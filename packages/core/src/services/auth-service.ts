@@ -152,6 +152,20 @@ export class AuthService {
       );
     }
 
+    // 5. Verify credential capability (read-only credentials cannot write)
+    if (minimumRole !== 'observer') {
+      const hasWrite =
+        auth.credential.capabilities.includes('write') ||
+        auth.credential.capabilities.includes('admin');
+      if (!hasWrite) {
+        throw new DetunedError(
+          ErrorCode.FORBIDDEN,
+          '凭据缺少 write 写入能力。',
+          403
+        );
+      }
+    }
+
     return {
       actor: auth.actor,
       credential: auth.credential,

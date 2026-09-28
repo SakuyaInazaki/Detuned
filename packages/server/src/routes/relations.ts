@@ -3,6 +3,8 @@ import {
   CreateRelationRequest,
   ResolveRelationRequest,
   ReopenRelationRequest,
+  DetunedError,
+  ErrorCode,
 } from '@detuned/protocol';
 import { RelationService, AuthenticatedContext } from '@detuned/core';
 
@@ -12,7 +14,14 @@ export const relationRoutes: FastifyPluginAsync = async (app) => {
   app.post('/spaces/:space_id/relations', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id } = req.params as { space_id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
+    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+    if (!key || typeof key !== 'string' || key.trim() === '') {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '缺少必需的 Idempotency-Key 请求头。',
+        400
+      );
+    }
     const body = req.body as CreateRelationRequest;
 
     const relation = relationService.createRelation(auth, space_id, body, key);
@@ -27,7 +36,14 @@ export const relationRoutes: FastifyPluginAsync = async (app) => {
   app.post('/spaces/:space_id/relations/:id/resolve', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
+    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+    if (!key || typeof key !== 'string' || key.trim() === '') {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '缺少必需的 Idempotency-Key 请求头。',
+        400
+      );
+    }
     const body = req.body as ResolveRelationRequest;
 
     const result = relationService.resolveChallenge(auth, space_id, id, body, key);
@@ -41,7 +57,14 @@ export const relationRoutes: FastifyPluginAsync = async (app) => {
   app.post('/spaces/:space_id/relations/:id/reopen', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
+    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+    if (!key || typeof key !== 'string' || key.trim() === '') {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '缺少必需的 Idempotency-Key 请求头。',
+        400
+      );
+    }
     const body = req.body as ReopenRelationRequest;
 
     const result = relationService.reopenChallenge(auth, space_id, id, body, key);

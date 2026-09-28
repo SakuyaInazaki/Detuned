@@ -54,15 +54,29 @@ export class EventService {
     }
 
     return this.storage.transaction((tx) => {
-      let sub = tx.findSubscriptionByActorAndSpace(auth.actor.id, spaceId);
+      function arraysEqual(a: string[], b: string[]) {
+        if (a.length !== b.length) return false;
+        const sortedA = [...a].sort();
+        const sortedB = [...b].sort();
+        return sortedA.every((v, i) => v === sortedB[i]);
+      }
+
+      const existingSubs = tx.listSubscriptionsByActorAndSpace(auth.actor.id, spaceId);
+      const reqThreadIds = req.thread_ids ?? [];
+      const reqEventTypes = req.event_types ?? [];
+
+      let sub = existingSubs.find(
+        (s) => arraysEqual(s.thread_ids, reqThreadIds) && arraysEqual(s.event_types, reqEventTypes)
+      );
+
       if (!sub) {
         const subId = this.idGen.generateId('sub');
         sub = {
           id: subId,
           actor_id: auth.actor.id,
           space_id: spaceId,
-          thread_ids: req.thread_ids ?? [],
-          event_types: req.event_types ?? [],
+          thread_ids: reqThreadIds,
+          event_types: reqEventTypes,
           created_at: this.clock.nowIso(),
         };
         tx.createSubscription(sub);
@@ -165,6 +179,23 @@ export class EventService {
         if (sub.event_types.length > 0 && !sub.event_types.includes(ev.type)) {
           continue;
         }
+
+        // Filter by thread_ids if configured
+        if (sub.thread_ids.length > 0) {
+          if (ev.type.startsWith('thread.')) {
+            if (!sub.thread_ids.includes(ev.object_id)) {
+              continue;
+            }
+          } else if (ev.type.startsWith('post.')) {
+            const post = tx.findPostById(ev.object_id);
+            if (!post || !sub.thread_ids.includes(post.thread_id)) {
+              continue;
+            }
+          } else {
+            continue;
+          }
+        }
+
         matchedEvents.push(ev);
         if (matchedEvents.length >= limit) {
           break;
@@ -242,8 +273,8 @@ export class EventService {
 
     return this.storage.transaction((tx) => {
       const batch = tx.findDeliveryBatchById(req.batch_id);
-      if (!batch) {
-        throw new DetunedError(ErrorCode.ACK_INVALID, '批次不存在。', 409);
+      if (!batch || batch.consumer_id !== consumer.id) {
+        throw new DetunedError(ErrorCode.ACK_INVALID, '批次不存在或不属于该消费者。', 409);
       }
 
       // Idempotent retry of identical batch ack
@@ -258,6 +289,24 @@ export class EventService {
         throw new DetunedError(
           ErrorCode.ACK_INVALID,
           '当前活跃批次与确认批次不一致。',
+          409
+        );
+      }
+
+      // Cursor through_seq must match server persisted delivery batch
+      if (throughSeq !== batch.through_seq) {
+        throw new DetunedError(
+          ErrorCode.ACK_INVALID,
+          '确认游标中的序列号与批次实际持久序列号不匹配。',
+          409
+        );
+      }
+
+      const latestSeq = tx.getLatestEventSeq(spaceId);
+      if (throughSeq > latestSeq) {
+        throw new DetunedError(
+          ErrorCode.ACK_INVALID,
+          '确认游标序列号超出当前已持久事件最大序列号。',
           409
         );
       }

@@ -1,5 +1,12 @@
 import { FastifyPluginAsync } from 'fastify';
-import { CreateThreadRequest, PatchThreadRequest, DetunedError, ErrorCode } from '@detuned/protocol';
+import {
+  CreateThreadRequest,
+  CreateThreadRequestSchema,
+  PatchThreadRequest,
+  PatchThreadRequestSchema,
+  DetunedError,
+  ErrorCode,
+} from '@detuned/protocol';
 import { ThreadService, AuthenticatedContext, AuthService } from '@detuned/core';
 
 export const threadRoutes: FastifyPluginAsync = async (app) => {
@@ -27,20 +34,31 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
-  app.post('/spaces/:space_id/threads', async (req, reply) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id } = req.params as { space_id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as CreateThreadRequest;
+  app.post(
+    '/spaces/:space_id/threads',
+    { schema: { body: CreateThreadRequestSchema } },
+    async (req, reply) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id } = req.params as { space_id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as CreateThreadRequest;
 
-    const result = threadService.createThread(auth, space_id, body, key);
-    reply.status(201);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: result,
-    };
-  });
+      const result = threadService.createThread(auth, space_id, body, key);
+      reply.status(201);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: result,
+      };
+    }
+  );
 
   app.get('/spaces/:space_id/threads/:id', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
@@ -71,17 +89,28 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
-  app.patch('/spaces/:space_id/threads/:id', async (req) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as PatchThreadRequest;
+  app.patch(
+    '/spaces/:space_id/threads/:id',
+    { schema: { body: PatchThreadRequestSchema } },
+    async (req) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id, id } = req.params as { space_id: string; id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as PatchThreadRequest;
 
-    const updated = threadService.patchThread(auth, space_id, id, body, key);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: updated,
-    };
-  });
+      const updated = threadService.patchThread(auth, space_id, id, body, key);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: updated,
+      };
+    }
+  );
 };

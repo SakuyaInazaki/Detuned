@@ -57,7 +57,12 @@ export interface StoragePort {
   createSpace(space: Space, revision: SpaceRevision): void;
   updateSpace(space: Space, revision: SpaceRevision): void;
   getSpaceRevision(spaceId: string, revision: number): SpaceRevision | null;
-  listVisibleSpaces(actorId: string, limit: number, cursor?: string | null): { spaces: Space[]; next_cursor: string | null };
+  listVisibleSpaces(
+    actorId: string,
+    limit: number,
+    cursor?: string | null,
+    allowedSpaceIds?: string[]
+  ): { spaces: Space[]; next_cursor: string | null };
 
   getMembership(spaceId: string, actorId: string): Membership | null;
   upsertMembership(membership: Membership): void;
@@ -116,6 +121,7 @@ export interface StoragePort {
   createSubscription(sub: Subscription): void;
   findSubscriptionById(id: string): Subscription | null;
   findSubscriptionByActorAndSpace(actorId: string, spaceId: string): Subscription | null;
+  listSubscriptionsByActorAndSpace(actorId: string, spaceId: string): Subscription[];
 
   createConsumer(consumer: Consumer): void;
   findConsumerById(id: string): Consumer | null;

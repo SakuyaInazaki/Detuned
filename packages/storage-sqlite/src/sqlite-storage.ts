@@ -255,7 +255,8 @@ export class SqliteStorage implements StoragePort {
   listVisibleSpaces(
     actorId: string,
     limit: number,
-    cursor?: string | null
+    cursor?: string | null,
+    allowedSpaceIds?: string[]
   ): { spaces: Space[]; next_cursor: string | null } {
     let sql = `
       SELECT s.* FROM spaces s
@@ -263,6 +264,12 @@ export class SqliteStorage implements StoragePort {
       WHERE m.actor_id = ? AND m.active = 1
     `;
     const params: any[] = [actorId];
+
+    if (allowedSpaceIds && allowedSpaceIds.length > 0 && !allowedSpaceIds.includes('*')) {
+      sql += ` AND s.id IN (${allowedSpaceIds.map(() => '?').join(', ')})`;
+      params.push(...allowedSpaceIds);
+    }
+
     if (cursor) {
       sql += ' AND s.id > ?';
       params.push(cursor);
@@ -605,6 +612,9 @@ export class SqliteStorage implements StoragePort {
     limit = 20,
     cursor?: string | null
   ): { revisions: PostRevision[]; next_cursor: string | null } {
+    const post = this.findPostById(postId);
+    const isRedacted = post?.lifecycle === 'redacted';
+
     let sql = 'SELECT * FROM post_revisions WHERE post_id = ?';
     const params: any[] = [postId];
     if (cursor) {
@@ -622,12 +632,12 @@ export class SqliteStorage implements StoragePort {
     const revisions: PostRevision[] = items.map((r) => ({
       post_id: r.post_id,
       revision: r.revision,
-      title: r.title,
-      summary: r.summary,
-      body: r.body,
-      tags: JSON.parse(r.tags),
-      structured: JSON.parse(r.structured),
-      content_hash: r.content_hash,
+      title: isRedacted ? '[REDACTED]' : r.title,
+      summary: isRedacted ? '[REDACTED]' : r.summary,
+      body: isRedacted ? '[REDACTED]' : r.body,
+      tags: isRedacted ? [] : JSON.parse(r.tags),
+      structured: isRedacted ? {} : JSON.parse(r.structured),
+      content_hash: isRedacted ? 'redacted' : r.content_hash,
       editor_id: r.editor_id,
       created_at: r.created_at,
     }));
@@ -1008,6 +1018,20 @@ export class SqliteStorage implements StoragePort {
     };
   }
 
+  listSubscriptionsByActorAndSpace(actorId: string, spaceId: string): Subscription[] {
+    const rows = this.db
+      .prepare('SELECT * FROM subscriptions WHERE actor_id = ? AND space_id = ?')
+      .all(actorId, spaceId) as any[];
+    return rows.map((row) => ({
+      id: row.id,
+      actor_id: row.actor_id,
+      space_id: row.space_id,
+      thread_ids: JSON.parse(row.thread_ids),
+      event_types: JSON.parse(row.event_types),
+      created_at: row.created_at,
+    }));
+  }
+
   createConsumer(consumer: Consumer): void {
     this.db
       .prepare(
@@ -1222,6 +1246,61 @@ export class SqliteStorage implements StoragePort {
     reason: string;
     created_at: string;
   }): void {
+    if (redaction.target_type === 'post') {
+      const post = this.findPostById(redaction.target_id);
+      if (!post || post.space_id !== redaction.space_id) {
+        throw new Error('NOT_FOUND: 目标帖子不存在或不属于该空间。');
+      }
+
+      this.db
+        .prepare("UPDATE posts SET lifecycle = 'redacted' WHERE id = ? AND space_id = ?")
+        .run(redaction.target_id, redaction.space_id);
+
+      // Sanitize post revisions in database
+      this.db
+        .prepare(
+          "UPDATE post_revisions SET title = '[REDACTED]', summary = '[REDACTED]', body = '[REDACTED]', structured = '{}' WHERE post_id = ?"
+        )
+        .run(redaction.target_id);
+
+      // Remove from FTS index
+      this.db.prepare('DELETE FROM post_fts WHERE post_id = ?').run(redaction.target_id);
+
+      // Also sanitize any historical idempotency records containing this post's content
+      const idemRows = this.db
+        .prepare('SELECT actor_id, space_id, operation, key, result_ref FROM idempotency_records WHERE space_id = ?')
+        .all(redaction.space_id) as any[];
+      for (const row of idemRows) {
+        if (row.result_ref && row.result_ref.includes(redaction.target_id)) {
+          try {
+            const parsed = JSON.parse(row.result_ref);
+            if (parsed.post && parsed.post.id === redaction.target_id) {
+              parsed.post.lifecycle = 'redacted';
+              if (parsed.revision) {
+                parsed.revision.title = '[REDACTED]';
+                parsed.revision.summary = '[REDACTED]';
+                parsed.revision.body = '[REDACTED]';
+                parsed.revision.structured = {};
+              }
+              this.db
+                .prepare('UPDATE idempotency_records SET result_ref = ? WHERE actor_id = ? AND space_id = ? AND operation = ? AND key = ?')
+                .run(JSON.stringify(parsed), row.actor_id, row.space_id, row.operation, row.key);
+            }
+          } catch {
+            // Ignore parse errors
+          }
+        }
+      }
+    } else if (redaction.target_type === 'artifact') {
+      const artifact = this.findArtifactById(redaction.target_id);
+      if (!artifact || artifact.space_id !== redaction.space_id) {
+        throw new Error('NOT_FOUND: 目标附件不存在或不属于该空间。');
+      }
+      this.db
+        .prepare("UPDATE artifacts SET state = 'redacted' WHERE id = ? AND space_id = ?")
+        .run(redaction.target_id, redaction.space_id);
+    }
+
     this.db
       .prepare(
         `INSERT INTO redactions (
@@ -1238,17 +1317,5 @@ export class SqliteStorage implements StoragePort {
         redaction.reason,
         redaction.created_at
       );
-
-    if (redaction.target_type === 'post') {
-      this.db
-        .prepare("UPDATE posts SET lifecycle = 'redacted' WHERE id = ?")
-        .run(redaction.target_id);
-      // Remove from FTS index
-      this.db.prepare('DELETE FROM post_fts WHERE post_id = ?').run(redaction.target_id);
-    } else if (redaction.target_type === 'artifact') {
-      this.db
-        .prepare("UPDATE artifacts SET state = 'redacted' WHERE id = ?")
-        .run(redaction.target_id);
-    }
   }
 }

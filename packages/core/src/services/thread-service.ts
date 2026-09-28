@@ -32,6 +32,74 @@ export class ThreadService {
     private readonly idempotency: IdempotencyService
   ) {}
 
+  private validateStructuredContent(kind: string, structured: any): void {
+    const structuredRequiredKinds = ['proposal', 'claim', 'objection', 'failure', 'summary'];
+    if (structuredRequiredKinds.includes(kind)) {
+      if (!structured || typeof structured !== 'object') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          `${kind} 类型的帖子必须提供 structured 结构化字段。`,
+          422
+        );
+      }
+    }
+
+    if (!structured) return;
+
+    if (kind === 'proposal' || kind === 'claim') {
+      if (
+        !structured.statement ||
+        typeof structured.statement !== 'string' ||
+        structured.statement.trim() === '' ||
+        !Array.isArray(structured.assumptions) ||
+        !structured.scope ||
+        typeof structured.scope !== 'string' ||
+        structured.scope.trim() === '' ||
+        !structured.falsification_plan ||
+        typeof structured.falsification_plan !== 'string' ||
+        structured.falsification_plan.trim() === ''
+      ) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          'proposal/claim 必须包含 statement, assumptions (数组), scope, falsification_plan。',
+          422
+        );
+      }
+    } else if (kind === 'objection') {
+      if (!structured.target_ref || !structured.issue || !structured.impact) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          'objection 必须包含 target_ref, issue, impact。',
+          422
+        );
+      }
+    } else if (kind === 'failure') {
+      if (
+        !structured.attempt ||
+        !structured.category ||
+        !Array.isArray(structured.assumptions) ||
+        !structured.tested_scope ||
+        !structured.expected ||
+        !structured.observed ||
+        !structured.ruled_out
+      ) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          'failure 必须包含 attempt, category, assumptions (数组), tested_scope, expected, observed, ruled_out。',
+          422
+        );
+      }
+    } else if (kind === 'summary') {
+      if (!Array.isArray(structured.source_refs) || structured.source_refs.length === 0) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          'summary 必须包含至少一个 source_refs。',
+          422
+        );
+      }
+    }
+  }
+
   createThread(
     auth: AuthenticatedContext,
     spaceId: string,
@@ -39,6 +107,39 @@ export class ThreadService {
     requestKey: string
   ): CreateThreadResult {
     this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
+
+    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '标题长度超出上限 (160 字符/字节)。',
+        400
+      );
+    }
+
+    if (req.initial_post) {
+      if (req.initial_post.artifact_ids && req.initial_post.artifact_ids.length > 0) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '附件存储在 M1 尚未开放 (scheduled for M2)。',
+          400
+        );
+      }
+      if (req.initial_post.title && Buffer.byteLength(req.initial_post.title, 'utf8') > 160) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '初始帖子标题长度超出上限 (160 字符/字节)。',
+          400
+        );
+      }
+      if (req.initial_post.body && Buffer.byteLength(req.initial_post.body, 'utf8') > 65536) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '初始帖子正文大小超出上限 (64KB)。',
+          422
+        );
+      }
+      this.validateStructuredContent(req.initial_post.kind, req.initial_post.structured);
+    }
 
     return this.idempotency.executeIdempotent(
       auth.actor.id,
@@ -92,7 +193,7 @@ export class ThreadService {
 
           const body = req.initial_post.body ?? '';
           const contentHash = this.hasher.sha256(
-            `${req.initial_post.title}\n${req.initial_post.summary}\n${body}`
+            `${req.initial_post.title}\n${req.initial_post.summary}\n${body}\n${this.hasher.canonicalJson(req.initial_post.structured ?? {})}`
           );
 
           const postRev: PostRevision = {
@@ -109,6 +210,56 @@ export class ThreadService {
           };
 
           tx.createPost(post, postRev);
+
+          // Persist relations declared on initial_post
+          if (req.initial_post.refs && req.initial_post.refs.length > 0) {
+            for (const ref of req.initial_post.refs) {
+              const targetPost = tx.findPostById(ref.target_ref.post_id);
+              if (!targetPost || targetPost.space_id !== spaceId) {
+                throw new DetunedError(
+                  ErrorCode.NOT_FOUND,
+                  `引用的目标帖子 ${ref.target_ref.post_id} 不存在于本空间。`,
+                  404
+                );
+              }
+              const targetRev = tx.getPostRevision(ref.target_ref.post_id, ref.target_ref.revision);
+              if (!targetRev) {
+                throw new DetunedError(
+                  ErrorCode.NOT_FOUND,
+                  `引用的目标帖子修订版本 ${ref.target_ref.revision} 不存在。`,
+                  404
+                );
+              }
+
+              const relId = this.idGen.generateId('rel');
+              const rel = {
+                id: relId,
+                space_id: spaceId,
+                source_post_id: postId,
+                source_revision: 1,
+                target_post_id: ref.target_ref.post_id,
+                target_revision: ref.target_ref.revision,
+                type: ref.type,
+                state: (ref.type === 'challenges' ? 'open' : 'resolved') as any,
+                version: 1,
+                creator_id: auth.actor.id,
+                created_at: now,
+              };
+
+              tx.createRelation(rel);
+
+              tx.appendEvent(spaceId, {
+                id: this.idGen.generateId('evt'),
+                space_id: spaceId,
+                type: 'relation.created',
+                object_id: relId,
+                revision: 1,
+                visibility: 'public',
+                actor_id: auth.actor.id,
+                created_at: now,
+              });
+            }
+          }
 
           tx.appendEvent(spaceId, {
             id: this.idGen.generateId('evt'),
@@ -141,7 +292,7 @@ export class ThreadService {
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'thread.patch',
+      `thread.patch:${threadId}`,
       requestKey,
       req,
       200,

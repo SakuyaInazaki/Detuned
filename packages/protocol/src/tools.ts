@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, Static, TSchema } from '@sinclair/typebox';
 import { PostKindSchema, StructuredContentSchema } from './posts.js';
 import { PostRefSchema, EvidenceRefSchema } from './common.js';
 import { RelationTypeSchema } from './relations.js';
@@ -44,6 +44,8 @@ export const ToolReadParamsSchema = Type.Object({
 export type ToolReadParams = Static<typeof ToolReadParamsSchema>;
 
 export const ToolPublishThreadOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('thread'),
   title: Type.String({ minLength: 1, maxLength: 160 }),
   initial_post: Type.Optional(Type.Object({
@@ -62,6 +64,8 @@ export const ToolPublishThreadOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolPublishPostOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('post'),
   thread_id: Type.String({ minLength: 1 }),
   kind: PostKindSchema,
@@ -78,6 +82,8 @@ export const ToolPublishPostOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolPublishRevisionOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('revision'),
   post_id: Type.String({ minLength: 1 }),
   expected_revision: Type.Integer({ minimum: 1 }),
@@ -94,28 +100,31 @@ export const ToolPublishRevisionOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolPublishWithdrawOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('withdraw'),
   post_id: Type.String({ minLength: 1 }),
   expected_revision: Type.Integer({ minimum: 1 }),
   reason: Type.String({ minLength: 1, maxLength: 500 }),
 }, { additionalProperties: false });
 
-export const ToolPublishParamsSchema = Type.Intersect([
-  Type.Object({
-    space_id: Type.String({ minLength: 1 }),
-    request_key: Type.String({ minLength: 1, maxLength: 128 }),
-  }),
-  Type.Union([
-    ToolPublishThreadOpSchema,
-    ToolPublishPostOpSchema,
-    ToolPublishRevisionOpSchema,
-    ToolPublishWithdrawOpSchema,
-  ]),
+export const ToolPublishParamsUnion = Type.Union([
+  ToolPublishThreadOpSchema,
+  ToolPublishPostOpSchema,
+  ToolPublishRevisionOpSchema,
+  ToolPublishWithdrawOpSchema,
 ]);
 
-export type ToolPublishParams = Static<typeof ToolPublishParamsSchema>;
+export const ToolPublishParamsSchema: TSchema = {
+  ...ToolPublishParamsUnion,
+  type: 'object',
+};
+
+export type ToolPublishParams = Static<typeof ToolPublishParamsUnion>;
 
 export const ToolRelateCreateOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('create'),
   source_ref: PostRefSchema,
   target_ref: PostRefSchema,
@@ -123,6 +132,8 @@ export const ToolRelateCreateOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolRelateResolveOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('resolve'),
   relation_id: Type.String({ minLength: 1 }),
   expected_version: Type.Integer({ minimum: 1 }),
@@ -130,25 +141,26 @@ export const ToolRelateResolveOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolRelateReopenOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('reopen'),
   relation_id: Type.String({ minLength: 1 }),
   expected_version: Type.Integer({ minimum: 1 }),
   reason_ref: PostRefSchema,
 }, { additionalProperties: false });
 
-export const ToolRelateParamsSchema = Type.Intersect([
-  Type.Object({
-    space_id: Type.String({ minLength: 1 }),
-    request_key: Type.String({ minLength: 1, maxLength: 128 }),
-  }),
-  Type.Union([
-    ToolRelateCreateOpSchema,
-    ToolRelateResolveOpSchema,
-    ToolRelateReopenOpSchema,
-  ]),
+export const ToolRelateParamsUnion = Type.Union([
+  ToolRelateCreateOpSchema,
+  ToolRelateResolveOpSchema,
+  ToolRelateReopenOpSchema,
 ]);
 
-export type ToolRelateParams = Static<typeof ToolRelateParamsSchema>;
+export const ToolRelateParamsSchema: TSchema = {
+  ...ToolRelateParamsUnion,
+  type: 'object',
+};
+
+export type ToolRelateParams = Static<typeof ToolRelateParamsUnion>;
 
 export const ToolSubscribeParamsSchema = Type.Object({
   space_id: Type.String({ minLength: 1 }),
@@ -181,6 +193,8 @@ export const ToolAckParamsSchema = Type.Object({
 export type ToolAckParams = Static<typeof ToolAckParamsSchema>;
 
 export const ToolReviewRequestOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('request'),
   target_ref: PostRefSchema,
   dependency_refs: Type.Array(PostRefSchema),
@@ -196,6 +210,8 @@ export const ToolReviewRequestOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolReviewSubmitOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('submit'),
   request_id: Type.String({ minLength: 1 }),
   snapshot_sha256: Type.String({ minLength: 64, maxLength: 64 }),
@@ -211,31 +227,34 @@ export const ToolReviewSubmitOpSchema = Type.Object({
 }, { additionalProperties: false });
 
 export const ToolReviewFinalizeOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('finalize'),
   request_id: Type.String({ minLength: 1 }),
   expected_phase: Type.Optional(ReviewPhaseSchema),
 }, { additionalProperties: false });
 
 export const ToolReviewCancelOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }),
+  request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('cancel'),
   request_id: Type.String({ minLength: 1 }),
   reason: Type.String({ minLength: 1, maxLength: 500 }),
 }, { additionalProperties: false });
 
-export const ToolReviewParamsSchema = Type.Intersect([
-  Type.Object({
-    space_id: Type.String({ minLength: 1 }),
-    request_key: Type.String({ minLength: 1, maxLength: 128 }),
-  }),
-  Type.Union([
-    ToolReviewRequestOpSchema,
-    ToolReviewSubmitOpSchema,
-    ToolReviewFinalizeOpSchema,
-    ToolReviewCancelOpSchema,
-  ]),
+export const ToolReviewParamsUnion = Type.Union([
+  ToolReviewRequestOpSchema,
+  ToolReviewSubmitOpSchema,
+  ToolReviewFinalizeOpSchema,
+  ToolReviewCancelOpSchema,
 ]);
 
-export type ToolReviewParams = Static<typeof ToolReviewParamsSchema>;
+export const ToolReviewParamsSchema: TSchema = {
+  ...ToolReviewParamsUnion,
+  type: 'object',
+};
+
+export type ToolReviewParams = Static<typeof ToolReviewParamsUnion>;
 
 export const DETUNED_TOOLS = [
   {

@@ -58,6 +58,14 @@ export function buildApp(options: AppOptions): FastifyInstance {
 
   const app = Fastify({
     logger: false,
+    ajv: {
+      customOptions: {
+        removeAdditional: false,
+        useDefaults: true,
+        coerceTypes: false,
+        allErrors: true,
+      },
+    },
   });
 
   // Attach services to app instance
@@ -66,6 +74,7 @@ export function buildApp(options: AppOptions): FastifyInstance {
   (app as any).idGen = idGen;
   (app as any).hasher = hasher;
   (app as any).tokenSigner = tokenSigner;
+  (app as any).tokenSecret = tokenSecret;
   (app as any).authService = authService;
   (app as any).spaceService = spaceService;
   (app as any).threadService = threadService;

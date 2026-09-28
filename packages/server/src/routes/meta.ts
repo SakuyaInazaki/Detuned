@@ -25,7 +25,12 @@ export const metaRoutes: FastifyPluginAsync = async (app) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const storage = (app as any).storage;
 
-    const visibleSpaces = storage.listVisibleSpaces(auth.actor.id, 100);
+    const visibleSpaces = storage.listVisibleSpaces(
+      auth.actor.id,
+      100,
+      undefined,
+      auth.credential.allowed_space_ids
+    );
 
     return {
       api_version: '1',

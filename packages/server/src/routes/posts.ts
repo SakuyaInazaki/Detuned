@@ -1,8 +1,11 @@
 import { FastifyPluginAsync } from 'fastify';
 import {
   CreatePostRequest,
+  CreatePostRequestSchema,
   CreatePostRevisionRequest,
+  CreatePostRevisionRequestSchema,
   WithdrawPostRequest,
+  WithdrawPostRequestSchema,
   DetunedError,
   ErrorCode,
 } from '@detuned/protocol';
@@ -13,20 +16,31 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
   const authService = (app as any).authService as AuthService;
   const storage = (app as any).storage;
 
-  app.post('/spaces/:space_id/threads/:id/posts', async (req, reply) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as CreatePostRequest;
+  app.post(
+    '/spaces/:space_id/threads/:id/posts',
+    { schema: { body: CreatePostRequestSchema } },
+    async (req, reply) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id, id } = req.params as { space_id: string; id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as CreatePostRequest;
 
-    const result = postService.createPost(auth, space_id, id, body, key);
-    reply.status(201);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: result,
-    };
-  });
+      const result = postService.createPost(auth, space_id, id, body, key);
+      reply.status(201);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: result,
+      };
+    }
+  );
 
   app.get('/spaces/:space_id/posts/:id', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
@@ -67,32 +81,54 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
-  app.post('/spaces/:space_id/posts/:id/revisions', async (req, reply) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as CreatePostRevisionRequest;
+  app.post(
+    '/spaces/:space_id/posts/:id/revisions',
+    { schema: { body: CreatePostRevisionRequestSchema } },
+    async (req, reply) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id, id } = req.params as { space_id: string; id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as CreatePostRevisionRequest;
 
-    const result = postService.createRevision(auth, space_id, id, body, key);
-    reply.status(201);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: result,
-    };
-  });
+      const result = postService.createRevision(auth, space_id, id, body, key);
+      reply.status(201);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: result,
+      };
+    }
+  );
 
-  app.post('/spaces/:space_id/posts/:id/withdraw', async (req) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id, id } = req.params as { space_id: string; id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as WithdrawPostRequest;
+  app.post(
+    '/spaces/:space_id/posts/:id/withdraw',
+    { schema: { body: WithdrawPostRequestSchema } },
+    async (req) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id, id } = req.params as { space_id: string; id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as WithdrawPostRequest;
 
-    const post = postService.withdrawPost(auth, space_id, id, body, key);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: post,
-    };
-  });
+      const post = postService.withdrawPost(auth, space_id, id, body, key);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: post,
+      };
+    }
+  );
 };

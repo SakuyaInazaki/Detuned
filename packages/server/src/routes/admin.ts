@@ -87,6 +87,8 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
+  const validRoles: SpaceRole[] = ['observer', 'contributor', 'maintainer', 'owner'];
+
   app.post('/spaces/:space_id/memberships', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id } = req.params as { space_id: string };
@@ -99,8 +101,8 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       independence_group?: string;
     };
 
-    if (!body.actor_id || !body.role) {
-      throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 actor_id 或 role。', 400);
+    if (!body.actor_id || !body.role || !validRoles.includes(body.role)) {
+      throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 actor_id 或 role 非法。', 400);
     }
 
     const membership = {
@@ -121,10 +123,97 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
+  app.patch('/spaces/:space_id/memberships/:actor_id', async (req) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    const { space_id, actor_id } = req.params as { space_id: string; actor_id: string };
+    authService.requireSpaceAccess(auth, space_id, 'owner');
+
+    const existing = storage.getMembership(space_id, actor_id);
+    if (!existing) {
+      throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
+    }
+
+    const body = req.body as {
+      role?: SpaceRole;
+      reviewer_eligible?: boolean;
+      active?: boolean;
+      independence_group?: string | null;
+    };
+
+    if (body.role && !validRoles.includes(body.role)) {
+      throw new DetunedError(ErrorCode.VALIDATION_ERROR, '非法的 role。', 400);
+    }
+
+    const updated = {
+      space_id,
+      actor_id,
+      role: body.role ?? existing.role,
+      active: body.active !== undefined ? body.active : existing.active,
+      reviewer_eligible: body.reviewer_eligible !== undefined ? body.reviewer_eligible : existing.reviewer_eligible,
+      independence_group: body.independence_group !== undefined ? body.independence_group : existing.independence_group,
+    };
+
+    storage.upsertMembership(updated);
+    return {
+      api_version: '1',
+      request_id: req.id,
+      data: updated,
+    };
+  });
+
+  app.delete('/spaces/:space_id/memberships/:actor_id', async (req) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    const { space_id, actor_id } = req.params as { space_id: string; actor_id: string };
+    authService.requireSpaceAccess(auth, space_id, 'owner');
+
+    const existing = storage.getMembership(space_id, actor_id);
+    if (!existing) {
+      throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
+    }
+
+    storage.upsertMembership({
+      ...existing,
+      active: false,
+    });
+
+    return {
+      api_version: '1',
+      request_id: req.id,
+      data: { deactivated: true },
+    };
+  });
+
+  app.post('/admin/credentials/:id/revoke', async (req) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    authService.requireInstanceAdmin(auth);
+
+    const { id } = req.params as { id: string };
+    const cred = storage.findCredentialById(id);
+    if (!cred) {
+      throw new DetunedError(ErrorCode.NOT_FOUND, '凭据不存在。', 404);
+    }
+
+    storage.revokeCredential(id, clock.nowIso());
+    return {
+      api_version: '1',
+      request_id: req.id,
+      data: { revoked: true },
+    };
+  });
+
   app.post('/spaces/:space_id/redactions', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id } = req.params as { space_id: string };
     authService.requireSpaceAccess(auth, space_id, 'owner');
+
+    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+    if (!key || typeof key !== 'string' || key.trim() === '') {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '缺少必需的 Idempotency-Key 请求头。',
+        400
+      );
+    }
 
     const body = req.body as {
       target_type: 'post' | 'artifact';
@@ -138,6 +227,20 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         '缺少 target_type, target_id 或 reason。',
         400
       );
+    }
+
+    if (body.target_type === 'post') {
+      const post = storage.findPostById(body.target_id);
+      if (!post || post.space_id !== space_id) {
+        throw new DetunedError(ErrorCode.NOT_FOUND, '目标帖子不存在或不属于该空间。', 404);
+      }
+    } else if (body.target_type === 'artifact') {
+      const artifact = storage.findArtifactById(body.target_id);
+      if (!artifact || artifact.space_id !== space_id) {
+        throw new DetunedError(ErrorCode.NOT_FOUND, '目标附件不存在或不属于该空间。', 404);
+      }
+    } else {
+      throw new DetunedError(ErrorCode.VALIDATION_ERROR, '非法的 target_type。', 400);
     }
 
     const redactionId = idGen.generateId('red');

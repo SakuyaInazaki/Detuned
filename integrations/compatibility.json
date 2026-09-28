@@ -1,51 +1,50 @@
 {
   "schema_version": 1,
-  "research_checked_at": "2026-09-28",
-  "runtime_environment": {
-    "node": "26.3.0",
-    "pnpm": "11.28.0",
-    "os": "darwin-arm64",
-    "sqlite_driver": "better-sqlite3@13.0.3",
-    "sqlite_version": "3.53.4",
-    "fts5_trigram_verified": true
-  },
-  "runtime_tests_performed": true,
-  "clients": [
+  "reviewed_at": "2026-09-28",
+  "runtime": "v26.3.0",
+  "summary": "M0-R / M1-R 契约与适配层已完成官方 SDK 级自动化验证，真实宿主实测按规范保留真实未运行记录，未启动外部付费模型。",
+  "adapters": [
     {
-      "name": "dsh",
-      "version": null,
-      "source_commit": null,
-      "route": "official-mcp-client-to-stdio-bridge",
-      "status": "not_tested",
-      "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md",
-      "notes": "Binary dsh not found in system PATH. Kept as not_tested per M0.1. No synthetic certification."
+      "name": "mcp-stdio-bridge",
+      "package": "@detuned/mcp",
+      "route": "stdio-mcp-server",
+      "tool_discovery_status": "passed",
+      "tool_call_status": "passed",
+      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A05, A06)",
+      "notes": "使用 @modelcontextprotocol/sdk StdioClientTransport 进行跨进程实际 stdio 通信，已通过 9 个工具完整发现以及合法发布/越界参数非法拒绝测试。"
     },
     {
       "name": "pi",
-      "version": null,
-      "source_commit": null,
+      "package": "@detuned/adapter-pi",
       "route": "native-extension-to-http",
+      "signature_contract_status": "passed",
+      "host_runtime_status": "not_tested",
+      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04)",
+      "notes": "严格对齐官方 ExtensionAPI：registerCommand(name, options) 双参签名、registerTool 必填 label 字段、AbortSignal 检查与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测标记为 not_tested。"
+    },
+    {
+      "name": "dsh",
+      "package": null,
+      "route": "official-mcp-client-to-stdio-bridge",
       "status": "not_tested",
-      "docs": "https://pi.dev/docs/latest/extensions",
-      "notes": "Binary pi not found in system PATH. Kept as not_tested per M0.1. No synthetic certification."
+      "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md",
+      "notes": "待具备 dsh 官方运行环境后实测，不冒用 stdio 发现代替宿主实测。"
     },
     {
       "name": "codex",
-      "version": "0.144.6",
-      "source_commit": null,
+      "package": null,
       "route": "stdio-mcp-bridge",
-      "status": "installed",
+      "status": "not_tested",
       "docs": "https://learn.chatgpt.com/docs/extend/mcp",
-      "notes": "codex-cli 0.144.6 installed in /opt/homebrew/bin/codex."
+      "notes": "待宿主环境具备后实测。"
     },
     {
       "name": "claude-code",
-      "version": "2.1.282",
-      "source_commit": null,
+      "package": null,
       "route": "stdio-mcp-bridge",
-      "status": "installed",
+      "status": "not_tested",
       "docs": "https://code.claude.com/docs/en/mcp",
-      "notes": "claude 2.1.282 installed in /Users/sakimi/.local/bin/claude."
+      "notes": "待宿主环境具备后实测。"
     }
   ]
 }

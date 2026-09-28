@@ -16,6 +16,12 @@ export function bootstrapDatabase(
   // Apply schema
   db.exec(SCHEMA_SQL);
 
+  // Record initial migration
+  db.prepare('INSERT OR IGNORE INTO schema_migrations (version, applied_at) VALUES (?, ?)').run(
+    1,
+    new Date().toISOString()
+  );
+
   const storage = new SqliteStorage(db);
 
   // Check if admin actor already exists

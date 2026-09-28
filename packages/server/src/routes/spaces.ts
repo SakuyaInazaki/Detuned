@@ -1,5 +1,13 @@
 import { FastifyPluginAsync } from 'fastify';
-import { CreateSpaceRequest, PatchSpaceRequest, CreateSessionRequest } from '@detuned/protocol';
+import {
+  CreateSpaceRequest,
+  CreateSpaceRequestSchema,
+  PatchSpaceRequest,
+  PatchSpaceRequestSchema,
+  CreateSessionRequest,
+  DetunedError,
+  ErrorCode,
+} from '@detuned/protocol';
 import { SpaceService, ContextService, AuthenticatedContext } from '@detuned/core';
 
 export const spaceRoutes: FastifyPluginAsync = async (app) => {
@@ -12,7 +20,12 @@ export const spaceRoutes: FastifyPluginAsync = async (app) => {
     const query = req.query as { limit?: string; cursor?: string };
     const limit = query.limit ? parseInt(query.limit, 10) : 20;
 
-    const result = storage.listVisibleSpaces(auth.actor.id, limit, query.cursor);
+    const result = storage.listVisibleSpaces(
+      auth.actor.id,
+      limit,
+      query.cursor,
+      auth.credential.allowed_space_ids
+    );
     return {
       api_version: '1',
       request_id: req.id,
@@ -24,33 +37,55 @@ export const spaceRoutes: FastifyPluginAsync = async (app) => {
     };
   });
 
-  app.post('/spaces', async (req, reply) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as CreateSpaceRequest;
+  app.post(
+    '/spaces',
+    { schema: { body: CreateSpaceRequestSchema } },
+    async (req, reply) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as CreateSpaceRequest;
 
-    const result = spaceService.createSpace(auth, body, key);
-    reply.status(201);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: result,
-    };
-  });
+      const result = spaceService.createSpace(auth, body, key);
+      reply.status(201);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: result,
+      };
+    }
+  );
 
-  app.patch('/spaces/:space_id', async (req) => {
-    const auth = (req as any).auth as AuthenticatedContext;
-    const { space_id } = req.params as { space_id: string };
-    const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key ?? req.id;
-    const body = req.body as PatchSpaceRequest;
+  app.patch(
+    '/spaces/:space_id',
+    { schema: { body: PatchSpaceRequestSchema } },
+    async (req) => {
+      const auth = (req as any).auth as AuthenticatedContext;
+      const { space_id } = req.params as { space_id: string };
+      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      if (!key || typeof key !== 'string' || key.trim() === '') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          '缺少必需的 Idempotency-Key 请求头。',
+          400
+        );
+      }
+      const body = req.body as PatchSpaceRequest;
 
-    const result = spaceService.patchSpace(auth, space_id, body, key);
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: result,
-    };
-  });
+      const result = spaceService.patchSpace(auth, space_id, body, key);
+      return {
+        api_version: '1',
+        request_id: req.id,
+        data: result,
+      };
+    }
+  );
 
   app.post('/spaces/:space_id/sessions', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;

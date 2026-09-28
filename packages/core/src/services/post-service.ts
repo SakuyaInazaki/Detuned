@@ -26,13 +26,35 @@ export class PostService {
   ) {}
 
   private validateStructuredContent(kind: string, structured: any): void {
+    const structuredRequiredKinds = ['proposal', 'claim', 'objection', 'failure', 'summary'];
+    if (structuredRequiredKinds.includes(kind)) {
+      if (!structured || typeof structured !== 'object') {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          `${kind} 类型的帖子必须提供 structured 结构化字段。`,
+          422
+        );
+      }
+    }
+
     if (!structured) return;
 
     if (kind === 'proposal' || kind === 'claim') {
-      if (!structured.statement || !structured.scope || !structured.falsification_plan) {
+      if (
+        !structured.statement ||
+        typeof structured.statement !== 'string' ||
+        structured.statement.trim() === '' ||
+        !Array.isArray(structured.assumptions) ||
+        !structured.scope ||
+        typeof structured.scope !== 'string' ||
+        structured.scope.trim() === '' ||
+        !structured.falsification_plan ||
+        typeof structured.falsification_plan !== 'string' ||
+        structured.falsification_plan.trim() === ''
+      ) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
-          'proposal/claim 必须包含 statement, assumptions, scope, falsification_plan。',
+          'proposal/claim 必须包含 statement, assumptions (数组), scope, falsification_plan。',
           422
         );
       }
@@ -48,6 +70,7 @@ export class PostService {
       if (
         !structured.attempt ||
         !structured.category ||
+        !Array.isArray(structured.assumptions) ||
         !structured.tested_scope ||
         !structured.expected ||
         !structured.observed ||
@@ -55,7 +78,7 @@ export class PostService {
       ) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
-          'failure 必须包含 attempt, category, tested_scope, expected, observed, ruled_out。',
+          'failure 必须包含 attempt, category, assumptions (数组), tested_scope, expected, observed, ruled_out。',
           422
         );
       }
@@ -78,12 +101,35 @@ export class PostService {
     requestKey: string
   ): { post: Post; revision: PostRevision; relations: Relation[] } {
     this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
+
+    if (req.artifact_ids && req.artifact_ids.length > 0) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '附件存储在 M1 尚未开放 (scheduled for M2)。',
+        400
+      );
+    }
+    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '标题长度超出上限 (160 字符/字节)。',
+        400
+      );
+    }
+    if (req.body && Buffer.byteLength(req.body, 'utf8') > 65536) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '正文大小超出上限 (64KB)。',
+        422
+      );
+    }
+
     this.validateStructuredContent(req.kind, req.structured);
 
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'post.create',
+      `post.create:${threadId}`,
       requestKey,
       req,
       201,
@@ -212,10 +258,32 @@ export class PostService {
   ): { post: Post; revision: PostRevision; relations: Relation[] } {
     this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
 
+    if (req.artifact_ids && req.artifact_ids.length > 0) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '附件存储在 M1 尚未开放 (scheduled for M2)。',
+        400
+      );
+    }
+    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '标题长度超出上限 (160 字符/字节)。',
+        400
+      );
+    }
+    if (req.body && Buffer.byteLength(req.body, 'utf8') > 65536) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        '正文大小超出上限 (64KB)。',
+        422
+      );
+    }
+
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'post.revision',
+      `post.revision:${postId}`,
       requestKey,
       req,
       201,
@@ -361,7 +429,7 @@ export class PostService {
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'post.withdraw',
+      `post.withdraw:${postId}`,
       requestKey,
       req,
       200,

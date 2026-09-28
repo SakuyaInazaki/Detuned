@@ -1,0 +1,77 @@
+{
+  "reviewed_date": "2026-09-28",
+  "runtime": "v26.3.0",
+  "pi_real_runtime_tested": false,
+  "mcp_real_stdio_discovery_tested": true,
+  "probes": [
+    {
+      "id": "A01",
+      "description": "Schema accepts its documented valid tool input",
+      "passes": false,
+      "errors": [
+        {
+          "path": "",
+          "message": "Expected union value"
+        },
+        {
+          "path": "",
+          "message": "Expected all values to match"
+        }
+      ]
+    },
+    {
+      "id": "A02",
+      "description": "Schema accepts its documented valid tool input",
+      "passes": false,
+      "errors": [
+        {
+          "path": "",
+          "message": "Expected union value"
+        },
+        {
+          "path": "",
+          "message": "Expected all values to match"
+        }
+      ]
+    },
+    {
+      "id": "A03",
+      "description": "Pi commands follow registerCommand(name, options)",
+      "passes": false,
+      "observed": [
+        {
+          "argument_count": 1,
+          "first_argument_type": "object"
+        },
+        {
+          "argument_count": 1,
+          "first_argument_type": "object"
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "description": "Pi registered tool definitions include official required label field",
+      "passes": false,
+      "observed_missing_labels": [
+        "forum_context",
+        "forum_search",
+        "forum_read",
+        "forum_publish",
+        "forum_relate",
+        "forum_subscribe",
+        "forum_poll",
+        "forum_ack",
+        "forum_review"
+      ]
+    },
+    {
+      "id": "A05",
+      "description": "Actual stdio bridge completes official SDK tool discovery",
+      "passes": false,
+      "error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"object\"\n    ],\n    \"path\": [\n      \"tools\",\n      3,\n      \"inputSchema\",\n      \"type\"\n    ],\n    \"message\": \"Invalid input: expected \\\"object\\\"\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"object\"\n    ],\n    \"path\": [\n      \"tools\",\n      4,\n      \"inputSchema\",\n      \"type\"\n    ],\n    \"message\": \"Invalid input: expected \\\"object\\\"\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"object\"\n    ],\n    \"path\": [\n      \"tools\",\n      8,\n      \"inputSchema\",\n      \"type\"\n    ],\n    \"message\": \"Invalid input: expected \\\"object\\\"\"\n  }\n]"
+    }
+  ],
+  "passed": 0,
+  "failed": 5
+}
