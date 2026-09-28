@@ -128,7 +128,7 @@ export class RelationService {
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'relation.resolve',
+      `relation.resolve:${relationId}`,
       requestKey,
       req,
       200,
@@ -240,7 +240,7 @@ export class RelationService {
     return this.idempotency.executeIdempotent(
       auth.actor.id,
       spaceId,
-      'relation.reopen',
+      `relation.reopen:${relationId}`,
       requestKey,
       req,
       200,

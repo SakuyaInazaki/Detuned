@@ -78,15 +78,23 @@ export class DetunedClient {
       headers['Content-Type'] = 'application/json';
     }
 
+    if (opts.signal?.aborted) {
+      throw new Error('Operation aborted');
+    }
+
     let attempts = 0;
     while (true) {
+      if (opts.signal?.aborted) {
+        throw new Error('Operation aborted');
+      }
+
       attempts++;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+      const onExternalAbort = () => controller.abort();
 
-      // Link external signal if provided
       if (opts.signal) {
-        opts.signal.addEventListener('abort', () => controller.abort(), { once: true });
+        opts.signal.addEventListener('abort', onExternalAbort, { once: true });
       }
 
       try {
@@ -98,6 +106,9 @@ export class DetunedClient {
         });
 
         clearTimeout(timeoutId);
+        if (opts.signal) {
+          opts.signal.removeEventListener('abort', onExternalAbort);
+        }
 
         const json: any = await res.json().catch(() => null);
 
@@ -110,7 +121,7 @@ export class DetunedClient {
         const message: string = errDetail?.message ?? `HTTP ${res.status} 请求失败`;
         const retryable = errDetail?.retryable ?? [502, 503, 504].includes(res.status);
 
-        if (retryable && attempts <= this.maxRetries) {
+        if (retryable && attempts <= this.maxRetries && !opts.signal?.aborted) {
           const delay = Math.min(1000 * Math.pow(2, attempts - 1) + Math.random() * 500, 10000);
           await new Promise((r) => setTimeout(r, delay));
           continue;
@@ -119,12 +130,20 @@ export class DetunedClient {
         throw new DetunedError(code, message, res.status, retryable, errDetail?.details);
       } catch (err: any) {
         clearTimeout(timeoutId);
+        if (opts.signal) {
+          opts.signal.removeEventListener('abort', onExternalAbort);
+        }
+
+        if (opts.signal?.aborted) {
+          throw new Error('Operation aborted');
+        }
+
         if (err instanceof DetunedError) {
           throw err;
         }
 
         const isNetworkOrTimeout = err.name === 'AbortError' || err.code === 'ECONNREFUSED';
-        if (isNetworkOrTimeout && attempts <= this.maxRetries) {
+        if (isNetworkOrTimeout && attempts <= this.maxRetries && !opts.signal?.aborted) {
           const delay = Math.min(1000 * Math.pow(2, attempts - 1) + Math.random() * 500, 10000);
           await new Promise((r) => setTimeout(r, delay));
           continue;
@@ -358,7 +377,10 @@ export class DetunedClient {
    * forum_context, forum_search, forum_read, forum_publish, forum_relate,
    * forum_subscribe, forum_poll, forum_ack, forum_review
    */
-  async callTool(name: string, params: Record<string, any>): Promise<any> {
+  async callTool(name: string, params: Record<string, any>, opts?: { signal?: AbortSignal }): Promise<any> {
+    if (opts?.signal?.aborted) {
+      throw new Error('Operation aborted');
+    }
     const spaceId = params.space_id;
     if (!spaceId) {
       throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Tool call missing space_id', 400);

@@ -67,18 +67,36 @@ export class PostService {
         );
       }
     } else if (kind === 'failure') {
+      const validCategories = new Set([
+        'counterexample',
+        'proof_gap',
+        'test_failure',
+        'performance_failure',
+        'environment_error',
+        'budget_exhausted',
+      ]);
+      if (!validCategories.has(structured.category)) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          `非法的 failure category: ${structured.category}。有效枚举为: counterexample, proof_gap, test_failure, performance_failure, environment_error, budget_exhausted`,
+          422
+        );
+      }
       if (
         !structured.attempt ||
-        !structured.category ||
         !Array.isArray(structured.assumptions) ||
         !structured.tested_scope ||
         !structured.expected ||
         !structured.observed ||
-        !structured.ruled_out
+        !structured.ruled_out ||
+        !Array.isArray(structured.evidence_refs) ||
+        !['provided', 'unverified'].includes(structured.evidence_state) ||
+        !Array.isArray(structured.not_ruled_out) ||
+        !Array.isArray(structured.retry_when)
       ) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
-          'failure 必须包含 attempt, category, assumptions (数组), tested_scope, expected, observed, ruled_out。',
+          'failure 必须包含 attempt, category, assumptions, tested_scope, expected, observed, ruled_out, evidence_refs, evidence_state, not_ruled_out, retry_when。',
           422
         );
       }
@@ -109,10 +127,10 @@ export class PostService {
         400
       );
     }
-    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+    if (req.title && [...req.title].length > 160) {
       throw new DetunedError(
         ErrorCode.VALIDATION_ERROR,
-        '标题长度超出上限 (160 字符/字节)。',
+        '标题长度超出上限 (160 字符)。',
         400
       );
     }
@@ -265,10 +283,10 @@ export class PostService {
         400
       );
     }
-    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+    if (req.title && [...req.title].length > 160) {
       throw new DetunedError(
         ErrorCode.VALIDATION_ERROR,
-        '标题长度超出上限 (160 字符/字节)。',
+        '标题长度超出上限 (160 字符)。',
         400
       );
     }

@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import {
@@ -44,7 +45,11 @@ export function buildApp(options: AppOptions): FastifyInstance {
   const idGen = options.idGen ?? new CryptoIdGenerator();
   const hasher = options.hasher ?? new CryptoHasher();
   const tokenSigner = options.tokenSigner ?? new HmacTokenSigner();
-  const tokenSecret = options.tokenSecret ?? 'detuned-dev-secret-key-min-32-bytes-long!';
+  const tokenSecret =
+    options.tokenSecret ??
+    (typeof (options.storage as any).getInstanceSecret === 'function'
+      ? (options.storage as any).getInstanceSecret()
+      : 'detuned-instance-secret-' + randomBytes(16).toString('hex'));
 
   const authService = new AuthService(options.storage, hasher, clock);
   const idempotency = new IdempotencyService(options.storage, hasher, clock);

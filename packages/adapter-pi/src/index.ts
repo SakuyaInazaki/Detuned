@@ -54,19 +54,11 @@ export function activate(pi: PiExtensionContext): void {
         if (signal?.aborted) {
           throw new Error('Operation aborted');
         }
-        try {
-          const result = await client.callTool(toolDef.name, params);
-          return {
-            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-            details: result,
-          };
-        } catch (err: any) {
-          return {
-            isError: true,
-            content: [{ type: 'text', text: `[Error ${err.code ?? 'ERROR'}]: ${err.message}` }],
-            details: { code: err.code, message: err.message, details: err.details },
-          };
-        }
+        const result = await client.callTool(toolDef.name, params, { signal });
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          details: result,
+        };
       },
     });
   }

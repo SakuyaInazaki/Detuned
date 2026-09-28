@@ -11,7 +11,7 @@
       "tool_discovery_status": "passed",
       "tool_call_status": "passed",
       "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A05, A06)",
-      "notes": "使用 @modelcontextprotocol/sdk StdioClientTransport 进行跨进程实际 stdio 通信，已通过 9 个工具完整发现以及合法发布/越界参数非法拒绝测试。"
+      "notes": "使用 @modelcontextprotocol/sdk StdioClientTransport 进行跨进程实际 stdio 通信，已通过 8 个有效启用工具的完整发现以及合法发布/越界参数非法拒绝测试（未实现的 forum_review 暂不暴露）。"
     },
     {
       "name": "pi",
@@ -19,8 +19,8 @@
       "route": "native-extension-to-http",
       "signature_contract_status": "passed",
       "host_runtime_status": "not_tested",
-      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04)",
-      "notes": "严格对齐官方 ExtensionAPI：registerCommand(name, options) 双参签名、registerTool 必填 label 字段、AbortSignal 检查与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测标记为 not_tested。"
+      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12)",
+      "notes": "严格对齐官方 ExtensionAPI：registerCommand(name, options) 双参签名、registerTool 必填 label 字段、execute 失败从 Promise 抛出异常、AbortSignal 贯穿取消检查与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测标记为 not_tested。"
     },
     {
       "name": "dsh",

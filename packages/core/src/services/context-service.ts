@@ -36,7 +36,9 @@ export class ContextService {
     const latestSeq = this.storage.getLatestEventSeq(spaceId);
     const checkpointToken = this.tokenSigner.sign(
       {
+        purpose: 'checkpoint',
         space_id: spaceId,
+        actor_id: auth.actor.id,
         seq: latestSeq,
         exp: Math.floor(Date.now() / 1000) + 86400, // 24 hours
       },

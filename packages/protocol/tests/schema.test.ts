@@ -65,7 +65,7 @@ describe('Protocol Schemas', () => {
   });
 
   it('validates forum tools definitions', () => {
-    expect(DETUNED_TOOLS.length).toBe(9);
+    expect(DETUNED_TOOLS.length).toBe(8);
     const toolNames = DETUNED_TOOLS.map((t) => t.name);
     expect(toolNames).toContain('forum_context');
     expect(toolNames).toContain('forum_search');
@@ -75,7 +75,7 @@ describe('Protocol Schemas', () => {
     expect(toolNames).toContain('forum_subscribe');
     expect(toolNames).toContain('forum_poll');
     expect(toolNames).toContain('forum_ack');
-    expect(toolNames).toContain('forum_review');
+    expect(toolNames).not.toContain('forum_review');
   });
 
   it('generates a valid OpenAPI spec object', () => {

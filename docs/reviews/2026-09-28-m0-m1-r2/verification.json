@@ -1,0 +1,28 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "fa1b35c80de02c1d601288847706495062935925",
+  "node": "v26.3.0",
+  "pnpm_cli": "11.7.0",
+  "commands": [
+    {"command": "pnpm build", "status": "passed"},
+    {"command": "pnpm typecheck", "status": "passed"},
+    {"command": "pnpm lint", "status": "passed", "limitation": "Same tsc --noEmit checks; not independent lint coverage"},
+    {"command": "pnpm test:all", "status": "passed", "files": 7, "tests": 36, "note": "Executed with permission for isolated loopback HTTP fixtures"},
+    {"command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs", "status": "passed", "assertions": 15},
+    {"command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs", "status": "passed", "assertions": 5},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs", "status": "completed_with_failed_assertions", "passed": 0, "failed": 12, "note": "S09 is separately classified as M2.2 backlog, not an additional M1 gate"},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs", "status": "completed_with_failed_assertions", "passed": 0, "failed": 3}
+  ],
+  "not_performed": [
+    "Clean-room dependency install",
+    "dsh, Pi, Codex or Claude Code host integration runs",
+    "Paid or local model inference",
+    "Full process-crash and live-lock race matrix",
+    "Product implementation fixes"
+  ],
+  "official_sources_rechecked": [
+    "https://pi.dev/docs/latest/extensions",
+    "https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md"
+  ],
+  "archive_sha256": "82e3f01295b1847d6bac1dbd403fa079e50e76ca03b0446f05cb39adab332b50"
+}

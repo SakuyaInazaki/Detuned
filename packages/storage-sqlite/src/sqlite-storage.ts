@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import Database from 'better-sqlite3';
 import {
   StoragePort,
@@ -265,9 +266,15 @@ export class SqliteStorage implements StoragePort {
     `;
     const params: any[] = [actorId];
 
-    if (allowedSpaceIds && allowedSpaceIds.length > 0 && !allowedSpaceIds.includes('*')) {
-      sql += ` AND s.id IN (${allowedSpaceIds.map(() => '?').join(', ')})`;
-      params.push(...allowedSpaceIds);
+    if (allowedSpaceIds) {
+      if (!allowedSpaceIds.includes('*')) {
+        if (allowedSpaceIds.length === 0) {
+          sql += ' AND 1 = 0';
+        } else {
+          sql += ` AND s.id IN (${allowedSpaceIds.map(() => '?').join(', ')})`;
+          params.push(...allowedSpaceIds);
+        }
+      }
     }
 
     if (cursor) {
@@ -593,15 +600,17 @@ export class SqliteStorage implements StoragePort {
       .prepare('SELECT * FROM post_revisions WHERE post_id = ? AND revision = ?')
       .get(postId, revision) as any;
     if (!row) return null;
+    const post = this.findPostById(postId);
+    const isRedacted = post?.lifecycle === 'redacted';
     return {
       post_id: row.post_id,
       revision: row.revision,
-      title: row.title,
-      summary: row.summary,
-      body: row.body,
-      tags: JSON.parse(row.tags),
-      structured: JSON.parse(row.structured),
-      content_hash: row.content_hash,
+      title: isRedacted ? '[REDACTED]' : row.title,
+      summary: isRedacted ? '[REDACTED]' : row.summary,
+      body: isRedacted ? '[REDACTED]' : row.body,
+      tags: isRedacted ? [] : JSON.parse(row.tags),
+      structured: isRedacted ? {} : JSON.parse(row.structured),
+      content_hash: isRedacted ? 'redacted' : row.content_hash,
       editor_id: row.editor_id,
       created_at: row.created_at,
     };
@@ -1246,76 +1255,119 @@ export class SqliteStorage implements StoragePort {
     reason: string;
     created_at: string;
   }): void {
-    if (redaction.target_type === 'post') {
-      const post = this.findPostById(redaction.target_id);
-      if (!post || post.space_id !== redaction.space_id) {
-        throw new Error('NOT_FOUND: 目标帖子不存在或不属于该空间。');
-      }
+    this.transaction(() => {
+      let actualAffectedRevisions = redaction.affected_revisions;
 
-      this.db
-        .prepare("UPDATE posts SET lifecycle = 'redacted' WHERE id = ? AND space_id = ?")
-        .run(redaction.target_id, redaction.space_id);
+      if (redaction.target_type === 'post') {
+        const post = this.findPostById(redaction.target_id);
+        if (!post || post.space_id !== redaction.space_id) {
+          throw new Error('NOT_FOUND: 目标帖子不存在或不属于该空间。');
+        }
 
-      // Sanitize post revisions in database
-      this.db
-        .prepare(
-          "UPDATE post_revisions SET title = '[REDACTED]', summary = '[REDACTED]', body = '[REDACTED]', structured = '{}' WHERE post_id = ?"
-        )
-        .run(redaction.target_id);
+        const { revisions: revs } = this.listPostRevisions(redaction.target_id);
+        if (revs.length > 0) {
+          actualAffectedRevisions = revs.map((r) => r.revision);
+        }
 
-      // Remove from FTS index
-      this.db.prepare('DELETE FROM post_fts WHERE post_id = ?').run(redaction.target_id);
+        this.db
+          .prepare("UPDATE posts SET lifecycle = 'redacted' WHERE id = ? AND space_id = ?")
+          .run(redaction.target_id, redaction.space_id);
 
-      // Also sanitize any historical idempotency records containing this post's content
-      const idemRows = this.db
-        .prepare('SELECT actor_id, space_id, operation, key, result_ref FROM idempotency_records WHERE space_id = ?')
-        .all(redaction.space_id) as any[];
-      for (const row of idemRows) {
-        if (row.result_ref && row.result_ref.includes(redaction.target_id)) {
-          try {
-            const parsed = JSON.parse(row.result_ref);
-            if (parsed.post && parsed.post.id === redaction.target_id) {
-              parsed.post.lifecycle = 'redacted';
-              if (parsed.revision) {
-                parsed.revision.title = '[REDACTED]';
-                parsed.revision.summary = '[REDACTED]';
-                parsed.revision.body = '[REDACTED]';
-                parsed.revision.structured = {};
+        // Sanitize post revisions in database (including tags!)
+        this.db
+          .prepare(
+            "UPDATE post_revisions SET title = '[REDACTED]', summary = '[REDACTED]', body = '[REDACTED]', tags = '[]', structured = '{}' WHERE post_id = ?"
+          )
+          .run(redaction.target_id);
+
+        // Remove from FTS index
+        this.db.prepare('DELETE FROM post_fts WHERE post_id = ?').run(redaction.target_id);
+
+        // Also sanitize any historical idempotency records containing this post's content
+        const idemRows = this.db
+          .prepare('SELECT actor_id, space_id, operation, key, result_ref FROM idempotency_records WHERE space_id = ?')
+          .all(redaction.space_id) as any[];
+        for (const row of idemRows) {
+          if (row.result_ref && row.result_ref.includes(redaction.target_id)) {
+            try {
+              const parsed = JSON.parse(row.result_ref);
+              let changed = false;
+              if (parsed.post && parsed.post.id === redaction.target_id) {
+                parsed.post.lifecycle = 'redacted';
+                if (parsed.revision) {
+                  parsed.revision.title = '[REDACTED]';
+                  parsed.revision.summary = '[REDACTED]';
+                  parsed.revision.body = '[REDACTED]';
+                  parsed.revision.tags = [];
+                  parsed.revision.structured = {};
+                }
+                changed = true;
               }
-              this.db
-                .prepare('UPDATE idempotency_records SET result_ref = ? WHERE actor_id = ? AND space_id = ? AND operation = ? AND key = ?')
-                .run(JSON.stringify(parsed), row.actor_id, row.space_id, row.operation, row.key);
+              if (parsed.initial_post?.post && parsed.initial_post.post.id === redaction.target_id) {
+                parsed.initial_post.post.lifecycle = 'redacted';
+                if (parsed.initial_post.revision) {
+                  parsed.initial_post.revision.title = '[REDACTED]';
+                  parsed.initial_post.revision.summary = '[REDACTED]';
+                  parsed.initial_post.revision.body = '[REDACTED]';
+                  parsed.initial_post.revision.tags = [];
+                  parsed.initial_post.revision.structured = {};
+                }
+                changed = true;
+              }
+              if (changed) {
+                this.db
+                  .prepare('UPDATE idempotency_records SET result_ref = ? WHERE actor_id = ? AND space_id = ? AND operation = ? AND key = ?')
+                  .run(JSON.stringify(parsed), row.actor_id, row.space_id, row.operation, row.key);
+              }
+            } catch {
+              // Ignore parse errors
             }
-          } catch {
-            // Ignore parse errors
           }
         }
+      } else if (redaction.target_type === 'artifact') {
+        const artifact = this.findArtifactById(redaction.target_id);
+        if (!artifact || artifact.space_id !== redaction.space_id) {
+          throw new Error('NOT_FOUND: 目标附件不存在或不属于该空间。');
+        }
+        this.db
+          .prepare("UPDATE artifacts SET state = 'redacted' WHERE id = ? AND space_id = ?")
+          .run(redaction.target_id, redaction.space_id);
       }
-    } else if (redaction.target_type === 'artifact') {
-      const artifact = this.findArtifactById(redaction.target_id);
-      if (!artifact || artifact.space_id !== redaction.space_id) {
-        throw new Error('NOT_FOUND: 目标附件不存在或不属于该空间。');
-      }
-      this.db
-        .prepare("UPDATE artifacts SET state = 'redacted' WHERE id = ? AND space_id = ?")
-        .run(redaction.target_id, redaction.space_id);
-    }
 
-    this.db
-      .prepare(
-        `INSERT INTO redactions (
-          id, space_id, target_type, target_id, affected_revisions, operator_id, reason, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-      )
-      .run(
-        redaction.id,
-        redaction.space_id,
-        redaction.target_type,
-        redaction.target_id,
-        JSON.stringify(redaction.affected_revisions),
-        redaction.operator_id,
-        redaction.reason,
-        redaction.created_at
-      );
+      this.db
+        .prepare(
+          `INSERT INTO redactions (
+            id, space_id, target_type, target_id, affected_revisions, operator_id, reason, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run(
+          redaction.id,
+          redaction.space_id,
+          redaction.target_type,
+          redaction.target_id,
+          JSON.stringify(actualAffectedRevisions),
+          redaction.operator_id,
+          redaction.reason,
+          redaction.created_at
+        );
+    });
+  }
+
+  getInstanceSecret(): string {
+    try {
+      const row = this.db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get() as any;
+      if (row?.value) {
+        return row.value;
+      }
+    } catch {
+      // Table might not exist yet
+    }
+    const secret = randomBytes(32).toString('hex');
+    try {
+      this.db.prepare("INSERT OR REPLACE INTO instance_metadata (key, value) VALUES ('token_secret', ?)").run(secret);
+    } catch {
+      // Ignore if table not created yet
+    }
+    return secret;
   }
 }

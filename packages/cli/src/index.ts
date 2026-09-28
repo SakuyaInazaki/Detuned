@@ -5,7 +5,7 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { DetunedClient } from '@detuned/client';
 import { DetunedError, ErrorCode } from '@detuned/protocol';
-import { SqliteStorage, bootstrapDatabase, DirectoryLock } from '@detuned/storage-sqlite';
+import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, DirectoryLock } from '@detuned/storage-sqlite';
 import { buildApp } from '@detuned/server';
 
 function mapExitCode(err: any): number {
@@ -114,19 +114,25 @@ program
       if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
       }
-      const dbPath = path.join(dataDir, 'detuned.sqlite');
-      const db = new Database(dbPath);
-      const res = bootstrapDatabase(db);
-      db.close();
+      const lock = new DirectoryLock(dataDir);
+      lock.acquire();
+      try {
+        const dbPath = path.join(dataDir, 'detuned.sqlite');
+        const db = new Database(dbPath);
+        const res = bootstrapDatabase(db);
+        db.close();
 
-      printOutput({
-        success: true,
-        data_dir: dataDir,
-        db_path: dbPath,
-        is_new_instance: res.isNewInstance,
-        admin_actor_id: res.adminActorId,
-        admin_token: res.adminToken,
-      }, program.opts().json);
+        printOutput({
+          success: true,
+          data_dir: dataDir,
+          db_path: dbPath,
+          is_new_instance: res.isNewInstance,
+          admin_actor_id: res.adminActorId,
+          admin_token: res.adminToken,
+        }, program.opts().json);
+      } finally {
+        lock.release();
+      }
     } catch (err: any) {
       handleError(err, program.opts().json);
     }
@@ -147,23 +153,58 @@ program
     const lock = new DirectoryLock(dataDir);
     lock.acquire();
 
-    process.on('SIGINT', () => {
-      lock.release();
-      process.exit(0);
-    });
-    process.on('SIGTERM', () => {
-      lock.release();
-      process.exit(0);
-    });
-
     const dbPath = path.join(dataDir, 'detuned.sqlite');
-    const db = new Database(dbPath);
-    bootstrapDatabase(db);
-    const storage = new SqliteStorage(db);
+    if (!fs.existsSync(dbPath)) {
+      lock.release();
+      handleError(
+        new DetunedError(
+          ErrorCode.NOT_FOUND,
+          `数据库文件不存在: ${dbPath}。请先执行 "detuned init --data-dir ${dataDir}" 完成初始化。`,
+          404
+        ),
+        program.opts().json
+      );
+      return;
+    }
 
+    const db = new Database(dbPath);
+    if (!isDatabaseInitialized(db)) {
+      db.close();
+      lock.release();
+      handleError(
+        new DetunedError(
+          ErrorCode.FORBIDDEN,
+          `数据库尚未初始化。请先执行 "detuned init --data-dir ${dataDir}" 完成初始化。`,
+          403
+        ),
+        program.opts().json
+      );
+      return;
+    }
+
+    const storage = new SqliteStorage(db);
     const app = buildApp({ storage });
     const port = parseInt(options.port, 10);
     const host = options.host;
+
+    let isShuttingDown = false;
+    const shutdown = async () => {
+      if (isShuttingDown) return;
+      isShuttingDown = true;
+      try {
+        await app.close();
+      } catch {}
+      try {
+        db.close();
+      } catch {}
+      try {
+        lock.release();
+      } catch {}
+      process.exit(0);
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
 
     await app.listen({ port, host });
     process.stderr.write(`Detuned 服务已启动: http://${host}:${port}\n数据目录: ${dataDir}\n`);
@@ -251,22 +292,23 @@ program
       const reqKey = options.requestKey ?? input.request_key;
 
       if (options.op === 'thread') {
-        const res = await client.createThread(options.space, input, reqKey);
+        const { request_key, ...payload } = input;
+        const res = await client.createThread(options.space, payload, reqKey);
         printOutput(res.data, program.opts().json);
       } else if (options.op === 'post') {
-        const threadId = input.thread_id;
-        if (!threadId) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 thread_id', 400);
-        const res = await client.createPost(options.space, threadId, input, reqKey);
+        const { thread_id, request_key, ...payload } = input;
+        if (!thread_id) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 thread_id', 400);
+        const res = await client.createPost(options.space, thread_id, payload, reqKey);
         printOutput(res.data, program.opts().json);
       } else if (options.op === 'revision') {
-        const postId = input.post_id;
-        if (!postId) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 post_id', 400);
-        const res = await client.createPostRevision(options.space, postId, input, reqKey);
+        const { post_id, request_key, ...payload } = input;
+        if (!post_id) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 post_id', 400);
+        const res = await client.createPostRevision(options.space, post_id, payload, reqKey);
         printOutput(res.data, program.opts().json);
       } else if (options.op === 'withdraw') {
-        const postId = input.post_id;
-        if (!postId) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 post_id', 400);
-        const res = await client.withdrawPost(options.space, postId, input, reqKey);
+        const { post_id, request_key, ...payload } = input;
+        if (!post_id) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 post_id', 400);
+        const res = await client.withdrawPost(options.space, post_id, payload, reqKey);
         printOutput(res.data, program.opts().json);
       } else {
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `未知 op: ${options.op}`, 400);
@@ -290,25 +332,28 @@ program
       const reqKey = options.requestKey ?? input.request_key;
 
       if (options.op === 'create') {
-        const res = await client.createRelation(options.space, input, reqKey);
+        const { request_key, ...payload } = input;
+        const res = await client.createRelation(options.space, payload, reqKey);
         printOutput(res.data, program.opts().json);
       } else if (options.op === 'resolve') {
-        const relId = input.relation_id;
+        const { relation_id, request_key, expected_version, reason_ref } = input;
+        if (!relation_id) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 relation_id', 400);
         const res = await client.resolveRelation(
           options.space,
-          relId,
-          input.expected_version,
-          input.reason_ref,
+          relation_id,
+          expected_version,
+          reason_ref,
           reqKey
         );
         printOutput(res.data, program.opts().json);
       } else if (options.op === 'reopen') {
-        const relId = input.relation_id;
+        const { relation_id, request_key, expected_version, reason_ref } = input;
+        if (!relation_id) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 relation_id', 400);
         const res = await client.reopenRelation(
           options.space,
-          relId,
-          input.expected_version,
-          input.reason_ref,
+          relation_id,
+          expected_version,
+          reason_ref,
           reqKey
         );
         printOutput(res.data, program.opts().json);

@@ -297,9 +297,4 @@ export const DETUNED_TOOLS = [
     description: '原子确认已持久消费的投递批次。',
     schema: ToolAckParamsSchema,
   },
-  {
-    name: 'forum_review',
-    description: 'v0.2 评审操作：创建证据快照并申请评审、提交独立初评、裁决最终决定或取消评审。',
-    schema: ToolReviewParamsSchema,
-  },
 ] as const;

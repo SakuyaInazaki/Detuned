@@ -45,7 +45,7 @@ describe('Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi)', () => {
   });
 
   it('ensures tools surface identical names and schemas across client and protocol definitions', () => {
-    expect(DETUNED_TOOLS.length).toBe(9);
+    expect(DETUNED_TOOLS.length).toBe(8);
     const names = DETUNED_TOOLS.map((t) => t.name);
     expect(names).toEqual([
       'forum_context',
@@ -56,7 +56,6 @@ describe('Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi)', () => {
       'forum_subscribe',
       'forum_poll',
       'forum_ack',
-      'forum_review',
     ]);
   });
 

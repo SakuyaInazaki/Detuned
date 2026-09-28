@@ -1,0 +1,126 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "fa1b35c",
+  "runtime": "v26.3.0",
+  "mode": "owned temporary file SQLite + Fastify inject; Pi registration/fetch fixture only",
+  "sqlite_journal_mode": "wal",
+  "probes": [
+    {
+      "id": "S01",
+      "description": "Redacted initial_post cannot reappear through thread.create replay",
+      "expected": false,
+      "observed": {
+        "status": 201,
+        "leaked": true
+      },
+      "passes": false
+    },
+    {
+      "id": "S02",
+      "description": "Redacted tags cannot reappear through post.create replay",
+      "expected": false,
+      "observed": {
+        "status": 201,
+        "leaked": true
+      },
+      "passes": false
+    },
+    {
+      "id": "S03",
+      "description": "Relation resolve idempotency must account for URL target",
+      "expected": "second target resolved, or an explicit conflict; never false success",
+      "observed": {
+        "status": 200,
+        "returned_first_relation": true,
+        "second_state": "open"
+      },
+      "passes": false
+    },
+    {
+      "id": "S04",
+      "description": "Public development secret must not authorize a future checkpoint",
+      "expected": "400/403/409/422 with no consumer beyond latest event",
+      "observed": {
+        "status": 201,
+        "ack_ahead_of_latest": true
+      },
+      "passes": false
+    },
+    {
+      "id": "S05",
+      "description": "Context checkpoint is bound to the requesting actor",
+      "expected": "400/403/409/422",
+      "observed": 201,
+      "passes": false
+    },
+    {
+      "id": "S06",
+      "description": "Thread filter retains a relation whose two endpoints are inside the subscribed thread",
+      "expected": true,
+      "observed": false,
+      "passes": false
+    },
+    {
+      "id": "S07",
+      "description": "Membership alone cannot bypass empty credential capabilities",
+      "expected": "403",
+      "observed": 200,
+      "passes": false
+    },
+    {
+      "id": "S08",
+      "description": "A legal 60-codepoint Chinese title is accepted",
+      "expected": "201 (180 UTF-8 bytes is not over the 160-codepoint title limit)",
+      "observed": 400,
+      "passes": false
+    },
+    {
+      "id": "S09",
+      "description": "Accepted failure kind validates category and mandatory evidence/scope fields (M2.2 coverage)",
+      "expected": "400/422",
+      "observed": 201,
+      "passes": false
+    },
+    {
+      "id": "S10",
+      "description": "Failed redaction audit insert rolls back content and lifecycle changes",
+      "expected": {
+        "status": 500,
+        "lifecycle": "active",
+        "original_preserved": true,
+        "audit_rows": 0
+      },
+      "observed": {
+        "status": 500,
+        "lifecycle": "redacted",
+        "original_preserved": false,
+        "audit_rows": 0
+      },
+      "passes": false
+    },
+    {
+      "id": "S11",
+      "description": "Bootstrap can recover after failure between admin actor and credential creation, including reopen",
+      "expected": "retry produces an admin credential and usable first token",
+      "observed": {
+        "first_boot_threw": true,
+        "retry_is_new": false,
+        "retry_has_token": false,
+        "credential_count": 0
+      },
+      "passes": false
+    },
+    {
+      "id": "S12",
+      "description": "Pi execute must throw for failure per the official extension contract",
+      "expected": "promise rejects",
+      "observed": {
+        "threw": false,
+        "resolved_with_isError": true
+      },
+      "passes": false
+    }
+  ],
+  "passed": 0,
+  "failed": 12
+}

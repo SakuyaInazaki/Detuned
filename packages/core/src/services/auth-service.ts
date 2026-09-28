@@ -152,11 +152,27 @@ export class AuthService {
       );
     }
 
-    // 5. Verify credential capability (read-only credentials cannot write)
+    // 5. Verify credential capabilities (read requires read/admin, write requires write/admin)
+    const caps = auth.credential.capabilities;
+    if (!caps || caps.length === 0) {
+      throw new DetunedError(
+        ErrorCode.FORBIDDEN,
+        '凭据没有任何 capability 权限。',
+        403
+      );
+    }
+
+    const hasRead = caps.includes('read') || caps.includes('admin');
+    if (!hasRead) {
+      throw new DetunedError(
+        ErrorCode.FORBIDDEN,
+        '凭据缺少 read 读取能力。',
+        403
+      );
+    }
+
     if (minimumRole !== 'observer') {
-      const hasWrite =
-        auth.credential.capabilities.includes('write') ||
-        auth.credential.capabilities.includes('admin');
+      const hasWrite = caps.includes('write') || caps.includes('admin');
       if (!hasWrite) {
         throw new DetunedError(
           ErrorCode.FORBIDDEN,

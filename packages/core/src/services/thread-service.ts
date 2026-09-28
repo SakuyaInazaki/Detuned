@@ -108,10 +108,10 @@ export class ThreadService {
   ): CreateThreadResult {
     this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
 
-    if (req.title && Buffer.byteLength(req.title, 'utf8') > 160) {
+    if (req.title && [...req.title].length > 160) {
       throw new DetunedError(
         ErrorCode.VALIDATION_ERROR,
-        '标题长度超出上限 (160 字符/字节)。',
+        '标题长度超出上限 (160 字符)。',
         400
       );
     }
@@ -124,10 +124,10 @@ export class ThreadService {
           400
         );
       }
-      if (req.initial_post.title && Buffer.byteLength(req.initial_post.title, 'utf8') > 160) {
+      if (req.initial_post.title && [...req.initial_post.title].length > 160) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
-          '初始帖子标题长度超出上限 (160 字符/字节)。',
+          '初始帖子标题长度超出上限 (160 字符)。',
           400
         );
       }

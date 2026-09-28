@@ -41,16 +41,27 @@ export class EventService {
       const verified = this.tokenSigner.verify(req.checkpoint_token, this.tokenSecret);
       if (
         !verified ||
+        verified['purpose'] !== 'checkpoint' ||
         verified['space_id'] !== spaceId ||
+        verified['actor_id'] !== auth.actor.id ||
         typeof verified['seq'] !== 'number'
       ) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
-          '无效或过期的 checkpoint_token。',
+          '无效、过期或跨身份/跨空间的 checkpoint_token。',
           422
         );
       }
-      startSeq = verified['seq'] as number;
+      const seq = verified['seq'] as number;
+      const latestSeq = this.storage.getLatestEventSeq(spaceId);
+      if (seq < 0 || seq > latestSeq) {
+        throw new DetunedError(
+          ErrorCode.VALIDATION_ERROR,
+          `checkpoint_token 序号 (${seq}) 超过当前最新事件序号 (${latestSeq})。`,
+          422
+        );
+      }
+      startSeq = seq;
     }
 
     return this.storage.transaction((tx) => {
@@ -189,6 +200,18 @@ export class EventService {
           } else if (ev.type.startsWith('post.')) {
             const post = tx.findPostById(ev.object_id);
             if (!post || !sub.thread_ids.includes(post.thread_id)) {
+              continue;
+            }
+          } else if (ev.type.startsWith('relation.')) {
+            const rel = tx.findRelationById(ev.object_id);
+            if (!rel) {
+              continue;
+            }
+            const sourcePost = tx.findPostById(rel.source_post_id);
+            const targetPost = tx.findPostById(rel.target_post_id);
+            const sourceMatches = sourcePost && sub.thread_ids.includes(sourcePost.thread_id);
+            const targetMatches = targetPost && sub.thread_ids.includes(targetPost.thread_id);
+            if (!sourceMatches && !targetMatches) {
               continue;
             }
           } else {
