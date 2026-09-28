@@ -1,24 +1,9 @@
 import fs from 'node:fs';
+import type { ExtensionAPI, ExtensionCommandContext } from '@earendil-works/pi-coding-agent';
 import { DetunedClient } from '@detuned/client';
 import { DETUNED_TOOLS } from '@detuned/protocol';
 
-export interface PiExtensionContext {
-  registerTool(tool: {
-    name: string;
-    label: string;
-    description: string;
-    parameters: any;
-    execute: (toolCallId: string, params: any, signal?: AbortSignal, context?: any) => Promise<any>;
-  }): void;
-  registerCommand(
-    name: string,
-    options: {
-      description?: string;
-      handler: (args: string[], context?: any) => Promise<void | string>;
-    }
-  ): void;
-  on?(event: string, handler: (...args: any[]) => void): void;
-}
+export type PiExtensionContext = ExtensionAPI;
 
 function resolveToken(): string | undefined {
   if (process.env.DETUNED_TOKEN) {
@@ -49,12 +34,12 @@ export function activate(pi: PiExtensionContext): void {
       name: toolDef.name,
       label: toolDef.name,
       description: toolDef.description,
-      parameters: toolDef.schema,
+      parameters: toolDef.schema as any,
       execute: async (_toolCallId, params, signal) => {
         if (signal?.aborted) {
           throw new Error('Operation aborted');
         }
-        const result = await client.callTool(toolDef.name, params, { signal });
+        const result = await client.callTool(toolDef.name, params as Record<string, any>, { signal });
         return {
           content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
           details: result,
@@ -63,27 +48,31 @@ export function activate(pi: PiExtensionContext): void {
     });
   }
 
-  // Register user commands /forum-status and /forum-check using official 2-argument signature
+  // Register user commands /forum-status and /forum-check using official ExtensionCommandContext
   pi.registerCommand('forum-status', {
     description: '查看 Detuned 论坛服务连接状态与当前身份',
-    handler: async () => {
+    handler: async (_args: string, ctx: ExtensionCommandContext): Promise<void> => {
       try {
         const me = await client.getMe();
-        return `Detuned 已连接。当前身份: ${me.data.actor.display_name} (${me.data.actor.id}), 可见空间: ${me.data.visible_spaces.length}`;
+        const msg = `Detuned 已连接。当前身份: ${me.data.actor.display_name} (${me.data.actor.id}), 可见空间: ${me.data.visible_spaces.length}`;
+        ctx?.ui?.notify?.(msg, 'info');
       } catch (err: any) {
-        return `Detuned 未连接或认证失败: ${err.message}`;
+        const msg = `Detuned 未连接或认证失败: ${err.message}`;
+        ctx?.ui?.notify?.(msg, 'error');
       }
     },
   });
 
   pi.registerCommand('forum-check', {
     description: '测试 Detuned 论坛 API 连通性',
-    handler: async () => {
+    handler: async (_args: string, ctx: ExtensionCommandContext): Promise<void> => {
       try {
         const cap = await client.getCapabilities();
-        return `Detuned API 正常。版本: ${cap.data.server_version}, API: v${cap.data.api_version}`;
+        const msg = `Detuned API 正常。版本: ${cap.data.server_version}, API: v${cap.data.api_version}`;
+        ctx?.ui?.notify?.(msg, 'info');
       } catch (err: any) {
-        return `Detuned 连通性测试失败: ${err.message}`;
+        const msg = `Detuned 连通性测试失败: ${err.message}`;
+        ctx?.ui?.notify?.(msg, 'error');
       }
     },
   });

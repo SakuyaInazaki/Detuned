@@ -815,6 +815,20 @@ export class SqliteStorage implements StoragePort {
       );
   }
 
+  findRelationResolutionById(id: string): RelationResolution | null {
+    const row = this.db.prepare('SELECT * FROM relation_resolutions WHERE id = ?').get(id) as any;
+    if (!row) return null;
+    return {
+      id: row.id,
+      relation_id: row.relation_id,
+      version: row.version,
+      resolver_id: row.resolver_id,
+      reason_ref: JSON.parse(row.reason_ref),
+      action: row.action,
+      created_at: row.created_at,
+    };
+  }
+
   // Artifacts
   createArtifact(artifact: Artifact): void {
     this.db
@@ -1264,9 +1278,11 @@ export class SqliteStorage implements StoragePort {
           throw new Error('NOT_FOUND: 目标帖子不存在或不属于该空间。');
         }
 
-        const { revisions: revs } = this.listPostRevisions(redaction.target_id);
-        if (revs.length > 0) {
-          actualAffectedRevisions = revs.map((r) => r.revision);
+        const revRows = this.db
+          .prepare('SELECT revision FROM post_revisions WHERE post_id = ? ORDER BY revision ASC')
+          .all(redaction.target_id) as { revision: number }[];
+        if (revRows.length > 0) {
+          actualAffectedRevisions = revRows.map((r) => r.revision);
         }
 
         this.db

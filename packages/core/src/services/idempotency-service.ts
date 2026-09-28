@@ -13,6 +13,9 @@ function extractResultRef(result: any): string {
     const ref: any = {
       $ref: 'thread',
       thread_id: result.thread.id,
+      title: result.thread.title,
+      version: result.thread.version,
+      state: result.thread.state,
     };
     if (result.initial_post?.post?.id) {
       ref.initial_post_id = result.initial_post.post.id;
@@ -42,6 +45,8 @@ function extractResultRef(result: any): string {
     const ref: any = {
       $ref: 'relation',
       relation_id: result.relation.id,
+      relation_version: result.relation.version,
+      relation_state: result.relation.state,
     };
     if (result.resolution && result.resolution.id) {
       ref.resolution_id = result.resolution.id;
@@ -54,7 +59,15 @@ function extractResultRef(result: any): string {
     return JSON.stringify({
       $ref: 'space',
       space_id: result.space.id,
-      revision: result.revision?.revision,
+      revision: result.revision?.revision ?? (typeof result.revision === 'number' ? result.revision : undefined),
+    });
+  }
+
+  // 5. Redaction: { redaction_id }
+  if (result.redaction_id) {
+    return JSON.stringify({
+      $ref: 'redaction',
+      redaction_id: result.redaction_id,
     });
   }
 
@@ -83,6 +96,13 @@ function reconstructResult(tx: StoragePort, resultRefStr: string): any {
       throw new DetunedError(ErrorCode.NOT_FOUND, '原主题已不存在。', 404);
     }
 
+    const outThread = {
+      ...thread,
+      title: parsed.title ?? (parsed.thread ? parsed.thread.title : thread.title),
+      version: parsed.version ?? (parsed.thread ? parsed.thread.version : thread.version),
+      state: parsed.state ?? (parsed.thread ? parsed.thread.state : thread.state),
+    };
+
     const initialPostId = parsed.initial_post_id ?? parsed.initial_post?.post?.id;
     if (initialPostId) {
       const initialRevNum = parsed.initial_post_revision ?? parsed.initial_post?.revision?.revision ?? 1;
@@ -92,7 +112,7 @@ function reconstructResult(tx: StoragePort, resultRefStr: string): any {
       const relations = relationIds.map((id) => tx.findRelationById(id)).filter(Boolean);
 
       return {
-        thread,
+        thread: outThread,
         initial_post: {
           post: post ?? { id: initialPostId, lifecycle: 'redacted' },
           revision: revision ?? {
@@ -112,12 +132,12 @@ function reconstructResult(tx: StoragePort, resultRefStr: string): any {
       };
     }
 
-    return { thread };
+    return { thread: outThread };
   }
 
   if (parsed.$ref === 'post' || (parsed.post && parsed.post.id)) {
     const postId = parsed.post_id ?? parsed.post.id;
-    const revNum = parsed.revision?.revision ?? parsed.revision ?? 1;
+    const revNum = parsed.revision?.revision ?? (typeof parsed.revision === 'number' ? parsed.revision : 1);
     const post = tx.findPostById(postId);
     if (!post) {
       throw new DetunedError(ErrorCode.NOT_FOUND, '原帖子已不存在。', 404);
@@ -153,9 +173,21 @@ function reconstructResult(tx: StoragePort, resultRefStr: string): any {
     if (!relation) {
       throw new DetunedError(ErrorCode.NOT_FOUND, '原关系已不存在。', 404);
     }
+    const resolutionId = parsed.resolution_id ?? parsed.resolution?.id;
+    let resolution = parsed.resolution;
+    if (resolutionId) {
+      const found = tx.findRelationResolutionById(resolutionId);
+      if (found) {
+        resolution = found;
+      }
+    }
     return {
-      relation,
-      resolution: parsed.resolution,
+      relation: {
+        ...relation,
+        version: parsed.relation_version ?? (parsed.relation ? parsed.relation.version : relation.version),
+        state: parsed.relation_state ?? (parsed.relation ? parsed.relation.state : relation.state),
+      },
+      resolution,
     };
   }
 
@@ -165,9 +197,18 @@ function reconstructResult(tx: StoragePort, resultRefStr: string): any {
     if (!space) {
       throw new DetunedError(ErrorCode.NOT_FOUND, '原空间已不存在。', 404);
     }
-    const revNum = parsed.revision ?? space.current_revision;
+    const rawRev = parsed.revision ?? parsed.space?.current_revision;
+    const revNum =
+      (typeof rawRev === 'object' && rawRev !== null ? rawRev.revision : rawRev) ??
+      space.current_revision;
     const revision = tx.getSpaceRevision(spaceIdTarget, revNum);
     return { space, revision };
+  }
+
+  if (parsed.$ref === 'redaction' || parsed.redaction_id) {
+    return {
+      redaction_id: parsed.redaction_id,
+    };
   }
 
   return parsed;

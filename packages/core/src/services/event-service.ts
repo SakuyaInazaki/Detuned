@@ -268,6 +268,11 @@ export class EventService {
   ): AckResponseData {
     this.authService.requireSpaceAccess(auth, spaceId, 'observer');
 
+    const space = this.storage.findSpaceById(spaceId);
+    if (!space) {
+      throw new DetunedError(ErrorCode.NOT_FOUND, '空间不存在。', 404);
+    }
+
     const consumer = this.storage.findConsumerById(consumerId);
     if (!consumer) {
       throw new DetunedError(ErrorCode.NOT_FOUND, '消费者不存在。', 404);
@@ -276,6 +281,14 @@ export class EventService {
     const sub = this.storage.findSubscriptionById(consumer.subscription_id);
     if (!sub || sub.actor_id !== auth.actor.id || sub.space_id !== spaceId) {
       throw new DetunedError(ErrorCode.FORBIDDEN, '无权访问该消费者。', 403);
+    }
+
+    if (consumer.acl_epoch < space.acl_epoch) {
+      throw new DetunedError(
+        ErrorCode.RESYNC_REQUIRED,
+        '成员权限已变更，消费者需要重新建立同步游标。',
+        409
+      );
     }
 
     const verified = this.tokenSigner.verify(req.next_cursor, this.tokenSecret);
@@ -295,6 +308,16 @@ export class EventService {
     const throughSeq = verified['through_seq'] as number;
 
     return this.storage.transaction((tx) => {
+      const currentSpace = tx.findSpaceById(spaceId);
+      const currentConsumer = tx.findConsumerById(consumerId);
+      if (!currentSpace || !currentConsumer || currentConsumer.acl_epoch < currentSpace.acl_epoch) {
+        throw new DetunedError(
+          ErrorCode.RESYNC_REQUIRED,
+          '成员权限已变更，消费者需要重新建立同步游标。',
+          409
+        );
+      }
+
       const batch = tx.findDeliveryBatchById(req.batch_id);
       if (!batch || batch.consumer_id !== consumer.id) {
         throw new DetunedError(ErrorCode.ACK_INVALID, '批次不存在或不属于该消费者。', 409);

@@ -1,0 +1,138 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "c4f041f899cf3224d42deeb3ecfc19cf379368f7",
+  "runtime": "v26.3.0",
+  "mode": "temporary SQLite + Fastify inject + controlled Pi/fetch fixtures; no model/host run",
+  "legacy_fixture_note": "Logical v1 fixture, missing instance_metadata and containing exact prior full-JSON result shapes; not a complete prior-version binary upgrade run",
+  "probes": [
+    {
+      "id": "T01",
+      "description": "An immediate resolve retry preserves its immutable resolution result",
+      "expected": "same resolution.id and version",
+      "observed": {
+        "first_has_resolution": true,
+        "replay_has_resolution": false,
+        "replay_relation_version": 2
+      },
+      "passes": false
+    },
+    {
+      "id": "T02",
+      "description": "Thread create replay does not silently become a newer operation version",
+      "expected": {
+        "version": 1,
+        "original_title": true
+      },
+      "observed": {
+        "version": 2,
+        "original_title": false
+      },
+      "passes": false
+    },
+    {
+      "id": "T03",
+      "description": "Legacy full-JSON space.create result can be replayed after upgrade",
+      "expected": "201 with original space/revision",
+      "observed": {
+        "status": 500,
+        "error_code": "TEMPORARILY_UNAVAILABLE"
+      },
+      "passes": false
+    },
+    {
+      "id": "T04",
+      "description": "An empty allowed-space set has the same deny semantics in enumeration and direct access",
+      "expected": "empty list and 403/404 direct read",
+      "observed": {
+        "listed_spaces": 0,
+        "direct_context_status": 200
+      },
+      "passes": false
+    },
+    {
+      "id": "T05",
+      "description": "Redaction retry commits exactly one audit/result and one invalidation event",
+      "expected": {
+        "same_id": true,
+        "audit_rows": 1,
+        "event_rows": 1
+      },
+      "observed": {
+        "same_id": false,
+        "audit_rows": 2,
+        "event_rows": 0
+      },
+      "passes": false
+    },
+    {
+      "id": "T06",
+      "description": "An already initialized v1 upgrade preserves credentials and migrates old content caches",
+      "expected": {
+        "extra_credentials": 0,
+        "returned_new_admin_token": false,
+        "cached_body": false
+      },
+      "observed": {
+        "extra_credentials": 1,
+        "returned_new_admin_token": true,
+        "cached_body": true
+      },
+      "passes": false
+    },
+    {
+      "id": "T07",
+      "description": "Unsupported schema version is rejected before any DDL mutation",
+      "expected": {
+        "rejected": true,
+        "added_tables": 0
+      },
+      "observed": {
+        "rejected": true,
+        "added_tables": 26
+      },
+      "passes": false
+    },
+    {
+      "id": "T08",
+      "description": "ACL epoch invalidation applies consistently to poll and ack",
+      "expected": "both 409 RESYNC_REQUIRED without advancing ack",
+      "observed": {
+        "poll_status": 409,
+        "poll_error": "RESYNC_REQUIRED",
+        "ack_status": 200,
+        "consumer_unchanged": false
+      },
+      "passes": false
+    },
+    {
+      "id": "T09",
+      "description": "Pi cancellation while a request is running reaches fetch and rejects without retry",
+      "expected": {
+        "fetch_aborted": true,
+        "outcome": "rejected",
+        "calls": 1
+      },
+      "observed": {
+        "fetch_aborted": false,
+        "outcome": "resolved",
+        "calls": 1
+      },
+      "passes": false
+    },
+    {
+      "id": "T10",
+      "description": "HTTP cancellation remains active until response body parsing completes",
+      "expected": {
+        "fetch_aborted": true,
+        "outcome": "rejected"
+      },
+      "observed": {
+        "fetch_aborted": false,
+        "outcome": "resolved"
+      },
+      "passes": false
+    }
+  ],
+  "passed": 0,
+  "failed": 10
+}

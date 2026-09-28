@@ -25,26 +25,109 @@ export function isDatabaseInitialized(db: Database.Database): boolean {
   }
 }
 
+export function migrateIdempotencyRecords(db: Database.Database): void {
+  try {
+    const rows = db.prepare('SELECT actor_id, space_id, operation, key, result_ref FROM idempotency_records').all() as any[];
+    const updateStmt = db.prepare('UPDATE idempotency_records SET result_ref = ? WHERE actor_id = ? AND space_id = ? AND operation = ? AND key = ?');
+    for (const row of rows) {
+      if (!row.result_ref) continue;
+      try {
+        const parsed = JSON.parse(row.result_ref);
+        let migrated = false;
+        let newRef: any = null;
+
+        if (parsed.thread && parsed.thread.id) {
+          newRef = {
+            $ref: 'thread',
+            thread_id: parsed.thread.id,
+            title: parsed.thread.title,
+            version: parsed.thread.version,
+            state: parsed.thread.state,
+          };
+          if (parsed.initial_post?.post?.id) {
+            newRef.initial_post_id = parsed.initial_post.post.id;
+            newRef.initial_post_revision = parsed.initial_post.revision?.revision ?? (typeof parsed.initial_post.revision === 'number' ? parsed.initial_post.revision : 1);
+            if (Array.isArray(parsed.initial_post.relations)) {
+              newRef.relation_ids = parsed.initial_post.relations.map((r: any) => r.id);
+            }
+          }
+          migrated = true;
+        } else if (parsed.post && parsed.post.id) {
+          newRef = {
+            $ref: 'post',
+            post_id: parsed.post.id,
+            revision: parsed.revision?.revision ?? (typeof parsed.revision === 'number' ? parsed.revision : 1),
+          };
+          if (Array.isArray(parsed.relations)) {
+            newRef.relation_ids = parsed.relations.map((r: any) => r.id);
+          }
+          migrated = true;
+        } else if (parsed.relation && parsed.relation.id) {
+          newRef = {
+            $ref: 'relation',
+            relation_id: parsed.relation.id,
+            relation_version: parsed.relation.version,
+            relation_state: parsed.relation.state,
+          };
+          if (parsed.resolution?.id) {
+            newRef.resolution_id = parsed.resolution.id;
+          }
+          migrated = true;
+        } else if (parsed.space && parsed.space.id) {
+          newRef = {
+            $ref: 'space',
+            space_id: parsed.space.id,
+            revision: parsed.revision?.revision ?? (typeof parsed.revision === 'number' ? parsed.revision : undefined),
+          };
+          migrated = true;
+        } else if (parsed.redaction_id) {
+          newRef = {
+            $ref: 'redaction',
+            redaction_id: parsed.redaction_id,
+          };
+          migrated = true;
+        }
+
+        if (migrated && newRef) {
+          updateStmt.run(JSON.stringify(newRef), row.actor_id, row.space_id, row.operation, row.key);
+        }
+      } catch {
+        // Ignore unparseable
+      }
+    }
+  } catch {
+    // If idempotency_records doesn't exist yet
+  }
+}
+
 export function bootstrapDatabase(
   db: Database.Database,
   adminDisplayName = 'Administrator'
 ): BootstrapResult {
+  // Check migration version before applying schema DDL
+  const hasMigrations = db
+    .prepare("SELECT count(*) AS n FROM sqlite_master WHERE type='table' AND name='schema_migrations'")
+    .get() as any;
+  if (hasMigrations?.n > 0) {
+    const maxVerRow = db.prepare('SELECT max(version) AS max_v FROM schema_migrations').get() as any;
+    if (maxVerRow && maxVerRow.max_v > 1) {
+      throw new Error(
+        `数据库 schema 版本 (v${maxVerRow.max_v}) 高于当前应用版本 (v1)，拒绝降级访问。请升级 Detuned。`
+      );
+    }
+  }
+
   // Apply schema
   db.exec(SCHEMA_SQL);
-
-  // Check migration version
-  const maxVerRow = db.prepare('SELECT max(version) AS max_v FROM schema_migrations').get() as any;
-  if (maxVerRow && maxVerRow.max_v > 1) {
-    throw new Error(
-      `数据库 schema 版本 (v${maxVerRow.max_v}) 高于当前应用版本 (v1)，拒绝降级访问。请升级 Detuned。`
-    );
-  }
 
   // Record initial migration
   db.prepare('INSERT OR IGNORE INTO schema_migrations (version, applied_at) VALUES (?, ?)').run(
     1,
     new Date().toISOString()
   );
+
+  // Run idempotency records migration to remove legacy content caches
+  migrateIdempotencyRecords(db);
 
   const storage = new SqliteStorage(db);
 
@@ -63,7 +146,23 @@ export function bootstrapDatabase(
     };
   }
 
-  // Atomic bootstrap of initial materials
+  // If this is an upgrade from an existing v1 database with admin actor & credential already created:
+  if (existingAdmin && existingCred) {
+    const existingSecret = db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get() as any;
+    if (!existingSecret?.value) {
+      const secret = randomBytes(32).toString('hex');
+      db.prepare("INSERT OR REPLACE INTO instance_metadata (key, value) VALUES ('token_secret', ?)").run(secret);
+    }
+    db.prepare("INSERT OR REPLACE INTO instance_metadata (key, value) VALUES ('initialized', 'true')").run();
+
+    return {
+      isNewInstance: false,
+      adminToken: null,
+      adminActorId: existingAdmin.id,
+    };
+  }
+
+  // Atomic bootstrap of initial materials for fresh instance
   const createAdminTx = db.transaction(() => {
     let adminActorId: string;
     const now = new Date().toISOString();
@@ -114,4 +213,3 @@ export function bootstrapDatabase(
 
   return createAdminTx();
 }
-

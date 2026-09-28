@@ -8,6 +8,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
   const storage = (app as any).storage;
   const idGen = (app as any).idGen;
   const clock = (app as any).clock;
+  const redactionService = (app as any).redactionService;
 
   app.post('/admin/actors', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
@@ -204,7 +205,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
   app.post('/spaces/:space_id/redactions', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id } = req.params as { space_id: string };
-    authService.requireSpaceAccess(auth, space_id, 'owner');
 
     const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
     if (!key || typeof key !== 'string' || key.trim() === '') {
@@ -221,47 +221,12 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       reason: string;
     };
 
-    if (!body.target_type || !body.target_id || !body.reason) {
-      throw new DetunedError(
-        ErrorCode.VALIDATION_ERROR,
-        '缺少 target_type, target_id 或 reason。',
-        400
-      );
-    }
-
-    if (body.target_type === 'post') {
-      const post = storage.findPostById(body.target_id);
-      if (!post || post.space_id !== space_id) {
-        throw new DetunedError(ErrorCode.NOT_FOUND, '目标帖子不存在或不属于该空间。', 404);
-      }
-    } else if (body.target_type === 'artifact') {
-      const artifact = storage.findArtifactById(body.target_id);
-      if (!artifact || artifact.space_id !== space_id) {
-        throw new DetunedError(ErrorCode.NOT_FOUND, '目标附件不存在或不属于该空间。', 404);
-      }
-    } else {
-      throw new DetunedError(ErrorCode.VALIDATION_ERROR, '非法的 target_type。', 400);
-    }
-
-    const redactionId = idGen.generateId('red');
-    const now = clock.nowIso();
-
-    storage.createRedaction({
-      id: redactionId,
-      space_id,
-      target_type: body.target_type,
-      target_id: body.target_id,
-      affected_revisions: [1],
-      operator_id: auth.actor.id,
-      reason: body.reason,
-      created_at: now,
-    });
-
+    const result = redactionService.createRedaction(auth, space_id, body, key);
     reply.status(201);
     return {
       api_version: '1',
       request_id: req.id,
-      data: { redaction_id: redactionId },
+      data: result.data,
     };
   });
 };

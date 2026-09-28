@@ -101,6 +101,7 @@ export interface StoragePort {
   ): Relation | null;
   listOpenChallenges(spaceId: string, targetPostId?: string, targetRevision?: number): Relation[];
   createRelationResolution(resolution: RelationResolution): void;
+  findRelationResolutionById(id: string): RelationResolution | null;
 
   // Artifacts
   createArtifact(artifact: Artifact): void;

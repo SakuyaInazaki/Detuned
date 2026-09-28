@@ -101,7 +101,6 @@ export class AuthService {
 
     // 2. Verify credential allows this space
     const allowed =
-      auth.credential.allowed_space_ids.length === 0 ||
       auth.credential.allowed_space_ids.includes('*') ||
       auth.credential.allowed_space_ids.includes(spaceId);
 

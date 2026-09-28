@@ -168,6 +168,28 @@ program
     }
 
     const db = new Database(dbPath);
+
+    // Check schema version before listening
+    const hasMigrations = db
+      .prepare("SELECT count(*) AS n FROM sqlite_master WHERE type='table' AND name='schema_migrations'")
+      .get() as any;
+    if (hasMigrations?.n > 0) {
+      const maxVerRow = db.prepare('SELECT max(version) AS max_v FROM schema_migrations').get() as any;
+      if (maxVerRow && maxVerRow.max_v > 1) {
+        db.close();
+        lock.release();
+        handleError(
+          new DetunedError(
+            ErrorCode.FORBIDDEN,
+            `数据库 schema 版本 (v${maxVerRow.max_v}) 高于当前应用支持版本 (v1)，拒绝服务。请升级 Detuned。`,
+            403
+          ),
+          program.opts().json
+        );
+        return;
+      }
+    }
+
     if (!isDatabaseInitialized(db)) {
       db.close();
       lock.release();

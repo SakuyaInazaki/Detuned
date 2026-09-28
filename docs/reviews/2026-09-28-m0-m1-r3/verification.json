@@ -1,0 +1,28 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "c4f041f899cf3224d42deeb3ecfc19cf379368f7",
+  "node": "v26.3.0",
+  "commands": [
+    {"command": "pnpm build", "status": "passed", "workspace_packages": 9},
+    {"command": "pnpm typecheck", "status": "passed"},
+    {"command": "pnpm lint", "status": "passed", "limitation": "tsc --noEmit again; not an independent lint rule set"},
+    {"command": "pnpm test:all", "status": "passed", "files": 9, "tests": 51},
+    {"command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs", "status": "passed", "assertions": 15},
+    {"command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs", "status": "passed", "assertions": 5, "active_tools": 8},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs", "status": "passed", "assertions": 12},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs", "status": "passed", "assertions": 3},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs", "status": "completed_with_failed_assertions", "passed": 0, "failed": 10},
+    {"command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs", "status": "completed_with_failed_assertions", "passed": 0, "failed": 1}
+  ],
+  "old_probe_metadata_note": "Some old scripts embed their original reviewed_commit. All commands in this file were executed against c4f041f after rebuilding dist.",
+  "not_performed": [
+    "Fresh dependency install or remote CI run",
+    "Real dsh/Pi/Codex/Claude Code host integration",
+    "Model inference",
+    "Full prior binary upgrade rehearsal; T06 uses an isolated logical legacy-schema/data fixture",
+    "Full live-lock race/process-crash matrix",
+    "Product implementation fixes"
+  ],
+  "official_source_rechecked": "https://pi.dev/docs/latest/extensions",
+  "archive_sha256": "82e3f01295b1847d6bac1dbd403fa079e50e76ca03b0446f05cb39adab332b50"
+}

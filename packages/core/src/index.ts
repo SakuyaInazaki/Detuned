@@ -13,3 +13,4 @@ export * from './services/relation-service.js';
 export * from './services/event-service.js';
 export * from './services/context-service.js';
 export * from './services/search-service.js';
+export * from './services/redaction-service.js';

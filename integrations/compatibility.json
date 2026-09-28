@@ -19,8 +19,8 @@
       "route": "native-extension-to-http",
       "signature_contract_status": "passed",
       "host_runtime_status": "not_tested",
-      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12)",
-      "notes": "严格对齐官方 ExtensionAPI：registerCommand(name, options) 双参签名、registerTool 必填 label 字段、execute 失败从 Promise 抛出异常、AbortSignal 贯穿取消检查与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测标记为 not_tested。"
+      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12), tests/integration/m0-m1-r3-regression.test.ts (T09)",
+      "notes": "直接导入并编译自官方 npm SDK @earendil-works/pi-coding-agent@0.87.1 的 ExtensionAPI / ExtensionCommandContext 类型定义。严格对齐官方签名、execute 异常抛出、AbortSignal 全链路取消与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测保留为 not_tested。"
     },
     {
       "name": "dsh",

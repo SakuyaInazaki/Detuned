@@ -20,6 +20,7 @@ import {
   EventService,
   ContextService,
   SearchService,
+  RedactionService,
 } from '@detuned/core';
 import { DetunedError, ErrorCode } from '@detuned/protocol';
 import { metaRoutes } from './routes/meta.js';
@@ -60,6 +61,7 @@ export function buildApp(options: AppOptions): FastifyInstance {
   const eventService = new EventService(options.storage, idGen, clock, tokenSigner, authService, tokenSecret);
   const contextService = new ContextService(options.storage, tokenSigner, authService, tokenSecret);
   const searchService = new SearchService(options.storage, authService);
+  const redactionService = new RedactionService(options.storage, idGen, clock, authService, idempotency);
 
   const app = Fastify({
     logger: false,
@@ -88,6 +90,7 @@ export function buildApp(options: AppOptions): FastifyInstance {
   (app as any).eventService = eventService;
   (app as any).contextService = contextService;
   (app as any).searchService = searchService;
+  (app as any).redactionService = redactionService;
 
   app.register(cors);
 

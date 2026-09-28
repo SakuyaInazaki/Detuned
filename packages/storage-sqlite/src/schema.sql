@@ -219,6 +219,11 @@ CREATE TABLE IF NOT EXISTS redactions (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS instance_metadata (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
 CREATE VIRTUAL TABLE IF NOT EXISTS post_fts USING fts5(
   post_id UNINDEXED,
   space_id UNINDEXED,
