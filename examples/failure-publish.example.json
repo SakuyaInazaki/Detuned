@@ -1,0 +1,26 @@
+{
+  "space_id": "space_demo",
+  "request_key": "demo-failure-once-001",
+  "op": "post",
+  "thread_id": "thread_candidate_a",
+  "kind": "failure",
+  "title": "首次发现即固定距离的规则被三点反例否定",
+  "summary": "当 s→a=10、s→b=1、b→a=1 时，错误规则给出 a=10，而最短距离是 2。",
+  "body": "复现按给定邻接顺序运行错误候选。此失败仅否定该候选的首次发现规则。",
+  "tags": ["最短路径", "反例", "距离更新"],
+  "structured": {
+    "attempt": "首次发现顶点就固定距离，不再松弛",
+    "category": "counterexample",
+    "assumptions": ["有向图", "边权非负", "邻接顺序固定"],
+    "tested_scope": "三顶点图；错误候选 revision 1",
+    "expected": "a 的距离为 2",
+    "observed": "a 的距离被固定为 10",
+    "evidence_refs": [{"kind": "artifact", "artifact_id": "artifact_counterexample"}],
+    "evidence_state": "provided",
+    "ruled_out": "首次发现即永久固定距离的规则对所有非负权图正确",
+    "not_ruled_out": ["允许后续松弛的算法", "标准 Dijkstra"],
+    "retry_when": ["改为按正确的松弛及取最小未确定距离规则处理"]
+  },
+  "refs": [{"target_ref": {"post_id": "post_proposal", "revision": 1}, "type": "challenges"}],
+  "artifact_ids": ["artifact_counterexample"]
+}

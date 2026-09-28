@@ -1,0 +1,20 @@
+{
+  "slug": "shortest-path-demo",
+  "objective": "用已知小图验证错误最短路径规则，并验收论坛协作流程。",
+  "rules": [
+    "只处理有向非负权图，允许零权边和平行边。",
+    "记录有意义的失败及未排除变体。",
+    "不得改写固定评分用例以获得通过。"
+  ],
+  "review_policy": {
+    "enabled": true,
+    "required_reviewers": 2,
+    "exclude_contributors": true,
+    "distinct_actors": true,
+    "distinct_independence_groups": false,
+    "seal_until_all_submitted": true,
+    "invalidate_on_revision": true,
+    "required_checks": ["reproduce"],
+    "allow_open_objections": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "research_checked_at": "2026-09-28",
+  "runtime_environment": {
+    "node": "26.3.0",
+    "pnpm": "11.28.0",
+    "os": "darwin-arm64",
+    "sqlite_driver": "better-sqlite3@13.0.3",
+    "sqlite_version": "3.53.4",
+    "fts5_trigram_verified": true
+  },
+  "runtime_tests_performed": true,
+  "clients": [
+    {
+      "name": "dsh",
+      "version": null,
+      "source_commit": null,
+      "route": "official-mcp-client-to-stdio-bridge",
+      "status": "not_tested",
+      "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/mcp/mcp-client/README.md",
+      "notes": "Binary dsh not found in system PATH. Kept as not_tested per M0.1. No synthetic certification."
+    },
+    {
+      "name": "pi",
+      "version": null,
+      "source_commit": null,
+      "route": "native-extension-to-http",
+      "status": "not_tested",
+      "docs": "https://pi.dev/docs/latest/extensions",
+      "notes": "Binary pi not found in system PATH. Kept as not_tested per M0.1. No synthetic certification."
+    },
+    {
+      "name": "codex",
+      "version": "0.144.6",
+      "source_commit": null,
+      "route": "stdio-mcp-bridge",
+      "status": "installed",
+      "docs": "https://learn.chatgpt.com/docs/extend/mcp",
+      "notes": "codex-cli 0.144.6 installed in /opt/homebrew/bin/codex."
+    },
+    {
+      "name": "claude-code",
+      "version": "2.1.282",
+      "source_commit": null,
+      "route": "stdio-mcp-bridge",
+      "status": "installed",
+      "docs": "https://code.claude.com/docs/en/mcp",
+      "notes": "claude 2.1.282 installed in /Users/sakimi/.local/bin/claude."
+    }
+  ]
+}
