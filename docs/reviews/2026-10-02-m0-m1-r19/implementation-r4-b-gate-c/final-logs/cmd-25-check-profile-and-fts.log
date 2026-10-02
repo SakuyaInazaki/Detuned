@@ -1,0 +1,212 @@
+{
+  "reviewed_date": "2026-10-02",
+  "probes": [
+    {
+      "id": "AA01",
+      "description": "Unsupported FTS detail option cannot pass preflight and break the existing search API",
+      "healthy_search": {
+        "status": 200,
+        "result_count": 1
+      },
+      "observed": [
+        {
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 配置项数量不匹配: 期望 [tokenize]，实际 [detail, tokenize]"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 配置项数量不匹配: 期望 [tokenize]，实际 [detail, tokenize]"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 配置项数量不匹配: 期望 [tokenize]，实际 [detail, tokenize]"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "unchanged_after_reopen": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AA02",
+      "description": "Generated current schema and its full runtime profile stay in agreement, or source checks explicitly reject drift",
+      "observed": [
+        {
+          "name": "source-index-semantics",
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "sync": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "generated_sql_matches_mutation": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "current_table_profile_changed": true,
+          "historical_profile_unchanged": true,
+          "runtime_without_src": true
+        },
+        {
+          "name": "source-fts-indexing",
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "sync": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "generated_sql_matches_mutation": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "current_table_profile_changed": true,
+          "historical_profile_unchanged": true,
+          "runtime_without_src": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AA03",
+      "description": "Missing required driver or historical source cannot silently disable profile checks and preserve a corrupt profile",
+      "observed": [
+        {
+          "kind": "missing_driver",
+          "deliberately_corrupted_profile": "V2",
+          "before_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: better-sqlite3 driver is required for schema profile synchronization check.\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: better-sqlite3 driver is required for schema generation.\n"
+          },
+          "after_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: better-sqlite3 driver is required for schema profile synchronization check.\n"
+          },
+          "corrupted_profile_retained": true,
+          "passes": true
+        },
+        {
+          "kind": "missing_historical_source",
+          "deliberately_corrupted_profile": "V1",
+          "before_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required historical fixture historical-v1-schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r17-profile-vWFOGa/missing_historical_source/tests/fixtures/historical-v1-schema.sql\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required historical fixture historical-v1-schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r17-profile-vWFOGa/missing_historical_source/tests/fixtures/historical-v1-schema.sql\n"
+          },
+          "after_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required historical fixture historical-v1-schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r17-profile-vWFOGa/missing_historical_source/tests/fixtures/historical-v1-schema.sql\n"
+          },
+          "corrupted_profile_retained": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AA04",
+      "description": "Healthy generation and an actually supported column-profile change work with native driver and frozen historical source",
+      "observed": [
+        {
+          "name": "positive-original-source",
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "sync": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "generated_sql_matches_mutation": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "current_table_profile_changed": false,
+          "historical_profile_unchanged": true,
+          "runtime_without_src": true
+        },
+        {
+          "name": "positive-column-mutation",
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "sync": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "generated_sql_matches_mutation": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "current_table_profile_changed": true,
+          "historical_profile_unchanged": true,
+          "runtime_without_src": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 4
+  }
+}
+
+--- STDERR ---

@@ -1,0 +1,9 @@
+file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:170
+    const relation = data(await send(fixtureApp, 'POST', `/spaces/${space}/relations`, relationBody, 'relation-create')).relation.id;
+                                                                                                                                 ^
+
+TypeError: Cannot read properties of undefined (reading 'id')
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:170:130
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.3.0

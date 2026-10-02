@@ -1,8 +1,10 @@
 import { FastifyPluginAsync } from 'fastify';
 import { AuthenticatedContext } from '@detuned/core';
+import { validateAllowedQueryParams } from '../utils/query.js';
 
 export const metaRoutes: FastifyPluginAsync = async (app) => {
   app.get('/capabilities', async (req) => {
+    validateAllowedQueryParams(req.query, []);
     return {
       api_version: '1',
       request_id: req.id,
@@ -22,6 +24,7 @@ export const metaRoutes: FastifyPluginAsync = async (app) => {
   });
 
   app.get('/me', async (req) => {
+    validateAllowedQueryParams(req.query, []);
     const auth = (req as any).auth as AuthenticatedContext;
     const storage = (app as any).storage;
 

@@ -1,0 +1,180 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_head": "71aefc1839a59f79ad9b6c48af42e36ff49f781a",
+  "reviewed_state": "HEAD plus uncommitted implementation; see baseline.json hashes",
+  "runtime": "v26.3.0",
+  "mode": "temporary file SQLite, Fastify inject, SQLite write faults, native CLI failure paths; no model calls",
+  "fixture_note": "G02/G03/G04/G07 use logical v1 fixtures; G08 executes historical fa1b35c DDL with synthetic actor/credential data. No complete old-binary run is claimed.",
+  "probes": [
+    {
+      "id": "G01",
+      "description": "A fresh relation.create retry preserves its original result after resolve",
+      "expected": {
+        "status": 201,
+        "version": 1,
+        "state": "open"
+      },
+      "observed": {
+        "status": 201,
+        "version": 1,
+        "state": "open"
+      },
+      "passes": true
+    },
+    {
+      "id": "G02",
+      "description": "A missing old thread version never attaches the current title to version 1",
+      "expected": "explicit non-success if history cannot be recovered, or a verifiably original result",
+      "observed": {
+        "status": 422,
+        "original_result_preserved": false,
+        "error_code": "RESYNC_REQUIRED"
+      },
+      "passes": true
+    },
+    {
+      "id": "G03",
+      "description": "A failed immutable-history INSERT aborts and rolls back the complete upgrade after reopen",
+      "expected": {
+        "fault_hits": 1,
+        "rejected": true,
+        "logical_state_unchanged": true
+      },
+      "observed": {
+        "fault_hits": 1,
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "schema_version": 1,
+        "old_history_row_exists": false
+      },
+      "passes": true
+    },
+    {
+      "id": "G04",
+      "description": "Malformed historical JSON stops migration and leaves an unchanged database for diagnosis",
+      "expected": {
+        "rejected": true,
+        "logical_state_unchanged": true
+      },
+      "observed": {
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "schema_version": 1,
+        "malformed_content_cache_retained": true
+      },
+      "passes": true
+    },
+    {
+      "id": "G05",
+      "description": "Unknown nonempty schemas are refused before creating Detuned tables or credentials",
+      "expected": {
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "issued_admin_token": false
+      },
+      "observed": {
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "added_tables": 0,
+        "issued_admin_token": false
+      },
+      "passes": true
+    },
+    {
+      "id": "G06",
+      "description": "Typed result references validate version, required fields, and operation-kind binding",
+      "expected": "each malformed or incompatible reference returns a structured non-success",
+      "observed": [
+        {
+          "name": "invalid_version_zero",
+          "status": 422,
+          "returned_thread": false,
+          "returned_space": false,
+          "error_code": "RESYNC_REQUIRED"
+        },
+        {
+          "name": "missing_thread_version",
+          "status": 422,
+          "returned_thread": false,
+          "returned_space": false,
+          "error_code": "RESYNC_REQUIRED"
+        },
+        {
+          "name": "wrong_operation_kind",
+          "status": 422,
+          "returned_thread": false,
+          "returned_space": false,
+          "error_code": "RESYNC_REQUIRED"
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "G07",
+      "description": "Recoverable direct-entity historical results remain replayable after migration",
+      "expected": {
+        "relation_status": 201,
+        "relation_version": 1,
+        "withdraw_status": 200
+      },
+      "observed": {
+        "relation_status": 201,
+        "relation_version": 1,
+        "withdraw_status": 200,
+        "migrated_kinds": [
+          {
+            "key": "original-relation",
+            "kind": "relation.create"
+          },
+          {
+            "key": "original-withdraw",
+            "kind": "post.withdraw"
+          }
+        ]
+      },
+      "passes": true
+    },
+    {
+      "id": "G08",
+      "description": "The shared serve coordinator upgrades a recognized old initialized schema before applying the new metadata gate",
+      "expected": {
+        "rejected": false,
+        "initialized": true,
+        "extra_credentials": 0,
+        "issued_admin_token": false
+      },
+      "observed": {
+        "rejected": false,
+        "error": null,
+        "initialized": true,
+        "schema_version": 2,
+        "extra_credentials": 0,
+        "issued_admin_token": false
+      },
+      "passes": true
+    },
+    {
+      "id": "G09",
+      "description": "Missing persistent secret fails both CLI entry points with diagnostics and releases the directory lock",
+      "expected": {
+        "init_reports_success": false,
+        "both_nonzero_exit": true,
+        "serve_has_structured_error": true,
+        "lock_left_after_exit": false
+      },
+      "observed": {
+        "init_exit": 3,
+        "init_reports_success": false,
+        "serve_exit": 3,
+        "serve_has_structured_error": true,
+        "lock_left_after_exit": false,
+        "timed_out": false
+      },
+      "passes": true
+    }
+  ],
+  "passed": 9,
+  "failed": 0
+}
+
+--- STDERR ---

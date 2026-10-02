@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 51ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (6 tests) 54ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 36ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 793ms
+   ✓ Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions  466ms
+   ✓ Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > executes forum_context and forum_publish via client.callTool with identical semantics  326ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 8ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 1339ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  692ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1790ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  838ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  944ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1689ms
+   ✓ M0-R / M1-R Behavioral Regressions (R01 - R11) > R01: Read-only capability cannot create a thread  416ms
+   ✓ M0-R / M1-R Behavioral Regressions (R01 - R11) > R02: A-scoped token must not enumerate B in /spaces or /me  305ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1876ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T01: An immediate resolve retry preserves its immutable resolution result  548ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 2272ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay  570ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  628ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (53 tests) 3576ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All implemented operations encode and reconstruct typed versioned references without arbitrary JSON fallback  743ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B02: Thread, post, and relation replays preserve original version/state across object changes and database reopen  450ms
+
+ Test Files  11 passed (11)
+      Tests  117 passed (117)
+   Start at  21:40:18
+   Duration  4.79s (transform 1.03s, setup 0ms, collect 6.25s, tests 13.48s, environment 1ms, prepare 1.34s)
+

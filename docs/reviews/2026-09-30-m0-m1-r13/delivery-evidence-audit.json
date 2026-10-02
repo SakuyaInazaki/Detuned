@@ -1,0 +1,224 @@
+{
+  "reviewed_date": "2026-09-30",
+  "delivery_path": "docs/reviews/2026-09-30-m0-m1-r12/implementation-r4-b4-2r3",
+  "commands_count": 25,
+  "commands": [
+    {
+      "id": 1,
+      "command": "pnpm build",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 2,
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 3,
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 4,
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 5,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 6,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 11,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 12,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 13,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 14,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 15,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 16,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 17,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 18,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 19,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 20,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 21,
+      "command": "pnpm build",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 22,
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 23,
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 24,
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 25,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/implementation-r4-b4-2r3/generate-baseline.mjs baseline-after.json",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    }
+  ],
+  "before_products_match_r12": true,
+  "after_products_match_r13": true,
+  "before_overall_diff_matches_r12": false,
+  "after_overall_diff_matches_r13": true,
+  "actual_changed_product_hashes": {
+    "packages/core/src/services/idempotency-service.ts": {
+      "before": "0537c14ca002cb47f519c27ca75da5e0510819553a20dffde80391d20c819832",
+      "after": "abd01e8149de996f214de4ba3d8993780fa4720d620844ef2466927e69536558"
+    },
+    "packages/storage-sqlite/src/bootstrap.ts": {
+      "before": "f3fc2c210ce110bf1a478cdce309ec27c7c3de5847ab2701d997053dbaa74c33",
+      "after": "de6fd4ef465a73813d4717c25c6ce4caf1c831d88dcd36b6d671fd5f31c0913c"
+    },
+    "tests/integration/m0-m1-r4-b-regression.test.ts": {
+      "before": "d3441acfcfc3585f814fd9712e97c19e431174ac2e12ff043b26ae13a46878f6",
+      "after": "fb6ccecb27011928c517cc4767f1e69dc67caf174d884058fdbf0555d0ead651"
+    }
+  },
+  "incorrect_markdown_hashes": [],
+  "actual_formal_test_file_counts": {
+    "tests/probes/m0-probes.test.ts": "3",
+    "packages/storage-sqlite/tests/storage.test.ts": "6",
+    "packages/protocol/tests/schema.test.ts": "5",
+    "tests/contracts/cross-interface-contract.test.ts": "2",
+    "tests/contracts/m0-m1-r2-adapters.test.ts": "3",
+    "tests/integration/m1-discussion.test.ts": "5",
+    "tests/integration/m0-m1-regression.test.ts": "11",
+    "tests/contracts/m0-m1-adapters-regression.test.ts": "6",
+    "tests/integration/m0-m1-r3-regression.test.ts": "11",
+    "tests/integration/m0-m1-r2-regression.test.ts": "12",
+    "tests/integration/m0-m1-r4-b-regression.test.ts": "58"
+  },
+  "report_corrections": [
+    "R12-F01 includes V01/V02/V03; R12-F02 is V04, not V03/V04.",
+    "The eleven operation families include admin.redaction, not post.redact.",
+    "46 refers to independent scripts 15+5+12+3+10+1, not the formal-test filenames listed in the report.",
+    "validateStoredResultRefPrecheck parsed is still any, not IdempotencyResultRef.",
+    "pnpm recursion runs tsc --noEmit; no Turbo invocation in the script.",
+    "Formal V01/V02 are helper toThrow checks, not migration/reopen/HTTP coverage. Independent R12 probe does provide those checks.",
+    "Formal V05 asserts thread status only, not exact initial-post/patch payload equality.",
+    "The pasted response names nonexistent check-remediation-gates.mjs; commands.json correctly uses check-r4b-gaps.mjs."
+  ]
+}

@@ -1,0 +1,70 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P01: Nested refs must bind to the result source and to a provable historical version
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1984:64
+    1982|       );
+    1983|       const before1 = fullLogicalSnapshot(p01Db1);
+    1984|       expect(() => openAndCoordinateDatabase(p01Db1, 'serve')).toThrow…
+       |                                                                ^
+    1985|       const childApp1 = buildApp({ storage: new SqliteStorage(p01Db1) …
+    1986|       await childApp1.ready();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P02: Every migration early return validates the original operation, shape and known entity bindings
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:2048:63
+    2046|         tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHE…
+    2047|         const before = fullLogicalSnapshot(tDb);
+    2048|         expect(() => openAndCoordinateDatabase(tDb, 'serve')).toThrow(…
+       |                                                               ^
+    2049|         tDb.close();
+    2050| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P03: Supported legacy online replay must pass the same checks/projection as migration
+AssertionError: expected 201 to be 422 // Object.is equality
+
+- Expected
++ Received
+
+- 422
++ 201
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:2076:36
+    2074|       try {
+    2075|         const replayWrong = await send('POST', `/spaces/${space}/threa…
+    2076|         expect(replayWrong.status).toBe(422);
+       |                                    ^
+    2077|         expect(replayWrong.body.error?.code).toBe('RESYNC_REQUIRED');
+    2078|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P04: Missing historical timestamps must never be synthesized from migration wall time
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:2127:63
+    2125| 
+    2126|       const before = fullLogicalSnapshot(p04Db);
+    2127|       expect(() => openAndCoordinateDatabase(p04Db, 'serve')).toThrow(…
+       |                                                               ^
+    2128|       p04Db.close();
+    2129| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P05: Validating a manufactured valid ref must not hide malformed new business results
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:2136:111
+    2134| 
+    2135|     it('P05: Validating a manufactured valid ref must not hide malform…
+    2136|       expect(() => extractResultRef('relation.create', { id: 'rel_test…
+       |                                                                                                               ^
+    2137|       expect(() => extractResultRef('relation.create', { id: 'rel_test…
+    2138|       expect(() => extractResultRef('post.create:thd_test', {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

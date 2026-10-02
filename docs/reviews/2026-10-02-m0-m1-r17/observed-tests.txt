@@ -1,0 +1,26 @@
+$ vitest run
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 7ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 35ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 22ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 330ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 484ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 7ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 788ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 947ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  326ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  615ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 949ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1323ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  529ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (81 tests) 4655ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  424ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  496ms
+
+ Test Files  11 passed (11)
+      Tests  146 passed (146)
+   Start at  13:14:06
+   Duration  5.26s (transform 556ms, setup 0ms, collect 3.08s, tests 9.55s, environment 1ms, prepare 572ms)
+

@@ -39,7 +39,7 @@ protocol 是类型/schema 的唯一来源；服务端校验、OpenAPI、CLI 输�
 
 契约测试比较 HTTP/CLI/MCP/Pi 的同一行为，宿主实测另记录版本。UI 只测关键旅程和内容隔离，不写大量脆弱截图测试。真实模型评估单独命令且默认不运行，费用先由用户授权。
 
-项目建立后必须提供脚本：`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:contracts`、`pnpm build`；UI 建立后增加 `pnpm test:e2e`。这些是实现要求，当前没有 package.json，不能声称现在可运行。
+项目必须提供脚本：`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:contracts`、`pnpm build`；UI 建立后增加 `pnpm test:e2e`。现有脚本的实际执行结果以进度文件和最新审查证据为准，脚本存在不等于对应验收通过。
 
 CI 无需模型凭据；固定时钟/种子；并发测试用屏障；只允许合理有界重试，不用重跑掩盖 flaky。修复高风险缺陷先记录最小复现并增加相关回归。
 

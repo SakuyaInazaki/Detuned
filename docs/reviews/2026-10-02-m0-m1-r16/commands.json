@@ -1,0 +1,205 @@
+{
+  "reviewed_date": "2026-10-02",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "runtime": "v26.3.0",
+  "pnpm": "11.7.0",
+  "note": "Independent reviewer executions, after fresh build. 24 required commands plus one new review probe. Combined stdout/stderr retained; numbers are not deduplicated test cases.",
+  "commands": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "output_file": "observed-build.txt",
+      "started_at": "2026-10-01T18:06:10.619406+00:00",
+      "finished_at": "2026-10-01T18:06:15.268451+00:00",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "output_file": "observed-typecheck.txt",
+      "started_at": "2026-10-01T18:06:15.268947+00:00",
+      "finished_at": "2026-10-01T18:06:19.605062+00:00",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "output_file": "observed-lint.txt",
+      "started_at": "2026-10-01T18:06:19.605355+00:00",
+      "finished_at": "2026-10-01T18:06:23.813334+00:00",
+      "summary": "通过；schema sync + tsc --noEmit"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "output_file": "observed-tests.txt",
+      "execution_note": "Observed tool exit 0; approved local loopback/temporary SQLite execution.",
+      "summary": "140/140; 11 files; B 76/76"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-behavior.json",
+      "started_at": "2026-10-01T18:06:23.813627+00:00",
+      "finished_at": "2026-10-01T18:06:24.151884+00:00",
+      "summary": "15/15"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-adapters.json",
+      "started_at": "2026-10-01T18:06:24.152112+00:00",
+      "finished_at": "2026-10-01T18:06:24.490202+00:00",
+      "summary": "5/5；不等于 Pi 真实宿主实测"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2.json",
+      "started_at": "2026-10-01T18:06:24.490445+00:00",
+      "finished_at": "2026-10-01T18:06:24.727405+00:00",
+      "summary": "12/12"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2-cli.json",
+      "execution_note": "Observed tool exit 0; approved local loopback/temporary SQLite execution.",
+      "summary": "3/3"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3.json",
+      "started_at": "2026-10-01T18:06:24.727629+00:00",
+      "finished_at": "2026-10-01T18:06:24.957667+00:00",
+      "summary": "10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3-serve.json",
+      "started_at": "2026-10-01T18:06:24.957877+00:00",
+      "finished_at": "2026-10-01T18:06:25.182234+00:00",
+      "summary": "1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "output_file": "observed-r4.json",
+      "started_at": "2026-10-01T18:06:25.182449+00:00",
+      "finished_at": "2026-10-01T18:06:25.449701+00:00",
+      "summary": "6/8；仅 U05/U06 失败，后续 R4-C"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r5.json",
+      "started_at": "2026-10-01T18:06:25.449919+00:00",
+      "finished_at": "2026-10-01T18:06:25.970161+00:00",
+      "summary": "G 9/9"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r6.json",
+      "started_at": "2026-10-01T18:06:25.970423+00:00",
+      "finished_at": "2026-10-01T18:06:26.525840+00:00",
+      "summary": "H 10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7.json",
+      "started_at": "2026-10-01T18:06:26.526073+00:00",
+      "finished_at": "2026-10-01T18:06:26.954971+00:00",
+      "summary": "J 7/7"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7-fixture.json",
+      "started_at": "2026-10-01T18:06:26.955190+00:00",
+      "finished_at": "2026-10-01T18:06:27.198941+00:00",
+      "summary": "K 1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r8.json",
+      "started_at": "2026-10-01T18:06:27.199173+00:00",
+      "finished_at": "2026-10-01T18:06:27.599471+00:00",
+      "summary": "L 8/8; L03 now passes"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r9.json",
+      "started_at": "2026-10-01T18:06:27.599701+00:00",
+      "finished_at": "2026-10-01T18:06:27.972057+00:00",
+      "summary": "N 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r10.json",
+      "started_at": "2026-10-01T18:06:27.972295+00:00",
+      "finished_at": "2026-10-01T18:06:28.341972+00:00",
+      "summary": "P 6/6"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r11.json",
+      "started_at": "2026-10-01T18:06:28.342203+00:00",
+      "finished_at": "2026-10-01T18:06:28.672546+00:00",
+      "summary": "Q 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r12.json",
+      "started_at": "2026-10-01T18:06:28.672829+00:00",
+      "finished_at": "2026-10-01T18:06:28.998148+00:00",
+      "summary": "V 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r13.json",
+      "started_at": "2026-10-01T18:06:28.998607+00:00",
+      "finished_at": "2026-10-01T18:06:29.466171+00:00",
+      "summary": "W 3/3"
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r14.json",
+      "started_at": "2026-10-01T18:06:29.466500+00:00",
+      "finished_at": "2026-10-01T18:06:30.116656+00:00",
+      "summary": "X 3/3; X03 now passes"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-structural-boundaries.json",
+      "started_at": "2026-10-01T18:06:30.116941+00:00",
+      "finished_at": "2026-10-01T18:06:30.424892+00:00",
+      "summary": "Y 4/4; all previous structural cases pass"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-ddl-build.mjs",
+      "exit_code": 0,
+      "output_file": "observed-ddl-build.json",
+      "started_at": "2026-10-01T18:06:30.425207+00:00",
+      "finished_at": "2026-10-01T18:06:30.898269+00:00",
+      "summary": "Isolated source generation/compilation and runtime-without-src check pass"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 1,
+      "output_file": "observed-schema-semantics.json",
+      "summary": "Z 2/4; Z01/Z02 fail; Z03 healthy and Z04 CLI pass"
+    }
+  ]
+}

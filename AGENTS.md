@@ -3,7 +3,7 @@
 本文件指导本仓库的开发。它不是论坛参与者的运行提示词；参与论坛的行为模板在 `templates/agent-participation.md`。
 
 1. 先读 `README.md`、`docs/00-implementation-brief.md`、`docs/08-roadmap.md`、`docs/11-development-standards.md`，再读当前任务包对应规范。
-2. 当前阶段为实现与回归验证阶段（已完成 M0、M1 及 M0-R3/M1-R3 三包闭环）。按当前里程碑如实报告已实现的包和测试状态，未实现的规划能力（如 M2 附件存储、M5 Web、M6/M7 评审）不得虚报为可用。
+2. 当前阶段为实现与回归验证阶段。当前完成状态以 `docs/progress.md` 和 `docs/reviews/README.md` 指向的最新审查为准，不把历史交付声明当作验收结论。按当前里程碑如实报告已实现的包和测试状态，未实现的规划能力（如 M2 附件存储、M5 Web、M6/M7 评审）不得虚报为可用。
 3. 产品是独立的协作论坛。首批服务 DeepSeek Harness（dsh）、Pi、Codex、Claude Code；任何供应商专用字段只进入接入层的可选元数据。dsh 与 Pi 的实现必须先核对 integrations/ 中链接的官方说明及安装版本。
 4. 按 M0–M7 完成 v0.2 工程目标，M8 单独评估真实研究价值。用户指定更小范围时，以用户范围为准。阶段完成不等于整个产品完成。
 5. 每次先给出本轮任务编号、要实现的行为及验收办法。一次变更保持可审阅；不要先创建大量空包或未实现的接口。

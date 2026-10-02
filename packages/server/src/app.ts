@@ -50,7 +50,9 @@ export function buildApp(options: AppOptions): FastifyInstance {
     options.tokenSecret ??
     (typeof (options.storage as any).getInstanceSecret === 'function'
       ? (options.storage as any).getInstanceSecret()
-      : 'detuned-instance-secret-' + randomBytes(16).toString('hex'));
+      : (() => {
+          throw new Error('实例未提供持久密钥且存储接口未实现 getInstanceSecret。');
+        })());
 
   const authService = new AuthService(options.storage, hasher, clock);
   const idempotency = new IdempotencyService(options.storage, hasher, clock);
@@ -120,6 +122,35 @@ export function buildApp(options: AppOptions): FastifyInstance {
           message: anyErr.message ?? '请求验证错误。',
           retryable: false,
           details: { issues: anyErr.validation },
+        },
+      });
+      return;
+    }
+
+    if (
+      typeof anyErr?.statusCode === 'number' &&
+      anyErr.statusCode >= 400 &&
+      anyErr.statusCode < 500
+    ) {
+      const statusCode = anyErr.statusCode;
+      const code =
+        statusCode === 404
+          ? ErrorCode.NOT_FOUND
+          : statusCode === 401
+          ? ErrorCode.UNAUTHENTICATED
+          : statusCode === 403
+          ? ErrorCode.FORBIDDEN
+          : statusCode === 413
+          ? ErrorCode.PAYLOAD_TOO_LARGE
+          : ErrorCode.VALIDATION_ERROR;
+      reply.status(statusCode).send({
+        api_version: '1',
+        request_id: req.id,
+        error: {
+          code,
+          message: anyErr.message ?? '客户端请求错误。',
+          retryable: false,
+          details: anyErr.details,
         },
       });
       return;

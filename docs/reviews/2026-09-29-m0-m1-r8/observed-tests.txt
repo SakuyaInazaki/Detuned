@@ -1,0 +1,34 @@
+$ vitest run
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 31ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (6 tests) 60ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 15ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 718ms
+   ✓ Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions  444ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 17ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 1199ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  511ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 2031ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  621ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  1394ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 2020ms
+   ✓ M0-R / M1-R Behavioral Regressions (R01 - R11) > R01: Read-only capability cannot create a thread  476ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 2274ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T01: An immediate resolve retry preserves its immutable resolution result  493ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  521ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 3392ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay  498ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  1516ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (27 tests) 4190ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All implemented operations encode and reconstruct typed versioned references without arbitrary JSON fallback  555ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B02: Thread, post, and relation replays preserve original version/state across object changes and database reopen  335ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H09: Migration diagnostics never print raw body marker  469ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J02: Current instance material loss is refused consistently across bootstrap, init and serve without mutating secrets  444ms
+
+ Test Files  11 passed (11)
+      Tests  91 passed (91)
+   Start at  03:47:11
+   Duration  5.63s (transform 1.03s, setup 0ms, collect 7.04s, tests 15.95s, environment 2ms, prepare 1.69s)
+

@@ -33,7 +33,7 @@ role 权限、token capability、token 空间范围、对象可见性同时满�
 
 首版不开发邮箱注册、密码找回或 SSO。人类可用专用 human token 通过 POST `/auth/session` 换短期 HttpOnly、SameSite cookie；生产 HTTPS 下设置 Secure，loopback 开发模式明确区分。会话服务端可撤销。变更请求验证 Origin 与 CSRF，严格 CORS/Host allowlist，防止任意网页调用本机论坛。token 不保存在 localStorage。
 
-bootstrap 只可在未初始化数据目录经本地管理 CLI 创建首个 admin；检测已有实例就拒绝重复初始化。后续密码学随机数和比较使用运行时成熟 API，不自造算法。
+bootstrap 只可在未初始化数据目录经本地管理 CLI 创建首个 admin；检测已有实例就拒绝重复初始化。后续密码学随机数和比较使用运行时成熟 API，不自造算法。管理操作防线：POST `/admin/credentials/:id/revoke` 严格禁止传入未知正文属性（无正文或空对象），防止参数污染与误传业务负载；POST `/spaces/:space_id/memberships` 严格在入库前预检 `actor_id` 真实存在性，缺失时返回 404 NOT_FOUND，不产生悬空成员或触发底层外键崩溃及不完整事件记录。
 
 ## 4. 内容与附件
 
@@ -61,6 +61,17 @@ v0.1 先支持**离线一致备份**：停止服务并确认没有写进程 → 
 迁移采用递增 SQL 文件和 schema_migrations；已发布迁移不可修改。升级前备份，事务化执行可事务化的迁移，测试旧版数据升级；不支持的降级明确拒绝。回滚路径为恢复备份和匹配版本二进制，不能假装每个结构迁移都可无损反向运行。
 
 备份恢复只能恢复备份时点的数据。崩溃恢复保证与备份 RPO 必须分别说明。恢复后旧客户端可能重投备份以后处理过的事件，本机去重和重新同步必须覆盖这一情况。
+
+### 6.1 实例初始化与升级可靠性保证
+
+- 初始化完成标志持久化于 `instance_metadata.initialized`。凭据全量吊销或过期不改变已初始化事实，杜绝重复 init 伪造新实例或增发管理员凭据。
+- 数据库分类严格分为 6 类状态：`blank`（空库或全量未初始化合法空结构）、`supported_legacy`（受支持旧库）、`current_initialized`（当前版本正常库）、`corrupt`（材料损坏/缺失关键列或元数据/约束或索引定义不符/残存初始化材料）、`future`（未来版本）、`unknown`（非空未知库）。
+- 以 `packages/storage-sqlite/src/schema.sql` 作为单一权威 DDL 来源，构建和代码检查流程（`prebuild`、`check:schema`、`lint`）强制保证 `schema.ts` 常量与 `schema.sql` 字符级严格一致，同时导出 `SCHEMA_MIGRATIONS_DDL`、`INSTANCE_METADATA_DDL` 与 `THREAD_VERSIONS_DDL` 迁移 DDL 常量，确保迁移逻辑与基础 DDL 完全同源。
+- 启动预检（Fail-Fast 物理与语义结构防线）：在 `classifyDatabase` 阶段，对全量 22 张 v2 表及 20 张 v1 表执行物理与语义结构校验，包括表存在性、所有列名、类型亲和性、NOT NULL 约束、主键与复合主键列序（如 `idempotency_records` 复合主键 `(actor_id, space_id, operation, key)`）、主键与索引排序规则（`COLLATE BINARY` 与 `ASC` 排序）、外键约束与默认更新/删除动作（`NO ACTION`，拒绝意外的级联修改）、非 Partial UNIQUE 约束与显式索引（`partial === 0`，杜绝 `WHERE 0` 等伪装约束），并深度校验 `index_xinfo` 所有 `key === 1` 键项（杜绝包含 `cid < 0` 或 `name === null` 的表达式伪装列，支持等价全量独立唯一索引）；虚拟表 `post_fts` 通过结构化 AST 解析校验模块为 `fts5`、字段数量与列序、`post_id` 与 `space_id` 的 `UNINDEXED` 标记、正文字段的索引状态以及完整配置键集合与参数取值（包括严格校验 `tokenize="trigram"`，拒绝未经支持的 `detail=none`、`content=""` 等配置破坏）。提取与校验逻辑统一由 `extract-schema-requirements.mjs` 单源维护并严格约束主键键项属性（`origin === "pk"` 必须为 BINARY/ASC），生成与同步工具对缺失驱动、基础文件、模板迁移标记或不受支持的主键属性严格 exit 1 失败，生成器在写入磁盘前完成全部内容内存预备且绝不写出半套产物。任何不合规判定为 `corrupt`。在 `schema-generation.test.ts` 中维护正式生成管线回归覆盖。
+- 残留初始化材料与版本矛盾排查：若数据库包含初始化材料（`instance_metadata` 含有 `initialized=true` 或 `token_secret`）但缺失迁移记录或管理员主体，判定为 `corrupt`，杜绝作为 `blank` 误重发凭据或覆写密钥；若数据库包含 v2 历史表 `thread_versions` 但缺失版本 2 迁移记录，判定为 `corrupt`，拒绝在 `applyMigrations` 中自动修补版本 2。
+- `corrupt` 状态的数据库在 CLI `init`、`serve` 及 `bootstrapDatabase` 入口均直接以 403 `FORBIDDEN` 明确拒绝，绝不向数据库写入任何变更，绝不重写 `token_secret` 或增发凭据，并在服务绑定监听端口（listen socket）前立即退出并释放目录文件锁。
+- 升级过程在单一事务中执行：包含 schema_migrations 递增、不可变历史实体补全、历史幂等引用转换与实例元数据更新；任何环节出错整体回滚，保持原子性。
+- 实例 secret 严格持久化于 `instance_metadata`，缺失时拒绝启动并要求恢复，杜绝在生产中生成随机临时密钥提供未授权访问。
 
 ## 7. 导出与导入
 

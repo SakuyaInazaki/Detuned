@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-09-28",
-  "runtime": "v26.3.0",
-  "summary": "M0-R / M1-R 契约与适配层已完成官方 SDK 级自动化验证，真实宿主实测按规范保留真实未运行记录，未启动外部付费模型。",
+  "reviewed_at": "2026-10-02",
+  "runtime": "v22.19.0+",
+  "summary": "MCP stdio 跨进程通信、Pi 0.87.1 官方类型与无头/UI 命令输出、HTTP query/schema 边界校验（C01）、客户端响应信封/取消/超时/重试生命周期（C02）及 Node >=22.19.0 对齐（C03）均已通过受控测试。真实宿主保持 not_tested，未调用模型。见 docs/reviews/2026-10-02-m0-m1-r20/implementation-r4-c1/README.md。",
   "adapters": [
     {
       "name": "mcp-stdio-bridge",
@@ -19,8 +19,8 @@
       "route": "native-extension-to-http",
       "signature_contract_status": "passed",
       "host_runtime_status": "not_tested",
-      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12), tests/integration/m0-m1-r3-regression.test.ts (T09)",
-      "notes": "直接导入并编译自官方 npm SDK @earendil-works/pi-coding-agent@0.87.1 的 ExtensionAPI / ExtensionCommandContext 类型定义。严格对齐官方签名、execute 异常抛出、AbortSignal 全链路取消与 DETUNED_TOKEN_FILE 凭据回退。宿主环境实测保留为 not_tested。"
+      "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12), tests/integration/m0-m1-r3-regression.test.ts (T09), tests/contracts/r4-c-contracts.test.ts",
+      "notes": "直接导入并编译官方 npm SDK @earendil-works/pi-coding-agent@0.87.1 的 ExtensionAPI / ExtensionCommandContext。工作区 Node engine 声明已对齐为 >=22.19.0。已验证 execute 抛错、运行中及 body 阶段的 signal 传递、凭据文件回退、/forum-status 和 /forum-check 在无 UI（hasUI: false）与交互 UI 环境下的观察输出。真实宿主保持 not_tested；类型编译与适配测试不等于完整宿主支持。"
     },
     {
       "name": "dsh",

@@ -1,0 +1,17 @@
+{
+  "test_file": "packages/storage-sqlite/tests/schema-generation.test.ts",
+  "needle": "CREATE INDEX IF NOT EXISTS idx_posts_thread_created ON posts(thread_id, created_at);",
+  "replacement": "CREATE INDEX IF NOT EXISTS idx_posts_thread_created ON posts(thread_id, created_at DESC);",
+  "target_occurrences": 0,
+  "mutated_equals_original": true,
+  "actual_create_index_statements": [
+    "CREATE INDEX IF NOT EXISTS idx_events_space_seq ON events(space_id, seq);"
+  ],
+  "formal_requirement_status": {
+    "AA02_named_index_mutation": "NO-OP: target does not exist; original schema compiled instead",
+    "AA02_FTS_source_mutation": "not in new formal test file",
+    "AA04_V2_changed_V1_unchanged": "formal test generates changed column but does not assert profiles changed/unchanged",
+    "AB03_corrupt_profile_repair": "V2 only; V1 remains external probe",
+    "AB04_missing_inputs": "formal generate covers missing driver/history and migration markers, not check failure or current SQL/helper/V2-marker and restoration"
+  }
+}

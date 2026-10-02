@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "command": "node --check docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 2,
+      "stdout": "packages/storage-sqlite/src/schema.ts:3665: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check -- README.md docs/progress.md docs/reviews/README.md",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --version",
+      "exit_code": 0,
+      "stdout": "v26.3.0\n",
+      "stderr": ""
+    },
+    {
+      "command": "pnpm --version",
+      "exit_code": 0,
+      "stdout": "11.7.0\n",
+      "stderr": ""
+    }
+  ],
+  "python_runner_syntax": {
+    "passed": true
+  }
+}

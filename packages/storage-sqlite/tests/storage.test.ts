@@ -3,11 +3,18 @@ import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { spawnSync } from 'node:child_process';
 import {
   SqliteStorage,
   bootstrapDatabase,
+  openAndCoordinateDatabase,
   DirectoryLock,
+  SCHEMA_SQL,
+  V2_SCHEMA_TABLES,
+  V1_SCHEMA_TABLES,
+  parseFts5Ddl,
 } from '../src/index.js';
+import { extractDatabaseRequirements } from '../scripts/extract-schema-requirements.mjs';
 
 describe('SqliteStorage and Bootstrap', () => {
   let db: Database.Database;
@@ -155,9 +162,110 @@ describe('SqliteStorage and Bootstrap', () => {
 
       // Now lock2 should be able to acquire
       expect(() => lock2.acquire()).not.toThrow();
-      lock2.release();
     } finally {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
+  });
+
+  it('verifies schema.sql and SCHEMA_SQL in schema.ts are strictly identical (single DDL source of truth)', () => {
+    const sqlFilePath = path.resolve(__dirname, '../src/schema.sql');
+    const sqlContent = fs.readFileSync(sqlFilePath, 'utf8').replace(/^--.*$/gm, '').trim();
+    const tsSql = SCHEMA_SQL.trim();
+    expect(tsSql).toBe(sqlContent);
+  });
+
+  it('asserts complete DDL parity between fresh bootstrap and upgraded v1 database', () => {
+    const freshDb = new Database(':memory:');
+    bootstrapDatabase(freshDb);
+
+    const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
+    const v1Sql = fs.readFileSync(v1SqlPath, 'utf8');
+
+    const upgradedDb = new Database(':memory:');
+    upgradedDb.exec(v1Sql);
+    upgradedDb.pragma('foreign_keys = ON');
+    upgradedDb.prepare('INSERT INTO schema_migrations(version, applied_at) VALUES(1, ?)').run(new Date().toISOString());
+    upgradedDb.prepare("INSERT INTO actors (id, kind, display_name, created_at) VALUES ('act_admin', 'human', 'Admin', ?)").run(new Date().toISOString());
+    upgradedDb.prepare("INSERT INTO credentials (id, actor_id, token_hash, allowed_space_ids, capabilities, created_at) VALUES ('cred_admin', 'act_admin', 'hash', '[\"*\"]', '[\"admin\"]', ?)").run(new Date().toISOString());
+
+    openAndCoordinateDatabase(upgradedDb, 'serve');
+
+    const getTableNames = (d: Database.Database) =>
+      d.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        .all()
+        .map((r: any) => r.name);
+
+    const freshTables = getTableNames(freshDb);
+    const upgradedTables = getTableNames(upgradedDb);
+    expect(upgradedTables).toEqual(freshTables);
+
+    for (const table of freshTables) {
+      // Columns
+      const freshCols = freshDb.prepare(`PRAGMA table_info("${table}")`).all();
+      const upgradedCols = upgradedDb.prepare(`PRAGMA table_info("${table}")`).all();
+      expect(upgradedCols).toEqual(freshCols);
+
+      // Foreign keys
+      const freshFks = freshDb.prepare(`PRAGMA foreign_key_list("${table}")`).all();
+      const upgradedFks = upgradedDb.prepare(`PRAGMA foreign_key_list("${table}")`).all();
+      expect(upgradedFks).toEqual(freshFks);
+
+      // Indexes and their detailed definitions (columns, order, uniqueness, partial predicate)
+      const freshIdx = freshDb.prepare(`PRAGMA index_list("${table}")`).all() as any[];
+      const upgradedIdx = upgradedDb.prepare(`PRAGMA index_list("${table}")`).all() as any[];
+      expect(upgradedIdx).toEqual(freshIdx);
+
+      for (const idx of freshIdx) {
+        const freshXinfo = freshDb.prepare(`PRAGMA index_xinfo("${idx.name}")`).all();
+        const upgradedXinfo = upgradedDb.prepare(`PRAGMA index_xinfo("${idx.name}")`).all();
+        expect(upgradedXinfo).toEqual(freshXinfo);
+      }
+    }
+
+    // Virtual table post_fts module and definition parity
+    const freshFts = freshDb.prepare("SELECT sql FROM sqlite_master WHERE name='post_fts'").get();
+    const upgradedFts = upgradedDb.prepare("SELECT sql FROM sqlite_master WHERE name='post_fts'").get();
+    expect(upgradedFts).toEqual(freshFts);
+
+    freshDb.close();
+    upgradedDb.close();
+  });
+
+  it('asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql)', () => {
+    // 1. V2 Profile Parity against authoritative schema.sql
+    const v2Db = new Database(':memory:');
+    const v2Sql = fs.readFileSync(path.resolve(__dirname, '../src/schema.sql'), 'utf8');
+    v2Db.exec(v2Sql);
+    const expectedV2 = extractDatabaseRequirements(v2Db);
+    expect(V2_SCHEMA_TABLES).toEqual(expectedV2);
+
+    // 2. V1 Profile Parity against frozen historical fixture
+    const v1Db = new Database(':memory:');
+    const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
+    const v1Sql = fs.readFileSync(v1SqlPath, 'utf8');
+    v1Db.exec(v1Sql);
+    const expectedV1 = extractDatabaseRequirements(v1Db);
+    expect(V1_SCHEMA_TABLES).toEqual(expectedV1);
+
+    // 3. FTS5 Definition Parity via table requirement
+    expect(V2_SCHEMA_TABLES['post_fts'].virtual).toBe(true);
+    expect(V2_SCHEMA_TABLES['post_fts'].fts?.configs['tokenize']).toBe('trigram');
+    expect(V1_SCHEMA_TABLES['post_fts'].virtual).toBe(true);
+    expect(V1_SCHEMA_TABLES['post_fts'].fts?.configs['tokenize']).toBe('trigram');
+
+    // 4. Intentional drift detection in isolated schema copy
+    const mutatedDb = new Database(':memory:');
+    mutatedDb.exec(v2Sql.replace('objective TEXT NOT NULL,', 'objective TEXT,'));
+    const mutatedV2 = extractDatabaseRequirements(mutatedDb);
+    expect(V2_SCHEMA_TABLES).not.toEqual(mutatedV2);
+
+    // 5. Command-level sync tool verifies cleanly
+    const checkScriptPath = path.resolve(__dirname, '../scripts/check-schema-sync.mjs');
+    const checkResult = spawnSync(process.execPath, [checkScriptPath], { encoding: 'utf8' });
+    expect(checkResult.status).toBe(0);
+
+    v2Db.close();
+    v1Db.close();
+    mutatedDb.close();
   });
 });

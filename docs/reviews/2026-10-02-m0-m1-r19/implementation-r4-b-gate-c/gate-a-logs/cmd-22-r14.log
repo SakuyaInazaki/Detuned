@@ -1,0 +1,207 @@
+=== COMMAND: node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs ===
+=== STARTED: 2026-10-02T11:56:55.431Z ===
+=== FINISHED: 2026-10-02T11:56:56.116Z ===
+=== EXPECTED EXIT: 0 ===
+=== ACTUAL EXIT: 0 ===
+=== PASSED: true ===
+--- STDOUT ---
+{
+  "reviewed_date": "2026-10-01",
+  "runtime": "v26.3.0",
+  "fixture_note": "Review-only synthetic stored-result variants in owned temporary SQLite databases with HTTP-generated fixtures and fixed clock. No real data, external services or models.",
+  "probes": [
+    {
+      "id": "X01",
+      "description": "Explicit invalid/conflicting aliases reject in HTTP and migration without writes",
+      "observed": [
+        {
+          "variant": "initial_revision_null_alias",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_revision_conflict",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_id_null_alias",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_relations_conflict",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "post_relation_state_alias_conflict",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "post_relation_version_alias_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "post_relation_version_alias_conflict",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "X02",
+      "description": "Legal empty/full relation arrays and equivalent aliases preserve complete output across restart",
+      "observed": [
+        {
+          "variant": "explicit_empty",
+          "online_exact": true,
+          "online_read_only": true,
+          "migrated_exact": true,
+          "replay_read_only": true
+        },
+        {
+          "variant": "complete_relation",
+          "online_exact": true,
+          "online_read_only": true,
+          "migrated_exact": true,
+          "replay_read_only": true
+        },
+        {
+          "variant": "equal_aliases",
+          "online_exact": true,
+          "online_read_only": true,
+          "migrated_exact": true,
+          "replay_read_only": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "X03",
+      "description": "Known future version contradictions reject before legal missing-state fallback; valid partial history remains controlled",
+      "observed": {
+        "invalid_cases": [
+          {
+            "variant": "post_partial_future_version",
+            "online_status": 422,
+            "online_error": "RESYNC_REQUIRED",
+            "online_initial_post_present": false,
+            "online_initial_revision": null,
+            "online_read_only": true,
+            "migration_rejected": true,
+            "resulting_kind": null,
+            "unchanged_after_reopen": true
+          },
+          {
+            "variant": "initial_partial_future_version",
+            "online_status": 422,
+            "online_error": "RESYNC_REQUIRED",
+            "online_initial_post_present": false,
+            "online_initial_revision": null,
+            "online_read_only": true,
+            "migration_rejected": true,
+            "resulting_kind": null,
+            "unchanged_after_reopen": true
+          },
+          {
+            "variant": "mixed_full_future_and_partial_relation",
+            "online_status": 422,
+            "online_error": "RESYNC_REQUIRED",
+            "online_initial_post_present": false,
+            "online_initial_revision": null,
+            "online_read_only": true,
+            "migration_rejected": true,
+            "resulting_kind": null,
+            "unchanged_after_reopen": true
+          },
+          {
+            "variant": "typed_relation_partial_future_version",
+            "online_status": 422,
+            "online_error": "RESYNC_REQUIRED",
+            "online_initial_post_present": false,
+            "online_initial_revision": null,
+            "online_read_only": true,
+            "migration_rejected": true,
+            "resulting_kind": "relation.create",
+            "unchanged_after_reopen": true
+          },
+          {
+            "variant": "legacy_relation_partial_future_version",
+            "online_status": 422,
+            "online_error": "RESYNC_REQUIRED",
+            "online_initial_post_present": false,
+            "online_initial_revision": null,
+            "online_read_only": true,
+            "migration_rejected": true,
+            "resulting_kind": null,
+            "unchanged_after_reopen": true
+          }
+        ],
+        "complete_future_control": {
+          "variant": "complete_future_control",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        "legal_partial_control": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 3,
+  "failed": 0
+}
+
+--- STDERR ---
+

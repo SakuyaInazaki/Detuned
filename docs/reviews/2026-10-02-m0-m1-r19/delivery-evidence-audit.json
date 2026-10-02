@@ -1,0 +1,239 @@
+{
+  "baseline_before_count": 89,
+  "baseline_before_matches_r18": true,
+  "baseline_after_count": 90,
+  "baseline_after_mismatches": [],
+  "changed_existing_product_files": [
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+    "packages/storage-sqlite/scripts/extract-schema-requirements.mjs",
+    "packages/storage-sqlite/scripts/generate-schema.mjs"
+  ],
+  "new_product_files": [
+    "packages/storage-sqlite/tests/schema-generation.test.ts"
+  ],
+  "historical_changed_since_r18_start": [],
+  "r18_review_material_changes": [],
+  "command_set_matches_r18": true,
+  "logs": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-01-build.log",
+      "exists": true,
+      "bytes": 1051,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-02-typecheck.log",
+      "exists": true,
+      "bytes": 907,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-03-lint.log",
+      "exists": true,
+      "bytes": 930,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-04-tests.log",
+      "exists": true,
+      "bytes": 2475,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-05-r1-behavior.log",
+      "exists": true,
+      "bytes": 3886,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-06-r1-adapters.log",
+      "exists": true,
+      "bytes": 1383,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-07-r2.log",
+      "exists": true,
+      "bytes": 3798,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-08-r2-cli.log",
+      "exists": true,
+      "bytes": 942,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-09-r3.log",
+      "exists": true,
+      "bytes": 4091,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-10-r3-serve.log",
+      "exists": true,
+      "bytes": 688,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-11-r4.log",
+      "exists": true,
+      "bytes": 4455,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-12-r5.log",
+      "exists": true,
+      "bytes": 5557,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-13-r6.log",
+      "exists": true,
+      "bytes": 6683,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-14-r7.log",
+      "exists": true,
+      "bytes": 5280,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-15-r7-fixture.log",
+      "exists": true,
+      "bytes": 1272,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-16-r8.log",
+      "exists": true,
+      "bytes": 4529,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-17-r9.log",
+      "exists": true,
+      "bytes": 3424,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-18-r10.log",
+      "exists": true,
+      "bytes": 4772,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-19-r11.log",
+      "exists": true,
+      "bytes": 4728,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-20-r12.log",
+      "exists": true,
+      "bytes": 3587,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-21-r13.log",
+      "exists": true,
+      "bytes": 4916,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-22-r14.log",
+      "exists": true,
+      "bytes": 7094,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-23-r15.log",
+      "exists": true,
+      "bytes": 14917,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-24-r16.log",
+      "exists": true,
+      "bytes": 12520,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-25-r17.log",
+      "exists": true,
+      "bytes": 7475,
+      "has_full_stream_sections": true
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r18/implementation-r4-b4-3r4/logs/cmd-26-r18.log",
+      "exists": true,
+      "bytes": 13640,
+      "has_full_stream_sections": true
+    }
+  ],
+  "independent_exit_disagreements": [],
+  "full_log_notes": "All 26 logs present with complete stdout/stderr sections; R4 full output parsed as U05/U06 only failures.",
+  "errata": {
+    "wrong_previous_hash_in_delivery": "2d21046fe75399587a8f15858cfd7be1ae9f9d784a92cfa76e9389a9fba11b81",
+    "actual_original_r17_hash": "2d21046f8ccf75cd52d1b4aa396b2b67438f7e3ca954457c8c256cab42228815",
+    "actual_overwritten_r17_hash": "67b0c7e3a4b8435c3b6eb6d474950c78392aafe1686c9910d80a18b6aab75308",
+    "r17_probe_does_not_itself_write_observed_json": "Probe emits stdout; actor/wrapper that redirected it is not established by the preserved evidence.",
+    "wrong_r10_command_in_prose": "2026-10-02-m0-m1-r10",
+    "actual_r10_command_in_runner_and_manifest": "2026-09-29-m0-m1-r10",
+    "U05": "invalid relation enum is accepted and commits relation/event/idempotency rows",
+    "U06": "truncated HTTP 200 JSON resolves undefined data instead of rejecting"
+  }
+}

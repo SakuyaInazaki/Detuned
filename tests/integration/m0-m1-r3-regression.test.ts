@@ -11,6 +11,7 @@ import { buildApp } from '@detuned/server';
 import { SqliteStorage, bootstrapDatabase } from '@detuned/storage-sqlite';
 import { DetunedClient } from '@detuned/client';
 import activatePi from '@detuned/adapter-pi';
+import { HISTORICAL_V1_SCHEMA_SQL } from '../fixtures/historical-v1-schema.js';
 
 describe('M0-R3 / M1-R3 Behavioral Regressions (T01 - T11)', () => {
   let tempDir: string;
@@ -283,10 +284,29 @@ describe('M0-R3 / M1-R3 Behavioral Regressions (T01 - T11)', () => {
     );
 
     const legacyPath = join(tempDir, 'legacy.sqlite');
-    writeFileSync(legacyPath, db.serialize());
     const legacyDb = new Database(legacyPath);
     try {
-      legacyDb.exec('DROP TABLE instance_metadata');
+      legacyDb.exec(HISTORICAL_V1_SCHEMA_SQL);
+      legacyDb.pragma('foreign_keys = ON');
+      legacyDb.prepare('INSERT INTO schema_migrations(version, applied_at) VALUES(1, ?)').run('2026-09-28T00:00:00.000Z');
+      for (const table of ['actors', 'credentials', 'spaces', 'space_revisions', 'memberships', 'threads', 'posts', 'post_revisions', 'events']) {
+        const columns = legacyDb.prepare(`PRAGMA table_info(${table})`).all().map((c: any) => c.name);
+        const quoted = columns.map((c: any) => `"${c}"`).join(',');
+        const insert = legacyDb.prepare(`INSERT INTO ${table}(${quoted}) VALUES(${columns.map(() => '?').join(',')})`);
+        for (const row of db.prepare(`SELECT ${quoted} FROM ${table}`).all()) insert.run(...columns.map((c: any) => (row as any)[c]));
+      }
+      const recordRow = db.prepare("SELECT * FROM idempotency_records WHERE key = 't06-legacy-post'").get() as any;
+      recordRow.result_ref = JSON.stringify(legacyPost);
+      const fields = Object.keys(recordRow);
+      legacyDb.prepare(`INSERT INTO idempotency_records(${fields.join(',')}) VALUES(${fields.map(() => '?').join(',')})`).run(...fields.map((c) => recordRow[c]));
+
+      const preMetadataAbsent = !legacyDb.prepare("SELECT 1 FROM sqlite_master WHERE name='instance_metadata'").get();
+      const preThreadVersionsAbsent = !legacyDb.prepare("SELECT 1 FROM sqlite_master WHERE name='thread_versions'").get();
+      const preFkErrors = (legacyDb.pragma('foreign_key_check') as any[]).length;
+      expect(preMetadataAbsent).toBe(true);
+      expect(preThreadVersionsAbsent).toBe(true);
+      expect(preFkErrors).toBe(0);
+
       const credsBefore = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
       const upgraded = bootstrapDatabase(legacyDb);
       const credsAfter = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;

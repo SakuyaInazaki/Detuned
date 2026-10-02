@@ -1,0 +1,227 @@
+[
+  {
+    "id": 1,
+    "name": "build",
+    "command": "pnpm build",
+    "exit_code": 0,
+    "stdout_file": "logs/01-build.stdout.txt",
+    "stderr_file": "logs/01-build.stderr.txt",
+    "timestamp": "2026-09-30T15:14:16.505Z"
+  },
+  {
+    "id": 2,
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exit_code": 0,
+    "stdout_file": "logs/02-typecheck.stdout.txt",
+    "stderr_file": "logs/02-typecheck.stderr.txt",
+    "timestamp": "2026-09-30T15:14:22.109Z"
+  },
+  {
+    "id": 3,
+    "name": "lint",
+    "command": "pnpm lint",
+    "exit_code": 0,
+    "stdout_file": "logs/03-lint.stdout.txt",
+    "stderr_file": "logs/03-lint.stderr.txt",
+    "timestamp": "2026-09-30T15:14:27.366Z"
+  },
+  {
+    "id": 4,
+    "name": "test-all",
+    "command": "pnpm test:all",
+    "exit_code": 0,
+    "stdout_file": "logs/04-test-all.stdout.txt",
+    "stderr_file": "logs/04-test-all.stderr.txt",
+    "timestamp": "2026-09-30T15:14:31.854Z"
+  },
+  {
+    "id": 5,
+    "name": "probe-r1-behavior",
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/05-probe-r1-behavior.stdout.txt",
+    "stderr_file": "logs/05-probe-r1-behavior.stderr.txt",
+    "timestamp": "2026-09-30T15:14:32.163Z"
+  },
+  {
+    "id": 6,
+    "name": "probe-r1-adapters",
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/06-probe-r1-adapters.stdout.txt",
+    "stderr_file": "logs/06-probe-r1-adapters.stderr.txt",
+    "timestamp": "2026-09-30T15:14:32.513Z"
+  },
+  {
+    "id": 7,
+    "name": "probe-r2-remaining",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/07-probe-r2-remaining.stdout.txt",
+    "stderr_file": "logs/07-probe-r2-remaining.stderr.txt",
+    "timestamp": "2026-09-30T15:14:32.783Z"
+  },
+  {
+    "id": 8,
+    "name": "probe-r2-cli",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/08-probe-r2-cli.stdout.txt",
+    "stderr_file": "logs/08-probe-r2-cli.stderr.txt",
+    "timestamp": "2026-09-30T15:14:33.484Z"
+  },
+  {
+    "id": 9,
+    "name": "probe-r3-invariants",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/09-probe-r3-invariants.stdout.txt",
+    "stderr_file": "logs/09-probe-r3-invariants.stderr.txt",
+    "timestamp": "2026-09-30T15:14:33.739Z"
+  },
+  {
+    "id": 10,
+    "name": "probe-r3-serve-version",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/10-probe-r3-serve-version.stdout.txt",
+    "stderr_file": "logs/10-probe-r3-serve-version.stderr.txt",
+    "timestamp": "2026-09-30T15:14:33.983Z"
+  },
+  {
+    "id": 11,
+    "name": "probe-r4-contracts",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+    "exit_code": 1,
+    "stdout_file": "logs/11-probe-r4-contracts.stdout.txt",
+    "stderr_file": "logs/11-probe-r4-contracts.stderr.txt",
+    "timestamp": "2026-09-30T15:14:34.292Z"
+  },
+  {
+    "id": 12,
+    "name": "probe-r5-gaps",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/12-probe-r5-gaps.stdout.txt",
+    "stderr_file": "logs/12-probe-r5-gaps.stderr.txt",
+    "timestamp": "2026-09-30T15:14:34.875Z"
+  },
+  {
+    "id": 13,
+    "name": "probe-r6-boundaries",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/13-probe-r6-boundaries.stdout.txt",
+    "stderr_file": "logs/13-probe-r6-boundaries.stderr.txt",
+    "timestamp": "2026-09-30T15:14:35.482Z"
+  },
+  {
+    "id": 14,
+    "name": "probe-r7-completeness",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/14-probe-r7-completeness.stdout.txt",
+    "stderr_file": "logs/14-probe-r7-completeness.stderr.txt",
+    "timestamp": "2026-09-30T15:14:35.948Z"
+  },
+  {
+    "id": 15,
+    "name": "probe-r7-fixture",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/15-probe-r7-fixture.stdout.txt",
+    "stderr_file": "logs/15-probe-r7-fixture.stderr.txt",
+    "timestamp": "2026-09-30T15:14:36.219Z"
+  },
+  {
+    "id": 16,
+    "name": "probe-r8-gates",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+    "exit_code": 1,
+    "stdout_file": "logs/16-probe-r8-gates.stdout.txt",
+    "stderr_file": "logs/16-probe-r8-gates.stderr.txt",
+    "timestamp": "2026-09-30T15:14:36.586Z"
+  },
+  {
+    "id": 17,
+    "name": "probe-r9-acceptance",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/17-probe-r9-acceptance.stdout.txt",
+    "stderr_file": "logs/17-probe-r9-acceptance.stderr.txt",
+    "timestamp": "2026-09-30T15:14:36.974Z"
+  },
+  {
+    "id": 18,
+    "name": "probe-r10-boundaries",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/18-probe-r10-boundaries.stdout.txt",
+    "stderr_file": "logs/18-probe-r10-boundaries.stderr.txt",
+    "timestamp": "2026-09-30T15:14:37.414Z"
+  },
+  {
+    "id": 19,
+    "name": "probe-r11-pipeline",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/19-probe-r11-pipeline.stdout.txt",
+    "stderr_file": "logs/19-probe-r11-pipeline.stderr.txt",
+    "timestamp": "2026-09-30T15:14:37.790Z"
+  },
+  {
+    "id": 20,
+    "name": "probe-r12-precheck",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/20-probe-r12-precheck.stdout.txt",
+    "stderr_file": "logs/20-probe-r12-precheck.stderr.txt",
+    "timestamp": "2026-09-30T15:14:38.153Z"
+  },
+  {
+    "id": 21,
+    "name": "final-build",
+    "command": "pnpm build",
+    "exit_code": 0,
+    "stdout_file": "logs/21-final-build.stdout.txt",
+    "stderr_file": "logs/21-final-build.stderr.txt",
+    "timestamp": "2026-09-30T15:14:43.704Z"
+  },
+  {
+    "id": 22,
+    "name": "final-typecheck",
+    "command": "pnpm typecheck",
+    "exit_code": 0,
+    "stdout_file": "logs/22-final-typecheck.stdout.txt",
+    "stderr_file": "logs/22-final-typecheck.stderr.txt",
+    "timestamp": "2026-09-30T15:14:48.949Z"
+  },
+  {
+    "id": 23,
+    "name": "final-lint",
+    "command": "pnpm lint",
+    "exit_code": 0,
+    "stdout_file": "logs/23-final-lint.stdout.txt",
+    "stderr_file": "logs/23-final-lint.stderr.txt",
+    "timestamp": "2026-09-30T15:14:54.419Z"
+  },
+  {
+    "id": 24,
+    "name": "final-test-all",
+    "command": "pnpm test:all",
+    "exit_code": 0,
+    "stdout_file": "logs/24-final-test-all.stdout.txt",
+    "stderr_file": "logs/24-final-test-all.stderr.txt",
+    "timestamp": "2026-09-30T15:14:59.131Z"
+  },
+  {
+    "id": 25,
+    "name": "generate-baseline-after",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r12/implementation-r4-b4-2r3/generate-baseline.mjs baseline-after.json",
+    "exit_code": 0,
+    "stdout_file": "logs/25-generate-baseline-after.stdout.txt",
+    "stderr_file": "logs/25-generate-baseline-after.stderr.txt",
+    "timestamp": "2026-09-30T15:14:59.236Z"
+  }
+]

@@ -1,0 +1,421 @@
+{
+  "reviewed_date": "2026-10-02",
+  "task": "M0/M1-R4-B-GATE+C",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "note": "All 26 verification commands independently rerun for final delivery of Unit A (B Package acceptance gaps) and Unit B (R4-C request/response contracts and lifecycle). All 26 exit 0.",
+  "all_passed": true,
+  "commands": [
+    {
+      "id": 1,
+      "command": "pnpm build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-01-pnpm-build.log",
+      "started_at": "2026-10-02T12:23:55.495Z",
+      "finished_at": "2026-10-02T12:23:59.879Z",
+      "summary": "passed",
+      "probe_summary": null
+    },
+    {
+      "id": 2,
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-02-pnpm-typecheck.log",
+      "started_at": "2026-10-02T12:23:59.879Z",
+      "finished_at": "2026-10-02T12:24:04.045Z",
+      "summary": "passed",
+      "probe_summary": null
+    },
+    {
+      "id": 3,
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-03-pnpm-lint.log",
+      "started_at": "2026-10-02T12:24:04.046Z",
+      "finished_at": "2026-10-02T12:24:08.247Z",
+      "summary": "passed",
+      "probe_summary": null
+    },
+    {
+      "id": 4,
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-04-pnpm-test-all.log",
+      "started_at": "2026-10-02T12:24:08.247Z",
+      "finished_at": "2026-10-02T12:24:15.492Z",
+      "summary": "166/166; 13 files",
+      "probe_summary": null
+    },
+    {
+      "id": 5,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-05-check-behavior.log",
+      "started_at": "2026-10-02T12:24:15.493Z",
+      "finished_at": "2026-10-02T12:24:15.763Z",
+      "summary": "15/15",
+      "probe_summary": {
+        "passed": 15,
+        "failed": 0,
+        "total": 15,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 6,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-06-check-adapters.log",
+      "started_at": "2026-10-02T12:24:15.764Z",
+      "finished_at": "2026-10-02T12:24:16.052Z",
+      "summary": "5/5",
+      "probe_summary": {
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-07-check-remaining.log",
+      "started_at": "2026-10-02T12:24:16.052Z",
+      "finished_at": "2026-10-02T12:24:16.297Z",
+      "summary": "12/12",
+      "probe_summary": {
+        "passed": 12,
+        "failed": 0,
+        "total": 12,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-08-check-cli.log",
+      "started_at": "2026-10-02T12:24:16.298Z",
+      "finished_at": "2026-10-02T12:24:16.917Z",
+      "summary": "passed",
+      "probe_summary": null
+    },
+    {
+      "id": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-09-check-invariants.log",
+      "started_at": "2026-10-02T12:24:16.917Z",
+      "finished_at": "2026-10-02T12:24:17.204Z",
+      "summary": "10/10",
+      "probe_summary": {
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-10-check-serve-version.log",
+      "started_at": "2026-10-02T12:24:17.204Z",
+      "finished_at": "2026-10-02T12:24:17.424Z",
+      "summary": "passed",
+      "probe_summary": null
+    },
+    {
+      "id": 11,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-11-check-unfinished-contracts.log",
+      "started_at": "2026-10-02T12:24:17.424Z",
+      "finished_at": "2026-10-02T12:24:17.701Z",
+      "summary": "8/8",
+      "probe_summary": {
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 12,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-12-check-r4b-gaps.log",
+      "started_at": "2026-10-02T12:24:17.702Z",
+      "finished_at": "2026-10-02T12:24:18.239Z",
+      "summary": "9/9",
+      "probe_summary": {
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 13,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-13-check-upgrade-boundaries.log",
+      "started_at": "2026-10-02T12:24:18.239Z",
+      "finished_at": "2026-10-02T12:24:18.807Z",
+      "summary": "10/10",
+      "probe_summary": {
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 14,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-14-check-b2-completeness.log",
+      "started_at": "2026-10-02T12:24:18.807Z",
+      "finished_at": "2026-10-02T12:24:19.251Z",
+      "summary": "7/7",
+      "probe_summary": {
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 15,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-15-check-legacy-fixture.log",
+      "started_at": "2026-10-02T12:24:19.251Z",
+      "finished_at": "2026-10-02T12:24:19.506Z",
+      "summary": "1/1",
+      "probe_summary": {
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 16,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-16-check-b3-gates.log",
+      "started_at": "2026-10-02T12:24:19.506Z",
+      "finished_at": "2026-10-02T12:24:19.864Z",
+      "summary": "8/8",
+      "probe_summary": {
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 17,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-17-check-b4-1-acceptance.log",
+      "started_at": "2026-10-02T12:24:19.864Z",
+      "finished_at": "2026-10-02T12:24:20.255Z",
+      "summary": "5/5",
+      "probe_summary": {
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 18,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-18-check-b4-2-boundaries.log",
+      "started_at": "2026-10-02T12:24:20.255Z",
+      "finished_at": "2026-10-02T12:24:20.662Z",
+      "summary": "6/6",
+      "probe_summary": {
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 19,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-19-check-validation-pipeline.log",
+      "started_at": "2026-10-02T12:24:20.663Z",
+      "finished_at": "2026-10-02T12:24:21.011Z",
+      "summary": "5/5",
+      "probe_summary": {
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 20,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-20-check-precheck-completeness.log",
+      "started_at": "2026-10-02T12:24:21.011Z",
+      "finished_at": "2026-10-02T12:24:21.355Z",
+      "summary": "5/5",
+      "probe_summary": {
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 21,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-21-check-legacy-input-presence.log",
+      "started_at": "2026-10-02T12:24:21.355Z",
+      "finished_at": "2026-10-02T12:24:21.862Z",
+      "summary": "3/3",
+      "probe_summary": {
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 22,
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-22-check-legacy-helper-boundaries.log",
+      "started_at": "2026-10-02T12:24:21.862Z",
+      "finished_at": "2026-10-02T12:24:22.564Z",
+      "summary": "3/3",
+      "probe_summary": {
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 23,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-23-check-structural-boundaries.log",
+      "started_at": "2026-10-02T12:24:22.565Z",
+      "finished_at": "2026-10-02T12:24:22.870Z",
+      "summary": "4/4",
+      "probe_summary": {
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 24,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-24-check-schema-semantics.log",
+      "started_at": "2026-10-02T12:24:22.870Z",
+      "finished_at": "2026-10-02T12:24:23.752Z",
+      "summary": "4/4",
+      "probe_summary": {
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 25,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-25-check-profile-and-fts.log",
+      "started_at": "2026-10-02T12:24:23.752Z",
+      "finished_at": "2026-10-02T12:24:26.203Z",
+      "summary": "4/4",
+      "probe_summary": {
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "failed_ids": []
+      }
+    },
+    {
+      "id": 26,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "log_file": "cmd-26-check-generation-completeness.log",
+      "started_at": "2026-10-02T12:24:26.203Z",
+      "finished_at": "2026-10-02T12:24:28.328Z",
+      "summary": "4/4",
+      "probe_summary": {
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "failed_ids": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "date": "2026-09-30",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "runtime": "v26.3.0",
+  "pnpm": "11.7.0",
+  "note": "Executed by the R11 independent reviewer. Each output_file contains original combined stdout/stderr; exit_code is from the tool process result. No historical output overwritten. Commands shown without output redirection.",
+  "commands": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "output_file": "observed-build.txt",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "output_file": "observed-typecheck.txt",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "output_file": "observed-lint.txt",
+      "summary": "通过；实际为 tsc --noEmit"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "output_file": "observed-tests.txt",
+      "summary": "112/112，11 个文件；B 回归 48/48"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-behavior.json",
+      "summary": "15/15"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-adapters.json",
+      "summary": "5/5；不等于 Pi 真实宿主实测"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2.json",
+      "summary": "12/12"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2-cli.json",
+      "summary": "3/3"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3.json",
+      "summary": "10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3-serve.json",
+      "summary": "1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "output_file": "observed-r4.json",
+      "summary": "6/8；仅 U05/U06 失败，后续 R4-C"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r5.json",
+      "summary": "G 9/9"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r6.json",
+      "summary": "H 10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7.json",
+      "summary": "J 7/7"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7-fixture.json",
+      "summary": "K 1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 1,
+      "output_file": "observed-r8.json",
+      "summary": "7/8；仅 L03 失败，后续 B.4-3"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r9.json",
+      "summary": "N 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r10.json",
+      "summary": "P 6/6"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 1,
+      "output_file": "observed-validation-pipeline.json",
+      "summary": "Q 1/5；Q01–Q04 失败，Q05 通过"
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "reviewed_date": "2026-10-02",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "note": "26 commands independently rerun; complete combined stdout/stderr preserved. No new product behavior probe added; test-coverage-audit.json records a no-op formal fixture.",
+  "commands": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "output_file": "observed-build.txt",
+      "started_at": "2026-10-02T11:06:24.009490+00:00",
+      "finished_at": "2026-10-02T11:06:28.852536+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "passed"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "output_file": "observed-typecheck.txt",
+      "started_at": "2026-10-02T11:06:28.852676+00:00",
+      "finished_at": "2026-10-02T11:06:33.237657+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "passed"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "output_file": "observed-lint.txt",
+      "started_at": "2026-10-02T11:06:33.237819+00:00",
+      "finished_at": "2026-10-02T11:06:37.387509+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "passed"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "output_file": "observed-tests.txt",
+      "started_at": "2026-10-02T11:12:31.543912+00:00",
+      "finished_at": "2026-10-02T11:12:37.598446+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "152/152; 12 files; B 82/82; generation 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-behavior.json",
+      "started_at": "2026-10-02T11:06:37.387628+00:00",
+      "finished_at": "2026-10-02T11:06:37.712167+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "15/15",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-adapters.json",
+      "started_at": "2026-10-02T11:06:37.712305+00:00",
+      "finished_at": "2026-10-02T11:06:38.034099+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "5/5",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2.json",
+      "started_at": "2026-10-02T11:06:38.034223+00:00",
+      "finished_at": "2026-10-02T11:06:38.264881+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "12/12",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2-cli.json",
+      "started_at": "2026-10-02T11:12:37.598591+00:00",
+      "finished_at": "2026-10-02T11:12:38.181206+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "3/3",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3.json",
+      "started_at": "2026-10-02T11:06:38.265005+00:00",
+      "finished_at": "2026-10-02T11:06:38.497812+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "10/10",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3-serve.json",
+      "started_at": "2026-10-02T11:06:38.498037+00:00",
+      "finished_at": "2026-10-02T11:06:38.719362+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "1/1",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "output_file": "observed-r4.json",
+      "started_at": "2026-10-02T11:06:38.719487+00:00",
+      "finished_at": "2026-10-02T11:06:38.988073+00:00",
+      "expected_exit_code": 1,
+      "meets_expected_exit": true,
+      "summary": "6/8; failing: ['U05', 'U06']",
+      "failed_items": [
+        "U05",
+        "U06"
+      ]
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r5.json",
+      "started_at": "2026-10-02T11:06:38.988214+00:00",
+      "finished_at": "2026-10-02T11:06:39.506625+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "9/9",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r6.json",
+      "started_at": "2026-10-02T11:06:39.506884+00:00",
+      "finished_at": "2026-10-02T11:06:40.193500+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "10/10",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7.json",
+      "started_at": "2026-10-02T11:06:40.193631+00:00",
+      "finished_at": "2026-10-02T11:06:40.616489+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "7/7",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7-fixture.json",
+      "started_at": "2026-10-02T11:06:40.616624+00:00",
+      "finished_at": "2026-10-02T11:06:40.864880+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "1/1",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r8.json",
+      "started_at": "2026-10-02T11:06:40.865018+00:00",
+      "finished_at": "2026-10-02T11:06:41.202238+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "8/8",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r9.json",
+      "started_at": "2026-10-02T11:06:41.202367+00:00",
+      "finished_at": "2026-10-02T11:06:41.574286+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "5/5",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r10.json",
+      "started_at": "2026-10-02T11:06:41.574426+00:00",
+      "finished_at": "2026-10-02T11:06:41.936382+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "6/6",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r11.json",
+      "started_at": "2026-10-02T11:06:41.936515+00:00",
+      "finished_at": "2026-10-02T11:06:42.264414+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "5/5",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r12.json",
+      "started_at": "2026-10-02T11:06:42.264744+00:00",
+      "finished_at": "2026-10-02T11:06:42.584108+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "5/5",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r13.json",
+      "started_at": "2026-10-02T11:06:42.584257+00:00",
+      "finished_at": "2026-10-02T11:06:43.060590+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "3/3",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r14.json",
+      "started_at": "2026-10-02T11:06:43.060743+00:00",
+      "finished_at": "2026-10-02T11:06:43.716294+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "3/3",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-structural-boundaries.json",
+      "started_at": "2026-10-02T11:06:43.716599+00:00",
+      "finished_at": "2026-10-02T11:06:44.027216+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "4/4",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "output_file": "observed-schema-semantics.json",
+      "started_at": "2026-10-02T11:06:44.027373+00:00",
+      "finished_at": "2026-10-02T11:06:44.882236+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "4/4",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "output_file": "observed-profile-and-fts.json",
+      "started_at": "2026-10-02T11:06:44.882409+00:00",
+      "finished_at": "2026-10-02T11:06:47.183691+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "4/4",
+      "failed_items": []
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-generation-completeness.json",
+      "started_at": "2026-10-02T11:06:47.183844+00:00",
+      "finished_at": "2026-10-02T11:06:49.218441+00:00",
+      "expected_exit_code": 0,
+      "meets_expected_exit": true,
+      "summary": "4/4",
+      "failed_items": []
+    }
+  ]
+}

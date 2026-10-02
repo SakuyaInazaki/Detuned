@@ -19,6 +19,101 @@ import {
   ViewName,
 } from '@detuned/protocol';
 
+export class UserAbortError extends Error {
+  readonly isUserAbort = true;
+  constructor(message = 'Operation aborted by user') {
+    super(message);
+    this.name = 'UserAbortError';
+  }
+}
+
+export class TimeoutError extends Error {
+  readonly isTimeout = true;
+  constructor(message = 'Request timed out') {
+    super(message);
+    this.name = 'TimeoutError';
+  }
+}
+
+export class ClientProtocolError extends Error {
+  readonly isProtocolError = true;
+  constructor(message: string) {
+    super(message);
+    this.name = 'ClientProtocolError';
+  }
+}
+
+function parseRetryAfter(header: string | null | undefined): number | undefined {
+  if (!header) return undefined;
+  const trimmed = header.trim();
+  if (/^\d+$/.test(trimmed)) {
+    const sec = parseInt(trimmed, 10);
+    if (!Number.isNaN(sec) && sec >= 0) {
+      return sec * 1000;
+    }
+  }
+  const dateMs = Date.parse(trimmed);
+  if (!Number.isNaN(dateMs)) {
+    const diff = dateMs - Date.now();
+    return Math.max(0, diff);
+  }
+  return undefined;
+}
+
+function isNetworkError(err: any): boolean {
+  if (!err) return false;
+  const RETRYABLE_NETWORK_CODES = new Set([
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ENOTFOUND',
+    'ETIMEDOUT',
+    'EAI_AGAIN',
+    'EPIPE',
+    'UND_ERR_CONNECT_TIMEOUT',
+    'UND_ERR_SOCKET',
+  ]);
+
+  if (typeof err.code === 'string' && RETRYABLE_NETWORK_CODES.has(err.code)) {
+    return true;
+  }
+  if (err.cause) {
+    if (typeof err.cause.code === 'string' && RETRYABLE_NETWORK_CODES.has(err.cause.code)) {
+      return true;
+    }
+    if (isNetworkError(err.cause)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+async function sleepWithAbort(delayMs: number, signal?: AbortSignal): Promise<void> {
+  if (signal?.aborted) {
+    throw new UserAbortError();
+  }
+  return new Promise<void>((resolve, reject) => {
+    let timer: any;
+    let onAbort: (() => void) | undefined;
+    const cleanup = () => {
+      if (timer) clearTimeout(timer);
+      if (signal && onAbort) {
+        signal.removeEventListener('abort', onAbort);
+      }
+    };
+    timer = setTimeout(() => {
+      cleanup();
+      resolve();
+    }, delayMs);
+    if (signal) {
+      onAbort = () => {
+        cleanup();
+        reject(new UserAbortError());
+      };
+      signal.addEventListener('abort', onAbort, { once: true });
+    }
+  });
+}
+
 export interface DetunedClientOptions {
   baseUrl: string;
   token?: string;
@@ -79,31 +174,40 @@ export class DetunedClient {
     }
 
     if (opts.signal?.aborted) {
-      throw new Error('Operation aborted');
+      throw new UserAbortError();
     }
 
     let attempts = 0;
     while (true) {
       if (opts.signal?.aborted) {
-        throw new Error('Operation aborted');
+        throw new UserAbortError();
       }
 
       attempts++;
       const controller = new AbortController();
       let onExternalAbort: (() => void) | undefined;
+      let isTimedOut = false;
+      let isUserAborted = false;
 
       if (opts.signal) {
         if (opts.signal.aborted) {
+          isUserAborted = true;
           controller.abort();
         } else {
-          onExternalAbort = () => controller.abort();
+          onExternalAbort = () => {
+            isUserAborted = true;
+            controller.abort();
+          };
           opts.signal.addEventListener('abort', onExternalAbort, { once: true });
         }
       }
 
       let timeoutId: any;
       if (this.timeoutMs > 0) {
-        timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+        timeoutId = setTimeout(() => {
+          isTimedOut = true;
+          controller.abort();
+        }, this.timeoutMs);
       }
 
       try {
@@ -114,84 +218,119 @@ export class DetunedClient {
           signal: controller.signal,
         });
 
-        if (opts.signal?.aborted || controller.signal.aborted) {
-          throw new Error('Operation aborted');
+        if (isUserAborted || opts.signal?.aborted) {
+          throw new UserAbortError();
+        }
+        if (isTimedOut) {
+          throw new TimeoutError(`Request timed out after ${this.timeoutMs}ms`);
         }
 
         let json: any = null;
         try {
           json = await res.json();
         } catch (jsonErr: any) {
-          if (opts.signal?.aborted || controller.signal.aborted) {
-            throw new Error('Operation aborted');
+          if (isUserAborted || opts.signal?.aborted) {
+            throw new UserAbortError();
           }
-          if (!res.ok) {
-            throw jsonErr;
+          if (isTimedOut) {
+            throw new TimeoutError(`Request timed out after ${this.timeoutMs}ms`);
+          }
+          if (res.ok) {
+            throw new ClientProtocolError(`响应体 JSON 解析失败: ${jsonErr.message}`);
           }
         }
 
-        if (opts.signal?.aborted || controller.signal.aborted) {
-          throw new Error('Operation aborted');
+        if (isUserAborted || opts.signal?.aborted) {
+          throw new UserAbortError();
+        }
+        if (isTimedOut) {
+          throw new TimeoutError(`Request timed out after ${this.timeoutMs}ms`);
         }
 
         if (res.ok) {
-          return { data: json?.data, meta: json?.meta };
+          if (json === null || typeof json !== 'object' || Array.isArray(json)) {
+            throw new ClientProtocolError('响应体不是有效的 JSON 对象。');
+          }
+
+          if (json.api_version !== '1') {
+            throw new ClientProtocolError(`不支持的 API 版本: ${json.api_version}`);
+          }
+
+          if (typeof json.request_id !== 'string' || json.request_id.trim() === '') {
+            throw new ClientProtocolError('响应体缺少有效的 request_id。');
+          }
+
+          if (!('data' in json)) {
+            throw new ClientProtocolError('响应体缺少必需的 data 字段。');
+          }
+
+          if (json.error !== undefined && json.error !== null) {
+            throw new ClientProtocolError('成功响应中不能包含 error 字段。');
+          }
+
+          return { data: json.data, meta: json.meta };
         }
 
         const errDetail = json?.error;
         const code: ErrorCodeType = errDetail?.code ?? ErrorCode.TEMPORARILY_UNAVAILABLE;
         const message: string = errDetail?.message ?? `HTTP ${res.status} 请求失败`;
-        const retryable = errDetail?.retryable ?? [502, 503, 504].includes(res.status);
+        const serverReportedRetryable = errDetail?.retryable;
 
-        if (retryable && attempts <= this.maxRetries && !opts.signal?.aborted && !controller.signal.aborted) {
-          const delay = Math.min(1000 * Math.pow(2, attempts - 1) + Math.random() * 500, 10000);
-          await new Promise((resolve, reject) => {
-            const timer = setTimeout(resolve, delay);
-            if (opts.signal) {
-              opts.signal.addEventListener(
-                'abort',
-                () => {
-                  clearTimeout(timer);
-                  reject(new Error('Operation aborted'));
-                },
-                { once: true }
-              );
-            }
-          });
+        const isNonRetryableStatus = [400, 401, 403, 404, 409, 413, 422].includes(res.status);
+        const retryable =
+          !isNonRetryableStatus &&
+          (res.status === 429 ||
+            [502, 503, 504].includes(res.status) ||
+            serverReportedRetryable === true);
+
+        if (
+          retryable &&
+          attempts <= this.maxRetries &&
+          !opts.signal?.aborted &&
+          !isUserAborted &&
+          !isTimedOut
+        ) {
+          const retryAfterHeader =
+            typeof res.headers?.get === 'function'
+              ? res.headers.get('retry-after') ?? res.headers.get('Retry-After')
+              : (res.headers as any)?.['retry-after'] ?? (res.headers as any)?.['Retry-After'];
+          const retryAfterMs = parseRetryAfter(retryAfterHeader);
+          const delay =
+            retryAfterMs !== undefined
+              ? retryAfterMs
+              : Math.min(1000 * Math.pow(2, attempts - 1) + Math.random() * 500, 10000);
+          await sleepWithAbort(delay, opts.signal);
           continue;
         }
 
         throw new DetunedError(code, message, res.status, retryable, errDetail?.details);
       } catch (err: any) {
-        if (
-          opts.signal?.aborted ||
-          controller.signal.aborted ||
-          err.name === 'AbortError' ||
-          err.message?.includes('aborted')
-        ) {
-          throw new Error('Operation aborted');
+        if (isUserAborted || opts.signal?.aborted || err instanceof UserAbortError) {
+          throw new UserAbortError();
+        }
+        if (isTimedOut || err instanceof TimeoutError) {
+          throw new TimeoutError(`Request timed out after ${this.timeoutMs}ms`);
+        }
+        if (err.name === 'AbortError') {
+          if (isTimedOut) {
+            throw new TimeoutError(`Request timed out after ${this.timeoutMs}ms`);
+          }
+          throw new UserAbortError();
         }
 
-        if (err instanceof DetunedError) {
+        if (err instanceof DetunedError || err instanceof ClientProtocolError) {
           throw err;
         }
 
-        const isNetworkOrTimeout = err.code === 'ECONNREFUSED';
-        if (isNetworkOrTimeout && attempts <= this.maxRetries && !opts.signal?.aborted) {
+        if (
+          isNetworkError(err) &&
+          attempts <= this.maxRetries &&
+          !opts.signal?.aborted &&
+          !isUserAborted &&
+          !isTimedOut
+        ) {
           const delay = Math.min(1000 * Math.pow(2, attempts - 1) + Math.random() * 500, 10000);
-          await new Promise((resolve, reject) => {
-            const timer = setTimeout(resolve, delay);
-            if (opts.signal) {
-              opts.signal.addEventListener(
-                'abort',
-                () => {
-                  clearTimeout(timer);
-                  reject(new Error('Operation aborted'));
-                },
-                { once: true }
-              );
-            }
-          });
+          await sleepWithAbort(delay, opts.signal);
           continue;
         }
 
@@ -424,7 +563,7 @@ export class DetunedClient {
     return this.request<any>({
       method: 'POST',
       path: `/spaces/${spaceId}/consumers/${consumerId}/poll`,
-      body: query,
+      body: query ?? {},
       signal: opts?.signal,
     });
   }

@@ -1,0 +1,530 @@
+=== check-behavior.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "runtime": "v26.3.0",
+  "sqlite_journal_mode": "wal",
+  "mode": "file-backed temporary SQLite + Fastify inject",
+  "probes": [
+    {
+      "id": "R01",
+      "description": "Read-only capability cannot create a thread",
+      "expected": "403",
+      "observed": 403,
+      "passes": true
+    },
+    {
+      "id": "R02",
+      "description": "A-scoped token must not enumerate B",
+      "expected": {
+        "spaces": false,
+        "me": false
+      },
+      "observed": {
+        "spaces": false,
+        "me": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R03a",
+      "description": "HTTP rejects unknown schema properties",
+      "expected": "400/422",
+      "observed": 400,
+      "passes": true
+    },
+    {
+      "id": "R03b",
+      "description": "HTTP enforces title length <= 160",
+      "expected": "400/422",
+      "observed": 400,
+      "passes": true
+    },
+    {
+      "id": "R03c",
+      "description": "Claim without required structured fields is rejected",
+      "expected": "400/422",
+      "observed": 422,
+      "passes": true
+    },
+    {
+      "id": "R04",
+      "description": "initial_post persists its declared relation",
+      "expected": 1,
+      "observed": 1,
+      "passes": true
+    },
+    {
+      "id": "R05a",
+      "description": "Idempotency scope includes target thread",
+      "expected": "new post in thread two",
+      "observed": {
+        "status": 201,
+        "reused_first_post": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R05b",
+      "description": "Writes require a durable idempotency key",
+      "expected": "both 400/422",
+      "observed": [
+        400,
+        400
+      ],
+      "passes": true
+    },
+    {
+      "id": "R06",
+      "description": "Redaction covers revision listing and idempotent replay",
+      "expected": {
+        "normal": 410,
+        "history_leak": false,
+        "replay_leak": false
+      },
+      "observed": {
+        "normal": 410,
+        "history_leak": false,
+        "replay_leak": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R07",
+      "description": "A owner cannot redact B post through A route",
+      "expected": {
+        "status": 404,
+        "lifecycle": "active"
+      },
+      "observed": {
+        "status": 404,
+        "lifecycle": "active"
+      },
+      "passes": true
+    },
+    {
+      "id": "R08",
+      "description": "ACK cannot advance beyond persisted delivery batch",
+      "expected": "409 ACK_INVALID and no future ack_seq",
+      "observed": {
+        "status": 409,
+        "ack_is_future": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R09a",
+      "description": "New filters do not silently reuse a different subscription",
+      "expected": {
+        "event_types": [
+          "post.created"
+        ],
+        "thread_ids": [
+          "thd_1b45b359-45f8-4174-a801-4b05fa552702"
+        ]
+      },
+      "observed": {
+        "event_types": [
+          "post.created"
+        ],
+        "thread_filter_matches": true
+      },
+      "passes": true
+    },
+    {
+      "id": "R09b",
+      "description": "Thread-filtered subscription excludes other thread posts",
+      "expected": false,
+      "observed": false,
+      "passes": true
+    },
+    {
+      "id": "R10",
+      "description": "Fresh initialized DB records applied migration version",
+      "expected": ">= 1",
+      "observed": 2,
+      "passes": true
+    },
+    {
+      "id": "R11",
+      "description": "Lock can recover after owning process is gone",
+      "expected": true,
+      "observed": true,
+      "passes": true
+    }
+  ],
+  "passed": 15,
+  "failed": 0
+}
+
+=== check-adapters.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "runtime": "v26.3.0",
+  "pi_real_runtime_tested": false,
+  "mcp_real_stdio_discovery_tested": true,
+  "probes": [
+    {
+      "id": "A01",
+      "description": "Schema accepts its documented valid tool input",
+      "passes": true,
+      "errors": []
+    },
+    {
+      "id": "A02",
+      "description": "Schema accepts its documented valid tool input",
+      "passes": true,
+      "errors": []
+    },
+    {
+      "id": "A03",
+      "description": "Pi commands follow registerCommand(name, options)",
+      "passes": true,
+      "observed": [
+        {
+          "argument_count": 2,
+          "first_argument_type": "string"
+        },
+        {
+          "argument_count": 2,
+          "first_argument_type": "string"
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "description": "Pi registered tool definitions include official required label field",
+      "passes": true,
+      "observed_missing_labels": []
+    },
+    {
+      "id": "A05",
+      "description": "Actual stdio bridge completes official SDK tool discovery",
+      "passes": true,
+      "count": 8
+    }
+  ],
+  "passed": 5,
+  "failed": 0
+}
+
+=== check-remaining.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "fa1b35c",
+  "runtime": "v26.3.0",
+  "mode": "owned temporary file SQLite + Fastify inject; Pi registration/fetch fixture only",
+  "sqlite_journal_mode": "wal",
+  "probes": [
+    {
+      "id": "S01",
+      "description": "Redacted initial_post cannot reappear through thread.create replay",
+      "expected": false,
+      "observed": {
+        "status": 201,
+        "leaked": false
+      },
+      "passes": true
+    },
+    {
+      "id": "S02",
+      "description": "Redacted tags cannot reappear through post.create replay",
+      "expected": false,
+      "observed": {
+        "status": 201,
+        "leaked": false
+      },
+      "passes": true
+    },
+    {
+      "id": "S03",
+      "description": "Relation resolve idempotency must account for URL target",
+      "expected": "second target resolved, or an explicit conflict; never false success",
+      "observed": {
+        "status": 200,
+        "returned_first_relation": false,
+        "second_state": "resolved"
+      },
+      "passes": true
+    },
+    {
+      "id": "S04",
+      "description": "Public development secret must not authorize a future checkpoint",
+      "expected": "400/403/409/422 with no consumer beyond latest event",
+      "observed": {
+        "status": 422,
+        "ack_ahead_of_latest": false
+      },
+      "passes": true
+    },
+    {
+      "id": "S05",
+      "description": "Context checkpoint is bound to the requesting actor",
+      "expected": "400/403/409/422",
+      "observed": 422,
+      "passes": true
+    },
+    {
+      "id": "S06",
+      "description": "Thread filter retains a relation whose two endpoints are inside the subscribed thread",
+      "expected": true,
+      "observed": true,
+      "passes": true
+    },
+    {
+      "id": "S07",
+      "description": "Membership alone cannot bypass empty credential capabilities",
+      "expected": "403",
+      "observed": 403,
+      "passes": true
+    },
+    {
+      "id": "S08",
+      "description": "A legal 60-codepoint Chinese title is accepted",
+      "expected": "201 (180 UTF-8 bytes is not over the 160-codepoint title limit)",
+      "observed": 201,
+      "passes": true
+    },
+    {
+      "id": "S09",
+      "description": "Accepted failure kind validates category and mandatory evidence/scope fields (M2.2 coverage)",
+      "expected": "400/422",
+      "observed": 422,
+      "passes": true
+    },
+    {
+      "id": "S10",
+      "description": "Failed redaction audit insert rolls back content and lifecycle changes",
+      "expected": {
+        "status": 500,
+        "lifecycle": "active",
+        "original_preserved": true,
+        "audit_rows": 0
+      },
+      "observed": {
+        "status": 500,
+        "lifecycle": "active",
+        "original_preserved": true,
+        "audit_rows": 0
+      },
+      "passes": true
+    },
+    {
+      "id": "S11",
+      "description": "Bootstrap can recover after failure between admin actor and credential creation, including reopen",
+      "expected": "retry produces an admin credential and usable first token",
+      "observed": {
+        "first_boot_threw": true,
+        "retry_is_new": true,
+        "retry_has_token": true,
+        "credential_count": 1
+      },
+      "passes": true
+    },
+    {
+      "id": "S12",
+      "description": "Pi execute must throw for failure per the official extension contract",
+      "expected": "promise rejects",
+      "observed": {
+        "threw": true,
+        "resolved_with_isError": false
+      },
+      "passes": true
+    }
+  ],
+  "passed": 12,
+  "failed": 0
+}
+
+=== check-cli.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "fa1b35c",
+  "runtime": "v26.3.0",
+  "mode": "real built CLI subprocess + loopback HTTP + temporary file SQLite",
+  "expected": "all exit 0",
+  "checks": [
+    {
+      "op": "post",
+      "exit_code": 0,
+      "error_code": null,
+      "message": null,
+      "stderr_empty": true,
+      "passes": true
+    },
+    {
+      "op": "revision",
+      "exit_code": 0,
+      "error_code": null,
+      "message": null,
+      "stderr_empty": true,
+      "passes": true
+    },
+    {
+      "op": "withdraw",
+      "exit_code": 0,
+      "error_code": null,
+      "message": null,
+      "stderr_empty": true,
+      "passes": true
+    }
+  ],
+  "passed": 3,
+  "failed": 0
+}
+
+=== check-invariants.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "71aefc1839a59f79ad9b6c48af42e36ff49f781a",
+  "runtime": "v26.3.0",
+  "mode": "temporary SQLite + Fastify inject + controlled Pi/fetch fixtures; no model/host run",
+  "legacy_fixture_note": "Logical v1 fixture, missing instance_metadata and containing exact prior full-JSON result shapes; not a complete prior-version binary upgrade run",
+  "probes": [
+    {
+      "id": "T01",
+      "description": "An immediate resolve retry preserves its immutable resolution result",
+      "expected": "same resolution.id and version",
+      "observed": {
+        "first_has_resolution": true,
+        "replay_has_resolution": true,
+        "replay_relation_version": 2
+      },
+      "passes": true
+    },
+    {
+      "id": "T02",
+      "description": "Thread create replay does not silently become a newer operation version",
+      "expected": {
+        "version": 1,
+        "original_title": true
+      },
+      "observed": {
+        "version": 1,
+        "original_title": true
+      },
+      "passes": true
+    },
+    {
+      "id": "T03",
+      "description": "Legacy full-JSON space.create result can be replayed after upgrade",
+      "expected": "201 with original space/revision",
+      "observed": {
+        "status": 201,
+        "error_code": null
+      },
+      "passes": true
+    },
+    {
+      "id": "T04",
+      "description": "An empty allowed-space set has the same deny semantics in enumeration and direct access",
+      "expected": "empty list and 403/404 direct read",
+      "observed": {
+        "listed_spaces": 0,
+        "direct_context_status": 404
+      },
+      "passes": true
+    },
+    {
+      "id": "T05",
+      "description": "Redaction retry commits exactly one audit/result and one invalidation event",
+      "expected": {
+        "same_id": true,
+        "audit_rows": 1,
+        "event_rows": 1
+      },
+      "observed": {
+        "same_id": true,
+        "audit_rows": 1,
+        "event_rows": 1
+      },
+      "passes": true
+    },
+    {
+      "id": "T06",
+      "description": "An already initialized v1 upgrade preserves credentials and migrates old content caches",
+      "expected": {
+        "extra_credentials": 0,
+        "returned_new_admin_token": false,
+        "cached_body": false
+      },
+      "observed": {
+        "extra_credentials": 0,
+        "returned_new_admin_token": false,
+        "cached_body": false
+      },
+      "passes": true
+    },
+    {
+      "id": "T07",
+      "description": "Unsupported schema version is rejected before any DDL mutation",
+      "expected": {
+        "rejected": true,
+        "added_tables": 0
+      },
+      "observed": {
+        "rejected": true,
+        "added_tables": 0
+      },
+      "passes": true
+    },
+    {
+      "id": "T08",
+      "description": "ACL epoch invalidation applies consistently to poll and ack",
+      "expected": "both 409 RESYNC_REQUIRED without advancing ack",
+      "observed": {
+        "poll_status": 409,
+        "poll_error": "RESYNC_REQUIRED",
+        "ack_status": 409,
+        "consumer_unchanged": true
+      },
+      "passes": true
+    },
+    {
+      "id": "T09",
+      "description": "Pi cancellation while a request is running reaches fetch and rejects without retry",
+      "expected": {
+        "fetch_aborted": true,
+        "outcome": "rejected",
+        "calls": 1
+      },
+      "observed": {
+        "fetch_aborted": true,
+        "outcome": "rejected",
+        "calls": 1
+      },
+      "passes": true
+    },
+    {
+      "id": "T10",
+      "description": "HTTP cancellation remains active until response body parsing completes",
+      "expected": {
+        "fetch_aborted": true,
+        "outcome": "rejected"
+      },
+      "observed": {
+        "fetch_aborted": true,
+        "outcome": "rejected"
+      },
+      "passes": true
+    }
+  ],
+  "passed": 10,
+  "failed": 0
+}
+
+=== check-serve-version.mjs ===
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "71aefc1839a59f79ad9b6c48af42e36ff49f781a",
+  "runtime": "v26.3.0",
+  "mode": "real built CLI subprocess, owned DB, ephemeral loopback port",
+  "id": "T11",
+  "expected": "serve refuses unsupported schema 999 before listening, with a diagnostic",
+  "observed": {
+    "started": false,
+    "timed_out": false,
+    "exit_code": 3,
+    "explains_unsupported_version": true
+  },
+  "passes": true
+}

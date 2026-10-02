@@ -1,0 +1,32 @@
+=== COMMAND ===
+node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs
+
+=== STARTED AT ===
+2026-10-02T10:56:24.354Z
+
+=== FINISHED AT ===
+2026-10-02T10:56:24.568Z
+
+=== EXIT CODE ===
+0 (expected: 0)
+
+=== STDOUT ===
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "71aefc1839a59f79ad9b6c48af42e36ff49f781a",
+  "runtime": "v26.3.0",
+  "mode": "real built CLI subprocess, owned DB, ephemeral loopback port",
+  "id": "T11",
+  "expected": "serve refuses unsupported schema 999 before listening, with a diagnostic",
+  "observed": {
+    "started": false,
+    "timed_out": false,
+    "exit_code": 3,
+    "explains_unsupported_version": true
+  },
+  "passes": true
+}
+
+
+=== STDERR ===
+

@@ -1,0 +1,22 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P03: Supported legacy online replay must pass the same checks/projection as migration
+AssertionError: expected 422 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 422
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:2092:37
+    2090|       try {
+    2091|         const onlineReplay = await send('POST', `/spaces/${space}/thre…
+    2092|         expect(onlineReplay.status).toBe(201);
+       |                                     ^
+    2093|         expect(onlineReplay.body.data.thread.updated_at).toBe(thread1.…
+    2094|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

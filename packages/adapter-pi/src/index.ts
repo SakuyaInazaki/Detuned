@@ -55,10 +55,18 @@ export function activate(pi: PiExtensionContext): void {
       try {
         const me = await client.getMe();
         const msg = `Detuned 已连接。当前身份: ${me.data.actor.display_name} (${me.data.actor.id}), 可见空间: ${me.data.visible_spaces.length}`;
-        ctx?.ui?.notify?.(msg, 'info');
+        if (ctx?.hasUI && typeof ctx.ui?.notify === 'function') {
+          ctx.ui.notify(msg, 'info');
+        } else {
+          console.log(`[forum-status] ${msg}`);
+        }
       } catch (err: any) {
         const msg = `Detuned 未连接或认证失败: ${err.message}`;
-        ctx?.ui?.notify?.(msg, 'error');
+        if (ctx?.hasUI && typeof ctx.ui?.notify === 'function') {
+          ctx.ui.notify(msg, 'error');
+        } else {
+          console.error(`[forum-status] ${msg}`);
+        }
       }
     },
   });
@@ -69,10 +77,18 @@ export function activate(pi: PiExtensionContext): void {
       try {
         const cap = await client.getCapabilities();
         const msg = `Detuned API 正常。版本: ${cap.data.server_version}, API: v${cap.data.api_version}`;
-        ctx?.ui?.notify?.(msg, 'info');
+        if (ctx?.hasUI && typeof ctx.ui?.notify === 'function') {
+          ctx.ui.notify(msg, 'info');
+        } else {
+          console.log(`[forum-check] ${msg}`);
+        }
       } catch (err: any) {
         const msg = `Detuned 连通性测试失败: ${err.message}`;
-        ctx?.ui?.notify?.(msg, 'error');
+        if (ctx?.hasUI && typeof ctx.ui?.notify === 'function') {
+          ctx.ui.notify(msg, 'error');
+        } else {
+          console.error(`[forum-check] ${msg}`);
+        }
       }
     },
   });

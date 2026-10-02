@@ -1,6 +1,6 @@
 // Review-only: owned temporary file databases, Fastify inject, controlled fetch fixtures.
 // Run after pnpm build. Exit 1 denotes unmet product invariants, not a harness error.
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
@@ -99,14 +99,30 @@ try {
     { same_id: redact1.redaction_id === redact2.redaction_id, audit_rows: auditCount, event_rows: eventCount },
     redact1.redaction_id === redact2.redaction_id && auditCount === 1 && eventCount === 1);
 
-  // An owned logical v1 fixture: same data tables, no instance_metadata, original full JSON result.
+  // A genuine historical fa1b35c v1 fixture: verified DDL, compatible rows, no instance_metadata, original full JSON result.
   const legacyPost = await post(note('R3_LEGACY_CACHE_MARKER'), 'legacy-post');
-  db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'legacy-post'").run(JSON.stringify(legacyPost));
   const legacyPath = join(directory, 'legacy.sqlite');
-  writeFileSync(legacyPath, db.serialize());
-  const legacyDb = new Database(legacyPath);
+  let legacyDb = new Database(legacyPath);
   try {
-    legacyDb.exec('DROP TABLE instance_metadata');
+    const historicalSql = readFileSync(new URL('../../../tests/fixtures/historical-v1-schema.sql', import.meta.url), 'utf8');
+    legacyDb.exec(historicalSql);
+    legacyDb.pragma('foreign_keys = ON');
+    legacyDb.prepare('INSERT INTO schema_migrations(version, applied_at) VALUES(1, ?)').run('2026-09-28T00:00:00.000Z');
+    for (const table of ['actors', 'credentials', 'spaces', 'space_revisions', 'memberships', 'threads', 'posts', 'post_revisions', 'events']) {
+      const columns = legacyDb.prepare(`PRAGMA table_info(${table})`).all().map(c => c.name);
+      const quoted = columns.map(c => `"${c}"`).join(',');
+      const insert = legacyDb.prepare(`INSERT INTO ${table}(${quoted}) VALUES(${columns.map(() => '?').join(',')})`);
+      for (const row of db.prepare(`SELECT ${quoted} FROM ${table}`).all()) insert.run(...columns.map(c => row[c]));
+    }
+    const recordRow = db.prepare("SELECT * FROM idempotency_records WHERE key = 'legacy-post'").get();
+    recordRow.result_ref = JSON.stringify(legacyPost);
+    const fields = Object.keys(recordRow);
+    legacyDb.prepare(`INSERT INTO idempotency_records(${fields.join(',')}) VALUES(${fields.map(() => '?').join(',')})`).run(...fields.map(c => recordRow[c]));
+
+    const preValid = !legacyDb.prepare("SELECT 1 FROM sqlite_master WHERE name='instance_metadata'").get() &&
+      !legacyDb.prepare("SELECT 1 FROM sqlite_master WHERE name='thread_versions'").get() &&
+      legacyDb.pragma('foreign_key_check').length === 0;
+
     const credsBefore = legacyDb.prepare('SELECT count(*) AS n FROM credentials').get().n;
     const upgraded = bootstrapDatabase(legacyDb);
     const credsAfter = legacyDb.prepare('SELECT count(*) AS n FROM credentials').get().n;
@@ -114,7 +130,7 @@ try {
     record('T06', 'An already initialized v1 upgrade preserves credentials and migrates old content caches',
       { extra_credentials: 0, returned_new_admin_token: false, cached_body: false },
       { extra_credentials: credsAfter - credsBefore, returned_new_admin_token: Boolean(upgraded.adminToken), cached_body: cache.includes('R3_LEGACY_CACHE_MARKER') },
-      credsAfter === credsBefore && !upgraded.adminToken && !cache.includes('R3_LEGACY_CACHE_MARKER'));
+      preValid && credsAfter === credsBefore && !upgraded.adminToken && !cache.includes('R3_LEGACY_CACHE_MARKER'));
   } finally { legacyDb.close(); }
 
   const futureDb = new Database(join(directory, 'future-bootstrap.sqlite'));

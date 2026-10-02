@@ -1,0 +1,97 @@
+[
+  {
+    "command": "pnpm typecheck",
+    "exit_code": 0,
+    "output_file": "observed-typecheck.txt"
+  },
+  {
+    "command": "pnpm lint",
+    "exit_code": 0,
+    "output_file": "observed-lint.txt"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r1-behavior.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r1-adapters.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r2.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r3.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r3-serve.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+    "exit_code": 1,
+    "output_file": "observed-r4.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r5.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r6.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r7.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r7-fixture.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r8.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r9.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r10.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r11.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r12.json"
+  },
+  {
+    "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r13.json"
+  },
+  {
+    "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+    "exit_code": 0,
+    "output_file": "observed-r14.json"
+  }
+]

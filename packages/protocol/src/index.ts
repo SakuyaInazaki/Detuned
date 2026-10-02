@@ -10,4 +10,5 @@ export * from './events.js';
 export * from './search.js';
 export * from './review.js';
 export * from './tools.js';
+export * from './admin.js';
 export * from './openapi.js';

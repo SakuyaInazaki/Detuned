@@ -1,0 +1,504 @@
+{
+  "changed_existing_count": 13,
+  "changed_existing": [
+    "package.json",
+    "packages/adapter-pi/src/index.ts",
+    "packages/client/src/client.ts",
+    "packages/core/src/services/relation-service.ts",
+    "packages/protocol/src/index.ts",
+    "packages/server/src/routes/admin.ts",
+    "packages/server/src/routes/events.ts",
+    "packages/server/src/routes/posts.ts",
+    "packages/server/src/routes/relations.ts",
+    "packages/server/src/routes/search.ts",
+    "packages/server/src/routes/spaces.ts",
+    "packages/server/src/routes/threads.ts",
+    "packages/storage-sqlite/tests/schema-generation.test.ts"
+  ],
+  "new_files": [
+    "packages/protocol/src/admin.ts",
+    "packages/server/src/utils/query.ts",
+    "tests/contracts/r4-c-contracts.test.ts"
+  ],
+  "unchanged_baseline_count": 77,
+  "after_hash_mismatches": [],
+  "gate_a_changed_from_r19": [
+    "packages/storage-sqlite/tests/schema-generation.test.ts"
+  ],
+  "gate_a_test_matches_final": true,
+  "historical_changes_against_r19_baseline": [],
+  "independent_before_manifest_exists": false,
+  "current_status_documents_changed_since_r19": [],
+  "contracts_changed_since_r19": [],
+  "logs": [
+    {
+      "stage": "gate-a",
+      "command": "pnpm build",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-01-build.log",
+      "bytes": 1078,
+      "has_stderr_section": true,
+      "stderr_section_empty": false
+    },
+    {
+      "stage": "gate-a",
+      "command": "pnpm typecheck",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-02-typecheck.log",
+      "bytes": 934,
+      "has_stderr_section": true,
+      "stderr_section_empty": false
+    },
+    {
+      "stage": "gate-a",
+      "command": "pnpm lint",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-03-lint.log",
+      "bytes": 957,
+      "has_stderr_section": true,
+      "stderr_section_empty": false
+    },
+    {
+      "stage": "gate-a",
+      "command": "pnpm test:all",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-04-tests.log",
+      "bytes": 3176,
+      "has_stderr_section": true,
+      "stderr_section_empty": false
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-05-r1-behavior.log",
+      "bytes": 3913,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-06-r1-adapters.log",
+      "bytes": 1410,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-07-r2.log",
+      "bytes": 3825,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-08-r2-cli.log",
+      "bytes": 969,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-09-r3.log",
+      "bytes": 4118,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-10-r3-serve.log",
+      "bytes": 715,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit": 1,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-11-r4.log",
+      "bytes": 4482,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-12-r5.log",
+      "bytes": 5584,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-13-r6.log",
+      "bytes": 6710,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-14-r7.log",
+      "bytes": 5307,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-15-r7-fixture.log",
+      "bytes": 1299,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-16-r8.log",
+      "bytes": 4556,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-17-r9.log",
+      "bytes": 3451,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-18-r10.log",
+      "bytes": 4799,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-19-r11.log",
+      "bytes": 4755,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-20-r12.log",
+      "bytes": 3614,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-21-r13.log",
+      "bytes": 4943,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-22-r14.log",
+      "bytes": 7121,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-23-r15.log",
+      "bytes": 14944,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-24-r16.log",
+      "bytes": 12547,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-25-r17.log",
+      "bytes": 7502,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "gate-a",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/gate-a-logs/cmd-26-r18.log",
+      "bytes": 13667,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "pnpm build",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-01-pnpm-build.log",
+      "bytes": 860,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "pnpm typecheck",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-02-pnpm-typecheck.log",
+      "bytes": 708,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "pnpm lint",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-03-pnpm-lint.log",
+      "bytes": 741,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "pnpm test:all",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-04-pnpm-test-all.log",
+      "bytes": 3277,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-05-check-behavior.log",
+      "bytes": 3672,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-06-check-adapters.log",
+      "bytes": 1169,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-07-check-remaining.log",
+      "bytes": 3580,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-08-check-cli.log",
+      "bytes": 730,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-09-check-invariants.log",
+      "bytes": 3872,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-10-check-serve-version.log",
+      "bytes": 466,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-11-check-unfinished-contracts.log",
+      "bytes": 4207,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-12-check-r4b-gaps.log",
+      "bytes": 5340,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-13-check-upgrade-boundaries.log",
+      "bytes": 6456,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-14-check-b2-completeness.log",
+      "bytes": 5056,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-15-check-legacy-fixture.log",
+      "bytes": 1049,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-16-check-b3-gates.log",
+      "bytes": 4312,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-17-check-b4-1-acceptance.log",
+      "bytes": 3200,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-18-check-b4-2-boundaries.log",
+      "bytes": 4547,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-19-check-validation-pipeline.log",
+      "bytes": 4499,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-20-check-precheck-completeness.log",
+      "bytes": 3356,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-21-check-legacy-input-presence.log",
+      "bytes": 4685,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-22-check-legacy-helper-boundaries.log",
+      "bytes": 6860,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-23-check-structural-boundaries.log",
+      "bytes": 14686,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-24-check-schema-semantics.log",
+      "bytes": 12294,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-25-check-profile-and-fts.log",
+      "bytes": 7250,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    },
+    {
+      "stage": "final",
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit": 0,
+      "path": "docs/reviews/2026-10-02-m0-m1-r19/implementation-r4-b-gate-c/final-logs/cmd-26-check-generation-completeness.log",
+      "bytes": 13407,
+      "has_stderr_section": true,
+      "stderr_section_empty": true
+    }
+  ],
+  "final_runner_stderr_limitation": "execSync success branch returns stdout only and never captures child stderr; empty stderr sections do not prove stderr was empty. Test summary is hard-coded in runner. Gate A spawnSync preserves both streams."
+}

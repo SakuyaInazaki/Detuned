@@ -1,0 +1,213 @@
+{
+  "reviewed_date": "2026-10-02",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "runtime": "v26.3.0",
+  "pnpm": "11.7.0",
+  "note": "26 independent verification commands: 25 inherited commands plus new review probe. Combined stdout/stderr. Old R15 four-file fixture not sufficient for native profile generation; see README and successor probe.",
+  "commands": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "output_file": "observed-build.txt",
+      "started_at": "2026-10-02T05:13:29.354292+00:00",
+      "finished_at": "2026-10-02T05:13:34.082207+00:00",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "output_file": "observed-typecheck.txt",
+      "started_at": "2026-10-02T05:13:34.082566+00:00",
+      "finished_at": "2026-10-02T05:13:38.527697+00:00",
+      "summary": "通过"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "output_file": "observed-lint.txt",
+      "started_at": "2026-10-02T05:13:38.527984+00:00",
+      "finished_at": "2026-10-02T05:13:42.673297+00:00",
+      "summary": "通过；schema sync + tsc --noEmit"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "output_file": "observed-tests.txt",
+      "execution_note": "Observed tool exit 0; approved temporary SQLite and local loopback execution.",
+      "summary": "146/146; 11 files; B 81/81"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-behavior.json",
+      "started_at": "2026-10-02T05:13:42.673569+00:00",
+      "finished_at": "2026-10-02T05:13:43.009233+00:00",
+      "summary": "15/15"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r1-adapters.json",
+      "started_at": "2026-10-02T05:13:43.009475+00:00",
+      "finished_at": "2026-10-02T05:13:43.327651+00:00",
+      "summary": "5/5；不等于 Pi 真实宿主实测"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2.json",
+      "started_at": "2026-10-02T05:13:43.327889+00:00",
+      "finished_at": "2026-10-02T05:13:43.555716+00:00",
+      "summary": "12/12"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r2-cli.json",
+      "execution_note": "Observed tool exit 0; approved temporary SQLite and local loopback execution.",
+      "summary": "3/3"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3.json",
+      "started_at": "2026-10-02T05:13:43.555953+00:00",
+      "finished_at": "2026-10-02T05:13:43.787130+00:00",
+      "summary": "10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r3-serve.json",
+      "started_at": "2026-10-02T05:13:43.787356+00:00",
+      "finished_at": "2026-10-02T05:13:44.004364+00:00",
+      "summary": "1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "output_file": "observed-r4.json",
+      "started_at": "2026-10-02T05:13:44.004739+00:00",
+      "finished_at": "2026-10-02T05:13:44.265616+00:00",
+      "summary": "6/8；仅 U05/U06 失败，后续 R4-C"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r5.json",
+      "started_at": "2026-10-02T05:13:44.265846+00:00",
+      "finished_at": "2026-10-02T05:13:44.774323+00:00",
+      "summary": "G 9/9"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r6.json",
+      "started_at": "2026-10-02T05:13:44.774589+00:00",
+      "finished_at": "2026-10-02T05:13:45.317716+00:00",
+      "summary": "H 10/10"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7.json",
+      "started_at": "2026-10-02T05:13:45.317962+00:00",
+      "finished_at": "2026-10-02T05:13:45.733002+00:00",
+      "summary": "J 7/7"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r7-fixture.json",
+      "started_at": "2026-10-02T05:13:45.733244+00:00",
+      "finished_at": "2026-10-02T05:13:45.970077+00:00",
+      "summary": "K 1/1"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r8.json",
+      "started_at": "2026-10-02T05:13:45.970332+00:00",
+      "finished_at": "2026-10-02T05:13:46.300981+00:00",
+      "summary": "L 8/8; L03 now passes"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r9.json",
+      "started_at": "2026-10-02T05:13:46.301248+00:00",
+      "finished_at": "2026-10-02T05:13:46.661980+00:00",
+      "summary": "N 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r10.json",
+      "started_at": "2026-10-02T05:13:46.662217+00:00",
+      "finished_at": "2026-10-02T05:13:47.023442+00:00",
+      "summary": "P 6/6"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r11.json",
+      "started_at": "2026-10-02T05:13:47.023682+00:00",
+      "finished_at": "2026-10-02T05:13:47.345358+00:00",
+      "summary": "Q 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r12.json",
+      "started_at": "2026-10-02T05:13:47.345623+00:00",
+      "finished_at": "2026-10-02T05:13:47.665644+00:00",
+      "summary": "V 5/5"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r13.json",
+      "started_at": "2026-10-02T05:13:47.665930+00:00",
+      "finished_at": "2026-10-02T05:13:48.128120+00:00",
+      "summary": "W 3/3"
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-r14.json",
+      "started_at": "2026-10-02T05:13:48.128392+00:00",
+      "finished_at": "2026-10-02T05:13:48.762542+00:00",
+      "summary": "X 3/3; X03 now passes"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "observed-structural-boundaries.json",
+      "started_at": "2026-10-02T05:13:48.762804+00:00",
+      "finished_at": "2026-10-02T05:13:49.056211+00:00",
+      "summary": "Y 4/4; all previous structural cases pass"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-ddl-build.mjs",
+      "exit_code": 0,
+      "output_file": "observed-ddl-build.json",
+      "started_at": "2026-10-02T05:13:49.056467+00:00",
+      "finished_at": "2026-10-02T05:13:49.441450+00:00",
+      "summary": "Pass as an old four-file SQL embedding check; native profile generation/checks silently skip. Superseded for full generation verification by AA04."
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "output_file": "observed-schema-semantics.json",
+      "started_at": "2026-10-02T05:13:49.441721+00:00",
+      "finished_at": "2026-10-02T05:13:50.280226+00:00",
+      "summary": "Z 4/4; all prior semantic cases pass"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 1,
+      "output_file": "observed-profile-and-fts.json",
+      "summary": "AA 1/4; AA01/AA02/AA03 fail; AA04 complete-fixture healthy controls pass"
+    }
+  ]
+}

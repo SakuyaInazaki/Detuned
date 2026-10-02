@@ -1,0 +1,47 @@
+{
+  "reviewed_date": "2026-10-02",
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/node/26.3.0/bin/node",
+        "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r15-ddl-build-Ahu4fx/scripts/generate-schema.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Successfully generated schema.ts from schema.sql\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/node/26.3.0/bin/node",
+        "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r15-ddl-build-Ahu4fx/scripts/check-schema-sync.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/node/26.3.0/bin/node",
+        "/Users/sakimi/Desktop/Detuned/node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/bin/tsc",
+        "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r15-ddl-build-Ahu4fx/src/schema.ts",
+        "--outDir",
+        "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r15-ddl-build-Ahu4fx/dist",
+        "--target",
+        "ES2022",
+        "--module",
+        "ES2022",
+        "--skipLibCheck"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "observed": {
+    "generated_source_change_present": true,
+    "exact_sql": true,
+    "runtime_without_source_directory": true
+  },
+  "passes": true,
+  "scope": "Positive build-wiring check only. This does not prove that bootstrap migration DDL and structural descriptions share the same editable source."
+}

@@ -78,6 +78,15 @@ CREATE TABLE IF NOT EXISTS threads (
   updated_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS thread_versions (
+  thread_id TEXT NOT NULL REFERENCES threads(id),
+  version INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  state TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (thread_id, version)
+);
+
 CREATE TABLE IF NOT EXISTS posts (
   id TEXT PRIMARY KEY,
   space_id TEXT NOT NULL REFERENCES spaces(id),

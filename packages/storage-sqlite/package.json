@@ -11,9 +11,12 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "prebuild": "node scripts/generate-schema.mjs",
+    "generate:schema": "node scripts/generate-schema.mjs",
+    "check:schema": "node scripts/check-schema-sync.mjs",
+    "build": "node scripts/generate-schema.mjs && tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit",
+    "lint": "node scripts/check-schema-sync.mjs && tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {

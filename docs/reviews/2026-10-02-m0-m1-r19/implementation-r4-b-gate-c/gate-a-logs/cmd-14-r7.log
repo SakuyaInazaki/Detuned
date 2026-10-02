@@ -1,0 +1,170 @@
+=== COMMAND: node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs ===
+=== STARTED: 2026-10-02T11:56:52.490Z ===
+=== FINISHED: 2026-10-02T11:56:52.918Z ===
+=== EXPECTED EXIT: 0 ===
+=== ACTUAL EXIT: 0 ===
+=== PASSED: true ===
+--- STDOUT ---
+{
+  "reviewed_date": "2026-09-29",
+  "runtime": "v26.3.0",
+  "fixture_note": "Owned temporary file DBs. J01/J04 reproduce known historical result shapes; J02-J06 also include deliberate integrity failures. J05 assumes persisted-reference corruption and is not an unauthenticated remote exploit. J07 uses ordinary valid HTTP requests. No old binary or model was executed.",
+  "probes": [
+    {
+      "id": "J01",
+      "description": "Migration preserves the result of a relation.create that reused an existing v2 relation",
+      "expected": "original v2/resolved, or explicit refusal if the historical result cannot be proven",
+      "observed": {
+        "upgrade_rejected": false,
+        "original_version": 2,
+        "original_state": "resolved",
+        "replay_status": 422,
+        "replay_version": null,
+        "replay_state": null
+      },
+      "passes": true
+    },
+    {
+      "id": "J02",
+      "description": "Current instance material loss is refused consistently by bootstrap, init and serve",
+      "expected": "all refuse and preserve logical state without changing the secret",
+      "observed": [
+        {
+          "name": "bootstrap_missing_table",
+          "classification": "corrupt",
+          "rejected": true,
+          "secret_replaced": false,
+          "unchanged": true
+        },
+        {
+          "name": "serve_empty_metadata",
+          "classification": "corrupt",
+          "rejected": true,
+          "secret_replaced": false,
+          "unchanged": true
+        },
+        {
+          "name": "serve_missing_table_control",
+          "classification": "corrupt",
+          "rejected": true,
+          "secret_replaced": false,
+          "unchanged": true
+        },
+        {
+          "name": "real_cli_init_missing_table",
+          "exit": 3,
+          "reports_success": false,
+          "rejected": true,
+          "secret_replaced": false,
+          "unchanged": true,
+          "lock_left": false,
+          "timed_out": false
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "J03",
+      "description": "A current schema with all table names but a missing required column is rejected",
+      "expected": {
+        "rejected": true,
+        "unchanged": true
+      },
+      "observed": {
+        "classification": "corrupt",
+        "rejected": true,
+        "unchanged": true
+      },
+      "passes": true
+    },
+    {
+      "id": "J04",
+      "description": "Migration recovers known historical timestamps and detects non-title snapshot conflicts",
+      "expected": "exactly recover the known old patch result; reject conflicting immutable state atomically",
+      "observed": {
+        "time": {
+          "upgrade_rejected": false,
+          "status": 200,
+          "original_updated_at": "2026-09-29T01:01:00.000Z",
+          "replay_updated_at": "2026-09-29T01:01:00.000Z",
+          "recovered_exactly": true
+        },
+        "state_conflict": {
+          "rejected": true,
+          "unchanged": true
+        }
+      },
+      "passes": true
+    },
+    {
+      "id": "J05",
+      "description": "Reconstruction validates space ownership and resolution-to-relation binding",
+      "expected": "mismatched references rejected in migration and never exposed by replay",
+      "observed": {
+        "upgrade_rejected": true,
+        "direct_private_read_status": 404,
+        "scoped_replay_status": 422,
+        "private_thread_returned": false,
+        "resolution_replay_status": 422,
+        "mismatched_resolution_returned": false
+      },
+      "passes": true
+    },
+    {
+      "id": "J06",
+      "description": "Encoding, validation and unreplayable migration have no bypasses for invalid fields or content",
+      "expected": "all invalid encodings rejected; illegal cached record aborts migration atomically",
+      "observed": {
+        "validation": [
+          {
+            "name": "fractional_nested_version",
+            "rejected": true
+          },
+          {
+            "name": "unsafe_top_level_revision",
+            "rejected": true
+          },
+          {
+            "name": "nested_extra_field",
+            "rejected": true
+          },
+          {
+            "name": "unreplayable_wrong_op_and_extra",
+            "rejected": true
+          }
+        ],
+        "unknown_operation_encoder_rejected": true,
+        "migration": {
+          "rejected": true,
+          "unchanged": true,
+          "cached_body_retained": true
+        }
+      },
+      "passes": true
+    },
+    {
+      "id": "J07",
+      "description": "Current-format reuse and newly encoded nested relation snapshots remain correct",
+      "expected": {
+        "reused_version": 2,
+        "reused_state": "resolved",
+        "nested_version": 1,
+        "nested_state": "open"
+      },
+      "observed": {
+        "reused_status": 201,
+        "reused_version": 2,
+        "reused_state": "resolved",
+        "nested_status": 201,
+        "nested_version": 1,
+        "nested_state": "open"
+      },
+      "passes": true
+    }
+  ],
+  "passed": 7,
+  "failed": 0
+}
+
+--- STDERR ---
+

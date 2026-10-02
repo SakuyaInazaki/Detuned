@@ -1,0 +1,63 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts (48 tests | 5 failed) 1677ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All implemented operations encode and reconstruct typed versioned references without arbitrary JSON fallback 112ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B02: Thread, post, and relation replays preserve original version/state across object changes and database reopen 53ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B03: Upgraded resolve references preserve the original operation version after subsequent reopen 26ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B04: Unknown idempotency reference kind or future version rejected with 422 RESYNC_REQUIRED 25ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B05: Historical full-JSON idempotency records and direct entities are migrated cleanly to versioned refs 25ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B06: Migration failure rolls back entire transaction leaving database unchanged 23ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B07: Revoking all credentials preserves initialization and does not create new admin credentials 21ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B08: Atomic initialization retries cleanly; legacy db upgrade never issues new tokens 36ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B09: openAndCoordinateDatabase rejects future schema versions and unknown databases before DDL mutation 25ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B10: getInstanceSecret throws when secret is missing, preventing ephemeral random secret fallback 27ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B11: Modified payload with same key returns 409 IDEMPOTENCY_CONFLICT, while concurrent identical requests succeed 23ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B12: Redaction audit covers multi-page revisions and rolls back atomically on failure 39ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H01: Upgrading old relation.create references preserves initial state or refuses upgrade 54ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H02: Replayed thread retains original updated_at and nested relations retain original version/state 34ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H03: Current v2 database with lost metadata is classified as corrupt and rejected 18ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H04: Missing post_revisions or version 2 without version 1 fails before mutation 21ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H05: Future v:99 ref and post result in thread operation abort upgrade 20ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H06: validateResultRef rejects unregistered operations, invalid optional fields and cached body 17ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H07: Replay rejects mismatched target and missing relations with 422 19ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H08: Conflicting history for the same immutable key rejects migration 24ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H09: Migration diagnostics never print raw body marker 152ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J01: Migration of relation.create lacking version/state safely refuses unprovable replay 40ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J02: Current instance material loss is refused consistently across bootstrap, init and serve without mutating secrets 140ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J03: Current schema with missing required column is classified as corrupt and rejected 19ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J04: Migration preserves historical timestamps and detects state conflicts 36ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J05: Reconstruction validates space ownership and resolution-to-relation binding 21ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J06: Strict validation on nested relations, unreplayable op/reason and encoder 19ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-1: POST /spaces initial 201, immediate same-key retry 201 with identical business data and zero extra writes 20ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-2: Reopening file database and running openAndCoordinateDatabase serve allows space.create same-key replay with 201 33ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-3: Transaction committed on disk but response not delivered: onSend 500 fault, 2nd connection check, and 201 replay across restarts 50ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-4: space.patch normal same-key retry succeeds, wrong space binding rejected with 422, modified payload rejected with 409 18ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-5: Space isolation (N05) - space.patch cross-space rejected with 422 and migration rejected 33ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-1: Unreplayable marker generated for unrecoverable thread.patch survives repeated restarts without self-locking 23ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-2: Replaying valid unreplayable thread marker returns controlled 422 RESYNC_REQUIRED without extra writes 35ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3a: Pure validator checks: invalid op, target mismatch, unregistered reason, and cached body rejected 15ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3b: Migrated relation.create unreplayable marker remains valid across three starts and replays with 422 38ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3c: Invalid marker migration refuses atomically without modifying database 26ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3d: Full target markers and legacy family markers survive repeated starts and replay safely (N02) 35ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-4: Recoverable full legacy thread and normal thread retry replay accurately across restarts (positive control) 35ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L04: Old nested relation results with unprovable version are converted to unreplayable and refused with 422 RESYNC_REQUIRED 37ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L05: Historical conflicts include operation timestamps, not only title and state, causing atomic rollback 21ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L06: Same-space initial-post and resolution/version mismatches are rejected by migration and replay 52ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L07: Encoder, partial legacy conversion and paired fields have no validation bypass 19ms
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P01: Nested refs must bind to the result source and to a provable historical version 24ms
+     → expected [Function] to throw an error
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P02: Every migration early return validates the original operation, shape and known entity bindings 22ms
+     → expected [Function] to throw an error
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P03: Supported legacy online replay must pass the same checks/projection as migration 36ms
+     → expected 201 to be 422 // Object.is equality
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P04: Missing historical timestamps must never be synthesized from migration wall time 19ms
+     → expected [Function] to throw an error
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P05: Validating a manufactured valid ref must not hide malformed new business results 16ms
+     → expected [Function] to throw an error
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 43 passed (48)
+   Start at  16:28:07
+   Duration  2.23s (transform 158ms, setup 0ms, collect 298ms, tests 1.68s, environment 0ms, prepare 43ms)
+

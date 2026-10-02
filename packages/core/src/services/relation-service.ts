@@ -1,5 +1,6 @@
 import {
   Relation,
+  RelationType,
   RelationResolution,
   CreateRelationRequest,
   ResolveRelationRequest,
@@ -12,6 +13,15 @@ import { IdGeneratorPort } from '../ports/id-generator.js';
 import { ClockPort } from '../ports/clock.js';
 import { AuthService, AuthenticatedContext } from './auth-service.js';
 import { IdempotencyService } from './idempotency-service.js';
+
+const VALID_RELATION_TYPES: readonly RelationType[] = [
+  'cites',
+  'supports',
+  'challenges',
+  'supersedes',
+  'reproduces',
+  'addresses',
+];
 
 export class RelationService {
   constructor(
@@ -28,6 +38,14 @@ export class RelationService {
     req: CreateRelationRequest,
     requestKey: string
   ): Relation {
+    if (!req.type || !VALID_RELATION_TYPES.includes(req.type)) {
+      throw new DetunedError(
+        ErrorCode.VALIDATION_ERROR,
+        `非法的关系类型: ${req.type}`,
+        400
+      );
+    }
+
     const spaceAuth = this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
 
     return this.idempotency.executeIdempotent(

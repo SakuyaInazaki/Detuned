@@ -8,6 +8,7 @@ import {
   ErrorCode,
 } from '@detuned/protocol';
 import { ThreadService, AuthenticatedContext, AuthService } from '@detuned/core';
+import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
 
 export const threadRoutes: FastifyPluginAsync = async (app) => {
   const threadService = (app as any).threadService as ThreadService;
@@ -19,10 +20,13 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
     const { space_id } = req.params as { space_id: string };
     authService.requireSpaceAccess(auth, space_id, 'observer');
 
-    const query = req.query as { state?: string; limit?: string; cursor?: string };
-    const limit = query.limit ? parseInt(query.limit, 10) : 20;
+    const query = req.query as { state?: unknown; limit?: unknown; cursor?: unknown };
+    validateAllowedQueryParams(query, ['state', 'limit', 'cursor']);
+    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 20 }) ?? 20;
+    const state = parseStringQuery(query?.state, 'state', { allowedValues: new Set(['open', 'archived']) });
+    const cursor = parseStringQuery(query?.cursor, 'cursor');
 
-    const result = storage.listThreads(space_id, query.state, limit, query.cursor);
+    const result = storage.listThreads(space_id, state, limit, cursor);
     return {
       api_version: '1',
       request_id: req.id,
@@ -40,7 +44,7 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
     async (req, reply) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id } = req.params as { space_id: string };
-      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
       if (!key || typeof key !== 'string' || key.trim() === '') {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
@@ -70,10 +74,12 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
       throw new DetunedError(ErrorCode.NOT_FOUND, '主题不存在。', 404);
     }
 
-    const query = req.query as { limit?: string; cursor?: string };
-    const limit = query.limit ? parseInt(query.limit, 10) : 50;
+    const query = req.query as { limit?: unknown; cursor?: unknown };
+    validateAllowedQueryParams(query, ['limit', 'cursor']);
+    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 50 }) ?? 50;
+    const cursor = parseStringQuery(query?.cursor, 'cursor');
 
-    const postsResult = storage.listPostsInThread(id, limit, query.cursor);
+    const postsResult = storage.listPostsInThread(id, limit, cursor);
 
     return {
       api_version: '1',
@@ -95,7 +101,7 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
     async (req) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, id } = req.params as { space_id: string; id: string };
-      const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
+      const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
       if (!key || typeof key !== 'string' || key.trim() === '') {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,

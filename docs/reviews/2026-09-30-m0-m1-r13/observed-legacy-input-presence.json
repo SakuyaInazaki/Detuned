@@ -1,0 +1,126 @@
+{
+  "reviewed_date": "2026-09-30",
+  "runtime": "v26.3.0",
+  "fixture_note": "Synthetic stored-result corruption in owned temporary SQLite databases; HTTP-generated valid fixtures and fixed clock. No product edits, real data or model calls.",
+  "probes": [
+    {
+      "id": "W01",
+      "description": "Legacy initial_post malformed envelopes, explicit revisions and orphan pairs must not disappear or default to v1",
+      "observed": [
+        {
+          "variant": "initial_revision_string",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": true,
+          "online_initial_revision": 1,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "initial_post_null",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "initial_post_empty_object",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "orphan_initial_revision_and_relations",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "id": "W02",
+      "description": "Explicit null legacy fields must fail before alias/default selection or missing-history markers",
+      "observed": [
+        {
+          "variant": "initial_relations_null",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": true,
+          "online_initial_revision": 1,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "initial_relation_ids_null",
+          "online_status": 201,
+          "online_error": null,
+          "online_initial_post_present": true,
+          "online_initial_revision": 1,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "post_relation_state_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "post_relation_version_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "id": "W03",
+      "description": "Legal paired controls preserve full initial result, omission, historical post and ID-only handling",
+      "observed": {
+        "online_complete_initial_exact": false,
+        "online_read_only": true,
+        "migrated_complete_initial_exact": false,
+        "legal_no_initial_exact": true,
+        "complete_post_exact": true,
+        "no_replay_writes": true,
+        "valid_initial_id_only_controlled": true,
+        "id_only_read_only": true
+      },
+      "passes": false
+    }
+  ],
+  "passed": 0,
+  "failed": 3
+}

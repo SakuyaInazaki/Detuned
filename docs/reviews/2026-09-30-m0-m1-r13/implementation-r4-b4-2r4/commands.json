@@ -1,0 +1,155 @@
+[
+  {
+    "id": 1,
+    "name": "build",
+    "command": "pnpm -r run build",
+    "exit_code": 0,
+    "stdout_file": "logs/01-build.stdout.txt",
+    "stderr_file": "logs/01-build.stderr.txt",
+    "timestamp": "2026-09-30T16:09:33.559Z"
+  },
+  {
+    "id": 2,
+    "name": "typecheck",
+    "command": "pnpm -r run typecheck",
+    "exit_code": 0,
+    "stdout_file": "logs/02-typecheck.stdout.txt",
+    "stderr_file": "logs/02-typecheck.stderr.txt",
+    "timestamp": "2026-09-30T16:09:37.501Z"
+  },
+  {
+    "id": 3,
+    "name": "lint",
+    "command": "pnpm -r run lint",
+    "exit_code": 0,
+    "stdout_file": "logs/03-lint.stdout.txt",
+    "stderr_file": "logs/03-lint.stderr.txt",
+    "timestamp": "2026-09-30T16:09:41.428Z"
+  },
+  {
+    "id": 4,
+    "name": "tests",
+    "command": "pnpm test",
+    "exit_code": 0,
+    "stdout_file": "logs/04-tests.stdout.txt",
+    "stderr_file": "logs/04-tests.stderr.txt",
+    "timestamp": "2026-09-30T16:09:45.418Z"
+  },
+  {
+    "id": 5,
+    "name": "check-legacy-input-presence",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/05-check-legacy-input-presence.stdout.txt",
+    "stderr_file": "logs/05-check-legacy-input-presence.stderr.txt",
+    "timestamp": "2026-09-30T16:09:45.868Z"
+  },
+  {
+    "id": 6,
+    "name": "check-precheck-completeness",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/06-check-precheck-completeness.stdout.txt",
+    "stderr_file": "logs/06-check-precheck-completeness.stderr.txt",
+    "timestamp": "2026-09-30T16:09:46.178Z"
+  },
+  {
+    "id": 7,
+    "name": "check-validation-pipeline",
+    "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/07-check-validation-pipeline.stdout.txt",
+    "stderr_file": "logs/07-check-validation-pipeline.stderr.txt",
+    "timestamp": "2026-09-30T16:09:46.490Z"
+  },
+  {
+    "id": 8,
+    "name": "check-b4-2-boundaries",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/08-check-b4-2-boundaries.stdout.txt",
+    "stderr_file": "logs/08-check-b4-2-boundaries.stderr.txt",
+    "timestamp": "2026-09-30T16:09:46.840Z"
+  },
+  {
+    "id": 9,
+    "name": "check-b4-1-acceptance",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/09-check-b4-1-acceptance.stdout.txt",
+    "stderr_file": "logs/09-check-b4-1-acceptance.stderr.txt",
+    "timestamp": "2026-09-30T16:09:47.183Z"
+  },
+  {
+    "id": 10,
+    "name": "check-b3-gates-expected-l03",
+    "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+    "exit_code": 1,
+    "stdout_file": "logs/10-check-b3-gates-expected-l03.stdout.txt",
+    "stderr_file": "logs/10-check-b3-gates-expected-l03.stderr.txt",
+    "timestamp": "2026-09-30T16:09:47.504Z"
+  },
+  {
+    "id": 11,
+    "name": "check-unfinished-contracts-expected-u05-u06",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+    "exit_code": 1,
+    "stdout_file": "logs/11-check-unfinished-contracts-expected-u05-u06.stdout.txt",
+    "stderr_file": "logs/11-check-unfinished-contracts-expected-u05-u06.stderr.txt",
+    "timestamp": "2026-09-30T16:09:47.772Z"
+  },
+  {
+    "id": 12,
+    "name": "check-adapters",
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/12-check-adapters.stdout.txt",
+    "stderr_file": "logs/12-check-adapters.stderr.txt",
+    "timestamp": "2026-09-30T16:09:48.062Z"
+  },
+  {
+    "id": 13,
+    "name": "check-behavior",
+    "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/13-check-behavior.stdout.txt",
+    "stderr_file": "logs/13-check-behavior.stderr.txt",
+    "timestamp": "2026-09-30T16:09:48.320Z"
+  },
+  {
+    "id": 14,
+    "name": "check-cli",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/14-check-cli.stdout.txt",
+    "stderr_file": "logs/14-check-cli.stderr.txt",
+    "timestamp": "2026-09-30T16:09:48.931Z"
+  },
+  {
+    "id": 15,
+    "name": "check-remaining",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/15-check-remaining.stdout.txt",
+    "stderr_file": "logs/15-check-remaining.stderr.txt",
+    "timestamp": "2026-09-30T16:09:49.167Z"
+  },
+  {
+    "id": 16,
+    "name": "check-invariants",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/16-check-invariants.stdout.txt",
+    "stderr_file": "logs/16-check-invariants.stderr.txt",
+    "timestamp": "2026-09-30T16:09:49.404Z"
+  },
+  {
+    "id": 17,
+    "name": "check-serve-version",
+    "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+    "exit_code": 0,
+    "stdout_file": "logs/17-check-serve-version.stdout.txt",
+    "stderr_file": "logs/17-check-serve-version.stderr.txt",
+    "timestamp": "2026-09-30T16:09:49.625Z"
+  }
+]

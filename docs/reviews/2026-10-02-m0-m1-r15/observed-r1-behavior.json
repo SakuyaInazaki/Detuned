@@ -1,0 +1,156 @@
+{
+  "reviewed_date": "2026-09-28",
+  "runtime": "v26.3.0",
+  "sqlite_journal_mode": "wal",
+  "mode": "file-backed temporary SQLite + Fastify inject",
+  "probes": [
+    {
+      "id": "R01",
+      "description": "Read-only capability cannot create a thread",
+      "expected": "403",
+      "observed": 403,
+      "passes": true
+    },
+    {
+      "id": "R02",
+      "description": "A-scoped token must not enumerate B",
+      "expected": {
+        "spaces": false,
+        "me": false
+      },
+      "observed": {
+        "spaces": false,
+        "me": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R03a",
+      "description": "HTTP rejects unknown schema properties",
+      "expected": "400/422",
+      "observed": 400,
+      "passes": true
+    },
+    {
+      "id": "R03b",
+      "description": "HTTP enforces title length <= 160",
+      "expected": "400/422",
+      "observed": 400,
+      "passes": true
+    },
+    {
+      "id": "R03c",
+      "description": "Claim without required structured fields is rejected",
+      "expected": "400/422",
+      "observed": 422,
+      "passes": true
+    },
+    {
+      "id": "R04",
+      "description": "initial_post persists its declared relation",
+      "expected": 1,
+      "observed": 1,
+      "passes": true
+    },
+    {
+      "id": "R05a",
+      "description": "Idempotency scope includes target thread",
+      "expected": "new post in thread two",
+      "observed": {
+        "status": 201,
+        "reused_first_post": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R05b",
+      "description": "Writes require a durable idempotency key",
+      "expected": "both 400/422",
+      "observed": [
+        400,
+        400
+      ],
+      "passes": true
+    },
+    {
+      "id": "R06",
+      "description": "Redaction covers revision listing and idempotent replay",
+      "expected": {
+        "normal": 410,
+        "history_leak": false,
+        "replay_leak": false
+      },
+      "observed": {
+        "normal": 410,
+        "history_leak": false,
+        "replay_leak": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R07",
+      "description": "A owner cannot redact B post through A route",
+      "expected": {
+        "status": 404,
+        "lifecycle": "active"
+      },
+      "observed": {
+        "status": 404,
+        "lifecycle": "active"
+      },
+      "passes": true
+    },
+    {
+      "id": "R08",
+      "description": "ACK cannot advance beyond persisted delivery batch",
+      "expected": "409 ACK_INVALID and no future ack_seq",
+      "observed": {
+        "status": 409,
+        "ack_is_future": false
+      },
+      "passes": true
+    },
+    {
+      "id": "R09a",
+      "description": "New filters do not silently reuse a different subscription",
+      "expected": {
+        "event_types": [
+          "post.created"
+        ],
+        "thread_ids": [
+          "thd_07dfece9-0000-4423-80bc-345011c49d9b"
+        ]
+      },
+      "observed": {
+        "event_types": [
+          "post.created"
+        ],
+        "thread_filter_matches": true
+      },
+      "passes": true
+    },
+    {
+      "id": "R09b",
+      "description": "Thread-filtered subscription excludes other thread posts",
+      "expected": false,
+      "observed": false,
+      "passes": true
+    },
+    {
+      "id": "R10",
+      "description": "Fresh initialized DB records applied migration version",
+      "expected": ">= 1",
+      "observed": 2,
+      "passes": true
+    },
+    {
+      "id": "R11",
+      "description": "Lock can recover after owning process is gone",
+      "expected": true,
+      "observed": true,
+      "passes": true
+    }
+  ],
+  "passed": 15,
+  "failed": 0
+}

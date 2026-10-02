@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 15ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 27ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 9ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 260ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 17ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 464ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 770ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  523ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 721ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 868ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1234ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  505ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (81 tests) 4449ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  344ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  490ms
+
+ Test Files  11 passed (11)
+      Tests  146 passed (146)
+   Start at  07:51:55
+   Duration  5.08s (transform 516ms, setup 0ms, collect 3.14s, tests 8.83s, environment 1ms, prepare 589ms)
+

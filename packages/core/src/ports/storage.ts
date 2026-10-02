@@ -38,8 +38,17 @@ export interface DeliveryBatchRecord {
   created_at: string;
 }
 
+export interface ThreadVersionRecord {
+  thread_id: string;
+  version: number;
+  title: string;
+  state: string;
+  created_at: string;
+}
+
 export interface StoragePort {
   transaction<T>(fn: (tx: StoragePort) => T): T;
+  getInstanceSecret(): string;
 
   // Actors & Credentials
   findActorById(id: string): Actor | null;
@@ -76,6 +85,8 @@ export interface StoragePort {
   createThread(thread: Thread): void;
   updateThread(thread: Thread): void;
   findThreadById(id: string): Thread | null;
+  getThreadVersion(threadId: string, version: number): ThreadVersionRecord | null;
+  createThreadVersion(record: ThreadVersionRecord): void;
   listThreads(spaceId: string, state?: string, limit?: number, cursor?: string | null): { threads: Thread[]; next_cursor: string | null };
 
   // Posts & Revisions
@@ -102,6 +113,7 @@ export interface StoragePort {
   listOpenChallenges(spaceId: string, targetPostId?: string, targetRevision?: number): Relation[];
   createRelationResolution(resolution: RelationResolution): void;
   findRelationResolutionById(id: string): RelationResolution | null;
+  findRelationResolutionByVersion(relationId: string, version: number): RelationResolution | null;
 
   // Artifacts
   createArtifact(artifact: Artifact): void;

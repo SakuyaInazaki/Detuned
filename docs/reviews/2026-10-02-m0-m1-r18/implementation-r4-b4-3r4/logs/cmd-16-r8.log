@@ -1,0 +1,153 @@
+=== COMMAND ===
+node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs
+
+=== STARTED AT ===
+2026-10-02T10:56:26.596Z
+
+=== FINISHED AT ===
+2026-10-02T10:56:26.931Z
+
+=== EXIT CODE ===
+0 (expected: 0)
+
+=== STDOUT ===
+{
+  "reviewed_date": "2026-09-29",
+  "runtime": "v26.3.0",
+  "fixture_note": "L01 uses ordinary HTTP requests. L02 uses a legacy-style variant accepted by the current codec, not a proven historical emitted shape. L04 uses an actual historical Post ref shape. L03/L05/L06/L07 intentionally corrupt owned test data. L08 is a supported positive control. No old binary or model was run.",
+  "probes": [
+    {
+      "id": "L01",
+      "description": "Normal space.create retry uses instance scope and returns the original result",
+      "expected": {
+        "status": 201,
+        "reopened_status": 201,
+        "same_result": true,
+        "no_extra_writes": true
+      },
+      "observed": {
+        "status": 201,
+        "error": null,
+        "reopened_status": 201,
+        "same_result": true,
+        "no_extra_writes": true
+      },
+      "passes": true
+    },
+    {
+      "id": "L02",
+      "description": "An accepted migration must not write a marker rejected by the next startup",
+      "expected": "consistent atomic refusal, or successful migration followed by successful restart with a valid marker",
+      "observed": {
+        "first_rejected": false,
+        "marker_kind": "unreplayable",
+        "marker_op_includes_target": true,
+        "second_rejected": false,
+        "unchanged_if_first_refused": false
+      },
+      "passes": true
+    },
+    {
+      "id": "L03",
+      "description": "Current schema lacking the idempotency primary key is rejected before mutation",
+      "expected": {
+        "rejected": true,
+        "unchanged": true
+      },
+      "observed": {
+        "classification": "corrupt",
+        "rejected": true,
+        "unchanged": true,
+        "duplicate_key_insert_accepted": true
+      },
+      "passes": true
+    },
+    {
+      "id": "L04",
+      "description": "Old nested relation results are recovered accurately or explicitly refused",
+      "expected": "original v1/open, or explicit non-success; never current v2/resolved as original",
+      "observed": {
+        "upgrade_rejected": false,
+        "original_version": 1,
+        "original_state": "open",
+        "replay_status": 422,
+        "replay_version": null,
+        "replay_state": null
+      },
+      "passes": true
+    },
+    {
+      "id": "L05",
+      "description": "Historical conflicts include operation timestamps, not only title and state",
+      "expected": {
+        "rejected": true,
+        "unchanged": true
+      },
+      "observed": {
+        "rejected": true,
+        "unchanged": true,
+        "original_updated_at": "2026-09-29T04:00:00.000Z",
+        "replay_status": null,
+        "replay_updated_at": null
+      },
+      "passes": true
+    },
+    {
+      "id": "L06",
+      "description": "Migration and replay reject same-space initial-post and resolution/version mismatches",
+      "expected": "migration rejects; replay is non-success and never returns a mismatched result",
+      "observed": [
+        {
+          "kind": "initial_post_wrong_thread",
+          "migration_rejected": true,
+          "status": 422,
+          "mismatched_result_returned": false
+        },
+        {
+          "kind": "resolution_version_mismatch",
+          "migration_rejected": true,
+          "status": 422,
+          "mismatched_result_returned": false
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "L07",
+      "description": "Encoder, partial legacy conversion and paired fields have no validation bypass",
+      "expected": "invalid encoder result and unpaired fields rejected; unknown operation aborts migration atomically",
+      "observed": {
+        "encoder_rejected": true,
+        "encoded_version": null,
+        "unpaired_fields_rejected": true,
+        "migration": {
+          "rejected": true,
+          "unchanged": true
+        }
+      },
+      "passes": true
+    },
+    {
+      "id": "L08",
+      "description": "Normal thread retries and recoverable full legacy results remain supported",
+      "expected": {
+        "normal_status": 201,
+        "full_legacy_status": 201,
+        "both_exact": true
+      },
+      "observed": {
+        "normal_status": 201,
+        "normal_exact": true,
+        "full_legacy_status": 201,
+        "full_legacy_exact": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 8,
+  "failed": 0
+}
+
+
+=== STDERR ===
+

@@ -1,0 +1,201 @@
+{
+  "reviewed_date": "2026-10-02",
+  "delivery_path": "docs/reviews/2026-10-01-m0-m1-r14/implementation-r4-b4-3",
+  "recorded_commands": 24,
+  "final_commands": 22,
+  "commands": [
+    {
+      "id": 1,
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 2,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 3,
+      "command": "pnpm build",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 4,
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 5,
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 6,
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 11,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 12,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 13,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 14,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 15,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 16,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 17,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 18,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 19,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 20,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 21,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 22,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 23,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 24,
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    }
+  ],
+  "before_83_products_match_r14": true,
+  "after_83_products_match_actual": true,
+  "changed_existing_products": [
+    "packages/core/src/services/idempotency-service.ts",
+    "packages/storage-sqlite/package.json",
+    "packages/storage-sqlite/src/bootstrap.ts",
+    "packages/storage-sqlite/src/schema.ts",
+    "tests/integration/m0-m1-r4-b-regression.test.ts"
+  ],
+  "additional_products_not_in_delivery_baseline": [
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+    "packages/storage-sqlite/scripts/generate-schema.mjs"
+  ],
+  "missing_final_required_commands": [],
+  "historical_script_hash_changes_from_r14": [],
+  "report_errors": [
+    "B01 lists decision.publish, evidence.attach and export.create, which are not in the implemented OperationFamily; it omits space.patch, post.withdraw and relation.reopen.",
+    "B01 formal test still does not retry all 11 families and does not call reopen under its create/resolve/reopen comment.",
+    "G/H/J/K final command IDs are 14/15/16/17, not 12/13/14/15.",
+    "SCHEMA_SQL is generated; CURRENT_SCHEMA is not the export name. SQL line comments are removed before comparison, so this is normalized equality rather than raw file byte equality.",
+    "V01/V02 now have HTTP, real migration and reopen assertions; this is confirmed. They invoke validation helpers directly, not executeIdempotent as described.",
+    "The test named B06 stores beforeSnapshot without comparing it and never reopens; B08 retry uses the same connection despite its reopened comment. Independent G03/H10/S11 have valid evidence, which must be cited precisely.",
+    "schema parity still compares index_list without index_xinfo definitions; applyMigrations still duplicates schema_migrations, instance_metadata and thread_versions DDL.",
+    "Root README and the appended B.4-3 delivery section claim completion, while docs/progress still opens with R14 and its B.4-3 phase row says next task/unimplemented."
+  ]
+}

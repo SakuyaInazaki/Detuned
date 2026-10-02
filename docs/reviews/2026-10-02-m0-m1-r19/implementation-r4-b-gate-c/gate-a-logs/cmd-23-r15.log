@@ -1,0 +1,333 @@
+=== COMMAND: node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs ===
+=== STARTED: 2026-10-02T11:56:56.117Z ===
+=== FINISHED: 2026-10-02T11:56:56.565Z ===
+=== EXPECTED EXIT: 0 ===
+=== ACTUAL EXIT: 0 ===
+=== PASSED: true ===
+--- STDOUT ---
+{
+  "reviewed_date": "2026-10-02",
+  "runtime": "v26.3.0",
+  "probes": [
+    {
+      "id": "Y01",
+      "description": "Semantic structure changes cannot masquerade as required constraints or a real FTS table",
+      "observed": [
+        {
+          "name": "partial_unique_credential_hash",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "partial_unique_credential_hash",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "partial_unique_credential_hash",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "partial_named_event_index",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "partial_named_event_index",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "partial_named_event_index",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（唯一性、partial 谓词或表达式键）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "changed_foreign_key_action",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "changed_foreign_key_action",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "changed_foreign_key_action",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少或不匹配外键约束: actor_id REFERENCES actors(id) ON UPDATE NO ACTION ON DELETE NO ACTION请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "ordinary_table_replacing_fts",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "ordinary_table_replacing_fts",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "ordinary_table_replacing_fts",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 虚拟表结构损坏: post_fts 必须为使用 fts5 的虚拟表请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Y02",
+      "description": "Existing initialization materials must prevent blank classification and credential reissuance",
+      "observed": [
+        {
+          "name": "initialized_material_without_migrations_or_actor",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "initialized_material_without_migrations_or_actor",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "initialized_material_without_migrations_or_actor",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库包含持久化初始化材料（instance_metadata）但缺失迁移记录与管理员主体。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Y03",
+      "description": "Current v2 materials with contradictory migration history reject before repair",
+      "observed": [
+        {
+          "name": "complete_v2_with_missing_v2_migration_row",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "complete_v2_with_missing_v2_migration_row",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        },
+        {
+          "name": "complete_v2_with_missing_v2_migration_row",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。数据库结构与迁移记录矛盾（包含 v2 的 thread_versions 表但缺失版本 2 迁移记录）。请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Y04",
+      "description": "True blank, supported raw schemas, real historical fixture and current instance retain healthy startup",
+      "observed": {
+        "healthy_search_status": 200,
+        "controls": [
+          {
+            "kind": "empty_file",
+            "classification": {
+              "kind": "blank"
+            },
+            "rejected": false,
+            "is_new_instance": true,
+            "issued_token": true,
+            "restarted": true,
+            "repeat_unchanged": true,
+            "current": true,
+            "correct_material_policy": true
+          },
+          {
+            "kind": "raw_v2_schema",
+            "classification": {
+              "kind": "blank"
+            },
+            "rejected": false,
+            "is_new_instance": true,
+            "issued_token": true,
+            "restarted": true,
+            "repeat_unchanged": true,
+            "current": true,
+            "correct_material_policy": true
+          },
+          {
+            "kind": "raw_v1_schema",
+            "classification": {
+              "kind": "blank"
+            },
+            "rejected": false,
+            "is_new_instance": true,
+            "issued_token": true,
+            "restarted": true,
+            "repeat_unchanged": true,
+            "current": true,
+            "correct_material_policy": true
+          },
+          {
+            "kind": "historical_v1_instance",
+            "classification": {
+              "kind": "supported_legacy",
+              "maxVersion": 1
+            },
+            "rejected": false,
+            "is_new_instance": false,
+            "issued_token": false,
+            "restarted": true,
+            "repeat_unchanged": true,
+            "current": true,
+            "correct_material_policy": true
+          },
+          {
+            "kind": "healthy_v2",
+            "classification": {
+              "kind": "current_initialized"
+            },
+            "rejected": false,
+            "is_new_instance": false,
+            "issued_token": false,
+            "restarted": true,
+            "repeat_unchanged": true,
+            "current": true,
+            "correct_material_policy": true
+          }
+        ]
+      },
+      "passes": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0
+  }
+}
+
+--- STDERR ---
+

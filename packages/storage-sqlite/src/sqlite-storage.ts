@@ -4,6 +4,7 @@ import {
   StoragePort,
   IdempotencyRecord,
   DeliveryBatchRecord,
+  ThreadVersionRecord,
 } from '@detuned/core';
 import {
   Actor,
@@ -31,10 +32,17 @@ export class SqliteStorage implements StoragePort {
   }
 
   private initPragmas(): void {
-    this.db.pragma('journal_mode = WAL');
-    this.db.pragma('synchronous = FULL');
-    this.db.pragma('foreign_keys = ON');
-    this.db.pragma('busy_timeout = 5000');
+    if (this.db.inTransaction) {
+      return;
+    }
+    try {
+      this.db.pragma('journal_mode = WAL');
+      this.db.pragma('synchronous = FULL');
+      this.db.pragma('foreign_keys = ON');
+      this.db.pragma('busy_timeout = 5000');
+    } catch {
+      // Ignore if pragmas cannot be applied in current database state
+    }
   }
 
   transaction<T>(fn: (tx: StoragePort) => T): T {
@@ -410,6 +418,13 @@ export class SqliteStorage implements StoragePort {
         thread.created_at,
         thread.updated_at
       );
+    this.createThreadVersion({
+      thread_id: thread.id,
+      version: thread.version,
+      title: thread.title,
+      state: thread.state,
+      created_at: thread.created_at,
+    });
   }
 
   updateThread(thread: Thread): void {
@@ -420,6 +435,37 @@ export class SqliteStorage implements StoragePort {
         WHERE id = ?`
       )
       .run(thread.title, thread.version, thread.state, thread.updated_at, thread.id);
+    this.createThreadVersion({
+      thread_id: thread.id,
+      version: thread.version,
+      title: thread.title,
+      state: thread.state,
+      created_at: thread.updated_at,
+    });
+  }
+
+  getThreadVersion(threadId: string, version: number): ThreadVersionRecord | null {
+    const row = this.db
+      .prepare(
+        'SELECT thread_id, version, title, state, created_at FROM thread_versions WHERE thread_id = ? AND version = ?'
+      )
+      .get(threadId, version) as any;
+    if (!row) return null;
+    return {
+      thread_id: row.thread_id,
+      version: row.version,
+      title: row.title,
+      state: row.state,
+      created_at: row.created_at,
+    };
+  }
+
+  createThreadVersion(record: ThreadVersionRecord): void {
+    this.db
+      .prepare(
+        'INSERT OR IGNORE INTO thread_versions (thread_id, version, title, state, created_at) VALUES (?, ?, ?, ?, ?)'
+      )
+      .run(record.thread_id, record.version, record.title, record.state, record.created_at);
   }
 
   findThreadById(id: string): Thread | null {
@@ -817,6 +863,20 @@ export class SqliteStorage implements StoragePort {
 
   findRelationResolutionById(id: string): RelationResolution | null {
     const row = this.db.prepare('SELECT * FROM relation_resolutions WHERE id = ?').get(id) as any;
+    if (!row) return null;
+    return {
+      id: row.id,
+      relation_id: row.relation_id,
+      version: row.version,
+      resolver_id: row.resolver_id,
+      reason_ref: JSON.parse(row.reason_ref),
+      action: row.action,
+      created_at: row.created_at,
+    };
+  }
+
+  findRelationResolutionByVersion(relationId: string, version: number): RelationResolution | null {
+    const row = this.db.prepare('SELECT * FROM relation_resolutions WHERE relation_id = ? AND version = ?').get(relationId, version) as any;
     if (!row) return null;
     return {
       id: row.id,
@@ -1370,20 +1430,10 @@ export class SqliteStorage implements StoragePort {
   }
 
   getInstanceSecret(): string {
-    try {
-      const row = this.db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get() as any;
-      if (row?.value) {
-        return row.value;
-      }
-    } catch {
-      // Table might not exist yet
+    const row = this.db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get() as any;
+    if (row?.value && typeof row.value === 'string' && row.value.trim() !== '') {
+      return row.value.trim();
     }
-    const secret = randomBytes(32).toString('hex');
-    try {
-      this.db.prepare("INSERT OR REPLACE INTO instance_metadata (key, value) VALUES ('token_secret', ?)").run(secret);
-    } catch {
-      // Ignore if table not created yet
-    }
-    return secret;
+    throw new Error('实例持久密钥缺失或未初始化。请先执行 detuned init 初始化。');
   }
 }

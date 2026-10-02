@@ -1,0 +1,302 @@
+{
+  "note": "Synchronized route inventory; all 32 enabled operations present in OpenAPI spec",
+  "routes": [
+    {
+      "method": "OPTIONS",
+      "path": "*",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/capabilities",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/spaces/:space_id",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/sessions",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/context",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/threads",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/threads",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/threads/:id",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/spaces/:space_id/threads/:id",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/threads/:id/posts",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/posts/:id",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/posts/:id/revisions",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/posts/:id/revisions",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/posts/:id/withdraw",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/relations",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/relations/:id/resolve",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/relations/:id/reopen",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/subscriptions",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/consumers/:id/poll",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/consumers/:id/ack",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/spaces/:space_id/consumers/:id",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/search",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/spaces/:space_id/views/:name",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/actors",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/credentials",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/memberships",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/spaces/:space_id/memberships/:actor_id",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/spaces/:space_id/memberships/:actor_id",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/credentials/:id/revoke",
+      "body_schema": false,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/spaces/:space_id/redactions",
+      "body_schema": true,
+      "query_schema": false,
+      "params_schema": false,
+      "headers_schema": false,
+      "openapi_present": true
+    }
+  ]
+}

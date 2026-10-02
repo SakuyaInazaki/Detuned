@@ -1,0 +1,23 @@
+$ vitest run
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 13ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (6 tests) 30ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 7ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 315ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 11ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 545ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 890ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  630ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 868ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 904ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1314ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  543ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (61 tests) 2798ms
+
+ Test Files  11 passed (11)
+      Tests  125 passed (125)
+   Start at  00:13:19
+   Duration  3.52s (transform 716ms, setup 0ms, collect 3.71s, tests 7.70s, environment 1ms, prepare 686ms)
+

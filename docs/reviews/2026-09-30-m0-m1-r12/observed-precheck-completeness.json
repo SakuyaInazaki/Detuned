@@ -1,0 +1,106 @@
+{
+  "reviewed_date": "2026-09-30",
+  "runtime": "v26.3.0",
+  "fixture_note": "Review-only synthetic stored-data corruption and internal action fault injection in owned temp SQLite files. V04 mutates an explicit timestamp of an HTTP-generated complete response. V05 has paired positive controls. No real credentials, models or network calls.",
+  "probes": [
+    {
+      "id": "V01",
+      "description": "Typed ID-only compatibility cannot hide missing revisions or known relation ownership errors",
+      "observed": [
+        {
+          "variant": "missing_post_revision",
+          "rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "wrong_relation_source",
+          "rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "nonexistent_nested_relation",
+          "rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "id": "V02",
+      "description": "Legacy explicit malformed arrays and known contradictions must not be discarded or persisted as markers",
+      "observed": [
+        {
+          "variant": "legacy_non_array_relation_ids",
+          "online_status": 201,
+          "online_relations_count": 0,
+          "migration_rejected": false,
+          "resulting_kind": "post",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "legacy_wrong_thread_before_marker",
+          "online_status": 422,
+          "online_relations_count": null,
+          "migration_rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        },
+        {
+          "variant": "legacy_duplicate_relation_ids",
+          "online_status": 422,
+          "online_relations_count": null,
+          "migration_rejected": false,
+          "resulting_kind": "unreplayable",
+          "unchanged_after_reopen": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "id": "V03",
+      "description": "Explicit null relation output fails and rolls back business/events/results",
+      "observed": {
+        "rejected": false,
+        "counts": {
+          "business": 1,
+          "events": 1,
+          "results": 1
+        },
+        "unchanged_after_reopen": false,
+        "exact_retry": false
+      },
+      "passes": false
+    },
+    {
+      "id": "V04",
+      "description": "Explicit v1 updated_at conflicting with the historical snapshot is refused atomically",
+      "observed": {
+        "migration_rejected": false,
+        "supplied_created_at": "2026-09-29T06:00:00.000Z",
+        "supplied_updated_at": "1999-01-01T00:00:00.000Z",
+        "resulting_kind": "thread.create",
+        "replay_status": 201,
+        "replay_updated_at": "2026-09-29T06:00:00.000Z",
+        "unchanged_after_reopen": false
+      },
+      "passes": false
+    },
+    {
+      "id": "V05",
+      "description": "Legal old inputs, complete history and empty relation arrays remain supported",
+      "observed": {
+        "id_only_controlled_422": true,
+        "complete_thread_exact": true,
+        "complete_patch_exact": true,
+        "no_replay_writes": true,
+        "valid_fresh_exact": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 1,
+  "failed": 4
+}

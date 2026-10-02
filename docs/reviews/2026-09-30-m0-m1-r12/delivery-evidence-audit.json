@@ -1,0 +1,134 @@
+{
+  "date": "2026-09-30",
+  "command_count": 31,
+  "missing_manifest_output_files": [],
+  "report_missing_output_paths": [
+    "logs/07-check-validation-pipeline.stdout.txt",
+    "logs/08-vitest-regression.stdout.txt",
+    "logs/09-pnpm-test-all.stdout.txt",
+    "logs/02-typecheck.stdout.txt",
+    "logs/03-lint.stdout.txt",
+    "logs/01-build.stdout.txt",
+    "logs/24-probe-r10.stdout.txt",
+    "logs/23-probe-r9.stdout.txt",
+    "logs/22-probe-r8.stdout.txt",
+    "logs/20-probe-r7.stdout.txt",
+    "logs/19-probe-r6.stdout.txt",
+    "logs/18-probe-r5.stdout.txt",
+    "logs/17-probe-r4.stdout.txt",
+    "logs/15-probe-r3.stdout.txt",
+    "logs/16-probe-r3-serve.stdout.txt",
+    "logs/13-probe-r2.stdout.txt",
+    "logs/14-probe-r2-cli.stdout.txt",
+    "logs/11-probe-r1-behavior.stdout.txt",
+    "logs/12-probe-r1-adapters.stdout.txt"
+  ],
+  "before_product_hashes_equal_R11_input": true,
+  "after_product_hashes_equal_R12_input": true,
+  "before_tracked_diff_hash_equal_R11_input": false,
+  "note_on_diff": "R11 edited documentation after capturing its input baseline; different overall diff hashes do not imply different product inputs. Do not claim the overall diff hashes match.",
+  "actual_R1_R3_counts": {
+    "behavior": 15,
+    "adapters": 5,
+    "remaining": 12,
+    "cli": 3,
+    "invariants": 10,
+    "serve": 1
+  },
+  "implementation_manifest_contains_all_R1_R3_commands": true,
+  "report_wrong_operation_names": [
+    "post.patch",
+    "membership.create",
+    "membership.patch",
+    "membership.delete"
+  ],
+  "actual_lint_command": "pnpm -r run lint",
+  "U06_actual": "truncated HTTP response JSON, not request body",
+  "L02_3c_full_snapshot_present": true,
+  "latest_actual_commands": [
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/18-probe-r5-gaps.stdout.txt",
+      "stderr_file": "logs/18-probe-r5-gaps.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/19-probe-r6-boundaries.stdout.txt",
+      "stderr_file": "logs/19-probe-r6-boundaries.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/20-probe-r7-completeness.stdout.txt",
+      "stderr_file": "logs/20-probe-r7-completeness.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/21-probe-r7-fixture.stdout.txt",
+      "stderr_file": "logs/21-probe-r7-fixture.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 1,
+      "stdout_file": "logs/22-probe-r8-gates.stdout.txt",
+      "stderr_file": "logs/22-probe-r8-gates.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/23-probe-r9-acceptance.stdout.txt",
+      "stderr_file": "logs/23-probe-r9-acceptance.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/24-probe-r10-boundaries.stdout.txt",
+      "stderr_file": "logs/24-probe-r10-boundaries.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "stdout_file": "logs/25-probe-r11-pipeline.stdout.txt",
+      "stderr_file": "logs/25-probe-r11-pipeline.stderr.txt"
+    },
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "stdout_file": "logs/26-final-build.stdout.txt",
+      "stderr_file": "logs/26-final-build.stderr.txt"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "stdout_file": "logs/27-final-typecheck.stdout.txt",
+      "stderr_file": "logs/27-final-typecheck.stderr.txt"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "stdout_file": "logs/28-final-lint.stdout.txt",
+      "stderr_file": "logs/28-final-lint.stderr.txt"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "stdout_file": "logs/29-final-test-all.stdout.txt",
+      "stderr_file": "logs/29-final-test-all.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/implementation-r4-b4-2r2/generate-baseline.mjs baseline-after.json",
+      "exit_code": 0,
+      "stdout_file": "logs/30-generate-baseline-after.stdout.txt",
+      "stderr_file": "logs/30-generate-baseline-after.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/implementation-r4-b4-2r2/generate-baseline.mjs baseline-after.json",
+      "exit_code": 0,
+      "stdout_file": "logs/31-update-baseline-after.stdout.txt",
+      "stderr_file": "logs/31-update-baseline-after.stderr.txt"
+    }
+  ]
+}

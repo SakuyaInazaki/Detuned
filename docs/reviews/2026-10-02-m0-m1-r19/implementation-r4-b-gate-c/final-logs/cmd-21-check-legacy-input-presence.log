@@ -1,0 +1,140 @@
+{
+  "reviewed_date": "2026-09-30",
+  "runtime": "v26.3.0",
+  "fixture_note": "Synthetic stored-result corruption in owned temporary SQLite databases; HTTP-generated valid fixtures and fixed clock. No product edits, real data or model calls.",
+  "probes": [
+    {
+      "id": "W01",
+      "description": "Legacy initial_post malformed envelopes, explicit revisions and orphan pairs must not disappear or default to v1",
+      "observed": [
+        {
+          "variant": "initial_revision_string",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_post_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_post_empty_object",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "orphan_initial_revision_and_relations",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "W02",
+      "description": "Explicit null legacy fields must fail before alias/default selection or missing-history markers",
+      "observed": [
+        {
+          "variant": "initial_relations_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "initial_relation_ids_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "post_relation_state_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "post_relation_version_null",
+          "online_status": 422,
+          "online_error": "RESYNC_REQUIRED",
+          "online_initial_post_present": false,
+          "online_initial_revision": null,
+          "online_read_only": true,
+          "migration_rejected": true,
+          "resulting_kind": null,
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "W03",
+      "description": "Legal paired controls preserve full initial result, omission, historical post and ID-only handling",
+      "observed": {
+        "online_complete_initial_exact": true,
+        "online_initial_diff_paths": [],
+        "online_read_only": true,
+        "migrated_complete_initial_exact": true,
+        "migrated_initial_diff_paths": [],
+        "legal_no_initial_exact": true,
+        "complete_post_exact": true,
+        "no_replay_writes": true,
+        "valid_initial_id_only_controlled": true,
+        "id_only_read_only": true,
+        "fresh_retry_status": 201,
+        "fresh_retry_diff_paths": [],
+        "first_initial_fields": [
+          "post",
+          "revision"
+        ],
+        "retry_initial_fields": [
+          "post",
+          "revision"
+        ]
+      },
+      "passes": true
+    }
+  ],
+  "passed": 3,
+  "failed": 0
+}
+
+--- STDERR ---

@@ -1,0 +1,69 @@
+{
+  "recorded_at": "2026-10-02T07:03:17.990209+00:00",
+  "checks": [
+    {
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 2,
+      "stdout": "packages/storage-sqlite/src/schema.ts:3665: new blank line at EOF.\n",
+      "stderr": "",
+      "scope": "full workspace, including preexisting implementation",
+      "known_preexisting_issue": {
+        "path": "packages/storage-sqlite/src/schema.ts",
+        "unchanged_since_review_baseline": true,
+        "issue": "Additional newline at EOF, line 3665",
+        "disposition": "Recorded; product file not modified during review."
+      }
+    },
+    {
+      "check": "local Markdown targets",
+      "documents": 7,
+      "checked_links": 151,
+      "missing": [],
+      "passed": true
+    },
+    {
+      "check": "all command output files exist",
+      "count": 26,
+      "missing": [],
+      "passed": true
+    },
+    {
+      "check": "review JSON parsing",
+      "count": 28,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "check": "review status document diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "README.md",
+        "docs/progress.md",
+        "docs/reviews/README.md"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "scope": "review"
+    }
+  ],
+  "review_scope_checks_passed": true,
+  "full_workspace_diff_check_passed": false
+}

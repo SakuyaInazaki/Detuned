@@ -1,0 +1,15 @@
+file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:366
+        throw new Error(`历史幂等记录语义校验失败 (op=${operation}, key=${key}): ${err.message}`);
+              ^
+
+Error: 历史幂等记录语义校验失败 (op=thread.create, key=original-thread): 引用的主题历史版本不存在。
+    at migrateSingleRef (file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:366:15)
+    at migrateIdempotencyRecords (file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:383:26)
+    at applyMigrations (file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:419:9)
+    at file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:443:9
+    at sqliteTransaction (/Users/sakimi/Desktop/Detuned/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24)
+    at bootstrapDatabase (file:///Users/sakimi/Desktop/Detuned/packages/storage-sqlite/dist/bootstrap.js:504:12)
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:89:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.3.0

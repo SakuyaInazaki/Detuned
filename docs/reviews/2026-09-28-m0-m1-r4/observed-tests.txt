@@ -1,0 +1,28 @@
+$ vitest run
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/storage-sqlite/tests/storage.test.ts (4 tests) 39ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 29ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 11ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 11ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 442ms
+   ✓ Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions  327ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 686ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  313ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1394ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  514ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  870ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1480ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1656ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T01: An immediate resolve retry preserves its immutable resolution result  323ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  504ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 2116ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay  322ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  769ms
+
+ Test Files  10 passed (10)
+      Tests  62 passed (62)
+   Start at  16:21:12
+   Duration  3.19s (transform 798ms, setup 0ms, collect 4.84s, tests 7.87s, environment 6ms, prepare 1.24s)
+

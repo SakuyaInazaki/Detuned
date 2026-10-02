@@ -1,0 +1,147 @@
+{
+  "reviewed_date": "2026-10-01",
+  "delivery_path": "docs/reviews/2026-09-30-m0-m1-r13/implementation-r4-b4-2r4",
+  "commands_count": 17,
+  "commands": [
+    {
+      "id": 1,
+      "command": "pnpm -r run build",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 2,
+      "command": "pnpm -r run typecheck",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 3,
+      "command": "pnpm -r run lint",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 4,
+      "command": "pnpm test",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 5,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 6,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 7,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 8,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 9,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 10,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 11,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 12,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 13,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 14,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 15,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 16,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    },
+    {
+      "id": 17,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "stdout_exists": true,
+      "stderr_exists": true
+    }
+  ],
+  "missing_required_probe_commands": [
+    "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+    "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+    "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+    "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs"
+  ],
+  "before_products_match_r13": true,
+  "after_products_match_r14": true,
+  "before_overall_diff_matches_r13": false,
+  "after_overall_diff_matches_r14": true,
+  "changed_products": [
+    "packages/core/src/services/idempotency-service.ts",
+    "tests/integration/m0-m1-r4-b-regression.test.ts"
+  ],
+  "report_corrections": [
+    "G/H/J/K probes are missing from implementation commands; R14 independently reran all four and passed.",
+    "Formal V01/V02 remain direct helper toThrow checks; the requested real HTTP/migration/reopen transfer is not done. Formal W01/W02 do provide real two-entry rollback checks.",
+    "Logical snapshots compare schema and rows, not physical database bytes.",
+    "Root pnpm build/typecheck/lint and recursive commands are equivalent here; pnpm test and test:all both use vitest run. This is not an execution omission."
+  ],
+  "raw_logs_present": true
+}

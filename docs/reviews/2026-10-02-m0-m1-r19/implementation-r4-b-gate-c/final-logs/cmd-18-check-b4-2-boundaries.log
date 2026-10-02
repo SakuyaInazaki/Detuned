@@ -1,0 +1,145 @@
+{
+  "reviewed_date": "2026-09-29",
+  "runtime": "v26.3.0",
+  "fixture_note": "Owned synthetic data. P01/P02/P03 contain deliberately inconsistent refs. P04 is an accepted missing-time legacy-style variant, not a proven released-binary output. P05 supplies malformed encoder inputs. P06 is a positive control. No model/network calls or real credentials.",
+  "probes": [
+    {
+      "id": "P01",
+      "description": "Nested refs must bind to the result source and to a provable historical version",
+      "observed": [
+        {
+          "variant": "wrong_source_post",
+          "online_status": 422,
+          "migration_rejected": true,
+          "returned_wrong_source": false,
+          "returned_version": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "future_nested_version",
+          "online_status": 422,
+          "migration_rejected": true,
+          "returned_wrong_source": false,
+          "returned_version": null,
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "P02",
+      "description": "Every migration early return validates the original operation, shape and known entity bindings",
+      "observed": [
+        {
+          "variant": "typed_post_cached_body",
+          "migration_rejected": true,
+          "resulting_kind": "post",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "typed_post_duplicate_ids",
+          "migration_rejected": true,
+          "resulting_kind": "post",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "known_operation_wrong_kind",
+          "migration_rejected": true,
+          "resulting_kind": "relation.create",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "invalid_thread_version_zero",
+          "migration_rejected": true,
+          "resulting_kind": "thread.patch",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "wrong_thread_target",
+          "migration_rejected": true,
+          "resulting_kind": "thread.patch",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "P03",
+      "description": "Legacy online replay does not bypass target binding or replace historical updated_at",
+      "observed": {
+        "wrong_target": {
+          "online_status": 422,
+          "returned_wrong_thread": false,
+          "migration_rejected": true,
+          "no_mutation": true
+        },
+        "timestamps": {
+          "original_updated_at": "2026-09-29T06:00:00.000Z",
+          "online_status": 201,
+          "online_updated_at": "2026-09-29T06:00:00.000Z",
+          "after_migration_status": 201,
+          "after_migration_exact": true,
+          "online_exact": true
+        }
+      },
+      "passes": true
+    },
+    {
+      "id": "P04",
+      "description": "A missing timestamp is recovered from evidence or refused, never replaced with wall time",
+      "observed": {
+        "migration_rejected": true,
+        "unchanged_if_refused": true,
+        "original_updated_at": "2026-09-29T06:01:00.000Z",
+        "persisted_version_time": null,
+        "replay_status": null,
+        "replay_updated_at": null
+      },
+      "passes": true
+    },
+    {
+      "id": "P05",
+      "description": "The new encoder rejects malformed required states/versions rather than defaulting them",
+      "observed": [
+        {
+          "variant": "invalid_relation_state",
+          "rejected": true,
+          "encoded_state": null,
+          "encoded_version": null
+        },
+        {
+          "variant": "non_numeric_relation_version",
+          "rejected": true,
+          "encoded_state": null,
+          "encoded_version": null
+        },
+        {
+          "variant": "invalid_nested_state",
+          "rejected": true,
+          "encoded_state": null,
+          "encoded_version": null
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "P06",
+      "description": "Modern and recoverable full legacy results still replay exactly after later changes and restart",
+      "observed": {
+        "modern_status": 201,
+        "modern_exact": true,
+        "first_start_succeeds": true,
+        "second_start_succeeds": true,
+        "full_legacy_post_exact": true,
+        "full_legacy_thread_exact": true,
+        "full_legacy_patch_exact": true,
+        "no_replay_mutation": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 6,
+  "failed": 0
+}
+
+--- STDERR ---

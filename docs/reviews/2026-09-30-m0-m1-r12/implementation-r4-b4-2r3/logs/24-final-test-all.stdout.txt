@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 24ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (6 tests) 30ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 12ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 389ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 8ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 673ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  302ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1182ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  369ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  806ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1146ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1333ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T01: An immediate resolve retry preserves its immutable resolution result  311ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  331ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1861ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay  314ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  764ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (58 tests) 3185ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All implemented operations encode and reconstruct typed versioned references without arbitrary JSON fallback  348ms
+
+ Test Files  11 passed (11)
+      Tests  122 passed (122)
+   Start at  23:14:55
+   Duration  4.00s (transform 899ms, setup 0ms, collect 4.15s, tests 9.84s, environment 2ms, prepare 1.00s)
+

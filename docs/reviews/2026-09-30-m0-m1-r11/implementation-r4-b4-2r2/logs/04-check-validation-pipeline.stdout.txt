@@ -1,0 +1,134 @@
+{
+  "reviewed_date": "2026-09-30",
+  "runtime": "v26.3.0",
+  "fixture_note": "Owned synthetic HTTP data/temp SQLite; Q01/Q02 damage stored inputs, Q03 removes only updated_at from a generated legacy-style response (not asserted to be released-binary output), Q04 injects invalid internal action output, Q05 has paired controls. No real credentials, model calls or network.",
+  "probes": [
+    {
+      "id": "Q01",
+      "description": "Incomplete prevalidation still converts damaged typed refs into accepted markers",
+      "observed": [
+        {
+          "variant": "missing_required_revision",
+          "rejected": true,
+          "resulting_kind": "post",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "wrong_post_thread_with_id_only_relations",
+          "rejected": true,
+          "resulting_kind": "post",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "compact_relation_missing_entity",
+          "rejected": true,
+          "resulting_kind": "relation.create",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "relations_without_initial_post",
+          "rejected": true,
+          "resulting_kind": "thread.create",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Q02",
+      "description": "Legacy normalizers must reject malformed supplied values before defaulting or coercing them",
+      "observed": [
+        {
+          "variant": "legacy_invalid_nested_state",
+          "online_status": 422,
+          "online_version": null,
+          "online_nested_state": null,
+          "migration_rejected": true,
+          "normalized_revision": {
+            "post_id": "pst_fb3227b5-523e-4e7d-890e-db7c3565cd0f",
+            "revision": 1,
+            "title": "R10 note",
+            "summary": "Synthetic fixture",
+            "body": "nested source",
+            "tags": [],
+            "structured": {},
+            "content_hash": "7d44a16a0bdfb0bf891cdc482bac4f4c3c84ce9c4676dba8623df33622bff63a",
+            "editor_id": "act_admin_9b3f1877ed18",
+            "created_at": "2026-09-29T06:00:00.000Z"
+          },
+          "normalized_state": "not-a-state",
+          "unchanged_after_reopen": true
+        },
+        {
+          "variant": "legacy_invalid_supplied_revision",
+          "online_status": 422,
+          "online_version": null,
+          "online_nested_state": null,
+          "migration_rejected": true,
+          "normalized_revision": "not-a-revision",
+          "normalized_state": "open",
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Q03",
+      "description": "Missing historical patch updated_at may be refused, but cannot borrow thread created_at",
+      "observed": {
+        "migration_rejected": true,
+        "unchanged_if_refused": true,
+        "thread_created_at": "2026-09-29T06:00:00.000Z",
+        "real_patch_updated_at": "2026-09-29T06:01:00.000Z",
+        "persisted_version_time": null,
+        "replay_status": null,
+        "replay_updated_at": null
+      },
+      "passes": true
+    },
+    {
+      "id": "Q04",
+      "description": "Invalid action output is rejected before persistence, with business/events/results rolled back",
+      "observed": {
+        "encoder": [
+          {
+            "variant": "non_array_relations",
+            "rejected": true,
+            "code": "VALIDATION_ERROR"
+          },
+          {
+            "variant": "malformed_initial_post",
+            "rejected": true,
+            "code": "VALIDATION_ERROR"
+          }
+        ],
+        "transaction": {
+          "rejected": true,
+          "error_code": "VALIDATION_ERROR",
+          "business_rows": 0,
+          "event_rows": 0,
+          "result_rows": 0,
+          "unchanged_after_reopen": true,
+          "exact_replay": null
+        }
+      },
+      "passes": true
+    },
+    {
+      "id": "Q05",
+      "description": "Positive controls prevent accepting fixes that reject legal writes or break semantic rollback",
+      "observed": {
+        "semantic_failure_rolls_back": true,
+        "valid_fresh_action_and_replay": true,
+        "modern_nested_history_exact": true,
+        "relation_create_can_reuse_resolved_v2": true,
+        "direct_exact": true,
+        "after_restart_exact": true,
+        "no_replay_writes": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 5,
+  "failed": 0
+}

@@ -107,7 +107,8 @@ export class SpaceService {
           created_at: now,
         });
 
-        return { space, revision };
+        const createdSpace = tx.findSpaceById(spaceId) ?? space;
+        return { space: createdSpace, revision };
       }
     ).data;
   }

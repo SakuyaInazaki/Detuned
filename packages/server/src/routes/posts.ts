@@ -10,6 +10,7 @@ import {
   ErrorCode,
 } from '@detuned/protocol';
 import { PostService, AuthenticatedContext, AuthService } from '@detuned/core';
+import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
 
 export const postRoutes: FastifyPluginAsync = async (app) => {
   const postService = (app as any).postService as PostService;
@@ -45,8 +46,9 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
   app.get('/spaces/:space_id/posts/:id', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id, id } = req.params as { space_id: string; id: string };
-    const query = req.query as { revision?: string };
-    const rev = query.revision ? parseInt(query.revision, 10) : undefined;
+    const query = req.query as { revision?: unknown };
+    validateAllowedQueryParams(query, ['revision']);
+    const rev = parseIntegerQuery(query?.revision, 'revision', { min: 1 });
 
     const result = postService.getPost(auth, space_id, id, rev);
     return {
@@ -66,10 +68,12 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
       throw new DetunedError(ErrorCode.NOT_FOUND, '帖子不存在。', 404);
     }
 
-    const query = req.query as { limit?: string; cursor?: string };
-    const limit = query.limit ? parseInt(query.limit, 10) : 20;
+    const query = req.query as { limit?: unknown; cursor?: unknown };
+    validateAllowedQueryParams(query, ['limit', 'cursor']);
+    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 20 }) ?? 20;
+    const cursor = parseStringQuery(query?.cursor, 'cursor');
 
-    const result = storage.listPostRevisions(id, limit, query.cursor);
+    const result = storage.listPostRevisions(id, limit, cursor);
     return {
       api_version: '1',
       request_id: req.id,

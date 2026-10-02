@@ -1,0 +1,64 @@
+{
+  "baseline_before_count": 88,
+  "baseline_before_matches_previous": true,
+  "baseline_after_count": 89,
+  "baseline_after_mismatches": [],
+  "changed_existing_product_files": [
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+    "packages/storage-sqlite/scripts/generate-schema.mjs",
+    "packages/storage-sqlite/src/schema.ts",
+    "packages/storage-sqlite/tests/storage.test.ts",
+    "tests/integration/m0-m1-r4-b-regression.test.ts"
+  ],
+  "new_product_files": [
+    "packages/storage-sqlite/scripts/extract-schema-requirements.mjs"
+  ],
+  "historical_changed": [],
+  "previous_review_changed": [
+    "docs/reviews/2026-10-02-m0-m1-r17/observed-profile-and-fts.json"
+  ],
+  "implementation_files": [
+    "README.md",
+    "baseline-after.json",
+    "baseline-before.json",
+    "generate-baseline.mjs",
+    "observed-25-commands.json",
+    "run-all-25.mjs"
+  ],
+  "command_count": 25,
+  "command_set_matches_expected": true,
+  "independent_exit_disagreements": [],
+  "command_log_format": {
+    "fields": [
+      "id",
+      "command",
+      "desc",
+      "expectedExit",
+      "actualExit",
+      "passed",
+      "startedAt",
+      "finishedAt",
+      "stdoutSample",
+      "stderrSample"
+    ],
+    "samples_limited_to_chars": 500,
+    "raw_stdout_stderr_files_present": [],
+    "note": "run-all-25.mjs only saves first 500 characters of each stream; implementation folder has no per-command raw logs. R18 independent rerun preserves complete streams."
+  },
+  "overwritten_previous_observation": {
+    "path": "docs/reviews/2026-10-02-m0-m1-r17/observed-profile-and-fts.json",
+    "hash_expected_from_r17_integrity": "2d21046f8ccf75cd52d1b4aa396b2b67438f7e3ca954457c8c256cab42228815",
+    "hash_observed_at_start_of_r18": "67b0c7e3a4b8435c3b6eb6d474950c78392aafe1686c9910d80a18b6aab75308",
+    "matches": false,
+    "current_summary": {
+      "passed": 4,
+      "total": 4
+    },
+    "r17_reported_original_summary": {
+      "passed": 1,
+      "total": 4
+    },
+    "r17_script_unchanged": true,
+    "action": "Preserved current bytes; mismatch recorded. Exact original bytes unavailable in reviewed delivery."
+  }
+}

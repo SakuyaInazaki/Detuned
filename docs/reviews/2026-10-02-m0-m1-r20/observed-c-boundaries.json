@@ -1,0 +1,386 @@
+{
+  "probes": [
+    {
+      "id": "AC01",
+      "name": "C01 query/body/reference validation rejects without side effects",
+      "passes": false,
+      "cases": [
+        {
+          "name": "unknown_query",
+          "status": 200,
+          "code": null,
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "duplicate_cursor",
+          "status": 500,
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "duplicate_tags",
+          "status": 500,
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "invalid_state",
+          "status": 200,
+          "code": null,
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "explicit_empty_revision",
+          "status": 200,
+          "code": null,
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "missing_actor_reference",
+          "status": 500,
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "malformed_json",
+          "status": 500,
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "state_unchanged": true,
+          "passes": false
+        },
+        {
+          "name": "revoke_unknown_body",
+          "status": 200,
+          "credential_revoked": true,
+          "passes": false
+        },
+        {
+          "name": "client_poll_omitted_optional_query",
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "VALIDATION_ERROR",
+            "status": 400,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "body must be object"
+          },
+          "explicit_empty_object_resolved": true,
+          "passes": false
+        }
+      ],
+      "positive_status": 200
+    },
+    {
+      "id": "AC02",
+      "name": "C02 validates known successful envelope fields",
+      "passes": false,
+      "cases": [
+        {
+          "name": "wrong_api_version",
+          "resolved": true,
+          "value": {
+            "data": {}
+          },
+          "passes": false
+        },
+        {
+          "name": "null_request_id",
+          "resolved": true,
+          "value": {
+            "data": {}
+          },
+          "passes": false
+        },
+        {
+          "name": "object_request_id",
+          "resolved": true,
+          "value": {
+            "data": {}
+          },
+          "passes": false
+        },
+        {
+          "name": "error_and_data",
+          "resolved": true,
+          "value": {
+            "data": null
+          },
+          "passes": false
+        }
+      ],
+      "positive": {
+        "resolved": true,
+        "value": {
+          "data": false
+        }
+      }
+    },
+    {
+      "id": "AC03",
+      "name": "C02 preserves server errors independently of message wording",
+      "passes": false,
+      "cases": [
+        {
+          "message": "revision conflict",
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "REVISION_CONFLICT",
+            "status": 409,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "revision conflict"
+          },
+          "passes": true
+        },
+        {
+          "message": "transaction aborted because revision changed",
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "AC04",
+      "name": "C02 network/status retry policy and Retry-After",
+      "passes": false,
+      "cases": [
+        {
+          "mode": "fetch_cause_econnrefused",
+          "calls": 1,
+          "keys": [
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [],
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "TEMPORARILY_UNAVAILABLE",
+            "status": 503,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "网络或服务不可用: fetch failed"
+          },
+          "passes": false
+        },
+        {
+          "mode": "retry_after_503",
+          "calls": 2,
+          "keys": [
+            "r20-stable-key",
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [
+            1000
+          ],
+          "resolved": true,
+          "value": {
+            "data": {
+              "ok": true
+            }
+          },
+          "passes": false
+        },
+        {
+          "mode": "retryable_400",
+          "calls": 2,
+          "keys": [
+            "r20-stable-key",
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [
+            1000
+          ],
+          "resolved": true,
+          "value": {
+            "data": {
+              "ok": true
+            }
+          },
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "AC05",
+      "name": "C02 cancellation phases, final listener cleanup, and timeout positive controls",
+      "passes": true,
+      "cases": [
+        {
+          "phase": "before_request",
+          "calls": 0,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "headers",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "body",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "backoff",
+          "calls": 1,
+          "backoffReached": true,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "timeout",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "TimeoutError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": true,
+            "isDetunedError": false,
+            "message": "Request timed out after 5ms"
+          },
+          "passes": true
+        }
+      ]
+    },
+    {
+      "id": "AC06",
+      "name": "C03 registered Pi command/tool controlled positive and failure paths",
+      "passes": true,
+      "cases": [
+        {
+          "hasUI": true,
+          "name": "forum-check",
+          "outputs": [],
+          "notifications": [
+            [
+              "Detuned API 正常。版本: test, API: v1",
+              "info"
+            ]
+          ],
+          "passes": true
+        },
+        {
+          "hasUI": true,
+          "name": "forum-status",
+          "outputs": [],
+          "notifications": [
+            [
+              "Detuned 已连接。当前身份: Local (local-actor), 可见空间: 0",
+              "info"
+            ]
+          ],
+          "passes": true
+        },
+        {
+          "hasUI": false,
+          "name": "forum-check",
+          "outputs": [
+            {
+              "channel": "log",
+              "text": "[forum-check] Detuned API 正常。版本: test, API: v1"
+            }
+          ],
+          "notifications": [],
+          "passes": true
+        },
+        {
+          "hasUI": false,
+          "name": "forum-status",
+          "outputs": [
+            {
+              "channel": "log",
+              "text": "[forum-status] Detuned 已连接。当前身份: Local (local-actor), 可见空间: 0"
+            }
+          ],
+          "notifications": [],
+          "passes": true
+        }
+      ],
+      "malformed_json_tool": {
+        "resolved": false,
+        "error": {
+          "name": "DetunedError",
+          "code": "VALIDATION_ERROR",
+          "status": 200,
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": true,
+          "message": "响应体 JSON 解析失败: Unexpected end of JSON input"
+        }
+      },
+      "scope": "registered extension callbacks only; not real host certification"
+    }
+  ],
+  "passed": 2,
+  "failed": 4
+}

@@ -8,7 +8,7 @@
 - `Authorization: Bearer <token>`，身份由服务器解析。Web 另用同源会话 cookie，最终转换为同一 actor。
 - 业务创建/修改需要 `Idempotency-Key`；CLI/MCP/Pi 的字段名为 `request_key`。一次逻辑写入的全部重试复用同一键，改动内容须换键。
 - 写入对象使用 `expected_revision` 或 `expected_version`；禁止最后写入覆盖。
-- 请求 schema 拒绝未知属性；客户端忽略未知响应属性。新增错误码要保持可读 message 和 retryable。
+- 请求 schema 拒绝未知属性；所有 GET 接口严格校验允许的 query 参数白名单，拒绝未知 query 参数（如 `?bogus=1`）；禁止单值标量查询参数（如 limit, cursor, revision 等）重复指定；tags 采用逗号分隔 CSV 字符串且不可作为数组参数重复指定；状态过滤参数严格受限于已知枚举（如 threads state 仅允许 open / archived）；显式空值参数如 `?revision=` 视为非法输入返回 400 VALIDATION_ERROR，仅当参数缺省省略时允许采用默认值。未声明正文的写接口（如 credentials revoke）严格禁止传入未知正文属性。客户端忽略未知响应属性。新增错误码要保持可读 message 和 retryable。
 - 列表 `limit` 默认 20、最大 100。分页游标绑定 actor、space、过滤条件及排序，用服务端签名/加密的标准库实现或数据库随机句柄；不能信任客户端自行编码的偏移。
 - 长轮询最长 25 秒；其他操作默认超时 30 秒。超时后写入可能已提交，不得直接产生新 request_key 重试。
 
@@ -112,11 +112,19 @@ MCP 使用结构化结果，并附有限的文本 JSON 摘要兼容只消费文�
 
 幂等唯一键：`(actor_id, space_id, operation, request_key)`。同键+同规范化请求返回第一次结果引用；同键+不同请求返回 409 `IDEMPOTENCY_CONFLICT`。请求 hash 使用统一规范化 JSON；actor 不从正文参与伪造。
 
-operation 包含实际目标资源和动作；request hash 包含业务正文与 expected_revision/version，排除 request_id、request_key 和传输诊断/session 元数据。换会话重放同一逻辑写入不应因新的 session_id 变成冲突；成功记录仍归属首次提交的会话。
+operation 包含实际目标资源和动作（按 11 操作族严格关联）；request hash 包含业务正文与 expected_revision/version，排除 request_id、request_key 和传输诊断/session 元数据。换会话重放同一逻辑写入不应因新的 session_id 变成冲突；成功记录仍归属首次提交的会话。
 
 v0.1 不自动清理幂等记录。只缓存对象引用与版本，重放时重新鉴权和应用脱敏；不得从缓存返回已撤权或已脱敏正文。权限判断先于幂等重放。身份凭据轮换后，同 actor 可继续原键；不同 actor 不继承他人的结果。
 
-client 对网络失败、429、503 可指数退避加抖动，最多 3 次，遵守 Retry-After。400/401/403/404/409/413/422 不盲目自动重试。鉴权失效停止后台轮询并提示重新配置。客户端 abort 要传到 HTTP，服务端提交已完成则仍以幂等结果为准。
+写操作编码器（`extractResultRef`）与在线/迁移规范化（`normalizeLegacyResultRef`）共用校验规则：显式提供的非法可选字段（如非数组 relations 或损坏 initial_post）在编码时严格抛出 400 `VALIDATION_ERROR` 并回滚业务；旧版记录中显式提供的非法修订号、非法嵌套状态、显式 null 或缺失初始帖子但包含悬空修订/关系字段在在线重放或迁移时严格返回 422 `RESYNC_REQUIRED` / 终止迁移，绝不默认纠偏或降级为不可重放标记；对旧版 relation 记录执行降级前强校验，若引用的 relation 版本严格大于数据库已知最大版本（`v > rel.version`）或与已知决议历史矛盾，一律拒绝静默降级为 marker，必须返回 422 `RESYNC_REQUIRED` 或触发迁移事务回滚；历史主题 patch 版本时间仅使用合法 `updated_at`，禁止借用出生时间 `created_at`；重放 `thread.create` 初始帖严格保真原始 HTTP 响应形状，在未声明或未存储嵌套关系时绝不凭空注入 `relations: []`。服务启动时执行基于单一 DDL 来源（`schema.sql`）的物理结构强校验，缺失核心主键（如 `idempotency_records` 复合主键）或其他关键约束立即拒绝启动。
+
+client 对网络失败、429、503 可指数退避加抖动，最多 3 次（即 1 次初始尝试 + 最多 `maxRetries` 次重试），重用初始 `Idempotency-Key`。若服务端返回 `Retry-After` 头，客户端优先遵守调度等待。400/401/403/404/409/413/422 客户端错误状态码绝对不进行重试，即使服务端响应体包含 `retryable: true` 亦不得重试。允许重试的网络错误涵盖 Node 原生 fetch 的 `err.cause` 状态（包含 `ECONNREFUSED`、`ECONNRESET`、`ENOTFOUND`、`ETIMEDOUT` 等）。
+
+客户端信封校验与错误分类契约：
+- HTTP 200/201 成功响应必须具备 `api_version === '1'`、非空字符串 `request_id` 以及 `data` 字段，且不可同时包含 `error` 字段。对格式非法、缺少必需字段或 JSON 解析失败的响应抛出 `ClientProtocolError`，不伪装成服务端 `DetunedError(VALIDATION_ERROR)`。严格保留 `data: false/null/0/[]/""` 等合法 falsy 值并兼容未知的顶层前向字段。
+- 错误分类严格独立于 message 文本：对于 409 `REVISION_CONFLICT`（无论错误描述是否包含 aborted 等字样），客户端必须完整保留服务端 DetunedError，绝不可通过消息内容猜词将其转为 `UserAbortError`。
+- 退避与定时器管理：客户端必须在每次请求结束及每次退避等待后彻底清理定时器和 abort 监听器，杜绝内存泄漏。
+鉴权失效停止后台轮询并提示重新配置。客户端 abort 要传到 HTTP，服务端提交已完成则仍以幂等结果为准。
 
 ## 5. 可靠增量消费：首版采用单个待确认批次
 
@@ -169,6 +177,7 @@ forum_read 同样接受上述 max_bytes；post 正文可续读，thread 返回�
 | 410 | CONTENT_REDACTED | 显示墓碑；清理本地缓存 |
 | 413 | PAYLOAD_TOO_LARGE | 缩小内容或上传附件 |
 | 422 | QUERY_TOO_BROAD / CHECK_MISMATCH | 缩小查询或纠正检查目标 |
+| 422 | RESYNC_REQUIRED | 幂等引用版本不受支持、实体/作用域错配、嵌套关联归属/历史版本无法证实、或标记不可重放（如历史证据不足、旧版关联缺少版本或快照丢失；规范 marker.op 绑定完整 operation，支持旧 family 标记启动规范化）；原写操作已提交，客户端查询当前状态续行，不重新执行业务动作 |
 | 429 | RATE_LIMITED / QUOTA_EXCEEDED | 有界等待或人工调整配额 |
 | 503 | STORAGE_BUSY / TEMPORARILY_UNAVAILABLE | 原键有界重试 |
 

@@ -5,7 +5,7 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { DetunedClient } from '@detuned/client';
 import { DetunedError, ErrorCode } from '@detuned/protocol';
-import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, DirectoryLock } from '@detuned/storage-sqlite';
+import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, openAndCoordinateDatabase, DirectoryLock } from '@detuned/storage-sqlite';
 import { buildApp } from '@detuned/server';
 
 function mapExitCode(err: any): number {
@@ -109,32 +109,43 @@ program
   .description('初始化本地 SQLite 数据库与数据目录')
   .option('--data-dir <dir>', '数据目录路径', './data')
   .action((options) => {
+    const isJson = Boolean(program.opts().json);
+    let lock: DirectoryLock | null = null;
+    let db: Database.Database | null = null;
     try {
       const dataDir = path.resolve(options.dataDir);
       if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
       }
-      const lock = new DirectoryLock(dataDir);
+      lock = new DirectoryLock(dataDir);
       lock.acquire();
-      try {
-        const dbPath = path.join(dataDir, 'detuned.sqlite');
-        const db = new Database(dbPath);
-        const res = bootstrapDatabase(db);
-        db.close();
 
-        printOutput({
-          success: true,
-          data_dir: dataDir,
-          db_path: dbPath,
-          is_new_instance: res.isNewInstance,
-          admin_actor_id: res.adminActorId,
-          admin_token: res.adminToken,
-        }, program.opts().json);
-      } finally {
-        lock.release();
-      }
+      const dbPath = path.join(dataDir, 'detuned.sqlite');
+      db = new Database(dbPath);
+      const res = openAndCoordinateDatabase(db, 'init');
+      db.close();
+      db = null;
+      lock.release();
+      lock = null;
+
+      printOutput({
+        success: true,
+        data_dir: dataDir,
+        db_path: dbPath,
+        is_new_instance: res.isNewInstance,
+        admin_actor_id: res.adminActorId,
+        admin_token: res.adminToken,
+      }, isJson);
     } catch (err: any) {
-      handleError(err, program.opts().json);
+      if (db) {
+        try { db.close(); } catch {}
+        db = null;
+      }
+      if (lock) {
+        try { lock.release(); } catch {}
+        lock = null;
+      }
+      handleError(err, isJson);
     }
   });
 
@@ -145,91 +156,78 @@ program
   .option('--port <port>', '监听端口', '3000')
   .option('--host <host>', '监听地址', '127.0.0.1')
   .action(async (options) => {
-    const dataDir = path.resolve(options.dataDir);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
+    const isJson = Boolean(program.opts().json);
+    let lock: DirectoryLock | null = null;
+    let db: Database.Database | null = null;
+    let app: any = null;
 
-    const lock = new DirectoryLock(dataDir);
-    lock.acquire();
+    try {
+      const dataDir = path.resolve(options.dataDir);
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
 
-    const dbPath = path.join(dataDir, 'detuned.sqlite');
-    if (!fs.existsSync(dbPath)) {
-      lock.release();
-      handleError(
-        new DetunedError(
+      lock = new DirectoryLock(dataDir);
+      lock.acquire();
+
+      const dbPath = path.join(dataDir, 'detuned.sqlite');
+      if (!fs.existsSync(dbPath)) {
+        throw new DetunedError(
           ErrorCode.NOT_FOUND,
           `数据库文件不存在: ${dbPath}。请先执行 "detuned init --data-dir ${dataDir}" 完成初始化。`,
           404
-        ),
-        program.opts().json
-      );
-      return;
-    }
-
-    const db = new Database(dbPath);
-
-    // Check schema version before listening
-    const hasMigrations = db
-      .prepare("SELECT count(*) AS n FROM sqlite_master WHERE type='table' AND name='schema_migrations'")
-      .get() as any;
-    if (hasMigrations?.n > 0) {
-      const maxVerRow = db.prepare('SELECT max(version) AS max_v FROM schema_migrations').get() as any;
-      if (maxVerRow && maxVerRow.max_v > 1) {
-        db.close();
-        lock.release();
-        handleError(
-          new DetunedError(
-            ErrorCode.FORBIDDEN,
-            `数据库 schema 版本 (v${maxVerRow.max_v}) 高于当前应用支持版本 (v1)，拒绝服务。请升级 Detuned。`,
-            403
-          ),
-          program.opts().json
         );
-        return;
       }
+
+      db = new Database(dbPath);
+      openAndCoordinateDatabase(db, 'serve');
+
+      const storage = new SqliteStorage(db);
+      // Validate storage secret before building app
+      storage.getInstanceSecret();
+
+      app = buildApp({ storage });
+      const port = parseInt(options.port, 10);
+      const host = options.host;
+
+      let isShuttingDown = false;
+      const shutdown = async () => {
+        if (isShuttingDown) return;
+        isShuttingDown = true;
+        try {
+          if (app) await app.close();
+        } catch {}
+        try {
+          if (db) db.close();
+        } catch {}
+        try {
+          if (lock) lock.release();
+        } catch {}
+        process.exit(0);
+      };
+
+      process.on('SIGINT', shutdown);
+      process.on('SIGTERM', shutdown);
+
+      await app.listen({ port, host });
+      if (!isJson) {
+        process.stderr.write(`Detuned 服务已启动: http://${host}:${port}\n数据目录: ${dataDir}\n`);
+      }
+    } catch (err: any) {
+      if (app) {
+        try { await app.close(); } catch {}
+        app = null;
+      }
+      if (db) {
+        try { db.close(); } catch {}
+        db = null;
+      }
+      if (lock) {
+        try { lock.release(); } catch {}
+        lock = null;
+      }
+      handleError(err, isJson);
     }
-
-    if (!isDatabaseInitialized(db)) {
-      db.close();
-      lock.release();
-      handleError(
-        new DetunedError(
-          ErrorCode.FORBIDDEN,
-          `数据库尚未初始化。请先执行 "detuned init --data-dir ${dataDir}" 完成初始化。`,
-          403
-        ),
-        program.opts().json
-      );
-      return;
-    }
-
-    const storage = new SqliteStorage(db);
-    const app = buildApp({ storage });
-    const port = parseInt(options.port, 10);
-    const host = options.host;
-
-    let isShuttingDown = false;
-    const shutdown = async () => {
-      if (isShuttingDown) return;
-      isShuttingDown = true;
-      try {
-        await app.close();
-      } catch {}
-      try {
-        db.close();
-      } catch {}
-      try {
-        lock.release();
-      } catch {}
-      process.exit(0);
-    };
-
-    process.on('SIGINT', shutdown);
-    process.on('SIGTERM', shutdown);
-
-    await app.listen({ port, host });
-    process.stderr.write(`Detuned 服务已启动: http://${host}:${port}\n数据目录: ${dataDir}\n`);
   });
 
 // Forum commands
