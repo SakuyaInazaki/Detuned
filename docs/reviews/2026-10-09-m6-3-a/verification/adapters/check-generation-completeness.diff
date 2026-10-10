@@ -1,0 +1,40 @@
+--- docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-generation-completeness.mjs
++++ docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs
+@@ -29,7 +29,7 @@
+   mkdirSync(join(dir, 'tests/fixtures'), { recursive: true });
+   writeFileSync(join(dir, 'package.json'), '{"type":"module"}');
+   for (const sub of ['src', 'scripts']) cpSync(join(root, 'packages/storage-sqlite', sub), join(dir, 'packages/storage-sqlite', sub), { recursive: true });
+-  if (historical) {for(const version of [1,2,3])copyFileSync(join(root, `tests/fixtures/historical-v${version}-schema.sql`), join(dir, `tests/fixtures/historical-v${version}-schema.sql`));}
++  if (historical) {for(const version of [1,2,3,4])copyFileSync(join(root, `tests/fixtures/historical-v${version}-schema.sql`), join(dir, `tests/fixtures/historical-v${version}-schema.sql`));}
+   if (driver) symlinkSync(join(root, 'node_modules'), join(dir, 'node_modules'), 'dir');
+   return dir;
+ }
+@@ -53,7 +53,7 @@
+   const db = new Database(':memory:');
+   try {
+     db.exec(mod.SCHEMA_SQL);
+-    return { compile, runtime_without_src: true, runtime_structure: mod.verifyDatabaseStructure(db, 4) };
++    return { compile, runtime_without_src: true, runtime_structure: mod.verifyDatabaseStructure(db, 5) };
+   } finally { db.close(); }
+ }
+ 
+@@ -74,8 +74,8 @@
+       output.passes = true;
+     } else {
+       const generated = readFileSync(tsPath(dir), 'utf8');
+-      output.current_profile_changed = !equal(profile(sourceTs, 4), profile(generated, 4));
+-      output.historical_profile_unchanged = equal(profile(sourceTs, 1), profile(generated, 1)) && equal(profile(sourceTs, 2), profile(generated, 2)) && equal(profile(sourceTs, 3), profile(generated, 3));
++      output.current_profile_changed = !equal(profile(sourceTs, 5), profile(generated, 5));
++      output.historical_profile_unchanged = equal(profile(sourceTs, 1), profile(generated, 1)) && equal(profile(sourceTs, 2), profile(generated, 2)) && equal(profile(sourceTs, 3), profile(generated, 3)) && equal(profile(sourceTs, 4), profile(generated, 4));
+       Object.assign(output, await verifyCompiled(dir));
+       output.passes = generate.exit_code === 0 && sync.exit_code === 0 && output.runtime_structure.valid && output.historical_profile_unchanged;
+     }
+@@ -114,7 +114,7 @@
+     const generate = script(dir, 'generate-schema.mjs');
+     const afterCheck = script(dir, 'check-schema-sync.mjs');
+     const repaired = readFileSync(tsPath(dir), 'utf8');
+-    const out = { version, before_check: beforeCheck, generate, after_check: afterCheck, profiles_restored: equal(profile(repaired, 1), profile(sourceTs, 1)) && equal(profile(repaired, 2), profile(sourceTs, 2)) && equal(profile(repaired, 3), profile(sourceTs, 3)) && equal(profile(repaired, 4), profile(sourceTs, 4)) };
++    const out = { version, before_check: beforeCheck, generate, after_check: afterCheck, profiles_restored: equal(profile(repaired, 1), profile(sourceTs, 1)) && equal(profile(repaired, 2), profile(sourceTs, 2)) && equal(profile(repaired, 3), profile(sourceTs, 3)) && equal(profile(repaired, 4), profile(sourceTs, 4)) && equal(profile(repaired, 5), profile(sourceTs, 5)) };
+     Object.assign(out, await verifyCompiled(dir));
+     out.passes = failed(beforeCheck) && generate.exit_code === 0 && afterCheck.exit_code === 0 && out.profiles_restored && out.runtime_structure.valid;
+     repairCases.push(out);

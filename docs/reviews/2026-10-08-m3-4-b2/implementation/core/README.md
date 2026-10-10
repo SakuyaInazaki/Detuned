@@ -1,0 +1,10 @@
+# A 有界退出资源能力作者记录
+
+按父冻结在fresh后实现；共享API先通知B。旧BlobStore open仅AsyncIterable，实际FileStore返回ReadStream但没有port级dispose，DirectoryLock原release吞失败；新增能力不以missing import构造红测试。新增RuntimeResources，不改HTTP app/routes或CLI预算策略。
+
+source-first 实际三文件21/21、exit0：new m3-shutdown-resources6；旧m2-artifacts-core9及filesystem6仅open契约/finallydispose适配，断言保留。六场景：未next真实FDclose；晚open取消/正常readclose；cancelall同步先行与wholefinallylease；cancelthrow隔离/idle后固定拒；strictclose失败保FD与材料且正常幂等；strictunlink失败FD已闭、重试不重关。真实FD oracle capturedfd fstat EBADF，不用iteratorreturn代真实释放；close/unlink fault仅测试spy，无用户fault参数。
+
+未build/fullsuite；B明确9files源码冻结后 source-noemit-final 一次exit0、空stdout/stderr；没有重跑21或build/fullsuite。transport-cross-review.md只读顺序核无finding。no raw credentials/cause归档，无schema/SQL/离线行为修改。原release保best-effort语义。读取terminalerror有监听防unhandled，dispose至少等close后才固定报错，不提前假完成。registry只ownerfinally真正结束后finish；同步native不可JS timer硬抢占。本包正式接受状态以C与父结论为准。
+
+
+末版freeze12文件逐hash仍匹配；A产品/tests/docs全停写。最终统一build/gates由C执行，不能将作者21项再加进全套计数。

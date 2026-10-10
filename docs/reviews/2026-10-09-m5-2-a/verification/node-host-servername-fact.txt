@@ -1,0 +1,38 @@
+function calculateServerName(options, req) {
+  let servername = options.host;
+  const hostHeader = req.getHeader('host');
+  if (hostHeader) {
+    validateString(hostHeader, 'options.headers.host');
+
+    // abc => abc
+    // abc:123 => abc
+    // [::1] => ::1
+    // [::1]:123 => ::1
+    if (hostHeader[0] === '[') {
+      const index = hostHeader.indexOf(']');
+      if (index === -1) {
+        // Leading '[', but no ']'. Need to do something...
+        servername = hostHeader;
+      } else {
+        servername = hostHeader.substring(1, index);
+      }
+    } else {
+      servername = hostHeader.split(':', 1)[0];
+    }
+  }
+  // Don't implicitly set invalid (IP) servernames.
+  if (net.isIP(servername))
+    servername = '';
+  return servername;
+}
+
+function installListeners(agent, s, options) {
+  function onFree() {
+    debug('CLIENT socket onFree');
+    agent.emit('free', s, options);
+  }
+  s.on('free', onFree);
+
+  function onClose(err) {
+    debug('CLIENT socket onClose');
+    // This is th

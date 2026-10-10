@@ -1,0 +1,7 @@
+# C2B CLI/contract author self-review
+
+Only authorized CLI index and new tools/CLI contract file changed. Exact-before CLI matched fresh baseline; new test originally missing. Three search flags decode source/request/target into canonical SearchSourceQuery; validateSearchSourceQuery precedes client construction/HTTP. Review branch calls typed searchPublicReviewSubmissions, posts strips source and calls old search preserving default filters/data/page/cursor behavior. No duplicated search/privacy/qualification business logic.
+
+Five authored tests distinguish controlled adapter/transport evidence from actual SQLite privacy: canonical nine-tool object/anyOf root, flat/wrapped and pure Pi schema adaptation; illegal source/filter branch rejection with zero fetch; shared tool dispatch to review typed source and default/explicit posts without source; controlled HTTP built-CLI bare/page/cursor and legacy forwarding; illegal CLI branch/empty IDs/filter/limit local safe error with zero HTTP. No new host activation, Pi runtime lifecycle, browser, model, global configuration or document edits. Actual reveal/ACL/privacy evidence belongs to A/D real integration tests.
+
+Static source review only, tests not run. Required A typed signatures coordinated; pending cross-review/build may expose issues. Old tests unchanged, no assertion/timeout adjustments. source.diff and freeze SHA are actual bytes; stop writing for root/A/D.

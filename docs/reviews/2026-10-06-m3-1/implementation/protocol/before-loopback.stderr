@@ -1,0 +1,35 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E01: legal positive wait actually waits at an empty consumer without creating or acknowledging a batch
+AssertionError: expected 1.725416999999993 to be greater than or equal to 100
+ ❯ tests/contracts/m3-events-contract.test.ts:44:39
+     42|     const response = await app.inject({ method: 'POST', url: path(), h…
+     43|     expect(response.statusCode, response.payload).toBe(200); expect(re…
+     44|     expect(performance.now() - start).toBeGreaterThanOrEqual(100); exp…
+       |                                       ^
+     45|   });
+     46|   it('E02: existing strict poll schema defaults and bounds reach the a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ until tests/contracts/m3-events-contract.test.ts:13:170
+     11| function deferred<T>() { let resolve!: (value: T) => void; const promi…
+     12| const pause = (ms: number) => new Promise(r => setTimeout(r, ms));
+     13| async function until(check: () => boolean, ms = 1500) { const end = pe…
+       |                                                                                                                                                                          ^
+     14| 
+     15| describe('M3.1 event HTTP and adapter cancellation contracts', () => {
+ ❯ tests/contracts/m3-events-contract.test.ts:91:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -1,0 +1,11 @@
+--- before-files/packages/client/src/client.ts
++++ packages/client/src/client.ts
+@@ -987,7 +987,7 @@
+       case 'forum_read': {
+         validateToolReadParams(params);
+         if (params.kind === 'space') return this.getSpaceRevision(spaceId, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+-        if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor }, opts);
++        if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor, sort: params.sort }, opts);
+         if (params.kind === 'post_revision') return this.getPostRevisionContent(spaceId, params.id, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+         const { kind, id } = params;
+         if (kind === 'post') {

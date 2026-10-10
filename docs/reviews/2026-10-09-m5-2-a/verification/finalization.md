@@ -1,0 +1,11 @@
+# M5.2-A finalization
+
+Parent formally accepted the limited TLS scope after reading the independent report and viewing the real narrow viewport. [Acceptance](acceptance.md) preserves the boundary and accepted evidence. No successful gate was rerun during metadata closure.
+
+The final A metadata manifest is [v2](../author/docs/freeze-manifest-v2.json), SHA256 `a59ee2ae6787b080de2521f6c39d31000ce37c6276957121b570ac738ec7fedf`: all 15 actual paths match. Relative to preserved v1, only the three parent-authorized current wording fixes in progress, operations and web-local changed. The current entry, ADR062, TLS configuration/security/tutorial statements and next M5.3-A planning link agree with actual evidence. This package uses README → planning task as its next-task entry; no nonexistent results or next-task file is asserted.
+
+[Final metadata check](metadata-final-check.json) records 345 local links with no missing targets, 80 package JSON files parsed before finalization, git diff --check exit 0, all 322 current source bytes still matching the verification-end snapshot, 7,785 old review files unchanged, four SQL/archive files unchanged, two schema profiles unchanged, and unchanged HEAD/lock. A5/B2 product/test freezes and D3 source ownership remain exact. Expected dist changes are already recorded in [protection results](protection-results.json); no Web/dependency/SQL/schema change occurred.
+
+The final read-only build planning file has SHA256 `3645a4ba9958c1ea49d81a15d194c3e2bc419ed4297a51f2edf0902ee0d583ff`. Parent confirmed A and B stopped all TLS package writing before this finalization. The whole package includes all planning, retained-environment receipts, first failures, private TLS source snapshots, original full logs, independent evidence, accepted metadata and this finalization. These will all become old protected review evidence in the next fresh baseline.
+
+The owned next-package VM remains intentionally retained, as distinguished in [cleanup results](cleanup-results.json). No container image build/run, dependency installation, certificate generation, product modification or further verification is performed by this closure. Next M5.3-A fresh waits for parent confirmation; deployment paths that do not yet exist will be recorded as missing rather than created as placeholders.

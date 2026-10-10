@@ -1,0 +1,92 @@
+{
+  "passes": true,
+  "product_version": "v2",
+  "results": [
+    {
+      "case": "nonmember",
+      "cursor_length": 0,
+      "status": 404
+    },
+    {
+      "case": "no-read-capability",
+      "cursor_length": 0,
+      "status": 403
+    },
+    {
+      "case": "cross-space",
+      "cursor_length": 0,
+      "status": 404
+    },
+    {
+      "case": "missing-thread",
+      "cursor_length": 0,
+      "status": 404
+    },
+    {
+      "case": "authorized-target",
+      "cursor_length": 0,
+      "status": 400
+    },
+    {
+      "case": "nonmember",
+      "cursor_length": 1,
+      "status": 404
+    },
+    {
+      "case": "no-read-capability",
+      "cursor_length": 1,
+      "status": 403
+    },
+    {
+      "case": "cross-space",
+      "cursor_length": 1,
+      "status": 404
+    },
+    {
+      "case": "missing-thread",
+      "cursor_length": 1,
+      "status": 404
+    },
+    {
+      "case": "authorized-target",
+      "cursor_length": 1,
+      "status": 400
+    },
+    {
+      "case": "nonmember",
+      "cursor_length": 4097,
+      "status": 404
+    },
+    {
+      "case": "no-read-capability",
+      "cursor_length": 4097,
+      "status": 403
+    },
+    {
+      "case": "cross-space",
+      "cursor_length": 4097,
+      "status": 404
+    },
+    {
+      "case": "missing-thread",
+      "cursor_length": 4097,
+      "status": 404
+    },
+    {
+      "case": "authorized-target",
+      "cursor_length": 4097,
+      "status": 400
+    },
+    {
+      "case": "transport-query-rejection",
+      "query": "cursor=a&cursor=b",
+      "status": 400
+    },
+    {
+      "case": "transport-query-rejection",
+      "query": "cursor=&unknown=1",
+      "status": 400
+    }
+  ],
+  "no_read_writes": true
+}

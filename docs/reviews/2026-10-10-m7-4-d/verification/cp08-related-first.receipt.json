@@ -1,0 +1,24 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "tests/contracts/m7-claude-probe-ownership.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "-t",
+    "^CP08 "
+  ],
+  "sandbox_mode": "require_escalated",
+  "source_sha256": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+  "test_sha256": "2bb5417897548b8acf0a51bdbebb220c4a5efbb288cf6e6c8c6e706a75d6731d",
+  "exit_code": 1,
+  "elapsed_seconds": 1.6470376250217669,
+  "stdout": "cp08-related-first.stdout",
+  "stderr": "cp08-related-first.stderr",
+  "max_workers": 1,
+  "file_parallelism": false,
+  "default_case_timeout_ms": 5000,
+  "rerun_old_seven": false
+}

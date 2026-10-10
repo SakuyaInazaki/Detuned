@@ -1,0 +1,18 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m3-logical-import-contract.test.ts (6 tests) 1372ms
+   ✓ M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink  1335ms
+ ✓ tests/integration/m3-logical-import.test.ts (12 tests) 1577ms
+   ✓ rejects a FIFO with no writer in a watchdog-bounded child without publishing  1242ms
+ ✓ tests/integration/m3-import-independent.test.ts (4 tests) 6115ms
+   ✓ B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing  1219ms
+   ✓ B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target  1821ms
+   ✓ B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes  1092ms
+   ✓ B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target  1983ms
+
+ Test Files  3 passed (3)
+      Tests  22 passed (22)
+   Start at  06:22:00
+   Duration  6.71s (transform 290ms, setup 0ms, collect 1.06s, tests 9.06s, environment 0ms, prepare 173ms)
+

@@ -1,0 +1,37 @@
+{
+  "os": "macOS 26.2 build25C56 Darwin25.2.0 arm64",
+  "hardware_model": "Mac16,12",
+  "cpu_physical_logical": 10,
+  "memory_bytes": 17179869184,
+  "disk_observed": {
+    "filesystem": "/dev/disk3s5",
+    "size_GiB": 228,
+    "used_GiB": 184,
+    "available_GiB": 21,
+    "capacity": "90%",
+    "mount": "/System/Volumes/Data",
+    "medium": "not independently verified; no target SSD certification"
+  },
+  "runtime": {
+    "node --version": "v26.3.0",
+    "pnpm --version": "11.7.0"
+  },
+  "installed_versions": {
+    "fastify": "5.12.5",
+    "cors": "10.1.0",
+    "multipart": "9.4.0",
+    "better-sqlite3": "13.0.3",
+    "SQLite": "3.53.4"
+  },
+  "target_comparability": "actual unbounded host, not controlled 2CPU/4GiB; no CPU affinity/memory cap applied",
+  "read_only_process_observation": "ps filtered Detuned/scripts-scale/vitest/pnpm-build only showed current observation shell/rg; no visible task product process",
+  "observation_failure": "sandbox sysctl Operation not permitted retained as fact; approved local read-only repeat succeeded",
+  "historical_material_hashes": {
+    "scripts/history-fixtures/generate-b8dacd5.mjs": "675b97535c9a53f98b2632cef2c3133639a877d544a92feaef26184bfc6e04c4",
+    "tests/fixtures/history-b8dacd5/legacy.db": "a73c64d63fa268788ce27f55ee96b2e912e411424ecf61b014d694ac768dcd22",
+    "tests/fixtures/history-b8dacd5/recipe.json": "4740b8ac324762b8d951c56551f87b66ba34a18c89f0b9111d6c09e6573b2fbd",
+    "tests/fixtures/history-b8dacd5/expected.json": "7ba11660003a3dafbf74580addf34d9106a4eddeca7cd6009bce4336692e3dc4",
+    "tests/fixtures/history-b8dacd5/provenance.json": "3890b55e69b5be738f231d1b61ceb141aca3f854cc0264c1fa8c65b24f1658b0"
+  },
+  "SQLite_probe": "installed driver in-memory select sqlite_version only, no product service/tests or persistent DB"
+}

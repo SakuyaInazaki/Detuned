@@ -1,0 +1,1 @@
+export default {test:{environment:'node',include:['/Users/sakimi/Desktop/Detuned/tests/contracts/m3-logical-import-contract.test.ts']},resolve:{alias:{'@detuned/protocol':'/Users/sakimi/Desktop/Detuned/packages/protocol/src/index.ts','@detuned/client':'/Users/sakimi/Desktop/Detuned/packages/client/src/index.ts'}}};

@@ -1,0 +1,268 @@
+{
+  "commands": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:12:50.666037+00:00",
+      "finished_at": "2026-10-07T23:12:55.512311+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-build-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-build-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm exec vitest run tests/integration/m3-write-rate-limit.test.ts tests/contracts/m3-write-limits-contract.test.ts tests/integration/m3-write-limits-independent.test.ts",
+      "exit_code": 1,
+      "started_at": "2026-10-07T23:13:23.278207+00:00",
+      "finished_at": "2026-10-07T23:13:27.152104+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-new-targeted-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-new-targeted-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm exec vitest run tests/integration/m3-write-limits-independent.test.ts",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:14:53.606051+00:00",
+      "finished_at": "2026-10-07T23:14:57.452997+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-independent-corrected-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-independent-corrected-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:15:40.688849+00:00",
+      "finished_at": "2026-10-07T23:15:45.248896+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-typecheck-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-typecheck-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:15:55.886203+00:00",
+      "finished_at": "2026-10-07T23:16:00.397619+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-lint-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-lint-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm test",
+      "exit_code": 1,
+      "started_at": "2026-10-07T23:16:16.103495+00:00",
+      "finished_at": "2026-10-07T23:16:35.178130+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-fullsuite-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-fullsuite-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:51.064668+00:00",
+      "finished_at": "2026-10-07T23:17:51.327799+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-05-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-05-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:51.349900+00:00",
+      "finished_at": "2026-10-07T23:17:51.626449+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-06-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-06-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:51.648385+00:00",
+      "finished_at": "2026-10-07T23:17:51.880430+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-07-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-07-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:51.902994+00:00",
+      "finished_at": "2026-10-07T23:17:52.527416+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-08-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-08-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:52.549554+00:00",
+      "finished_at": "2026-10-07T23:17:52.780900+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-09-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-09-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:17:52.803418+00:00",
+      "finished_at": "2026-10-07T23:17:53.027908+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-10-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-10-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 1,
+      "started_at": "2026-10-07T23:17:53.050494+00:00",
+      "finished_at": "2026-10-07T23:17:53.312351+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-11-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-11-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:09.428352+00:00",
+      "finished_at": "2026-10-07T23:21:09.954895+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-12-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-12-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:09.977331+00:00",
+      "finished_at": "2026-10-07T23:21:10.536781+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-13-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-13-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:10.559195+00:00",
+      "finished_at": "2026-10-07T23:21:10.987846+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-14-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-14-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:11.010168+00:00",
+      "finished_at": "2026-10-07T23:21:11.251722+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-15-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-15-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:11.274148+00:00",
+      "finished_at": "2026-10-07T23:21:11.619450+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-16-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-16-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:11.641357+00:00",
+      "finished_at": "2026-10-07T23:21:12.022862+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-17-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-17-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:12.044963+00:00",
+      "finished_at": "2026-10-07T23:21:12.420125+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-18-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-18-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:12.442350+00:00",
+      "finished_at": "2026-10-07T23:21:12.773341+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-19-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-19-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:12.795454+00:00",
+      "finished_at": "2026-10-07T23:21:13.124342+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-20-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-20-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:13.146629+00:00",
+      "finished_at": "2026-10-07T23:21:13.639935+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-21-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-21-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:13.662983+00:00",
+      "finished_at": "2026-10-07T23:21:14.339450+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-22-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-22-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:14.362706+00:00",
+      "finished_at": "2026-10-07T23:21:14.659647+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-23-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-23-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:14.682025+00:00",
+      "finished_at": "2026-10-07T23:21:15.576684+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-24-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-24-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:15.599826+00:00",
+      "finished_at": "2026-10-07T23:21:17.845812+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-25-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-25-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:17.868581+00:00",
+      "finished_at": "2026-10-07T23:21:19.807095+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-26-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-26-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:19.830356+00:00",
+      "finished_at": "2026-10-07T23:21:20.053876+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-27-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-27-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-03-m2-1/verification/check-c-completion-v2.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:20.076378+00:00",
+      "finished_at": "2026-10-07T23:21:20.455628+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-28-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-28-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r22/check-c2-boundaries.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:20.478836+00:00",
+      "finished_at": "2026-10-07T23:21:20.877635+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-29-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-29-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "pnpm test",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:21:31.862419+00:00",
+      "finished_at": "2026-10-07T23:21:50.848338+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-fullsuite-final-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-fullsuite-final-2026-10-08.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs",
+      "exit_code": 0,
+      "started_at": "2026-10-07T23:22:06.935465+00:00",
+      "finished_at": "2026-10-07T23:22:07.215249+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-11-adapted-2026-10-08.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-4-a1/verification/observed-current29-11-adapted-2026-10-08.stderr.txt"
+    }
+  ]
+}

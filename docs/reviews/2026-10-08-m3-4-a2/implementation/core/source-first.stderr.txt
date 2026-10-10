@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-resource-limits.test.ts > M3.4-A.2 runtime connection and registered artifact quotas > test injection triggers real allocation FULL at createPostRevision and rolls back the whole business transaction
+Error: expected rejection
+ ❯ errorOf tests/integration/m3-resource-limits.test.ts:30:88
+     28|   return { root, filename, db, storage, clock, hash, ids, authService,…
+     29| }
+     30| function errorOf(fn: () => unknown): any { try { fn(); } catch (e) { r…
+       |                                                                                        ^
+     31| function count(db: Database.Database, table: string): number { return …
+     32| function register(f: ReturnType<typeof fixture>, id: string, bytes: nu…
+ ❯ tests/integration/m3-resource-limits.test.ts:82:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

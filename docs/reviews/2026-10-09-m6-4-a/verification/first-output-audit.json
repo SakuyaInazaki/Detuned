@@ -1,0 +1,388 @@
+{
+  "full_streams_read": true,
+  "entries": [
+    {
+      "label": "new-source-noemit-first",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 2,
+      "seconds": 0.562,
+      "stdout": "new-source-noemit-first.stdout.txt",
+      "stderr": "new-source-noemit-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 432,
+          "sha256": "6bbdae5e1b35395de240e6689cc9e780b655bce5b4882f253116bc38136efcff",
+          "warning_lines": [],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "new-source-noemit-second",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 2,
+      "seconds": 1.547,
+      "stdout": "new-source-noemit-second.stdout.txt",
+      "stderr": "new-source-noemit-second.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 189,
+          "sha256": "6438f2b487f1a1af41f0fe8b9ff89294a9465fe8717f7a2a068e25695154bff3",
+          "warning_lines": [],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "new-source-noemit-third",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 0,
+      "seconds": 1.812,
+      "stdout": "new-source-noemit-third.stdout.txt",
+      "stderr": "new-source-noemit-third.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "new-source-noemit-fourth",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 0,
+      "seconds": 1.631,
+      "stdout": "new-source-noemit-fourth.stdout.txt",
+      "stderr": "new-source-noemit-fourth.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "build-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 10.921,
+      "stdout": "build-first.stdout.txt",
+      "stderr": "build-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 576,
+          "sha256": "9b4f51e8ee3941ec8a3dc9a4f871eca0264b7471d29e6d7ea45bf2eeb19f147d",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 486,
+          "sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+          "warning_lines": [
+            "(!) Some chunks are larger than 500 kB after minification. Consider:",
+            "- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit."
+          ],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "new-groups-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http.test.ts",
+        "tests/contracts/m6-review-client.test.ts",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 1,
+      "seconds": 2.79,
+      "stdout": "new-groups-first.stdout.txt",
+      "stderr": "new-groups-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 2546,
+          "sha256": "af85cb1990c112b1c08a4e730d1e8cdd5acc3f059a8552d849d0a28c17708996",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": [
+            "Test Files  2 failed | 1 passed (3)",
+            "Tests  8 failed | 5 passed (13)"
+          ]
+        },
+        "stderr": {
+          "bytes": 5049,
+          "sha256": "94764dfc83116c1ada2feed280f5662dc8f7abfb6a684f1e18e3e08d7951b4c3",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "new-eight-second",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http.test.ts",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "RH0[123]|H0[12345] "
+      ],
+      "exit_code": 0,
+      "seconds": 2.957,
+      "stdout": "new-eight-second.stdout.txt",
+      "stderr": "new-eight-second.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 751,
+          "sha256": "fc6aef95a45035646084a6f77719da88c36387cb663d171607f46d1f44fbb242",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": [
+            "Test Files  2 passed (2)",
+            "Tests  8 passed | 1 skipped (9)"
+          ]
+        },
+        "stderr": {
+          "bytes": 165,
+          "sha256": "6763d022874406be8f4c4615f7f29a7d19e86642c393540cdcb0a6aa98f17b0c",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "typecheck-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 8.124,
+      "stdout": "typecheck-first.stdout.txt",
+      "stderr": "typecheck-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 127,
+          "sha256": "da24a2802618672ca9b7e4dba1579435e8e559fbcc3e4abd98b0ceb8aa202443",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 150,
+          "sha256": "6bba7a8786709a43d0aad26d70dfe24f53c35644d743380882e60a19eebef24e",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "lint-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 8.647,
+      "stdout": "lint-first.stdout.txt",
+      "stderr": "lint-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 182,
+          "sha256": "5173766b613f2357823ac030f341d90273574dd507a2049fa02667d5f64be9a8",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 188,
+          "sha256": "5a4c5d8668bb4e4edb9ea871139c3de41cea3894558ffb1e32d9ffd79ce8fed3",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "core-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 1,
+      "seconds": 264.086,
+      "stdout": "core-first.stdout.txt",
+      "stderr": "core-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 43689,
+          "sha256": "816ee088f0809cab4e29d116c0dd34a932c37793edc1ce6c683d89990c2b089c",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": [
+            "Test Files  1 failed | 124 passed (125)",
+            "Tests  1 failed | 802 passed (803)"
+          ]
+        },
+        "stderr": {
+          "bytes": 1358,
+          "sha256": "0f95609d8e4fa4fb45d926ede2a10046dc5eb1c6b508375ad32d4a7aea6693a6",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "h02-origin-noemit-first",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 0,
+      "seconds": 1.689,
+      "stdout": "h02-origin-noemit-first.stdout.txt",
+      "stderr": "h02-origin-noemit-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    },
+    {
+      "label": "h02-origin-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "H02 "
+      ],
+      "exit_code": 1,
+      "seconds": 1.79,
+      "stdout": "h02-origin-first.stdout.txt",
+      "stderr": "h02-origin-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 1622,
+          "sha256": "882fdd489d50bd3999c83ec29835c28bb9ccd8f5ef6da22fa980d60be23381d3",
+          "warning_lines": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "test_summary": [
+            "Test Files  1 failed (1)",
+            "Tests  1 failed | 5 skipped (6)"
+          ]
+        },
+        "stderr": {
+          "bytes": 636,
+          "sha256": "f0f0f84acc4bff5cce0e41d2054ab64f51aedc06abef8fb6f2f22ee230ab91fc",
+          "warning_lines": [],
+          "test_summary": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+Error: listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-AfmO95/control.sock
+ ❯ tests/integration/m3-logical-import.test.ts:45:10
+     43|    else{phase='invalid-ipc';terminate();}
+     44|   }});});
+     45|   server.listen(path.join(root,'control.sock'));await once(server,'lis…
+       |          ^
+     46|   child=spawn('pnpm',['exec','vitest','run','tests/integration/m3-logi…
+     47|   startup=setTimeout(terminate,15000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

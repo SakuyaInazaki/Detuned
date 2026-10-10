@@ -1,0 +1,61 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-thread-posts-read-contracts.test.ts > M2.4-B.2.2 bounded thread metadata transport > D01: raw 4K/64K/default envelopes reconstruct exactly the sorted metadata directory
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts:41:66
+     39|         expect(res.payload).toBe(serializeThreadPostsEnvelope(requestI…
+     40|         expect(threadPostsEnvelopeBytes(requestId, page)).toBe(Buffer.…
+     41|         expect(Value.Check(ThreadPostsEnvelopeSchema, envelope)).toBe(…
+       |                                                                  ^
+     42|         expect(res.payload).not.toContain('SECRET BODY'); expect(envel…
+     43|         ids.push(...page.data.posts.map((post: { id: string }) => post…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/contracts/m2-thread-posts-read-contracts.test.ts > M2.4-B.2.2 bounded thread metadata transport > D04: whole schemas enforce all three metadata branches and strict cursor purpose
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts:76:215
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/contracts/m2-thread-posts-read-contracts.test.ts > M2.4-B.2.2 bounded thread metadata transport > D06: OpenAPI merges new GET with unchanged POST and restores exact cursor policy
+AssertionError: expected { Object (minimum, maximum, ...) } to deeply equal { type: 'integer', minimum: 1, …(2) }
+
+- Expected
++ Received
+
+  {
+    "default": 50,
+    "maximum": 100,
+    "minimum": 1,
+    "type": "integer",
++   Symbol(TypeBox.Kind): "Integer",
++   Symbol(TypeBox.Optional): "Optional",
+  }
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts:116:67
+    114|     expect(path.post!.requestBody).toBeDefined(); const get = path.get…
+    115|     expect(get.requestBody).toBeUndefined();
+    116|     expect(get.parameters!.find(p => p.name === 'limit')!.schema).toEq…
+       |                                                                   ^
+    117|     expect(get.parameters!.find(p => p.name === 'max_bytes')!.schema).…
+    118|     expect(get.parameters!.find(p => p.name === 'cursor')!.schema).toE…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

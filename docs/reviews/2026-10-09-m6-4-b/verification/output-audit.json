@@ -1,0 +1,849 @@
+{
+  "scope": "complete stdout/stderr of each executed receipt, not terminal tails; first failures retained",
+  "receipts": [
+    {
+      "receipt": "build-first.json",
+      "exit_code": 0,
+      "seconds": 10.243,
+      "outputs": {
+        "stdout": {
+          "path": "build-first.stdout.txt",
+          "bytes": 576,
+          "sha256": "7f5b93ec708a5fdcb0479ee82d1d810a02667a1d535e157d5a104a7e5e20b41d",
+          "summaries": [
+            "\u2713 614 modules transformed.",
+            "\u2713 built in 918ms"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "build-first.stderr.txt",
+          "bytes": 486,
+          "sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+          "summaries": [],
+          "warnings": [
+            "(!) Some chunks are larger than 500 kB after minification. Consider:",
+            "- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit."
+          ]
+        }
+      }
+    },
+    {
+      "receipt": "build-v2.json",
+      "exit_code": 0,
+      "seconds": 10.374,
+      "outputs": {
+        "stdout": {
+          "path": "build-v2.stdout.txt",
+          "bytes": 576,
+          "sha256": "9e369d98c4efdbe3b3f55a99f738d16ba787effe7535236ebdb84515cf03dbb6",
+          "summaries": [
+            "\u2713 614 modules transformed.",
+            "\u2713 built in 959ms"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "build-v2.stderr.txt",
+          "bytes": 486,
+          "sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+          "summaries": [],
+          "warnings": [
+            "(!) Some chunks are larger than 500 kB after minification. Consider:",
+            "- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit."
+          ]
+        }
+      }
+    },
+    {
+      "receipt": "core-first.json",
+      "exit_code": 1,
+      "seconds": 265.298,
+      "outputs": {
+        "stdout": {
+          "path": "core-first.stdout.txt",
+          "bytes": 50519,
+          "sha256": "374353e23b4920f7e2be97296d3f929b17ead2d5bf22e0f6dd5c6f7dbefbe464",
+          "summaries": [
+            "Test Files  5 failed | 123 passed (128)",
+            "Tests  5 failed | 811 passed (816)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "core-first.stderr.txt",
+          "bytes": 3150,
+          "sha256": "03bf42f36aad4a3ed76ec6da08386681d463802d58b42e3d9aef83733ea91e72",
+          "summaries": [
+            "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 5 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "core-five-corrected.json",
+      "exit_code": 0,
+      "seconds": 3.332,
+      "outputs": {
+        "stdout": {
+          "path": "core-five-corrected.stdout.txt",
+          "bytes": 649,
+          "sha256": "80bbebaa3a5d5ebb81bfcb09d766f2300a3a6a2486aa47e260d85321afc57ac6",
+          "summaries": [
+            "Test Files  5 passed (5)",
+            "Tests  30 passed (30)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "core-five-corrected.stderr.txt",
+          "bytes": 275,
+          "sha256": "0827be2edf2e1521068090fe1cf7ba2aa7b8bb9fb682bf7dbe7709d61fceca21",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "core-five-source-noemit.json",
+      "exit_code": 0,
+      "seconds": 1.55,
+      "outputs": {
+        "stdout": {
+          "path": "core-five-source-noemit.stdout.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "core-five-source-noemit.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-05-first.json",
+      "exit_code": 0,
+      "seconds": 0.358,
+      "outputs": {
+        "stdout": {
+          "path": "current-05-first.stdout.txt",
+          "bytes": 3656,
+          "sha256": "b85b901a95f9989c528a1bb6da11757802a5de96b58a80f6c2a39981e8002fa7",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-05-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-06-first.json",
+      "exit_code": 0,
+      "seconds": 0.439,
+      "outputs": {
+        "stdout": {
+          "path": "current-06-first.stdout.txt",
+          "bytes": 1153,
+          "sha256": "022d4d8f22ee86fc48716ba4e8e45323c17e3e92789684535c14c0ea960b68e5",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-06-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-07-first.json",
+      "exit_code": 0,
+      "seconds": 0.312,
+      "outputs": {
+        "stdout": {
+          "path": "current-07-first.stdout.txt",
+          "bytes": 3564,
+          "sha256": "cb71aead42fa842608b447857b9d9f8f34ee25e3246ebfe904c408e6cc870bab",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-07-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-08-first.json",
+      "exit_code": 0,
+      "seconds": 0.942,
+      "outputs": {
+        "stdout": {
+          "path": "current-08-first.stdout.txt",
+          "bytes": 714,
+          "sha256": "4953e2dd9819795510242d2aa633d7654c9a61cb3d056efc319fddd381b9200e",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-08-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-09-first.json",
+      "exit_code": 0,
+      "seconds": 0.353,
+      "outputs": {
+        "stdout": {
+          "path": "current-09-first.stdout.txt",
+          "bytes": 3856,
+          "sha256": "f35108593c87350c4ab151cfdf9347c9059a10b50b96f4f9f63f3091eca84dc9",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-09-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-10-first.json",
+      "exit_code": 0,
+      "seconds": 0.288,
+      "outputs": {
+        "stdout": {
+          "path": "current-10-first.stdout.txt",
+          "bytes": 450,
+          "sha256": "4fb09cf29f73fdda755e26a64a4776207b0d4995d469c4f8a6b041c6b6da8e75",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-10-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-11-first.json",
+      "exit_code": 0,
+      "seconds": 0.358,
+      "outputs": {
+        "stdout": {
+          "path": "current-11-first.stdout.txt",
+          "bytes": 4230,
+          "sha256": "be356150855505032d57fc6cc580e51e0e169144b3689332475f341003aec283",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-11-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-12-first.json",
+      "exit_code": 0,
+      "seconds": 0.767,
+      "outputs": {
+        "stdout": {
+          "path": "current-12-first.stdout.txt",
+          "bytes": 5412,
+          "sha256": "4941e3df81bc1a5fb15aae1f5a18138b897853b54da2b52884ab2da6fd86f84a",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-12-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-13-first.json",
+      "exit_code": 0,
+      "seconds": 0.864,
+      "outputs": {
+        "stdout": {
+          "path": "current-13-first.stdout.txt",
+          "bytes": 6440,
+          "sha256": "a4c4baf6bbd56f02b14ebd30522b6efda4fbf32c40f07da1a327e423a029c0dd",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-13-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-14-first.json",
+      "exit_code": 0,
+      "seconds": 0.725,
+      "outputs": {
+        "stdout": {
+          "path": "current-14-first.stdout.txt",
+          "bytes": 5040,
+          "sha256": "ede6b8e71e78af2e0638835fd71a3d327efb84a3e35bb2d5d102e2d83853586c",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-14-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-15-first.json",
+      "exit_code": 0,
+      "seconds": 0.323,
+      "outputs": {
+        "stdout": {
+          "path": "current-15-first.stdout.txt",
+          "bytes": 1033,
+          "sha256": "8688a895ce2aa542cd84695ed7dc37289368c85842b02143577777f576ab0ad8",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-15-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-16-first.json",
+      "exit_code": 0,
+      "seconds": 0.487,
+      "outputs": {
+        "stdout": {
+          "path": "current-16-first.stdout.txt",
+          "bytes": 4296,
+          "sha256": "9f185168428a33670aed53d18cab9c7fcf409f281ff50239c895be3b75b42e3e",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-16-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-17-first.json",
+      "exit_code": 0,
+      "seconds": 0.593,
+      "outputs": {
+        "stdout": {
+          "path": "current-17-first.stdout.txt",
+          "bytes": 3184,
+          "sha256": "1f86be6b9164a244897547c531131b41106e2ecc0163b02e7530349d214b4e43",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-17-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-18-first.json",
+      "exit_code": 0,
+      "seconds": 0.517,
+      "outputs": {
+        "stdout": {
+          "path": "current-18-first.stdout.txt",
+          "bytes": 4531,
+          "sha256": "fa2967de4ea70507fbb0ffc782483ab17055de9970944e8b6c875f85d2a53b2f",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-18-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-19-first.json",
+      "exit_code": 0,
+      "seconds": 0.451,
+      "outputs": {
+        "stdout": {
+          "path": "current-19-first.stdout.txt",
+          "bytes": 4483,
+          "sha256": "2bdf2339ef80809f04f6fa32a8888d885f0e3fe1c5e841143bddd236d446fb61",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-19-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-20-first.json",
+      "exit_code": 0,
+      "seconds": 0.52,
+      "outputs": {
+        "stdout": {
+          "path": "current-20-first.stdout.txt",
+          "bytes": 3340,
+          "sha256": "472ead752eab65a5455d5e4b2518fb54a30a0f12522bb9f07539d686553ab71a",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-20-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-21-first.json",
+      "exit_code": 0,
+      "seconds": 0.666,
+      "outputs": {
+        "stdout": {
+          "path": "current-21-first.stdout.txt",
+          "bytes": 4669,
+          "sha256": "8fb7fa098fca22e2722fd6b0c6c1eda98e7a22add56670b90e888c6ef38aa236",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-21-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-22-first.json",
+      "exit_code": 0,
+      "seconds": 1.099,
+      "outputs": {
+        "stdout": {
+          "path": "current-22-first.stdout.txt",
+          "bytes": 6844,
+          "sha256": "02239d7b920673416e4f176c7785ce34e56e7364a95a57b1d5ca1e0e17078714",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-22-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-23-first.json",
+      "exit_code": 0,
+      "seconds": 0.419,
+      "outputs": {
+        "stdout": {
+          "path": "current-23-first.stdout.txt",
+          "bytes": 14251,
+          "sha256": "6c4ce9bcff7d450304d5e737c12790b8f3b16df679b3074fc5e7be414e40ef67",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-23-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-24-first.json",
+      "exit_code": 0,
+      "seconds": 1.271,
+      "outputs": {
+        "stdout": {
+          "path": "current-24-first.stdout.txt",
+          "bytes": 12365,
+          "sha256": "f394c9982924cc16bb5deadd20eb5f392b0e8593c8c6b314e840761f2853ca18",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-24-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-25-first.json",
+      "exit_code": 0,
+      "seconds": 2.656,
+      "outputs": {
+        "stdout": {
+          "path": "current-25-first.stdout.txt",
+          "bytes": 7102,
+          "sha256": "f5ae350c34332681299a946d61921d4cbec5bec986c196086d03147cb138ec62",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-25-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-26-first.json",
+      "exit_code": 0,
+      "seconds": 2.225,
+      "outputs": {
+        "stdout": {
+          "path": "current-26-first.stdout.txt",
+          "bytes": 12951,
+          "sha256": "96e93b13add6bfe39af3ec09d5c0f95bec344f01f0bc4dc06436c2edc7a79228",
+          "summaries": [],
+          "warnings": [
+            "\"stderr\": \"Error: schema.ts is out of sync with schema.sql. Run \\\"pnpm --filter @detuned/storage-sqlite run generate:schema\\\" to synchronize.\\n\"",
+            "\"stderr\": \"Error: schema.ts is out of sync with schema.sql. Run \\\"pnpm --filter @detuned/storage-sqlite run generate:schema\\\" to synchronize.\\n\"",
+            "\"stderr\": \"Error: schema.ts is out of sync with schema.sql. Run \\\"pnpm --filter @detuned/storage-sqlite run generate:schema\\\" to synchronize.\\n\"",
+            "\"stderr\": \"Error: schema.ts is out of sync with schema.sql. Run \\\"pnpm --filter @detuned/storage-sqlite run generate:schema\\\" to synchronize.\\n\"",
+            "\"stderr\": \"Error: V1_SCHEMA_TABLES in schema.ts is out of sync with historical-v1-schema.sql DDL structure.\\n\"",
+            "\"stderr\": \"Error: V2_SCHEMA_TABLES in schema.ts is out of sync with schema.sql DDL structure.\\n\""
+          ]
+        },
+        "stderr": {
+          "path": "current-26-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-27-first.json",
+      "exit_code": 0,
+      "seconds": 0.277,
+      "outputs": {
+        "stdout": {
+          "path": "current-27-first.stdout.txt",
+          "bytes": 10714,
+          "sha256": "c21731f91a7a1332cd70ed866c57504e736b486de024cd2b8a5a04d7ba46321a",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-27-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-28-first.json",
+      "exit_code": 0,
+      "seconds": 0.482,
+      "outputs": {
+        "stdout": {
+          "path": "current-28-first.stdout.txt",
+          "bytes": 24811,
+          "sha256": "52c10e70c9eb781b4d2e5028d654969ffff6c824e70e4a8aadfe7117a7b0c62f",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-28-first.stderr.txt",
+          "bytes": 11268,
+          "sha256": "45df40ecf2f6dd3fac9563272ac712f1511732d0fe92a073244649876e3ea8c9",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "current-29-first.json",
+      "exit_code": 0,
+      "seconds": 0.513,
+      "outputs": {
+        "stdout": {
+          "path": "current-29-first.stdout.txt",
+          "bytes": 31166,
+          "sha256": "b972aa3b0406aee5a933bf9880e0d158abaa569c7904505815320a6b50dd7469",
+          "summaries": [],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "current-29-first.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "dsh-first.json",
+      "exit_code": 0,
+      "seconds": 3.713,
+      "outputs": {
+        "stdout": {
+          "path": "dsh-first.stdout.txt",
+          "bytes": 1965,
+          "sha256": "371bafc55701ce3ddb40b19bc7eaa737739152d0976cffe3d79fed262fceab15",
+          "summaries": [
+            "Test Files  1 passed (1)",
+            "Tests  3 passed (3)",
+            "{\"runner_exit\":0,\"signal\":null}"
+          ],
+          "warnings": []
+        },
+        "stderr": {
+          "path": "dsh-first.stderr.txt",
+          "bytes": 256,
+          "sha256": "b90e8483106951a0f720e203b8e2f50ece6095e97e1ceb235f53525423accbf3",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "dt03-first.json",
+      "exit_code": 1,
+      "seconds": 1.778,
+      "outputs": {
+        "stdout": {
+          "path": "dt03-first.stdout.txt",
+          "bytes": 1627,
+          "sha256": "ea1a1a0185b2dfe1edf07081ce86b16ec67d2c17bf3a8a8402f31c6818662a54",
+          "summaries": [
+            "Test Files  1 failed (1)",
+            "Tests  1 failed | 5 skipped (6)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "dt03-first.stderr.txt",
+          "bytes": 649,
+          "sha256": "ef28c4980e5a416fd8fe94d2a43579e6f043b14570dc0c168e88a76e6e80904d",
+          "summaries": [
+            "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "dt03-v2.json",
+      "exit_code": 0,
+      "seconds": 1.737,
+      "outputs": {
+        "stdout": {
+          "path": "dt03-v2.stdout.txt",
+          "bytes": 1387,
+          "sha256": "8223e392c7f94896baac27015d4a26a4da441f3cdc8af7240c7bbd4143cea533",
+          "summaries": [
+            "Test Files  1 passed (1)",
+            "Tests  1 passed | 5 skipped (6)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "dt03-v2.stderr.txt",
+          "bytes": 110,
+          "sha256": "0053d22cc5950f4583759e11cae4daa1d73d6459d698a1c9fb46151e0ccfb957",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "dt04-dt05-corrected.json",
+      "exit_code": 0,
+      "seconds": 2.874,
+      "outputs": {
+        "stdout": {
+          "path": "dt04-dt05-corrected.stdout.txt",
+          "bytes": 867,
+          "sha256": "4ec106bbcdfba97ec739ae68b51c70ec34ace243f6ad969e5da50e2ba7ebfe61",
+          "summaries": [
+            "Test Files  1 passed (1)",
+            "Tests  2 passed | 4 skipped (6)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "dt04-dt05-corrected.stderr.txt",
+          "bytes": 117,
+          "sha256": "76e87ad23fe79d4744150614f53a30b9a4f4850cf63fe32d3a48df8883221e1f",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "lint-first.json",
+      "exit_code": 0,
+      "seconds": 7.787,
+      "outputs": {
+        "stdout": {
+          "path": "lint-first.stdout.txt",
+          "bytes": 182,
+          "sha256": "5173766b613f2357823ac030f341d90273574dd507a2049fa02667d5f64be9a8",
+          "summaries": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "lint-first.stderr.txt",
+          "bytes": 188,
+          "sha256": "5a4c5d8668bb4e4edb9ea871139c3de41cea3894558ffb1e32d9ffd79ce8fed3",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "new-affected-first.json",
+      "exit_code": 1,
+      "seconds": 26.706,
+      "outputs": {
+        "stdout": {
+          "path": "new-affected-first.stdout.txt",
+          "bytes": 17758,
+          "sha256": "83577eacee2ff8be19dcc9547e1bccc71f8f01cff705f6eef478443527fba4b4",
+          "summaries": [
+            "Test Files  1 failed | 14 passed (15)",
+            "Tests  2 failed | 78 passed (80)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "new-affected-first.stderr.txt",
+          "bytes": 1675,
+          "sha256": "7548c38a77678069172a5b08468f593b6bd5a098af7a0dfca17209194c0522d5",
+          "summaries": [
+            "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "receipt": "typecheck-first.json",
+      "exit_code": 0,
+      "seconds": 7.993,
+      "outputs": {
+        "stdout": {
+          "path": "typecheck-first.stdout.txt",
+          "bytes": 127,
+          "sha256": "da24a2802618672ca9b7e4dba1579435e8e559fbcc3e4abd98b0ceb8aa202443",
+          "summaries": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ]
+        },
+        "stderr": {
+          "path": "typecheck-first.stderr.txt",
+          "bytes": 150,
+          "sha256": "6bba7a8786709a43d0aad26d70dfe24f53c35644d743380882e60a19eebef24e",
+          "summaries": [],
+          "warnings": []
+        }
+      }
+    }
+  ]
+}

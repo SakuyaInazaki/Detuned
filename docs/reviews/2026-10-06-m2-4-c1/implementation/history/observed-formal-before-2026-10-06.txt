@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/historical-http-replay.test.ts (7 tests | 7 failed) 3ms
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > loads a hash-bound credential-free archive with the actual old HTTP business records 2ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > initial replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > newpost replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > revision replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > replays all three old keys after a current-server close and reopen without altering business/hash/ref 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay 0ms
+     → ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+
+ Test Files  1 failed (1)
+      Tests  7 failed (7)
+   Start at  19:45:28
+   Duration  473ms (transform 160ms, setup 0ms, collect 262ms, tests 3ms, environment 0ms, prepare 32ms)
+

@@ -1,0 +1,42 @@
+--- docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-profile-and-fts.mjs
++++ docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-profile-and-fts.mjs
+@@ -10,7 +10,7 @@
+ import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase as currentCoordinate, SqliteStorage } from '../../../../../packages/storage-sqlite/dist/index.js';
+ import { buildApp } from '../../../../../packages/server/dist/index.js';
+ 
+-// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++// M6.2-A: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
+ import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
+ function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
+ 
+@@ -39,7 +39,7 @@
+   writeFileSync(join(dir, 'package.json'), '{"type":"module"}');
+   // Copy all source/generator inputs, including any extracted shared helpers.
+   for (const name of ['src', 'scripts']) cpSync(join(root, 'packages/storage-sqlite', name), join(dir, 'packages/storage-sqlite', name), { recursive: true });
+-  if (historical) {for(const version of [1,2])copyFileSync(join(root, `tests/fixtures/historical-v${version}-schema.sql`), join(dir, `tests/fixtures/historical-v${version}-schema.sql`));}
++  if (historical) {for(const version of [1,2,3])copyFileSync(join(root, `tests/fixtures/historical-v${version}-schema.sql`), join(dir, `tests/fixtures/historical-v${version}-schema.sql`));}
+   if (driver) symlinkSync(join(root, 'node_modules'), join(dir, 'node_modules'), 'dir');
+   return dir;
+ }
+@@ -64,7 +64,7 @@
+   if (compile.exit_code !== 0) throw new Error(`Isolated compile failed: ${compile.stderr}${compile.stdout}`);
+   const generated = readFileSync(join(dir, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
+   const v1 = profile(generated, 1);
+-  const v2 = profile(generated, 3);
++  const v2 = profile(generated, 4);
+   // Runtime cannot rely on leftover source files.
+   rmSync(join(dir, 'packages/storage-sqlite/src'), { recursive: true, force: true });
+   const module = await import(pathToFileURL(join(dir, 'dist/schema.js')).href);
+@@ -72,9 +72,9 @@
+   try {
+     db.exec(module.SCHEMA_SQL);
+     output.generated_sql_matches_mutation = module.SCHEMA_SQL.trim() === changed.replace(/^--.*$/gm, '').trim();
+-    output.runtime_structure = module.verifyDatabaseStructure(db, 3);
+-    output.current_table_profile_changed = !equal(profile(tsSource, 3), v2);
+-    output.historical_profile_unchanged = equal(profile(tsSource, 1), v1) && equal(profile(tsSource, 2), profile(generated, 2));
++    output.runtime_structure = module.verifyDatabaseStructure(db, 4);
++    output.current_table_profile_changed = !equal(profile(tsSource, 4), v2);
++    output.historical_profile_unchanged = equal(profile(tsSource, 1), v1) && equal(profile(tsSource, 2), profile(generated, 2)) && equal(profile(tsSource, 3), profile(generated, 3));
+     output.runtime_without_src = true;
+   } finally { db.close(); }
+   return output;

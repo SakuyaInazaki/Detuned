@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts (5 tests | 1 failed) 79ms
+   ✓ M2.2-A strict new action and compatible transport contracts > B01: four strict definitions agree in TypeBox, installed Fastify AJV and parser 18ms
+   ✓ M2.2-A strict new action and compatible transport contracts > B02: missing, types, unknown keys, blank text, lengths and array elements reject without coercion 4ms
+   ✓ M2.2-A strict new action and compatible transport contracts > B03: failure conditions and fixed reference shapes are public schema rules 1ms
+   ✓ M2.2-A strict new action and compatible transport contracts > B04: legacy broad structured payload remains wire-compatible in all three HTTP/tool branches without defaults 52ms
+   × M2.2-A strict new action and compatible transport contracts > B05: OpenAPI preserves wire schemas and publishes honest new action components and tool policy 3ms
+     → Cannot read properties of undefined (reading 'find')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B05: OpenAPI preserves wire schemas and publishes honest new action components and tool policy
+TypeError: Cannot read properties of undefined (reading 'find')
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:107:29
+    105|     for (const [kind, schema] of Object.entries(NEW_TYPED_STRUCTURED_S…
+    106|     expect(spec.paths[paths[1]].post.requestBody.content['application/…
+    107|     expect(TOOL_DEFINITIONS.find(t => t.name === 'forum_publish')?.des…
+       |                             ^
+    108|   });
+    109| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  14:53:06
+   Duration  432ms (transform 53ms, setup 0ms, collect 121ms, tests 79ms, environment 0ms, prepare 39ms)
+

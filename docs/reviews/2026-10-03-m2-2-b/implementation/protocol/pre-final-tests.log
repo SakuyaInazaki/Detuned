@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests | 1 failed) 232ms
+   ✓ M2.2-B typed knowledge projection contracts > B01: source and flat relation schemas make unavailable/redacted version knowledge null 44ms
+   ✓ M2.2-B typed knowledge projection contracts > B02: material requires explicit nullable fields/missing lists without fake defaults 5ms
+   ✓ M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas 101ms
+   × M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer 81ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ agrees tests/contracts/m2-knowledge-view-contracts.test.ts:19:38
+     17| function agrees(schema: any, value: unknown, expected: boolean) {
+     18|   const before = JSON.stringify(value);
+     19|   expect(Value.Check(schema, value)).toBe(expected);
+       |                                      ^
+     20|   expect(ajv.compile(schema)(value)).toBe(expected);
+     21|   expect(JSON.stringify(value)).toBe(before);
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:114:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  15:30:13
+   Duration  720ms (transform 148ms, setup 0ms, collect 296ms, tests 232ms, environment 0ms, prepare 32ms)
+

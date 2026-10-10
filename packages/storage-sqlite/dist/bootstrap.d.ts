@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-export declare const CURRENT_SCHEMA_VERSION = 2;
+export declare const CURRENT_SCHEMA_VERSION = 6;
 export interface BootstrapResult {
     isNewInstance: boolean;
     adminToken: string | null;

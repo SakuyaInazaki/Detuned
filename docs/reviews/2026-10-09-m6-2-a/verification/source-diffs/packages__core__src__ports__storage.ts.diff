@@ -1,0 +1,25 @@
+--- packages/core/src/ports/storage.ts (fresh exact before)
++++ packages/core/src/ports/storage.ts (current)
+@@ -1,6 +1,6 @@
+ import type { SpaceExportSnapshot } from './space-export-snapshot.js';
+ import {
+-  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord,
++  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord, ReviewSubmissionRecord,
+   Actor,
+   ResourceLimits,
+   StorageOperationalStatus,
+@@ -83,6 +83,14 @@
+   findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null;
+   listReviewAssignments(requestId: string): ReviewAssignmentRecord[];
+   updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void;
++  findReviewAssignmentById(id: string): ReviewAssignmentRecord | null;
++  findReviewAssignment(requestId: string, actorId: string): ReviewAssignmentRecord | null;
++  createReviewSubmission(record: ReviewSubmissionRecord): void;
++  findReviewSubmissionById(id: string): ReviewSubmissionRecord | null;
++  findReviewSubmissionByAssignmentId(id: string): ReviewSubmissionRecord | null;
++  findReviewSubmissionBySessionId(id: string): ReviewSubmissionRecord | null;
++  listReviewSubmissions(requestId: string): ReviewSubmissionRecord[];
++  revealReviewSubmissions(requestId: string, revealedAt: string): void;
+ 
+   // Actors & Credentials
+   findActorById(id: string): Actor | null;

@@ -1,0 +1,69 @@
+{
+  "scope": "pure installed validators, no product execution",
+  "pattern": "^\\s*(?=[\\s\\S]*\\S)(?:[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])|[^\\uD800-\\uDBFF]){1,256}\\s*$",
+  "cases": [
+    {
+      "name": "ASCII256",
+      "trimmed_code_points": 256,
+      "typebox": true,
+      "ajv_unicodeRegExp_true": true,
+      "ajv_unicodeRegExp_false": true
+    },
+    {
+      "name": "ASCII257",
+      "trimmed_code_points": 257,
+      "typebox": false,
+      "ajv_unicodeRegExp_true": false,
+      "ajv_unicodeRegExp_false": false
+    },
+    {
+      "name": "emoji256",
+      "trimmed_code_points": 256,
+      "typebox": true,
+      "ajv_unicodeRegExp_true": true,
+      "ajv_unicodeRegExp_false": true
+    },
+    {
+      "name": "emoji257",
+      "trimmed_code_points": 257,
+      "typebox": false,
+      "ajv_unicodeRegExp_true": false,
+      "ajv_unicodeRegExp_false": false
+    },
+    {
+      "name": "outerWhitespace",
+      "trimmed_code_points": 256,
+      "typebox": true,
+      "ajv_unicodeRegExp_true": true,
+      "ajv_unicodeRegExp_false": true
+    },
+    {
+      "name": "internalNewline",
+      "trimmed_code_points": 3,
+      "typebox": true,
+      "ajv_unicodeRegExp_true": true,
+      "ajv_unicodeRegExp_false": true
+    },
+    {
+      "name": "combining256",
+      "trimmed_code_points": 256,
+      "typebox": true,
+      "ajv_unicodeRegExp_true": true,
+      "ajv_unicodeRegExp_false": true
+    },
+    {
+      "name": "combining258",
+      "trimmed_code_points": 258,
+      "typebox": false,
+      "ajv_unicodeRegExp_true": false,
+      "ajv_unicodeRegExp_false": false
+    },
+    {
+      "name": "blank",
+      "trimmed_code_points": 0,
+      "typebox": false,
+      "ajv_unicodeRegExp_true": false,
+      "ajv_unicodeRegExp_false": false
+    }
+  ]
+}

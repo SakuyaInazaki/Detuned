@@ -1,0 +1,29 @@
+{
+  "gate": "focused-first",
+  "exit_code": 1,
+  "passed_tests": 28,
+  "failed_tests": 1,
+  "files_passed": 5,
+  "files_total": 6,
+  "failed_case": "A native checks prepares no invalid input and performs real two-write/six-read calls",
+  "actual_failure": "70000ms own watchdog killed child; actualclose null/SIGKILL; stderr empty",
+  "reached": "D PII01/02 pass, old six Pi pass, otheradjacent pass; A checks inner checkpoints not emitted cannot claim reached",
+  "receipt_pid_alive": false,
+  "raw_credential_pattern_hits": {
+    "focused-first.stdout.txt": false,
+    "focused-first.stderr.txt": false
+  },
+  "cleanup": {
+    "D_fixture_directories": "finally removal covered by passed D tests",
+    "A_failed_child": "parent test awaited actual SIGKILL close",
+    "A_private_directory": "unconfirmed; generated onlyinsidechild without own registry; no tmp scan/cleanup performed"
+  },
+  "stopped": [
+    "type",
+    "lint",
+    "schema",
+    "core",
+    "Claude guard",
+    "Claude native"
+  ]
+}

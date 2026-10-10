@@ -1,0 +1,69 @@
+{
+  "status": "prepared; B review and root runtime release required",
+  "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+  "new_test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+  "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+  "binding_sha256": "bdaa9cfa3ceeb70557c7dc46e3579151a33787018120c51c7169b8027426c037",
+  "case_count": 1,
+  "commands": [
+    {
+      "id": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+      ]
+    },
+    {
+      "id": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture.mjs"
+      ]
+    },
+    {
+      "id": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "id": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-codex-launcher.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "case_timeout_ms": 5000,
+      "own_watchdog_ms": 4000,
+      "permission_proposed": "require_escalated only root-approved exact own Node/ps"
+    }
+  ],
+  "native_future_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-first-result.json"
+  ],
+  "budgets": "original40poll/75work90total95outer and perrequest unchanged",
+  "not_run": [
+    "syntax",
+    "new-source-noemit",
+    "focused",
+    "native",
+    "standaloneguard",
+    "full/build/type/lint/schema/current"
+  ],
+  "guard": "reuse actual sealed C guard with byte-identical policy/minenv; no standalone rerun",
+  "failure_policy": "new0600wx outputs; first failure preserved, stop without retry; normal separately released",
+  "test_contract": "production factory; exact own UID/directPPID/PGID; preACK zero stdout; postACK initialize/exact9; EOF close0/null; exactPID/groupabsence/rootremoved; 1MiB UTF8 fixture bound; safe failure diagnostics only"
+}

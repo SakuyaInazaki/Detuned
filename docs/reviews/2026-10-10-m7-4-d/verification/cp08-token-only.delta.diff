@@ -1,0 +1,11 @@
+--- before/tests/contracts/m7-claude-probe-ownership.test.ts
++++ after/tests/contracts/m7-claude-probe-ownership.test.ts
+@@ -36,7 +36,7 @@
+  const delay=(ms:number)=>new Promise<void>(resolve=>setTimeout(resolve,ms));
+  try{
+   const module=await import(pathToFileURL(path.join(repo,'scripts/integrations/claude-check-probe.mjs')).href);const factory:({privateRoot,workEnd}:{privateRoot:string;workEnd:number})=>string=module.createTrustedMcpLauncher;
+-  const launcher=path.join(dir,'launcher.mjs'),token=path.join(dir,'token');await writeFile(token,'fixed harmless own test credential',{flag:'wx',mode:0o600});await writeFile(launcher,factory({privateRoot:dir,workEnd:Date.now()+3500}),{flag:'wx',mode:0o600});
++  const launcher=path.join(dir,'launcher.mjs'),token=path.join(dir,'token');await writeFile(token,'fixed-own-test-token',{flag:'wx',mode:0o600});await writeFile(launcher,factory({privateRoot:dir,workEnd:Date.now()+3500}),{flag:'wx',mode:0o600});
+   child=spawn(process.execPath,[launcher],{cwd:repo,detached:true,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',DETUNED_BASE_URL:'http://127.0.0.1:1',DETUNED_TOKEN_FILE:token,DETUNED_MCP_INPUT_MODE:'wrapped'},stdio:['pipe','pipe','pipe']});pid=child.pid??0;expect(Number.isSafeInteger(pid)&&pid>1).toBe(true);actualClose=new Promise(resolve=>child!.once('close',(code,signal)=>{closed=true;resolve({code,signal});}));child.on('error',()=>{});watchdog=setTimeout(()=>{expired=true;if(!closed&&pid>1)child!.kill('SIGTERM');},4000);
+   const actual=await query(pid);expect(actual.uid).toBe(process.getuid!());expect(actual.ppid).toBe(process.pid);expect(actual.pgid).toBe(pid);pgid=actual.pgid;
+   let stdout='',stderr='',pending='';const responses=new Map<number,Record<string,unknown>>();child.stdout!.setEncoding('utf8');child.stderr!.setEncoding('utf8');child.stdout!.on('data',(text:string)=>{stdout+=text;pending+=text;if(stdout.length>32768){child!.kill('SIGTERM');return;}let end;while((end=pending.indexOf('\n'))>=0){const line=pending.slice(0,end);pending=pending.slice(end+1);try{const value=JSON.parse(line) as Record<string,unknown>;if(typeof value.id==='number')responses.set(value.id,value);}catch{}}});child.stderr!.on('data',(text:string)=>{stderr+=text;if(stderr.length>32768)child!.kill('SIGTERM');});

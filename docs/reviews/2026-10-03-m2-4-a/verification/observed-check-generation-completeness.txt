@@ -1,0 +1,274 @@
+{
+  "reviewed_date": "2026-10-02",
+  "probes": [
+    {
+      "id": "AB01",
+      "description": "PK key collation/direction is generated consistently or explicitly rejected at build time",
+      "observed": [
+        {
+          "name": "pk-collation",
+          "source_change": "PRIMARY KEY (actor_id COLLATE NOCASE, space_id, operation, key)",
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error extracting requirements from schema.sql: 表 idempotency_records 主键索引 sqlite_autoindex_idempotency_records_1 列 actor_id 包含不受支持的排序规则: NOCASE（当前架构策略仅支持 BINARY）\n"
+          },
+          "sync": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is out of sync with schema.sql. Run \"pnpm --filter @detuned/storage-sqlite run generate:schema\" to synchronize.\n"
+          },
+          "explicit_source_rejection": true,
+          "passes": true
+        },
+        {
+          "name": "pk-direction",
+          "source_change": "PRIMARY KEY (actor_id, space_id, operation, key DESC)",
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error extracting requirements from schema.sql: 表 idempotency_records 主键索引 sqlite_autoindex_idempotency_records_1 列 key 包含不受支持的排序方向: DESC（当前架构策略仅支持 ASC）\n"
+          },
+          "sync": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is out of sync with schema.sql. Run \"pnpm --filter @detuned/storage-sqlite run generate:schema\" to synchronize.\n"
+          },
+          "explicit_source_rejection": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AB02",
+      "description": "Missing migration block markers cannot produce a successful partial schema update",
+      "observed": [
+        {
+          "missing_marker": "// BEGIN MIGRATION_DDL",
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is missing required migration marker (// BEGIN MIGRATION_DDL). Please restore the marker before regenerating.\n"
+          },
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is out of sync with schema.sql. Run \"pnpm --filter @detuned/storage-sqlite run generate:schema\" to synchronize.\n"
+          },
+          "output_hash_before": "a7ddc38271e056310b77e9d0ef67df7d8efb6241e0f359df4f9e352cc7bc0746",
+          "output_hash_after": "a7ddc38271e056310b77e9d0ef67df7d8efb6241e0f359df4f9e352cc7bc0746",
+          "output_unchanged": true,
+          "migration_constant_matches_source": false,
+          "passes": true
+        },
+        {
+          "missing_marker": "// END MIGRATION_DDL",
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is missing required migration marker (// END MIGRATION_DDL). Please restore the marker before regenerating.\n"
+          },
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: schema.ts is out of sync with schema.sql. Run \"pnpm --filter @detuned/storage-sqlite run generate:schema\" to synchronize.\n"
+          },
+          "output_hash_before": "2b060f7484a6aaf280d3aae84be7535a68c13b2c04e8d7913649ac28118d5bbc",
+          "output_hash_after": "2b060f7484a6aaf280d3aae84be7535a68c13b2c04e8d7913649ac28118d5bbc",
+          "output_unchanged": true,
+          "migration_constant_matches_source": false,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AB03",
+      "description": "With complete inputs, actual sync commands reject corrupt profiles and generation repairs them",
+      "observed": [
+        {
+          "version": 1,
+          "before_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: V1_SCHEMA_TABLES in schema.ts is out of sync with historical-v1-schema.sql DDL structure.\n"
+          },
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "after_check": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "profiles_restored": true,
+          "compile": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "",
+            "stderr": ""
+          },
+          "runtime_without_src": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "passes": true
+        },
+        {
+          "version": 2,
+          "before_check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: V2_SCHEMA_TABLES in schema.ts is out of sync with schema.sql DDL structure.\n"
+          },
+          "generate": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "Successfully generated schema.ts from schema.sql\n",
+            "stderr": ""
+          },
+          "after_check": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "schema.sql and schema.ts are in exact synchronization.\n",
+            "stderr": ""
+          },
+          "profiles_restored": true,
+          "compile": {
+            "exit_code": 0,
+            "signal": null,
+            "stdout": "",
+            "stderr": ""
+          },
+          "runtime_without_src": true,
+          "runtime_structure": {
+            "valid": true
+          },
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "AB04",
+      "description": "Other required input failures reject without modifying schema.ts",
+      "observed": [
+        {
+          "missing": "driver",
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: better-sqlite3 driver is required for schema profile synchronization check.\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: better-sqlite3 driver is required for schema generation.\n"
+          },
+          "output_hash_before": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_hash_after": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_unchanged": true,
+          "passes": true
+        },
+        {
+          "missing": "historical",
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required historical fixture historical-v1-schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-historical/tests/fixtures/historical-v1-schema.sql\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required historical fixture historical-v1-schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-historical/tests/fixtures/historical-v1-schema.sql\n"
+          },
+          "output_hash_before": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_hash_after": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_unchanged": true,
+          "passes": true
+        },
+        {
+          "missing": "schema.sql",
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-schema.sql/packages/storage-sqlite/src/schema.sql\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Required schema.sql not found at /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-schema.sql/packages/storage-sqlite/src/schema.sql\n"
+          },
+          "output_hash_before": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_hash_after": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_unchanged": true,
+          "passes": true
+        },
+        {
+          "missing": "extractor",
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "node:internal/modules/esm/resolve:271\n    throw new ERR_MODULE_NOT_FOUND(\n          ^\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/extract-schema-requirements.mjs' imported from /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/check-schema-sync.mjs\n    at finalizeResolution (node:internal/modules/esm/resolve:271:11)\n    at moduleResolve (node:internal/modules/esm/resolve:865:10)\n    at defaultResolve (node:internal/modules/esm/resolve:992:11)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:20)\n    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:724:38)\n    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:762:56)\n    at #resolve (node:internal/modules/esm/loader:686:17)\n    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:606:35)\n    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)\n    at ModuleJob.link (node:internal/modules/esm/module_job:253:17) {\n  code: 'ERR_MODULE_NOT_FOUND',\n  url: 'file:///private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/extract-schema-requirements.mjs'\n}\n\nNode.js v26.3.0\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "node:internal/modules/esm/resolve:271\n    throw new ERR_MODULE_NOT_FOUND(\n          ^\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/extract-schema-requirements.mjs' imported from /private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/generate-schema.mjs\n    at finalizeResolution (node:internal/modules/esm/resolve:271:11)\n    at moduleResolve (node:internal/modules/esm/resolve:865:10)\n    at defaultResolve (node:internal/modules/esm/resolve:992:11)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:20)\n    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:724:38)\n    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:762:56)\n    at #resolve (node:internal/modules/esm/loader:686:17)\n    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:606:35)\n    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)\n    at ModuleJob.link (node:internal/modules/esm/module_job:253:17) {\n  code: 'ERR_MODULE_NOT_FOUND',\n  url: 'file:///private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-r18-generation-ew35fp/missing-extractor/packages/storage-sqlite/scripts/extract-schema-requirements.mjs'\n}\n\nNode.js v26.3.0\n"
+          },
+          "output_hash_before": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_hash_after": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+          "output_unchanged": true,
+          "passes": true
+        },
+        {
+          "missing": "v2-marker",
+          "check": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Could not extract V2_SCHEMA_TABLES literal from schema.ts\n"
+          },
+          "generate": {
+            "exit_code": 1,
+            "signal": null,
+            "stdout": "",
+            "stderr": "Error: Could not find V2_SCHEMA_TABLES placeholder in schema.ts\n"
+          },
+          "output_hash_before": "9ec43a582bf3a2a1885ff32ad0863ff4db1efa672a90b172ce706f0a1d0ad071",
+          "output_hash_after": "9ec43a582bf3a2a1885ff32ad0863ff4db1efa672a90b172ce706f0a1d0ad071",
+          "output_unchanged": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 4
+  }
+}

@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-event-recovery.test.ts (2 tests | 2 failed) 1733ms
+   × T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected 1329ms
+     → expected 200 to be 409 // Object.is equality
+   × T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans 404ms
+     → expected 103 to be 403 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  21:47:48
+   Duration  2.27s (transform 166ms, setup 0ms, collect 274ms, tests 1.73s, environment 0ms, prepare 45ms)
+

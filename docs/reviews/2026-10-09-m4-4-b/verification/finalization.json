@@ -1,0 +1,122 @@
+{
+  "status": "accepted_by_parent_finalized",
+  "date": "2026-10-09",
+  "head_unchanged": true,
+  "counts": {
+    "product_source_config_test_hashes": 278,
+    "current_document_hashes": 54,
+    "mutable_status_document_hashes": 5,
+    "protected_review_probe_log_evidence_hashes": 5752,
+    "frozen_sql_archive_hashes": 4,
+    "schema_profile_hashes": 2,
+    "tracked_build_artifact_hashes": 208,
+    "untracked_build_artifact_hashes": 220
+  },
+  "delta": {
+    "product_source_config_test_hashes": {
+      "changed": [
+        "packages/adapter-pi/src/index.ts",
+        "tests/contracts/m2-post-revision-read-contracts.test.ts",
+        "tests/contracts/r4-c-contracts.test.ts"
+      ],
+      "added": [
+        "tests/contracts/m4-pi-native-lifecycle.test.ts",
+        "packages/adapter-pi/src/runtime.ts",
+        "tests/fixtures/pi-runtime/native-lifecycle.mjs",
+        "tests/contracts/m4-pi-runtime.test.ts"
+      ],
+      "removed": []
+    },
+    "current_document_hashes": {
+      "changed": [
+        "docs/00-implementation-brief.md",
+        "docs/06-agent-integration.md",
+        "docs/08-roadmap.md",
+        "docs/09-validation.md",
+        "docs/12-decisions.md",
+        "integrations/compatibility.json",
+        "integrations/pi.md"
+      ],
+      "added": [
+        "examples/pi-extension.md"
+      ],
+      "removed": []
+    },
+    "mutable_status_document_hashes": {
+      "changed": [
+        "README.md",
+        "docs/progress.md",
+        "docs/reviews/README.md",
+        "examples/README.md"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "schema_profile_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "changed": [
+        "packages/adapter-pi/dist/index.d.ts.map",
+        "packages/adapter-pi/dist/index.js",
+        "packages/adapter-pi/dist/index.js.map"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "untracked_build_artifact_hashes": {
+      "changed": [],
+      "added": [
+        "packages/adapter-pi/dist/runtime.d.ts",
+        "packages/adapter-pi/dist/runtime.js",
+        "packages/adapter-pi/dist/runtime.d.ts.map",
+        "packages/adapter-pi/dist/runtime.js.map"
+      ],
+      "removed": []
+    }
+  },
+  "allowed_source_test_files": [
+    "packages/adapter-pi/src/index.ts",
+    "packages/adapter-pi/src/runtime.ts",
+    "tests/contracts/m2-post-revision-read-contracts.test.ts",
+    "tests/contracts/m4-pi-native-lifecycle.test.ts",
+    "tests/contracts/m4-pi-runtime.test.ts",
+    "tests/contracts/r4-c-contracts.test.ts",
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs"
+  ],
+  "D_final_hashes": {
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": "027760bf247c195977190f65b90635c32a6799817a11f40a608c0b3b7d8ba8b0",
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": "60fdc63bc38fbb0e67891ad03acf08001f5ebbb313d39bd503fe6d549514792c"
+  },
+  "unauthorized_delta": [],
+  "freeze_mismatches": {
+    "A": [],
+    "Bformal": [],
+    "Bdocs": []
+  },
+  "local_links": {
+    "markdown_files": 21,
+    "checked": 291,
+    "missing": []
+  },
+  "trailing_whitespace": [],
+  "git_diff_check": 0,
+  "compatibility_json_parse": "passed",
+  "primary_lock_unchanged": true,
+  "old_review_sql_schema_archive_protected": true,
+  "docs11_unchanged": true,
+  "C_functional_checks_rerun": false,
+  "held_dsh_not_touched_or_cleaned": true
+}

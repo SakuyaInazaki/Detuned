@@ -1,0 +1,23 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+$ vitest run packages/storage-sqlite/tests/schema-generation.test.ts packages/storage-sqlite/tests/storage.test.ts tests/integration/historical-http-replay.test.ts tests/integration/m6-review-requests.test.ts tests/integration/m6-schema3-maintenance.test.ts --maxWorkers=1 --no-file-parallelism
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (7 tests) 5214ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V3 updates and frozen V1/V2 remain unchanged  556ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1003ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  350ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V3' profile in sync check and successfully repairs it via generate-schema (AB03)  561ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  544ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  569ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1611ms
+ ✓ tests/integration/m6-review-requests.test.ts (7 tests) 311ms
+ ✓ tests/integration/m6-schema3-maintenance.test.ts (5 tests) 215ms
+ ✓ tests/integration/historical-http-replay.test.ts (7 tests) 363ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 93ms
+
+ Test Files  5 passed (5)
+      Tests  33 passed (33)
+   Start at  13:58:14
+   Duration  7.79s (transform 404ms, setup 0ms, collect 904ms, tests 6.20s, environment 0ms, prepare 139ms)
+

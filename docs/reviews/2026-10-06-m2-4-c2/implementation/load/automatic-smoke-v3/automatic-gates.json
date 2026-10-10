@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "mode": "smoke",
+  "started_utc": "2026-10-06T13:09:08.278Z",
+  "origin_performance_ms": 36.141375,
+  "elapsed_ms": 13716.541666000001,
+  "runner_result": {
+    "exit_code": 0,
+    "signal": null
+  },
+  "success": true,
+  "failure": null,
+  "events": [
+    {
+      "schema_version": 1,
+      "t_ms": 1.7562500000000014,
+      "utc": "2026-10-06T13:09:08.280Z",
+      "action": "spawn_fixed_script",
+      "script": "run.mjs",
+      "pid": 41379,
+      "args_without_secrets": [
+        "--manifest",
+        "/private/tmp/detuned-c2-seed-smoke-20261006-v3-a1/manifest.json",
+        "--runtime",
+        "/private/tmp/detuned-c2-load-auto-private-v3-a1/runtime.json",
+        "--out",
+        "/private/tmp/detuned-c2-load-auto-v3-a1",
+        "--mode",
+        "smoke",
+        "--gated",
+        "true"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 309.59337500000004,
+      "utc": "2026-10-06T13:09:08.588Z",
+      "action": "gate_observed",
+      "phase": "preflight"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 310.101125,
+      "utc": "2026-10-06T13:09:08.588Z",
+      "action": "spawn_fixed_script",
+      "script": "verify-gate.mjs",
+      "pid": 41381,
+      "args_without_secrets": [
+        "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates/preflight/live.json",
+        "preflight",
+        "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates/preflight/result.json"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 761.196291,
+      "utc": "2026-10-06T13:09:09.039Z",
+      "action": "gate_process_exit",
+      "phase": "preflight",
+      "exit_code": 0,
+      "signal": null,
+      "stdout_sha256": "9b9e079ec5b57ba996241687f0b63e3e345b044fb548895d7026430a50cb8e69",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 762.4069999999999,
+      "utc": "2026-10-06T13:09:09.040Z",
+      "action": "gate_released_atomically",
+      "phase": "preflight",
+      "audit": {
+        "documents_checked": [
+          "task conditions/evidence/variants/retry and sources"
+        ],
+        "HTTP_records": 23,
+        "HTTP_bytes": 102123,
+        "oracle_opened_after_session": true
+      },
+      "report_sha256": "fcf6c15cf0fb83dfb7ec8f52bb4d347d12db9dc5083914692f5fa0881959b7e4"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 13123.392791,
+      "utc": "2026-10-06T13:09:21.401Z",
+      "action": "gate_observed",
+      "phase": "postflight"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 13124.363208,
+      "utc": "2026-10-06T13:09:21.402Z",
+      "action": "spawn_fixed_script",
+      "script": "verify-gate.mjs",
+      "pid": 41391,
+      "args_without_secrets": [
+        "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates/postflight/live.json",
+        "postflight",
+        "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates/postflight/result.json"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 13613.483666,
+      "utc": "2026-10-06T13:09:21.891Z",
+      "action": "gate_process_exit",
+      "phase": "postflight",
+      "exit_code": 0,
+      "signal": null,
+      "stdout_sha256": "81a961dd61f625df4e70851d0add7f28f9b2917c357a1aaabe9b1c048859c9fd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 13614.566041,
+      "utc": "2026-10-06T13:09:21.893Z",
+      "action": "gate_released_atomically",
+      "phase": "postflight",
+      "audit": {
+        "documents_checked": [
+          "task conditions/evidence/variants/retry and sources"
+        ],
+        "HTTP_records": 23,
+        "HTTP_bytes": 102441,
+        "oracle_opened_after_session": true
+      },
+      "report_sha256": "13929d880dee32bfac7699f261471ef1c1d43aa19d4c4609c863a55a0e2b00e5"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 13666.467541,
+      "utc": "2026-10-06T13:09:21.944Z",
+      "action": "runner_exit",
+      "exit_code": 0,
+      "signal": null
+    }
+  ],
+  "private_artifacts": "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates"
+}

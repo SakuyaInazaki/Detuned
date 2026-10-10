@@ -1,0 +1,82 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts (5 tests | 5 failed) 79ms
+   × M2.2-A strict new action and compatible transport contracts > B01: four strict definitions agree in TypeBox, installed Fastify AJV and parser 2ms
+     → Cannot read properties of undefined (reading 'proposal')
+   × M2.2-A strict new action and compatible transport contracts > B02: missing, types, unknown keys, blank text, lengths and array elements reject without coercion 0ms
+     → Cannot read properties of undefined (reading 'proposal')
+   × M2.2-A strict new action and compatible transport contracts > B03: failure conditions and fixed reference shapes are public schema rules 0ms
+     → Cannot read properties of undefined (reading 'failure')
+   × M2.2-A strict new action and compatible transport contracts > B04: legacy broad structured payload remains wire-compatible in all three HTTP/tool branches without defaults 75ms
+     → Cannot read properties of undefined (reading 'failure')
+   × M2.2-A strict new action and compatible transport contracts > B05: OpenAPI preserves wire schemas and publishes honest new action components and tool policy 1ms
+     → Cannot read properties of undefined (reading 'schemas')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B01: four strict definitions agree in TypeBox, installed Fastify AJV and parser
+TypeError: Cannot read properties of undefined (reading 'proposal')
+ ❯ agree tests/contracts/m2-typed-write-contracts.test.ts:21:18
+     19| 
+     20| function agree(kind: keyof typeof NEW_TYPED_STRUCTURED_SCHEMAS, input:…
+     21|   const schema = NEW_TYPED_STRUCTURED_SCHEMAS[kind];
+       |                  ^
+     22|   const before = JSON.stringify(input);
+     23|   expect(Value.Check(schema, input)).toBe(valid);
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:35:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B02: missing, types, unknown keys, blank text, lengths and array elements reject without coercion
+TypeError: Cannot read properties of undefined (reading 'proposal')
+ ❯ agree tests/contracts/m2-typed-write-contracts.test.ts:21:18
+     19| 
+     20| function agree(kind: keyof typeof NEW_TYPED_STRUCTURED_SCHEMAS, input:…
+     21|   const schema = NEW_TYPED_STRUCTURED_SCHEMAS[kind];
+       |                  ^
+     22|   const before = JSON.stringify(input);
+     23|   expect(Value.Check(schema, input)).toBe(valid);
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:42:80
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B03: failure conditions and fixed reference shapes are public schema rules
+TypeError: Cannot read properties of undefined (reading 'failure')
+ ❯ agree tests/contracts/m2-typed-write-contracts.test.ts:21:18
+     19| 
+     20| function agree(kind: keyof typeof NEW_TYPED_STRUCTURED_SCHEMAS, input:…
+     21|   const schema = NEW_TYPED_STRUCTURED_SCHEMAS[kind];
+       |                  ^
+     22|   const before = JSON.stringify(input);
+     23|   expect(Value.Check(schema, input)).toBe(valid);
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:69:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B04: legacy broad structured payload remains wire-compatible in all three HTTP/tool branches without defaults
+TypeError: Cannot read properties of undefined (reading 'failure')
+ ❯ agree tests/contracts/m2-typed-write-contracts.test.ts:21:18
+     19| 
+     20| function agree(kind: keyof typeof NEW_TYPED_STRUCTURED_SCHEMAS, input:…
+     21|   const schema = NEW_TYPED_STRUCTURED_SCHEMAS[kind];
+       |                  ^
+     22|   const before = JSON.stringify(input);
+     23|   expect(Value.Check(schema, input)).toBe(valid);
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:92:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/contracts/m2-typed-write-contracts.test.ts > M2.2-A strict new action and compatible transport contracts > B05: OpenAPI preserves wire schemas and publishes honest new action components and tool policy
+TypeError: Cannot read properties of undefined (reading 'schemas')
+ ❯ tests/contracts/m2-typed-write-contracts.test.ts:100:46
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  14:52:20
+   Duration  707ms (transform 80ms, setup 0ms, collect 187ms, tests 79ms, environment 0ms, prepare 67ms)
+

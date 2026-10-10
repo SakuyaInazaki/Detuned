@@ -1,0 +1,286 @@
+{
+  "format_version": 1,
+  "generated_at": "2026-10-09T15:34:47.694Z",
+  "source_kind": "Actual accepted built schema5 HTTP handlers/services via app.inject, not TCP/model or SQL fabricated formal state",
+  "runtime": {
+    "node": "v26.3.0",
+    "sqlite": "3.53.4",
+    "better_sqlite3": "13.0.3"
+  },
+  "source_baseline_sha256": "c5e7554d6ac337146ef9b30bf57c6b2ffe3ef3886520df55c80e2a9693219777",
+  "sourceproof_sha256": "ab548c7ebbd6662d149a34e92d4448f352a7947b034a6348878b160bc4db8f32",
+  "generator_sha256": "bf3bdb4ac8cab722493c7e10ec3b5a6f6d404f9a3e612398902251856030aeb5",
+  "archive": {
+    "file": "database.sqlite",
+    "bytes": 331776,
+    "sha256": "d784753dd1e8e5dc63518147158efa2ac160e81d28ecbb1966656da4cb0d5752"
+  },
+  "schema_version": 5,
+  "migrations": [
+    {
+      "version": 1,
+      "applied_at": "2026-10-09T15:34:47.491Z"
+    },
+    {
+      "version": 2,
+      "applied_at": "2026-10-09T15:34:47.491Z"
+    },
+    {
+      "version": 3,
+      "applied_at": "2026-10-09T15:34:47.491Z"
+    },
+    {
+      "version": 4,
+      "applied_at": "2026-10-09T15:34:47.491Z"
+    },
+    {
+      "version": 5,
+      "applied_at": "2026-10-09T15:34:47.491Z"
+    }
+  ],
+  "schema_sql_sha256": "cde0048952c6a38041e3909b0fe68d099eeacad58e0daf1f5b3ddb086e082de1",
+  "table_facts": {
+    "actors": {
+      "count": 3,
+      "rows_sha256": "33b92a064f6854a3bc030c9fa8be48847ee514c3c66bd349bd78bc0a0ba6e193"
+    },
+    "artifacts": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "consumers": {
+      "count": 1,
+      "rows_sha256": "b44e1d394bee1f6ccf99eb2ffc0ca3f0d16dc16bb8ae7c995f5269be4db07ccc"
+    },
+    "delivery_batches": {
+      "count": 1,
+      "rows_sha256": "c24111735542399aaa5bb2cbc265611e61f864420a87d138c833e4a39a725d1a"
+    },
+    "events": {
+      "count": 8,
+      "rows_sha256": "69a1c8d9cc7fb07d679dea70b3fd15600872ee863009570093db273f5e30c477"
+    },
+    "idempotency_records": {
+      "count": 7,
+      "rows_sha256": "150e3ceed366914009c891af3ab4b3649edba52e0eace65877b46d86cf5b209b"
+    },
+    "memberships": {
+      "count": 3,
+      "rows_sha256": "56dd3914896fe6411e94f4d4836a2900916eabda178b04da8f4f00417858c328"
+    },
+    "post_fts": {
+      "count": 1,
+      "rows_sha256": "7b7c09ddee42314096d2269f4d44274b36990fc762aaab8bea80bb00fa867319"
+    },
+    "post_fts_config": {
+      "count": 1,
+      "rows_sha256": "65642436c0afc30f002b4ffc2bb040fbe3482e13da6fc0b90500c31f80144192"
+    },
+    "post_fts_content": {
+      "count": 1,
+      "rows_sha256": "0db88c6e24f105bf8eabd0fdc9760dc806b2ad0a2b1570d2d3da88957c1a145b"
+    },
+    "post_fts_data": {
+      "count": 3,
+      "rows_sha256": "62d51e69272c07c4bd3d696a5d068b967454858b970ca777323d921d7b898998"
+    },
+    "post_fts_docsize": {
+      "count": 1,
+      "rows_sha256": "0fafb4aa407c9ef72e21c5a0d4ed21543ea54258c99147eedb6b248b4e6a841c"
+    },
+    "post_fts_idx": {
+      "count": 1,
+      "rows_sha256": "d5dbe144d37c37a60eeb8ff70454d214e6b5249a07a689970be0145f791174ff"
+    },
+    "post_revisions": {
+      "count": 1,
+      "rows_sha256": "3fa122f94286e9d92fc2dd8471d013d0498cb617439b27c82359203fdbdc69ff"
+    },
+    "posts": {
+      "count": 1,
+      "rows_sha256": "6adc2e803d1d9474c1b4fccfc231d4f31f7a7d3c88055c641aad7cee2de4014b"
+    },
+    "redactions": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "relation_resolutions": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "relations": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "review_assignments": {
+      "count": 2,
+      "rows_sha256": "1036e70f97782a3e8265c9b9eaebfdf97a04034d0657a9b39a0cd10f8f2bfa46"
+    },
+    "review_decisions": {
+      "count": 1,
+      "rows_sha256": "dd84cabc0f2bd687b0c595f9b54d2bcb1e120d942c789611e1c7252b0b477374"
+    },
+    "review_request_versions": {
+      "count": 4,
+      "rows_sha256": "52dedc7b8f174153abc169e6c1267e24cd41e2c03e38949ed52ef114d0c2413e"
+    },
+    "review_requests": {
+      "count": 1,
+      "rows_sha256": "e189613af7c721a9631b2cea1ec5b870912877af1f95ab93727a2df238ed58a0"
+    },
+    "review_submissions": {
+      "count": 2,
+      "rows_sha256": "7ad1b7e5ac0364e5b94bb686f108d7e7dac9c27329f20708baae5bc9a09537a2"
+    },
+    "revision_artifacts": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "schema_migrations": {
+      "count": 5,
+      "rows_sha256": "3cbc4201c9ccc7e04608327ea0dd3727c51d014722153ed6dc67abc00ee1a5e2"
+    },
+    "sessions": {
+      "count": 2,
+      "rows_sha256": "de0a1b856797c41b3bab426aedf66c0f8a6ab525e7f3f98e7a3add0e624fd710"
+    },
+    "snapshot_items": {
+      "count": 2,
+      "rows_sha256": "0a3fe84650a2eb81838f0fba0f937cd8f670ef4ed52d74739a0dde24006b4288"
+    },
+    "snapshots": {
+      "count": 1,
+      "rows_sha256": "a2abe3859a1c001a0649f120d6318280a9e32ab4a1f0ccba80eba2368e799514"
+    },
+    "space_revisions": {
+      "count": 1,
+      "rows_sha256": "24b300fe76791011fce039626797676e4d088d3295cb0269b4936cdea3153bf9"
+    },
+    "spaces": {
+      "count": 1,
+      "rows_sha256": "de67af2ee423546cccbe4711ea141bb7b9355f24878cfaf27123f79529913650"
+    },
+    "subscriptions": {
+      "count": 1,
+      "rows_sha256": "d5692bb0e1278c5ebe3a25da8413eaeb2978a637e2f6c952e6be759b46086400"
+    },
+    "thread_versions": {
+      "count": 1,
+      "rows_sha256": "2352a1df54051a82a3c6b7a81e021382a6029560bc8cac39e983ea1b129c61ca"
+    },
+    "threads": {
+      "count": 1,
+      "rows_sha256": "d32330e907679c8eb9fe1dfd97a809848235fe4dbd2516480492a13b602deb4b"
+    },
+    "credentials": {
+      "count": 0,
+      "rows_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "instance_metadata": {
+      "count": 1,
+      "rows_sha256": "bda6a03f9b88792ca165848a5bd04599a86352edab7ae743ffcee18dccc6e42e"
+    }
+  },
+  "fixture": {
+    "space_id": "spc_7890466a-a8df-4cb4-bfce-3b8092c720c4",
+    "thread_id": "thd_3194dcb9-c02a-40da-aea9-00b99f3dd068",
+    "target_ref": {
+      "post_id": "pst_b7dca84b-47ad-45e7-8067-383877db1bc7",
+      "revision": 1
+    },
+    "author_actor_id": "act_admin_cc7fcc2725cb",
+    "reviewer_actor_ids": [
+      "act_f6b2c502-241d-4835-992a-e788d153fab5",
+      "act_0c853b43-ad6d-47ab-b977-709d7112127c"
+    ],
+    "request": {
+      "id": "rrq_c8f505be-5d22-42c0-bca6-e99fb91bdd87",
+      "space_id": "spc_7890466a-a8df-4cb4-bfce-3b8092c720c4",
+      "target_ref": {
+        "post_id": "pst_b7dca84b-47ad-45e7-8067-383877db1bc7",
+        "revision": 1
+      },
+      "snapshot_id": "snp_27346b9e-04bd-47c1-8537-a0dde4f43de4",
+      "snapshot_sha256": "fd215b992bba7ac2da5541ba549ec703243a9cc0804ab9452bd11e5656c1580d",
+      "rules_revision": 1,
+      "policy_revision": 1,
+      "round": 1,
+      "phase": "collecting",
+      "version": 1,
+      "requested_by": "act_admin_cc7fcc2725cb",
+      "created_at": "2026-10-09T16:10:00.000Z",
+      "changed_by": "act_admin_cc7fcc2725cb",
+      "changed_at": "2026-10-09T16:10:00.000Z",
+      "reason": null,
+      "reviewer_actor_ids": [
+        "act_0c853b43-ad6d-47ab-b977-709d7112127c",
+        "act_f6b2c502-241d-4835-992a-e788d153fab5"
+      ]
+    },
+    "snapshot_sha256": "fd215b992bba7ac2da5541ba549ec703243a9cc0804ab9452bd11e5656c1580d",
+    "submissions": [
+      {
+        "submission_id": "rsb_3ee39e02-2c42-4138-a293-23fc78e173cc",
+        "request_id": "rrq_c8f505be-5d22-42c0-bca6-e99fb91bdd87",
+        "assignment_id": "ras_c494201a-11e5-466b-9c8a-3cb310f1a96a",
+        "reviewer_actor_id": "act_f6b2c502-241d-4835-992a-e788d153fab5",
+        "snapshot_sha256": "fd215b992bba7ac2da5541ba549ec703243a9cc0804ab9452bd11e5656c1580d",
+        "submitted_at": "2026-10-09T16:12:00.000Z"
+      },
+      {
+        "submission_id": "rsb_e2ae841e-1410-4a43-b3f5-58899d74d8ec",
+        "request_id": "rrq_c8f505be-5d22-42c0-bca6-e99fb91bdd87",
+        "assignment_id": "ras_eaf112b0-e737-4c2b-8bb7-6e195b810001",
+        "reviewer_actor_id": "act_0c853b43-ad6d-47ab-b977-709d7112127c",
+        "snapshot_sha256": "fd215b992bba7ac2da5541ba549ec703243a9cc0804ab9452bd11e5656c1580d",
+        "submitted_at": "2026-10-09T16:14:00.000Z"
+      }
+    ],
+    "decision": {
+      "id": "rde_9530e8d2-54d5-41ce-b957-c62091652a7b",
+      "request_id": "rrq_c8f505be-5d22-42c0-bca6-e99fb91bdd87",
+      "actor_id": "act_admin_cc7fcc2725cb",
+      "snapshot_sha256": "fd215b992bba7ac2da5541ba549ec703243a9cc0804ab9452bd11e5656c1580d",
+      "outcome": "accepted",
+      "rationale": "All complete reviews accept; no required checks or blocking objections remain.",
+      "request_version": 4,
+      "created_at": "2026-10-09T16:15:00.000Z",
+      "review_ids": [
+        "rsb_e2ae841e-1410-4a43-b3f5-58899d74d8ec",
+        "rsb_3ee39e02-2c42-4138-a293-23fc78e173cc"
+      ],
+      "check_receipt_ids": []
+    },
+    "consumer": {
+      "id": "csr_9dd844cc-d5ec-41f7-bcfa-f041106b64a6",
+      "subscription_id": "sub_f54b7683-c1a5-45e0-a20a-ffbc54148fa2",
+      "consumer_key": "v5-pending",
+      "ack_seq": 0,
+      "version": 2,
+      "active_batch_id": "bat_42409022-3274-458c-a78b-1041db2812ce",
+      "acl_epoch": 4
+    },
+    "batch": {
+      "id": "bat_42409022-3274-458c-a78b-1041db2812ce",
+      "consumer_id": "csr_9dd844cc-d5ec-41f7-bcfa-f041106b64a6",
+      "from_seq": 0,
+      "through_seq": 2,
+      "event_ids": "[\"evt_6835b8f3-a90f-41f2-9133-d4b806373c9e\"]",
+      "acked_at": null,
+      "created_at": "2026-10-09T16:17:00.000Z"
+    }
+  },
+  "sanitization": {
+    "all_credentials_removed": true,
+    "token_secret_removed": true,
+    "known_token_hash_secret_scan_passed": true,
+    "business_rows_exact": true,
+    "foreign_key_check": [],
+    "integrity_check": "ok",
+    "artifact_rows": 0,
+    "no_blob_store_created": true,
+    "archive_classification": "corrupt: deliberately no runtime token_secret; copy hydration required"
+  },
+  "hydration": "Copy archive; raw SQLite insert fresh token_secret before coordinator; optional fresh bounded credentials for retained actor IDs. Do not init/bootstrap original or alter business/formal history.",
+  "reproducibility": "Normal tests copy checked-in archive+manifest. Generator/current accepted V5 built only for explicit capture; no old Git/tmp/model dependency. Random IDs/time/bootstrap mean semantic, not byte-identical regeneration."
+}

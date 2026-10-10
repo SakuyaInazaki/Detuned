@@ -1,0 +1,771 @@
+--- before/packages/core/src/ports/storage.ts
++++ current/packages/core/src/ports/storage.ts
+@@ -11,6 +11,8 @@
+   Thread,
+   Post,
+   PostRevision,
++  PostRevisionMetadata,
++  RevisionArtifactCatalogItem,
+   Relation,
+   RelationResolution,
+   Artifact,
+@@ -112,6 +114,10 @@
+   createPostRevision(post: Post, revision: PostRevision): void;
+   updatePost(post: Post): void;
+   findPostById(id: string): Post | null;
++  /** Narrow directory reads: no stored content or private attachment fields. */
++  getPostRevisionMetadata(postId: string, revision: number): PostRevisionMetadata | null;
++  listPostRevisionMetadata(postId: string, limit: number, afterRevision?: number): { revisions: PostRevisionMetadata[]; has_more: boolean };
++  listRevisionArtifactMetadata(spaceId: string, postId: string, revision: number, limit: number, afterId?: string): { artifacts: RevisionArtifactCatalogItem[]; has_more: boolean };
+   getPostRevision(postId: string, revision: number): PostRevision | null;
+   listPostRevisions(postId: string, limit?: number, cursor?: string | null): { revisions: PostRevision[]; next_cursor: string | null };
+   listPostsInThread(threadId: string, limit?: number, cursor?: string | null): { posts: Post[]; next_cursor: string | null };
+--- before/packages/core/src/index.ts
++++ current/packages/core/src/index.ts
+@@ -32,3 +32,5 @@
+ export * from './services/operations-service.js';
+ 
+ export * from './services/web-session-service.js';
++
++export * from './services/post-catalog-read-service.js';
+--- before/packages/storage-sqlite/src/sqlite-storage.ts
++++ current/packages/storage-sqlite/src/sqlite-storage.ts
+@@ -26,6 +26,8 @@
+   Thread,
+   Post,
+   PostRevision,
++  PostRevisionMetadata,
++  RevisionArtifactCatalogItem,
+   Relation,
+   RelationResolution,
+   Artifact,
+@@ -676,6 +678,39 @@
+       lifecycle: row.lifecycle,
+       created_at: row.created_at,
+     };
++  }
++
++  getPostRevisionMetadata(postId: string, revision: number): PostRevisionMetadata | null {
++    return this.db.prepare('SELECT revision,editor_id,created_at,content_hash FROM post_revisions WHERE post_id=? AND revision=?')
++      .get(postId, revision) as PostRevisionMetadata | undefined ?? null;
++  }
++
++  listPostRevisionMetadata(postId: string, limit: number, afterRevision?: number): { revisions: PostRevisionMetadata[]; has_more: boolean } {
++    const rows = this.db.prepare(`SELECT revision,editor_id,created_at,content_hash FROM post_revisions
++      WHERE post_id=? ${afterRevision === undefined ? '' : 'AND revision<?'} ORDER BY revision DESC LIMIT ?`)
++      .all(...(afterRevision === undefined ? [postId, limit + 1] : [postId, afterRevision, limit + 1])) as PostRevisionMetadata[];
++    return { revisions: rows.slice(0, limit), has_more: rows.length > limit };
++  }
++
++  listRevisionArtifactMetadata(spaceId: string, postId: string, revision: number, limit: number, afterId?: string): { artifacts: RevisionArtifactCatalogItem[]; has_more: boolean } {
++    // Filter before projecting. A tombstone never selects its old material metadata into JS.
++    const rows = this.db.prepare(`SELECT a.id,a.state,
++      CASE WHEN a.state!='redacted' THEN a.owner_id END AS owner_id,
++      CASE WHEN a.state!='redacted' THEN a.sha256 END AS sha256,
++      CASE WHEN a.state!='redacted' THEN a.bytes END AS bytes,
++      CASE WHEN a.state!='redacted' THEN a.mime END AS mime,
++      CASE WHEN a.state!='redacted' THEN a.created_at END AS created_at,
++      CASE WHEN a.state!='redacted' THEN r.purpose END AS purpose
++      FROM revision_artifacts r JOIN artifacts a ON a.id=r.artifact_id
++      WHERE r.post_id=? AND r.revision=? AND a.space_id=? AND a.visibility='space'
++      ${afterId === undefined ? '' : 'AND a.id>?'} ORDER BY a.id ASC LIMIT ?`)
++      .all(...(afterId === undefined ? [postId, revision, spaceId, limit + 1] : [postId, revision, spaceId, afterId, limit + 1])) as Array<{
++        id: string; state: 'ready' | 'missing' | 'redacted'; owner_id: string; sha256: string; bytes: number; mime: string; created_at: string; purpose: string;
++      }>;
++    const artifacts: RevisionArtifactCatalogItem[] = rows.slice(0, limit).map(row => row.state === 'redacted'
++      ? { id: row.id, state: 'redacted' }
++      : { id: row.id, state: row.state, owner_id: row.owner_id, sha256: row.sha256, bytes: row.bytes, mime: row.mime, created_at: row.created_at, purpose: row.purpose });
++    return { artifacts, has_more: rows.length > limit };
+   }
+ 
+   getPostRevision(postId: string, revision: number): PostRevision | null {
+--- before/packages/server/src/app.ts
++++ current/packages/server/src/app.ts
+@@ -33,6 +33,7 @@
+   SpaceRevisionReadService,
+   PostRevisionReadService,
+   ThreadPostsReadService,
++  PostCatalogReadService,
+   SearchService,
+   RedactionService,
+   ArtifactService,
+@@ -114,6 +115,7 @@
+   const adminService = new AdminService(options.storage, idGen, clock, authService, writeRateLimiter);
+   const contextService = new ContextService(options.storage, tokenSigner, authService, tokenSecret, clock);
+   const spaceRevisionReadService = new SpaceRevisionReadService(options.storage, tokenSigner, authService, tokenSecret, clock);
++  const postCatalogReadService = new PostCatalogReadService(options.storage, tokenSigner, authService, tokenSecret, clock);
+   const threadPostsReadService = new ThreadPostsReadService(options.storage, tokenSigner, authService, tokenSecret, clock);
+   const postRevisionReadService = new PostRevisionReadService(options.storage, tokenSigner, authService, tokenSecret, clock);
+   const searchService = new SearchService(options.storage, authService, { signer: tokenSigner, secret: tokenSecret, clock, hasher });
+@@ -170,6 +172,7 @@
+   (app as any).eventService = eventService;
+   (app as any).contextService = contextService;
+   (app as any).spaceRevisionReadService = spaceRevisionReadService;
++  (app as any).postCatalogReadService = postCatalogReadService;
+   (app as any).threadPostsReadService = threadPostsReadService;
+   (app as any).postRevisionReadService = postRevisionReadService;
+   (app as any).searchService = searchService;
+--- before/packages/server/src/routes/posts.ts
++++ current/packages/server/src/routes/posts.ts
+@@ -1,4 +1,4 @@
+-import { serializePostRevisionContentEnvelope, CONTEXT_BYTES, LIST_LIMIT, REVISION_QUERY, integerQueryOptions, isNonblankString } from '@detuned/protocol';
++import { serializePostRevisionCatalogEnvelope, serializePostRevisionArtifactsEnvelope, serializePostRevisionContentEnvelope, CONTEXT_BYTES, LIST_LIMIT, REVISION_QUERY, integerQueryOptions, isNonblankString } from '@detuned/protocol';
+ import { FastifyPluginAsync } from 'fastify';
+ import {
+   CreatePostRequest,
+@@ -10,7 +10,7 @@
+   DetunedError,
+   ErrorCode,
+ } from '@detuned/protocol';
+-import { PostRevisionReadService, PostService, AuthenticatedContext, AuthService } from '@detuned/core';
++import { PostCatalogReadService, PostRevisionReadService, PostService, AuthenticatedContext, AuthService } from '@detuned/core';
+ import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
+ 
+ export const postRoutes: FastifyPluginAsync = async (app) => {
+@@ -57,6 +57,27 @@
+       request_id: req.id,
+       data: result,
+     };
++  });
++
++  const catalogService = (app as any).postCatalogReadService as PostCatalogReadService;
++  function catalogQuery(query: { limit?: unknown; max_bytes?: unknown; cursor?: unknown }) {
++    validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor']);
++    return { limit: parseIntegerQuery(query.limit, 'limit', integerQueryOptions(LIST_LIMIT)),
++      max_bytes: parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES)),
++      cursor: parseStringQuery(query.cursor, 'cursor', { allowEmpty: true }) };
++  }
++  app.get('/spaces/:space_id/posts/:id/revisions/catalog', async (req, reply) => {
++    const { space_id, id } = req.params as { space_id: string; id: string };
++    const page = catalogService.getRevisions((req as any).auth as AuthenticatedContext, space_id, id,
++      catalogQuery(req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown }), { request_id: req.id });
++    return reply.type('application/json; charset=utf-8').send(serializePostRevisionCatalogEnvelope(req.id, page));
++  });
++  app.get('/spaces/:space_id/posts/:id/revisions/:revision/artifacts', async (req, reply) => {
++    const { space_id, id, revision: rawRevision } = req.params as { space_id: string; id: string; revision: string };
++    const revision = parseIntegerQuery(rawRevision, 'revision', { required: true, min: 1, max: Number.MAX_SAFE_INTEGER })!;
++    const page = catalogService.getArtifacts((req as any).auth as AuthenticatedContext, space_id, id, revision,
++      catalogQuery(req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown }), { request_id: req.id });
++    return reply.type('application/json; charset=utf-8').send(serializePostRevisionArtifactsEnvelope(req.id, page));
+   });
+ 
+   app.get('/spaces/:space_id/posts/:id/revisions/:revision', async (req, reply) => {
+--- before/packages/protocol/src/index.ts
++++ current/packages/protocol/src/index.ts
+@@ -23,3 +23,4 @@
+ export * from './response-guards.js';
+ 
+ export * from './web-auth.js';
++export * from './post-catalogs.js';
+--- before/packages/protocol/src/openapi.ts
++++ current/packages/protocol/src/openapi.ts
+@@ -1,3 +1,4 @@
++import { PostRevisionCatalogQuerySchema, RevisionArtifactsQuerySchema, PostRevisionCatalogEnvelopeSchema, PostRevisionArtifactsEnvelopeSchema } from './post-catalogs.js';
+ import { WebSessionResponseSchema, CreateWebSessionRequestSchema, WebSessionQuerySchema, WEB_AUTH_PATH, WEB_SESSION_COOKIE, WEB_CSRF_HEADER } from './web-auth.js';
+ import { LivenessEnvelopeSchema, ReadinessEnvelopeSchema, OperationsDiagnosticsEnvelopeSchema } from './operations.js';
+ import { SpaceExportLineSchema, SpaceExportQuerySchema } from './export.js';
+@@ -347,6 +348,45 @@
+           },
+         },
+       },
++      '/spaces/{space_id}/posts/{id}/revisions/catalog': {
++        get: {
++          summary: 'Bounded revision metadata catalog',
++          description: 'Metadata only; current authorization per page, not a cross-page snapshot. Complete UTF-8 envelope includes request_id and signed cursor in max_bytes.',
++          parameters: [
++            { name: 'space_id', in: 'path', required: true, schema: { type: 'string' } },
++            { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
++            { name: 'limit', in: 'query', schema: PostRevisionCatalogQuerySchema.properties.limit },
++            { name: 'max_bytes', in: 'query', schema: PostRevisionCatalogQuerySchema.properties.max_bytes },
++            { name: 'cursor', in: 'query', schema: PostRevisionCatalogQuerySchema.properties.cursor },
++          ],
++          'x-query-schema': PostRevisionCatalogQuerySchema,
++          responses: {
++            '200': { description: 'Metadata page with correlated meta', content: { 'application/json': { schema: PostRevisionCatalogEnvelopeSchema } } },
++            '400': { description: 'Invalid query or cursor' }, '404': { description: 'Post unavailable' },
++            '410': { description: 'Redacted post' }, '422': { description: 'An item cannot fit the envelope budget' },
++          },
++        },
++      },
++      '/spaces/{space_id}/posts/{id}/revisions/{revision}/artifacts': {
++        get: {
++          summary: 'Bounded artifact catalog for a fixed revision',
++          description: 'Only same-space visible associations. Redacted items contain id/state only; ready/missing are registration states, not verified physical bytes. Full envelope/cursor is budgeted.',
++          parameters: [
++            { name: 'space_id', in: 'path', required: true, schema: { type: 'string' } },
++            { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
++            { name: 'revision', in: 'path', required: true, schema: { type: 'integer', minimum: 1 } },
++            { name: 'limit', in: 'query', schema: RevisionArtifactsQuerySchema.properties.limit },
++            { name: 'max_bytes', in: 'query', schema: RevisionArtifactsQuerySchema.properties.max_bytes },
++            { name: 'cursor', in: 'query', schema: RevisionArtifactsQuerySchema.properties.cursor },
++          ],
++          'x-query-schema': RevisionArtifactsQuerySchema,
++          responses: {
++            '200': { description: 'Fixed-ref association metadata page', content: { 'application/json': { schema: PostRevisionArtifactsEnvelopeSchema } } },
++            '400': { description: 'Invalid query or cursor' }, '404': { description: 'Post or revision unavailable' },
++            '410': { description: 'Redacted post' }, '422': { description: 'An item cannot fit the envelope budget' },
++          },
++        },
++      },
+       '/spaces/{space_id}/posts/{id}/revisions': {
+         get: {
+           summary: '获取帖子修订历史',
+@@ -694,6 +734,8 @@
+         if (path === '/spaces/{space_id}/posts/{id}/revisions/{revision}' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = PostRevisionReadQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/revisions/{revision}' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = SpaceRevisionReadQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/threads/{id}/posts' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = ThreadPostsReadQuerySchema.properties.cursor!;
++        if (path === '/spaces/{space_id}/posts/{id}/revisions/catalog' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = PostRevisionCatalogQuerySchema.properties.cursor!;
++        if (path === '/spaces/{space_id}/posts/{id}/revisions/{revision}/artifacts' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = RevisionArtifactsQuerySchema.properties.cursor!;
+         if (path.endsWith('/search') && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = SearchCursorStringSchema;
+         if (parameter.in === 'query' && parameter.name === 'tags') {
+           parameter.description = 'One comma-separated string; repeated parameters reject. Empty string yields []; trim entries and omit empty entries.';
+--- before/packages/protocol/src/response-guards.ts
++++ current/packages/protocol/src/response-guards.ts
+@@ -1,3 +1,4 @@
++import { PostRevisionMetadataSchema, PostRevisionCatalogPageSchema, PostRevisionArtifactsPageSchema, RevisionArtifactCatalogItemSchema, RevisionArtifactCatalogReadySchema, RevisionArtifactCatalogMissingSchema, RevisionArtifactCatalogRedactedSchema, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from './post-catalogs.js';
+ import { Type } from '@sinclair/typebox';
+ import { WebSessionResponseSchema, type WebSessionResponse } from './web-auth.js';
+ import addFormats from 'ajv-formats';
+@@ -56,3 +57,33 @@
+   return Value.Check(webCheckSchema, value) && isMeResponse(value.me)
+     && webExpiryFormat === 'date-time' && validDate(value.expires_at);
+ }
++
++// Catalog format locations are only revision.created_at and ready/missing
++// artifact.created_at. Keep public schemas intact and every other constraint.
++const { format: revisionMetadataFormat, ...revisionMetadataDate } = PostRevisionMetadataSchema.properties.created_at;
++const revisionMetadataCheck = { ...PostRevisionMetadataSchema, properties: { ...PostRevisionMetadataSchema.properties, created_at: revisionMetadataDate } };
++const revisionCatalogCheck = { ...PostRevisionCatalogPageSchema, anyOf: PostRevisionCatalogPageSchema.anyOf.map(page => ({
++  ...page, properties: { ...page.properties, data: { ...page.properties.data, properties: { ...page.properties.data.properties,
++    revisions: { ...page.properties.data.properties.revisions, items: revisionMetadataCheck },
++  } } },
++})) };
++const { format: readyCatalogFormat, ...readyCatalogDate } = RevisionArtifactCatalogReadySchema.properties.created_at;
++const { format: missingCatalogFormat, ...missingCatalogDate } = RevisionArtifactCatalogMissingSchema.properties.created_at;
++const artifactCatalogItemsCheck = { ...RevisionArtifactCatalogItemSchema, anyOf: [
++  { ...RevisionArtifactCatalogReadySchema, properties: { ...RevisionArtifactCatalogReadySchema.properties, created_at: readyCatalogDate } },
++  { ...RevisionArtifactCatalogMissingSchema, properties: { ...RevisionArtifactCatalogMissingSchema.properties, created_at: missingCatalogDate } },
++  RevisionArtifactCatalogRedactedSchema,
++] };
++const revisionArtifactsCheck = { ...PostRevisionArtifactsPageSchema, anyOf: PostRevisionArtifactsPageSchema.anyOf.map(page => ({
++  ...page, properties: { ...page.properties, data: { ...page.properties.data, properties: { ...page.properties.data.properties,
++    artifacts: { ...page.properties.data.properties.artifacts, items: artifactCatalogItemsCheck },
++  } } },
++})) };
++export function isPostRevisionCatalogPage(value: unknown): value is PostRevisionCatalogPage {
++  return Value.Check(revisionCatalogCheck, value) && revisionMetadataFormat === 'date-time'
++    && value.data.revisions.every(revision => validDate(revision.created_at));
++}
++export function isPostRevisionArtifactsPage(value: unknown): value is PostRevisionArtifactsPage {
++  return Value.Check(revisionArtifactsCheck, value) && readyCatalogFormat === 'date-time' && missingCatalogFormat === 'date-time'
++    && value.data.artifacts.every(artifact => artifact.state === 'redacted' || validDate(artifact.created_at));
++}
+--- before/packages/client/src/client.ts
++++ current/packages/client/src/client.ts
+@@ -1,3 +1,4 @@
++import { isPostRevisionCatalogPage, isPostRevisionArtifactsPage, type PostRevisionCatalogQuery, type RevisionArtifactsQuery, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from '@detuned/protocol';
+ import { WEB_AUTH_PATH, WEB_CSRF_HEADER, isWebSessionResponse, type WebSessionResponse } from '@detuned/protocol';
+ import { artifactMetadata, snapshotUpload, downloadArtifactBytes, waitForArtifact, readArtifactJson, type ArtifactDownload } from './artifact-transfer.js';
+ export type { ArtifactDownload } from './artifact-transfer.js';
+@@ -787,6 +788,22 @@
+     return { data: result.data, meta: result.meta } as PostRevisionContentPage;
+   }
+ 
++  async getPostRevisionCatalog(spaceId: string, postId: string, query: PostRevisionCatalogQuery = {}, options?: { signal?: AbortSignal }): Promise<PostRevisionCatalogPage> {
++    const result = await this.requestWithBody<unknown>({ method: 'GET',
++      path: `/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/catalog`,
++      query, signal: options?.signal }, undefined, true);
++    if (!isPostRevisionCatalogPage(result) || result.data.post_id !== postId) throw new ClientProtocolError('Invalid revision catalog response.');
++    return result;
++  }
++
++  async getPostRevisionArtifacts(spaceId: string, postId: string, revision: number, query: RevisionArtifactsQuery = {}, options?: { signal?: AbortSignal }): Promise<PostRevisionArtifactsPage> {
++    const result = await this.requestWithBody<unknown>({ method: 'GET',
++      path: `/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}/artifacts`,
++      query, signal: options?.signal }, undefined, true);
++    if (!isPostRevisionArtifactsPage(result) || result.data.ref.post_id !== postId || result.data.ref.revision !== revision) throw new ClientProtocolError('Invalid revision artifacts response.');
++    return result;
++  }
++
+   listPostRevisions(spaceId: string, postId: string, limit?: number, cursor?: string, opts?: { signal?: AbortSignal }) {
+     return this.request<any[]>({
+       method: 'GET',
+--- before/packages/client/src/index.ts
++++ current/packages/client/src/index.ts
+@@ -3,3 +3,5 @@
+ export * from './session-binding.js';
+ 
+ export type { WebSessionResponse } from '@detuned/protocol';
++
++export type { PostRevisionCatalogQuery, RevisionArtifactsQuery, PostRevisionMetadata, RevisionArtifactCatalogItem, PostRevisionCatalogPage, PostRevisionArtifactsPage } from '@detuned/protocol';
+--- /dev/null
++++ current/packages/core/src/services/post-catalog-read-service.ts
+@@ -0,0 +1,104 @@
++import {
++  CONTEXT_BYTES, LIST_LIMIT, POST_CATALOG_READ_LIMITS, DetunedError, ErrorCode,
++  type PostRevisionCatalogQuery, type RevisionArtifactsQuery, type PostRevisionCatalogPage,
++  type PostRevisionArtifactsPage, validatePostRevisionCatalogQuery, validateRevisionArtifactsQuery,
++  isPostRevisionCatalogCursorPayload, isRevisionArtifactsCursorPayload,
++  postRevisionCatalogEnvelopeBytes, postRevisionArtifactsEnvelopeBytes,
++} from '@detuned/protocol';
++import { StoragePort } from '../ports/storage.js';
++import { ClockPort } from '../ports/clock.js';
++import { TokenSignerPort } from '../ports/token-signer.js';
++import { AuthService, AuthenticatedContext } from './auth-service.js';
++
++const invalidCursor = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid post catalog cursor.', 400);
++const tooBroad = () => new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Required metadata and one directory item cannot fit the budget. Increase max_bytes.', 422);
++
++/** Dynamic directories: one synchronous snapshot per page, never a full content read. */
++export class PostCatalogReadService {
++  constructor(private readonly storage: StoragePort, private readonly signer: TokenSignerPort,
++    private readonly authService: AuthService, private readonly secret: string, private readonly clock: ClockPort) {}
++
++  private currentPost(auth: AuthenticatedContext, spaceId: string, postId: string) {
++    const current = this.authService.refreshContext(auth);
++    this.authService.requireSpaceAccess(current, spaceId, 'observer');
++    const post = this.storage.findPostById(postId);
++    if (!post || post.space_id !== spaceId) throw new DetunedError(ErrorCode.NOT_FOUND, 'Post does not exist or is not accessible.', 404);
++    if (post.lifecycle === 'redacted') throw new DetunedError(ErrorCode.CONTENT_REDACTED, 'Post content has been redacted.', 410);
++    return { current, post };
++  }
++
++  private timing(budget: { request_id: string }) {
++    if (!budget || typeof budget.request_id !== 'string') throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Directory budget requires the actual request_id.', 400);
++    const now = Math.floor(this.clock.now().getTime() / 1000);
++    return { now, exp: now + POST_CATALOG_READ_LIMITS.cursor_ttl_seconds };
++  }
++
++  getRevisions(auth: AuthenticatedContext, spaceId: string, postId: string,
++    query: PostRevisionCatalogQuery, budget: { request_id: string }): PostRevisionCatalogPage {
++    const snapshot = this.storage.readSnapshot(() => {
++      const { current, post } = this.currentPost(auth, spaceId, postId);
++      validatePostRevisionCatalogQuery(query);
++      const { now, exp: initialExp } = this.timing(budget);
++      let exp = initialExp, afterRevision: number | undefined;
++      if (query.cursor !== undefined) {
++        const payload = this.signer.verify(query.cursor, this.secret, now);
++        if (!isPostRevisionCatalogCursorPayload(payload) || payload.actor_id !== current.actor.id || payload.space_id !== spaceId ||
++            payload.post_id !== postId || now > payload.exp || payload.exp > initialExp) throw invalidCursor();
++        afterRevision = payload.after_revision; exp = payload.exp;
++      }
++      const listed = this.storage.listPostRevisionMetadata(postId, query.limit ?? LIST_LIMIT.default, afterRevision);
++      return { actorId: current.actor.id, currentRevision: post.current_revision, ...listed, exp,
++        maxBytes: query.max_bytes ?? CONTEXT_BYTES.default };
++    });
++    const revisions = snapshot.revisions.slice();
++    let removed = false;
++    while (true) {
++      const more = snapshot.has_more || removed;
++      const last = revisions.at(-1);
++      if (more && !last) throw tooBroad();
++      const cursor = more ? this.signer.sign({ v: 1, purpose: 'post_revisions_catalog', actor_id: snapshot.actorId,
++        space_id: spaceId, post_id: postId, sort: 'revision_desc', after_revision: last!.revision, exp: snapshot.exp }, this.secret) : null;
++      const page: PostRevisionCatalogPage = { data: { post_id: postId, current_revision: snapshot.currentRevision, revisions },
++        meta: removed ? { truncated: true, next_cursor: cursor! } : { truncated: false, next_cursor: cursor } };
++      if ((cursor === null || cursor.length <= POST_CATALOG_READ_LIMITS.cursor_chars) &&
++          postRevisionCatalogEnvelopeBytes(budget.request_id, page) <= snapshot.maxBytes) return page;
++      if (revisions.length <= 1) throw tooBroad();
++      revisions.pop(); removed = true;
++    }
++  }
++
++  getArtifacts(auth: AuthenticatedContext, spaceId: string, postId: string, revision: number,
++    query: RevisionArtifactsQuery, budget: { request_id: string }): PostRevisionArtifactsPage {
++    const snapshot = this.storage.readSnapshot(() => {
++      const { current } = this.currentPost(auth, spaceId, postId);
++      if (!Number.isSafeInteger(revision) || revision < 1) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Post revision must be a positive safe integer.', 400);
++      validateRevisionArtifactsQuery(query);
++      if (!this.storage.getPostRevisionMetadata(postId, revision)) throw new DetunedError(ErrorCode.NOT_FOUND, 'Post revision does not exist.', 404);
++      const { now, exp: initialExp } = this.timing(budget);
++      let exp = initialExp, afterId: string | undefined;
++      if (query.cursor !== undefined) {
++        const payload = this.signer.verify(query.cursor, this.secret, now);
++        if (!isRevisionArtifactsCursorPayload(payload) || payload.actor_id !== current.actor.id || payload.space_id !== spaceId ||
++            payload.post_id !== postId || payload.revision !== revision || now > payload.exp || payload.exp > initialExp) throw invalidCursor();
++        afterId = payload.after_id; exp = payload.exp;
++      }
++      const listed = this.storage.listRevisionArtifactMetadata(spaceId, postId, revision, query.limit ?? LIST_LIMIT.default, afterId);
++      return { actorId: current.actor.id, ...listed, exp, maxBytes: query.max_bytes ?? CONTEXT_BYTES.default };
++    });
++    const artifacts = snapshot.artifacts.slice();
++    let removed = false;
++    while (true) {
++      const more = snapshot.has_more || removed;
++      const last = artifacts.at(-1);
++      if (more && !last) throw tooBroad();
++      const cursor = more ? this.signer.sign({ v: 1, purpose: 'revision_artifacts', actor_id: snapshot.actorId,
++        space_id: spaceId, post_id: postId, revision, sort: 'artifact_id_asc', after_id: last!.id, exp: snapshot.exp }, this.secret) : null;
++      const page: PostRevisionArtifactsPage = { data: { ref: { post_id: postId, revision }, artifacts },
++        meta: removed ? { truncated: true, next_cursor: cursor! } : { truncated: false, next_cursor: cursor } };
++      if ((cursor === null || cursor.length <= POST_CATALOG_READ_LIMITS.cursor_chars) &&
++          postRevisionArtifactsEnvelopeBytes(budget.request_id, page) <= snapshot.maxBytes) return page;
++      if (artifacts.length <= 1) throw tooBroad();
++      artifacts.pop(); removed = true;
++    }
++  }
++}
+--- /dev/null
++++ current/packages/protocol/src/post-catalogs.ts
+@@ -0,0 +1,88 @@
++import { Type, type Static } from '@sinclair/typebox';
++import { Value } from '@sinclair/typebox/value';
++import { DetunedError, ErrorCode } from './errors.js';
++import { LIST_LIMIT, CONTEXT_BYTES } from './request-policies.js';
++import { PostRefSchema } from './common.js';
++
++export const POST_CATALOG_READ_LIMITS = Object.freeze({ cursor_chars: 4096, cursor_ttl_seconds: 86400 });
++const cursor = Type.String({ minLength: 1, maxLength: POST_CATALOG_READ_LIMITS.cursor_chars, pattern: '\\S' });
++export const PostRevisionCatalogQuerySchema = Type.Object({
++  limit: Type.Optional(Type.Integer({ ...LIST_LIMIT })),
++  max_bytes: Type.Optional(Type.Integer({ ...CONTEXT_BYTES })), cursor: Type.Optional(cursor),
++}, { additionalProperties: false });
++export type PostRevisionCatalogQuery = Static<typeof PostRevisionCatalogQuerySchema>;
++export const RevisionArtifactsQuerySchema = Type.Object({ ...PostRevisionCatalogQuerySchema.properties }, { additionalProperties: false });
++export type RevisionArtifactsQuery = Static<typeof RevisionArtifactsQuerySchema>;
++export function validatePostRevisionCatalogQuery(query: PostRevisionCatalogQuery): void {
++  if (!Value.Check(PostRevisionCatalogQuerySchema, query)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid revision catalog query. Remove cursor or correct parameters and retry.', 400, false);
++}
++export function validateRevisionArtifactsQuery(query: RevisionArtifactsQuery): void {
++  if (!Value.Check(RevisionArtifactsQuerySchema, query)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid revision artifacts query. Remove cursor or correct parameters and retry.', 400, false);
++}
++const positive = Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER });
++const binding = { v: Type.Literal(1), actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }),
++  post_id: Type.String({ minLength: 1 }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }) };
++export const PostRevisionCatalogCursorPayloadSchema = Type.Object({ ...binding,
++  purpose: Type.Literal('post_revisions_catalog'), sort: Type.Literal('revision_desc'), after_revision: positive,
++}, { additionalProperties: false });
++export type PostRevisionCatalogCursorPayload = Static<typeof PostRevisionCatalogCursorPayloadSchema>;
++export function isPostRevisionCatalogCursorPayload(value: unknown): value is PostRevisionCatalogCursorPayload {
++  return Value.Check(PostRevisionCatalogCursorPayloadSchema, value);
++}
++export const RevisionArtifactsCursorPayloadSchema = Type.Object({ ...binding,
++  purpose: Type.Literal('revision_artifacts'), revision: positive, sort: Type.Literal('artifact_id_asc'), after_id: Type.String({ minLength: 1 }),
++}, { additionalProperties: false });
++export type RevisionArtifactsCursorPayload = Static<typeof RevisionArtifactsCursorPayloadSchema>;
++export function isRevisionArtifactsCursorPayload(value: unknown): value is RevisionArtifactsCursorPayload {
++  return Value.Check(RevisionArtifactsCursorPayloadSchema, value);
++}
++
++export const PostRevisionMetadataSchema = Type.Object({ revision: positive, editor_id: Type.String(),
++  created_at: Type.String({ format: 'date-time' }), content_hash: Type.String({ minLength: 64, maxLength: 64 }),
++}, { additionalProperties: false });
++export type PostRevisionMetadata = Static<typeof PostRevisionMetadataSchema>;
++const artifactFields = { id: Type.String({ minLength: 1 }), owner_id: Type.String(),
++  sha256: Type.String({ minLength: 64, maxLength: 64 }), bytes: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
++  mime: Type.String(), created_at: Type.String({ format: 'date-time' }), purpose: Type.String() };
++export const RevisionArtifactCatalogReadySchema = Type.Object({ ...artifactFields, state: Type.Literal('ready') }, { additionalProperties: false });
++export const RevisionArtifactCatalogMissingSchema = Type.Object({ ...artifactFields, state: Type.Literal('missing') }, { additionalProperties: false });
++export const RevisionArtifactCatalogRedactedSchema = Type.Object({ id: artifactFields.id, state: Type.Literal('redacted') }, { additionalProperties: false });
++export const RevisionArtifactCatalogItemSchema = Type.Union([RevisionArtifactCatalogReadySchema, RevisionArtifactCatalogMissingSchema, RevisionArtifactCatalogRedactedSchema]);
++export type RevisionArtifactCatalogItem = Static<typeof RevisionArtifactCatalogItemSchema>;
++
++const meta = (truncated: boolean, hasCursor: boolean) => Type.Object({ truncated: Type.Literal(truncated),
++  next_cursor: hasCursor ? cursor : Type.Null() }, { additionalProperties: false });
++const revisionData = (minItems: number) => Type.Object({ post_id: Type.String({ minLength: 1 }), current_revision: positive,
++  revisions: Type.Array(PostRevisionMetadataSchema, { minItems }) }, { additionalProperties: false });
++export const PostRevisionCatalogPageSchema = Type.Union([
++  Type.Object({ data: revisionData(1), meta: meta(true, true) }, { additionalProperties: false }),
++  Type.Object({ data: revisionData(1), meta: meta(false, true) }, { additionalProperties: false }),
++  Type.Object({ data: revisionData(0), meta: meta(false, false) }, { additionalProperties: false }),
++]);
++export type PostRevisionCatalogPage = Static<typeof PostRevisionCatalogPageSchema>;
++export const PostRevisionCatalogEnvelopeSchema = Type.Union(PostRevisionCatalogPageSchema.anyOf.map(page => Type.Object({
++  api_version: Type.Literal('1'), request_id: Type.String(), ...page.properties,
++}, { additionalProperties: false })));
++export type PostRevisionCatalogEnvelope = { api_version: '1'; request_id: string } & PostRevisionCatalogPage;
++const artifactData = (minItems: number) => Type.Object({ ref: PostRefSchema,
++  artifacts: Type.Array(RevisionArtifactCatalogItemSchema, { minItems }) }, { additionalProperties: false });
++export const PostRevisionArtifactsPageSchema = Type.Union([
++  Type.Object({ data: artifactData(1), meta: meta(true, true) }, { additionalProperties: false }),
++  Type.Object({ data: artifactData(1), meta: meta(false, true) }, { additionalProperties: false }),
++  Type.Object({ data: artifactData(0), meta: meta(false, false) }, { additionalProperties: false }),
++]);
++export type PostRevisionArtifactsPage = Static<typeof PostRevisionArtifactsPageSchema>;
++export const PostRevisionArtifactsEnvelopeSchema = Type.Union(PostRevisionArtifactsPageSchema.anyOf.map(page => Type.Object({
++  api_version: Type.Literal('1'), request_id: Type.String(), ...page.properties,
++}, { additionalProperties: false })));
++export type PostRevisionArtifactsEnvelope = { api_version: '1'; request_id: string } & PostRevisionArtifactsPage;
++export function buildPostRevisionCatalogEnvelope(requestId: string, page: PostRevisionCatalogPage): PostRevisionCatalogEnvelope {
++  return { api_version: '1', request_id: requestId, ...page };
++}
++export function serializePostRevisionCatalogEnvelope(requestId: string, page: PostRevisionCatalogPage): string { return JSON.stringify(buildPostRevisionCatalogEnvelope(requestId, page)); }
++export function postRevisionCatalogEnvelopeBytes(requestId: string, page: PostRevisionCatalogPage): number { return new TextEncoder().encode(serializePostRevisionCatalogEnvelope(requestId, page)).byteLength; }
++export function buildPostRevisionArtifactsEnvelope(requestId: string, page: PostRevisionArtifactsPage): PostRevisionArtifactsEnvelope {
++  return { api_version: '1', request_id: requestId, ...page };
++}
++export function serializePostRevisionArtifactsEnvelope(requestId: string, page: PostRevisionArtifactsPage): string { return JSON.stringify(buildPostRevisionArtifactsEnvelope(requestId, page)); }
++export function postRevisionArtifactsEnvelopeBytes(requestId: string, page: PostRevisionArtifactsPage): number { return new TextEncoder().encode(serializePostRevisionArtifactsEnvelope(requestId, page)).byteLength; }
+--- /dev/null
++++ current/tests/contracts/m5-post-catalogs-client.test.ts
+@@ -0,0 +1,115 @@
++import { describe, it, expect } from 'vitest';
++import { Value } from '@sinclair/typebox/value';
++import { DetunedClient, ClientProtocolError, UserAbortError, TimeoutError } from '@detuned/client';
++import { PostRevisionCatalogQuerySchema, RevisionArtifactsQuerySchema, isPostRevisionCatalogPage,
++  isPostRevisionArtifactsPage, isPostRevisionCatalogCursorPayload, isRevisionArtifactsCursorPayload,
++  buildPostRevisionCatalogEnvelope, buildPostRevisionArtifactsEnvelope, postRevisionCatalogEnvelopeBytes,
++  postRevisionArtifactsEnvelopeBytes, PostRevisionCatalogEnvelopeSchema, PostRevisionArtifactsEnvelopeSchema,
++  generateOpenApiSpec, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from '@detuned/protocol';
++
++const date = '2026-10-09T00:00:00Z';
++const revisionPage = (): PostRevisionCatalogPage => ({ data: { post_id: 'post-a', current_revision: 2,
++  revisions: [{ revision: 2, editor_id: 'actor-a', created_at: date, content_hash: 'a'.repeat(64) }] },
++  meta: { truncated: false, next_cursor: 'opaque-first' } });
++const artifactPage = (): PostRevisionArtifactsPage => ({ data: { ref: { post_id: 'post-a', revision: 1 }, artifacts: [
++  { id: 'art-missing', state: 'missing', owner_id: 'actor-a', sha256: 'b'.repeat(64), bytes: 26_214_401, mime: 'application/octet-stream', created_at: date, purpose: '' },
++  { id: 'art-redacted', state: 'redacted' },
++] }, meta: { truncated: false, next_cursor: null } });
++const envelope = (data: unknown, meta?: unknown) => ({ api_version: '1', request_id: 'catalog-contract', data, ...(meta === undefined ? {} : { meta }) });
++function splitJson(value: unknown, cancelled?: () => void) {
++  const bytes = new TextEncoder().encode(JSON.stringify(value)); let offset = 0;
++  return new Response(new ReadableStream<Uint8Array>({ pull(controller) {
++    if (offset === bytes.length) { controller.close(); return; }
++    const end = Math.min(bytes.length, offset + 37); controller.enqueue(bytes.slice(offset, end)); offset = end;
++  }, cancel() { cancelled?.(); } }), { headers: { 'content-type': 'application/json' } });
++}
++
++describe('bounded post catalogs client/protocol contracts', () => {
++  it('PC01: strict known DTOs, actual date formats and correlated pages preserve historical missing metadata and OpenAPI budget', () => {
++    expect(Value.Check(PostRevisionCatalogQuerySchema, {})).toBe(true);
++    expect(Value.Check(RevisionArtifactsQuerySchema, { limit: 20, max_bytes: 4096, cursor: 'opaque' })).toBe(true);
++    for (const bad of [{ limit: 0 }, { max_bytes: 4095 }, { cursor: '' }, { unknown: true }]) expect(Value.Check(PostRevisionCatalogQuerySchema, bad)).toBe(false);
++    const rev = revisionPage(); const artifacts = artifactPage(); const original = JSON.stringify({ rev, artifacts });
++    expect(isPostRevisionCatalogPage(rev)).toBe(true); expect(isPostRevisionArtifactsPage(artifacts)).toBe(true);
++    expect(isPostRevisionCatalogPage({ ...rev, data: { ...rev.data, revisions: [{ ...rev.data.revisions[0], created_at: '2026-02-31T00:00:00Z' }] } })).toBe(false);
++    expect(isPostRevisionCatalogPage({ ...rev, data: { ...rev.data, body: 'forbidden' } })).toBe(false);
++    expect(isPostRevisionCatalogPage({ ...rev, data: { ...rev.data, revisions: [] } })).toBe(false);
++    expect(isPostRevisionArtifactsPage({ ...artifacts, data: { ...artifacts.data, artifacts: [{ id: 'redacted', state: 'redacted', purpose: 'must not leak' }] } })).toBe(false);
++    expect(isPostRevisionArtifactsPage({ ...artifacts, data: { ...artifacts.data, artifacts: [{ ...artifacts.data.artifacts[0], bytes: Number.MAX_SAFE_INTEGER + 1 }] } })).toBe(false);
++    expect(isPostRevisionArtifactsPage({ ...artifacts, meta: { truncated: true, next_cursor: null } })).toBe(false);
++    expect(JSON.stringify({ rev, artifacts })).toBe(original);
++    const cursor = { v: 1, purpose: 'post_revisions_catalog', actor_id: 'actor', space_id: 'space', post_id: 'post', sort: 'revision_desc', after_revision: 2, exp: 1 };
++    expect(isPostRevisionCatalogCursorPayload(cursor)).toBe(true); expect(isRevisionArtifactsCursorPayload(cursor)).toBe(false);
++    const aCursor = { ...cursor, purpose: 'revision_artifacts', sort: 'artifact_id_asc', revision: 1, after_id: 'art' };
++    const { after_revision: _after, ...validACursor } = aCursor;
++    expect(isRevisionArtifactsCursorPayload(validACursor)).toBe(true);
++    expect(postRevisionCatalogEnvelopeBytes('汉字-request', rev)).toBe(new TextEncoder().encode(JSON.stringify(buildPostRevisionCatalogEnvelope('汉字-request', rev))).byteLength);
++    expect(postRevisionArtifactsEnvelopeBytes('请求', artifacts)).toBe(new TextEncoder().encode(JSON.stringify(buildPostRevisionArtifactsEnvelope('请求', artifacts))).byteLength);
++    const spec = generateOpenApiSpec() as { paths: Record<string, { get: { parameters: Array<{ name: string; schema: unknown }>; responses: Record<string, { content: { 'application/json': { schema: unknown } } }> } }> };
++    const r = spec.paths['/spaces/{space_id}/posts/{id}/revisions/catalog']!.get;
++    const a = spec.paths['/spaces/{space_id}/posts/{id}/revisions/{revision}/artifacts']!.get;
++    expect(r.responses['200']!.content['application/json'].schema).toEqual(PostRevisionCatalogEnvelopeSchema);
++    expect(a.responses['200']!.content['application/json'].schema).toEqual(PostRevisionArtifactsEnvelopeSchema);
++    expect(r.parameters.find(p => p.name === 'cursor')?.schema).toEqual(PostRevisionCatalogQuerySchema.properties.cursor);
++  });
++
++  it('PC02: split UTF8 EOF catalogs use exact encoded paths, opaque query and old Bearer/browser-session transport', async () => {
++    const originalFetch = globalThis.fetch; const requests: Array<{ url: URL; authorization: string | null; csrf: string | null; credentials?: RequestInit['credentials'] }> = [];
++    try {
++      globalThis.fetch = async (input, options) => { const url = new URL(String(input)); const headers = new Headers(options?.headers);
++        requests.push({ url, authorization: headers.get('authorization'), csrf: headers.get('x-detuned-csrf'), credentials: options?.credentials });
++        const page = url.pathname.endsWith('/artifacts') ? artifactPage() : revisionPage();
++        return splitJson(envelope(page.data, page.meta)); };
++      const browser = new DetunedClient({ baseUrl: 'http://catalog.invalid', token: 'fixture-not-sent', browserSession: { getCsrfToken: () => 'fixture-not-sent-on-GET' }, maxRetries: 0 });
++      const r = await browser.getPostRevisionCatalog('space/a', 'post-a', { limit: 20, max_bytes: 65536, cursor: 'opaque&+汉字' });
++      expect(r.data.revisions[0]?.revision).toBe(2); expect(r.meta.next_cursor).toBe('opaque-first');
++      expect(requests[0]?.url.pathname).toBe('/api/v1/spaces/space%2Fa/posts/post-a/revisions/catalog');
++      expect(requests[0]?.url.searchParams.get('cursor')).toBe('opaque&+汉字');
++      expect(requests[0]?.credentials).toBe('same-origin'); expect(requests[0]?.authorization).toBeNull(); expect(requests[0]?.csrf).toBeNull();
++      const bearer = new DetunedClient({ baseUrl: 'http://catalog.invalid', token: 'isolated-contract', maxRetries: 0 });
++      const a = await bearer.getPostRevisionArtifacts('space', 'post-a', 1, { max_bytes: 12288 });
++      expect(a.data.artifacts[0]).toMatchObject({ state: 'missing', bytes: 26_214_401, purpose: '' });
++      expect(requests[1]?.authorization === 'Bearer isolated-contract').toBe(true); expect(requests[1]?.credentials).toBeUndefined();
++      globalThis.fetch = async () => { const page = revisionPage(); page.meta = { truncated: false, next_cursor: null }; page.data.revisions = [{ revision: 1, editor_id: 'actor-a', created_at: date, content_hash: 'c'.repeat(64) }]; return splitJson(envelope(page.data, page.meta)); };
++      expect((await bearer.getPostRevisionCatalog('space', 'post-a', { cursor: r.meta.next_cursor! })).data.revisions[0]?.revision).toBe(1);
++    } finally { globalThis.fetch = originalFetch; }
++  });
++
++  it('PC03: bounded raw responses, invalid UTF8/ref/leaked fields and pending-body abort/timeout reject without partial success', async () => {
++    const originalFetch = globalThis.fetch; let cancelled = 0;
++    const client = new DetunedClient({ baseUrl: 'http://catalog.invalid', maxRetries: 0, timeoutMs: 40 });
++    try {
++      globalThis.fetch = async () => new Response(new ReadableStream({ start(c) { c.enqueue(new Uint8Array(1_048_577)); }, cancel() { cancelled++; } }));
++      await expect(client.getPostRevisionCatalog('space', 'post-a')).rejects.toBeInstanceOf(ClientProtocolError); expect(cancelled).toBe(1);
++      globalThis.fetch = async () => new Response(new Uint8Array([0xff]));
++      await expect(client.getPostRevisionCatalog('space', 'post-a')).rejects.toBeInstanceOf(ClientProtocolError);
++      const badRevision = revisionPage(); badRevision.data.post_id = 'different-post';
++      globalThis.fetch = async () => splitJson(envelope(badRevision.data, badRevision.meta));
++      await expect(client.getPostRevisionCatalog('space', 'post-a')).rejects.toBeInstanceOf(ClientProtocolError);
++      const badArtifact = artifactPage(); badArtifact.data.ref.revision = 2;
++      globalThis.fetch = async () => splitJson(envelope(badArtifact.data, badArtifact.meta));
++      await expect(client.getPostRevisionArtifacts('space', 'post-a', 1)).rejects.toBeInstanceOf(ClientProtocolError);
++      globalThis.fetch = async () => splitJson(envelope({ ...artifactPage().data, storage_key: 'private' }, artifactPage().meta));
++      await expect(client.getPostRevisionArtifacts('space', 'post-a', 1)).rejects.toBeInstanceOf(ClientProtocolError);
++      globalThis.fetch = async () => new Response(new ReadableStream({ cancel() { cancelled++; } }));
++      const abort = new AbortController(); const pending = client.getPostRevisionArtifacts('space', 'post-a', 1, {}, { signal: abort.signal });
++      await new Promise(resolve => setTimeout(resolve, 0)); abort.abort();
++      await expect(pending).rejects.toBeInstanceOf(UserAbortError);
++      await expect(client.getPostRevisionCatalog('space', 'post-a')).rejects.toBeInstanceOf(TimeoutError);
++      expect(cancelled).toBe(3);
++    } finally { globalThis.fetch = originalFetch; }
++  }, 10000);
++
++  it('PC04: complete server error retains code/no partial success and old full-revision JSON remains unchanged', async () => {
++    const originalFetch = globalThis.fetch; let calls = 0;
++    try {
++      // Use the actual server status, not a malformed 200 success envelope.
++      globalThis.fetch = async () => { calls++; return new Response(JSON.stringify({ api_version: '1', request_id: 'contract', error: { code: 'QUERY_TOO_BROAD', message: 'A single item does not fit.', retryable: false } }), { status: 422 }); };
++      const client = new DetunedClient({ baseUrl: 'http://catalog.invalid', maxRetries: 3 });
++      await expect(client.getPostRevisionCatalog('space', 'post-a')).rejects.toMatchObject({ code: 'QUERY_TOO_BROAD', statusCode: 422 }); expect(calls).toBe(1);
++      const fullBody = 'x'.repeat(1_048_577);
++      globalThis.fetch = async () => new Response(JSON.stringify(envelope([{ post_id: 'post-a', revision: 1, body: fullBody }], { truncated: false, next_cursor: null })));
++      expect((await client.listPostRevisions('space', 'post-a', 1)).data[0].body.length).toBe(fullBody.length);
++    } finally { globalThis.fetch = originalFetch; }
++  }, 10000);
++});
+--- /dev/null
++++ current/tests/contracts/m5-post-catalogs.test.ts
+@@ -0,0 +1,127 @@
++import { afterEach, beforeEach, expect, it, vi } from 'vitest';
++import Database from 'better-sqlite3';
++import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
++import { buildApp } from '@detuned/server';
++import { createHash } from 'node:crypto';
++
++let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>;
++let token: string, sid: string, tid: string, pid: string, actor: string;
++let milliseconds = Date.parse('2026-10-09T00:00:00.000Z');
++let requestId = '目录"\\🙂';
++const clock = { now: () => new Date(milliseconds), nowIso: () => new Date(milliseconds).toISOString() };
++const headers = () => ({ authorization: `Bearer ${token}` });
++const revisions = (query = '') => `/api/v1/spaces/${sid}/posts/${pid}/revisions/catalog${query ? '?' + query : ''}`;
++const artifacts = (revision = 1, query = '') => `/api/v1/spaces/${sid}/posts/${pid}/revisions/${revision}/artifacts${query ? '?' + query : ''}`;
++async function get(url: string) { return app.inject({ url, headers: headers() }); }
++beforeEach(async () => {
++  milliseconds = Date.parse('2026-10-09T00:00:00.000Z'); requestId = '目录"\\🙂';
++  db = new Database(':memory:'); token = bootstrapDatabase(db).adminToken!; storage = new SqliteStorage(db);
++  app = buildApp({ storage, clock }); app.addHook('onRequest', (req, _reply, done) => { req.id = requestId; done(); }); await app.ready();
++  const created = await app.inject({ method: 'POST', url: '/api/v1/spaces', headers: { ...headers(), 'idempotency-key': 's' }, payload: { slug: 'catalogs', objective: 'o', rules: [] } });
++  expect(created.statusCode).toBe(201); sid = created.json().data.space.id;
++  const thread = await app.inject({ method: 'POST', url: `/api/v1/spaces/${sid}/threads`, headers: { ...headers(), 'idempotency-key': 't' }, payload: { title: 'catalog' } });
++  expect(thread.statusCode).toBe(201); tid = thread.json().data.thread.id;
++  const post = await app.inject({ method: 'POST', url: `/api/v1/spaces/${sid}/threads/${tid}/posts`, headers: { ...headers(), 'idempotency-key': 'p' }, payload: { kind: 'note', title: 'title', summary: 's', body: 'PRIVATE CONTENT SENTINEL' } });
++  expect(post.statusCode).toBe(201); pid = post.json().data.post.id; actor = storage.findPostById(pid)!.author_id;
++});
++afterEach(async () => { vi.restoreAllMocks(); await app.close(); db.close(); });
++function revisionSeed(count: number) {
++  for (let revision = 2; revision <= count; revision++) db.prepare(`INSERT INTO post_revisions
++    SELECT post_id,?,title,summary,?,tags,structured,content_hash,editor_id,created_at FROM post_revisions WHERE post_id=? AND revision=1`)
++    .run(revision, 'PRIVATE CONTENT SENTINEL'.repeat(6000), pid);
++  db.prepare('UPDATE posts SET current_revision=? WHERE id=?').run(count, pid);
++}
++function artifactSeed(id: string, opts: { state?: 'ready' | 'missing' | 'redacted'; space?: string; visibility?: string; bytes?: number; mime?: string; purpose?: string } = {}) {
++  db.prepare(`INSERT INTO artifacts(id,space_id,owner_id,visibility,sha256,bytes,mime,storage_key,state,created_at)
++    VALUES(?,?,?,?,?,?,?,?,?,?)`).run(id, opts.space ?? sid, actor, opts.visibility ?? 'space', 'a'.repeat(64), opts.bytes ?? 2,
++      opts.mime ?? 'application/octet-stream', `objects/${id}`, opts.state ?? 'ready', clock.nowIso());
++  storage.createRevisionArtifact(pid, 1, id, opts.purpose ?? 'evidence');
++}
++
++it('PC01 narrow revision SQL excludes large content, preserves legacy full endpoint, and paginates complete UTF8 envelopes without loss', async () => {
++  revisionSeed(60);
++  const fullRead = vi.spyOn(storage, 'getPostRevision').mockImplementation(() => { throw new Error('Directory must not load content'); });
++  const fullList = vi.spyOn(storage, 'listPostRevisions').mockImplementation(() => { throw new Error('Directory must not load content'); });
++  let cursor: string | undefined; const seen: number[] = []; let pages = 0;
++  do {
++    const q = new URLSearchParams({ limit: '100', max_bytes: '4096', ...(cursor ? { cursor } : {}) });
++    const res = await get(revisions(q.toString())); expect(res.statusCode, res.body).toBe(200);
++    expect(Buffer.byteLength(res.body)).toBeLessThanOrEqual(4096); expect(res.body).not.toContain('PRIVATE CONTENT');
++    const e = res.json(); expect(e.request_id).toBe(requestId); expect(e.data.current_revision).toBe(60);
++    for (const item of e.data.revisions) expect(Object.keys(item).sort()).toEqual(['content_hash', 'created_at', 'editor_id', 'revision']);
++    seen.push(...e.data.revisions.map((r: { revision: number }) => r.revision));
++    cursor = e.meta.next_cursor ?? undefined; expect(++pages).toBeLessThan(20);
++  } while (cursor);
++  expect(seen).toEqual(Array.from({ length: 60 }, (_, i) => 60 - i)); expect(pages).toBeGreaterThan(1);
++  expect(fullRead).not.toHaveBeenCalled(); expect(fullList).not.toHaveBeenCalled(); fullRead.mockRestore(); fullList.mockRestore();
++  const legacy = await get(`/api/v1/spaces/${sid}/posts/${pid}/revisions?limit=1`);
++  expect(legacy.statusCode).toBe(200); expect(legacy.json().data[0].body).toContain('PRIVATE CONTENT SENTINEL');
++  expect(legacy.json().meta.next_cursor).toBe('60');
++});
++
++it('PC02 artifact directory filters before projection, preserves missing declarations and historical purposes, and emits strict tombstones', async () => {
++  const other = await app.inject({ method: 'POST', url: '/api/v1/spaces', headers: { ...headers(), 'idempotency-key': 'other' }, payload: { slug: 'other', objective: 'o', rules: [] } });
++  artifactSeed('a-ready', { purpose: '' }); artifactSeed('b-missing', { state: 'missing', bytes: 30000000, purpose: 'custom old purpose' });
++  artifactSeed('c-redacted', { state: 'redacted', mime: 'OLD PRIVATE MIME', bytes: 12345, purpose: 'OLD PRIVATE PURPOSE' });
++  artifactSeed('d-private', { visibility: 'sealed' }); artifactSeed('e-cross', { space: other.json().data.space.id });
++  const fullRead = vi.spyOn(storage, 'getPostRevision').mockImplementation(() => { throw new Error('Must use narrow existence'); });
++  const res = await get(artifacts()); expect(res.statusCode, res.body).toBe(200);
++  const items = res.json().data.artifacts; expect(items.map((a: { id: string }) => a.id)).toEqual(['a-ready', 'b-missing', 'c-redacted']);
++  expect(items[0].purpose).toBe(''); expect(items[1]).toMatchObject({ state: 'missing', bytes: 30000000, purpose: 'custom old purpose' });
++  expect(items[2]).toEqual({ id: 'c-redacted', state: 'redacted' });
++  for (const probe of ['OLD PRIVATE', 'd-private', 'e-cross', 'content_url', 'storage_key', 'visibility']) expect(res.body).not.toContain(probe);
++  expect(res.json().meta).toEqual({ truncated: false, next_cursor: null }); expect(fullRead).not.toHaveBeenCalled();
++});
++
++it('PC03 trimmed artifact pages continue from last delivered id; count paging and single-item budget failure are distinct', async () => {
++  for (let i = 0; i < 14; i++) artifactSeed(`a-${String(i).padStart(2, '0')}`, { mime: '中🙂'.repeat(120) });
++  let cursor: string | undefined; const seen: string[] = []; let pageCount = 0;
++  do {
++    const res = await get(artifacts(1, new URLSearchParams({ limit: '100', max_bytes: '4096', ...(cursor ? { cursor } : {}) }).toString()));
++    expect(res.statusCode, res.body).toBe(200); expect(Buffer.byteLength(res.body)).toBeLessThanOrEqual(4096);
++    const e = res.json(); if (pageCount === 0) expect(e.meta.truncated).toBe(true);
++    seen.push(...e.data.artifacts.map((a: { id: string }) => a.id)); cursor = e.meta.next_cursor ?? undefined;
++    expect(++pageCount).toBeLessThan(30);
++  } while (cursor);
++  expect(seen).toEqual(Array.from({ length: 14 }, (_, i) => `a-${String(i).padStart(2, '0')}`));
++  const count = await get(artifacts(1, 'limit=1&max_bytes=65536')); expect(count.json().meta).toMatchObject({ truncated: false, next_cursor: expect.any(String) });
++  db.prepare('UPDATE artifacts SET mime=? WHERE id=?').run('中'.repeat(5000), 'a-00');
++  expect((await get(artifacts(1, 'max_bytes=4096'))).statusCode).toBe(422);
++  requestId = '中'.repeat(5000); expect((await get(revisions('max_bytes=4096'))).statusCode).toBe(422);
++});
++
++it('PC04 signed cursors bind purpose/actor/post/exact revision, preserve expiry, and use current credential authorization', async () => {
++  revisionSeed(3); artifactSeed('a'); artifactSeed('b');
++  const first = (await get(revisions('limit=1'))).json(); const cursor = first.meta.next_cursor;
++  // Public continuation behavior verifies retained exp without exposing its signing secret.
++  const decode = (s: string) => JSON.parse(Buffer.from(s.split('.')[0]!, 'base64url').toString());
++  const original = decode(cursor); milliseconds += 10000;
++  const second = await get(revisions(new URLSearchParams({ limit: '1', cursor }).toString()));
++  expect(second.statusCode).toBe(200); expect(decode(second.json().meta.next_cursor).exp).toBe(original.exp);
++  expect((await get(artifacts(1, new URLSearchParams({ cursor }).toString()))).statusCode).toBe(400);
++  const aCursor = (await get(artifacts(1, 'limit=1'))).json().meta.next_cursor;
++  expect((await get(artifacts(2, new URLSearchParams({ cursor: aCursor }).toString()))).statusCode).toBe(400);
++  expect((await get(revisions('cursor=not-signed'))).statusCode).toBe(400);
++  const otherToken = 'private-test-other-actor-token';
++  db.prepare("INSERT INTO actors SELECT 'other-actor',kind,display_name,created_at,disabled_at FROM actors WHERE id=?").run(actor);
++  db.prepare("INSERT INTO credentials SELECT 'other-credential','other-actor',?,allowed_space_ids,capabilities,expires_at,revoked_at,created_at FROM credentials WHERE actor_id=? LIMIT 1")
++    .run(createHash('sha256').update(otherToken).digest('hex'), actor);
++  expect((await app.inject({ url: revisions(new URLSearchParams({ cursor }).toString()), headers: { authorization: `Bearer ${otherToken}` } })).statusCode).toBe(400);
++  db.prepare("INSERT INTO posts SELECT 'other-post',space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at FROM posts WHERE id=?").run(pid);
++  const otherPostUrl = `/api/v1/spaces/${sid}/posts/other-post/revisions/catalog?` + new URLSearchParams({ cursor });
++  expect((await get(otherPostUrl)).statusCode).toBe(400);
++  milliseconds += 86400001; expect((await get(revisions(new URLSearchParams({ cursor }).toString()))).statusCode).toBe(400);
++  db.prepare('UPDATE credentials SET revoked_at=? WHERE actor_id=?').run(clock.nowIso(), actor);
++  expect((await get(revisions())).statusCode).toBe(401);
++});
++
++it('PC05 fixed-ref existence, redaction and malformed query checks fail without serving material', async () => {
++  expect((await get(artifacts(99))).statusCode).toBe(404);
++  expect((await get(`/api/v1/spaces/${sid}/posts/not-found/revisions/catalog`)).statusCode).toBe(404);
++  expect((await get(artifacts())).json().data.artifacts).toEqual([]);
++  for (const q of ['unknown=x', 'limit=0', 'limit=1.2', 'max_bytes=4095', 'cursor=', `cursor=${'x'.repeat(4097)}`]) {
++    expect((await get(revisions(q))).statusCode, q).toBe(400); expect((await get(artifacts(1, q))).statusCode, q).toBe(400);
++  }
++  db.prepare("UPDATE posts SET lifecycle='redacted' WHERE id=?").run(pid);
++  for (const url of [revisions(), artifacts()]) { const res = await get(url); expect(res.statusCode).toBe(410); expect(res.body).not.toContain('PRIVATE CONTENT'); }
++});
+--- hash-approved-afterward-before/packages/client/src/artifact-transfer.ts
++++ current/packages/client/src/artifact-transfer.ts
+@@ -88,7 +88,7 @@
+ 
+ /** New artifact JSON transport only; old generic JSON requests keep their semantics. */
+ export async function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error): Promise<unknown> {
+-  if (!response.body) throw new ClientProtocolError('Invalid artifact JSON response.');
++  if (!response.body) throw new ClientProtocolError('Invalid JSON response.');
+   const reader = response.body.getReader();
+   const maximum = 1048576;
+   const buffer = new Uint8Array(maximum);
+@@ -97,11 +97,11 @@
+     while (true) {
+       const part = await waitForArtifact(reader.read(), signal, error);
+       if (part.done) break;
+-      if (!(part.value instanceof Uint8Array) || part.value.length > maximum - size) throw new ClientProtocolError('Artifact JSON response exceeds the client limit.');
++      if (!(part.value instanceof Uint8Array) || part.value.length > maximum - size) throw new ClientProtocolError('JSON response exceeds the client limit.');
+       buffer.set(part.value, size); size += part.value.length;
+     }
+     try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, size))); }
+-    catch { throw new ClientProtocolError('Invalid artifact JSON response.'); }
++    catch { throw new ClientProtocolError('Invalid JSON response.'); }
+   } finally {
+     void reader.cancel().catch(() => {});
+     try { reader.releaseLock(); } catch {}

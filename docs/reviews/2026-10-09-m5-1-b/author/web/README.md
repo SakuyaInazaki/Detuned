@@ -1,0 +1,13 @@
+# M5.1-B Web author delivery
+
+Source frozen for independent build/browser verification; acceptance is pending. No old review, server/core/client/protocol, dependencies, Web package/configuration or SQL was changed by B.
+
+The UI restores cookie sessions or performs a one-time human token login, clears the token field on submission, and keeps CSRF only in memory. Space/thread directories use page size 20 and opaque cursors; the post directory preserves server ID order. Selection/logout advances generation and aborts older requests so late responses cannot refill a different page. Logout immediately clears discussion and blocks business requests, privately retaining its nonce only for DELETE/retry; unresolved failure explicitly reports “退出尚未确认”. A confirmed 204 or subsequent session 401 completes logout.
+
+Fixed revision reads use 65,536-byte response budgets and explicit continuation. Each page is checked against the selected ref and byte offset. Only a complete document within the 1 MiB accumulated UTF-8 budget is parsed into title/summary/body/tags/structured and rendered as React text/pre. Beyond that limit the accumulated chunks are released and only the current raw JSON segment/cursor remains; users may continue or restart that same revision. No Markdown/HTML execution, external images, router, automatic ACK or hidden revision changes.
+
+New notes and cited responses use existing createPost and refs/cites only. The first attempt freezes body/key in memory, pending controls prevent double submission, and unknown results offer explicit same-key retry; editing starts a new intent. Shared client default bounded retries are preserved by parent decision. The server remains the authority for identity, ACL, revision, relations and idempotency. A known publish followed by failed directory refresh reports publication as successful with a separate refresh error.
+
+Validation: the first `pnpm --filter @detuned/web typecheck` did not reach tsc: pnpm 11.7's dependency-status mechanism attempted install and failed (registry/no-TTY); both logs are preserved. Direct installed `node node_modules/typescript/bin/tsc -p packages/web/tsconfig.json --noEmit` second/third/final attempts each exited 0. These checks cover Web source/config, not the browser test fixture. No build, whole core suite, browser or current29 was run by B yet.
+
+`author.spec.ts` is one real Chrome human journey using D's private HTTP/SQLite fixture: fixed read → note → cited response → logout, with exact DB author/space/thread/revision and relation assertions. It includes two explicit token-free desktop/narrow captures and a narrow overflow check. Its execution and screenshot review await D's single shared build; they are not represented as passed.

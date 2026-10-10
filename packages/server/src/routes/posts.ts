@@ -1,3 +1,4 @@
+import { serializePostRevisionCatalogEnvelope, serializePostRevisionArtifactsEnvelope, serializePostRevisionContentEnvelope, CONTEXT_BYTES, LIST_LIMIT, REVISION_QUERY, integerQueryOptions, isNonblankString } from '@detuned/protocol';
 import { FastifyPluginAsync } from 'fastify';
 import {
   CreatePostRequest,
@@ -9,7 +10,7 @@ import {
   DetunedError,
   ErrorCode,
 } from '@detuned/protocol';
-import { PostService, AuthenticatedContext, AuthService } from '@detuned/core';
+import { PostCatalogReadService, PostRevisionReadService, PostService, AuthenticatedContext, AuthService } from '@detuned/core';
 import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
 
 export const postRoutes: FastifyPluginAsync = async (app) => {
@@ -24,7 +25,7 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, id } = req.params as { space_id: string; id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',
@@ -48,7 +49,7 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
     const { space_id, id } = req.params as { space_id: string; id: string };
     const query = req.query as { revision?: unknown };
     validateAllowedQueryParams(query, ['revision']);
-    const rev = parseIntegerQuery(query?.revision, 'revision', { min: 1 });
+    const rev = parseIntegerQuery(query?.revision, 'revision', integerQueryOptions(REVISION_QUERY));
 
     const result = postService.getPost(auth, space_id, id, rev);
     return {
@@ -56,6 +57,40 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
       request_id: req.id,
       data: result,
     };
+  });
+
+  const catalogService = (app as any).postCatalogReadService as PostCatalogReadService;
+  function catalogQuery(query: { limit?: unknown; max_bytes?: unknown; cursor?: unknown }) {
+    validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor']);
+    return { limit: parseIntegerQuery(query.limit, 'limit', integerQueryOptions(LIST_LIMIT)),
+      max_bytes: parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES)),
+      cursor: parseStringQuery(query.cursor, 'cursor', { allowEmpty: true }) };
+  }
+  app.get('/spaces/:space_id/posts/:id/revisions/catalog', async (req, reply) => {
+    const { space_id, id } = req.params as { space_id: string; id: string };
+    const page = catalogService.getRevisions((req as any).auth as AuthenticatedContext, space_id, id,
+      catalogQuery(req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown }), { request_id: req.id });
+    return reply.type('application/json; charset=utf-8').send(serializePostRevisionCatalogEnvelope(req.id, page));
+  });
+  app.get('/spaces/:space_id/posts/:id/revisions/:revision/artifacts', async (req, reply) => {
+    const { space_id, id, revision: rawRevision } = req.params as { space_id: string; id: string; revision: string };
+    const revision = parseIntegerQuery(rawRevision, 'revision', { required: true, min: 1, max: Number.MAX_SAFE_INTEGER })!;
+    const page = catalogService.getArtifacts((req as any).auth as AuthenticatedContext, space_id, id, revision,
+      catalogQuery(req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown }), { request_id: req.id });
+    return reply.type('application/json; charset=utf-8').send(serializePostRevisionArtifactsEnvelope(req.id, page));
+  });
+
+  app.get('/spaces/:space_id/posts/:id/revisions/:revision', async (req, reply) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    const { space_id, id, revision: rawRevision } = req.params as { space_id: string; id: string; revision: string };
+    const revision = parseIntegerQuery(rawRevision, 'revision', { required: true, min: 1, max: Number.MAX_SAFE_INTEGER })!;
+    const query = req.query as { max_bytes?: unknown; cursor?: unknown };
+    validateAllowedQueryParams(query, ['max_bytes', 'cursor']);
+    const maxBytes = parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES));
+    const cursor = parseStringQuery(query.cursor, 'cursor', { allowEmpty: true });
+    const service = (app as any).postRevisionReadService as PostRevisionReadService;
+    const page = service.getRevision(auth, space_id, id, revision, { max_bytes: maxBytes, cursor }, { request_id: req.id });
+    return reply.type('application/json; charset=utf-8').send(serializePostRevisionContentEnvelope(req.id, page));
   });
 
   app.get('/spaces/:space_id/posts/:id/revisions', async (req) => {
@@ -70,7 +105,7 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
 
     const query = req.query as { limit?: unknown; cursor?: unknown };
     validateAllowedQueryParams(query, ['limit', 'cursor']);
-    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 20 }) ?? 20;
+    const limit = parseIntegerQuery(query?.limit, 'limit', integerQueryOptions(LIST_LIMIT)) ?? 20;
     const cursor = parseStringQuery(query?.cursor, 'cursor');
 
     const result = storage.listPostRevisions(id, limit, cursor);
@@ -92,7 +127,7 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, id } = req.params as { space_id: string; id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',
@@ -118,7 +153,7 @@ export const postRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, id } = req.params as { space_id: string; id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.body as any)?.request_key;
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',

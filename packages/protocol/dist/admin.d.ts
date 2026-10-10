@@ -31,4 +31,22 @@ export declare const CreateRedactionRequestSchema: import("@sinclair/typebox").T
     reason: import("@sinclair/typebox").TString;
 }>;
 export type CreateRedactionRequest = Static<typeof CreateRedactionRequestSchema>;
+export declare const CreateCredentialDataSchema: import("@sinclair/typebox").TObject<{
+    credential_id: import("@sinclair/typebox").TString;
+    actor_id: import("@sinclair/typebox").TString;
+    token: import("@sinclair/typebox").TString;
+}>;
+export type CreateCredentialData = Static<typeof CreateCredentialDataSchema>;
+export declare const RevokeCredentialDataSchema: import("@sinclair/typebox").TObject<{
+    revoked: import("@sinclair/typebox").TLiteral<true>;
+}>;
+export type RevokeCredentialData = Static<typeof RevokeCredentialDataSchema>;
+export declare const DeactivateMembershipDataSchema: import("@sinclair/typebox").TObject<{
+    deactivated: import("@sinclair/typebox").TLiteral<true>;
+}>;
+export type DeactivateMembershipData = Static<typeof DeactivateMembershipDataSchema>;
+export declare const RedactionResultSchema: import("@sinclair/typebox").TObject<{
+    redaction_id: import("@sinclair/typebox").TString;
+}>;
+export type RedactionResult = Static<typeof RedactionResultSchema>;
 //# sourceMappingURL=admin.d.ts.map

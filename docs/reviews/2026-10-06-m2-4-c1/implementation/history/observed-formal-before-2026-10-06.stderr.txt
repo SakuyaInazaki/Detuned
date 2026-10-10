@@ -1,0 +1,21 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > loads a hash-bound credential-free archive with the actual old HTTP business records
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > initial replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > newpost replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > revision replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays all three old keys after a current-server close and reopen without altering business/hash/ref
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay
+Error: ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/tests/fixtures/history-b8dacd5/expected.json'
+ ❯ tests/integration/historical-http-replay.test.ts:39:27
+     37|   };
+     38|   beforeEach(() => {
+     39|     expected = JSON.parse(readFileSync(new URL('expected.json', direct…
+       |                           ^
+     40|     dir = mkdtempSync(join(tmpdir(), 'detuned-hr1-test-'));
+     41|     copyFileSync(new URL('legacy.db', directory), join(dir, 'runtime.d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+

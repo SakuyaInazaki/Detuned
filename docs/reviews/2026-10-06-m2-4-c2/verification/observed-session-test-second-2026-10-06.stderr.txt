@@ -1,0 +1,25 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context-session-chain.test.ts > C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision
+AssertionError: expected { …(3) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+    "post_id": "pst_4b978d87-177a-4dda-ac75-88d06e826edb",
+    "revision": 1,
++   "space_id": "spc_ca2f1bdc-8efc-4aa8-bff5-22ffec7b9f89",
+  }
+
+ ❯ tests/integration/m2-context-session-chain.test.ts:31:123
+     29|  expect(journey.documents.find((x:{ref:{post_id:string}})=>x.ref.post_…
+     30|  expect(journey.documents.find((x:{ref:{space_id?:string}})=>x.ref.spa…
+     31|  const oldSource=journey.documents.find((x:{ref:{post_id:string}})=>x.…
+       |                                                                                                                           ^
+     32|  const sub=await call('POST',`/api/v1/spaces/${sid}/subscriptions`,{co…
+     33|  const initialSeq=sub.consumer.ack_seq;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

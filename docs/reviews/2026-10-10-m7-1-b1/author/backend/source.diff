@@ -1,0 +1,629 @@
+--- a/packages/core/src/services/check-service.ts
++++ b/packages/core/src/services/check-service.ts
+@@ -10,7 +10,7 @@
+ import { IdempotencyService } from './idempotency-service.js';
+ import { readReviewSnapshotRecords,assertReviewSnapshotCurrent,reviewResync } from './review-request-records.js';
+ import { authorizeCheck } from './check-authorization.js';
+-import { readCheckRun,readCheckReceipt,assertCheckReceiptPrivacy } from './check-records.js';
++import { readCheckRun,readCheckReceipt,assertCheckReceiptPrivacy,readRequiredCheckFacts } from './check-records.js';
+ export class CheckService {
+   constructor(private readonly storage:StoragePort,private readonly auth:AuthService,private readonly idempotency:IdempotencyService,private readonly clock:ClockPort,private readonly ids:IdGeneratorPort,private readonly hasher:HasherPort){}
+   private maintainer(auth:AuthenticatedContext,spaceId:string){return this.auth.requireSpaceAccess(this.auth.refreshContext(auth),spaceId,'maintainer','write');}
+@@ -37,6 +37,15 @@
+       }).data;
+     });
+   }
++  getRequiredChecks(auth:AuthenticatedContext,spaceId:string,requestId:string){return this.storage.readSnapshot(()=>{
++    const current=this.auth.refreshContext(auth);this.auth.requireOrdinaryAccess(current);this.auth.requireSpaceAccess(current,spaceId,'observer','read');
++    const request=this.storage.findReviewRequestById(requestId);
++    if(!request||request.space_id!==spaceId)throw new DetunedError(ErrorCode.NOT_FOUND,'Request does not exist or is not accessible.',404);
++    readReviewSnapshotRecords(this.storage,spaceId,request.snapshot_id);
++    const facts=readRequiredCheckFacts(this.storage,spaceId,requestId);
++    return {space_id:spaceId,request_id:requestId,snapshot_id:request.snapshot_id,request_version:request.version,verification_status:facts.verification_status,checks:facts.checks.map(c=>({check_name:c.name,run:c.run?this.publicRun(c.run,spaceId):null,receipt_id:c.receipt?.receipt_id??null}))};
++  });}
++  private publicRun(run:CheckRunRecord,spaceId:string){const {created_request_version,...view}=run;return {...view,space_id:spaceId};}
+   getRun(auth:AuthenticatedContext,spaceId:string,runId:string):CheckRunRecord {return this.storage.readSnapshot(()=>authorizeCheck(this.storage,this.auth,auth,spaceId,runId).run);}
+   getSnapshot(auth:AuthenticatedContext,spaceId:string,runId:string){return this.storage.readSnapshot(()=>{const {run}=authorizeCheck(this.storage,this.auth,auth,spaceId,runId);return readReviewSnapshotRecords(this.storage,spaceId,run.snapshot_id);});}
+   getPostRevision(auth:AuthenticatedContext,spaceId:string,runId:string,postId:string,revision:number){return this.storage.readSnapshot(()=>{const {run}=authorizeCheck(this.storage,this.auth,auth,spaceId,runId),{manifest}=readReviewSnapshotRecords(this.storage,spaceId,run.snapshot_id);if(![manifest.target,...manifest.dependencies].some(e=>e.ref.post_id===postId&&e.ref.revision===revision))throw new DetunedError(ErrorCode.NOT_FOUND,'Material is not in the check snapshot.',404);const post=this.storage.getPostRevision(postId,revision);if(!post)throw reviewResync();return post;});}
+--- a/packages/protocol/src/review.ts
++++ b/packages/protocol/src/review.ts
+@@ -1,3 +1,4 @@
++import { PostRevisionSchema } from './posts.js';
+ import addFormats from 'ajv-formats';
+ import {DetunedError,ErrorCode} from './errors.js';
+ import { Value } from '@sinclair/typebox/value';
+@@ -284,3 +285,31 @@
+ }
+ export function serializePostReviewRequestsEnvelope(requestId:string,page:PostReviewRequestsPage):string{return JSON.stringify({api_version:'1',request_id:requestId,...page});}
+ export function postReviewRequestsEnvelopeBytes(requestId:string,page:PostReviewRequestsPage):number{return new TextEncoder().encode(serializePostReviewRequestsEnvelope(requestId,page)).byteLength;}
++
++/** Scoped check HTTP views exclude persistence-only audit and credential bindings. */
++export const CheckRunViewSchema=Type.Object({
++ id:reviewId,space_id:reviewId,request_id:reviewId,snapshot_id:reviewId,snapshot_sha256:reviewHash,
++ check_name:reviewId,attempt:Type.Integer({minimum:1,maximum:Number.MAX_SAFE_INTEGER}),verifier_actor_id:reviewId,check_config_sha256:reviewHash,
++ state:Type.Union((['pending','pass','fail','error','invalidated'] as const).map(v=>Type.Literal(v))),version:Type.Integer({minimum:1,maximum:Number.MAX_SAFE_INTEGER}),
++ created_by:reviewId,created_at:Type.String({format:'date-time'}),changed_by:reviewId,changed_at:Type.String({format:'date-time'}),invalidation_reason:Type.Union([checkText(500),Type.Null()]),
++},{additionalProperties:false});
++export type CheckRunView=Static<typeof CheckRunViewSchema>;
++export const CheckReceiptViewSchema=Type.Object({...SubmitCheckReceiptSchema.properties,check_run_id:reviewId,space_id:reviewId,verifier_actor_id:reviewId,received_at:Type.String({format:'date-time'}),run_version:Type.Integer({minimum:2,maximum:Number.MAX_SAFE_INTEGER})},{additionalProperties:false});
++export type CheckReceiptView=Static<typeof CheckReceiptViewSchema>;
++export const CheckSnapshotViewSchema=Type.Object({...ReviewSnapshotViewSchema.properties,check_run_id:reviewId},{additionalProperties:false});
++export type CheckSnapshotView=Static<typeof CheckSnapshotViewSchema>;
++export const CheckPostRevisionViewSchema=Type.Object({...PostRevisionSchema.properties,space_id:reviewId,check_run_id:reviewId},{additionalProperties:false});
++export type CheckPostRevisionView=Static<typeof CheckPostRevisionViewSchema>;
++export const IssueCheckRunCredentialRequestSchema=Type.Object({ttl_seconds:Type.Optional(Type.Integer({minimum:60,maximum:86400}))},{additionalProperties:false});
++export type IssueCheckRunCredentialRequest=Static<typeof IssueCheckRunCredentialRequestSchema>;
++export const IssueCheckRunCredentialDataSchema=Type.Object({credential_id:reviewId,token:Type.String({minLength:1}),expires_at:Type.String({format:'date-time'})},{additionalProperties:false});
++export type IssueCheckRunCredentialData=Static<typeof IssueCheckRunCredentialDataSchema>;
++export const RequiredChecksViewSchema=Type.Object({space_id:reviewId,request_id:reviewId,snapshot_id:reviewId,request_version:Type.Integer({minimum:1,maximum:Number.MAX_SAFE_INTEGER}),verification_status:ReviewStatusViewSchema.properties.verification_status,checks:Type.Array(Type.Object({check_name:reviewId,run:Type.Union([CheckRunViewSchema,Type.Null()]),receipt_id:Type.Union([reviewId,Type.Null()])},{additionalProperties:false}),{maxItems:32})},{additionalProperties:false});
++export type RequiredChecksView=Static<typeof RequiredChecksViewSchema>;
++export function isIssueCheckRunCredentialRequest(value:unknown):value is IssueCheckRunCredentialRequest{return Value.Check(IssueCheckRunCredentialRequestSchema,value);}
++
++export const CheckSpaceParamsSchema=Type.Object({space_id:reviewId},{additionalProperties:false});
++export const CheckRunParamsSchema=Type.Object({space_id:reviewId,run_id:reviewId},{additionalProperties:false});
++export const CheckPostParamsSchema=Type.Object({...CheckRunParamsSchema.properties,post_id:reviewId,revision:Type.String({pattern:'^[1-9][0-9]*$'})},{additionalProperties:false});
++export const CheckRequestParamsSchema=Type.Object({space_id:reviewId,request_id:reviewId},{additionalProperties:false});
++export const CheckArtifactParamsSchema=Type.Object({...CheckRunParamsSchema.properties,id:reviewId},{additionalProperties:false});
+--- a/packages/protocol/src/response-guards.ts
++++ b/packages/protocol/src/response-guards.ts
+@@ -172,3 +172,50 @@
+     && (query?.target_post_id === undefined || item.target_ref.post_id === query.target_post_id)
+     && (index === 0 || compareReviewSubmissionIds(value.data[index - 1]!.submission_id, item.submission_id) > 0));
+ }
++
++// Scoped check views: canonical schemas remain intact; strict instants are checked locally.
++import { CheckRunViewSchema,CheckReceiptViewSchema,CheckSnapshotViewSchema,CheckPostRevisionViewSchema,IssueCheckRunCredentialDataSchema,RequiredChecksViewSchema,isSubmitCheckReceipt,isCheckInstant,
++ type CheckRunView,type CheckReceiptView,type CheckSnapshotView,type CheckPostRevisionView,type IssueCheckRunCredentialData,type RequiredChecksView } from './review.js';
++import { isArtifactMetadata,type ArtifactMetadata,type ReadableArtifactMetadata } from './artifacts.js';
++import { canonicalizeReviewJson } from './review-canonical.js';
++import type { TSchema } from '@sinclair/typebox';
++function checkWireSchema<T extends TSchema>(schema:T):T {
++ const clone={...schema};delete clone.format;
++ if(schema.properties)clone.properties=Object.fromEntries(Object.entries(schema.properties).map(([k,v])=>[k,checkWireSchema(v as TSchema)]));
++ if(schema.items)clone.items=checkWireSchema(schema.items as TSchema);
++ for(const key of ['anyOf','allOf','oneOf'])if(Array.isArray(schema[key]))clone[key]=schema[key].map(checkWireSchema);
++ return clone as T;
++}
++const checkRunWire=checkWireSchema(CheckRunViewSchema),checkReceiptWire=checkWireSchema(CheckReceiptViewSchema),checkSnapshotWire=checkWireSchema(CheckSnapshotViewSchema),checkPostWire=checkWireSchema(CheckPostRevisionViewSchema),checkIssueWire=checkWireSchema(IssueCheckRunCredentialDataSchema),checkDirectoryWire=checkWireSchema(RequiredChecksViewSchema);
++export function isCheckRunView(value:unknown,spaceId:string,runId:string):value is CheckRunView {
++ return Value.Check(checkRunWire,value)&&value.space_id===spaceId&&value.id===runId&&[value.id,value.space_id,value.request_id,value.snapshot_id,value.verifier_actor_id,value.created_by,value.changed_by].every(isUnicodeReviewId)&&!!value.check_name.trim()&&(value.state==='pending'?value.version===1&&value.changed_by===value.created_by&&value.changed_at===value.created_at:value.version>=2)&&isCheckInstant(value.created_at)&&isCheckInstant(value.changed_at)&&Date.parse(value.changed_at)>=Date.parse(value.created_at)&&((value.state==='invalidated')===(value.invalidation_reason!==null))&&(value.invalidation_reason===null||!!value.invalidation_reason.trim());
++}
++export function isCheckReceiptView(value:unknown,spaceId:string,runId:string):value is CheckReceiptView {
++ if(!Value.Check(checkReceiptWire,value)||value.space_id!==spaceId||value.check_run_id!==runId||![value.space_id,value.check_run_id,value.verifier_actor_id,value.logs_artifact_id].every(isUnicodeReviewId)||!isCheckInstant(value.received_at))return false;
++ const {space_id,check_run_id,verifier_actor_id,received_at,run_version,...input}=value;return isSubmitCheckReceipt(input);
++}
++export function isCheckSnapshotView(value:unknown,spaceId:string,runId:string):value is CheckSnapshotView {
++ try {if(!Value.Check(checkSnapshotWire,value)||value.space_id!==spaceId||value.check_run_id!==runId||value.manifest.space_id!==spaceId||!isCheckInstant(value.created_at))return false;canonicalizeReviewJson(value.manifest);
++ const checks=value.manifest.review_policy.required_checks,profiles=value.manifest.check_profiles;
++ if(checks.length!==profiles.length||checks.some((name,i)=>!name.trim()||(i>0&&checks[i-1]!>=name)||profiles[i]!.check_name!==name))return false;
++ return [value.snapshot_id,value.space_id,value.check_run_id,value.created_by].every(isUnicodeReviewId);}catch{return false;}
++}
++export function isCheckPostRevisionView(value:unknown,spaceId:string,runId:string,postId:string,revision:number):value is CheckPostRevisionView {
++ return Value.Check(checkPostWire,value)&&value.space_id===spaceId&&value.check_run_id===runId&&value.post_id===postId&&value.revision===revision&&isCheckInstant(value.created_at)&&/^[0-9a-f]{64}$/.test(value.content_hash);
++}
++export function isIssueCheckRunCredentialData(value:unknown,_spaceId:string,_runId:string):value is IssueCheckRunCredentialData{return Value.Check(checkIssueWire,value)&&isCheckInstant(value.expires_at);}
++export function checkArtifactContentPath(spaceId:string,runId:string,artifactId:string):string{return `/api/v1/spaces/${encodeURIComponent(spaceId)}/check-runs/${encodeURIComponent(runId)}/artifacts/${encodeURIComponent(artifactId)}/content`;}
++export function isCheckArtifactMetadata(value:unknown,spaceId:string,runId:string):value is ArtifactMetadata {
++ try{return isArtifactMetadata(value)&&value.space_id===spaceId&&value.content_url===checkArtifactContentPath(spaceId,runId,value.id)&&/^[0-9a-f]{64}$/.test(value.sha256);}catch{return false;}
++}
++export function isReadableCheckArtifactMetadata(value:unknown,spaceId:string,runId:string):value is ReadableArtifactMetadata{return isCheckArtifactMetadata(value,spaceId,runId)&&value.state==='ready';}
++export function isRequiredChecksView(value:unknown,spaceId:string,requestId:string):value is RequiredChecksView {
++ if(!Value.Check(checkDirectoryWire,value)||value.space_id!==spaceId||value.request_id!==requestId)return false;
++ let previous:string|undefined;
++ for(const item of value.checks){if(!item.check_name.trim()||(previous!==undefined&&previous>=item.check_name))return false;previous=item.check_name;
++  if(item.run){if(!isCheckRunView(item.run,spaceId,item.run.id)||item.run.request_id!==requestId||item.run.snapshot_id!==value.snapshot_id||item.run.check_name!==item.check_name)return false;
++   if(['pass','fail','error'].includes(item.run.state)!==(item.receipt_id!==null))return false;
++  }else if(item.receipt_id!==null)return false;
++ }
++ const status=value.checks.length===0?'not_required':value.checks.some(c=>c.run?.state==='fail')?'failed':value.checks.some(c=>c.run?.state==='error')?'error':value.checks.every(c=>c.run?.state==='pass')?'passed':'pending';return status===value.verification_status;
++}
+--- a/packages/protocol/src/openapi.ts
++++ b/packages/protocol/src/openapi.ts
+@@ -1,3 +1,4 @@
++import { CheckRunViewSchema,CheckReceiptViewSchema,CheckSnapshotViewSchema,CheckPostRevisionViewSchema,IssueCheckRunCredentialRequestSchema,IssueCheckRunCredentialDataSchema,RequiredChecksViewSchema,CreateCheckRunSchema,InvalidateCheckRunSchema,SubmitCheckReceiptSchema } from './review.js';
+ import { ReviewSubmissionSearchQuerySchema, PublicReviewSubmissionSearchItemSchema, PublicReviewSubmissionSearchPageSchema, SearchSourceQuerySchema } from './search.js';
+ import { PostReviewRequestsQuerySchema,PostReviewRequestsEnvelopeSchema,CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
+ import { ReviewArtifactMetadataSchema } from './artifacts.js';
+@@ -753,7 +754,26 @@
+   };
+   const catalogPath='/spaces/{space_id}/posts/{id}/review-requests';
+   const catalogOperation={...withId(reviewOperation(PostReviewRequestsEnvelopeSchema,'200')),parameters:[reviewParameter('space_id'),reviewParameter('id'),...Object.entries(PostReviewRequestsQuerySchema.properties).map(([name,schema])=>({name,in:'query',schema}))],'x-query-schema':PostReviewRequestsQuerySchema,responses:{'200':{description:'Bounded all-round directory',content:{'application/json':{schema:PostReviewRequestsEnvelopeSchema}}}}};
+-  const allPaths={...spec.paths,...reviewPaths,[catalogPath]:{get:catalogOperation}};
++  const checkBase='/spaces/{space_id}/check-runs',checkRun=checkBase+'/{run_id}';
++  const checkOperation=(response:TSchema,status:string,names:string[],body?:TSchema,issuer=false)=>{
++    const op=reviewOperation(response,status,body);
++    return {...op,parameters:[reviewParameter('space_id'),...names.map(reviewParameter),...(body&&!issuer?[{name:'Idempotency-Key',in:'header',required:true,schema:NONBLANK_STRING_SCHEMA}]:[])],description:issuer?'Maintainer-only once credential issuance; Idempotency-Key prohibited. No automatic retry; response private, no-store.':'Scoped check read/write; current core authorization and fixed material privacy apply. Verify credentials access only their bound run. No sealed initial opinions. Responses private, no-store.'};
++  };
++  const checkUpload={...checkOperation(ArtifactMetadataSchema,'201',['run_id'],Type.Object({})),requestBody:{required:true,content:{'multipart/form-data':{schema:Type.Object({file:Type.String({format:'binary'}),metadata:Type.Optional(Type.Object({},{additionalProperties:false}))},{additionalProperties:false}),encoding:{metadata:{contentType:'application/json'}}}}}};
++  const checkPaths={
++    [checkBase]:{post:checkOperation(CheckRunViewSchema,'201',[],CreateCheckRunSchema)},
++    [checkRun]:{get:checkOperation(CheckRunViewSchema,'200',['run_id'])},
++    [checkRun+'/snapshot']:{get:checkOperation(CheckSnapshotViewSchema,'200',['run_id'])},
++    [checkRun+'/posts/{post_id}/revisions/{revision}']:{get:checkOperation(CheckPostRevisionViewSchema,'200',['run_id','post_id','revision'])},
++    [checkRun+'/credentials']:{post:checkOperation(IssueCheckRunCredentialDataSchema,'201',['run_id'],IssueCheckRunCredentialRequestSchema,true)},
++    [checkRun+'/receipt']:{post:checkOperation(CheckReceiptViewSchema,'201',['run_id'],SubmitCheckReceiptSchema),get:checkOperation(CheckReceiptViewSchema,'200',['run_id'])},
++    [checkRun+'/invalidate']:{post:checkOperation(CheckRunViewSchema,'200',['run_id'],InvalidateCheckRunSchema)},
++    [checkRun+'/artifacts']:{post:checkUpload},
++    [checkRun+'/artifacts/{id}']:{get:checkOperation(ArtifactMetadataSchema,'200',['run_id','id'])},
++    [checkRun+'/artifacts/{id}/content']:{get:{...checkOperation(ArtifactMetadataSchema,'200',['run_id','id']),responses:{'200':{description:'Bounded raw bytes; Content-Length and metadata SHA256 must match. Cancellation disposes the source.',content:{'application/octet-stream':{schema:Type.String({format:'binary'})}}}}}},
++    '/spaces/{space_id}/review-requests/{request_id}/check-runs':{get:{...checkOperation(RequiredChecksViewSchema,'200',['request_id']),description:'Ordinary read only; rejects verify. One read snapshot, frozen required-check order, latest attempt metadata or null; no receipt body or all-attempt pagination.'}},
++  };
++  const allPaths={...spec.paths,...reviewPaths,...checkPaths,[catalogPath]:{get:catalogOperation}};
+   for (const [path, methods] of Object.entries(allPaths)) {
+     for (const [operationName, operation] of Object.entries(methods)) {
+       if (!['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'].includes(operationName)) continue;
+--- a/packages/server/src/app.ts
++++ b/packages/server/src/app.ts
+@@ -1,3 +1,4 @@
++import { checkRoutes } from './routes/checks.js';
+ import { ReviewModule, ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService, ReviewPostCatalogService } from '@detuned/module-review';
+ import { reviewRoutes } from './routes/reviews.js';
+ import type { Server as HttpServer } from 'node:http';
+@@ -43,6 +44,7 @@
+   SearchService,
+   RedactionService,
+   ArtifactService,
++  CheckService,
+   BlobStorePort,
+ } from '@detuned/core';
+ import { DetunedError, ErrorCode, resolveArtifactLimits, resolveWriteRateLimits, resolveResourceLimits, type ResourceLimits, type WriteRateLimits, type ArtifactLimits, ANONYMOUS_HTTP_ROUTES } from '@detuned/protocol';
+@@ -141,6 +143,7 @@
+   const searchService = new SearchService(options.storage, authService, { signer: tokenSigner, secret: tokenSecret, clock, hasher });
+   const redactionService = new RedactionService(options.storage, idGen, clock, authService, idempotency);
+ 
++  const checkService=new CheckService(options.storage,authService,idempotency,clock,idGen,hasher);
+   const artifactService = options.artifactBlobs
+     ? new ArtifactService(options.storage, options.artifactBlobs, authService, idempotency, idGen, clock, artifactLimits, resourceLimits)
+     : undefined;
+@@ -321,6 +324,7 @@
+     async (v1) => {
+       v1.register(metaRoutes);
+       v1.register(reviewRoutes,reviewServices);
++      v1.register(checkRoutes,{service:checkService});
+       v1.register(operationsRoutes, { service: operationsService });
+       v1.register(spaceRoutes);
+       v1.register(exportRoutes, { service: spaceExportService });
+--- a/packages/server/src/routes/artifacts.ts
++++ b/packages/server/src/routes/artifacts.ts
+@@ -2,7 +2,7 @@
+ import multipart from '@fastify/multipart';
+ import { Readable } from 'node:stream';
+ import type { ArtifactService, AuthenticatedContext, BlobStorePort, StagedBlob } from '@detuned/core';
+-import { DetunedError, ErrorCode, type ArtifactLimits, type CreateArtifactMetadata } from '@detuned/protocol';
++import { DetunedError, ErrorCode, type ArtifactLimits, type CreateArtifactMetadata, checkArtifactContentPath, CheckRunParamsSchema,CheckArtifactParamsSchema,isCheckArtifactMetadata } from '@detuned/protocol';
+ import { validateAllowedQueryParams } from '../utils/query.js';
+ 
+ interface ArtifactRouteOptions {
+@@ -27,7 +27,7 @@
+   };
+   const invalid = (message: string) => new DetunedError(ErrorCode.VALIDATION_ERROR, message, 400);
+ 
+-  const upload=(privateReview:boolean):RouteHandlerMethod=>async(req,reply)=>{
++  const upload=(privateReview:boolean,checkRun=false):RouteHandlerMethod=>async(req,reply)=>{
+     const controller = new AbortController();
+     let currentFile: Readable | undefined;
+     const onAbort = () => { controller.abort(); currentFile?.destroy(new Error('附件上传已取消。')); req.raw.destroy(); };
+@@ -38,14 +38,13 @@
+     try {
+     const artifacts = service();
+     const auth = (req as unknown as { auth: AuthenticatedContext }).auth;
+-    const { space_id, requestId } = req.params as { space_id:string; requestId?:string };
++    const { space_id, requestId, run_id } = req.params as { space_id:string; requestId?:string; run_id?:string };
+     let assignmentId:string|undefined;
+-    if(privateReview){
++    if(privateReview||checkRun){
+       validateAllowedQueryParams(req.query,[]);
+       let keyHeaders=0;for(let i=0;i<req.raw.rawHeaders.length;i+=2)if(req.raw.rawHeaders[i]?.toLowerCase()==='idempotency-key')keyHeaders++;
+       if(keyHeaders!==1||typeof req.headers['idempotency-key']!=='string'||!req.headers['idempotency-key'].trim())throw invalid('缺少或重复的 Idempotency-Key 请求头。');
+-      if(!requestId)throw invalid('缺少评审请求。');
+-      assignmentId=artifacts.authorizeReviewUploadForRequest(auth,space_id,requestId);
++      if(checkRun){if(!run_id)throw invalid('缺少检查。');artifacts.authorizeCheckUpload(auth,space_id,run_id);}else{if(!requestId)throw invalid('缺少评审请求。');assignmentId=artifacts.authorizeReviewUploadForRequest(auth,space_id,requestId);}
+     }else artifacts.authorizeUpload(auth,space_id);
+     if (activeUploads >= options.maxUploads) {
+       throw new DetunedError(ErrorCode.QUOTA_EXCEEDED, '活跃附件上传已达到服务限额。', 429);
+@@ -86,15 +85,19 @@
+       if (controller.signal.aborted) throw invalid('附件上传已取消。');
+       // All parts, including trailing metadata and framing errors, have now been consumed.
+       // Core takes ownership of stage and performs metadata, MIME, ACL, quota and idempotency checks.
+-      if(privateReview&&(typeof metadata!=='object'||metadata===null||Array.isArray(metadata)||Object.keys(metadata).length!==0))throw invalid('评审附件metadata必须为空对象。');
++      if((privateReview||checkRun)&&(typeof metadata!=='object'||metadata===null||Array.isArray(metadata)||Object.keys(metadata).length!==0))throw invalid('评审附件metadata必须为空对象。');
+       const input={staged,mime,metadata:metadata as CreateArtifactMetadata};
+       const requestKey=typeof req.headers['idempotency-key']==='string'?req.headers['idempotency-key']:'';
+       handedToCore = true;
+-      const artifact = assignmentId===undefined
++      const artifact = checkRun
++        ?await artifacts.createForCheck(auth,space_id,run_id!,input,requestKey)
++        :assignmentId===undefined
+         ?await artifacts.create(auth,space_id,input,requestKey)
+         :await artifacts.createForReview(auth,space_id,assignmentId,input,requestKey);
++      const projected=checkRun?{...artifact,content_url:checkArtifactContentPath(space_id,run_id!,artifact.id)}:artifact;
++      if(checkRun&&!isCheckArtifactMetadata(projected,space_id,run_id!))throw new DetunedError(ErrorCode.RESYNC_REQUIRED,'Check artifact response cannot be reconstructed.',409);
+       reply.status(201);
+-      return { api_version: '1', request_id: req.id, data: artifact };
++      return { api_version: '1', request_id: req.id, data:projected };
+     } catch (error) {
+       // multipart 9.x reports malformed or truncated application/json fields
+       // as 406. This upload contract treats them as invalid request metadata;
+@@ -115,26 +118,32 @@
+     }
+   };
+   app.post('/spaces/:space_id/artifacts',upload(false));
++  app.post('/spaces/:space_id/check-runs/:run_id/artifacts',{schema:{params:CheckRunParamsSchema},onRequest:async(_req,reply)=>{reply.header('Cache-Control','private, no-store');}},upload(false,true));
+   app.post('/spaces/:space_id/review-requests/:requestId/artifacts',{
+     onRequest:async(_req,reply)=>{reply.header('Cache-Control','private, no-store');},
+   },upload(true));
+ 
+ 
+ 
+-  app.get('/spaces/:space_id/artifacts/:id', async (req,reply) => {
++  const metadataHandler=(checkRun=false):RouteHandlerMethod=>async (req,reply) => {
+     validateAllowedQueryParams(req.query, []);
+-    const { space_id, id } = req.params as { space_id: string; id: string };
++    const { space_id, id, run_id } = req.params as { space_id: string; id: string;run_id?:string };
+     const finish = resources.acquire(() => {});
+     try {
+-    const metadata = await service().getMetadata((req as unknown as { auth: AuthenticatedContext }).auth, space_id, id);
++    const auth=(req as unknown as { auth: AuthenticatedContext }).auth;
++    const metadata = checkRun?await service().getCheckMetadata(auth,space_id,run_id!,id):await service().getMetadata(auth, space_id, id);
+     if(metadata.visibility==='review_assignment')reply.header('Cache-Control','private, no-store');
+-    return { api_version: '1', request_id: req.id, data: metadata };
++    const projected=checkRun?{...metadata,content_url:checkArtifactContentPath(space_id,run_id!,id)}:metadata;
++    if(checkRun&&!isCheckArtifactMetadata(projected,space_id,run_id!))throw new DetunedError(ErrorCode.RESYNC_REQUIRED,'Check artifact response cannot be reconstructed.',409);
++    return { api_version: '1', request_id: req.id, data:projected };
+     } finally { finish(); }
+-  });
++  };
++  app.get('/spaces/:space_id/artifacts/:id',metadataHandler());
++  app.get('/spaces/:space_id/check-runs/:run_id/artifacts/:id',{schema:{params:CheckArtifactParamsSchema},onRequest:async(_req,reply)=>{reply.header('Cache-Control','private, no-store');}},metadataHandler(true));
+ 
+-  app.get('/spaces/:space_id/artifacts/:id/content', async (req, reply) => {
++  const contentHandler=(checkRun=false):RouteHandlerMethod=>async (req, reply) => {
+     validateAllowedQueryParams(req.query, []);
+-    const { space_id, id } = req.params as { space_id: string; id: string };
++    const { space_id, id, run_id } = req.params as { space_id: string; id: string;run_id?:string };
+     let cancelled = false;
+     let stream: Readable | undefined;
+     let content: Awaited<ReturnType<ArtifactService['getContent']>> | undefined;
+@@ -147,7 +156,8 @@
+     const disconnect = () => { cancelled = true; stream?.destroy(); if (content) void dispose().catch(() => {}); };
+     req.raw.on('aborted', disconnect); reply.raw.on('close', disconnect);
+     try {
+-      content = await service().getContent((req as unknown as { auth: AuthenticatedContext }).auth, space_id, id);
++      const auth=(req as unknown as { auth: AuthenticatedContext }).auth;
++      content = checkRun?await service().getCheckContent(auth,space_id,run_id!,id):await service().getContent(auth, space_id, id);
+       if (cancelled || resources.closing || req.raw.aborted || reply.raw.destroyed) {
+         await dispose();
+         throw new DetunedError(ErrorCode.SERVICE_NOT_READY, '附件读取已取消。', 503, true);
+@@ -164,5 +174,7 @@
+       req.raw.off('aborted', disconnect); reply.raw.off('close', disconnect);
+       throw error;
+     }
+-  });
++  };
++  app.get('/spaces/:space_id/artifacts/:id/content',contentHandler());
++  app.get('/spaces/:space_id/check-runs/:run_id/artifacts/:id/content',{schema:{params:CheckArtifactParamsSchema}},contentHandler(true));
+ };
+--- a/modules/review/src/canonical-json.ts
++++ b/modules/review/src/canonical-json.ts
+@@ -1,102 +1 @@
+-/** RFC 8785 serialization for already-parsed JSON values. No text parser or Proxy isolation. */
+-export type ReviewCanonicalizationReason = 'invalid_json' | 'max_bytes' | 'max_depth' | 'max_nodes';
+-export class ReviewCanonicalizationError extends Error {
+-  constructor(readonly reason: ReviewCanonicalizationReason) {
+-    super('Review canonical JSON is invalid or exceeds its fixed limits.');
+-    this.name = 'ReviewCanonicalizationError';
+-  }
+-}
+-const MAX_BYTES = 262144;
+-const MAX_DEPTH = 64;
+-const MAX_NODES = 20000;
+-const encoder = new TextEncoder();
+-
+-export function canonicalizeReviewJson(value: unknown): string {
+-  const parts: string[] = [];
+-  const ancestors = new Set<object>();
+-  let bytes = 0;
+-  let nodes = 0;
+-  const fail = (reason: ReviewCanonicalizationReason): never => { throw new ReviewCanonicalizationError(reason); };
+-  const emit = (text: string) => {
+-    bytes += encoder.encode(text).byteLength;
+-    if (bytes > MAX_BYTES) fail('max_bytes');
+-    parts.push(text);
+-  };
+-  const string = (text: string): string => {
+-    // UTF-16 code units alone already exceed the UTF-8/output bound in this case.
+-    if (text.length > MAX_BYTES) fail('max_bytes');
+-    for (let i = 0; i < text.length; i++) {
+-      const unit = text.charCodeAt(i);
+-      if (unit >= 0xd800 && unit <= 0xdbff) {
+-        const next = text.charCodeAt(++i);
+-        if (!(next >= 0xdc00 && next <= 0xdfff)) fail('invalid_json');
+-      } else if (unit >= 0xdc00 && unit <= 0xdfff) fail('invalid_json');
+-    }
+-    return JSON.stringify(text);
+-  };
+-  const dataDescriptor = (object: object, key: string): PropertyDescriptor => {
+-    const descriptor = Object.getOwnPropertyDescriptor(object, key);
+-    if (!descriptor) return fail('invalid_json');
+-    if (!descriptor.enumerable || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) fail('invalid_json');
+-    return descriptor;
+-  };
+-  const visit = (item: unknown, depth: number): void => {
+-    if (depth > MAX_DEPTH) fail('max_depth');
+-    if (++nodes > MAX_NODES) fail('max_nodes');
+-    if (item === null) { emit('null'); return; }
+-    switch (typeof item) {
+-      case 'boolean': emit(item ? 'true' : 'false'); return;
+-      case 'number':
+-        if (!Number.isFinite(item)) fail('invalid_json');
+-        emit(JSON.stringify(item)); return;
+-      case 'string': emit(string(item)); return;
+-      case 'object': break;
+-      default: fail('invalid_json');
+-    }
+-    const object = item as object;
+-    if (ancestors.has(object) || Object.getOwnPropertySymbols(object).length !== 0) fail('invalid_json');
+-    const array = Array.isArray(object);
+-    const prototype = Object.getPrototypeOf(object);
+-    if (array ? prototype !== Array.prototype : prototype !== Object.prototype && prototype !== null) fail('invalid_json');
+-    ancestors.add(object);
+-    try {
+-      const keys = Object.getOwnPropertyNames(object);
+-      if (array) {
+-        const lengthDescriptor = Object.getOwnPropertyDescriptor(object, 'length');
+-        if (!lengthDescriptor) return fail('invalid_json');
+-        if (!Object.prototype.hasOwnProperty.call(lengthDescriptor, 'value')) fail('invalid_json');
+-        const length: number = lengthDescriptor.value;
+-        if (length > MAX_NODES - nodes) fail('max_nodes');
+-        if (keys.length !== length + 1) fail('invalid_json');
+-        // Validate the entire shape before emitting; never read accessors.
+-        for (let i = 0; i < length; i++) dataDescriptor(object, String(i));
+-        emit('[');
+-        for (let i = 0; i < length; i++) {
+-          if (i) emit(',');
+-          visit(dataDescriptor(object, String(i)).value, depth + 1);
+-        }
+-        emit(']');
+-      } else {
+-        if (keys.length > MAX_NODES - nodes) fail('max_nodes');
+-        for (const key of keys) { string(key); dataDescriptor(object, key); }
+-        // ECMAScript default sort compares raw UTF-16 code units; numeric-looking keys stay lexicographic.
+-        keys.sort();
+-        emit('{');
+-        for (let i = 0; i < keys.length; i++) {
+-          const key = keys[i]!;
+-          if (i) emit(',');
+-          emit(string(key)); emit(':');
+-          visit(dataDescriptor(object, key).value, depth + 1);
+-        }
+-        emit('}');
+-      }
+-    } finally { ancestors.delete(object); }
+-  };
+-  try { visit(value, 0); }
+-  catch (error) {
+-    if (error instanceof ReviewCanonicalizationError) throw error;
+-    // Reflective host/Proxy failures never expose input or native exception messages.
+-    fail('invalid_json');
+-  }
+-  return parts.join('');
+-}
++export { canonicalizeReviewJson, ReviewCanonicalizationError, type ReviewCanonicalizationReason } from '@detuned/protocol';
+--- a/packages/protocol/src/index.ts
++++ b/packages/protocol/src/index.ts
+@@ -24,3 +24,5 @@
+ 
+ export * from './web-auth.js';
+ export * from './post-catalogs.js';
++
++export { canonicalizeReviewJson, ReviewCanonicalizationError, type ReviewCanonicalizationReason } from './review-canonical.js';
+--- a/packages/server/src/routes/checks.ts
++++ b/packages/server/src/routes/checks.ts
+@@ -0,0 +1,27 @@
++import type { FastifyPluginAsync,FastifyRequest } from 'fastify';
++import type { CheckService,AuthenticatedContext } from '@detuned/core';
++import { CreateCheckRunSchema,InvalidateCheckRunSchema,SubmitCheckReceiptSchema,IssueCheckRunCredentialRequestSchema,
++ type CreateCheckRun,type InvalidateCheckRun,type SubmitCheckReceipt,type IssueCheckRunCredentialRequest,type CheckRunRecord,
++ isCheckRunView,isCheckSnapshotView,isCheckPostRevisionView,isCheckReceiptView,isRequiredChecksView,isIssueCheckRunCredentialData,
++ CheckRunParamsSchema,CheckSpaceParamsSchema,CheckPostParamsSchema,CheckRequestParamsSchema,
++ DetunedError,ErrorCode } from '@detuned/protocol';
++import {validateAllowedQueryParams} from '../utils/query.js';
++const auth=(req:FastifyRequest)=>(req as FastifyRequest&{auth:AuthenticatedContext}).auth;
++const params=(req:FastifyRequest)=>req.params as {space_id:string;run_id:string;post_id:string;revision:string;request_id:string};
++function key(req:FastifyRequest){let count=0;for(let i=0;i<req.raw.rawHeaders.length;i+=2)if(req.raw.rawHeaders[i]?.toLowerCase()==='idempotency-key')count++;const value=req.headers['idempotency-key'];if(count!==1||typeof value!=='string'||!value.trim())throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Missing or duplicate Idempotency-Key.',400);return value;}
++const publicRun=(run:CheckRunRecord,spaceId:string)=>{const {created_request_version,...view}=run;return {...view,space_id:spaceId};};
++function checked(req:FastifyRequest,data:unknown,valid:boolean){if(!valid)throw new DetunedError(ErrorCode.RESYNC_REQUIRED,'Check response cannot be safely reconstructed.',409);return {api_version:'1',request_id:req.id,data};}
++export const checkRoutes:FastifyPluginAsync<{service:CheckService}>=async(app,{service})=>{
++ app.addHook('onRequest',async(_req,reply)=>{reply.header('Cache-Control','private, no-store');});
++ app.addHook('preValidation',async req=>{validateAllowedQueryParams(req.query,[]);});
++ const base='/spaces/:space_id/check-runs',run=base+'/:run_id';
++ app.post<{Body:CreateCheckRun}>(base,{schema:{params:CheckSpaceParamsSchema,body:CreateCheckRunSchema}},async(req,reply)=>{const {space_id}=params(req);const data=publicRun(service.createRun(auth(req),space_id,req.body,key(req)),space_id);reply.code(201);return checked(req,data,isCheckRunView(data,space_id,data.id));});
++ app.get(run,{schema:{params:CheckRunParamsSchema}},async req=>{const {space_id,run_id}=params(req),data=publicRun(service.getRun(auth(req),space_id,run_id),space_id);return checked(req,data,isCheckRunView(data,space_id,run_id));});
++ app.get(run+'/snapshot',{schema:{params:CheckRunParamsSchema}},async req=>{const {space_id,run_id}=params(req),{record,manifest}=service.getSnapshot(auth(req),space_id,run_id);const data={snapshot_id:record.id,space_id,check_run_id:run_id,manifest_sha256:record.manifest_sha256,manifest,created_by:record.created_by,created_at:record.created_at};return checked(req,data,isCheckSnapshotView(data,space_id,run_id));});
++ app.get(run+'/posts/:post_id/revisions/:revision',{schema:{params:CheckPostParamsSchema}},async req=>{const {space_id,run_id,post_id,revision}=params(req);const rev=Number(revision);if(!Number.isSafeInteger(rev)||rev<1)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid fixed revision.',400);const data={...service.getPostRevision(auth(req),space_id,run_id,post_id,rev),space_id,check_run_id:run_id};return checked(req,data,isCheckPostRevisionView(data,space_id,run_id,post_id,rev));});
++ app.post<{Body:IssueCheckRunCredentialRequest}>(run+'/credentials',{schema:{params:CheckRunParamsSchema,body:IssueCheckRunCredentialRequestSchema}},async(req,reply)=>{if(req.raw.rawHeaders.some((v,i)=>i%2===0&&v.toLowerCase()==='idempotency-key'))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Credential issuance does not accept Idempotency-Key.',400);const {space_id,run_id}=params(req),data=service.issueCredential(auth(req),space_id,run_id,req.body.ttl_seconds);reply.code(201);return checked(req,data,isIssueCheckRunCredentialData(data,space_id,run_id));});
++ app.post<{Body:SubmitCheckReceipt}>(run+'/receipt',{schema:{params:CheckRunParamsSchema,body:SubmitCheckReceiptSchema}},async(req,reply)=>{const {space_id,run_id}=params(req),data={...service.submitReceipt(auth(req),space_id,run_id,req.body,key(req)),space_id};reply.code(201);return checked(req,data,isCheckReceiptView(data,space_id,run_id));});
++ app.get(run+'/receipt',{schema:{params:CheckRunParamsSchema}},async req=>{const {space_id,run_id}=params(req),data={...service.getReceipt(auth(req),space_id,run_id),space_id};return checked(req,data,isCheckReceiptView(data,space_id,run_id));});
++ app.post<{Body:InvalidateCheckRun}>(run+'/invalidate',{schema:{params:CheckRunParamsSchema,body:InvalidateCheckRunSchema}},async req=>{const {space_id,run_id}=params(req),data=publicRun(service.invalidateRun(auth(req),space_id,run_id,req.body,key(req)),space_id);return checked(req,data,isCheckRunView(data,space_id,run_id));});
++ app.get('/spaces/:space_id/review-requests/:request_id/check-runs',{schema:{params:CheckRequestParamsSchema}},async req=>{const {space_id,request_id}=params(req),data=service.getRequiredChecks(auth(req),space_id,request_id);return checked(req,data,isRequiredChecksView(data,space_id,request_id));});
++};
+--- a/tests/contracts/m7-check-http.test.ts
++++ b/tests/contracts/m7-check-http.test.ts
+@@ -0,0 +1,72 @@
++import {afterEach,beforeEach,expect,it} from 'vitest';
++import Database from 'better-sqlite3';
++import {mkdtemp,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {join} from 'node:path';
++import {createHash} from 'node:crypto';
++import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
++import {buildApp} from '@detuned/server';
++import {ArtifactFileStore} from '../../packages/server/src/artifact-files.js';
++import {CryptoHasher} from '@detuned/core';
++import {canonicalizeReviewJson,generateOpenApiSpec,isCheckRunView,isCheckSnapshotView,isCheckReceiptView,isRequiredChecksView,isCheckArtifactMetadata,type CheckRunView,type SubmitCheckReceipt} from '@detuned/protocol';
++let db:Database.Database,storage:SqliteStorage,app:ReturnType<typeof buildApp>,dir:string,url:string,token:string,sid:string,pid:string,request:any,run:CheckRunView,verify:string;
++const now='2026-10-10T00:00:00.000Z',clock={now:()=>new Date(now),nowIso:()=>now};
++async function http(method:string,path:string,body?:unknown,key?:string,bearer=token){const response=await fetch(url+'/api/v1'+path,{method,headers:{authorization:'Bearer '+bearer,...(body!==undefined?{'content-type':'application/json'}:{}),...(key!==undefined?{'idempotency-key':key}:{})},...(body!==undefined?{body:JSON.stringify(body)}:{})});return {status:response.status,headers:response.headers,body:await response.json()};}
++async function write(path:string,body:unknown,key:string,method='POST'){const r=await http(method,path,body,key);expect(r.status,JSON.stringify(r.body)).toBe(method==='POST'?201:200);return r.body.data;}
++const base=()=>`/spaces/${encodeURIComponent(sid)}/check-runs/${encodeURIComponent(run.id)}`;
++beforeEach(async()=>{
++ db=new Database(':memory:');token=bootstrapDatabase(db).adminToken!;storage=new SqliteStorage(db);dir=await mkdtemp(join(tmpdir(),'detuned-check-http-'));app=buildApp({storage,clock,artifactBlobs:await ArtifactFileStore.create(dir)});url=await app.listen({host:'127.0.0.1',port:0});
++ sid=(await write('/spaces',{slug:'check-http',objective:'o',rules:[]},'space')).space.id;
++ const tid=(await write(`/spaces/${sid}/threads`,{title:'t'},'thread')).thread.id;
++ pid=(await write(`/spaces/${sid}/threads/${tid}/posts`,{kind:'claim',title:'c',summary:'s',body:'fixed material',structured:{statement:'s',assumptions:[],scope:'s',falsification_plan:'f'}},'post')).post.id;
++ // Identity fixtures only. All request/run/receipt/log transitions use genuine HTTP services.
++ for(const id of ['http-r1','http-r2','http-verifier']){storage.createActor({id,kind:id==='http-verifier'?'service':'human',display_name:id,created_at:now,disabled_at:null});if(id!=='http-verifier')storage.upsertMembership({space_id:sid,actor_id:id,role:'observer',active:true,reviewer_eligible:true,independence_group:id});}
++ const rev=storage.getSpaceRevision(sid,1)!;await write(`/spaces/${sid}`,{expected_revision:1,review_policy:{...rev.review_policy,required_checks:['local']},check_profiles:{local:{verifier_actor_ids:['http-verifier'],config_sha256:'a'.repeat(64),description:'local'}}},'policy','PATCH');
++ request=await write(`/spaces/${sid}/review-requests`,{target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['http-r1','http-r2'],expected_policy_revision:storage.findSpaceById(sid)!.policy_revision,reproduction_instructions:'run'},'request');
++ run=await write(`/spaces/${sid}/check-runs`,{request_id:request.id,snapshot_id:request.snapshot_id,check_name:'local',verifier_id:'http-verifier',expected_request_version:request.version},'run');
++ const issued=await http('POST',base()+'/credentials',{});expect(issued.status).toBe(201);expect(issued.headers.get('cache-control')).toBe('private, no-store');verify=issued.body.data.token;
++});
++afterEach(async()=>{await app.close();db.close();await rm(dir,{recursive:true,force:true});});
++async function log(key='log',bytes='real bounded HTTP log'){const form=new FormData();form.append('file',new Blob([bytes],{type:'text/plain'}),'log.txt');form.append('metadata','{}');const response=await fetch(url+'/api/v1'+base()+'/artifacts',{method:'POST',headers:{authorization:'Bearer '+verify,'idempotency-key':key},body:form});expect(response.status,await response.clone().text()).toBe(201);return (await response.json()).data;}
++function receipt(logId:string):SubmitCheckReceipt{return {receipt_id:'http-receipt',observed_snapshot_sha256:run.snapshot_sha256,observed_check_config_sha256:run.check_config_sha256,result:'pass',environment:'HTTP fixture',tool_versions:{node:'owned'},execution_steps:'bounded local fixture',started_at:now,finished_at:now,exit_code:0,logs_artifact_id:logId};}
++it('CH01 real HTTP scoped reads, directory and streamed log/receipt replay preserve frozen identities',async()=>{
++ const get=await http('GET',base(),undefined,undefined,verify);expect(get.status).toBe(200);expect(isCheckRunView(get.body.data,sid,run.id)).toBe(true);expect(get.body.data).not.toHaveProperty('created_request_version');
++ const snapshot=await http('GET',base()+'/snapshot',undefined,undefined,verify);expect(snapshot.status).toBe(200);expect(isCheckSnapshotView(snapshot.body.data,sid,run.id)).toBe(true);expect(createHash('sha256').update(canonicalizeReviewJson(snapshot.body.data.manifest)).digest('hex')).toBe(snapshot.body.data.manifest_sha256);
++ const post=await http('GET',base()+`/posts/${pid}/revisions/1`,undefined,undefined,verify);expect(post.status).toBe(200);expect(post.body.data.body).toBe('fixed material');
++ const directory=await http('GET',`/spaces/${sid}/review-requests/${request.id}/check-runs`);expect(isRequiredChecksView(directory.body.data,sid,request.id)).toBe(true);expect(directory.body.data.checks).toEqual([{check_name:'local',run:get.body.data,receipt_id:null}]);
++ const artifact=await log();expect(isCheckArtifactMetadata(artifact,sid,run.id)).toBe(true);const metadata=await http('GET',base()+'/artifacts/'+artifact.id,undefined,undefined,verify);expect(metadata.body.data).toEqual(artifact);
++ const content=await fetch(url+artifact.content_url,{headers:{authorization:'Bearer '+verify}});expect(content.status).toBe(200);expect(await content.text()).toBe('real bounded HTTP log');
++ expect(await log()).toEqual(artifact);const payload=receipt(artifact.id),submitted=await http('POST',base()+'/receipt',payload,'receipt',verify);expect(submitted.status).toBe(201);expect(isCheckReceiptView(submitted.body.data,sid,run.id)).toBe(true);expect((await http('POST',base()+'/receipt',payload,'receipt',verify)).body.data).toEqual(submitted.body.data);expect((await http('GET',base()+'/receipt',undefined,undefined,verify)).body.data).toEqual(submitted.body.data);
++ const invalidated=await http('POST',base()+'/invalidate',{expected_version:2,reason:'explicit withdrawal'},'invalidate');expect(invalidated.status).toBe(200);expect(invalidated.body.data.state).toBe('invalidated');expect((await http('POST',base()+'/receipt',payload,'receipt',verify)).body.data).toEqual(submitted.body.data);
++});
++it('CH02 strict inputs and scope deny before new side effects, issuer rotation invalidates old token',async()=>{
++ for(const path of [`/spaces/${sid}/review-requests/${request.id}/check-runs`,`/spaces/${sid}/review-requests/${request.id}/assignment`,`/spaces/${sid}`,`/spaces/${sid}/posts/${pid}`])expect((await http('GET',path,undefined,undefined,verify)).status).not.toBe(200);
++ expect((await http('GET',base()+'?extra=1',undefined,undefined,verify)).status).toBe(400);
++ for(const body of [{ttl_seconds:59},{ttl_seconds:86401},{unknown:1}])expect((await http('POST',base()+'/credentials',body)).status).toBe(400);
++ expect((await http('POST',base()+'/credentials',{},'forbidden-key')).status).toBe(400);
++ const issued=await http('POST',base()+'/credentials',{ttl_seconds:60});expect(issued.status).toBe(201);expect((await http('GET',base(),undefined,undefined,verify)).status).toBe(401);verify=issued.body.data.token;
++ expect((await http('GET',base()+'/posts/outside/revisions/1',undefined,undefined,verify)).status).toBe(404);
++ const artifact=await log();expect((await http('GET',`/spaces/${sid}/artifacts/${artifact.id}`,undefined,undefined,verify)).status).toBe(403);
++ const payload=receipt(artifact.id);for(const body of [{...payload,extra:true},{...payload,exit_code:1},{...payload,environment:'界'.repeat(8000),execution_steps:'界'.repeat(16000)}])expect((await http('POST',base()+'/receipt',body,'bad',verify)).status).toBe(400);
++ expect(storage.findCheckReceiptByRunId(run.id)).toBeNull();expect(storage.findCheckRunById(run.id)!.version).toBe(1);
++});
++it('CH03 whole DTO guards reject swapped scope, internal audit, inconsistent directory and foreign URL',async()=>{
++ expect(isCheckRunView({...run,created_request_version:1},sid,run.id)).toBe(false);expect(isCheckRunView(run,'other',run.id)).toBe(false);expect(isCheckRunView({...run,version:2},sid,run.id)).toBe(false);expect(isCheckRunView({...run,created_at:'2026-10-10'},sid,run.id)).toBe(false);
++ const page=(await http('GET',`/spaces/${sid}/review-requests/${request.id}/check-runs`)).body.data;
++ for(const bad of [{...page,extra:true},{...page,verification_status:'passed'},{...page,checks:[...page.checks,...page.checks]},{...page,checks:[{...page.checks[0],receipt_id:'forged'}]}])expect(isRequiredChecksView(bad,sid,request.id)).toBe(false);
++ const artifact=await log();expect(isCheckArtifactMetadata({...artifact,content_url:'https://outside.test/log'},sid,run.id)).toBe(false);expect(isCheckArtifactMetadata(artifact,sid,'other')).toBe(false);
++});
++it('CH04 OpenAPI contains twelve scoped operations and credential issuance has no key header',()=>{
++ const spec=generateOpenApiSpec();const root='/spaces/{space_id}/check-runs',r=root+'/{run_id}';
++ for(const path of [root,r,r+'/snapshot',r+'/posts/{post_id}/revisions/{revision}',r+'/credentials',r+'/receipt',r+'/invalidate',r+'/artifacts',r+'/artifacts/{id}',r+'/artifacts/{id}/content','/spaces/{space_id}/review-requests/{request_id}/check-runs'])expect(spec.paths).toHaveProperty(path);
++ expect(spec.paths[r+'/credentials'].post.parameters.some((p:any)=>p.name==='Idempotency-Key')).toBe(false);expect(spec.paths[r+'/receipt']).toHaveProperty('post');expect(spec.paths[r+'/receipt']).toHaveProperty('get');
++});
++it('CH05 controlled legal Unicode slash space ID preserves scoped URL and real log replay',async()=>{
++ const revision=storage.getSpaceRevision(sid,storage.findSpaceById(sid)!.current_revision)!;const encoded='研究/space with gap';// Only identity is controlled; formal state is created through HTTP.
++ storage.createSpace({id:encoded,slug:'encoded-http',current_revision:1,policy_revision:1,acl_epoch:1,created_at:now},{...revision,space_id:encoded,revision:1,editor_id:revision.editor_id,created_at:now});for(const id of ['http-r1','http-r2'])storage.upsertMembership({space_id:encoded,actor_id:id,role:'observer',active:true,reviewer_eligible:true,independence_group:id});
++ sid=encoded;const root='/spaces/'+encodeURIComponent(sid);const thread=(await write(root+'/threads',{title:'encoded'},'encoded-thread')).thread.id;
++ pid=(await write(root+'/threads/'+thread+'/posts',{kind:'claim',title:'c',summary:'s',body:'material',structured:{statement:'s',assumptions:[],scope:'s',falsification_plan:'f'}},'encoded-post')).post.id;
++ request=await write(root+'/review-requests',{target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['http-r1','http-r2'],expected_policy_revision:1,reproduction_instructions:'run'},'encoded-request');
++ run=await write(root+'/check-runs',{request_id:request.id,snapshot_id:request.snapshot_id,check_name:'local',verifier_id:'http-verifier',expected_request_version:request.version},'encoded-run');verify=(await http('POST',base()+'/credentials',{})).body.data.token;
++ const artifact=await log('encoded-log');expect(artifact.content_url).toContain(encodeURIComponent(encoded));expect(isCheckArtifactMetadata(artifact,sid,run.id)).toBe(true);expect(await log('encoded-log')).toEqual(artifact);const response=await fetch(url+artifact.content_url,{headers:{authorization:'Bearer '+verify}});expect(response.status).toBe(200);expect(await response.text()).toBe('real bounded HTTP log');
++});
+--- a/packages/protocol/src/review-canonical.ts
++++ b/packages/protocol/src/review-canonical.ts
+@@ -0,0 +1,102 @@
++/** RFC 8785 serialization for already-parsed JSON values. No text parser or Proxy isolation. */
++export type ReviewCanonicalizationReason = 'invalid_json' | 'max_bytes' | 'max_depth' | 'max_nodes';
++export class ReviewCanonicalizationError extends Error {
++  constructor(readonly reason: ReviewCanonicalizationReason) {
++    super('Review canonical JSON is invalid or exceeds its fixed limits.');
++    this.name = 'ReviewCanonicalizationError';
++  }
++}
++const MAX_BYTES = 262144;
++const MAX_DEPTH = 64;
++const MAX_NODES = 20000;
++const encoder = new TextEncoder();
++
++export function canonicalizeReviewJson(value: unknown): string {
++  const parts: string[] = [];
++  const ancestors = new Set<object>();
++  let bytes = 0;
++  let nodes = 0;
++  const fail = (reason: ReviewCanonicalizationReason): never => { throw new ReviewCanonicalizationError(reason); };
++  const emit = (text: string) => {
++    bytes += encoder.encode(text).byteLength;
++    if (bytes > MAX_BYTES) fail('max_bytes');
++    parts.push(text);
++  };
++  const string = (text: string): string => {
++    // UTF-16 code units alone already exceed the UTF-8/output bound in this case.
++    if (text.length > MAX_BYTES) fail('max_bytes');
++    for (let i = 0; i < text.length; i++) {
++      const unit = text.charCodeAt(i);
++      if (unit >= 0xd800 && unit <= 0xdbff) {
++        const next = text.charCodeAt(++i);
++        if (!(next >= 0xdc00 && next <= 0xdfff)) fail('invalid_json');
++      } else if (unit >= 0xdc00 && unit <= 0xdfff) fail('invalid_json');
++    }
++    return JSON.stringify(text);
++  };
++  const dataDescriptor = (object: object, key: string): PropertyDescriptor => {
++    const descriptor = Object.getOwnPropertyDescriptor(object, key);
++    if (!descriptor) return fail('invalid_json');
++    if (!descriptor.enumerable || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) fail('invalid_json');
++    return descriptor;
++  };
++  const visit = (item: unknown, depth: number): void => {
++    if (depth > MAX_DEPTH) fail('max_depth');
++    if (++nodes > MAX_NODES) fail('max_nodes');
++    if (item === null) { emit('null'); return; }
++    switch (typeof item) {
++      case 'boolean': emit(item ? 'true' : 'false'); return;
++      case 'number':
++        if (!Number.isFinite(item)) fail('invalid_json');
++        emit(JSON.stringify(item)); return;
++      case 'string': emit(string(item)); return;
++      case 'object': break;
++      default: fail('invalid_json');
++    }
++    const object = item as object;
++    if (ancestors.has(object) || Object.getOwnPropertySymbols(object).length !== 0) fail('invalid_json');
++    const array = Array.isArray(object);
++    const prototype = Object.getPrototypeOf(object);
++    if (array ? prototype !== Array.prototype : prototype !== Object.prototype && prototype !== null) fail('invalid_json');
++    ancestors.add(object);
++    try {
++      const keys = Object.getOwnPropertyNames(object);
++      if (array) {
++        const lengthDescriptor = Object.getOwnPropertyDescriptor(object, 'length');
++        if (!lengthDescriptor) return fail('invalid_json');
++        if (!Object.prototype.hasOwnProperty.call(lengthDescriptor, 'value')) fail('invalid_json');
++        const length: number = lengthDescriptor.value;
++        if (length > MAX_NODES - nodes) fail('max_nodes');
++        if (keys.length !== length + 1) fail('invalid_json');
++        // Validate the entire shape before emitting; never read accessors.
++        for (let i = 0; i < length; i++) dataDescriptor(object, String(i));
++        emit('[');
++        for (let i = 0; i < length; i++) {
++          if (i) emit(',');
++          visit(dataDescriptor(object, String(i)).value, depth + 1);
++        }
++        emit(']');
++      } else {
++        if (keys.length > MAX_NODES - nodes) fail('max_nodes');
++        for (const key of keys) { string(key); dataDescriptor(object, key); }
++        // ECMAScript default sort compares raw UTF-16 code units; numeric-looking keys stay lexicographic.
++        keys.sort();
++        emit('{');
++        for (let i = 0; i < keys.length; i++) {
++          const key = keys[i]!;
++          if (i) emit(',');
++          emit(string(key)); emit(':');
++          visit(dataDescriptor(object, key).value, depth + 1);
++        }
++        emit('}');
++      }
++    } finally { ancestors.delete(object); }
++  };
++  try { visit(value, 0); }
++  catch (error) {
++    if (error instanceof ReviewCanonicalizationError) throw error;
++    // Reflective host/Proxy failures never expose input or native exception messages.
++    fail('invalid_json');
++  }
++  return parts.join('');
++}

@@ -1,0 +1,11 @@
+# B schema4 / private artifact implementation — source frozen
+
+No B test, build, typecheck, lint or probe was run. D owns the single low-resource execution window. Two D schema generation attempts succeeded; these are code generation only, not migration behavior evidence.
+
+Historical3 SQL was captured before currentDDL edits (cf14b7cbe4c8b99e0f7c880ba9a45bd7c63a53d740f76b09d017b22ed21a5cd0). Stage migration adds count0, immutable assignment IDs and actual submission storage before formal-ref intrinsic validation; original ref strings remain unchanged. Source profiles2/3/4 and wire1/source2 versus wire2/source3|4 are finite. Six formal tables stay outside logical export/import.
+
+Public create/upload metadata remains space exact. Existing GET/download use readable union; private artifact metadata retains review_assignment after reveal. Internal evidence privacy checks use assignment binding and current material redaction without applying the final reviewer's read ACL to others; readiness is a separate fresh/reveal check. Online metadata/content requires normal current space auth then own-or-revealed explicit evidence. Idle private artifacts never become space-visible. Upload reuses the existing publication/transaction/quota/discard pipeline and rechecks fresh qualification after publication; historical replay does not rejudge phase/eligibility.
+
+New formal author cases: RA01 sealed/explicit reveal versus idle + replay; RA02 post-publication qualification failure cleanup; RA03 read-only denial/public post binding/redaction privacy. SM401 uses genuine D-frozen original schema3 service JSON and full historical SQL, checks source hash/original ref bytes/stable confirmation + backfilled ID/count0. SM402 sealed/revealed physical history recovery. SM403 strict wire source union. These cases are written but not yet executed. Existing schema3-maintenance only updates current target expectations; source2/source3 positives retain their meaning. Generator/profile tests add frozen3/current4 without weakening failure atomicity.
+
+Known pending: D must execute schema-sync, targeted author/integration checks, test-inclusive types and independent privacy/maintenance probes. No behavior success is inferred from source inspection. No installation, VM, models, global configuration or old review edits.

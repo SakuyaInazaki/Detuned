@@ -1,0 +1,32 @@
+--- v1/packages/core/src/services/idempotency-service.ts
++++ v2/packages/core/src/services/idempotency-service.ts
+@@ -1520,7 +1520,6 @@
+ }
+ 
+ export function extractResultRef(operation: string, result: any, storage?: StoragePort): string {
+-  if(operation.startsWith('check.')||operation.startsWith('artifact.check.')){if(!storage)throw reviewResync();const kind=operation.startsWith('artifact.check.')?'artifact.check':operation.startsWith('check.receipt.')?'check.receipt':'check.run';const runId=kind==='check.run'?result.id:kind==='check.receipt'?result.check_run_id:operation.slice('artifact.check.create:'.length);const run=storage.findCheckRunById(runId);if(!run)throw reviewResync();return JSON.stringify({v:1,kind,run_id:runId,run_version:kind==='check.run'?result.version:kind==='check.receipt'?result.run_version:run.version,...(kind==='artifact.check'?{artifact_id:result.id}:{})});}
+   if (!result || typeof result !== 'object') {
+     throw new DetunedError(
+       ErrorCode.VALIDATION_ERROR,
+@@ -1533,6 +1532,21 @@
+   let ref: IdempotencyResultRef;
+ 
+   switch (parsedOp.family) {
++    case 'check.run.create':
++    case 'check.run.invalidate':
++    case 'check.receipt.create':
++    case 'artifact.check.create': {
++      if(!storage||!parsedOp.targetId)throw reviewResync();
++      const kind=parsedOp.family==='artifact.check.create'?'artifact.check':parsedOp.family==='check.receipt.create'?'check.receipt':'check.run';
++      const runId=kind==='check.run'?result.id:kind==='check.receipt'?result.check_run_id:parsedOp.targetId;
++      const run=storage.findCheckRunById(runId),request=run?storage.findReviewRequestById(run.request_id):null;
++      if(!run||!request)throw reviewResync();
++      ref={v:1,kind,run_id:run.id,run_version:kind==='check.run'?result.version:kind==='check.receipt'?result.run_version:run.version,...(kind==='artifact.check'?{artifact_id:result.id}:{})};
++      // Validate the compact immutable/history locator against the actual business result.
++      if(!equal(result,reconstructCheckResult(storage,request.space_id,operation,ref,false)))throw reviewResync();
++      break;
++    }
++
+     case 'review.request.finalize': {
+       if(!storage||!parsedOp.targetId)throw reviewResync();
+       const head=storage.findReviewRequestById(parsedOp.targetId);if(!head)throw reviewResync();

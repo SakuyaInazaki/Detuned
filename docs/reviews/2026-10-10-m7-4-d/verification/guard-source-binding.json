@@ -1,0 +1,48 @@
+{
+  "complete": true,
+  "status": "actual source freeze-bound preparation; no new guard/native run",
+  "source_sha256": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+  "author_freeze_sha256": "9a67590f8cc8adfdc6f834c144d75c77922d9929fa0fc88bafabb4947ad679fb",
+  "policy_raw": "(version 1)\\n(allow default)\\n(deny network*)\\n(allow network-outbound (remote ip \"localhost:${port}\"))\\n(deny mach-lookup)\\n(deny file-read* file-write* (subpath \"${home}/.codex\") (subpath \"${home}/.claude\") (literal \"${home}/.claude.json\") (subpath \"${home}/.config\") (subpath \"${home}/Library/Keychains\") (subpath \"/Library/Keychains\") (subpath \"${home}/Library/Application Support/Codex\") (subpath \"${home}/Library/Application Support/Claude\"))\\n(deny file-write*)\\n(allow file-write* (subpath \"${owned}\"))\\n(deny file-read* file-write* (literal \"${sentinel}\"))\\n",
+  "policy_template_sha256": "02ea2a24fffbecc5e934c2a01d4311f8a8da89e8473ff839f4f0a2ed2f481ec7",
+  "native_spawn_args_environment_literal": "spawn('/usr/bin/sandbox-exec',['-f',profile,binary,'--bare','-p','--input-format','stream-json','--output-format','stream-json','--verbose','--setting-sources','','--settings',settings,'--strict-mcp-config','--mcp-config',mcp,'--no-session-persistence'],{cwd:owned,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',HOME:home,CLAUDE_CODE_TMPDIR:path.join(owned,'tmp'),CLAUDE_CONFIG_DIR:path.join(owned,'state')},detached:false,stdio:['pipe','pipe','pipe']})",
+  "native_literal_byte_identical": true,
+  "protected_exports": [
+    {
+      "export": "nativeCheckNames",
+      "bytes": 181,
+      "sha256": "fe9ce0d225a3aa37698a66b1c2e8da66b270f315262d0c405201c3a7a105c512",
+      "byte_identical": true
+    },
+    {
+      "export": "prepareOrdinaryCheckFixture",
+      "bytes": 2437,
+      "sha256": "291e5ca286dcc979b3c478b20649090758adc9178578dab3ccb6384acd632a50",
+      "byte_identical": true
+    },
+    {
+      "export": "exerciseOrdinaryCheckBranches",
+      "bytes": 4544,
+      "sha256": "8d69a5eed0e7ec2b91eb9220f6dd2373f25c980d0ad4637367e5531be11fcbaf",
+      "byte_identical": true
+    },
+    {
+      "export": "createNativeInputWriter",
+      "bytes": 736,
+      "sha256": "d31cb7c7a84ff42c2b2589440a4867b67ccb3d2d02e28da3b7f6b7b4cbd554bf",
+      "byte_identical": true
+    }
+  ],
+  "binary": "/Users/sakimi/.local/share/claude/versions/2.1.282",
+  "binary_sha256": "fcfd837103965c64de34a6b9b94370d77a347ea71819715a27d5f0ef01775ea4",
+  "binary_size": 222245312,
+  "guard_reuse": {
+    "result_path": "docs/reviews/2026-10-10-m7-4-a/verification/claude-guard-only-result-v2.json",
+    "result_sha256": "0d8ed67aa2b70f434c73b3b6b17811b2c2ab0c7c3603319ff8d87b947bfd3154",
+    "receipt_path": "docs/reviews/2026-10-10-m7-4-a/verification/claude-guard-only-second.json",
+    "receipt_sha256": "6560640b806a409a9a3c21bb7886b75009bd28bcc36d3800fe1bbe7e1f5f4f9b",
+    "actual_guard_status": "passed",
+    "policy_unchanged": true,
+    "new_guard_decision": "root only; not run"
+  }
+}

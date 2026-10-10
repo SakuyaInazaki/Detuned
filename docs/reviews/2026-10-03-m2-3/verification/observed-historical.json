@@ -1,0 +1,35 @@
+{
+  "passes": true,
+  "cases": [
+    {
+      "entry": "initial",
+      "original_key_status": 201,
+      "new_key_status": 400,
+      "changed_payload_status": 409,
+      "raw_hash_unchanged": true
+    },
+    {
+      "entry": "newpost",
+      "original_key_status": 201,
+      "new_key_status": 400,
+      "changed_payload_status": 409,
+      "raw_hash_unchanged": true
+    },
+    {
+      "entry": "revision",
+      "original_key_status": 201,
+      "new_key_status": 409,
+      "current_revision_validation": {
+        "status": 400,
+        "expected_revision": 2,
+        "only_changed_field": "expected_revision",
+        "structured_unchanged": true
+      },
+      "changed_payload_status": 409,
+      "raw_hash_unchanged": true
+    }
+  ],
+  "restart_replays": 3,
+  "redaction_replay_status": 201,
+  "revoked_replay_status": 401
+}

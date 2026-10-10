@@ -1,0 +1,21 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-resource-limits.test.ts (10 tests) 231ms
+ ❯ tests/contracts/m3-resource-limits-contract.test.ts (4 tests | 1 failed) 844ms
+   ✓ RS B01: strict resource configuration rejects unknown, unsafe and disabled values without echo 1ms
+   ✓ RS B02: invalid configuration and unsupported storage reject before business access 1ms
+   ✓ RS B03: real HTTP maps native FULL safely and shared client does not retry complete 507 105ms
+   × RS B04: built CLI invalid resource flags precede mkdir and existing overquota rejects before listen 737ms
+     → expected 2 to be 1 // Object.is equality
+ ✓ tests/integration/m3-resource-limits-independent.test.ts (4 tests) 3266ms
+   ✓ M3.4-A2 independent natural bounded research fills real main database, rolls back failed post/event/idempotency and keeps reads usable  461ms
+   ✓ M3.4-A2 independent real uploads race global bytes and object quotas, replay and restarted service preserve registered usage  1286ms
+   ✓ M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation  671ms
+   ✓ M3.4-A2 independent published artifact real allocation FULL cleans this call files and CLI invalid resource config is rejected before mkdir  846ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 17 passed (18)
+   Start at  15:30:05
+   Duration  3.50s (transform 257ms, setup 0ms, collect 731ms, tests 4.34s, environment 0ms, prepare 123ms)
+

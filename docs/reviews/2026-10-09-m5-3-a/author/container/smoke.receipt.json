@@ -1,0 +1,71 @@
+{
+  "builder_layer": "c085ace64bf1",
+  "checks": [
+    {
+      "name": "builder-tag",
+      "argv": [
+        "tag",
+        "c085ace64bf1",
+        "detuned-m53-owned:builder"
+      ],
+      "exit": 0,
+      "elapsed": 0.165
+    },
+    {
+      "name": "image-inspect",
+      "argv": [
+        "image",
+        "inspect",
+        "--format",
+        "{{json .Id}} {{json .Architecture}} {{json .Config.User}}",
+        "detuned-m53-owned:runtime",
+        "detuned-m53-owned:builder"
+      ],
+      "exit": 1,
+      "elapsed": 0.068
+    },
+    {
+      "name": "runtime-version",
+      "argv": [
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "--name",
+        "detuned-m53-owned-version",
+        "detuned-m53-owned:runtime",
+        "--version"
+      ],
+      "exit": 0,
+      "elapsed": 0.348
+    },
+    {
+      "name": "runtime-native",
+      "argv": [
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "--name",
+        "detuned-m53-owned-native",
+        "--entrypoint",
+        "node",
+        "detuned-m53-owned:runtime",
+        "--input-type=module",
+        "-e",
+        "import Database from 'better-sqlite3'; const db=new Database(':memory:'); const row=db.prepare('SELECT 1 AS n').get(); db.close(); if(row.n!==1||process.getuid()!==1000)throw Error('smoke'); console.log(JSON.stringify({uid:process.getuid(),platform:process.platform,arch:process.arch,sqlite:row.n,closed:!db.open}));"
+      ],
+      "exit": 0,
+      "elapsed": 0.102
+    },
+    {
+      "name": "failed-build-container-cleanup",
+      "argv": [
+        "rm",
+        "c6ab1a53bfcb"
+      ],
+      "exit": 0,
+      "elapsed": 0.023
+    }
+  ]
+}

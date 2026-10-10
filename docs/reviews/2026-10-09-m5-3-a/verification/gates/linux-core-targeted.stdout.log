@@ -1,0 +1,24 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/app[39m
+
+ [32m✓[39m tests/contracts/r4-c-contracts.test.ts [2m([22m[2m26 tests[22m[2m)[22m[33m 6373[2mms[22m[39m
+   [33m[2m✓[22m[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-6: Bounded retries maintain original requestKey and terminate at maxRetries [33m 3568[2mms[22m[39m
+   [33m[2m✓[22m[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-8: Network and Retry-After retry policies [33m 1438[2mms[22m[39m
+[90mstdout[2m | tests/contracts/m5-web-auth-independent.test.ts[2m > [22m[2mM5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes
+[22m[39mIndependent root auth carriers: {"post_query":400,"get_query":400,"delete_nonempty_body":400,"cookie_after_bad_delete":200}
+
+ [32m✓[39m tests/contracts/m5-web-auth-independent.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1381[2mms[22m[39m
+   [33m[2m✓[22m[39m M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen [33m 797[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-wrapped-independent.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3220[2mms[22m[39m
+   [33m[2m✓[22m[39m wrapped independent default/explicit flat advertises the original eight schemas; wrapped nests every canonical keyword exactly with no HTTP [33m 1372[2mms[22m[39m
+   [33m[2m✓[22m[39m wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback [33m 554[2mms[22m[39m
+   [33m[2m✓[22m[39m wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post [33m 317[2mms[22m[39m
+   [33m[2m✓[22m[39m wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK [33m 319[2mms[22m[39m
+   [33m[2m✓[22m[39m wrapped independent invalid startup modes exit safely without environment/token output or HTTP [33m 656[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
+[2m   Start at [22m 04:07:03
+[2m   Duration [22m 12.39s[2m (transform 485ms, setup 0ms, collect 1.10s, tests 10.97s, environment 0ms, prepare 92ms)[22m
+

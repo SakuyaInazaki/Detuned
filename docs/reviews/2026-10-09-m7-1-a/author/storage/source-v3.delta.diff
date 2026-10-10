@@ -1,0 +1,33 @@
+--- tests/integration/m6-review-finalization-independent.test.ts (fresh exact-before)
++++ tests/integration/m6-review-finalization-independent.test.ts
+@@ -10,7 +10,7 @@
+ import {AuthService,CryptoHasher,CryptoIdGenerator,IdempotencyService,PostService,SpaceService,RelationService,RedactionService,ArtifactService,EventService,HmacTokenSigner} from '@detuned/core';
+ import {ReviewModule,ReviewRequestService,ReviewSubmissionService,ReviewFinalizationService,ReviewStatusService} from '@detuned/module-review';
+ import {ArtifactFileStore} from '../../packages/server/src/artifact-files.js';
+-import {DEFAULT_ARTIFACT_LIMITS,REVIEW_VALIDITY_REASON_ORDER,FinalizeReviewRequestSchema,ToolReviewFinalizeOpSchema,
++import {DEFAULT_ARTIFACT_LIMITS,FinalizeReviewRequestSchema,ToolReviewFinalizeOpSchema,
+  type ReviewPolicy,type CreateReviewRequest,type CreateReviewSubmission,type ReviewVerdict} from '@detuned/protocol';
+ import {Value} from '@sinclair/typebox/value';
+ const repo=fileURLToPath(new URL('../../',import.meta.url));
+@@ -134,6 +134,8 @@
+ },25000);
+ 
+ it('DF05 the twelve metadata reasons are ordered and sealed or unused evidence health never leaks into public status',async()=>{
++ // This no-check fixture covers the original twelve reasons, independently of later check families.
++ const expectedReasons = ['target_redacted','dependency_redacted','artifact_redacted','target_withdrawn','dependency_withdrawn','artifact_unavailable','published_review_evidence_redacted','published_review_evidence_unavailable','target_superseded','dependency_superseded','policy_superseded','open_challenges'] as const;
+  const observed=new Set<string>();
+  for(const mode of ['one','two'] as const){const f=await fixture({allow_open_objections:true});f.reveal();f.finalize();f.challenge();f.revise();f.revise(f.dependency.id,'dependency-revise');f.spaces.patchSpace(f.context(),f.sid,{expected_revision:1,rules:['effective new rules']},'rule-patch');
+   f.redact.createRedaction(f.context(),f.sid,{target_type:'post',target_id:mode==='one'?f.target.id:f.dependency.id,reason:'public material redaction'},'material-redaction');
+@@ -142,10 +144,10 @@
+   else f.redact.createRedaction(f.context(),f.sid,{target_type:'artifact',target_id:f.snapshotArtifact.id,reason:'snapshot redaction'},'artifact-redaction');
+   if(mode==='one')f.redact.createRedaction(f.context(),f.sid,{target_type:'post',target_id:f.evidence.id,reason:'published evidence redaction'},'published-redaction');
+   else f.posts.withdrawPost(f.context(),f.sid,f.evidence.id,{expected_revision:1,reason:'published evidence withdrawal'},'published-withdraw');
+-  const status=f.status.getStatus(f.context(f.actors.reader),f.sid,f.request.id);expect(status.current_validity).toBe('invalidated');expect(status.phase).toBe('accepted');expect(status.validity_reasons).toEqual(REVIEW_VALIDITY_REASON_ORDER.filter(x=>status.validity_reasons.includes(x)));for(const reason of status.validity_reasons)observed.add(reason);
++  const status=f.status.getStatus(f.context(f.actors.reader),f.sid,f.request.id);expect(status.current_validity).toBe('invalidated');expect(status.phase).toBe('accepted');expect(status.validity_reasons).toEqual(expectedReasons.filter(x=>status.validity_reasons.includes(x)));for(const reason of status.validity_reasons)observed.add(reason);
+   expect(Object.keys(status).sort()).toEqual(['request_id','snapshot_id','phase','verification_status','current_validity','validity_reasons'].sort());
+  }
+- expect([...observed].sort()).toEqual([...REVIEW_VALIDITY_REASON_ORDER].sort());
++ expect([...observed].sort()).toEqual([...expectedReasons].sort());
+  const sealed=await fixture();const assignment=sealed.submissions.getOwnAssignment(sealed.context(sealed.actors.one),sealed.sid,sealed.request.id);
+  const upload=async(key:string)=>{const staged=await sealed.blobs.stage((async function*(){yield Buffer.from('private '+key);})(),1000);return sealed.artifacts.createForReview(sealed.context(sealed.actors.one),sealed.sid,assignment.id,{staged,mime:'text/plain',metadata:{}},key);};
+  const cited=await upload('cited'),unused=await upload('unused');sealed.submit(sealed.actors.one,'accept',[{kind:'artifact',artifact_id:cited.id}]);

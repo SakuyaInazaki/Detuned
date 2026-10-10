@@ -1,0 +1,43 @@
+node:internal/modules/cjs/loader:1519
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module 'vite'
+Require stack:
+- /Users/sakimi/Desktop/Detuned/node_modules/vitest/package.json
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1519:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1073:27)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1124:12)
+    at require.resolve (node:internal/modules/helpers:209:31)
+    at file:///Users/sakimi/Desktop/Detuned/tests/fixtures/runtime-fa1b35c/generator.mjs:16:41
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/Users/sakimi/Desktop/Detuned/node_modules/vitest/package.json' ]
+}
+
+Node.js v26.3.0
+node:internal/errors:998
+  const err = new Error(message);
+              ^
+
+Error: Command failed: /opt/homebrew/Cellar/node/26.3.0/bin/node tests/fixtures/runtime-fa1b35c/generator.mjs
+    at genericNodeError (node:internal/errors:998:15)
+    at wrappedFn (node:internal/errors:543:14)
+    at checkExecSyncError (node:child_process:926:11)
+    at execFileSync (node:child_process:962:15)
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-3-c/implementation/transport/runtime-proof.mjs:8:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [ null, null, null ],
+  pid: 74650,
+  stdout: null,
+  stderr: null
+}
+
+Node.js v26.3.0
+{"child_reaped":true,"watchdog_killed":false,"code":1,"signal":null}

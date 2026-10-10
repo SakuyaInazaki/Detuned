@@ -1,0 +1,77 @@
+{
+  "kind": "independent built maintenance API and actual CLI probe",
+  "checks": [
+    {
+      "name": "genuine original API produced format1/schema2 physical backup",
+      "schema_version": 2,
+      "artifact_bytes": 25
+    },
+    {
+      "name": "CLI refusal observed",
+      "exit": 3,
+      "signal": null
+    },
+    {
+      "name": "actual built init rejects legacy2",
+      "exit": 3,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "CLI refusal observed",
+      "exit": 3,
+      "signal": null
+    },
+    {
+      "name": "actual built serve rejects legacy2",
+      "exit": 3,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "migration only publishes new schema3 copy",
+      "source_unchanged": true,
+      "schema_version": 3
+    },
+    {
+      "name": "old2 backup stages to3 preserving physical material and resetting old identity",
+      "all_formal_tables_empty": true,
+      "old_token_rejected": true
+    },
+    {
+      "name": "new3 physical backup restores every immutable formal history row",
+      "formal_counts": {
+        "snapshots": 1,
+        "snapshot_items": 3,
+        "review_requests": 1,
+        "review_request_versions": 2,
+        "review_assignments": 2
+      }
+    },
+    {
+      "name": "actual old1 logical import projects research only",
+      "schema_version": 3,
+      "formal_empty": true,
+      "source_actors_disabled": true,
+      "attachment_missing": true
+    },
+    {
+      "name": "actual new2 logical import projects research only",
+      "schema_version": 3,
+      "formal_empty": true,
+      "source_actors_disabled": true,
+      "attachment_missing": true
+    },
+    {
+      "name": "chain-valid mixed header rejects new-version-old-source",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "name": "chain-valid mixed header rejects old-version-excluded",
+      "error_code": "INVALID_INPUT"
+    }
+  ],
+  "source": "private trusted research seed via original schema2 built storage; no old deployed runtime certification",
+  "status": "passed",
+  "cleanup_removed": true
+}

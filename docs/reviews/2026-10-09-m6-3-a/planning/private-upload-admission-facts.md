@@ -1,0 +1,22 @@
+# Private upload admission facts — static only
+
+- ArtifactService.createForReview(auth,spaceId,assignmentId,input:CreateArtifactInput,key):Promise<ReviewArtifactMetadata> (:77–80). Input is staged blob + MIME + existing metadata; upload metadata still only space/omitted visibility, actual private scope is selected by this explicit entry. No request-ID public entry exists.
+- private authorizeReviewUpload(auth,space,assignmentId,fresh):AuthenticatedContext (:51–71) refreshes credential, observer floor + write capability; finds assignment/request, checks same space and assignment actor; online request/snapshot reconstruction enforces fixed binding/contributors/group and material privacy. fresh=true additionally checks current snapshot revision/policy/ready, real active eligible human/agent, current groups, collecting and no existing submission. false skips fresh eligibility/phase/current-material validity while keeping current ACL/ownership/privacy.
+- createInternal (:82–141): initial false authorization precedes blob publish; after asynchronous publish an original storage transaction rechecks false authorization before idempotency. Only fresh action calls true authorization (:108), then quota/record/private event; replay reconstructs old result then getMetadata rechecks readable scope. Stage and unused published blob cleanup remains finally. Thus replay is deliberately not fresh-upload qualification.
+- SubmissionService.getOwnAssignment(auth,space,requestId) (:36–40) is one readSnapshot, uses private assignment(...fresh=false,operation=read), returns only id/request_id/reviewer_actor_id/snapshot_id/snapshot_sha256. Later loss of reviewer eligibility or cancellation does not remove this read, while current ACL/material privacy still applies. It is insufficient as write admission by itself.
+- Public multipart route (:30–104) acquires cancellation resource, calls public authorizeUpload before active-upload admission or body parsing, then checks cap, attaches abort handler, bounded stage, consumes all trailing fields/framing, hands stage to create, and releases/discards correctly in finally. Existing entry is contributor/public upload; it must not be used to authorize an observer reviewer. Core second-stage authorization remains necessary after streaming.
+
+## Narrow prospective admission seam, requiring root decision
+A request-ID admission entry can reuse ArtifactService’s current refresh/observer-write and fixed own-assignment/privacy checks, resolving storage.findReviewAssignment(requestId,current.actor.id), rather than using getOwnAssignment’s read-only result as permission. The existing private assignment-ID checker can be shared without a caller-controlled skip-privacy flag. Admission must preserve replay allowance; final fresh qualification/current-material checks stay inside createForReview’s fresh idempotent action after streaming. Candidate minimum source changes: ArtifactService for public narrow admission seam; server artifact route (or root-selected new route) for request-to-assignment selection and existing multipart machinery reuse; server app for review service construction/registration. No service method, route, or policy implemented here.
+
+## Dependency/import state
+Real package name is @detuned/module-review; server package.json has no such dependency and its node_modules/@detuned/module-review symlink is absent (previous metadata-only inspection). Current server app imports artifactRoutes and constructs ArtifactService (:58,134–135), registering it in v1 (:320); no review module importer. A future server-only workspace dependency link requires approved manifest/lock refresh; no install/link command executed or proposed as current validation. Client/CLI should consume HTTP, not module services.
+
+Read-only source hashes:
+- `packages/core/src/services/artifact-service.ts`: `433020cb46f7357da8f5f65e8246b4cddd7995d2f2f00d7f83700c2ee6d23775`
+- `modules/review/src/submission-service.ts`: `aa09b355c7717f90c7ddc45ed18f85bd129b607c47466d18510e86d2c88eb4f9`
+- `packages/server/src/routes/artifacts.ts`: `5ccf7977adeaa10de4804659309b78314df4a4392ca134dfbdfe438f900d2688`
+- `packages/server/src/app.ts`: `ae7b6edd6cfbdd6a45f81d0a2690550249e35e3080e7c3a6618302ea2196d79e`
+- `packages/server/package.json`: `3bd4b5f49f27ba75bb1e8beec54755bb633bc6f61964bd975c806629f5c2b719`
+
+No tests, build, installation, browser or external environment operation performed.

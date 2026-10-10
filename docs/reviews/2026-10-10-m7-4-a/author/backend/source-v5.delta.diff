@@ -1,0 +1,31 @@
+--- a/tests/contracts/m4-pi-native-lifecycle.test.ts
++++ b/tests/contracts/m4-pi-native-lifecycle.test.ts
+@@ -31,16 +31,24 @@
+   const {mkdtemp,chmod,realpath,rm,access}=await import('node:fs/promises');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+   const privateRoot=await realpath(await mkdtemp(join(tmpdir(),'detuned-pi-checks-parent-')));await chmod(privateRoot,0o700);
+   let stdout='',stderr='',killed=false,lastStage='parent-created',exit:{code:number|null;signal:NodeJS.Signals|null}|undefined;
++  const stages:string[]=[];const caught:{error_name?:string;error_code?:string}={};const diagnostic=()=>JSON.stringify({lastStage,stages,caught});
+   try {
+    const child=spawn(process.execPath,[helper,'checks',privateRoot],{env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true'},stdio:['ignore','pipe','pipe','ipc']});
+-   child.on('message',value=>{if(typeof value==='object'&&value!==null&&'stage'in value&&typeof value.stage==='string'&&/^[A-Za-z-]{1,64}$/.test(value.stage))lastStage=value.stage;});
++   child.on('message',value=>{
++    if(typeof value!=='object'||value===null||!('stage'in value)||typeof value.stage!=='string'||!/^[A-Za-z-]{1,64}$/.test(value.stage))return;
++    lastStage=value.stage;if(stages.length<64)stages.push(value.stage);
++    if(value.stage==='catch'){
++     if('error_name'in value&&typeof value.error_name==='string'&&/^[A-Za-z0-9_]{1,64}$/.test(value.error_name))caught.error_name=value.error_name;
++     if('error_code'in value&&typeof value.error_code==='string'&&/^[A-Za-z0-9_]{1,64}$/.test(value.error_code))caught.error_code=value.error_code;
++    }
++   });
+    child.stdout!.setEncoding('utf8');child.stderr!.setEncoding('utf8');child.stdout!.on('data',value=>{stdout+=value;});child.stderr!.on('data',value=>{stderr+=value;});const timer=setTimeout(()=>{killed=true;child.kill('SIGKILL');},70000);
+    let spawnFailed=false;exit=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>{child.once('error',()=>{spawnFailed=true;});child.once('close',(code,signal)=>resolve({code,signal}));}).finally(()=>clearTimeout(timer));
+-   expect(spawnFailed,lastStage).toBe(false);
++   expect(spawnFailed,diagnostic()).toBe(false);
+   } finally {await rm(privateRoot,{recursive:true,force:true});}
+-  let removed=false;try{await access(privateRoot);}catch(error){removed=typeof error==='object'&&error!==null&&'code'in error&&error.code==='ENOENT';}expect(removed,lastStage).toBe(true);
++  let removed=false;try{await access(privateRoot);}catch(error){removed=typeof error==='object'&&error!==null&&'code'in error&&error.code==='ENOENT';}expect(removed,diagnostic()).toBe(true);
+   // The child only emits white-listed evidence; no credentials/raw HTTP are captured.
+-  expect({exit,killed,stderr},lastStage).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
++  expect({exit,killed,stderr},diagnostic()).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
+   expect(evidence).toMatchObject({mode:'checks',passed:true,model_calls:0,metadata:{version:'0.87.1'},checks:{invalid_before_prepare_http:0,reason_500:true,scope_denied:true,artifact_metadata_only:true,ack_delta:0,pending_unchanged:true,cancelled:true},cleanup:{host_disposed:true,app_closed:true,private_directory_removed:true}});
+   expect(evidence.tools).toHaveLength(9);expect(evidence.checks.reads).toEqual(['check_run','check_snapshot','check_post_revision','check_receipt','check_artifact','required_checks']);
+  },80000);

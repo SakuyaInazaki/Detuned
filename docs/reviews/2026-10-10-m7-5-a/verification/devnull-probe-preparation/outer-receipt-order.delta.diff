@@ -1,0 +1,14 @@
+# Relevant-block delta: before is copied from the executed inline tool command; it is not a claimed standalone original runner hash.
+--- first executed inline relevant block
++++ retry1 actual runner relevant block
+@@ -1,3 +1,7 @@
+-  wx(v/(name+'.stdout'),out);wx(v/(name+'.stderr'),err)
+-  if name!='generated-controller-syntax':row['result']=json.loads(out)
+-  wx(v/(name+'.receipt.json'),(json.dumps(row,indent=2)+'\n').encode());rows.append(row)
++  wx(V/(name+'.stdout'),out);wx(V/(name+'.stderr'),err)
++  save(name+'.receipt.json',row);rows.append(row)
++  if name!='generated-controller-syntax':
++   try:result=json.loads(out)
++   except (json.JSONDecodeError,UnicodeDecodeError):
++    save(name+'.parse-failure.receipt.json',{'failure_enum':'PROBE_JSON_PARSE_FAILURE','stage_receipt_persisted_before_parse':True});raise RuntimeError('PROBE_JSON_PARSE_FAILURE')
++   save(name+'.result.json',result)

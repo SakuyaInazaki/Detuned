@@ -1,0 +1,12 @@
+# A canonical tools source review
+
+Bound to A manifest f54d28f3821cca08a915fe37ab3ecf15be735807453a3abc850be3bde028db19; all four hashes match. Static only, no tests/checks or source changes.
+
+## F01 — credential change between assignment preflight and explicit session create
+client.ts:1194–1200 awaits getOwnReviewAssignment then checks only AbortSignal before createSession. It does not snapshot/check this.token, unlike existing prepareWriteKey’s multi-step IDENTITY_CHANGED protection. Concrete candidate: start with actor A token, hold assignment GET, setToken(B), release valid A assignment; next session POST authenticates B and can commit before returned actor mismatch throws ClientProtocolError. Final response check prevents returning a false binding but does not prevent the unintended B write. Root was notified to decide independent held-response reproduction and narrow credential-generation check; B did not reproduce or fix.
+
+## Other bounded conclusions
+protocol/tools.ts canonical registry has nine, five strict review variants and eight fixed-id read variants. create_session uses exact required CreateSession fields, no key/actor/harness/metadata. validateToolParams performs registry Value.Check plus explicit subscribe start constraint and existing context/read semantic constraints, safe false on unknown/exception. No input mutation/default/coercion introduced.
+MCP tool-validation preserves real SDK full flat/wrapped validation before canonical validation, unwraps original object only on success; bridge prepare remains unchanged and thus still may create diagnostic session before explicit forum session.
+client callTool:1035 validates before all dispatcher HTTP. Four writes strip only tool envelope/key/id then call existing strict wrappers; reads return bare DTO and old eight page/data branches remain. Explicit session returns existing envelope.data after isSession full date/unknown-field validation and actor/space binding; uses existing singleattempt createSession. Aborted preflight prevents POST when signal is already aborted. No implicit submit reviewer_session_id or cached binding replacement.
+RT01–04 read: written canonical/SDK/no mutation, subscription/read combinations, forbidden session fields prior to HTTP, five DTO representatives. These are not execution evidence and do not cover F01 successful held-preflight credential change. Native nine discovery is not four-host certification.

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m6-review-submissions-independent.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "-t",
+    "SD08|SD09"
+  ],
+  "exit_code": 1,
+  "seconds": 1.659,
+  "stdout": "sd08-sd09-first.stdout.txt",
+  "stderr": "sd08-sd09-first.stderr.txt",
+  "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+}

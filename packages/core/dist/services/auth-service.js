@@ -1,12 +1,15 @@
 import { DetunedError, ErrorCode, } from '@detuned/protocol';
+import { WriteRateLimiter } from './write-rate-limiter.js';
 export class AuthService {
     storage;
     hasher;
     clock;
-    constructor(storage, hasher, clock) {
+    writeRateLimiter;
+    constructor(storage, hasher, clock, writeRateLimiter = new WriteRateLimiter(clock)) {
         this.storage = storage;
         this.hasher = hasher;
         this.clock = clock;
+        this.writeRateLimiter = writeRateLimiter;
     }
     authenticateToken(rawToken) {
         if (!rawToken || typeof rawToken !== 'string') {
@@ -28,14 +31,51 @@ export class AuthService {
         if (!actor || actor.disabled_at) {
             throw new DetunedError(ErrorCode.UNAUTHENTICATED, '身份不存在或已被禁用。', 401);
         }
+        this.validateVerificationCredential(cred, actor);
         return { actor, credential: cred };
     }
+    /** Reload persisted identity and credential before an asynchronous operation commits. */
+    refreshContext(auth) {
+        const credential = this.storage.findCredentialById(auth.credential.id);
+        const actor = this.storage.findActorById(auth.actor.id);
+        if (!credential || credential.actor_id !== auth.actor.id || !actor || actor.disabled_at || credential.revoked_at ||
+            (credential.expires_at && credential.expires_at < this.clock.nowIso())) {
+            throw new DetunedError(ErrorCode.UNAUTHENTICATED, '身份或凭据已失效。', 401);
+        }
+        this.validateVerificationCredential(credential, actor);
+        return { actor, credential };
+    }
+    getMe(auth) {
+        const current = this.refreshContext(auth);
+        this.requireOrdinaryAccess(current);
+        const visible = this.storage.listVisibleSpaces(current.actor.id, 100, undefined, current.credential.allowed_space_ids);
+        return { actor: current.actor, capabilities: current.credential.capabilities, allowed_space_ids: current.credential.allowed_space_ids,
+            visible_spaces: visible.spaces.map(space => ({ id: space.id, slug: space.slug, role: this.storage.getMembership(space.id, current.actor.id)?.role ?? 'none' })) };
+    }
+    requireOrdinaryAccess(auth) {
+        if (auth.credential.capabilities.includes('verify'))
+            throw new DetunedError(ErrorCode.FORBIDDEN, 'Verification credentials only access their assigned check.', 403);
+    }
+    validateVerificationCredential(cred, actor) {
+        const binding = this.storage.findCheckRunCredentialByCredentialId(cred.id);
+        if (!cred.capabilities.includes('verify')) {
+            if (binding)
+                throw new DetunedError(ErrorCode.UNAUTHENTICATED, 'Credential binding is invalid.', 401);
+            return;
+        }
+        const run = binding ? this.storage.findCheckRunById(binding.check_run_id) : null;
+        const request = run ? this.storage.findReviewRequestById(run.request_id) : null;
+        if (cred.capabilities.length !== 1 || !binding || !run || !request || run.verifier_actor_id !== actor.id || cred.allowed_space_ids.length !== 1 || cred.allowed_space_ids[0] !== request.space_id || !cred.expires_at || !Number.isFinite(Date.parse(cred.expires_at)) || Date.parse(cred.expires_at) <= this.clock.now().getTime())
+            throw new DetunedError(ErrorCode.UNAUTHENTICATED, 'Verification credential is invalid or expired.', 401);
+    }
     requireInstanceAdmin(auth) {
+        this.requireOrdinaryAccess(auth);
         if (!auth.credential.capabilities.includes('admin')) {
             throw new DetunedError(ErrorCode.FORBIDDEN, '需要实例管理员权限。', 403);
         }
     }
-    requireSpaceAccess(auth, spaceId, minimumRole = 'observer') {
+    requireSpaceAccess(auth, spaceId, minimumRole = 'observer', operation) {
+        this.requireOrdinaryAccess(auth);
         // 1. Verify space exists
         const space = this.storage.findSpaceById(spaceId);
         if (!space) {
@@ -83,7 +123,7 @@ export class AuthService {
         if (!hasRead) {
             throw new DetunedError(ErrorCode.FORBIDDEN, '凭据缺少 read 读取能力。', 403);
         }
-        if (minimumRole !== 'observer') {
+        if ((operation ?? (minimumRole === 'observer' ? 'read' : 'write')) === 'write') {
             const hasWrite = caps.includes('write') || caps.includes('admin');
             if (!hasWrite) {
                 throw new DetunedError(ErrorCode.FORBIDDEN, '凭据缺少 write 写入能力。', 403);

@@ -1,0 +1,877 @@
+{
+  "audit": "Every complete stdout/stderr byte stream read and hashed; all25 probe JSON parsed and success boolean assertions inspected; no tail-only conclusion.",
+  "core": {
+    "tests": 699,
+    "files": 105,
+    "new_server_tests": 4,
+    "new_cli_tests": 3,
+    "new_tests_not_skipped": true
+  },
+  "runs": [
+    {
+      "stage": "browser-source-noemit-final",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "docs/reviews/2026-10-09-m5-2-a/verification/browser-source-tsconfig.json"
+      ],
+      "exit_code": 0,
+      "seconds": 1.719,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-browser-source-noemit-final",
+      "logs": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "browser-source-noemit-first",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "docs/reviews/2026-10-09-m5-2-a/verification/browser-source-tsconfig.json"
+      ],
+      "exit_code": 0,
+      "seconds": 1.277,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-browser-source-noemit-first",
+      "logs": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "browser-source-noemit-helper-final",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "docs/reviews/2026-10-09-m5-2-a/verification/browser-source-tsconfig.json"
+      ],
+      "exit_code": 0,
+      "seconds": 1.368,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-browser-source-noemit-helper-final",
+      "logs": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-05",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1/check-behavior.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.503,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-05",
+      "logs": {
+        "stdout": {
+          "bytes": 3656,
+          "sha256": "1c96aeaf40a08db5c3d6291d26c010b187f0471cbee030af65ca301329b57484",
+          "lines": 156
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-06",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.46,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-06",
+      "logs": {
+        "stdout": {
+          "bytes": 1153,
+          "sha256": "bea6573f9228c55e719ed6dc1ccafa86667cb7cafe9088f09c282a55a90372ac",
+          "lines": 49
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-07",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.295,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-07",
+      "logs": {
+        "stdout": {
+          "bytes": 3564,
+          "sha256": "cb71aead42fa842608b447857b9d9f8f34ee25e3246ebfe904c408e6cc870bab",
+          "lines": 126
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-08",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.83,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-08",
+      "logs": {
+        "stdout": {
+          "bytes": 714,
+          "sha256": "4953e2dd9819795510242d2aa633d7654c9a61cb3d056efc319fddd381b9200e",
+          "lines": 35
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-09",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.342,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-09",
+      "logs": {
+        "stdout": {
+          "bytes": 3856,
+          "sha256": "f35108593c87350c4ab151cfdf9347c9059a10b50b96f4f9f63f3091eca84dc9",
+          "lines": 138
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-10",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.295,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-10",
+      "logs": {
+        "stdout": {
+          "bytes": 450,
+          "sha256": "4fb09cf29f73fdda755e26a64a4776207b0d4995d469c4f8a6b041c6b6da8e75",
+          "lines": 15
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-11",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.348,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-11",
+      "logs": {
+        "stdout": {
+          "bytes": 4191,
+          "sha256": "56572d074ce2f350ce7567541be0cfd58551b4c3d6fb37753a089078ffff25a4",
+          "lines": 141
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-12",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.73,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-12",
+      "logs": {
+        "stdout": {
+          "bytes": 5324,
+          "sha256": "299d3cab5930e891dd20abe0d161d3486dfc835b4e7c2d7903377ba08a4ac9c4",
+          "lines": 178
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-13",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.728,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-13",
+      "logs": {
+        "stdout": {
+          "bytes": 6440,
+          "sha256": "a4c4baf6bbd56f02b14ebd30522b6efda4fbf32c40f07da1a327e423a029c0dd",
+          "lines": 212
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-14",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.548,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-14",
+      "logs": {
+        "stdout": {
+          "bytes": 5040,
+          "sha256": "ede6b8e71e78af2e0638835fd71a3d327efb84a3e35bb2d5d102e2d83853586c",
+          "lines": 160
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-15",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.342,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-15",
+      "logs": {
+        "stdout": {
+          "bytes": 1033,
+          "sha256": "8688a895ce2aa542cd84695ed7dc37289368c85842b02143577777f576ab0ad8",
+          "lines": 32
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-16",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.458,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-16",
+      "logs": {
+        "stdout": {
+          "bytes": 4296,
+          "sha256": "9f185168428a33670aed53d18cab9c7fcf409f281ff50239c895be3b75b42e3e",
+          "lines": 136
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-17",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.497,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-17",
+      "logs": {
+        "stdout": {
+          "bytes": 3184,
+          "sha256": "1f86be6b9164a244897547c531131b41106e2ecc0163b02e7530349d214b4e43",
+          "lines": 107
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-18",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.497,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-18",
+      "logs": {
+        "stdout": {
+          "bytes": 4531,
+          "sha256": "fa2967de4ea70507fbb0ffc782483ab17055de9970944e8b6c875f85d2a53b2f",
+          "lines": 143
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-19",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.446,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-19",
+      "logs": {
+        "stdout": {
+          "bytes": 4483,
+          "sha256": "9b16386d1b591a5754e71b6d5a56374f21ee0d0049d06b1e3491e769b446fd90",
+          "lines": 134
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-20",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.447,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-20",
+      "logs": {
+        "stdout": {
+          "bytes": 3340,
+          "sha256": "472ead752eab65a5455d5e4b2518fb54a30a0f12522bb9f07539d686553ab71a",
+          "lines": 106
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-21",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.605,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-21",
+      "logs": {
+        "stdout": {
+          "bytes": 4669,
+          "sha256": "8fb7fa098fca22e2722fd6b0c6c1eda98e7a22add56670b90e888c6ef38aa236",
+          "lines": 138
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-22",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.886,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-22",
+      "logs": {
+        "stdout": {
+          "bytes": 6844,
+          "sha256": "02239d7b920673416e4f176c7785ce34e56e7364a95a57b1d5ca1e0e17078714",
+          "lines": 197
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-23",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.386,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-23",
+      "logs": {
+        "stdout": {
+          "bytes": 14670,
+          "sha256": "99f4985ba0b9109e06b8dec75d75416d7f7eb6e22f9e5aee69a632116c36a716",
+          "lines": 323
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-24",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 1.2,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-24",
+      "logs": {
+        "stdout": {
+          "bytes": 12278,
+          "sha256": "e5d44279ff76678398720d722e892bbabdea19cd9a903b8cc71cd95f142c8e00",
+          "lines": 308
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-25",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.602,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-25",
+      "logs": {
+        "stdout": {
+          "bytes": 7234,
+          "sha256": "7a8d85178b50b2c4e7dec883cae185489fa6056ee327d99b67240b144819629c",
+          "lines": 210
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-26",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.175,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-26",
+      "logs": {
+        "stdout": {
+          "bytes": 13391,
+          "sha256": "234a2aa396582d575b8486b312e253b3a7520154cf32416a2027472e01ad8acb",
+          "lines": 274
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-27",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.29,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-27",
+      "logs": {
+        "stdout": {
+          "bytes": 10714,
+          "sha256": "c21731f91a7a1332cd70ed866c57504e736b486de024cd2b8a5a04d7ba46321a",
+          "lines": 407
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "current29-28",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.508,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-28",
+      "logs": {
+        "stdout": {
+          "bytes": 21262,
+          "sha256": "f0f907113736594aed5a43ae1e2f01ba9ce2ebb044dbd3203771fdfa4294223f",
+          "lines": 726
+        },
+        "stderr": {
+          "bytes": 8032,
+          "sha256": "e8f80bed087cb068d6c89151d068432123c14b5991bd04428eb1e0f58a04870c",
+          "lines": 66
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": "unknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/prope"
+    },
+    {
+      "stage": "current29-29",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.507,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-current29-29",
+      "logs": {
+        "stdout": {
+          "bytes": 28682,
+          "sha256": "b7e0b7b33fadd599e4993e663ca2c3ec49b41cf43b11f2202dbdc8c96206f444",
+          "lines": 1040
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stdout_full_JSON_validated": true,
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "root-build",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 7.229,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-root-build",
+      "logs": {
+        "stdout": {
+          "bytes": 1951,
+          "sha256": "9f1dabb4bdaa68745a6ac3b3959230c6842633e8e960832b35bfd4dfd24f6905",
+          "lines": 39
+        },
+        "stderr": {
+          "bytes": 20,
+          "sha256": "87ef89fc66b05699d57e3ebddbffde3a78201a046aaf664157c21cee3842d2df",
+          "lines": 1
+        }
+      },
+      "stderr_warning_preview": "$ pnpm -r run build\n"
+    },
+    {
+      "stage": "root-core-first",
+      "command": [
+        "/usr/bin/caffeinate",
+        "-i",
+        "/opt/homebrew/bin/pnpm",
+        "test"
+      ],
+      "exit_code": 0,
+      "seconds": 72.511,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-root-core-first",
+      "logs": {
+        "stdout": {
+          "bytes": 50443,
+          "sha256": "66ac92cde1c41af44639e232c518d3cc21e2b7105ade05e1b85a73e78787560a",
+          "lines": 385
+        },
+        "stderr": {
+          "bytes": 13,
+          "sha256": "cb7efe2ed065b3202856f854f1645179984b659249d4ea99dde8467ed4a4b173",
+          "lines": 1
+        }
+      },
+      "stderr_warning_preview": "$ vitest run\n"
+    },
+    {
+      "stage": "root-lint",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 6.29,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-root-lint",
+      "logs": {
+        "stdout": {
+          "bytes": 874,
+          "sha256": "69d2a6175f42c14bd45e2d7384f86cf59cd8715305b422fd831c8cb8996213a9",
+          "lines": 23
+        },
+        "stderr": {
+          "bytes": 19,
+          "sha256": "95fcc3d2c562aa37ac96ab4d2d4fe3a705f8c3080ca9c3ad31bf197462e8aa5f",
+          "lines": 1
+        }
+      },
+      "stderr_warning_preview": "$ pnpm -r run lint\n"
+    },
+    {
+      "stage": "root-typecheck",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 5.838,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-root-typecheck",
+      "logs": {
+        "stdout": {
+          "bytes": 851,
+          "sha256": "1d518fa1390b33114cd0e978bec5fd213212177414a470209d214457f6a12add",
+          "lines": 22
+        },
+        "stderr": {
+          "bytes": 24,
+          "sha256": "5f4e8cc6357cefc741b3a602e29a1ff25113a452f8eb55da8e072868a898984e",
+          "lines": 1
+        }
+      },
+      "stderr_warning_preview": "$ pnpm -r run typecheck\n"
+    },
+    {
+      "stage": "selected-browser-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "TLS201|human reads a fixed revision|BI04"
+      ],
+      "exit_code": 1,
+      "seconds": 7.351,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-selected-browser-first",
+      "logs": {
+        "stdout": {
+          "bytes": 1702,
+          "sha256": "b4ed38542ff308725e42d94ffb2c84c043fa39b8859d9adb308a85e86f7af4e9",
+          "lines": 30
+        },
+        "stderr": {
+          "bytes": 449,
+          "sha256": "2ff161e893f9870a3c57d8912f316b551785a852228e76a9a503636722f2942e",
+          "lines": 5
+        }
+      },
+      "stderr_warning_preview": "$ playwright test --config scripts/integrations/web/playwright.config.ts --grep 'TLS201|human reads a fixed revision|BI04'\n(node:4975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:5003) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "stage": "tls-browser-second",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "TLS201"
+      ],
+      "exit_code": 0,
+      "seconds": 3.691,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-tls-browser-second",
+      "logs": {
+        "stdout": {
+          "bytes": 299,
+          "sha256": "0db2ee50d63acc1afabbeab465a0a3fee87bd5027632a1eeecf6a3175a72e004",
+          "lines": 7
+        },
+        "stderr": {
+          "bytes": 250,
+          "sha256": "416355147154a7d37899a16d0056bc7f5459e6e7fe6a78f5240519c4f8d647f3",
+          "lines": 3
+        }
+      },
+      "stderr_warning_preview": "$ playwright test --config scripts/integrations/web/playwright.config.ts --grep TLS201\n(node:5363) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "stage": "tls-independent-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-2-a/verification/tls-independent-probe.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.768,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-tls-independent-first",
+      "logs": {
+        "stdout": {
+          "bytes": 3248,
+          "sha256": "23f1a0b1c19001df4fe18c8a13781af7b10581cb0c8bf6862f0534ea5a4d20fa",
+          "lines": 1
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stderr_warning_preview": ""
+    },
+    {
+      "stage": "tls-ip-sni-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-2-a/verification/tls-ip-sni-probe.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.505,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-2-a/verification/browser-tls-ip-sni-first",
+      "logs": {
+        "stdout": {
+          "bytes": 352,
+          "sha256": "dabc88d55c11ffa6a71ccbeba57990d4fdc09d30812502682e121c518e2b046b",
+          "lines": 1
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "lines": 0
+        }
+      },
+      "stderr_warning_preview": ""
+    }
+  ]
+}

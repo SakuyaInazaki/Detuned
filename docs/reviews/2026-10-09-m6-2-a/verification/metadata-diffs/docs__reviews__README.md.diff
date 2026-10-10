@@ -1,0 +1,10 @@
+--- docs/reviews/README.md (fresh before)
++++ docs/reviews/README.md (metadata v2)
+@@ -1,6 +1,6 @@
+ # Detuned 审查记录
+ 
+-当前入口：[M6.1-B内部持久评审请求](2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
++当前入口：[M6.2-A内部封存提交与揭示](2026-10-09-m6-2-a/README.md)。根已接受固定assignment、封存意见/私有证据、原子全员揭示及schema4维护的有限内部实现。最终766项/116文件、build/type/lint与current25组合通过，完整证据见包内独验报告；不是完整M6或四宿主认证。下一[M6.3-A决定、材料失效与当前有效性](2026-10-09-m6-2-a/planning/m6-3-a-task.md)已批准，待封存与fresh后实施。VM/Colima禁令和本机串行约束保持。
+ 
+ 运行提示：根本机执行约束为workspace构建/type/lint并发1、核心worker1/文件串行；原coverage与timeout保持。资源暂停、首次失败及清退事实详见本包独验报告，禁止VM/Colima相关操作。
+ 

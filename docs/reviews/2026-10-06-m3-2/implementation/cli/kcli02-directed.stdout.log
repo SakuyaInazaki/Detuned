@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m3-request-key-cli.test.ts (5 tests | 1 failed | 4 skipped) 76ms
+   ↓ M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes
+   × M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output 76ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ↓ M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests
+   ↓ M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created
+   ↓ M3.2 CLI persistent request keys > KCLI05: rejected persistence sends no business request and does not overwrite existing material
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  22:41:51
+   Duration  597ms (transform 186ms, setup 0ms, collect 309ms, tests 76ms, environment 0ms, prepare 31ms)
+

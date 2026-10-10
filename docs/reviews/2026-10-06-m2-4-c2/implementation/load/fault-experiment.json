@@ -1,0 +1,34 @@
+{
+  "kind": "real_owned_SIGSTOP_TERM_fallback_not_load_smoke",
+  "command": [
+    "/opt/homebrew/Cellar/node/26.3.0/bin/node",
+    "scripts/scale/run-verified.mjs",
+    "--manifest",
+    "/private/tmp/detuned-c2-seed-smoke-20261006-v3-a1/manifest.json",
+    "--runtime",
+    "/private/tmp/detuned-c2-load-fault-private-v3-a1/runtime.json",
+    "--out",
+    "/private/tmp/detuned-c2-load-fault-v3-a1",
+    "--mode",
+    "smoke"
+  ],
+  "wrapper_pid": 41778,
+  "started_utc": "2026-10-06T13:18:31.674Z",
+  "runner_pid": 41779,
+  "server_pid": 41780,
+  "verified_group_parent": [
+    41779,
+    41778,
+    41779
+  ],
+  "phase_before_fault": "preflight",
+  "sigstop_utc": "2026-10-06T13:18:32.184Z",
+  "wrapper_cancel_utc": "2026-10-06T13:18:32.185Z",
+  "wrapper_exit": {
+    "code": 1,
+    "signal": null
+  },
+  "cancel_to_exit_ms": 5016.136084,
+  "success": false,
+  "error": "ENOENT: no such file or directory, open '/private/tmp/detuned-c2-load-fault-v3-a1/automatic-gates.json'"
+}

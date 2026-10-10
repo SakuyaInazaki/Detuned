@@ -1,0 +1,62 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/integrations/dsh-runtime/loader.spec.ts [ scripts/integrations/dsh-runtime/loader.spec.ts ]
+Error: Cannot find module '/Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js' imported from '/Users/sakimi/Desktop/Detuned/scripts/integrations/dsh-runtime/loader.spec.ts'
+ ❯ scripts/integrations/dsh-runtime/loader.spec.ts:8:21
+      6| const repo = process.env.DETUNED_EXPERIMENT_REPO!;
+      7| const load = (path: string) => import(pathToFileURL(source + '/' + pat…
+      8| const { Context } = await load('vendor/cordis');
+       |                     ^
+      9| const { default: Loader } = await load('vendor/loader');
+     10| const { default: Timer } = await load('vendor/timer');
+
+Caused by: Error: Failed to load url /Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js (resolved id: /Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js). Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.6_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  scripts/integrations/dsh-runtime/runtime.spec.ts [ scripts/integrations/dsh-runtime/runtime.spec.ts ]
+Error: Cannot find package '@deepseek-ai/cordis' imported from '/Users/sakimi/Desktop/Detuned/scripts/integrations/dsh-runtime/runtime.spec.ts'
+ ❯ scripts/integrations/dsh-runtime/runtime.spec.ts:2:1
+      1| import { it,expect } from 'vitest';
+      2| import { Context } from '@deepseek-ai/cordis';
+       | ^
+      3| import SystemPrompt from '@deepseek-ai/dsh-system-prompt';
+      4| import ToolRuntime from '@deepseek-ai/dsh-tools';
+
+Caused by: Error: Failed to load url @deepseek-ai/cordis (resolved id: @deepseek-ai/cordis) in /Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.6_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts [ docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts ]
+Error: Cannot find package '@deepseek-ai/cordis' imported from '/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts'
+ ❯ docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts:2:1
+      1| import { it,expect } from 'vitest';
+      2| import { Context } from '@deepseek-ai/cordis';
+       | ^
+      3| import SystemPrompt from '@deepseek-ai/dsh-system-prompt';
+      4| import ToolRuntime from '@deepseek-ai/dsh-tools';
+
+Caused by: Error: Failed to load url @deepseek-ai/cordis (resolved id: @deepseek-ai/cordis) in /Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.6_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  docs/reviews/2026-10-09-m4-3-b/verification/independent/independent.spec.ts [ docs/reviews/2026-10-09-m4-3-b/verification/independent/independent.spec.ts ]
+Error: Cannot find module '/Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js' imported from '/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m4-3-b/verification/independent/independent.spec.ts'
+ ❯ docs/reviews/2026-10-09-m4-3-b/verification/independent/independent.spec.ts:8:21
+      6| const repo = process.env.DETUNED_EXPERIMENT_REPO!;
+      7| const load = (path: string) => import(pathToFileURL(source + '/' + pat…
+      8| const { Context } = await load('vendor/cordis');
+       |                     ^
+      9| const { default: Loader } = await load('vendor/loader');
+     10| const { default: Timer } = await load('vendor/timer');
+
+Caused by: Error: Failed to load url /Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js (resolved id: /Users/sakimi/Desktop/Detuned/undefined/vendor/cordis/lib/index.js). Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.6_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

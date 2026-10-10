@@ -1,0 +1,52 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "CX01",
+      "budget": 4096,
+      "actual_complete_bytes": 841
+    },
+    {
+      "id": "CX01",
+      "budget": 65536,
+      "actual_complete_bytes": 841
+    },
+    {
+      "id": "CX01",
+      "budget": 12288,
+      "actual_complete_bytes": 841
+    },
+    {
+      "id": "CX02-09",
+      "pass": true
+    },
+    {
+      "id": "CX04",
+      "whole_pin_removed": true,
+      "large_control_sources": 50,
+      "actual_small_bytes": 598
+    },
+    {
+      "id": "CX03",
+      "mandatory_oversize": 422
+    },
+    {
+      "id": "CX06",
+      "pass": true
+    },
+    {
+      "id": "CX05",
+      "shared_client_tool_meta": true
+    }
+  ],
+  "separate": [
+    "priority multi-array formal/source review",
+    "two-connection snapshot/checkpoint independent probe",
+    "fixedclock subscription boundary",
+    "full regressions/integrity"
+  ],
+  "limits": [
+    "SDK external wrapper outside HTTP bytes",
+    "historical oversized fixtures explicitly storage-written"
+  ]
+}

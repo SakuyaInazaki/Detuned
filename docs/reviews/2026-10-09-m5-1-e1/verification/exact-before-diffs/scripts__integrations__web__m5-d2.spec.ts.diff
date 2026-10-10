@@ -1,0 +1,10 @@
+--- before/scripts/integrations/web/m5-d2.spec.ts
++++ after/scripts/integrations/web/m5-d2.spec.ts
+@@ -5,6 +5,7 @@
+ 
+ async function discussion(page: Page, forum: ForumFixture) {
+   await page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true}).click();
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '讨论', exact: true}).click();
+   await page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true}).click();
+   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+ }

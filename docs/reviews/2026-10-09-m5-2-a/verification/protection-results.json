@@ -1,0 +1,101 @@
+{
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "lock_sha256": "ea84a3709fe9a54b1a1fb1e0e9403ab9fd6e363ed8a3ecf7ba0cbf536be94f4f",
+  "all_expected_protections_hold": true,
+  "source_authorized_exactly_10": true,
+  "author_freezes_still_match": true,
+  "changes": {
+    "product_source_config_test_hashes": {
+      "before_count": 317,
+      "after_count": 322,
+      "changed": [
+        "packages/server/src/index.ts",
+        "packages/server/src/app.ts",
+        "packages/cli/src/index.ts",
+        "scripts/integrations/web/playwright.config.ts",
+        "scripts/integrations/web/fixtures.ts"
+      ],
+      "added": [
+        "packages/server/src/tls-config.ts",
+        "packages/server/src/tls-sockets.ts",
+        "scripts/integrations/web/m5-tls.spec.ts",
+        "tests/contracts/cli-tls.test.ts",
+        "tests/contracts/server-tls.test.ts"
+      ],
+      "removed": []
+    },
+    "current_document_hashes": {
+      "before_count": 59,
+      "after_count": 59,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "mutable_status_document_hashes": {
+      "before_count": 5,
+      "after_count": 5,
+      "changed": [
+        "docs/progress.md"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "before_count": 7785,
+      "after_count": 7785,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "before_count": 4,
+      "after_count": 4,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "schema_profile_hashes": {
+      "before_count": 2,
+      "after_count": 2,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "before_count": 208,
+      "after_count": 208,
+      "changed": [
+        "packages/cli/dist/index.js.map",
+        "packages/server/dist/index.d.ts.map",
+        "packages/server/dist/index.d.ts",
+        "packages/cli/dist/index.js",
+        "packages/server/dist/index.js.map",
+        "packages/server/dist/app.d.ts.map",
+        "packages/server/dist/app.js",
+        "packages/server/dist/index.js",
+        "packages/server/dist/app.js.map",
+        "packages/server/dist/app.d.ts"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "untracked_build_artifact_hashes": {
+      "before_count": 255,
+      "after_count": 263,
+      "changed": [],
+      "added": [
+        "packages/server/dist/tls-config.d.ts",
+        "packages/server/dist/tls-config.d.ts.map",
+        "packages/server/dist/tls-config.js",
+        "packages/server/dist/tls-config.js.map",
+        "packages/server/dist/tls-sockets.d.ts",
+        "packages/server/dist/tls-sockets.d.ts.map",
+        "packages/server/dist/tls-sockets.js",
+        "packages/server/dist/tls-sockets.js.map"
+      ],
+      "removed": []
+    }
+  },
+  "mutable_note": "Only docs/progress.md has the author implementation-phase note; current docs metadata phase has not begun.",
+  "retained_environment": "Root-authorized next-package owned Colima VM /private/tmp/detuned-colima-owned-608g1enf intentionally retained; not a TLS test process/temp. Not cleaned here."
+}

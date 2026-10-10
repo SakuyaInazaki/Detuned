@@ -1,0 +1,327 @@
+--- packages/web/src/app.tsx (C2A before)
++++ packages/web/src/app.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useRef, useState, type FormEvent } from 'react';
+ import { DetunedClient, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
+ import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, type PostRevisionMetadata, type RevisionArtifactCatalogItem, type ArtifactMetadata, type MeResponse, isMeResponse, POST_KINDS } from '@detuned/protocol';
+-import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
++import { parseSearchItems, parseFailures, parseFindings, FailureReport, FindingReport, type SearchItem, type FailureItem, type FindingItem } from './knowledge.js';
+ import { SafeMarkdown } from './safe-markdown.js';
+ import { SpaceOverview, PersonalSettings, parseOverview, type OverviewData } from './space-overview.js';
+ import { ReviewPanel } from './review-panel.js';
+@@ -12,8 +12,8 @@
+ type ThreadItem = { id: string; title: string; state: 'open' | 'archived' };
+ type PostItem = { id: string; kind: string; current_revision: number; lifecycle: string };
+ type SessionState = 'restoring' | 'anonymous' | 'authenticated' | 'logout-pending';
+-type SpaceView = 'overview' | 'discussion' | 'search' | 'failures' | 'settings';
+-type ResultReading = { origin: 'overview' | 'search' | 'failures'; threadId: string; postId: string; revision: number };
++type SpaceView = 'overview' | 'discussion' | 'search' | 'findings' | 'failures' | 'settings';
++type ResultReading = { origin: 'overview' | 'search' | 'findings' | 'failures'; threadId: string; postId: string; revision: number };
+ type ThreadIntent = { body: CreateThreadRequest; key: string; spaceId: string };
+ type UploadIntent = { file: File; key: string; spaceId: string };
+ type Intent = { body: CreatePostRequest; key: string; spaceId: string; threadId: string };
+@@ -112,6 +112,8 @@
+   const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null);
+   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
+   const [searchCursor, setSearchCursor] = useState<string | null>(null);
++  const [findingResults, setFindingResults] = useState<FindingItem[]>([]);
++  const [findingsLoaded, setFindingsLoaded] = useState(false);
+   const [failureResults, setFailureResults] = useState<FailureItem[]>([]);
+   const [failuresLoaded, setFailuresLoaded] = useState(false);
+   const [failureKeyword, setFailureKeyword] = useState('');
+@@ -157,7 +159,7 @@
+     setView('overview'); setOverview(null); setFixedRules(null); setPersonalMe(null); setResultReading(null); setShowThreadForm(false); setNewThreadTitle(''); setWithFirstPost(false);
+     setFirstTitle(''); setFirstSummary(''); setFirstBody(''); setThreadIntent(null);
+     setSearchQ(''); setSearchKind(''); setSearchThread(''); setSearchTags(''); setSearchQuery(null);
+-    setSearchResults([]); setSearchCursor(null); setFailureResults([]); setFailuresLoaded(false); setFailureKeyword('');
++    setSearchResults([]); setSearchCursor(null); setFindingResults([]); setFindingsLoaded(false); setFailureResults([]); setFailuresLoaded(false); setFailureKeyword('');
+   }
+   function clearDiscussion() {
+     clearSpaceViews();
+@@ -286,7 +288,7 @@
+   function openPost(postId: string, revision: number, resultThreadId?: string) {
+     if (!space) return;
+     newGeneration();
+-    setResultReading((view === 'search' || view === 'failures') && resultThreadId ? { origin: view, threadId: resultThreadId, postId, revision }
++    setResultReading((view === 'search' || view === 'findings' || view === 'failures') && resultThreadId ? { origin: view, threadId: resultThreadId, postId, revision }
+       : resultReading && resultThreadId === resultReading.threadId && postId === resultReading.postId && revision === resultReading.revision ? resultReading : null);
+     const initial = initialContent(postId, revision); setContent(initial); setReply(null); setIntent(null);
+     void run(async signal => {
+@@ -300,8 +302,9 @@
+     if (next === 'overview') loadOverview(space);
+     else if (next === 'settings') loadPersonalMe();
+     else if (next === 'discussion' && !threadPage.length) loadThreads(threadState);
++    else if (next === 'findings' && !findingsLoaded) loadFindings();
+     else if (next === 'failures' && !failuresLoaded) loadFailures();
+-    else setStatus(next === 'discussion' ? '讨论页面。' : next === 'search' ? '输入关键词搜索当前空间。' : '失败作者报告。');
++    else setStatus(next === 'discussion' ? '讨论页面。' : next === 'search' ? '输入关键词搜索当前空间。' : next === 'findings' ? '研究发现作者报告。' : '失败作者报告。');
+   }
+   function changeSearchDraft(update: () => void) {
+     newGeneration(); setResultReading(null); update(); setSearchQuery(null); setSearchResults([]); setSearchCursor(null); setContent(null);
+@@ -323,12 +326,22 @@
+       if (id === generation.current) { setSearchResults(items); setSearchCursor(next); }
+     }, '搜索结果已加载。');
+   }
++  function loadFindings() {
++    if (!space) return;
++    setFindingResults([]); setFindingsLoaded(false);
++    void run(async signal => {
++      const id = generation.current;
++      const result = await client.getView(space.id, 'findings', { signal });
++      const items = parseFindings(result.data, space.id);
++      if (id === generation.current && !signal.aborted) { setFindingResults(items); setFindingsLoaded(true); }
++    }, '研究发现已加载（最多 25 条的当前视图）。');
++  }
+   function loadFailures() {
+     if (!space) return;
+     void run(async signal => {
+       const id = generation.current;
+       const result = await client.getView(space.id, 'failures', { signal });
+-      const items = parseFailures(result.data);
++      const items = parseFailures(result.data, space.id);
+       if (id === generation.current) { setFailureResults(items); setFailuresLoaded(true); }
+     }, '失败作者报告已加载（最多 50 条的当前视图）。');
+   }
+@@ -338,9 +351,9 @@
+     submitSearch(undefined, undefined, { q: failureKeyword, kind: 'failure', limit: 20 });
+   }
+   function returnToResults() {
+-    const origin = resultReading?.origin ?? (view === 'overview' ? 'overview' : view === 'search' ? 'search' : 'failures');
++    const origin = resultReading?.origin ?? (view === 'overview' ? 'overview' : view === 'search' ? 'search' : view === 'findings' ? 'findings' : 'failures');
+     newGeneration(); setView(origin); setContent(null); setResultReading(null); setReply(null);
+-    setStatus(origin === 'overview' ? '已返回空间概览。' : origin === 'search' ? '已返回原搜索结果与筛选。' : '已返回失败报告。');
++    setStatus(origin === 'overview' ? '已返回空间概览。' : origin === 'search' ? '已返回原搜索结果与筛选。' : origin === 'findings' ? '已返回研究发现。' : '已返回失败报告。');
+   }
+   function enterReferencedThread() {
+     if (!space || !content || !resultReading || pending.current || sessionState !== 'authenticated') return;
+@@ -520,7 +533,7 @@
+         <section className="discussion" aria-label="讨论内容">
+           <nav className="breadcrumbs" aria-label="当前位置"><span>空间</span>{space && <><span aria-hidden="true">/</span><button onClick={() => selectSpace(space)}>{space.slug}</button></>}{thread && view === 'discussion' && <><span aria-hidden="true">/</span><button onClick={() => loadPosts(thread)}>{thread.title}</button></>}</nav>
+           {!space && <div className="panel welcome"><h2>选择一个空间</h2><p>这里仅显示当前身份可见的研究。论坛文本不会作为程序执行。</p></div>}
+-          {space && <nav className="space-nav" aria-label="空间页面"><button className="quiet" aria-current={view === 'overview' ? 'page' : undefined} onClick={() => switchView('overview')}>概览</button><button className="quiet" aria-current={view === 'discussion' ? 'page' : undefined} onClick={() => switchView('discussion')}>讨论</button><button className="quiet" aria-current={view === 'search' ? 'page' : undefined} onClick={() => switchView('search')}>搜索</button><button className="quiet" aria-current={view === 'failures' ? 'page' : undefined} onClick={() => switchView('failures')}>失败报告</button><button className="quiet" aria-current={view === 'settings' ? 'page' : undefined} onClick={() => switchView('settings')}>设置</button></nav>}
++          {space && <nav className="space-nav" aria-label="空间页面"><button className="quiet" aria-current={view === 'overview' ? 'page' : undefined} onClick={() => switchView('overview')}>概览</button><button className="quiet" aria-current={view === 'discussion' ? 'page' : undefined} onClick={() => switchView('discussion')}>讨论</button><button className="quiet" aria-current={view === 'search' ? 'page' : undefined} onClick={() => switchView('search')}>搜索</button><button className="quiet" aria-current={view === 'findings' ? 'page' : undefined} onClick={() => switchView('findings')}>研究发现</button><button className="quiet" aria-current={view === 'failures' ? 'page' : undefined} onClick={() => switchView('failures')}>失败报告</button><button className="quiet" aria-current={view === 'settings' ? 'page' : undefined} onClick={() => switchView('settings')}>设置</button></nav>}
+           {space && view === 'overview' && !content && <SpaceOverview value={overview} busy={busy} refresh={() => loadOverview()} open={(postId, revision) => openPost(postId, revision)} rules={fixedRules} readRules={readFixedRules}/>}
+           {space && view === 'settings' && <PersonalSettings me={personalMe} spaceId={space.id} busy={busy} refresh={loadPersonalMe}/>}
+           {space && view === 'discussion' && <section className="panel" aria-labelledby="new-thread-heading"><div className="section-heading"><h2 id="new-thread-heading">新主题</h2><button className="quiet" aria-expanded={showThreadForm} onClick={() => setShowThreadForm(!showThreadForm)}>新建主题</button></div>
+@@ -533,6 +546,7 @@
+             <ul className="search-results">{searchResults.map(item => <li key={`${item.post_id}:${item.revision}`}><h3>{item.title}</h3><p>{item.summary}</p><pre className="snippet">{item.snippet}</pre><p className="reference">{item.kind} · 帖子 {item.post_id} · 修订 {item.revision} · 主题 {item.thread_id}</p><p className="reference">标签：{item.tags.join(' · ') || '无标签'}</p><button onClick={() => openPost(item.post_id, item.revision, item.thread_id)}>查看搜索修订 {item.revision}</button></li>)}</ul>
+             {searchQuery && <div className="paging"><button className="quiet" disabled={busy} onClick={() => submitSearch(undefined, undefined, searchQuery)}>搜索首页</button>{searchCursor && <button disabled={busy} onClick={() => submitSearch(undefined, searchCursor)}>下一页搜索结果</button>}</div>}
+           </section>}
++          {space && view === 'findings' && !content && <section className="panel" aria-labelledby="findings-heading"><div className="section-heading"><h2 id="findings-heading">研究发现</h2><span>最多 25 条的当前视图</span></div><p>这是作者的主张与公共来源关系；历史评审结论和当前材料有效性分别展示。</p><button className="quiet" disabled={busy} onClick={loadFindings}>刷新研究发现</button>{findingsLoaded && !findingResults.length && !busy && <p className="empty">当前视图暂无可见研究发现。</p>}{findingResults.map(item => <FindingReport key={`${item.post_id}:${item.revision}`} item={item} open={openPost}/>)}</section>}
+           {space && view === 'failures' && !content && <section className="panel" aria-labelledby="failures-heading"><div className="section-heading"><h2 id="failures-heading">失败作者报告</h2><span>最多 50 条的当前视图</span></div><p>这是作者对有限尝试的报告，不是完整失败索引、正式证明或批准。</p><button className="quiet" disabled={busy} onClick={loadFailures}>刷新失败报告</button><form className="failure-search" onSubmit={searchFailureKeyword}><label htmlFor="failure-keyword">失败搜索关键词</label><input id="failure-keyword" value={failureKeyword} onChange={e => setFailureKeyword(e.target.value)} required/><button type="submit" disabled={busy || !failureKeyword.trim()}>按关键词搜索失败</button></form>{failuresLoaded && !failureResults.length && !busy && <p className="empty">当前视图暂无可见失败报告。</p>}{failureResults.map(item => <FailureReport key={`${item.post_id}:${item.revision}`} item={item} open={openPost}/>)}</section>}
+           {space && view === 'discussion' && <section className="panel" aria-labelledby="threads-heading"><div className="section-heading"><h2 id="threads-heading">主题</h2><label className="inline-label">主题状态<select value={threadState} onChange={e => loadThreads(e.target.value === 'archived' ? 'archived' : 'open')}><option value="open">开放</option><option value="archived">归档</option></select></label></div>
+             {!threadPage.length && !busy && <p className="empty">当前页暂无{threadState === 'open' ? '开放' : '归档'}主题。</p>}
+@@ -544,7 +558,7 @@
+             <ul className="post-directory">{postPage.map(item => <li key={item.id}><div><strong>{item.kind}</strong><small>{item.id}</small><span>{item.lifecycle}</span></div><button onClick={() => openPost(item.id, item.current_revision)}>查看修订 {item.current_revision}</button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadPosts(thread)}>帖子首页</button>{postCursor && <button disabled={busy} onClick={() => loadPosts(thread, postCursor)}>下一页帖子</button>}</div>
+           </section>}
+-          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'overview' ? '返回空间概览' : (resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{view === 'overview' && <p className="reference">当前从概览打开固定正文；可在所属主题内阅读后引用。</p>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
++          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'overview' ? '返回空间概览' : (resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : (resultReading?.origin ?? view) === 'findings' ? '返回研究发现' : '返回失败报告'}</button>}{view === 'overview' && <p className="reference">当前从概览打开固定正文；可在所属主题内阅读后引用。</p>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+             {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><SafeMarkdown source={content.document.body} label="正文"/><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+             <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button>{view !== 'overview' && <button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button>}</div>
+             <div className="paging"><button disabled={busy} aria-expanded={showReview} onClick={() => setShowReview(true)}>正式评审</button></div>
+--- packages/web/src/knowledge.tsx (C2A before)
++++ packages/web/src/knowledge.tsx
+@@ -1,5 +1,6 @@
+ import { ClientProtocolError } from '@detuned/client';
+-import { POST_KINDS, type PostKind, type EvidenceRef } from '@detuned/protocol';
++import { POST_KINDS, isFindingsView, isFailuresView, type PostKind, type FindingViewItem, type FailureViewItem, type RelationProjection } from '@detuned/protocol';
++import { SafeMarkdown } from './safe-markdown.js';
+ 
+ export type SearchItem = { post_id: string; revision: number; thread_id: string; kind: PostKind;
+   title: string; summary: string; snippet: string; tags: string[] };
+@@ -26,54 +27,79 @@
+   ['expected', '预期'], ['observed', '观察结果'], ['evidence_state', '证据状态'], ['evidence_missing_reason', '证据缺失原因'],
+   ['ruled_out', '已排除'], ['not_ruled_out', '尚未排除'], ['retry_when', '重试条件'],
+ ] as const;
+-type FailureField = typeof failureFields[number][0];
+-export type FailureItem = SearchItem & {
+-  material: Record<FailureField, string | string[] | null>;
+-  evidence: EvidenceRef[] | null; missing: string[];
++export type FindingItem = FindingViewItem;
++export type FailureItem = FailureViewItem;
++type Open = (postId: string, revision: number, threadId?: string) => void;
++export function parseFindings(value: unknown, spaceId?: string): FindingItem[] {
++  if (!isFindingsView(value, spaceId)) throw new ClientProtocolError('Invalid findings view.');
++  return value;
++}
++export function parseFailures(value: unknown, spaceId?: string): FailureItem[] {
++  if (!isFailuresView(value, spaceId)) throw new ClientProtocolError('Invalid failure view.');
++  return value;
++}
++const findingFields = [['statement', '主张'], ['assumptions', '适用假设'], ['scope', '适用范围'], ['falsification_plan', '证伪计划']] as const;
++function MaterialValue({ value }: { value: string | string[] | null }) {
++  return value === null ? <>未提供</> : Array.isArray(value) ? value.length ? <ul>{value.map((text, i) => <li key={i}>{text}</li>)}</ul> : <>已提供空列表</> : <>{value}</>;
++}
++const phaseLabels: Record<FindingItem['formal_review_status'], string> = {
++  not_enabled: '未启用', not_requested: '未发起', collecting: '收集初评中', revealed: '已揭示',
++  accepted: '历史裁决：接受', rejected: '历史裁决：拒绝', changes_requested: '要求修改', stale: '已失效', cancelled: '已取消',
+ };
+-function evidenceRef(v: unknown): EvidenceRef {
+-  if (record(v) && v.kind === 'artifact' && typeof v.artifact_id === 'string') return { kind: 'artifact', artifact_id: v.artifact_id };
+-  if (record(v) && v.kind === 'post' && typeof v.post_id === 'string' && positive(v.revision)) return { kind: 'post', post_id: v.post_id, revision: v.revision };
+-  throw new ClientProtocolError('Invalid failure evidence reference.');
++const checkLabels: Record<FindingItem['formal_check_status'], string> = {
++  not_enabled: '未启用', not_requested: '未发起', not_required: '此轮无需检查（不表示检查通过）',
++  pending: '待完成', passed: '已通过', failed: '失败', error: '检查错误',
++};
++function FormalFacts({ item, open }: { item: FindingItem | FailureItem; open: Open }) {
++  const round = item.formal_review;
++  const validity = { current: '当前有效', superseded: '材料或规则已有更新', challenged: '受到挑战', invalidated: '已失效' };
++  return <section className="knowledge-formal" aria-label="正式状态">
++    <h4>正式状态</h4><dl className="knowledge-facts">
++      <dt>正式评审</dt><dd>{phaseLabels[item.formal_review_status]}</dd>
++      <dt>正式检查</dt><dd>{checkLabels[item.formal_check_status]}</dd>
++      <dt>当前材料有效性</dt><dd>{round ? validity[round.current_validity] : '无评审轮次，未产生评审有效性结论'}</dd>
++    </dl>{round && <><p className="reference">最近评审轮次 {round.round} · 请求 {round.request_id} · 评审对象固定修订 {round.target_revision}</p>
++      <p className="reference">快照 {round.snapshot_id} · 创建时间 {round.created_at}</p>
++      <p>有效性原因：{round.validity_reasons.length ? round.validity_reasons.join('、') : '无'}</p>
++      <p className="notice">评审结论针对固定材料；历史接受不代表当前条目修订获批。检查状态与评审结论分别展示。</p>
++      <button className="quiet" onClick={() => open(round.target_post_id, round.target_revision, item.thread_id)}>阅读评审对象修订 {round.target_revision}</button>
++      <p className="reference">打开固定正文后，可进入正式评审目录选择轮次。</p></>}
++    {item.kind === 'failure' && <p className="reference">失败报告不能作为正式评审对象；其作为依赖材料被评审，不赋予本报告批准。</p>}
++  </section>;
+ }
+-const nullableString = (v: unknown): string | null => {
+-  if (v === null || v === undefined) return null;
+-  if (typeof v !== 'string') throw new ClientProtocolError('Invalid failure material.');
+-  return v;
+-};
+-const nullableStrings = (v: unknown): string[] | null => {
+-  if (v === null || v === undefined) return null;
+-  if (!strings(v)) throw new ClientProtocolError('Invalid failure material.');
+-  return v;
+-};
+-export function parseFailures(value: unknown): FailureItem[] {
+-  if (!Array.isArray(value) || value.length > 50) throw new ClientProtocolError('Invalid failure view.');
+-  return value.map((v: unknown) => {
+-    const item = searchItem(v);
+-    if (!record(v) || v.kind !== 'failure' || v.type !== 'failure' || v.report_kind !== 'author_report'
+-      || v.formal_review_status !== 'not_enabled' || v.formal_check_status !== 'not_enabled' || !record(v.material)) {
+-      throw new ClientProtocolError('Invalid failure view.');
+-    }
+-    const m = v.material;
+-    if (!strings(m.missing_fields)) throw new ClientProtocolError('Invalid failure material.');
+-    const evidence = m.evidence_refs === null || m.evidence_refs === undefined ? null : Array.isArray(m.evidence_refs) ? m.evidence_refs.map(evidenceRef) : undefined;
+-    if (evidence === undefined) throw new ClientProtocolError('Invalid failure evidence.');
+-    return { ...item, material: {
+-      attempt: nullableString(m.attempt), category: nullableString(m.category), assumptions: nullableStrings(m.assumptions),
+-      tested_scope: nullableString(m.tested_scope), expected: nullableString(m.expected), observed: nullableString(m.observed),
+-      evidence_state: nullableString(m.evidence_state), evidence_missing_reason: nullableString(m.evidence_missing_reason),
+-      ruled_out: nullableString(m.ruled_out), not_ruled_out: nullableStrings(m.not_ruled_out), retry_when: nullableStrings(m.retry_when),
+-    }, evidence, missing: m.missing_fields };
+-  });
++function Relations({ relations, open, item }: { relations: RelationProjection[]; open: Open; item: FindingItem | FailureItem }) {
++  return <section><h4>公共来源关系</h4>{relations.length ? <ul className="evidence-list">{relations.map(relation => <li key={relation.relation_id}>
++    <span>{relation.relation_type} · {relation.state} · 关系 {relation.relation_id} / 版本 {relation.version}</span>
++    <p className="reference">创建者 {relation.creator_id} · 来源作者 {relation.source_author_id} · 对象作者 {relation.target_author_id}</p>
++    {(['source', 'target'] as const).map(endpoint => { const ref = endpoint === 'source' ? relation.source_ref : relation.target_ref;
++      const status = endpoint === 'source' ? relation.source_status : relation.target_status;
++      const newer = endpoint === 'source' ? relation.source_has_newer_revision : relation.target_has_newer_revision;
++      return <div key={endpoint}><span>{endpoint === 'source' ? '来源' : '对象'}：帖子 {ref.post_id} · 固定修订 {ref.revision} · {status} · {newer === null ? '更新情况未知' : newer ? '已有更新修订' : '无更新修订'}</span>
++        <button className="quiet" onClick={() => open(ref.post_id, ref.revision, ref.post_id === item.post_id ? item.thread_id : undefined)}>阅读{endpoint === 'source' ? '来源' : '对象'}修订 {ref.revision}</button></div>;
++    })}
++  </li>)}</ul> : <p>暂无公共来源关系；这不表示已独立验证。</p>}</section>;
+ }
+-export function FailureReport({ item, open }: { item: FailureItem; open: (postId: string, revision: number, threadId?: string) => void }) {
++export function FindingReport({ item, open }: { item: FindingItem; open: Open }) {
++  return <article className="finding-report">
++    <div className="section-heading"><h3>{item.title}</h3><span className="report-badge">作者报告</span></div>
++    <SafeMarkdown source={item.summary} label="发现摘要"/><p className="reference">帖子 {item.post_id} · 当前条目修订 {item.revision}</p>
++    <dl className="failure-material">{findingFields.map(([field, name]) => <div key={field}><dt>{name}</dt><dd><MaterialValue value={item.material[field]}/></dd></div>)}</dl>
++    <p className="notice">{item.material.missing_fields.length ? `历史主张缺失字段：${item.material.missing_fields.join('、')}。未提供不代表已验证。` : '作者提供了结构字段；这不代表主张已独立验证。'}</p>
++    <Relations relations={item.relations} item={item} open={open}/><FormalFacts item={item} open={open}/>
++    <button onClick={() => open(item.post_id, item.revision, item.thread_id)}>阅读当前条目修订 {item.revision}</button>
++  </article>;
++}
++export function FailureReport({ item, open }: { item: FailureItem; open: Open }) {
+   const label = (key: string) => failureFields.find(field => field[0] === key)?.[1] ?? (key === 'evidence_refs' ? '证据引用' : key);
++  const evidence = item.material.evidence_refs;
+   return <article className="failure-report">
+     <div className="section-heading"><h3>{item.title}</h3><span className="report-badge">作者报告</span></div>
+-    <p className="summary">{item.summary}</p><p className="reference">帖子 {item.post_id} · 修订 {item.revision}</p>
+-    <dl className="failure-material">{failureFields.map(([field, name]) => <div key={field}><dt>{name}</dt><dd>{item.material[field] === null ? '未提供' : Array.isArray(item.material[field]) ? (item.material[field].length ? <ul>{item.material[field].map((text, i) => <li key={i}>{text}</li>)}</ul> : '已提供空列表') : item.material[field]}</dd></div>)}</dl>
+-    <h4>证据引用</h4>{item.evidence === null ? <p>未提供</p> : item.evidence.length ? <ul className="evidence-list">{item.evidence.map((ref, i) => <li key={i}>{ref.kind === 'post' ? <><span>帖子 {ref.post_id} · 修订 {ref.revision}</span><button className="quiet" onClick={() => open(ref.post_id, ref.revision, ref.post_id === item.post_id ? item.thread_id : undefined)}>查看证据修订 {ref.revision}</button></> : <span>附件 {ref.artifact_id}（此页仅列引用）</span>}</li>)}</ul> : <p>已提供空列表</p>}
+-    <p className="notice">{item.missing.length ? `历史报告缺失字段：${item.missing.map(label).join('、')}。未提供不代表已验证。` : '报告已提供这些结构字段；这不代表证据已独立验证。'}</p>
+-    <p className="reference">正式评审与正式检查尚未启用。</p><button onClick={() => open(item.post_id, item.revision, item.thread_id)}>查看报告修订 {item.revision}</button>
++    <SafeMarkdown source={item.summary} label="失败摘要"/><p className="reference">帖子 {item.post_id} · 修订 {item.revision}</p>
++    <dl className="failure-material">{failureFields.map(([field, name]) => <div key={field}><dt>{name}</dt><dd><MaterialValue value={item.material[field]}/></dd></div>)}</dl>
++    <h4>证据引用</h4>{evidence === null ? <p>未提供</p> : evidence.length ? <ul className="evidence-list">{evidence.map((ref, i) => <li key={i}>{ref.kind === 'post' ? <><span>帖子 {ref.post_id} · 修订 {ref.revision}</span><button className="quiet" onClick={() => open(ref.post_id, ref.revision, ref.post_id === item.post_id ? item.thread_id : undefined)}>查看证据修订 {ref.revision}</button></> : <span>附件 {ref.artifact_id}（此页仅列引用）</span>}</li>)}</ul> : <p>已提供空列表</p>}
++    <p className="notice">{item.material.missing_fields.length ? `历史报告缺失字段：${item.material.missing_fields.map(label).join('、')}。未提供不代表已验证。` : '报告已提供这些结构字段；这不代表证据已独立验证。'}</p>
++    <Relations relations={item.relations} item={item} open={open}/><FormalFacts item={item} open={open}/>
++    <p className="reference">以下动作阅读当前报告条目，与评审对象固定修订区分。</p>
++    <button onClick={() => open(item.post_id, item.revision, item.thread_id)}>查看报告修订 {item.revision}</button>
+   </article>;
+ }
+--- packages/web/src/styles.css (C2A before)
++++ packages/web/src/styles.css
+@@ -157,3 +157,12 @@
+ .review-panel .check-label { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0; }
+ .review-panel .check-label input { width: auto; margin: 4px 0 0; }
+ @media (max-width: 700px) { .review-panel fieldset { padding: 12px; } .review-status { grid-template-columns: 1fr; gap: 5px; } .review-status dd { margin-bottom: 10px; } }
++
++.finding-report { margin-top: 28px; padding-top: 24px; border-top: 1px solid #dce5df; min-width: 0; }
++.finding-report h3 { font-size: 20px; margin: 0; overflow-wrap: anywhere; }
++.knowledge-formal { padding: 16px; margin: 18px 0; border: 1px solid #dce5df; border-radius: 7px; }
++.knowledge-facts { display: grid; grid-template-columns: minmax(100px, 1fr) 2fr; gap: 8px 14px; }
++.knowledge-facts dd { margin: 0; overflow-wrap: anywhere; }
++.finding-report p, .finding-report li, .failure-report p, .failure-report li { overflow-wrap: anywhere; }
++.finding-report button, .failure-report button { max-width: 100%; white-space: normal; }
++@media (max-width: 700px) { .knowledge-facts { grid-template-columns: 1fr; } .knowledge-facts dd { margin-bottom: 8px; } .knowledge-formal { padding: 12px; } }
+--- /dev/null
++++ tests/contracts/m6-knowledge-web-input.test.ts
+@@ -0,0 +1,54 @@
++import { describe, expect, it } from 'vitest';
++import { ClientProtocolError } from '@detuned/client';
++import { parseFindings, parseFailures } from '../../packages/web/src/knowledge.js';
++
++// Pure untrusted-input checks only; these do not prove database authorization.
++const base = { post_id: 'claim', revision: 3, thread_id: 'thread', title: '<script>unsafe</script>',
++  summary: '[link](javascript:alert(1))', snippet: '', tags: [], created_at: '2026-10-09T00:00:00.000Z',
++  report_kind: 'author_report', formal_review_status: 'not_requested', formal_check_status: 'not_requested', formal_review: null, relations: [] };
++const claim = () => ({ ...base, type: 'claim', kind: 'claim', material: {
++  statement: null, assumptions: [], scope: 'finite scope', falsification_plan: null, missing_fields: ['statement', 'falsification_plan'],
++} });
++const failure = () => ({ ...base, post_id: 'failure', type: 'failure', kind: 'failure', material: {
++  attempt: null, category: null, assumptions: null, tested_scope: null, expected: null, observed: null,
++  evidence_refs: null, evidence_state: null, evidence_missing_reason: null, ruled_out: null,
++  not_ruled_out: null, retry_when: null,
++  missing_fields: ['attempt', 'category', 'assumptions', 'tested_scope', 'expected', 'observed', 'evidence_refs', 'evidence_state', 'evidence_missing_reason', 'ruled_out', 'not_ruled_out', 'retry_when'],
++} });
++const reviewed = () => ({ ...claim(), formal_review_status: 'accepted', formal_check_status: 'pending', formal_review: {
++  request_id: 'request', snapshot_id: 'snapshot', phase: 'accepted', verification_status: 'pending',
++  current_validity: 'superseded', validity_reasons: [], space_id: 'space', target_post_id: 'claim',
++  round: 2, target_revision: 1, created_at: '2026-10-09T00:00:00.000Z',
++} });
++
++describe('M6.4-C2A Web knowledge input (pure parsing)', () => {
++  it('preserves author material, null/missing and literal untrusted strings without normalization', () => {
++    const value = claim(); expect(parseFindings([value], 'space')).toEqual([value]);
++    expect(parseFailures([failure()], 'space')[0]?.material.evidence_refs).toBeNull();
++    expect(parseFindings([], 'space')).toEqual([]);
++  });
++  it('preserves latest historical round, pending check and fixed old target separately', () => {
++    const value = reviewed(); expect(parseFindings([value], 'space')).toEqual([value]);
++    expect(parseFindings([value], 'space')[0]?.formal_review?.target_revision).toBe(1);
++    expect(parseFindings([value], 'space')[0]?.revision).toBe(3);
++  });
++  it('rejects entire arrays when even one row is malformed, unknown, or over view bounds', () => {
++    for (const bad of [{ ...claim(), unexpected: true }, { ...claim(), created_at: 'yesterday' },
++      { ...claim(), material: { ...claim().material, scope: undefined } }, { ...claim(), kind: 'failure' }]) {
++      expect(() => parseFindings([claim(), bad], 'space')).toThrow(ClientProtocolError);
++    }
++    expect(() => parseFindings(Array.from({ length: 26 }, claim))).toThrow(ClientProtocolError);
++    expect(() => parseFailures(Array.from({ length: 51 }, failure))).toThrow(ClientProtocolError);
++    expect(() => parseFailures([failure(), { ...failure(), formal_review: undefined }])).toThrow(ClientProtocolError);
++  });
++  it('rejects mismatched summary facts and cross-scope targets without inventing valid status', () => {
++    const value = reviewed();
++    for (const bad of [{ ...value, formal_check_status: 'passed' }, { ...value, formal_review_status: 'revealed' },
++      { ...value, formal_review: { ...value.formal_review, space_id: 'other' } },
++      { ...value, formal_review: { ...value.formal_review, target_post_id: 'other' } },
++      { ...value, formal_review: { ...value.formal_review, target_revision: 4 } },
++      { ...claim(), formal_check_status: 'pending' }]) {
++      expect(() => parseFindings([bad], 'space')).toThrow(ClientProtocolError);
++    }
++  });
++});

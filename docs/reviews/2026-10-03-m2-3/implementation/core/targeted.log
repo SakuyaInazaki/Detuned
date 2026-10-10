@@ -1,0 +1,72 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 49ms
+ ❯ tests/integration/m2-search.test.ts (9 tests | 2 failed) 54ms
+   ✓ M2.3 product search semantics and bound cursors > S01: tags are exact all-match properties before paging, not FTS text 24ms
+   ✓ M2.3 product search semantics and bound cursors > S02: 1/2/3+ Unicode codepoints and literal symbols match product content including tags 4ms
+   ✓ M2.3 product search semantics and bound cursors > S03: signed keyset pages bind actor/space/query/filters and permit equivalent tag order 5ms
+   × M2.3 product search semantics and bound cursors > S04: query cardinality and encoded items excess fail explicitly, not a partial-prefix empty result 6ms
+     → expected error to match asymmetric matcher
+   ✓ M2.3 product search semantics and bound cursors > S05: altered, expired, wrong-purpose cursors all fail identically, while current permission comes first 3ms
+   ✓ M2.3 product search semantics and bound cursors > S06: current revisions, withdrawal and redaction remove old content in both branches 4ms
+   × M2.3 product search semantics and bound cursors > S07: properties combine before limit, and matching candidate excess is explicit on FTS 4ms
+     → expected error to match asymmetric matcher
+   ✓ M2.3 product search semantics and bound cursors > S08: signer accepts an injected clock without changing default older calls; nonASCII case behavior is explicit 2ms
+   ✓ M2.3 product search semantics and bound cursors > S09: Unicode query length is codepoints, with trim but no normalization 2ms
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 75ms
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 96ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S04: query cardinality and encoded items excess fail explicitly, not a partial-prefix empty result
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "code": "QUERY_TOO_BROAD",
+-   "statusCode": 422,
++ ReferenceError {
++   "message": "DetunedError is not defined",
+  }
+
+ ❯ tests/integration/m2-search.test.ts:37:102
+     35|   it('S04: query cardinality and encoded items excess fail explicitly,…
+     36|     add('unrelated-1');add('unrelated-2');add('far-z',['narrow']);
+     37|     expect(()=>searchService({max_candidates:2,max_response_bytes:2621…
+       |                                                                                                      ^
+     38|     expect(searchService({max_candidates:2,max_response_bytes:262144})…
+     39|     expect(()=>searchService({max_candidates:5000,max_response_bytes:1…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S07: properties combine before limit, and matching candidate excess is explicit on FTS
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "code": "QUERY_TOO_BROAD",
++ ReferenceError {
++   "message": "DetunedError is not defined",
+  }
+
+ ❯ tests/integration/m2-search.test.ts:65:107
+     63|     const yes=add('needle match',['exact'],'question');add('needle wro…
+     64|     const service=searchService();expect(service.search(auth,sid,{q:'n…
+     65|     expect(()=>searchService({max_candidates:2,max_response_bytes:2621…
+       |                                                                                                           ^
+     66|   });
+     67|   it('S08: signer accepts an injected clock without changing default o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 35 passed (37)
+   Start at  16:17:27
+   Duration  637ms (transform 232ms, setup 0ms, collect 1.25s, tests 274ms, environment 0ms, prepare 173ms)
+

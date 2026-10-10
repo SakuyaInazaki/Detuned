@@ -1,0 +1,54 @@
+{
+  "receipt": "new-affected-first.json",
+  "source_sha256": "450487ca64447c36939d30490ff61c161e8f0795397750d3d0cc25575a58291d",
+  "collected": 80,
+  "passed": 78,
+  "failed": 2,
+  "files": 15,
+  "author_tools": {
+    "passed": 4
+  },
+  "author_cli": {
+    "passed": 3
+  },
+  "independent": {
+    "passed": [
+      "DT01",
+      "DT02",
+      "DT03",
+      "DT06"
+    ],
+    "failed": [
+      "DT04",
+      "DT05"
+    ]
+  },
+  "catalog_files": 11,
+  "catalog_cases_passed": 61,
+  "official_Pi_cases_passed": 6,
+  "findings": [
+    {
+      "case": "DT04",
+      "actual_first": "boolean assertion false; exact native error fields were not printed",
+      "incorrect_D_expectation": "duplicate-assignment submit status409",
+      "source_basis": "submission-service.ts:62 duplicate submission uses invalid():VALIDATION_ERROR400",
+      "classification": "D contract expectation; await root narrow correction"
+    },
+    {
+      "case": "DT05",
+      "actual_first": {
+        "download_existing_output_exit": 1
+      },
+      "incorrect_D_expectation": "exit2",
+      "source_basis": "artifact-io.ts existing lstat => CliSafeError; mapExitCode returns1",
+      "classification": "D CLI exit expectation; SHA download and samekey recovery passed before this failure"
+    }
+  ],
+  "unexecuted": [
+    "dsh official lane",
+    "typecheck",
+    "lint",
+    "whole core",
+    "current25"
+  ]
+}

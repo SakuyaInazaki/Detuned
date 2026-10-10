@@ -1,0 +1,31 @@
+{
+  "status": "pass_final_v2_no_remaining_substantive_defect",
+  "metadata_freeze_sha256": "1d6256dbee2a3ef190975fc888c25416878cb3828af71a0e4d031067acdca6b6",
+  "metadata_diff_sha256": "5425aac8f367463fe5c330f978ecba861722cde6e44b927d09d074f56a37946b",
+  "owner_counts": {
+    "existing": 19,
+    "new": 3
+  },
+  "exact_before": "19 byte hashes match author preserved before; original missing for3 per owner",
+  "actual_final_hashes": "22 match freeze",
+  "local_links": {
+    "checked": 521,
+    "missing": 0
+  },
+  "source": "407 baseline nonowners plus final A/B/D frozen owners match; SQL/profile/V5/lock included",
+  "dist": "555 hashes match immediate build-green",
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "semantic_review": "twelve HTTP/client entrypoints, ordinary owner/maintainer and scoped admin exception; verify restrictions; issuer no-key retry0; JCS actualSHA; strict metadata; 917/147 once with25 included; focused74/75+related10/10; original current28 fail/newv3 pass; B2/M7.2/D01 planning only; no host/browser/model upgrade",
+  "planning_facts_sha256": "a3864e088537f2b20f9f35cee22056e6f39084ca32146aa3723d6e61eba5adc7",
+  "runtime": "none during metadata audit",
+  "history": "no sealed recursive scan",
+  "minor_editorial": "brief final historical sentence duplicates M7.1-A当时; historical labeling remains unambiguous; not a functional defect",
+  "seal": "await root acceptance",
+  "supersedes": "v1 audit preliminary; root subsequently found two documentary defects fixedv2",
+  "v2_delta_sha256": "b43b8ca174dc409823161d0dd4d9ffc72935203c3e0065dfedd34406e7b1e613",
+  "v2_changed_paths": [
+    "README.md",
+    "examples/check-http.md"
+  ],
+  "v2_review": "README duplicate removed; POSIX subshell umask077 + noclobber redirection avoids overwriting and permissions leak; curl fail/partial bytes and lackSHA/EOF/atomicpublish explicitly stated"
+}

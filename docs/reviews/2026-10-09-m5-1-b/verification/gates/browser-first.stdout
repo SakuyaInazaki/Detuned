@@ -1,0 +1,114 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 6 tests using 1 worker
+
+  ✓  1 scripts/integrations/web/author.spec.ts:4:1 › human reads a fixed revision, publishes a note and cited response, then confirms logout (2.9s)
+  ✘  2 scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout (5.4s)
+  ✘  3 scripts/integrations/web/independent.spec.ts:61:1 › BI02 observer write denial, hidden space and immediate membership/credential withdrawal (5.4s)
+  ✘  4 scripts/integrations/web/independent.spec.ts:87:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (5.4s)
+  ✘  5 scripts/integrations/web/independent.spec.ts:108:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (5.4s)
+  ✘  6 scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (5.4s)
+
+
+  1) scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+
+    TimeoutError: locator.focus: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'browser-space进入空间 →', exact: true })
+
+
+      37 |   await expect(page.getByRole('status')).toContainText('已恢复登录');
+      38 |   const space = page.getByRole('button', {name: `${forum.space.slug}进入空间 →`, exact: true});
+    > 39 |   await space.focus(); await page.keyboard.press('Enter');
+         |               ^
+      40 |   const filter = page.getByLabel('主题状态', {exact: true});
+      41 |   await filter.focus(); await page.keyboard.press('End'); await page.keyboard.press('Enter');
+      42 |   await expect(page.getByText('当前页暂无归档主题。', {exact: true})).toBeVisible();
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:39:15
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI01-real-cook-2518c--keyboard-and-narrow-layout/error-context.md
+
+  2) scripts/integrations/web/independent.spec.ts:61:1 › BI02 observer write denial, hidden space and immediate membership/credential withdrawal 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'browser-space进入空间 →', exact: true })
+
+
+       5 |
+       6 | async function discussion(page: Page, forum: ForumFixture) {
+    >  7 |   await page.getByRole('button', {name: `${forum.space.slug}进入空间 →`, exact: true}).click();
+         |                                                                                    ^
+       8 |   await page.getByRole('button', {name: `${forum.thread.title}开放 · 查看帖子 →`, exact: true}).click();
+       9 |   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+      10 | }
+        at discussion (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:7:84)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:65:9
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI02-observer--b9e84-rship-credential-withdrawal/error-context.md
+
+  3) scripts/integrations/web/independent.spec.ts:87:1 › BI03 committed response loss exhausts bounded retries then same intent replays once 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'browser-space进入空间 →', exact: true })
+
+
+       5 |
+       6 | async function discussion(page: Page, forum: ForumFixture) {
+    >  7 |   await page.getByRole('button', {name: `${forum.space.slug}进入空间 →`, exact: true}).click();
+         |                                                                                    ^
+       8 |   await page.getByRole('button', {name: `${forum.thread.title}开放 · 查看帖子 →`, exact: true}).click();
+       9 |   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+      10 | }
+        at discussion (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:7:84)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:88:66
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI03-committed-65ea6-en-same-intent-replays-once/error-context.md
+
+  4) scripts/integrations/web/independent.spec.ts:108:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'browser-space进入空间 →', exact: true })
+
+
+       5 |
+       6 | async function discussion(page: Page, forum: ForumFixture) {
+    >  7 |   await page.getByRole('button', {name: `${forum.space.slug}进入空间 →`, exact: true}).click();
+         |                                                                                    ^
+       8 |   await page.getByRole('button', {name: `${forum.thread.title}开放 · 查看帖子 →`, exact: true}).click();
+       9 |   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+      10 | }
+        at discussion (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:7:84)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:109:66
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI04-logout-fa-4ede0--response-cannot-repopulate/error-context.md
+
+  5) scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'browser-space进入空间 →', exact: true })
+
+
+       5 |
+       6 | async function discussion(page: Page, forum: ForumFixture) {
+    >  7 |   await page.getByRole('button', {name: `${forum.space.slug}进入空间 →`, exact: true}).click();
+         |                                                                                    ^
+       8 |   await page.getByRole('button', {name: `${forum.thread.title}开放 · 查看帖子 →`, exact: true}).click();
+       9 |   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+      10 | }
+        at discussion (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:7:84)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:140:66
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI05-UTF-8-fix-d0638-historical-1MiB-degradation/error-context.md
+
+  5 failed
+    scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+    scripts/integrations/web/independent.spec.ts:61:1 › BI02 observer write denial, hidden space and immediate membership/credential withdrawal 
+    scripts/integrations/web/independent.spec.ts:87:1 › BI03 committed response loss exhausts bounded retries then same intent replays once 
+    scripts/integrations/web/independent.spec.ts:108:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate 
+    scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+  1 passed (38.9s)
+[ELIFECYCLE] Command failed with exit code 1.

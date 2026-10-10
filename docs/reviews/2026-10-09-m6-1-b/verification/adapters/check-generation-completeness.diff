@@ -1,0 +1,51 @@
+--- docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-generation-completeness.mjs
+@@ -9,8 +9,8 @@
+ import { createHash } from 'node:crypto';
+ import { isDeepStrictEqual as equal } from 'node:util';
+ 
+-const root = fileURLToPath(new URL('../../../', import.meta.url));
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++const root = fileURLToPath(new URL('../../../../../', import.meta.url));
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-r18-generation-'));
+ const sourceSql = readFileSync(join(root, 'packages/storage-sqlite/src/schema.sql'), 'utf8');
+@@ -29,7 +29,7 @@
+   mkdirSync(join(dir, 'tests/fixtures'), { recursive: true });
+   writeFileSync(join(dir, 'package.json'), '{"type":"module"}');
+   for (const sub of ['src', 'scripts']) cpSync(join(root, 'packages/storage-sqlite', sub), join(dir, 'packages/storage-sqlite', sub), { recursive: true });
+-  if (historical) copyFileSync(join(root, 'tests/fixtures/historical-v1-schema.sql'), join(dir, 'tests/fixtures/historical-v1-schema.sql'));
++  if (historical) {for(const version of [1,2])copyFileSync(join(root, `tests/fixtures/historical-v${version}-schema.sql`), join(dir, `tests/fixtures/historical-v${version}-schema.sql`));}
+   if (driver) symlinkSync(join(root, 'node_modules'), join(dir, 'node_modules'), 'dir');
+   return dir;
+ }
+@@ -53,7 +53,7 @@
+   const db = new Database(':memory:');
+   try {
+     db.exec(mod.SCHEMA_SQL);
+-    return { compile, runtime_without_src: true, runtime_structure: mod.verifyDatabaseStructure(db, 2) };
++    return { compile, runtime_without_src: true, runtime_structure: mod.verifyDatabaseStructure(db, 3) };
+   } finally { db.close(); }
+ }
+ 
+@@ -74,8 +74,8 @@
+       output.passes = true;
+     } else {
+       const generated = readFileSync(tsPath(dir), 'utf8');
+-      output.current_profile_changed = !equal(profile(sourceTs, 2), profile(generated, 2));
+-      output.historical_profile_unchanged = equal(profile(sourceTs, 1), profile(generated, 1));
++      output.current_profile_changed = !equal(profile(sourceTs, 3), profile(generated, 3));
++      output.historical_profile_unchanged = equal(profile(sourceTs, 1), profile(generated, 1)) && equal(profile(sourceTs, 2), profile(generated, 2));
+       Object.assign(output, await verifyCompiled(dir));
+       output.passes = generate.exit_code === 0 && sync.exit_code === 0 && output.runtime_structure.valid && output.historical_profile_unchanged;
+     }
+@@ -114,7 +114,7 @@
+     const generate = script(dir, 'generate-schema.mjs');
+     const afterCheck = script(dir, 'check-schema-sync.mjs');
+     const repaired = readFileSync(tsPath(dir), 'utf8');
+-    const out = { version, before_check: beforeCheck, generate, after_check: afterCheck, profiles_restored: equal(profile(repaired, 1), profile(sourceTs, 1)) && equal(profile(repaired, 2), profile(sourceTs, 2)) };
++    const out = { version, before_check: beforeCheck, generate, after_check: afterCheck, profiles_restored: equal(profile(repaired, 1), profile(sourceTs, 1)) && equal(profile(repaired, 2), profile(sourceTs, 2)) && equal(profile(repaired, 3), profile(sourceTs, 3)) };
+     Object.assign(out, await verifyCompiled(dir));
+     out.passes = failed(beforeCheck) && generate.exit_code === 0 && afterCheck.exit_code === 0 && out.profiles_restored && out.runtime_structure.valid;
+     repairCases.push(out);

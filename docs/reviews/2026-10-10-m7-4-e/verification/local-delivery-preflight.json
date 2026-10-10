@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-10-10T06:02:53.062117+00:00",
+  "scope": "read-only availability preflight; no install/cache mutation or tests",
+  "current_tools": {
+    "node": {
+      "resolved_path": "/opt/homebrew/bin/node",
+      "exit_code": 0,
+      "version": "v26.3.0",
+      "stderr_empty": true
+    },
+    "pnpm": {
+      "resolved_path": "/opt/homebrew/bin/pnpm",
+      "exit_code": 0,
+      "version": "11.7.0",
+      "stderr_empty": true
+    }
+  },
+  "fixed_node22_paths": {
+    "/opt/homebrew/opt/node@22/bin/node": {
+      "exists": false
+    },
+    "/usr/local/opt/node@22/bin/node": {
+      "exists": false
+    }
+  },
+  "project_cache_fields": {},
+  "cache_roots": {},
+  "clean_install_verified": false,
+  "limitations": [
+    "fixed path absence does not prove no Node22 elsewhere",
+    "cache existence does not prove install completeness or integrity",
+    "no global config/store commands or recursive scans"
+  ],
+  "workspace_statfs": {
+    "path": "/Users/sakimi/Desktop/Detuned",
+    "available_bytes": 10074251264,
+    "free_bytes": 10074251264,
+    "block_size": 4096
+  }
+}

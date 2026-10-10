@@ -1,0 +1,5 @@
+# M7.5-A continuation3 6929 静审
+
+实际runner6929fe32192c6741099da9d76fd48e45ce9a922e1c1641ff38974b6bd530f416/plan8dafc883d5fc7bafbb8f3c991735af4453f61b2ad1da730845370e912ca97591匹配。AST仅读常量生成968B/fcdc06a08e516b887bcc0bdfae2214a0355126dd2b2263c1ffac772540963ba7与保存JS完全一致；A980e原字节保持。固定Node--check先对wx文件解析，再读hash与probebytes一致后-e执行同bytes，12keys/预算/371copy/158tests闭包保持，未actualNodecheck。
+
+阻塞两生产路径仍旧：phase:73写continuation-3-output，:416读effective-config.stdout却取continuation-2-output（旧失败为空，必JSON读取失败）；:438 test_json仍旧continuation-2-output，会把本次新test结果写旧目录。只这两生产读写路径改3；:325 prior95812输出校验必须保持2以保历史binding。已按root持续授权直接followup D窄修，不扩scope/框架，不运行。旧6929保留待增量freeze。

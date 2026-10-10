@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test:e2e",
+    "scripts/integrations/web/m6-review.spec.ts",
+    "--workers=1",
+    "--grep",
+    "CW01 ordinary requester"
+  ],
+  "exit_code": 0,
+  "seconds": 10.432,
+  "runner_pid": 74382,
+  "stdout": "browser-author-selected-first.stdout.txt",
+  "stderr": "browser-author-selected-first.stderr.txt",
+  "source_freeze": "independent-source-freeze-v4.json",
+  "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+}

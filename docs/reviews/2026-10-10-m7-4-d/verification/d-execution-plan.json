@@ -1,0 +1,85 @@
+{
+  "status": "frozen preparation; B review/root runtime release required",
+  "source_sha256": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+  "author_freeze_sha256": "9a67590f8cc8adfdc6f834c144d75c77922d9929fa0fc88bafabb4947ad679fb",
+  "new_test_sha256": "115c7807619614c4c0786ad8d7616b0da2b85b0b2ed281367507f8de791f1ce3",
+  "capture_sha256": "b501f08c2429e4b04b5888ad49e48385202ca012f8f1241c6495fb7714b498b8",
+  "guard_binding_sha256": "f4efbc6410006cd9f41ae4cb483ee90a0006ced0aa7c43a8d5c3883925e97e40",
+  "addendum_sha256": "624aac387d817e82502421182f55ec3805b0130ed41f4f09d23a965f99a029e3",
+  "commands": [
+    {
+      "id": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/claude-check-probe.mjs"
+      ]
+    },
+    {
+      "id": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/claude-bounded-capture.mjs"
+      ]
+    },
+    {
+      "id": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "id": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-claude-probe-ownership.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "case_count": 8,
+      "default_case_timeout_ms": 5000,
+      "own_watchdog_ms": 4000,
+      "permission": "require_escalated auto_review bounded own child/ps only"
+    }
+  ],
+  "controlled_reject_separate_release_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/claude-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/claude-reject-worker-first-result.json",
+    "--mode",
+    "reject-worker"
+  ],
+  "reject_oracle": "three ownership stages; driver ACK then worker observer injection. Source group confirmed true/observer completed false, bootstrap/native/MCP false, initializer/registration settled, actualworker/group/root closed; capture independently all group/candidate/root/control absence. Capture0 only verified expected failure",
+  "normal_separate_future_release_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/claude-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/claude-native-first-result.json"
+  ],
+  "permission": "necessary outer require_escalated auto_review; strict child sandbox unchanged",
+  "budgets": "source50work/60worker/65supervisor absolute; capture70normal/75absolute no reset, cleanup adds no business time",
+  "guard": "actual M7.4-A v8 policy/result bound byteidentical, new standalone guard root decision only",
+  "capture_authority": "sameworker only; driver/outer exactquery worker/native/MCP; driver registry+own MCP authority persist beforeACK. Only originalworker groups signal; candidate positivepresence0 only; unknown/present/parsefail preserve roots/control/registry, originalfailure first",
+  "not_run": [
+    "source syntax",
+    "capture syntax",
+    "new-source noEmit",
+    "focused8",
+    "controlled reject",
+    "native normal",
+    "standalone guard",
+    "build/full/type/lint/schema/current"
+  ],
+  "historical_full": "967/155 reuse only, no addition",
+  "new_source_count": 436,
+  "dist_count": 555
+}

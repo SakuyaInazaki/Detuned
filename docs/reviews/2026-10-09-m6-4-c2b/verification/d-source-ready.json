@@ -1,0 +1,21 @@
+{
+  "status": "source_ready_not_executed",
+  "owner": "D",
+  "files": [
+    {
+      "path": "tests/integration/m6-public-review-search-independent.test.ts",
+      "sha256": "b40d2f9e1e2d0d07ba6412b368194dfcb2e112ea477438f33242d5475b3aa2ae",
+      "change": "new"
+    }
+  ],
+  "cases": 7,
+  "runtime_performed": false,
+  "source_review": "Static API/transaction/cursor inspection; runtime and type compatibility remain unverified.",
+  "controlled_cases": [
+    "PSI01 event-trigger failure injection",
+    "PSI03 selected current-space intrinsic persisted fault; cross-space online evidence fault",
+    "PSI06 default-budget metadata sentinel"
+  ],
+  "real_cases": "Formal requests, sessions, two distinct reviewers, submissions/reveal and history use real services/HTTP; PSI07 actual file-WAL second connection uses real redaction business transaction.",
+  "scope": "No product/old test/Web writes; no whole-database health claim."
+}

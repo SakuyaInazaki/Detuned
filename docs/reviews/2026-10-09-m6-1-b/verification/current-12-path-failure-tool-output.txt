@@ -1,0 +1,16 @@
+Captured tool output transcription of first #12 failure. The first runner log pathname was reused by the second invocation; that logging defect is corrected to allocate unique attempt filenames. This transcript preserves the original full diagnostic, not a claimed original-file SHA.
+node:fs:436
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-b/verification/adapters/baseline.json'
+    at readFileSync (node:fs:436:20)
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-r4b-gaps.mjs:276:31
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-b/verification/adapters/baseline.json'
+}
+
+Node.js v26.3.0

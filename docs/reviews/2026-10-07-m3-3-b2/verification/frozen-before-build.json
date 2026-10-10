@@ -1,0 +1,25 @@
+{
+  "storage": {
+    "packages/storage-sqlite/src/logical-import.ts": true,
+    "packages/storage-sqlite/src/offline-backup.ts": true,
+    "packages/storage-sqlite/src/index.ts": true,
+    "tests/integration/m3-logical-import.test.ts": true,
+    "docs/03-data-model.md": true,
+    "docs/07-security-operations.md": true,
+    "docs/12-decisions.md": true,
+    "docs/reviews/2026-10-07-m3-3-b2/planning/frozen-contract.md": true
+  },
+  "transport": {
+    "packages/protocol/src/export-decoder.ts": true,
+    "packages/protocol/src/index.ts": true,
+    "packages/client/src/export-stream.ts": true,
+    "packages/cli/src/index.ts": true,
+    "tests/contracts/m3-logical-import-contract.test.ts": true,
+    "examples/space-import.md": true,
+    "docs/04-protocol.md": true
+  },
+  "independent": {
+    "tests/integration/m3-import-independent.test.ts": "ea9d286f0779140e4cd92d9221b694c8974008697c58cd53edd5342f19e21220",
+    "tests/helpers/m3-import-worker.mjs": "dd7148be6597525869a523c0e2141c1e31922ac6a32cf937b41b188523ad13eb"
+  }
+}

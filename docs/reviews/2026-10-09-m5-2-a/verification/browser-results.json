@@ -1,0 +1,26 @@
+{
+  "unique_journeys": 3,
+  "passed": 3,
+  "composition": "first run two unchanged HTTP journeys passed, only failed TLS201 rerun after test-helper identity fix",
+  "first_run": {
+    "exit_code": 1,
+    "passed": 2,
+    "failed": 1,
+    "seconds": 7.351
+  },
+  "targeted_second": {
+    "exit_code": 0,
+    "passed": 1,
+    "seconds": 3.691
+  },
+  "final_browser_source_noEmit": {
+    "exit_code": 0,
+    "seconds": 1.368,
+    "files": 9
+  },
+  "first_failure": "Generic private TLS request failure; native error code not retained. Installed Node HTTP-agent source showed HTTP Host determines inferred TLS servername. Helper now supplies target URL identity explicitly and preserves default verification.",
+  "certificate_boundary": "Only private leaf SPKI exception in disposable Chrome; ignoreHTTPSErrors false; not system PKI certification. Node explicit CA/default verification separately tested.",
+  "receipt": "browser-tls-browser-second/tls-browser-receipt.json",
+  "screenshot": "browser-tls-browser-second/screenshots/tls-human-narrow.png",
+  "visual_acceptance": "Root viewed actual390px screenshot; limited visible layout only, no full-page/accessibility extrapolation."
+}

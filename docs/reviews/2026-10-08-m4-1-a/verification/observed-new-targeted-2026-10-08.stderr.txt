@@ -1,0 +1,59 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP
+DetunedError: 服务器内部错误。
+ ❯ DetunedClient.request packages/client/src/client.ts:486:28
+    484|                   outcome = {
+    485|                     kind: 'error',
+    486|                     error: new DetunedError(code, message, res.status,…
+       |                            ^
+    487|                   };
+    488|                 }
+ ❯ fixture tests/contracts/m4-read-cli-contract.test.ts:23:15
+ ❯ tests/contracts/m4-read-cli-contract.test.ts:33:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request
+DetunedError: 服务器内部错误。
+ ❯ DetunedClient.request packages/client/src/client.ts:486:28
+    484|                   outcome = {
+    485|                     kind: 'error',
+    486|                     error: new DetunedError(code, message, res.status,…
+       |                            ^
+    487|                   };
+    488|                 }
+ ❯ fixture tests/contracts/m4-read-cli-contract.test.ts:23:15
+ ❯ tests/contracts/m4-read-cli-contract.test.ts:40:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits
+DetunedError: 服务器内部错误。
+ ❯ DetunedClient.request packages/client/src/client.ts:486:28
+    484|                   outcome = {
+    485|                     kind: 'error',
+    486|                     error: new DetunedError(code, message, res.status,…
+       |                            ^
+    487|                   };
+    488|                 }
+ ❯ fixture tests/contracts/m4-read-cli-contract.test.ts:23:15
+ ❯ tests/contracts/m4-read-cli-contract.test.ts:49:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior
+AssertionError: expected undefined to be 'findings' // Object.is equality
+
+- Expected: 
+"findings"
+
++ Received: 
+undefined
+
+ ❯ tests/integration/m4-read-cli-independent.test.ts:87:233
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

@@ -1,0 +1,23 @@
+{
+  "root_authorized": "Optional runReviewedDemo signal only trusted in-process; CLI stays --output only.",
+  "boundary_sha256": "d094b1ba5ccca4524fc13fc0cb1edcaa3883405d85be4ff381ac256cc63aa032",
+  "requirements": [
+    "HTTP/child/IPC/ready/observe waits cancel and settle with finally cleanup",
+    "Normal actual close and lock release; after bounded grace force only owned child, never claim normal recovery",
+    "D owned 4s abort watchdog awaits settlement, default5000ms unchanged",
+    "No source/runtime dispatch expansion"
+  ],
+  "status": "root repair scope clarification, awaiting A v3 freeze/B review/root repair runtime release",
+  "prior_addendum_sha256": "d38eb51a7e338e0aa5a36debe5edff8407e90140d1d432b5848474b143b37a90",
+  "observer_addendum": "Root authorizes safe originalChallengeId and C.getOriginalChallenge() no-argument read-only fixed closure, actual ordinary sharedclient HTTP, to independently verify original challenge open at accepted/superseded. No client/writes/general selectors/core API added.",
+  "observer_actual_read": "Root correction after actual first failure: existing ordinary C getView(space, findings), fixed original A claim TARGET row, then fixed originalChallengeId in incoming relations public projection. projectTargetRelations uses listRelationsByTarget; failure was source, so prior failures-row selector was incorrect. No core/API/relation or test assertion changes.",
+  "prior_addendum_v2_sha256": "546e101b32f73d5da21652b0e6de306d6aef7c5a767ad3f8a3dbb9f7fec397c5",
+  "first_failure": {
+    "focused_passed": 40,
+    "focused_total": 42,
+    "new_passed": 6,
+    "new_total": 8,
+    "both_failures": "DJ01/DI01 accepted observer getOriginalChallenge before remaining accepted/superseded assertions",
+    "remaining_coverage": "DI02 genuine CLI journey passed; DI01 later independent assertions not reached on first run"
+  }
+}

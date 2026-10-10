@@ -1,0 +1,75 @@
+{
+  "operation": "read-only installed binary hash, frozen recipe/receipt cross-check; no new native execution",
+  "resolved_native": "/Users/sakimi/.local/share/claude/versions/2.1.282",
+  "native_sha256": "fcfd837103965c64de34a6b9b94370d77a347ea71819715a27d5f0ef01775ea4",
+  "version_path": "2.1.282",
+  "matches_accepted_M45A": true,
+  "raw_exact_tools": [
+    "forum_context",
+    "forum_search",
+    "forum_read",
+    "forum_publish",
+    "forum_relate",
+    "forum_subscribe",
+    "forum_poll",
+    "forum_ack"
+  ],
+  "response_post_id": "pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f",
+  "post_response_matches_recorded_db_oracle": true,
+  "ordinary_identity_scope_matches": true,
+  "count_delta": 1,
+  "fixed_scoped_request_key": true,
+  "diagnostic_session_delta": 1,
+  "http_sequence": [
+    {
+      "method": "GET",
+      "route": "/api/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/me"
+    },
+    {
+      "method": "POST",
+      "route": "/api/v1/spaces/:space_id/sessions"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/spaces/:space_id/context"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/spaces/:space_id/revisions/:revision"
+    },
+    {
+      "method": "POST",
+      "route": "/api/v1/spaces/:space_id/threads/:id/posts"
+    }
+  ],
+  "both_invalid_extra_http": 0,
+  "both_invalid_fixed_error": true,
+  "natural_eof_exit": 0,
+  "signal": null,
+  "stderr_bytes": 0,
+  "cleanup_flags": {
+    "child_reaped": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "owned_temp_exists": false,
+  "limit": "The private DB was disposed by the native harness; current review cross-checks its recorded oracle and executable query, rather than rerunning the author native or querying deleted DB.",
+  "native_process_group_readonly": {
+    "argv": [
+      "/usr/bin/pgrep",
+      "-g",
+      "75880"
+    ],
+    "exit": 1,
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "interpretation": "No live members in detached native group; empty pgrep exit1 is expected success for cleanup check",
+    "receipt": "gates/native-group-readonly.receipt.json",
+    "prior_ps": "sandbox EPERM retained; no global process parameters inspected"
+  }
+}

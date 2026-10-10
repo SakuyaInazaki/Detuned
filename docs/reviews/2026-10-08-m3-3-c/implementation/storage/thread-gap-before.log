@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-offline-upgrade.test.ts (5 tests | 1 failed | 4 skipped) 171ms
+   × copies real schema1 history with preserved source DB/WAL and permits sparse migrated thread history through export/import 170ms
+     → expected [ { version: 1 }, { version: 2 } ] to deeply equal [ { version: 2 } ]
+   ↓ refuses active source lock and source-internal canonical targets without touching old schema
+   ↓ copies only registered verified legacy-profile attachments and refuses mismatched ready bytes
+   ↓ cancels backup progress without publishing or migrating source
+   ↓ retains readiness gate on publication failure and refuses current schema2 as a legacy source
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-offline-upgrade.test.ts > copies real schema1 history with preserved source DB/WAL and permits sparse migrated thread history through export/import
+AssertionError: expected [ { version: 1 }, { version: 2 } ] to deeply equal [ { version: 2 } ]
+
+- Expected
++ Received
+
+  [
+    {
++     "version": 1,
++   },
++   {
+      "version": 2,
+    },
+  ]
+
+ ❯ tests/integration/m3-offline-upgrade.test.ts:12:833
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  06:38:34
+   Duration  704ms (transform 201ms, setup 0ms, collect 322ms, tests 171ms, environment 0ms, prepare 28ms)
+

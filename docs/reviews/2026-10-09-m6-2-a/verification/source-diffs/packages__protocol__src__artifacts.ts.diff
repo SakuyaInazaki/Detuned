@@ -1,0 +1,18 @@
+--- packages/protocol/src/artifacts.ts (fresh exact before)
++++ packages/protocol/src/artifacts.ts (current)
+@@ -78,3 +78,15 @@
+ }
+ export function isArtifactMetadata(value: unknown): value is ArtifactMetadata { return Value.Check(artifactMetadataCheckSchema, value) && validArtifactDate(value.created_at); }
+ export function isCreateArtifactMetadata(value: unknown): value is CreateArtifactMetadata { return Value.Check(CreateArtifactMetadataSchema, value); }
++
++export const ReviewArtifactMetadataSchema = Type.Object({ ...ArtifactMetadataSchema.properties,
++  visibility: Type.Literal('review_assignment'), review_assignment_id: Type.String({ minLength: 1 }),
++}, { additionalProperties: false });
++export type ReviewArtifactMetadata = Static<typeof ReviewArtifactMetadataSchema>;
++export const ReadableArtifactMetadataSchema = Type.Union([ArtifactMetadataSchema, ReviewArtifactMetadataSchema]);
++export type ReadableArtifactMetadata = Static<typeof ReadableArtifactMetadataSchema>;
++const reviewArtifactMetadataCheckSchema = { ...ReviewArtifactMetadataSchema,
++  properties: { ...ReviewArtifactMetadataSchema.properties, created_at: Type.String() } };
++export function isReadableArtifactMetadata(value: unknown): value is ReadableArtifactMetadata {
++  return isArtifactMetadata(value) || (Value.Check(reviewArtifactMetadataCheckSchema, value) && validArtifactDate(value.created_at));
++}

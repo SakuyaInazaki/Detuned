@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+{"fifo_ready":true,"fifo_operation_done":true,"fifo_operation_ms":2.0305000000000746,"fifo_watchdog_killed":false}
+
+ ✓ tests/integration/m3-logical-import.test.ts (12 tests | 11 skipped) 1164ms
+   ✓ rejects a FIFO with no writer in a watchdog-bounded child without publishing  1163ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 11 skipped (12)
+   Start at  06:25:13
+   Duration  1.68s (transform 180ms, setup 0ms, collect 277ms, tests 1.16s, environment 0ms, prepare 42ms)
+

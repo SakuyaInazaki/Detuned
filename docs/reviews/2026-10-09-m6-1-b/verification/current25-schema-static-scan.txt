@@ -1,0 +1,154 @@
+docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs:9:import { SqliteStorage, bootstrapDatabase, SCHEMA_SQL } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs:151:    bootDb.exec(SCHEMA_SQL);
+docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs:153:    try { bootstrapDatabase(bootDb); } catch { firstBootThrew = true; }
+docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs:158:    retryBoot = bootstrapDatabase(reopenedBootDb);
+docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs:8:import { bootstrapDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs:14:bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs:10:import { SqliteStorage, bootstrapDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:10:import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized } from '../../../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:17:const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:65:    try { bootstrapDatabase(migrationDb); } catch { rejected = true; }
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:100:    bootstrapDatabase(replayDb);
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:123:    bootstrapDatabase(revokedDb);
+docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs:128:    try { secondBootstrap = bootstrapDatabase(revokedDb); } catch { /* Explicit recovery-required rejection is safe. */ }
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:10:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, classifyDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:18:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:40:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:80:      const refused = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:104:        const refused = rejected(() => entry === 'bootstrap' ? bootstrapDatabase(database) : openAndCoordinateDatabase(database, entry));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:137:      const refused = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:156:      const refused = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:165:      database.prepare("UPDATE thread_versions SET state='archived' WHERE thread_id=? AND version=1").run(thread);
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:167:      const refused = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:193:      const upgradeRejected = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs:223:      const before = snapshot(database); const refused = rejected(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:11:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, isDatabaseInitialized } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:18:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:39:function maxVersion(database) {
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:52:  database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:89:      bootstrapDatabase(database);
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:115:        if (!installed && /CREATE TABLE IF NOT EXISTS thread_versions/.test(sql)) {
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:117:          nativeExec(`CREATE TEMP TRIGGER r5_history_fault BEFORE INSERT ON thread_versions
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:124:      try { bootstrapDatabase(database); } catch { rejected = true; }
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:129:      const oldVersionExists = hasTable(database, 'thread_versions') && Boolean(database.prepare('SELECT 1 FROM thread_versions WHERE thread_id=? AND version=1').get(thread));
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:132:        { fault_hits: faultHits, rejected, logical_state_unchanged: unchanged, schema_version: maxVersion(database), old_history_row_exists: oldVersionExists },
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:146:      try { bootstrapDatabase(database); } catch { rejected = true; }
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:151:        { rejected, logical_state_unchanged: unchanged, schema_version: maxVersion(database), malformed_content_cache_retained: retained },
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:164:      try { response = openAndCoordinateDatabase(database, 'init'); } catch { rejected = true; }
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:204:      bootstrapDatabase(database);
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:236:      try { response = openAndCoordinateDatabase(database, 'serve'); } catch (err) { rejected = true; error = err.message; }
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:240:        { rejected, error: error ?? null, initialized: isDatabaseInitialized(database), schema_version: maxVersion(database), extra_credentials: extra, issued_admin_token: Boolean(response?.adminToken) },
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:241:        !rejected && isDatabaseInitialized(database) && maxVersion(database) >= 2 && extra === 0 && !response?.adminToken);
+docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs:251:    bootstrapDatabase(database);
+docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs:10:import { SqliteStorage, bootstrapDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs:18:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs:123:      !legacyDb.prepare("SELECT 1 FROM sqlite_master WHERE name='thread_versions'").get() &&
+docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs:127:    const upgraded = bootstrapDatabase(legacyDb);
+docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs:141:    try { bootstrapDatabase(futureDb); } catch { rejected = true; }
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:8:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, classifyDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:15:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:35:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:88:      openAndCoordinateDatabase(database, 'serve'); database.close(); database = new Database(fixture.path);
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:110:      const first = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:114:      const second = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:130:      const outcome = attempt(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:145:      const upgrade = attempt(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:162:      database.prepare("UPDATE thread_versions SET created_at='1999-01-01T00:00:00.000Z' WHERE thread_id=? AND version=1").run(thread);
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:165:      const upgrade = attempt(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:188:        const upgrade = attempt(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:214:      const upgrade = attempt(() => openAndCoordinateDatabase(database, 'init'));
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:231:      openAndCoordinateDatabase(database, 'serve'); database.close(); database = new Database(fixture.path);
+docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs:232:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-28-m0-m1/check-behavior.mjs:10:import { SqliteStorage, bootstrapDatabase, DirectoryLock } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1/check-behavior.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:11:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, classifyDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:19:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:59:  try { openAndCoordinateDatabase(database, mode); return false; }
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:178:        observations.push({ name, rejected, logical_state_unchanged: isDeepStrictEqual(before, snapshot(database)), schema_version: database.prepare('SELECT max(version) AS v FROM schema_migrations').get().v,
+docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs:231:      database.prepare('UPDATE thread_versions SET title=? WHERE thread_id=? AND version=1').run('R6 contradictory history', thread);
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:103:        const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:125:        const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:146:      const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:147:      const storedTime = outcome.rejected ? null : database.prepare('SELECT created_at FROM thread_versions WHERE thread_id=? AND version=2').get(thread)?.created_at ?? null;
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:207:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs:209:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:88:    openAndCoordinateDatabase(reopenedDb, 'serve');
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:123:          starts.push(attempt(() => openAndCoordinateDatabase(database, 'serve')));
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:150:        database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:153:        const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:172:          starts.push(attempt(() => openAndCoordinateDatabase(database, 'serve')));
+docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs:199:        const upgrade = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:102:        const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:126:        const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:176:      const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:196:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs:198:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs:55:    db.exec(mod.SCHEMA_SQL);
+docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs:129:    if (missing === 'v2-marker') writeFileSync(tsPath(dir), replaceOnce(sourceTs, 'export const V2_SCHEMA_TABLES:', 'export const BROKEN_V2_SCHEMA_TABLES:'));
+docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs:10:import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs:11:import { SCHEMA_SQL } from '../../../packages/storage-sqlite/dist/schema.js';
+docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs:19:const boot = bootstrapDatabase(source);
+docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs:43:    const result = mode === 'bootstrap' ? bootstrapDatabase(db) : openAndCoordinateDatabase(db, mode);
+docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs:153:  materialDb.exec(SCHEMA_SQL);
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:115:      const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:170:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:172:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:189:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs:191:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:97:        const migrated = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:124:        const migrated = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:143:      const migrated = attempt(() => openAndCoordinateDatabase(wrongDb, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:152:      openAndCoordinateDatabase(timeDb, 'serve');
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:171:      const migrated = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:173:        ? database.prepare('SELECT created_at FROM thread_versions WHERE thread_id=? AND version=2').get(thread)?.created_at ?? null : null;
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:211:      const first = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs:213:      const second = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:9:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:16:const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:41:  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:115:      const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:162:        openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:164:        openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:198:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs:200:      openAndCoordinateDatabase(database, 'serve');
+docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs:5:import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs:31:  const boot = bootstrapDatabase(db);
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:11:import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, classifyDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:18:const boot = bootstrapDatabase(source);
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:67:    thread_versions_absent: !old.prepare("SELECT 1 FROM sqlite_master WHERE name='thread_versions'").get(),
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:73:  const upgrade = openAndCoordinateDatabase(old, 'serve');
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:81:  openAndCoordinateDatabase(old, 'serve');
+docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs:91:  const passes = pre.classification === 'supported_legacy' && pre.metadata_absent && pre.thread_versions_absent &&
+docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs:8:import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs:126:  const db = new Database(':memory:'); const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs:10:import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs:69:    db.exec(module.SCHEMA_SQL);
+docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs:70:    output.generated_sql_matches_mutation = module.SCHEMA_SQL.trim() === changed.replace(/^--.*$/gm, '').trim();
+docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs:83:  const boot = bootstrapDatabase(source);
+docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs:113:      try { mode === 'bootstrap' ? bootstrapDatabase(db) : openAndCoordinateDatabase(db, mode); }
+docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs:8:import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs:49:  const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs:93:  const boot = bootstrapDatabase(db);
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:7:import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage } from '../../../packages/storage-sqlite/dist/index.js';
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:8:import { SCHEMA_SQL } from '../../../packages/storage-sqlite/dist/schema.js';
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:15:const boot = bootstrapDatabase(source);
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:37:    const result = mode === 'bootstrap' ? bootstrapDatabase(database) : openAndCoordinateDatabase(database, mode);
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:112:  materialOnly.exec(SCHEMA_SQL);
+docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs:132:      if (kind === 'raw_v2_schema') db.exec(SCHEMA_SQL);

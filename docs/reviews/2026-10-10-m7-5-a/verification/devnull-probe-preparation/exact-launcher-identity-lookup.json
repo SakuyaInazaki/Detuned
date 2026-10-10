@@ -1,0 +1,88 @@
+{
+  "scope": "root-authorized pgrep exactfullargv for only three known own launcher paths/verifiedprivateNode/UID501, no other argv output or process census",
+  "elapsed_seconds": 1.1618770000059158,
+  "positive_control": {
+    "proof": {
+      "pid": 1423,
+      "uid": 501,
+      "ppid": 1422,
+      "pgid": 1423
+    },
+    "live_lookup": {
+      "launcher": "/private/tmp/detuned-m75-clean-gq6h90m6/devnull-probe-runtime-retry-1/lookup-positive-control.cjs",
+      "exact_argv": [
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/devnull-probe-runtime-retry-1/lookup-positive-control.cjs"
+      ],
+      "UID_filter": 501,
+      "pgrep_exit": 1,
+      "PIDs": [],
+      "actual_negative": true,
+      "valid_shape": true,
+      "stderr_bytes": 0
+    },
+    "actual_close": true,
+    "code": 0,
+    "stderr_bytes": 0,
+    "post_close_lookup": {
+      "launcher": "/private/tmp/detuned-m75-clean-gq6h90m6/devnull-probe-runtime-retry-1/lookup-positive-control.cjs",
+      "exact_argv": [
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/devnull-probe-runtime-retry-1/lookup-positive-control.cjs"
+      ],
+      "UID_filter": 501,
+      "pgrep_exit": 1,
+      "PIDs": [],
+      "actual_negative": true,
+      "valid_shape": true,
+      "stderr_bytes": 0
+    },
+    "PID_absent": true,
+    "group_absent": true
+  },
+  "three_exact_identity_queries": [
+    {
+      "launcher": "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-codex-owned-main-8WYM6r/launcher.mjs",
+      "exact_argv": [
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-codex-owned-main-8WYM6r/launcher.mjs"
+      ],
+      "UID_filter": 501,
+      "pgrep_exit": 1,
+      "PIDs": [],
+      "actual_negative": true,
+      "valid_shape": true,
+      "stderr_bytes": 0
+    },
+    {
+      "launcher": "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-codex-owned-dual-CmfacN/launcher.mjs",
+      "exact_argv": [
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-codex-owned-dual-CmfacN/launcher.mjs"
+      ],
+      "UID_filter": 501,
+      "pgrep_exit": 1,
+      "PIDs": [],
+      "actual_negative": true,
+      "valid_shape": true,
+      "stderr_bytes": 0
+    },
+    {
+      "launcher": "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-claude-owned-main-5C4XYV/launcher.mjs",
+      "exact_argv": [
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/tmp/detuned-claude-owned-main-5C4XYV/launcher.mjs"
+      ],
+      "UID_filter": 501,
+      "pgrep_exit": 1,
+      "PIDs": [],
+      "actual_negative": true,
+      "valid_shape": true,
+      "stderr_bytes": 0
+    }
+  ],
+  "matched_PID_exact_queries": [],
+  "all_three_actual_negative_and_positive_control_valid": false,
+  "no_signal_or_cleanup": true,
+  "unrelated_inner_child_absence_not_certified": true
+}

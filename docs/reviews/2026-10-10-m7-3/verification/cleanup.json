@@ -1,0 +1,22 @@
+{
+  "status": "bounded_owned_cleanup_verified",
+  "registered_runtime_receipts": [
+    "source-noemit-first.json",
+    "core-once-first.json",
+    "schema-first.json",
+    "build-first.json",
+    "syntax-1-first.json",
+    "related-new-repair-first.json",
+    "syntax-1-repair.json",
+    "new-and-adjacent-first.json",
+    "syntax-2-first.json",
+    "lint-first.json",
+    "typecheck-first.json"
+  ],
+  "runner_command_pids_all_exited": true,
+  "still_alive": [],
+  "raw_logs_scanned": 22,
+  "token_pattern_hits": [],
+  "fixture_evidence": "Related8/8 and full include DI01 actual close0/null + restartorder + owned directory absent, DI02 real CLI close and children dead, DI03 failure/abort actual close + directories absent/nooutput, DI04 zero spawn/timer/listener clear, DI05 real ENOENT/error/close + owned cleanup/nooutput. afterEach aborts known controllers, closes only actual owned handles then removes own mkdtemp directories.",
+  "limits": "No all-host process or temporary directory census. Successful ledger checked inside fixture then removed by owned cleanup; no extra demo rerun performed to retain a ledger. No credentials, headers or private tmp paths archived."
+}

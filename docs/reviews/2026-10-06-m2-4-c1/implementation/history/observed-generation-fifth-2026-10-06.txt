@@ -1,0 +1,36 @@
+{"stage":"old-HTTP-and-sanitization-complete","actual_http_statuses":[201,201,201],"secret_scan_passed":true}
+{
+  "passes": true,
+  "source_commit": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "actual_http_statuses": [
+    201,
+    201,
+    201
+  ],
+  "cases": [
+    {
+      "entry": "initial",
+      "request_hash": "3d841433d749e5b76cbdd07632cc9123b19e5667a1fc023415d1b867b4a12dd2",
+      "result_ref": "{\"v\":1,\"kind\":\"thread.create\",\"thread_id\":\"thd_hr1_0003\",\"thread_version\":1,\"initial_post_id\":\"pst_hr1_0005\",\"initial_post_revision\":1}"
+    },
+    {
+      "entry": "newpost",
+      "request_hash": "8c1a1e7c58c76ef86a600bf1d9d21427f8e9954046174b9d031772e3b4b9a349",
+      "result_ref": "{\"v\":1,\"kind\":\"post\",\"post_id\":\"pst_hr1_0007\",\"revision\":1,\"relation_ids\":[]}"
+    },
+    {
+      "entry": "revision",
+      "request_hash": "655c56bd57886bea87ca293eb5f931878af26fbb12bb7b8f0b2429285bf74211",
+      "result_ref": "{\"v\":1,\"kind\":\"post\",\"post_id\":\"pst_hr1_0007\",\"revision\":2,\"relation_ids\":[]}"
+    }
+  ],
+  "isolated_internal_resolution_checks": 6,
+  "exported_file_count": 192,
+  "original_232_dist_comparison": {
+    "matching": 111,
+    "different": 97,
+    "missing": 24
+  },
+  "sanitized_archive_sha256": "a73c64d63fa268788ce27f55ee96b2e912e411424ecf61b014d694ac768dcd22",
+  "temporary_generation_tree_removed": true
+}

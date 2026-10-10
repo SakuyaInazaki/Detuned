@@ -1,0 +1,150 @@
+{
+  "status": "pending_parent",
+  "head_unchanged": true,
+  "counts": {
+    "product_source_config_test_hashes": 228,
+    "current_document_hashes": 45,
+    "mutable_status_document_hashes": 5,
+    "protected_review_probe_log_evidence_hashes": 4374,
+    "frozen_sql_archive_hashes": 4,
+    "schema_profile_hashes": 2,
+    "tracked_build_artifact_hashes": 208,
+    "untracked_build_artifact_hashes": 160
+  },
+  "delta": {
+    "product_source_config_test_hashes": {
+      "added": [
+        "packages/cli/src/serve-shutdown.ts",
+        "packages/server/src/runtime-resources.ts",
+        "tests/contracts/m3-shutdown-contract.test.ts",
+        "tests/helpers/m3-shutdown-worker.mjs",
+        "tests/integration/m3-milestone-gate.test.ts",
+        "tests/integration/m3-shutdown-independent.test.ts",
+        "tests/integration/m3-shutdown-resources.test.ts"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/cli/src/index.ts",
+        "packages/core/src/ports/blob-store.ts",
+        "packages/core/src/services/artifact-service.ts",
+        "packages/server/src/app.ts",
+        "packages/server/src/artifact-files.ts",
+        "packages/server/src/index.ts",
+        "packages/server/src/routes/artifacts.ts",
+        "packages/server/src/routes/events.ts",
+        "packages/server/src/routes/export.ts",
+        "packages/storage-sqlite/src/lock.ts",
+        "tests/integration/m2-artifacts-core.test.ts",
+        "tests/integration/m2-artifacts-filesystem.test.ts"
+      ]
+    },
+    "current_document_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "docs/04-protocol.md",
+        "docs/07-security-operations.md",
+        "docs/12-decisions.md",
+        "examples/operations.md"
+      ]
+    },
+    "mutable_status_document_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "schema_profile_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "packages/cli/dist/index.js",
+        "packages/cli/dist/index.js.map",
+        "packages/server/dist/app.d.ts",
+        "packages/server/dist/app.d.ts.map",
+        "packages/server/dist/app.js",
+        "packages/server/dist/app.js.map",
+        "packages/server/dist/index.d.ts",
+        "packages/server/dist/index.d.ts.map",
+        "packages/server/dist/index.js",
+        "packages/server/dist/index.js.map",
+        "packages/server/dist/routes/events.d.ts.map",
+        "packages/server/dist/routes/events.js",
+        "packages/server/dist/routes/events.js.map",
+        "packages/storage-sqlite/dist/lock.d.ts",
+        "packages/storage-sqlite/dist/lock.d.ts.map",
+        "packages/storage-sqlite/dist/lock.js",
+        "packages/storage-sqlite/dist/lock.js.map"
+      ]
+    },
+    "untracked_build_artifact_hashes": {
+      "added": [
+        "packages/cli/dist/serve-shutdown.d.ts",
+        "packages/cli/dist/serve-shutdown.d.ts.map",
+        "packages/cli/dist/serve-shutdown.js",
+        "packages/cli/dist/serve-shutdown.js.map",
+        "packages/server/dist/runtime-resources.d.ts",
+        "packages/server/dist/runtime-resources.d.ts.map",
+        "packages/server/dist/runtime-resources.js",
+        "packages/server/dist/runtime-resources.js.map"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/core/dist/ports/blob-store.d.ts",
+        "packages/core/dist/ports/blob-store.d.ts.map",
+        "packages/core/dist/services/artifact-service.d.ts",
+        "packages/core/dist/services/artifact-service.d.ts.map",
+        "packages/core/dist/services/artifact-service.js",
+        "packages/core/dist/services/artifact-service.js.map",
+        "packages/server/dist/artifact-files.d.ts",
+        "packages/server/dist/artifact-files.d.ts.map",
+        "packages/server/dist/artifact-files.js",
+        "packages/server/dist/artifact-files.js.map",
+        "packages/server/dist/routes/artifacts.d.ts.map",
+        "packages/server/dist/routes/artifacts.js",
+        "packages/server/dist/routes/artifacts.js.map",
+        "packages/server/dist/routes/export.js",
+        "packages/server/dist/routes/export.js.map"
+      ]
+    }
+  },
+  "all_protected_unchanged": true,
+  "freeze_mismatches": {
+    "core": [],
+    "transport": []
+  },
+  "source_delta_outside_ownership": [],
+  "stable_final_delta": {
+    "product_source_config_test_hashes": [],
+    "current_document_hashes": [],
+    "mutable_status_document_hashes": [],
+    "frozen_sql_archive_hashes": [],
+    "schema_profile_hashes": [],
+    "tracked_build_artifact_hashes": [],
+    "untracked_build_artifact_hashes": []
+  },
+  "finite_new_archive_token_pattern_scan": {
+    "files": 99,
+    "matching_files": [],
+    "not_universal_secret_scan": true
+  },
+  "owned_resources": {
+    "pids": [],
+    "private_dirs": [],
+    "kill_performed": false
+  }
+}

@@ -1,0 +1,16 @@
+# C capture v4 / A v2 联合差分静审
+
+2026-10-10，仅静态读取与 SHA 核对，无运行。
+
+实际 pins：A source6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99，freeze167ffb325b80cb3df7471d35b3ccdd65943a7011570c494f5a1cda93505d8110；D capture6fc4094bb6eaaf161baed7f87db5146880400018951ae486c0300b9a1ef819f5、plan49b4abc71053936b100759b219a2539d9929d9fa7e8dc8c1b6933479425bebc9、ready7f5156126eefd8e20bc508c66dc0e84ef456ae2bdc707729e42497975cb97a84、delta63c00ee9ec55a171e6700ad5bae89fa7e0008aeeb694641fca1552c61b1f5273、bindingeadfc1079f5251b1749ce5b0aa107c82deb2fc908ee09b4b2795cd5716cffd93。均实际匹配。
+
+- mcp_spawned 六字段与A对应；workerPGID是此前确认组，不是候选PGID。candidate不能新增不同组signal权限。候选只有positive>1存在性probe，ESRCH才absent，present/EPERM/unknown失败。
+- finally不依赖主成功断言或stdout解析；先清已登记组，再独立核已登记candidate存在性，再读取producer.received boolean与registry candidate presence严格对应，received时数量必须1。producer坏JSON或缺字段、source已收到但可信登记缺失都无法置coverage=true；保目录/registry并failed。
+- root/control删除需driver实际close、registered group absence、candidate absence与coverage同时成立；原错误保留。95秒绝对外期限包含5秒清退，不另叠加source90秒。失败未认证不伪装expected pass。
+- binding中actualpolicy/rawliteral与minenv保持原字节；旧guard真实正负例与pre-MCP reject只能复用旧运行事实，没有新跑、没有覆盖本轮normal候选分支。首native失败不可改写为通过。
+
+没有可行动source阻塞。支持root限定释放source+capture syntax和唯一normal修复复验，不追加guard/reject/全库/新宿主矩阵。actualsamegroup不匹配可以安全failed作为兼容边界；候选未证不存在须保资源证据，不能放宽policy或signal不同组。
+
+执行前必须用新的独立output路径：plan-v4 capture_argv仍列已经存在的codex-native-first-result.json，仅为沿用示例；其no-clobber前置检查会拒旧路径，绝不能覆盖首失败。root应在实际批准命令使用新repair结果名。未因此修改plan/脚本。
+
+Root执行裁定已明确：唯一复验输出 `verification/codex-native-v2-result.json` 与同名 `.capture.json`，receipt为 `verification/native-v2.receipt.json`。原first全部不覆盖；此精确新路径解决上述计划示例已存在问题，无需改源码或新增审查循环。最终结论：可由root释放限定syntax及唯一normal复验，实际结果仍未知。

@@ -1,0 +1,11 @@
+{
+  "authorization": "parent exact single-field post-freeze metadata correction; preserve author freeze-v4",
+  "path": "integrations/compatibility.json",
+  "before_sha256": "270926083b927475465dae4bcf212474e9aa6ce2fc90a1561f5f064b8e279e8b",
+  "after_sha256": "e549d6cb992b383f10b05b45da26deef334c7f5da2a4ab95c6e8767dd959d3f0",
+  "before_summary": "MCP桥本机安全结果/生命周期与完整校验已验；Pi0.87.1官方类型路径已验；固定dsh官方plugin/registry、Loader配置加载与真实配置HMR已验。完整CLI/profile、模块代码HMR、模型与其余真实宿主仍未验。",
+  "after_summary": "各宿主已验证范围见 adapters；dsh/Pi 与 Claude 有各自有限真实运行时证据，Codex native 受保护环境入口约束；完整 CLI/profile 与模型评估未完成。",
+  "only_summary_changed": true,
+  "adapter_data_equal": true,
+  "diff": "--- compatibility.json before\n+++ compatibility.json after\n@@ -2,5 +2,5 @@\n   \"schema_version\": 1,\n   \"reviewed_at\": \"2026-10-09\",\n-  \"summary\": \"MCP桥本机安全结果/生命周期与完整校验已验；Pi0.87.1官方类型路径已验；固定dsh官方plugin/registry、Loader配置加载与真实配置HMR已验。完整CLI/profile、模块代码HMR、模型与其余真实宿主仍未验。\",\n+  \"summary\": \"各宿主已验证范围见 adapters；dsh/Pi 与 Claude 有各自有限真实运行时证据，Codex native 受保护环境入口约束；完整 CLI/profile 与模型评估未完成。\",\n   \"adapters\": [\n     {\n"
+}

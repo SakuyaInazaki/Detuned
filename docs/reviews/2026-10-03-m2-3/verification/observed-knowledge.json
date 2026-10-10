@@ -1,0 +1,49 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "KV01",
+      "pass": true
+    },
+    {
+      "id": "KV02",
+      "pass": true,
+      "three_relation_types": true,
+      "fixed_target_revision": 1
+    },
+    {
+      "id": "KV03",
+      "pass": true,
+      "fixture_origin": "direct storage historical shape; not old HTTP"
+    },
+    {
+      "id": "KV04",
+      "pass": true
+    },
+    {
+      "id": "KV05",
+      "pass": true
+    },
+    {
+      "id": "KV06",
+      "pass": true
+    },
+    {
+      "id": "KV07",
+      "pass": true,
+      "fixture_origin": "explicit storage nonpublic event"
+    },
+    {
+      "id": "KV08",
+      "pass": true,
+      "measurement": "assembled data includes added source status fields",
+      "hard_length_limit_claimed": false
+    }
+  ],
+  "limits": [
+    "KV09 requires full regression/integrity separately",
+    "storage fixtures are not captured historical HTTP",
+    "loopback app.inject; no external service/model",
+    "no hard context budget claim"
+  ]
+}

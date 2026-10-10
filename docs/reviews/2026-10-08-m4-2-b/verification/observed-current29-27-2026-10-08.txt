@@ -1,0 +1,401 @@
+{
+  "probes": [
+    {
+      "id": "AC01",
+      "name": "C01 query/body/reference validation rejects without side effects",
+      "passes": true,
+      "cases": [
+        {
+          "name": "unknown_query",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "duplicate_cursor",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "duplicate_tags",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "invalid_state",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "explicit_empty_revision",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "missing_actor_reference",
+          "status": 404,
+          "code": "NOT_FOUND",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "malformed_json",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "passes": true
+        },
+        {
+          "name": "revoke_unknown_body",
+          "status": 400,
+          "credential_revoked": false,
+          "passes": true
+        },
+        {
+          "name": "client_poll_omitted_optional_query",
+          "resolved": true,
+          "explicit_empty_object_resolved": true,
+          "passes": true
+        }
+      ],
+      "positive_status": 200
+    },
+    {
+      "id": "AC02",
+      "name": "C02 validates known successful envelope fields",
+      "passes": true,
+      "cases": [
+        {
+          "name": "wrong_api_version",
+          "resolved": false,
+          "error": {
+            "name": "ClientProtocolError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "不支持的 API 版本: 999"
+          },
+          "passes": true
+        },
+        {
+          "name": "null_request_id",
+          "resolved": false,
+          "error": {
+            "name": "ClientProtocolError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "响应体缺少有效的 request_id。"
+          },
+          "passes": true
+        },
+        {
+          "name": "object_request_id",
+          "resolved": false,
+          "error": {
+            "name": "ClientProtocolError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "响应体缺少有效的 request_id。"
+          },
+          "passes": true
+        },
+        {
+          "name": "error_and_data",
+          "resolved": false,
+          "error": {
+            "name": "ClientProtocolError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "成功响应中不能包含 error 字段。"
+          },
+          "passes": true
+        }
+      ],
+      "positive": {
+        "resolved": true,
+        "value": {
+          "data": false
+        }
+      }
+    },
+    {
+      "id": "AC03",
+      "name": "C02 preserves server errors independently of message wording",
+      "passes": true,
+      "cases": [
+        {
+          "message": "revision conflict",
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "REVISION_CONFLICT",
+            "status": 409,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "revision conflict"
+          },
+          "passes": true
+        },
+        {
+          "message": "transaction aborted because revision changed",
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "REVISION_CONFLICT",
+            "status": 409,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "transaction aborted because revision changed"
+          },
+          "passes": true
+        }
+      ]
+    },
+    {
+      "id": "AC04",
+      "name": "C02 network/status retry policy and Retry-After",
+      "passes": true,
+      "cases": [
+        {
+          "mode": "fetch_cause_econnrefused",
+          "calls": 2,
+          "keys": [
+            "r20-stable-key",
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [
+            1000
+          ],
+          "resolved": true,
+          "value": {
+            "data": {
+              "ok": true
+            }
+          },
+          "passes": true
+        },
+        {
+          "mode": "retry_after_503",
+          "calls": 2,
+          "keys": [
+            "r20-stable-key",
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [
+            60000
+          ],
+          "resolved": true,
+          "value": {
+            "data": {
+              "ok": true
+            }
+          },
+          "passes": true
+        },
+        {
+          "mode": "retryable_400",
+          "calls": 1,
+          "keys": [
+            "r20-stable-key"
+          ],
+          "scheduled_delays_ms": [],
+          "resolved": false,
+          "error": {
+            "name": "DetunedError",
+            "code": "VALIDATION_ERROR",
+            "status": 400,
+            "isUserAbort": false,
+            "isTimeout": false,
+            "isDetunedError": true,
+            "message": "bad input"
+          },
+          "passes": true
+        }
+      ]
+    },
+    {
+      "id": "AC05",
+      "name": "C02 cancellation phases, final listener cleanup, and timeout positive controls",
+      "passes": true,
+      "cases": [
+        {
+          "phase": "before_request",
+          "calls": 0,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "headers",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "body",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "backoff",
+          "calls": 1,
+          "backoffReached": true,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "UserAbortError",
+            "code": null,
+            "status": null,
+            "isUserAbort": true,
+            "isTimeout": false,
+            "isDetunedError": false,
+            "message": "Operation aborted by user"
+          },
+          "passes": true
+        },
+        {
+          "phase": "timeout",
+          "calls": 1,
+          "backoffReached": false,
+          "final_abort_listeners": 0,
+          "resolved": false,
+          "error": {
+            "name": "TimeoutError",
+            "code": null,
+            "status": null,
+            "isUserAbort": false,
+            "isTimeout": true,
+            "isDetunedError": false,
+            "message": "Request timed out after 5ms"
+          },
+          "passes": true
+        }
+      ]
+    },
+    {
+      "id": "AC06",
+      "name": "C03 registered Pi command/tool controlled positive and failure paths",
+      "passes": true,
+      "cases": [
+        {
+          "hasUI": true,
+          "name": "forum-check",
+          "outputs": [],
+          "notifications": [
+            [
+              "Detuned API 正常。版本: test, API: v1",
+              "info"
+            ]
+          ],
+          "passes": true
+        },
+        {
+          "hasUI": true,
+          "name": "forum-status",
+          "outputs": [],
+          "notifications": [
+            [
+              "Detuned 已连接。当前身份: Local (local-actor), 可见空间: 0",
+              "info"
+            ]
+          ],
+          "passes": true
+        },
+        {
+          "hasUI": false,
+          "name": "forum-check",
+          "outputs": [
+            {
+              "channel": "log",
+              "text": "[forum-check] Detuned API 正常。版本: test, API: v1"
+            }
+          ],
+          "notifications": [],
+          "passes": true
+        },
+        {
+          "hasUI": false,
+          "name": "forum-status",
+          "outputs": [
+            {
+              "channel": "log",
+              "text": "[forum-status] Detuned 已连接。当前身份: Local (local-actor), 可见空间: 0"
+            }
+          ],
+          "notifications": [],
+          "passes": true
+        }
+      ],
+      "malformed_json_tool": {
+        "resolved": false,
+        "error": {
+          "name": "ClientProtocolError",
+          "code": null,
+          "status": null,
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": false,
+          "message": "响应体 JSON 解析失败: Unexpected end of JSON input"
+        }
+      },
+      "scope": "registered extension callbacks only; not real host certification"
+    }
+  ],
+  "passed": 6,
+  "failed": 0
+}

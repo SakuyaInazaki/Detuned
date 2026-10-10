@@ -1,0 +1,45 @@
+{
+  "kind": "real_owned_SIGSTOP_TERM_fallback_not_load_smoke",
+  "command": [
+    "/opt/homebrew/Cellar/node/26.3.0/bin/node",
+    "scripts/scale/run-verified.mjs",
+    "--manifest",
+    "/private/tmp/detuned-c2-seed-smoke-20261006-v3-a1/manifest.json",
+    "--runtime",
+    "/private/tmp/detuned-c2-load-fault-private-v3-a2/runtime.json",
+    "--out",
+    "/private/tmp/detuned-c2-load-fault-v3-a2",
+    "--mode",
+    "smoke"
+  ],
+  "wrapper_pid": 41926,
+  "started_utc": "2026-10-06T13:22:31.857Z",
+  "runner_pid": 41927,
+  "server_pid": 41928,
+  "verified_group_parent": [
+    41927,
+    41926,
+    41927
+  ],
+  "phase_before_fault": "preflight",
+  "sigstop_utc": "2026-10-06T13:22:32.362Z",
+  "wrapper_cancel_utc": "2026-10-06T13:22:32.362Z",
+  "wrapper_exit": {
+    "code": 1,
+    "signal": null
+  },
+  "cancel_to_exit_ms": 5036.2496249999995,
+  "success": true,
+  "killed_after5s": [
+    {
+      "schema_version": 1,
+      "t_ms": 5454.141958,
+      "utc": "2026-10-06T13:22:37.364Z",
+      "action": "sigkill_owned_process_group_after_5s",
+      "pid": 41927
+    }
+  ],
+  "all_owned_processes_absent": true,
+  "loopback_listener": "ECONNREFUSED",
+  "measure_window_started": false
+}

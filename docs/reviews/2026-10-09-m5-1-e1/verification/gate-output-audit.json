@@ -1,0 +1,219 @@
+{
+  "executions": [
+    {
+      "stage": "keyboard-browser-third",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "E101"
+      ],
+      "exit_code": 0,
+      "seconds": 2.656,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-keyboard-browser-third",
+      "logs": [
+        {
+          "path": "gates/keyboard-browser-third.stdout.log",
+          "bytes": 313,
+          "sha256": "18a11ffd6cae1ff9d90537ce090d187aad5078a843e5fb8ce3992d7a6c0d62d0",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/keyboard-browser-third.stderr.log",
+          "bytes": 249,
+          "sha256": "cc5dd9bd29322221486282c3cbce79a6bdc5783be2a7dd3ad2d31d877bd5c106",
+          "full_output_reviewed": true
+        }
+      ]
+    },
+    {
+      "stage": "overview-browser-second",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "E101"
+      ],
+      "exit_code": 1,
+      "seconds": 7.35,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-overview-browser-second",
+      "logs": [
+        {
+          "path": "gates/overview-browser-second.stdout.log",
+          "bytes": 2186,
+          "sha256": "07779b867cb8f13510320ff93c50ea7cc7c3be19e7916f64f65644612283faa0",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/overview-browser-second.stderr.log",
+          "bytes": 249,
+          "sha256": "eecf282fa60738af6eb9e207294700e9544216c83243320f8f3be0271d939429",
+          "full_output_reviewed": true
+        }
+      ]
+    },
+    {
+      "stage": "selected-browser-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "E10[1-4]|human reads a fixed revision|BI03|BI04|C02|D202|D204"
+      ],
+      "exit_code": 1,
+      "seconds": 36.66,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-selected-browser-first",
+      "logs": [
+        {
+          "path": "gates/selected-browser-first.stdout.log",
+          "bytes": 3812,
+          "sha256": "287a3a8f733e22823482a667ec6b9ff0029346f99357212c64b9c3a465d3883a",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/selected-browser-first.stderr.log",
+          "bytes": 472,
+          "sha256": "257e13f1b107760bb5bce71aee2d6d4ddd715e7a742b95a4637c2978cd4d29a4",
+          "full_output_reviewed": true
+        }
+      ]
+    },
+    {
+      "stage": "web-build",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 2.235,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-web-build",
+      "logs": [
+        {
+          "path": "gates/web-build.stdout.log",
+          "bytes": 443,
+          "sha256": "097ae4a18c5449920eae760c214c71606e27bbe06511a35fe33568d8328580c4",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/web-build.stderr.log",
+          "bytes": 361,
+          "sha256": "b99f98f4dd4ae400b94f31b4231998daecf44315b70fafe33ec028ad48067f4f",
+          "full_output_reviewed": true
+        }
+      ]
+    },
+    {
+      "stage": "web-lint",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 0.978,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-web-lint",
+      "logs": [
+        {
+          "path": "gates/web-lint.stdout.log",
+          "bytes": 92,
+          "sha256": "7f3953bfc451156f2c21d7695e09ff11cf29fda989cdf242a47924d9b71e1efc",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/web-lint.stderr.log",
+          "bytes": 15,
+          "sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+          "full_output_reviewed": true
+        }
+      ]
+    },
+    {
+      "stage": "web-typecheck",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 1.13,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e1/verification/browser-web-typecheck",
+      "logs": [
+        {
+          "path": "gates/web-typecheck.stdout.log",
+          "bytes": 92,
+          "sha256": "7f3953bfc451156f2c21d7695e09ff11cf29fda989cdf242a47924d9b71e1efc",
+          "full_output_reviewed": true
+        },
+        {
+          "path": "gates/web-typecheck.stderr.log",
+          "bytes": 15,
+          "sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+          "full_output_reviewed": true
+        }
+      ]
+    }
+  ],
+  "browser_unique_cases": 10,
+  "browser_composition": {
+    "selected_first": {
+      "passed": 9,
+      "failed": 1
+    },
+    "E101_second": {
+      "passed": 0,
+      "failed": 1
+    },
+    "E101_third": {
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "product_fixes": 0,
+  "browser_source_noemit": {
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "docs/reviews/2026-10-09-m5-1-e1/verification/browser-source-tsconfig.json"
+    ],
+    "final_observed_exit_code": 0,
+    "scope": "Seven browser source files, with source aliases and their dependencies; repeated only following two E101 fixture edits.",
+    "logs": [
+      {
+        "path": "browser-source-noemit-final.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "browser-source-noemit-first.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "browser-source-noemit-readiness.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "reused_not_executed": {
+    "core": {
+      "tests": 684,
+      "files": 101,
+      "from": "../2026-10-09-m5-1-d1/verification/independent-report.md"
+    },
+    "current29": {
+      "count": 29,
+      "from": "../2026-10-09-m5-1-d1/verification/independent-report.md"
+    }
+  },
+  "known_warnings": [
+    "The list of pnpmfiles changed; configured warn avoids implicit install.",
+    "Vite final JS 543.84 kB, over 500 kB advisory.",
+    "NO_COLOR ignored when FORCE_COLOR is set during Playwright."
+  ]
+}

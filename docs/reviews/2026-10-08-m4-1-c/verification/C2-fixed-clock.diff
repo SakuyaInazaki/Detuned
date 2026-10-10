@@ -1,0 +1,17 @@
+--- tests/integration/m2-context-session-chain.test.ts
++++ tests/integration/m2-context-session-chain.test.ts
+@@ -3,10 +3,13 @@
+ import {createHash,randomBytes} from 'node:crypto';
+ import {spawn} from 'node:child_process';
+ import {buildApp} from '@detuned/server';
++import type {ClockPort} from '@detuned/core';
+ import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
+ 
+ it('C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision',async()=>{
+- const db=new Database(':memory:'),admin=bootstrapDatabase(db).adminToken!,storage=new SqliteStorage(db),app=buildApp({storage});let serial=0;
++ // This whole-response replay equality has an explicit same-Clock premise; E05 separately advances TTL.
++ const instant='2026-10-08T00:00:00.000Z';const clock={now:()=>new Date(instant),nowIso:()=>instant} satisfies ClockPort;
++ const db=new Database(':memory:'),admin=bootstrapDatabase(db).adminToken!,storage=new SqliteStorage(db),app=buildApp({storage,clock});let serial=0;
+  const call=async(method:'GET'|'POST'|'PATCH',url:string,payload?:Record<string,unknown>,token=admin)=>{const r=await app.inject({method,url,headers:{authorization:`Bearer ${token}`,'idempotency-key':`chain-${++serial}`},...(payload?{payload}:{})});expect(r.statusCode,r.body).toBeLessThan(300);return r.json().data;};
+  try{
+  const rules=Array.from({length:20},()=> '规则🙂"\\'.repeat(50));const sid=(await call('POST','/api/v1/spaces',{slug:'chain',objective:'HTTP唯一入口',rules})).space.id;

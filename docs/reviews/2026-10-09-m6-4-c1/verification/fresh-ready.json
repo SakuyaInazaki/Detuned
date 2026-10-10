@@ -1,0 +1,41 @@
+{
+  "state": "fresh_ready_pending_root_dispatch_no_product_or_gate_execution",
+  "created_at": "2026-10-09T11:07:49.242425+00:00",
+  "baseline_path": "docs/reviews/2026-10-09-m6-4-c1/verification/baseline.json",
+  "baseline_sha256": "259368bb925564d78a2fb34b4414b2d5c171913c30991ed463bdc35502bc10c5",
+  "before_manifest_path": "docs/reviews/2026-10-09-m6-4-c1/verification/before-manifest.json",
+  "before_manifest_sha256": "bbb3027bde1052ea3f0b036c63d1999817f33fb00f1bc88f2f0169b1f42d4f58",
+  "task_boundary_path": "docs/reviews/2026-10-09-m6-4-c1/verification/task-boundary.md",
+  "task_boundary_sha256": "ff2566b743da73139be6956385758a4a2ebf30d212b84fd1163a7a5dfac958f9",
+  "counts": {
+    "product_source_config_test_hashes": 374,
+    "current_document_hashes": 63,
+    "mutable_status_document_hashes": 5,
+    "protected_review_probe_log_evidence_hashes": 10296,
+    "sql_archive_before_hashes": 7,
+    "schema_profile_before_hashes": 2,
+    "tracked_build_artifact_hashes": 212,
+    "untracked_build_artifact_hashes": 307
+  },
+  "before_existing_count": 16,
+  "before_missing_count": 8,
+  "all_before_existing_match_fresh": true,
+  "all_new_candidates_missing": true,
+  "new_sealed_package": {
+    "path": "docs/reviews/2026-10-09-m6-4-b",
+    "files_including_manifest": 293,
+    "manifest_sha256": "df913f7c27f957ea92c1a5876f3be5b96824e1fe3cdf1c494426a6bf98451c0f",
+    "finalization_sha256": "63847182fb97657a756e5fb696a3cac8a74d42df939468629c94d33180b54bf5",
+    "all_entries_match": true
+  },
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "lock_sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+  "path_fact": {
+    "requested_readonly_protected": "packages/web/src/knowledge.ts",
+    "requested_path_exists": false,
+    "actual_existing_readonly": "packages/web/src/knowledge.tsx",
+    "actual_sha256": "f6355176851c43d2899344d1126ccd7d54dc4a3e3b3cb1ee1318bc77a25a2eb2",
+    "disposition": "Record suffix fact, do not create nonexistent .ts or grant product ownership; actual .tsx remains protected"
+  },
+  "environment_actions": 0
+}

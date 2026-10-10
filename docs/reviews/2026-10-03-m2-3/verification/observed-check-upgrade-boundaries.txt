@@ -1,0 +1,212 @@
+{
+  "reviewed_date": "2026-09-28",
+  "runtime": "v26.3.0",
+  "fixture_note": "H01 uses exact old reference shapes with current file DB fixtures; H02 is ordinary HTTP with a controlled clock. H03-H09 include deliberate integrity/corruption fixtures. H10 injects native SQLite failures. No old binary, external service, real model, or real user database was used.",
+  "probes": [
+    {
+      "id": "H01",
+      "description": "Upgrading known old relation.create references never substitutes the current state",
+      "expected": "recover exactly the original result, or explicitly refuse when evidence is insufficient",
+      "observed": [
+        {
+          "format": "previous_v1",
+          "upgrade_rejected": false,
+          "status": 422,
+          "version": null,
+          "state": null,
+          "safe": true
+        },
+        {
+          "format": "legacy_dollar_ref",
+          "upgrade_rejected": false,
+          "status": 422,
+          "version": null,
+          "state": null,
+          "safe": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "H02",
+      "description": "Fresh thread times and nested relation versions remain tied to the original operation",
+      "expected": {
+        "thread_updated_at": "2026-09-28T01:00:00.000Z",
+        "nested_relation_version": 1,
+        "nested_relation_state": "open"
+      },
+      "observed": {
+        "thread_status": 201,
+        "thread_version": 1,
+        "thread_updated_at": "2026-09-28T01:00:00.000Z",
+        "post_status": 201,
+        "nested_relation_version": 1,
+        "nested_relation_state": "open"
+      },
+      "passes": true
+    },
+    {
+      "id": "H03",
+      "description": "A current instance with lost metadata is refused without generating a replacement secret",
+      "expected": {
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "secret_replaced": false
+      },
+      "observed": {
+        "classification": "corrupt",
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "secret_replaced": false
+      },
+      "passes": true
+    },
+    {
+      "id": "H04",
+      "description": "Missing required schema or contradictory migration markers fail before mutation",
+      "expected": "both fixtures rejected with unchanged logical state",
+      "observed": [
+        {
+          "name": "missing_post_revisions",
+          "classification": "corrupt",
+          "rejected": true,
+          "logical_state_unchanged": true
+        },
+        {
+          "name": "version_gap_2_without_1",
+          "classification": "corrupt",
+          "rejected": true,
+          "logical_state_unchanged": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "H05",
+      "description": "Unsupported references and incompatible legacy results abort the complete upgrade",
+      "expected": "both rejected without committing transformed data",
+      "observed": [
+        {
+          "name": "future_ref_disguised_as_legacy",
+          "rejected": true,
+          "logical_state_unchanged": true,
+          "schema_version": 1,
+          "result_version": 99,
+          "result_kind": null,
+          "output_passes_current_validator": false
+        },
+        {
+          "name": "post_result_in_thread_operation",
+          "rejected": true,
+          "logical_state_unchanged": true,
+          "schema_version": 1,
+          "result_version": null,
+          "result_kind": null,
+          "output_passes_current_validator": false
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "H06",
+      "description": "Reference validation rejects unregistered operations, invalid optional fields and extra cached content",
+      "expected": "all invalid references rejected",
+      "observed": [
+        {
+          "name": "unknown_operation",
+          "rejected": true
+        },
+        {
+          "name": "similar_but_unregistered_operation",
+          "rejected": true
+        },
+        {
+          "name": "negative_initial_revision",
+          "rejected": true
+        },
+        {
+          "name": "non_array_relation_ids",
+          "rejected": true
+        },
+        {
+          "name": "nested_cached_body",
+          "rejected": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "H07",
+      "description": "Replay checks the operation target and does not silently drop missing associated records",
+      "expected": "structured non-success for both corrupted references",
+      "observed": {
+        "wrong_target_status": 422,
+        "returned_wrong_thread": false,
+        "missing_relation_status": 422,
+        "returned_relations": null
+      },
+      "passes": true
+    },
+    {
+      "id": "H08",
+      "description": "Conflicting history for the same immutable key rejects migration instead of discarding the old evidence",
+      "expected": {
+        "rejected": true,
+        "logical_state_unchanged": true
+      },
+      "observed": {
+        "rejected": true,
+        "logical_state_unchanged": true,
+        "replay_status": null,
+        "replay_title": null
+      },
+      "passes": true
+    },
+    {
+      "id": "H09",
+      "description": "Migration diagnostics identify the record without copying old body content to CLI output",
+      "expected": "nonzero exit, no body marker in stdout/stderr, no remaining lock",
+      "observed": [
+        {
+          "format": "json",
+          "exit": 1,
+          "timed_out": false,
+          "raw_body_in_stdout": false,
+          "raw_body_in_stderr": false,
+          "lock_left": false
+        },
+        {
+          "format": "text",
+          "exit": 1,
+          "timed_out": false,
+          "raw_body_in_stdout": false,
+          "raw_body_in_stderr": false,
+          "lock_left": false
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "H10",
+      "description": "Version-marker and metadata SQL failures both roll back the whole upgrade after reopen",
+      "expected": "both triggers hit, upgrade rejected, full logical snapshot unchanged",
+      "observed": [
+        {
+          "stage": "version",
+          "fault_hits": 1,
+          "rejected": true,
+          "logical_state_unchanged": true
+        },
+        {
+          "stage": "metadata",
+          "fault_hits": 1,
+          "rejected": true,
+          "logical_state_unchanged": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "passed": 10,
+  "failed": 0
+}

@@ -1,0 +1,421 @@
+{
+  "format_version": 1,
+  "recipe_id": "detuned-c2-v2",
+  "profile": "smoke",
+  "recipe_sha256": "44b85c26915092429414ce27440d681feacf03eadc24db7cb234136617fdb432",
+  "seed": "detuned-c2-v2",
+  "schema_version": 2,
+  "database_file": "baseline.db",
+  "oracle_file": "oracle.json",
+  "discovery_file": "discovery.json",
+  "source": {
+    "generator_sha256": "8eb9461a367db207465c5a456627fe8f461bdc5fc4222fe383c0554058e61aff",
+    "current_dist_sha256": {
+      "packages/protocol/dist/posts.js": "304c74fec753a4dceecba022e4c6843f9b3c80edfc6e256d635f350bcee64d47",
+      "packages/protocol/dist/index.js": "534ffcbfa3920d11f5a140d2a0270b689ad7a8ec65301301e9228dca12e7330d",
+      "packages/core/dist/services/post-service.js": "00221cd8fe9d9eebd9052a092aef21cad118809d7933708d98a04f432cadc55a",
+      "packages/storage-sqlite/dist/bootstrap.js": "47d2428ade48d6806b7f304d2e05dd19005c39c6caa027b83df78943b2ba61b0",
+      "packages/storage-sqlite/dist/schema.js": "a5a76ffeca629a881ac6f69edc75a663806d7e052c10763b92c1e8f1ce0720e5",
+      "packages/storage-sqlite/dist/sqlite-storage.js": "3c411bff55e9b3abe0a0b6597bd68d0a942eed2edcabfd86c041bbb8eb7a3f6d"
+    },
+    "versions": {
+      "node": "v26.3.0",
+      "sqlite": "3.53.4",
+      "better_sqlite3": "13.0.3"
+    }
+  },
+  "counts": {
+    "posts": 1000,
+    "post_revisions": 9914,
+    "events": 10000,
+    "threads": 40,
+    "relations": 40,
+    "actors": 21,
+    "sessions": 20
+  },
+  "logical_sha256": {
+    "actors": "bb150f598bc20237143cb442dacf8378318146631f1292977fbefe4403ff97b1",
+    "memberships": "689b979cc65b31e5b5510012ada287ad7da020d30d529e713b1d5bca999cf734",
+    "sessions": "6aa9cc7b8e2ce4d14b99e7431736a5e54bd9e8f6a4101ea5983b5bd337e6746d",
+    "spaces": "e6b6dd438f60c424c9e8a44c180c76de47e7a86c711f929ed7038683aafc52b3",
+    "space_revisions": "96645381cc586b45c686122cd80464bf7e8ac921ee1b440f40c64044303c36a7",
+    "threads": "e0131e5cc7c8945f8eacbd3f5119f460a62ae2b55c61d8bf1cfd3c49dad824f4",
+    "thread_versions": "92fc533c911d5fafb877fae065eb9639bf8f11c4165639fb4358fd359e443fc5",
+    "posts": "887f517da1894f17b9740e33880e3a0ff17d1735a137d8955f86ab36ec583c3a",
+    "post_revisions": "e2115937cf7a793ec1fd7da7fdf7641b92a37287c9a991b9772ceea79edf929b",
+    "relations": "b11c7725966f638eacc33adcefde4ed76078055a75814ce00078806fe805330b",
+    "events": "f7b4219e4208070e8d6ffe016281be65fdd2d2c0e0b5767941699de6e8dd3a73",
+    "post_fts": "92acab0bbb2412337c0e760027f32907282ac939db4e3442f2a77842fd070138"
+  },
+  "space_id": "spc_c2_main",
+  "admin_actor_id": "act_c2_admin",
+  "baseline_event_seq": 10000,
+  "clients": [
+    {
+      "index": 0,
+      "actor_id": "act_c2_00",
+      "session_id": "ses_c2_00",
+      "consumer_key": "c2-client-0",
+      "write_thread_id": "thd_c2_0000",
+      "revision_post_id": "pst_c2_000000",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 1,
+      "actor_id": "act_c2_01",
+      "session_id": "ses_c2_01",
+      "consumer_key": "c2-client-1",
+      "write_thread_id": "thd_c2_0001",
+      "revision_post_id": "pst_c2_000030",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 2,
+      "actor_id": "act_c2_02",
+      "session_id": "ses_c2_02",
+      "consumer_key": "c2-client-2",
+      "write_thread_id": "thd_c2_0002",
+      "revision_post_id": "pst_c2_000050",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 3,
+      "actor_id": "act_c2_03",
+      "session_id": "ses_c2_03",
+      "consumer_key": "c2-client-3",
+      "write_thread_id": "thd_c2_0003",
+      "revision_post_id": "pst_c2_000080",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 4,
+      "actor_id": "act_c2_04",
+      "session_id": "ses_c2_04",
+      "consumer_key": "c2-client-4",
+      "write_thread_id": "thd_c2_0004",
+      "revision_post_id": "pst_c2_000100",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 5,
+      "actor_id": "act_c2_05",
+      "session_id": "ses_c2_05",
+      "consumer_key": "c2-client-5",
+      "write_thread_id": "thd_c2_0005",
+      "revision_post_id": "pst_c2_000130",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 6,
+      "actor_id": "act_c2_06",
+      "session_id": "ses_c2_06",
+      "consumer_key": "c2-client-6",
+      "write_thread_id": "thd_c2_0006",
+      "revision_post_id": "pst_c2_000150",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 7,
+      "actor_id": "act_c2_07",
+      "session_id": "ses_c2_07",
+      "consumer_key": "c2-client-7",
+      "write_thread_id": "thd_c2_0007",
+      "revision_post_id": "pst_c2_000180",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 8,
+      "actor_id": "act_c2_08",
+      "session_id": "ses_c2_08",
+      "consumer_key": "c2-client-8",
+      "write_thread_id": "thd_c2_0008",
+      "revision_post_id": "pst_c2_000200",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 9,
+      "actor_id": "act_c2_09",
+      "session_id": "ses_c2_09",
+      "consumer_key": "c2-client-9",
+      "write_thread_id": "thd_c2_0009",
+      "revision_post_id": "pst_c2_000230",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 10,
+      "actor_id": "act_c2_10",
+      "session_id": "ses_c2_10",
+      "consumer_key": "c2-client-10",
+      "write_thread_id": "thd_c2_0010",
+      "revision_post_id": "pst_c2_000250",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 11,
+      "actor_id": "act_c2_11",
+      "session_id": "ses_c2_11",
+      "consumer_key": "c2-client-11",
+      "write_thread_id": "thd_c2_0011",
+      "revision_post_id": "pst_c2_000280",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 12,
+      "actor_id": "act_c2_12",
+      "session_id": "ses_c2_12",
+      "consumer_key": "c2-client-12",
+      "write_thread_id": "thd_c2_0012",
+      "revision_post_id": "pst_c2_000300",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 13,
+      "actor_id": "act_c2_13",
+      "session_id": "ses_c2_13",
+      "consumer_key": "c2-client-13",
+      "write_thread_id": "thd_c2_0013",
+      "revision_post_id": "pst_c2_000330",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 14,
+      "actor_id": "act_c2_14",
+      "session_id": "ses_c2_14",
+      "consumer_key": "c2-client-14",
+      "write_thread_id": "thd_c2_0014",
+      "revision_post_id": "pst_c2_000350",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 15,
+      "actor_id": "act_c2_15",
+      "session_id": "ses_c2_15",
+      "consumer_key": "c2-client-15",
+      "write_thread_id": "thd_c2_0015",
+      "revision_post_id": "pst_c2_000380",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 16,
+      "actor_id": "act_c2_16",
+      "session_id": "ses_c2_16",
+      "consumer_key": "c2-client-16",
+      "write_thread_id": "thd_c2_0016",
+      "revision_post_id": "pst_c2_000400",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 17,
+      "actor_id": "act_c2_17",
+      "session_id": "ses_c2_17",
+      "consumer_key": "c2-client-17",
+      "write_thread_id": "thd_c2_0017",
+      "revision_post_id": "pst_c2_000430",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 18,
+      "actor_id": "act_c2_18",
+      "session_id": "ses_c2_18",
+      "consumer_key": "c2-client-18",
+      "write_thread_id": "thd_c2_0018",
+      "revision_post_id": "pst_c2_000450",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    },
+    {
+      "index": 19,
+      "actor_id": "act_c2_19",
+      "session_id": "ses_c2_19",
+      "consumer_key": "c2-client-19",
+      "write_thread_id": "thd_c2_0019",
+      "revision_post_id": "pst_c2_000480",
+      "revision_post_kind": "note",
+      "current_revision": 10
+    }
+  ],
+  "threads": {
+    "open": [
+      "thd_c2_0000",
+      "thd_c2_0001",
+      "thd_c2_0002",
+      "thd_c2_0003",
+      "thd_c2_0004",
+      "thd_c2_0005",
+      "thd_c2_0006",
+      "thd_c2_0007",
+      "thd_c2_0008",
+      "thd_c2_0009",
+      "thd_c2_0010",
+      "thd_c2_0011",
+      "thd_c2_0012",
+      "thd_c2_0013",
+      "thd_c2_0014",
+      "thd_c2_0015",
+      "thd_c2_0016",
+      "thd_c2_0017",
+      "thd_c2_0018",
+      "thd_c2_0019",
+      "thd_c2_0020",
+      "thd_c2_0021",
+      "thd_c2_0022",
+      "thd_c2_0023",
+      "thd_c2_0024",
+      "thd_c2_0025",
+      "thd_c2_0026",
+      "thd_c2_0027",
+      "thd_c2_0028",
+      "thd_c2_0029",
+      "thd_c2_0030",
+      "thd_c2_0031",
+      "thd_c2_0032",
+      "thd_c2_0033",
+      "thd_c2_0034",
+      "thd_c2_0035"
+    ],
+    "archived": [
+      "thd_c2_0036",
+      "thd_c2_0037",
+      "thd_c2_0038",
+      "thd_c2_0039"
+    ]
+  },
+  "post_refs": [
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000000",
+      "revision": 10,
+      "document_sha256": "4d24fd8122039d1920211babe0c734675a5d04c8c3b6e1ed658d905dd0522cce",
+      "document_bytes": 524
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000005",
+      "revision": 10,
+      "document_sha256": "9817df2e496d7e7b442887ab8db2d78b8f62045577d7970c0dae06a4b1a9f329",
+      "document_bytes": 690
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000007",
+      "revision": 10,
+      "document_sha256": "2a9cf333e66f3adabedba3e20107dc0270940d017464c0b5082e5cc8991e92d7",
+      "document_bytes": 1144
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000008",
+      "revision": 10,
+      "document_sha256": "4951c160620e3e4bde635fba2da4e69aa6ad6f7029bd4359d888e3ebe244b215",
+      "document_bytes": 673
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000099",
+      "revision": 10,
+      "document_sha256": "5b3693d819d7d2cc3580feb4b2a60daba2e5a1847ae5946aea1175b2f7c7ba7e",
+      "document_bytes": 17662
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000999",
+      "revision": 9,
+      "document_sha256": "dab311cbc7018cb4cd1abea568e2e3e2ecdbee9b918e06755a30dba4a40ff0a6",
+      "document_bytes": 17644
+    }
+  ],
+  "space_ref": {
+    "space_id": "spc_c2_main",
+    "revision": 2,
+    "document_sha256": "6a1ef16b65594ba9942a6aedde8ce1f7fcbef4727ed2f7407445f90339021bdf",
+    "document_bytes": 24880
+  },
+  "queries": {
+    "zh1": {
+      "hit": [
+        "图"
+      ],
+      "miss": [
+        "罕"
+      ]
+    },
+    "zh2": {
+      "hit": [
+        "失败"
+      ],
+      "miss": [
+        "罕词"
+      ]
+    },
+    "zh3": {
+      "hit": [
+        "反例图"
+      ],
+      "miss": [
+        "罕词组"
+      ]
+    },
+    "en": {
+      "hit": [
+        "counterexample"
+      ],
+      "miss": [
+        "nevermatchC2xyz"
+      ]
+    }
+  },
+  "templates": {
+    "failure": {
+      "attempt": "固定批次最短路实验",
+      "category": "counterexample",
+      "assumptions": [
+        "非负权"
+      ],
+      "tested_scope": "当前配方三点图",
+      "expected": "2",
+      "observed": "10",
+      "evidence_refs": [
+        {
+          "kind": "post",
+          "post_id": "pst_c2_000007",
+          "revision": 10
+        }
+      ],
+      "evidence_state": "provided",
+      "ruled_out": "首次发现固定距离",
+      "not_ruled_out": [
+        "松弛算法"
+      ],
+      "retry_when": [
+        "加入松弛后复测"
+      ]
+    }
+  },
+  "credential_free": true,
+  "consumer_initialization": "runtime_context_checkpoint",
+  "body_distribution": {
+    "short": 900,
+    "medium": 90,
+    "long": 10
+  },
+  "database_sha256": "184cf358bab6e31c3e41de07baccb8d59748167bb3adcc8526bf010f39802139",
+  "database_bytes": 9469952
+}

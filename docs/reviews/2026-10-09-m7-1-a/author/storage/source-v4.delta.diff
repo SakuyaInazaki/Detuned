@@ -1,0 +1,78 @@
+--- a/tests/integration/m0-m1-r4-b-regression.test.ts
++++ b/tests/integration/m0-m1-r4-b-regression.test.ts
+@@ -103,6 +103,11 @@
+     };
+   }
+ 
++  // Synthetic legacy fixtures must remove schema6 dependents before the existing v1 downgrade.
++  function dropCheckTablesForLegacyFixture(database: Database.Database) {
++    database.exec('DROP TABLE check_run_credentials; DROP TABLE check_receipts; DROP TABLE check_run_versions; DROP TABLE check_runs;');
++  }
++
+   // B01: All implemented operation families have typed, versioned result schemas without fallback
+   it('B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback', async () => {
+     const dbPath = join(tempDir, 'b01_ops.sqlite');
+@@ -650,6 +655,7 @@
+ 
+     let faultDb = new Database(faultDbPath);
+     try {
++      dropCheckTablesForLegacyFixture(faultDb);
+       faultDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       const beforeSnapshot = fullLogicalSnapshot(faultDb);
+ 
+@@ -771,6 +777,7 @@
+     writeFileSync(legacyDbPath, db.serialize());
+     const legacyDb = new Database(legacyDbPath);
+     try {
++      dropCheckTablesForLegacyFixture(legacyDb);
+       legacyDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       const upgraded = bootstrapDatabase(legacyDb);
+@@ -833,6 +840,7 @@
+     writeFileSync(legacyServeDbPath, db.serialize());
+     const legacyServeDb = new Database(legacyServeDbPath);
+     try {
++      dropCheckTablesForLegacyFixture(legacyServeDb);
+       legacyServeDb.exec('DROP TABLE IF EXISTS review_decisions; DROP TABLE IF EXISTS review_submissions; DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       expect(() => openAndCoordinateDatabase(legacyServeDb, 'serve')).toThrow(/migrate/);
+@@ -1416,6 +1424,7 @@
+       writeFileSync(j04Path, db.serialize());
+       const dbTime = new Database(j04Path);
+       try {
++        dropCheckTablesForLegacyFixture(dbTime);
+         dbTime.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         dbTime.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'j04-p1'").run(JSON.stringify(patch1));
+         bootstrapDatabase(dbTime);
+@@ -1720,6 +1729,7 @@
+       const l02Path = join(tempDir, 'r8_l02_marker.sqlite');
+       writeFileSync(l02Path, db.serialize());
+       const l02Db = new Database(l02Path);
++      dropCheckTablesForLegacyFixture(l02Db);
+       l02Db.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       l02Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+@@ -1751,6 +1761,7 @@
+       const repPath = join(tempDir, 'r8_l02_replay.sqlite');
+       writeFileSync(repPath, db.serialize());
+       const repDb = new Database(repPath);
++      dropCheckTablesForLegacyFixture(repDb);
+       repDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       repDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-rep-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+@@ -1939,6 +1950,7 @@
+       const posPath = join(tempDir, 'r8_l08_positive.sqlite');
+       writeFileSync(posPath, db.serialize());
+       const posDb = new Database(posPath);
++      dropCheckTablesForLegacyFixture(posDb);
+       posDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       posDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l08-thread'").run(JSON.stringify(original));
+ 
+@@ -3411,6 +3423,7 @@
+         writeFileSync(legacyPath, db.serialize());
+         const dbLeg = new Database(legacyPath);
+         try {
++          dropCheckTablesForLegacyFixture(dbLeg);
+           dbLeg.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+           expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
+           expect(() => openAndCoordinateDatabase(dbLeg, 'serve')).toThrow(/migrate/);

@@ -1,0 +1,21 @@
+# M7.4-C independent verification
+
+The optional fixed Codex native experiment is safely stopped with a compatibility failure. This is not a forum/algorithm failure or evidence that Codex is permanently unavailable. Metadata and sealing remain pending. No further experiment or group-policy relaxation was performed.
+
+## Actual execution
+
+- Original source/guard/capture syntax: 3/3 exit 0. Independent guard: exit 0, 0.625s; allowed loopback hit 1, forbidden hit 0, ordinary own-file wx0600 write/read true, sentinel read/write EPERM. Actual child close 0/null, sockets 0, both servers closed and own root absent. No Codex binary launched by this guard.
+- One controlled reject: capture exit 0, 0.567s; **producer failed**, actual driver close 1/null. Trusted root→direct worker→confirmed worker registration completed, callback rejected before bootstrap; native/MCP were not started. `controlled_expected_failure_verified=true`, with actual worker/group/root/control absence. This is an expected failure test, not a normal native success.
+- First normal native: exit 1, 1.015s. Initialize/initialized/thread response reached; MCP status requested. Ownership stopped at native_registered, with no trusted MCP candidate registration. The original report could not prove absence of that unregistered MCP candidate. Its registered worker/group/root cleanup evidence is preserved, and v2 cannot retrospectively certify this missing ownership.
+- v2 source/capture syntax: 2/2 exit 0. The original guard policy function and minimal native environment source literals are byte-identical in v2; those actual guard results are reused, not rerun. Original reject stopped before bootstrap, before the changed native/MCP candidate branch; it is also historical evidence, not a new v2 run.
+- Sole normal repair/native v2: exit 1, 4.335s. Trusted ownership reached mcp_spawned. Source received and observed the candidate; exact group comparison failed (`mcp_phase=group-match`, `mcp_same_worker_group=false`, registered/acknowledged=false). Worker cancellation was labelled CANCELLED; no work-budget deadline was exhausted. Initialize, initialized, thread/start and MCP status/list were each sent once; no MCP tool call was sent. Tools/check matrix remained empty.
+
+v2 producer retained the failed result and original assertion. Source actual worker/group close and candidate absence were true. Capture independently checked its one trusted positive MCP candidate for absence, matched producer receipt against registration (`candidate_coverage_verified=true`), and verified driver actual close 1/null, registered group/direct/candidate/root/control absence. These facts apply only to v2's registered resources. No global process or temporary-directory census was made. No prompt, turn/start, model request, account/login, installation, VM or global configuration operation was performed.
+
+## Protection and limits
+
+[Final integrity](final-integrity.json) checks the supplied 433-source baseline, current documents, SQL/archive/profile/integration protection and 555 dist files. Sole permitted added source is scripts/integrations/codex-check-probe.mjs (434 current source entries); nonowner drift is zero, HEAD/lock unchanged. Old 12177 sealed evidence entries are referenced by the accepted manifest chain, not recursively rehashed. No dist/build change occurred in C.
+
+C did not run build, full core, type, lint, schema or current probes. M7.4-A's 967/155 core result, M7.4-B's 23/5 focused result and B docs smoke are prior accepted evidence only; they are not C runs or v2 full regression. The installed binary was fixed by streaming SHA/stat; probe control response does not certify account/model capability or complete host interoperability.
+
+[Gate summary](gate-summary.json) preserves exact commands, exits, elapsed times and evidence hashes. Original failure artifacts remain untouched. [Native v2 receipt](native-v2.receipt.json), [producer](codex-native-v2-result.json), and [capture](codex-native-v2-result.json.capture.json) distinguish the compatibility refusal from actual cleanup. Public evidence contains safe phases/booleans and source/driver frame coordinates, not token/header/raw native output or private paths.

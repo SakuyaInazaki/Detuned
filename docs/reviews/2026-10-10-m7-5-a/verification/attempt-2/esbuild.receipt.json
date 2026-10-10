@@ -1,0 +1,43 @@
+{
+  "stage": "esbuild",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/detuned-m75-clean-gq6h90m6/policy.sb",
+    "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+    "/opt/homebrew/lib/node_modules/pnpm/bin/pnpm.mjs",
+    "--config.enable-global-virtual-store=false",
+    "--config.side-effects-cache=false",
+    "--config.pm-on-fail=error",
+    "--config.verify-deps-before-run=warn",
+    "--store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/store",
+    "--config.cache-dir=/private/tmp/detuned-m75-clean-gq6h90m6/cache",
+    "--config.state-dir=/private/tmp/detuned-m75-clean-gq6h90m6/state",
+    "--virtual-store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/work/node_modules/.pnpm",
+    "--config.workspace-concurrency=1",
+    "--network-concurrency=1",
+    "--child-concurrency=1",
+    "rebuild",
+    "esbuild",
+    "--ignore-pnpmfile"
+  ],
+  "budget_seconds": 60,
+  "close_code": 1,
+  "close_signal": null,
+  "actual_close": true,
+  "group_absent": true,
+  "stdout_bytes": 0,
+  "stderr_bytes": 141,
+  "leader_peak_rss_kib": 3936,
+  "pid": 93749,
+  "uid": 501,
+  "ppid": 92848,
+  "pgid": 93749,
+  "leader_rss_kib": 3936,
+  "elapsed_seconds": 0.43631887499941513,
+  "output_hashes": [
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "4db06b121d4b35d17efa5053add93f1523bd4c69ede12779123d8aecdf4362b6"
+  ],
+  "failure_enum": "STAGE_NONZERO"
+}

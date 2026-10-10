@@ -1,0 +1,72 @@
+{
+  "source_commit": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "clock": "2030-01-01T00:00:00.000Z",
+  "space_payload": {
+    "slug": "history-b8dacd5",
+    "objective": "reproducible old HTTP compatibility",
+    "rules": []
+  },
+  "cases": [
+    {
+      "entry": "initial",
+      "key": "historical-initial-failure",
+      "payload": {
+        "title": "Old successful wide initial failure",
+        "initial_post": {
+          "kind": "failure",
+          "title": "Old failure",
+          "summary": "s",
+          "body": "b",
+          "structured": {
+            "attempt": "old attempt",
+            "category": "environment_error",
+            "assumptions": [],
+            "tested_scope": "this run",
+            "expected": "run",
+            "observed": "offline",
+            "evidence_refs": [],
+            "ruled_out": "this execution only",
+            "not_ruled_out": [],
+            "retry_when": []
+          }
+        }
+      }
+    },
+    {
+      "entry": "newpost",
+      "key": "historical-newpost-proposal",
+      "payload": {
+        "kind": "proposal",
+        "title": "Old proposal",
+        "summary": "old",
+        "body": "HistoricalBody",
+        "structured": {
+          "statement": "old statement",
+          "assumptions": [
+            42
+          ],
+          "scope": "fixed scope",
+          "falsification_plan": "recheck"
+        }
+      }
+    },
+    {
+      "entry": "revision",
+      "key": "historical-revision-proposal",
+      "payload": {
+        "expected_revision": 1,
+        "title": "Old revision",
+        "summary": "old",
+        "body": "HistoricalRevisionBody",
+        "structured": {
+          "statement": "old statement",
+          "assumptions": [
+            42
+          ],
+          "scope": "fixed scope",
+          "falsification_plan": "recheck"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "version": "2.1.282",
+  "environment_keys": [
+    "PATH",
+    "CI",
+    "HOME (unchanged inherited value)",
+    "CLAUDE_CODE_TMPDIR (owned)",
+    "CLAUDE_CONFIG_DIR (owned)"
+  ],
+  "messages": [
+    {
+      "type": "system",
+      "subtype": "commands_changed"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "error"
+    }
+  ],
+  "http": [
+    {
+      "method": "GET",
+      "route": "/api/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/me"
+    },
+    {
+      "method": "POST",
+      "route": "/api/v1/spaces/:space_id/sessions"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/spaces/:space_id/context"
+    }
+  ],
+  "cleanup": {
+    "child_reaped": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "control_kind": "installed-internal-not-public-SDK",
+  "guard": {
+    "exit": 0,
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "profile_sha256": "18d796d3b1c09f9626e7e45472ee5d6f96097f2ee39262c0792c77c79497d503",
+  "help": {
+    "exit": 0,
+    "stderr_bytes": 0,
+    "failure_category": null,
+    "flags": [
+      {
+        "flag": "--bare",
+        "present": true
+      },
+      {
+        "flag": "--input-format",
+        "present": true
+      },
+      {
+        "flag": "--output-format",
+        "present": true
+      },
+      {
+        "flag": "--verbose",
+        "present": true
+      },
+      {
+        "flag": "--setting-sources",
+        "present": true
+      },
+      {
+        "flag": "--settings",
+        "present": true
+      },
+      {
+        "flag": "--strict-mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--no-session-persistence",
+        "present": true
+      }
+    ]
+  },
+  "argv": [
+    "-f",
+    "<owned>/guard.sb",
+    "/Users/sakimi/.local/bin/claude",
+    "--bare",
+    "-p",
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--setting-sources",
+    "",
+    "--settings",
+    "<owned>/settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "<owned>/mcp.json",
+    "--no-session-persistence"
+  ],
+  "pid": 72928,
+  "initialize": {
+    "received": true,
+    "success": true
+  },
+  "status": {
+    "polls": 2,
+    "received": true,
+    "success": true,
+    "payload_keys": [
+      "mcpServers"
+    ],
+    "servers": [
+      {
+        "name": "detuned",
+        "status": "connected",
+        "keys": [
+          "name",
+          "status",
+          "serverInfo",
+          "config",
+          "scope",
+          "source",
+          "tools"
+        ],
+        "error": null,
+        "tool_count": 4,
+        "tool_names": [
+          "forum_context",
+          "forum_search",
+          "forum_poll",
+          "forum_ack"
+        ],
+        "tool_keys": [
+          "name",
+          "annotations"
+        ]
+      }
+    ]
+  },
+  "exact_eight": false,
+  "context": {
+    "received": true,
+    "success": true,
+    "response_keys": [
+      "content",
+      "structuredContent"
+    ],
+    "control_error": null,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "success",
+        "request_id": "call-1",
+        "response": {
+          "content": "{\"result\":{\"data\":{\"space_id\":\"REDACTED\",\"slug\":\"claude-owned\",\"space_revision_ref\":{\"space_id\":\"REDACTED\",\"revision\":1},\"space_content_status\":\"included\",\"objective\":\"isolated host probe\",\"rules\":[],\"policy_revision\":1,\"pinned_summaries\":[],\"blocking_objections\":[],\"recent_failures\":[],\"recent_activity\":[{\"type\":\"space.revised\",\"object_id\":\"REDACTED\",\"occurred_at\":\"2026-10-08T18:51:48.818Z\"}],\"checkpoint_token\":\"REDACTED_CHECKPOINT\"},\"meta\":{\"truncated\":false,\"next_cursor\":null}}}",
+          "structuredContent": {
+            "result": {
+              "data": {
+                "space_id": "REDACTED",
+                "slug": "claude-owned",
+                "space_revision_ref": {
+                  "space_id": "REDACTED",
+                  "revision": 1
+                },
+                "space_content_status": "included",
+                "objective": "isolated host probe",
+                "rules": [],
+                "policy_revision": 1,
+                "pinned_summaries": [],
+                "blocking_objections": [],
+                "recent_failures": [],
+                "recent_activity": [
+                  {
+                    "type": "space.revised",
+                    "object_id": "REDACTED",
+                    "occurred_at": "2026-10-08T18:51:48.818Z"
+                  }
+                ],
+                "checkpoint_token": "REDACTED_CHECKPOINT"
+              },
+              "meta": {
+                "truncated": false,
+                "next_cursor": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "http_after": 4,
+    "original_response_sha256": "f7975e011ba21eeb07a9418dcbac5e791c306e68696bc054471fc996729dc24e"
+  },
+  "invalid": {
+    "received": true,
+    "subtype": "error",
+    "response_keys": [],
+    "control_error": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid forum tool arguments.\"\n  }\n}",
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "error",
+        "request_id": "bad-1",
+        "error": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid forum tool arguments.\"\n  }\n}"
+      }
+    },
+    "http_after": 4
+  },
+  "ordinary_actor_sessions": true,
+  "session_delta": 1,
+  "raw_stderr_bytes": 0,
+  "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr": "",
+  "no_user_prompt": true,
+  "exit": 0,
+  "signal": null,
+  "stderr_requires_private_review": false
+}

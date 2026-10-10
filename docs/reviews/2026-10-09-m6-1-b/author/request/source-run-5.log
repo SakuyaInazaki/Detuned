@@ -1,0 +1,49 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-requests.test.ts (6 tests | 1 failed | 5 skipped) 121ms
+   ↓ RR01 fixed assignment/version and compact replay survive cancellation and later policy changes
+   ↓ RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation
+   ↓ RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous
+   ↓ RR04 historical material reads stay detached but redaction and revoked credential gate replay
+   ↓ RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material
+   × RR06 requester-only cancellation, current membership and reopened immutable history retain their authority 120ms
+     → expected error to match asymmetric matcher
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR06 requester-only cancellation, current membership and reopened immutable history retain their authority
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "code": "FORBIDDEN",
++ DetunedError {
++   "message": "空间不存在或无权访问。",
++   "isDetunedError": true,
++   "isTransportError": false,
++   "code": "NOT_FOUND",
++   "statusCode": 404,
++   "retryable": false,
++   "details": undefined,
++   "name": "DetunedError",
+  }
+
+ ❯ tests/integration/m6-review-requests.test.ts:75:119
+     73|   expect(rr.getRequest(other,sid,first.id)).toEqual(cancelled);expect(…
+     74|   expect(rr.cancelRequest(other,sid,first.id,{expected_version:1,reaso…
+     75|   ss.upsertMembership({...ss.getMembership(sid,'other')!,active:false}…
+       |                                                                                                                       ^
+     76|  }finally{reopened.close();}
+     77| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  13:14:06
+   Duration  979ms (transform 346ms, setup 0ms, collect 617ms, tests 121ms, environment 0ms, prepare 44ms)
+

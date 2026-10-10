@@ -1,0 +1,9 @@
+# M4.4-B B 实施计划
+
+产品/runtime/index与新作者test由A拥有；B仅旧r4-c-contracts.test.ts C03专用fixture、integrations/pi.md、compatibility.json仅Pi项/reviewed_at、examples/pi-extension.md与author/compat证据。
+
+C03-1补完整Me合法形状，保持8种UI/headless输出与1次HTTP断言；它不曾测试activation后环境变更。C03-4增加合法capabilities/me/session预检后原badJSON业务仍ClientProtocolError、原409仍DetunedError与完整publicdetails；首业务总4请求，缓存身份/session后第二业务1请求。C03-5既有真实HTTP与官方validator/liveexecute保持，不放宽断言。
+
+activation立即空generation，URL/凭据同代snapshot安全resolver仅解析一次，不setToken/匿名fallback；sharedbinding用于tools，commands也跟踪取消。shutdown stop/abort/awaitfinally，startrotate，不用before-switch/fork提前关闭以免veto。关闭预算默认10s，超时不等同完成，旧代仍closed；import/register零HTTP/noACK。真实fullreload可能新activation无start，不能依赖start初始化。
+
+成功完整details+text16KiB；工具错误仍throw，公共DetunedError类型/details保持，其他真实typed/unknown固定safe消息。原型仅固定0.87.1隔离harness可用内部loader文件URL，非产品依赖，不能称全public或模型/CLIprofile认证。作者fixture等Afreeze后定向一次，不build/full；compat在独验前pending，文档最后验收再freeze。

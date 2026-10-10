@@ -1,0 +1,30 @@
+{
+  "first_attempt": "new-targeted:18pass/2fail/1unhandled error; no product defect established",
+  "failures": [
+    {
+      "case": 1,
+      "cause": "Existing relation route returns data directly; fixture wrongly accessed .relation."
+    },
+    {
+      "case": 2,
+      "cause": "DELETE with no body incorrectly carried application/json header; Fastify empty JSON rejection400."
+    },
+    {
+      "cleanup": "Already-started export result promise rejected on worker cleanup after assertion; attach observing catch without changing original await semantics."
+    }
+  ],
+  "corrective_scope": [
+    "tests/integration/m3-export-independent.test.ts",
+    "tests/helpers/m3-export-worker.mjs"
+  ],
+  "product_changed": false,
+  "large_run": "Already passed40MiB; corrected directed run only cases1/2, no repeat large probe before final suite.",
+  "corrected_hashes": {
+    "tests/integration/m3-export-independent.test.ts": "9dbf37d85d78b9bc9dd69f03366f6cd1ff51dc365acf387520a1dd1732b6e78f",
+    "tests/helpers/m3-export-worker.mjs": "508360c95443d2f6a26a5b302ed804c786dd55cd55c933f096b5deb58085feac"
+  },
+  "second_attempt": {
+    "result": "case2pass/case1fail,2skip,no unhandled",
+    "cause": "Fixture tried resolve on cites relation; existing business explicitly permits resolve/reopen only challenges. Change fixture relation type only, preserving resolution assertion."
+  }
+}

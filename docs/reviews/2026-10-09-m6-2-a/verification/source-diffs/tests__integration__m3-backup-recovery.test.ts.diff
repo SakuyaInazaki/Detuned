@@ -1,0 +1,22 @@
+--- tests/integration/m3-backup-recovery.test.ts (fresh exact before)
++++ tests/integration/m3-backup-recovery.test.ts (current)
+@@ -70,7 +70,7 @@
+   });
+   it('rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup', async () => {
+     const cases: ((value: BackupManifest) => void)[] = [
+-      value => { (value as any).extra = true; }, value => { value.version = 2 as 1; }, value => { value.schemaVersion = 4 as 3; },
++      value => { (value as any).extra = true; }, value => { value.version = 2 as 1; }, value => { value.schemaVersion = 5 as 4; },
+       value => { value.database.path = '../detuned.sqlite'; }, value => { value.artifacts.push(value.artifacts[0]!); },
+       value => { value.artifacts = value.artifacts.filter(row => row.id !== 'ready'); }, value => { value.artifacts.find(row => row.id === 'ready')!.present = false; },
+     ];
+@@ -135,8 +135,8 @@
+   it('rejects non-current, corrupt and foreign-key-invalid source databases without publishing', async () => {
+     for (const kind of ['future', 'legacy', 'corrupt', 'fk']) {
+       const f = await fixture(); const db = new Database(path.join(f.source, 'detuned.sqlite'));
+-      if (kind === 'future') db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(4,?)').run(new Date().toISOString());
+-      else if (kind === 'legacy') { db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions'); db.exec('DROP TABLE instance_metadata'); db.exec('DELETE FROM schema_migrations WHERE version>1'); }
++      if (kind === 'future') db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(5,?)').run(new Date().toISOString());
++      else if (kind === 'legacy') { db.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions'); db.exec('DROP TABLE instance_metadata'); db.exec('DELETE FROM schema_migrations WHERE version>1'); }
+       else if (kind === 'corrupt') db.exec('DROP TABLE credentials');
+       else { db.pragma('foreign_keys=OFF'); db.prepare("UPDATE artifacts SET owner_id='absent-owner' WHERE id='ready'").run(); }
+       db.close(); const before = await readFile(path.join(f.source, 'detuned.sqlite'));

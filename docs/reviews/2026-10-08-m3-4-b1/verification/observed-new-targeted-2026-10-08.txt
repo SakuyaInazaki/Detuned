@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-operations.test.ts (6 tests) 59ms
+ ✓ tests/contracts/m3-operations-contract.test.ts (4 tests) 196ms
+ ❯ tests/integration/m3-operations-independent.test.ts (5 tests | 1 failed) 2251ms
+   × M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates 517ms
+     → expected { event: 'request_completed', …(7) } to match object { event: 'request_completed', …(4) }
+(3 matching properties omitted from actual)
+   ✓ M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log  416ms
+   ✓ M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes  388ms
+   ✓ M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint  404ms
+   ✓ M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners  525ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 14 passed (15)
+   Start at  16:10:00
+   Duration  2.52s (transform 324ms, setup 0ms, collect 778ms, tests 2.51s, environment 0ms, prepare 156ms)
+

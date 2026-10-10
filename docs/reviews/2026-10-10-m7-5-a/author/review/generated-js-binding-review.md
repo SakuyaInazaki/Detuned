@@ -1,0 +1,9 @@
+# M7.5-A continuation3 最终增量独审
+
+通过，可由root统一释放固定Node JS check→effective config→既定pipeline。当前未运行Nodecheck、probe或后续阶段，不把PythonAST当JS解析成功。
+
+最终runner `367cbfa6c60133336e793b40d2b2afac6dc7e80a2143c6085f342f338174002e` / plan `8dafc883d5fc7bafbb8f3c991735af4453f61b2ad1da730845370e912ca97591`匹配。原6929拒绝保存，两生产路径窄修为continuation-3-output，prior95812旧输出校验仍continuation2；此前读旧空stdout与写旧testjson阻塞闭合。生成JS仍968B / `fcdc06a08e516b887bcc0bdfae2214a0355126dd2b2263c1ffac772540963ba7`，与A导出、final常量及保存文件一致；A980e原字节不改。
+
+probe写wx0600且writer已close后，固定已验证Node22对该文件--check，actualstageexit0/close/groupabsence才继续；postcheck重新核filehash==plan==同probebytes，再-e执行同字节。不是检查另一个fixture或PythonAST替代。原12keys/同loader/实际typevalue门禁、9s内部与10s外层、1200含90cleanup/900tests保持。当前typedYAML只exactbytes/hash核验不重写，prior95812 actualreceipt/output与positivePID/groupabsence预检；新结果仅新输出目录。
+
+371copy/九包/158suite/原timeout/assertions/envpolicy/source保护不变；成功须真实完整pass及清退/rootabsence，失败保rootledger；首JS错误、各旧失败、静审拒绝保留。未来仍cleaninstall与续跑组合证据，不单pipeline成功；许可证暂不指定不加LICENSE/字段。仅静读/字节比对/哈希和新报告，无runtime/进程查询。

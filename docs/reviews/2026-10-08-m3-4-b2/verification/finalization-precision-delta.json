@@ -1,0 +1,14 @@
+{
+  "parent_authorized": true,
+  "path": "docs/reviews/2026-10-08-m3-4-b2/m3-acceptance.md",
+  "before_sha256": "679deb07a17a56311f7def294e73c7d86491bf1d935ea648ce80789b08018759",
+  "after_sha256": "793991ff2b185f80093723682eccadedcd5ee1589b3c1e70fe45ad72a304befd",
+  "old_text": "等待 route finally 与显式 FD 关闭，再 app.close、db.close、严格释放锁",
+  "new_text": "app.close 内等待 route finally 与显式 FD 关闭，随后 db.close、strictrelease（严格释放锁）",
+  "scope": "one report sentence only; no links/source/dist/old evidence changed",
+  "product_or_full_doc_rerun": false,
+  "anchors_verified": [
+    "verification/verification.md#m3-出口"
+  ],
+  "T08_T12_reference_files_present": true
+}

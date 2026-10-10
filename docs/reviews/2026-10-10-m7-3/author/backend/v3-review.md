@@ -1,0 +1,3 @@
+# v3 actual incoming challenge projection repair
+
+D first focused run was 40/42. DJ01 and DI01 failed with Original challenge missing; assertions after that failure were not reached. projectTargetRelations uses listRelationsByTarget, so the failure source row does not contain its outgoing challenge. findings is a claim projection and contains original A claim in this bounded two-claim journey. The bound C read closure now selects that original claim row and exact incoming originalChallengeId. Relation direction/state, observer/test assertions, APIs and ownership are unchanged. v2 and exact-before retained. No A runtime was run; later checkpoint assertions await D rerun.

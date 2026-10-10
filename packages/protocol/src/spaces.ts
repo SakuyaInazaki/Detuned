@@ -1,3 +1,6 @@
+import { Value } from '@sinclair/typebox/value';
+import { CONTEXT_BYTES } from './request-policies.js';
+import { DetunedError, ErrorCode } from './errors.js';
 import { Type, Static } from '@sinclair/typebox';
 import { PostRefSchema } from './common.js';
 
@@ -110,3 +113,32 @@ export const CreateSessionRequestSchema = Type.Object({
 }, { additionalProperties: false });
 
 export type CreateSessionRequest = Static<typeof CreateSessionRequestSchema>;
+
+
+export const SpaceRevisionRefSchema = Type.Object({ space_id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }) }, { additionalProperties: false });
+export type SpaceRevisionRef = Static<typeof SpaceRevisionRefSchema>;
+export const SpaceRulesDocumentSchema = Type.Object({ objective: Type.String(), rules: Type.Array(Type.String()) }, { additionalProperties: false });
+export type SpaceRulesDocument = Static<typeof SpaceRulesDocumentSchema>;
+export function encodeSpaceRulesDocument(document: SpaceRulesDocument): string { return JSON.stringify({ objective: document.objective, rules: document.rules }); }
+export const SPACE_REVISION_READ_LIMITS = Object.freeze({ cursor_chars: 4096, cursor_ttl_seconds: 86400 });
+export const SPACE_REVISION_CURSOR_ERROR_MESSAGE = '空间修订游标无效，请去掉 cursor 重新读取指定修订。';
+export const SpaceRevisionReadQuerySchema = Type.Object({ max_bytes: Type.Optional(Type.Integer({ ...CONTEXT_BYTES })), cursor: Type.Optional(Type.String({ minLength: 1, maxLength: SPACE_REVISION_READ_LIMITS.cursor_chars, pattern: '\\S' })) }, { additionalProperties: false });
+export type SpaceRevisionReadQuery = Static<typeof SpaceRevisionReadQuerySchema>;
+export function validateSpaceRevisionReadQuery(query: SpaceRevisionReadQuery): void {
+  if (query?.cursor !== undefined && (typeof query.cursor !== 'string' || !query.cursor.trim() || query.cursor.length > SPACE_REVISION_READ_LIMITS.cursor_chars)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, SPACE_REVISION_CURSOR_ERROR_MESSAGE, 400, false);
+  if (!Value.Check(SpaceRevisionReadQuerySchema, query)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '空间修订读取参数不合法。', 400, false);
+}
+export const SpaceRevisionReadCursorPayloadSchema = Type.Object({ v: Type.Literal(1), purpose: Type.Literal('space_revision_read'), actor_id: Type.String({ pattern: '\\S' }), space_id: Type.String({ pattern: '\\S' }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), byte_offset: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }) }, { additionalProperties: false });
+export type SpaceRevisionReadCursorPayload = Static<typeof SpaceRevisionReadCursorPayloadSchema>;
+export function isSpaceRevisionReadCursorPayload(value: unknown): value is SpaceRevisionReadCursorPayload { return Value.Check(SpaceRevisionReadCursorPayloadSchema, value); }
+const spaceRevisionPageFields = { ref: SpaceRevisionRefSchema, encoding: Type.Literal('json'), chunk: Type.String({ minLength: 1 }), start_byte: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }), end_byte: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }) };
+export const SpaceRevisionPageSchema = Type.Union([
+  Type.Object({ data: Type.Object({ ...spaceRevisionPageFields, complete: Type.Literal(false) }, { additionalProperties: false }), meta: Type.Object({ truncated: Type.Literal(true), next_cursor: Type.String({ minLength: 1, pattern: '\\S' }) }, { additionalProperties: false }) }, { additionalProperties: false }),
+  Type.Object({ data: Type.Object({ ...spaceRevisionPageFields, complete: Type.Literal(true) }, { additionalProperties: false }), meta: Type.Object({ truncated: Type.Literal(false), next_cursor: Type.Null() }, { additionalProperties: false }) }, { additionalProperties: false }),
+]);
+export type SpaceRevisionPage = Static<typeof SpaceRevisionPageSchema>;
+export const SpaceRevisionEnvelopeSchema = Type.Union(SpaceRevisionPageSchema.anyOf.map(page => Type.Object({ api_version: Type.Literal('1'), request_id: Type.String(), ...page.properties }, { additionalProperties: false })));
+export type SpaceRevisionEnvelope = { api_version: '1'; request_id: string } & SpaceRevisionPage;
+export function buildSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): SpaceRevisionEnvelope { return { api_version: '1', request_id: requestId, ...page }; }
+export function serializeSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): string { return JSON.stringify(buildSpaceRevisionEnvelope(requestId, page)); }
+export function spaceRevisionEnvelopeBytes(requestId: string, page: SpaceRevisionPage): number { return new TextEncoder().encode(serializeSpaceRevisionEnvelope(requestId, page)).byteLength; }

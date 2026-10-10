@@ -1,0 +1,45 @@
+--- docs/reviews/2026-10-02-m0-m1-r22/check-c2-boundaries.mjs
++++ docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs
+@@ -4,22 +4,26 @@
+ import { isDeepStrictEqual } from 'node:util';
+ import { realpathSync } from 'node:fs';
+ import { pathToFileURL } from 'node:url';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+-import { DetunedClient } from '../../../packages/client/dist/index.js';
+-import { generateOpenApiSpec, DETUNED_TOOLS } from '../../../packages/protocol/dist/index.js';
+-import activate from '../../../packages/adapter-pi/dist/index.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { DetunedClient } from '../../../../../packages/client/dist/index.js';
++import { generateOpenApiSpec, DETUNED_TOOLS } from '../../../../../packages/protocol/dist/index.js';
++import activate from '../../../../../packages/adapter-pi/dist/index.js';
+ 
+ const require = createRequire(import.meta.url);
+ const Database = require('better-sqlite3');
+-const serverRequire = createRequire(new URL('../../../packages/server/dist/app.js', import.meta.url));
++const serverRequire = createRequire(new URL('../../../../../packages/server/dist/app.js', import.meta.url));
+ const fastifyRequire = createRequire(serverRequire.resolve('fastify'));
+ const compilerRequire = createRequire(fastifyRequire.resolve('@fastify/ajv-compiler'));
+ const Ajv = compilerRequire('ajv');
+-const piPackage = realpathSync(new URL('../../../packages/adapter-pi/node_modules/@earendil-works/pi-coding-agent/package.json', import.meta.url));
++const piPackage = realpathSync(new URL('../../../../../packages/adapter-pi/node_modules/@earendil-works/pi-coding-agent/package.json', import.meta.url));
+ const { validateToolArguments } = await import(new URL('../pi-ai/dist/utils/validation.js', pathToFileURL(piPackage)));
+ const original = { fetch: globalThis.fetch, setTimeout, clearTimeout, now: Date.now,
+   random: Math.random, log: console.log, error: console.error };
++const apiV1Operations = spec => Object.entries(spec.paths).flatMap(([path, methods]) =>
++  Object.entries(methods).filter(([method, op]) => ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'].includes(method) &&
++    (op.servers ?? methods.servers ?? spec.servers ?? []).some(server => new URL(server.url, 'http://contract.invalid').pathname.replace(/\/$/, '') === '/api/v1'))
++    .map(([method, op]) => ({ path, method, op })));
+ const probes = [];
+ const envelope = data => ({ api_version: '1', request_id: 'r22-controlled', data });
+ const conflict = { api_version: '1', request_id: 'r22-controlled', error: {
+@@ -168,7 +172,7 @@
+       return { method, path, exists: !!op, has_body: !!r.schema?.body,
+         body_schema_equal: isDeepStrictEqual(JSON.parse(JSON.stringify(published ?? null)), JSON.parse(JSON.stringify(r.schema?.body ?? null))) };
+     });
+-    const publishedSet = Object.entries(spec.paths).flatMap(([path, methods]) => Object.keys(methods).map(m => `${m} ${path}`)).sort();
++    const publishedSet = apiV1Operations(spec).map(({method, path}) => `${method} ${path}`).sort();
+     const liveSet = routeRows.map(r => `${r.method} ${r.path}`).sort();
+     return { passes: cases.every(c => c.passes) && isDeepStrictEqual(liveSet, publishedSet) && routeRows.every(r => r.body_schema_equal),
+       cases, route_sets_equal: isDeepStrictEqual(liveSet, publishedSet), route_count: liveSet.length,

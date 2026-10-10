@@ -14,4 +14,6 @@ export interface ParseStringQueryOptions {
 export declare function parseStringQuery(val: unknown, paramName: string, options?: ParseStringQueryOptions): string | undefined;
 export declare function parseCsvQuery(val: unknown, paramName: string): string[] | undefined;
 export declare function validateAllowedQueryParams(query: unknown, allowedKeys: string[]): void;
+export declare function validateNoBody(body: unknown, operationName?: string): void;
+export declare function parseSearchTagsJson(val: unknown): string[] | undefined;
 //# sourceMappingURL=query.d.ts.map

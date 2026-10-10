@@ -1,0 +1,91 @@
+{
+  "status": "parent_accepted",
+  "review_date": "2026-10-08",
+  "formal": {
+    "passed": 449,
+    "failed": 0,
+    "files": 54,
+    "new_unique_tests": 13,
+    "new_files": 3
+  },
+  "new_targeted_attempts": [
+    {
+      "command_label": "new-targeted",
+      "passed": 8,
+      "failed": 5,
+      "files_passed": 1,
+      "files_failed": 2,
+      "classification": "B complete-thread-cache oracle, C wrong CLI command and FK seed UNIQUE collision; product unchanged"
+    },
+    {
+      "command_label": "independent-corrected",
+      "passed": 3,
+      "failed": 1,
+      "files_passed": 0,
+      "files_failed": 1,
+      "classification": "readonly new empty WAL coordination boundary, parent clarified scope; not product bug fix"
+    },
+    {
+      "command_label": "corrected-b-c",
+      "passed": 7,
+      "failed": 0,
+      "files_passed": 2,
+      "files_failed": 0,
+      "classification": "only changed B/C files; A6 original targeted already passed"
+    }
+  ],
+  "gate_runs": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "retained_probes": 25
+  },
+  "current29": {
+    "passed": 29,
+    "failed": 0
+  },
+  "fullsuite_unhandled": 0,
+  "inherited_40MiB_export_case_runs": 1,
+  "stable_counts": {
+    "source_config_tests": 197,
+    "current_docs": 42,
+    "mutable_docs": 5,
+    "old_reviews": 3887,
+    "sql_archive": 4,
+    "schema_profiles": 2,
+    "dist_tracked": 208,
+    "dist_untracked": 104
+  },
+  "protected_changes": 0,
+  "stable_final_window_changes": 0,
+  "cleanup": {
+    "upgrade_worker_pids": 0,
+    "owned_private_dirs": 0,
+    "new_package_text_files_scanned": 105,
+    "minted_token_shape_hits": 0
+  },
+  "not_run": [
+    "additional large materials",
+    "600s scale load",
+    "model/network inference",
+    "four host sessions",
+    "arbitrary legacy/future versions",
+    "general downgrade",
+    "media disaster/cross-platform durability"
+  ],
+  "limits": [
+    "only supported schema1 copy upgrade to2 and matched fa1 runtime original-source rollback",
+    "source original DB/WAL/registered files invariant; readonly may create previously absent regular empty WAL coordination file",
+    "registered legacy artifacts manually SQL seeded, no old HTTP artifact API",
+    "manual deletion of one thread.create operation cache models incomplete-cache boundary, not TTL/all v1"
+  ],
+  "evidence": [
+    "commands.json",
+    "integrity.json",
+    "cleanup.json",
+    "verification.md"
+  ],
+  "accepted_date": "2026-10-08",
+  "acceptance_scope": "finite local supported schema1→2 copy upgrade and matched legacy runtime original-source rollback"
+}

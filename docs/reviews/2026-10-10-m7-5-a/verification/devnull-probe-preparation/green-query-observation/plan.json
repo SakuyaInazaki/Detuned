@@ -1,0 +1,96 @@
+{
+  "task": "M7.5-A devnull-only controlled diagnostic preparation",
+  "runtime_released": false,
+  "total_seconds": 5,
+  "stages": [
+    {
+      "name": "green",
+      "budget_seconds": 5,
+      "policy": "candidate-devnull-policy.sb",
+      "expected": "actual same-group Node child UID/directPPID/PGID proof, close0/null and PIDabsence; private write works, same sentinel denied"
+    }
+  ],
+  "root": "/private/tmp/detuned-m75-clean-gq6h90m6",
+  "runtime_directory": "/private/tmp/detuned-m75-clean-gq6h90m6/devnull-probe-green-query",
+  "sentinel": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-5-a/verification/devnull-probe-preparation/green-query-observation/disallowed-sentinel.txt",
+  "source_policy_sha256": "077b8ee745fc3b83ddb507e56c556473bc9c053457105a59ba02434217ea940c",
+  "fixed_node": "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+  "fixed_node_binary_sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+  "fixed_node_archive_sha256": "c59006db713c770d6ec63ae16cb3edc11f49ee093b5c415d667bb4f436c6526d",
+  "device_binding": {
+    "path": "/dev/null",
+    "lstat_mode": 8630,
+    "uid": 0,
+    "gid": 0,
+    "rdev": 50331650,
+    "dev": 1679825703,
+    "ino": 336,
+    "realpath": "/dev/null",
+    "is_character_device": true,
+    "is_symlink": false
+  },
+  "controller_sha256": "b4f0046788d890a5c10a13b7434bbdd7d0276950a92d6b84c35beb78b6d2f0b5",
+  "candidate_policy_sha256": "a040f7fb83c7ec098c2ea116a286a70525e0a406a00d68bae08ad884a778b4c4",
+  "candidate_delta": "only allow file-write-data literal /dev/null; deny externalwrites and Users reads unchanged; original policy is never modified",
+  "env": "exact existing private zero-constructed continuation3 env, no parent/env/config/keys/account loading",
+  "authority": "each own detached driver-stage proven exact ps UID/direct-parent/PGID before timeout signal; Node query and test child detachedfalse same owned stagegroup; own child proof before signal, actualclose and positive PID/groupabsence recorded; no other process scan",
+  "output_limits": {
+    "per_stage_stdout_bytes": 16384,
+    "per_stage_stderr_bytes": 8192,
+    "ps_bytes": 4096
+  },
+  "failure_policy": "unexpected parse/proof/close/absence/timeout stops; never expand permission or retry; retain exact probe runtime logs/ledger; unexpected sentinel existence retained and reported, no content read",
+  "no_models_install_tests_or_fixture_cleanup": true,
+  "not_run": [
+    "all three probe stages",
+    "product tests",
+    "full suite",
+    "any cleanup"
+  ],
+  "prior_inner_process_boundary": {
+    "existing_outer_stage_groups_closed_and_absent": true,
+    "inner_test_CL02_cleanup_actual_record": {
+      "actual_close": [
+        {
+          "code": null,
+          "signal": "SIGTERM"
+        }
+      ],
+      "all_owned_absent": false
+    },
+    "explicit_inner_PID_or_PGID_found_in_reporter_failures": 0,
+    "conclusion": "no complete inner-child absence proof; no trusted exact PID ledger to resume; retain fixture and do not broadscan or blindkill"
+  },
+  "commands": {
+    "syntax": [
+      "fixed verified Node",
+      "--check",
+      "same controller bytes copied wx into exact probe runtime"
+    ],
+    "red": [
+      "sandbox-exec",
+      "-f",
+      "bound original policy",
+      "fixed Node",
+      "-e",
+      "bound controller bytes",
+      "red",
+      "exact probe runtime",
+      "exact absent sentinel"
+    ],
+    "green": [
+      "sandbox-exec",
+      "-f",
+      "bound candidate policy only literal /dev/null write-data",
+      "fixed Node",
+      "-e",
+      "same bound controller bytes",
+      "green",
+      "same runtime",
+      "same absent sentinel"
+    ]
+  },
+  "prior_plan_sha256": "4aa34124f2f03d89c282438d7965b1a447838187a8802e6765f1e2caff1841ad",
+  "retry_condition": "Root explicitly approved once after A synchronous spawn catch + D receipt-before-JSONparse + B acceptance",
+  "first_red_specific_PID_receipt_missing": true
+}

@@ -1,0 +1,56 @@
+{
+  "status": "independent finite scope passed; awaiting root acceptance",
+  "core": {
+    "unique_tests": 717,
+    "files": 108,
+    "first_pass": 716,
+    "first_fail": 1,
+    "first_exit": 1,
+    "first_failure": "m3-backup-recovery.test.ts:71 timeout5000ms (actual5119ms)",
+    "targeted_pass": 1,
+    "targeted_unselected": 10,
+    "targeted_exit": 0,
+    "targeted_ms": 1936,
+    "code_timeout_assertions_unchanged": true
+  },
+  "new_M6_tests": {
+    "canonical_author": 7,
+    "snapshot_author": 5,
+    "independent": 6,
+    "total": 18,
+    "final_core_first_all_pass": true
+  },
+  "four_gates": {
+    "build": 0,
+    "typecheck": 0,
+    "lint": 0,
+    "core": "716 first +1 targeted combination"
+  },
+  "current25": "Reused accepted M5.2-A results, not executed this package; root explicitly approved unchanged tools/endpoints scope",
+  "standalone_independent_noemit": 0,
+  "source_before": {
+    "existing_changed": 3,
+    "new": 4,
+    "old_review": 8272,
+    "SQL_archive": 4,
+    "schema": 2
+  },
+  "final_freeze_match": true,
+  "seconds": {
+    "root-build-first": 9.869,
+    "root-typecheck-first": 10.154,
+    "root-lint-first": 6.501,
+    "root-core-first": 89.361,
+    "independent-source-first": 1.906,
+    "independent-noemit-first": 1.843,
+    "backup-one-case-recheck": 3.652
+  },
+  "limitations": [
+    "No persisted review round, reviewer eligibility, sealed content, finalize or review HTTP route",
+    "Artifact metadata binding only, not physical blob verification",
+    "Private trusted synthetic history, not public bulk writes",
+    "No VM/Docker/browser/model/install; retained prior VM not touched",
+    "Core original full run was not entirely green; precise first+targeted combination retained"
+  ],
+  "next": "Root acceptance, then authorized metadata closure only."
+}

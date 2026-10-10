@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-context.test.ts (2 tests | 2 failed) 28ms
+   × M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules 18ms
+     → expected false to be true // Object.is equality
+   × M2.4-A context snapshot and full response budget > C02: oversized mandatory rules fail instead of returning an oversized successful envelope 10ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m2-context.test.ts:37:91
+     35|     const delivery=events.poll(auth,sid,sub.consumer.id,{});
+     36|     // Actual checkpoint consumption must replay the concurrent change…
+     37|     expect(delivery.events.some(event=>event.seq>oldSeq && event.type=…
+       |                                                                                           ^
+     38|     expect(signer.verify(page.data.checkpoint_token,secret)?.seq).toBe…
+     39|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C02: oversized mandatory rules fail instead of returning an oversized successful envelope
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-context.test.ts:43:104
+     41|   it('C02: oversized mandatory rules fail instead of returning an over…
+     42|     spaces.patchSpace(auth,sid,{expected_revision:1,rules:Array.from({…
+     43|     expect(()=> (context.getContext as Function)(auth,sid,{max_bytes:4…
+       |                                                                                                        ^
+     44|   });
+     45| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:55:37
+   Duration  541ms (transform 164ms, setup 0ms, collect 279ms, tests 28ms, environment 0ms, prepare 37ms)
+

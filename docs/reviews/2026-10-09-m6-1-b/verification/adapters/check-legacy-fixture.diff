@@ -1,0 +1,22 @@
+--- docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-legacy-fixture.mjs
+@@ -7,11 +7,15 @@
+ import { execFileSync } from 'node:child_process';
+ import { createHash } from 'node:crypto';
+ import { isDeepStrictEqual } from 'node:util';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, classifyDatabase } from '../../../packages/storage-sqlite/dist/index.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate, classifyDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
+ 
+-const root = fileURLToPath(new URL('../../../', import.meta.url));
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const root = fileURLToPath(new URL('../../../../../', import.meta.url));
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-r7-old-ddl-'));
+ const source = new Database(join(directory, 'source.sqlite'));

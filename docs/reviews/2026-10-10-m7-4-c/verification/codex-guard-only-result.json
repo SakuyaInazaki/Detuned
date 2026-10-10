@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "binary_launched": false,
+  "prompt_sent": false,
+  "model_request_sent": false,
+  "guard": {
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "ordinary_write": true,
+    "ordinary_read": true,
+    "sentinel_read": "EPERM",
+    "sentinel_write": "EPERM"
+  },
+  "cleanup": {
+    "child_actual_close": true,
+    "allowed_server_closed": true,
+    "forbidden_server_closed": true,
+    "own_socket_count": 0,
+    "own_root_absent": true
+  },
+  "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+  "policy_template_sha256": "b6264fa0af668b5d1941d93fac25673ac2eda289fc7e4ab1ef3b0ccf0f049119",
+  "native_env_source_sha256": "36213631d6923be795df5cbfa6b8cf6e81a91e3f4a70a862e14ebf02b64d680c",
+  "binary_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff",
+  "canonical_owned_root": true,
+  "profile_sha256": "d7c9f0140ff107ab23632fdda5a97819661279d032409bcc5b0fc289149fdbf6",
+  "native_environment_keys": [
+    "CI",
+    "CODEX_HOME",
+    "HOME",
+    "PATH"
+  ],
+  "hits": {
+    "allowed": 1,
+    "forbidden": 0
+  },
+  "child_close": {
+    "code": 0,
+    "signal": null,
+    "error": false,
+    "expired": false
+  }
+}

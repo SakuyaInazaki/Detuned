@@ -1,0 +1,13 @@
+# M6.4-C.1 Web source delivery
+
+Six owned files frozen. Existing app/styles connect a real ReviewPanel to each fixed post reader; no protected component or lower-layer changes. No author checks, build, browser or host execution; WI01–03 written but unexecuted. D owns the single serial verification window.
+
+Historical round pages use getPostReviewRequests wholepage and fixed target; safeStatus loads before request/snapshot so safe metadata remains visible if protected material read fails. Fixed snapshot shows claim/assumptions/scope/falsification/dependencies/artifacts/code/policy/check configuration; existing bounded content append and SafeMarkdown read each exact ref, with explicit continuation/raw fallback. Downloads use existing complete verified helper, then synchronous current generation/selection/mounted+abort checks before BlobURL; URL always revoked.
+
+Create form covers all current DTO fields and bounded structured arrays. Own task loads separately, singleattempt Session creation is a visible candidate with explicit selection; replacing an existing value uses confirmation, pending submit locks fields. Lost Session result remains unknown and any new creation requires a separate confirmed intent. Neither new session nor declaration proves cognitive independence.
+
+Private File/key immutable upload intent is separate from submission body/key; evidence binding remains explicit JSON, unused uploaded attachments are not automatically listed publicly. Complete submit declarations use canonical guards; accept pending constraints retained. Visible opinions come only from server list, never phase inference. Finalize/cancel confirm current version; samebody/key unknown-result retry preserved, edit starts a new intention. Decision history/check facts/current validity remain separate and M7 is not fabricated.
+
+App generation and controller are passed through synchronous validity closure; each generation/space/post/revision mounts a fresh panel. Panel also tracks mount/selection and a synchronous action latch (double-click before rerender cannot replace frozen intent). Parent run maintains authenticated/pending gate; logout nonce ownership stays in app. Keyboard uses semantic labels/fieldset/buttons/aria-live and existing focus styling; local review CSS wraps IDs/JSON and collapses at700px.
+
+Pure cases: malformed/oversize structured input safely rejects; complete DTO constraints preserved; unknown-result body detached from later mutable edits. These are not service ACL or browser execution evidence. Browser layout, native confirmation dialogs, actual two-identity reveal/permissions and error races remain unverified until D. No credentials persisted or screenshots produced by B.

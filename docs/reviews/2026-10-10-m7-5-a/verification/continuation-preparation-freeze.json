@@ -1,0 +1,69 @@
+{
+  "task": "M7.5-A dedicated post-install continuation preparation",
+  "runtime_released": false,
+  "bindings": {
+    "runner": {
+      "path": "docs/reviews/2026-10-10-m7-5-a/verification/continue-clean-backend.py",
+      "sha256": "a72179b7e9537d2a68ddb17b4b09f05fb1b915313fdbfaaa53fc2d88bd79a38d",
+      "bytes": 22270
+    },
+    "plan": {
+      "path": "docs/reviews/2026-10-10-m7-5-a/verification/continuation/execution-plan.json",
+      "sha256": "7e66c9931d38d59faa546fd01e4c714515602b4f563d62013b9e34acda6dcf05",
+      "bytes": 77902
+    },
+    "before": {
+      "path": "docs/reviews/2026-10-10-m7-5-a/verification/runner-attempt-2-before-continuation.py",
+      "sha256": "7e92456d26edd834ccdab2611ffa5ea0e19136e86d7d85207c168f6807e5e335",
+      "bytes": 22523
+    },
+    "delta": {
+      "path": "docs/reviews/2026-10-10-m7-5-a/verification/runner-continuation.delta.diff",
+      "sha256": "9f3ed3e2daf4a92a7b1466214e48129f93057e27d1b7edabd41f567c87a6dbc3",
+      "bytes": 14379
+    }
+  },
+  "static_parser_evidence": {
+    "fixed_bundle": "/opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs",
+    "rebuild_cli_types_line": 162755,
+    "run_cli_types_line": 247608,
+    "exec_types_line": 247951,
+    "config_dot_parser_lines": [
+      285293,
+      285310
+    ],
+    "known_types_lines": [
+      145526,
+      145566,
+      145590,
+      145631,
+      145646
+    ],
+    "cli_precedence_lines": [
+      145969,
+      145981,
+      146474
+    ],
+    "ignore_pnpmfile_excluded_from_yaml_line": 143972,
+    "finding": "all continuation pnpm common flags use known typed --config.* before subcommand; no rejected plain install-only options; no YAML/policy/env/product edits",
+    "independent_A_confirmation": true,
+    "static_only_not_runtime_success": true
+  },
+  "budget_seconds": {
+    "total": 1200,
+    "cleanup_reserved": 90,
+    "esbuild": 60,
+    "sqlite": 10,
+    "each_build": 60,
+    "backend_suite": 900
+  },
+  "prior_fixture": "/private/tmp/detuned-m75-clean-gq6h90m6",
+  "evidence_boundary": "verified attempt-2 empty-fixture install + dedicated continuation; no new network download or install; internal child teardown remains tests own evidence",
+  "output_boundary": "new verification/continuation wx0600 receipts and new exact-own-root continuation-output; prior receipts/raw unchanged",
+  "execution_command": [
+    "python3",
+    "docs/reviews/2026-10-10-m7-5-a/verification/continue-clean-backend.py",
+    "--execute-root-release",
+    "7e66c9931d38d59faa546fd01e4c714515602b4f563d62013b9e34acda6dcf05"
+  ]
+}

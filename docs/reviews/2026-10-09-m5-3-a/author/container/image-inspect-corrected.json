@@ -1,0 +1,32 @@
+{
+  "exit": 0,
+  "images": [
+    {
+      "id": "sha256:4a9168b405b2521ee4114d79ab48c4008d9d048fb9faea3f116677495c491cba",
+      "tags": [
+        "detuned-m53-owned:runtime"
+      ],
+      "arch": "arm64",
+      "os": "linux",
+      "user": "1000:1000",
+      "entrypoint": [
+        "node",
+        "/app/packages/cli/dist/index.js"
+      ],
+      "size": 138371374
+    },
+    {
+      "id": "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+      "tags": [
+        "detuned-m53-owned:builder"
+      ],
+      "arch": "arm64",
+      "os": "linux",
+      "user": "",
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "size": 195079813
+    }
+  ]
+}

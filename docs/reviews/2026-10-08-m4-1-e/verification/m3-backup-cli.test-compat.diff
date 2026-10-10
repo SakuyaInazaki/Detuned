@@ -1,0 +1,13 @@
+--- tests/contracts/m3-backup-cli.test.ts before
++++ tests/contracts/m3-backup-cli.test.ts after
+@@ -34,8 +34,8 @@
+     expect(missingOffline.code).toBe(2); expect(JSON.parse(missingOffline.stdout).error.code).toBe('OFFLINE_REQUIRED');
+     expect((await cli(['backup', '--offline', '--data-dir', '', '--output', path.join(root, 'backup')])).code).toBe(2);
+     expect((await cli(['restore', '--backup', '', '--data-dir', path.join(root, 'new')])).code).toBe(2);
+-    expect((await cli(['backup', '--offline'])).code).toBe(1);
+-    expect((await cli(['restore', '--offline', '--backup', 'b', '--data-dir', 'd'])).code).toBe(1);
++    expect((await cli(['backup', '--offline'])).code).toBe(2);
++    expect((await cli(['restore', '--offline', '--backup', 'b', '--data-dir', 'd'])).code).toBe(2);
+     expect(await readdir(root)).toEqual([]);
+   }, 30_000);
+   it('BKCLI02: offline backup and fresh restore output one human recovery credential without network config', async () => {

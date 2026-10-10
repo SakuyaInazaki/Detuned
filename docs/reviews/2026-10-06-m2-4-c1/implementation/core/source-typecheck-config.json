@@ -1,0 +1,27 @@
+{
+  "extends": "/Users/sakimi/Desktop/Detuned/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "/Users/sakimi/Desktop/Detuned",
+    "noEmit": true,
+    "baseUrl": "/Users/sakimi/Desktop/Detuned",
+    "paths": {
+      "@detuned/protocol": [
+        "packages/protocol/src/index.ts"
+      ],
+      "@detuned/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@detuned/storage-sqlite": [
+        "packages/storage-sqlite/src/index.ts"
+      ]
+    },
+    "typeRoots": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/@types"
+    ]
+  },
+  "include": [
+    "/Users/sakimi/Desktop/Detuned/packages/core/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/storage-sqlite/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/tests/integration/m2-context-focus.test.ts"
+  ]
+}

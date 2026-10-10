@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/contracts/m5-web-auth-independent.test.ts > M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes
+Independent root auth carriers: {"post_query":400,"get_query":200,"delete_nonempty_body":204}
+
+ ❯ tests/contracts/m5-web-auth-independent.test.ts (7 tests | 2 failed) 1089ms
+   × M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation 113ms
+     → Private fixture object expected.
+   ✓ M5 independent persisted credential revoke/expiry, actor disable and membership withdrawal affect an already issued cookie immediately 45ms
+   ✓ M5 independent failed replacement and full target credential preserve old login; TTL is absolute and restart forgets cookies without losing forum identity 61ms
+   × M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes 37ms
+     → expected [ 200, 204 ] to deeply equal [ 400, 400 ]
+   ✓ M5 independent client root auth uses only one login/logout attempt across actual upstream commits and observes entered-request cancellation safely 45ms
+   ✓ M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen  754ms
+   ✓ M5 independent anonymous login budget charges trusted credential/body failures once, excludes hostile origins and refills with controlled time 34ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  03:51:06
+   Duration  1.76s (transform 241ms, setup 0ms, collect 439ms, tests 1.09s, environment 0ms, prepare 31ms)
+

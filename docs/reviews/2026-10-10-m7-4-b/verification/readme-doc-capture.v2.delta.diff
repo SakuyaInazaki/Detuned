@@ -1,0 +1,35 @@
+--- before-v2
++++ v2
+@@ -27,11 +27,6 @@
+  # Public raw archive receives only a fixed safe stdout shape, never arbitrary stderr.
+  wire=(control/'stdout').read_text();decoded=json.loads(wire);assert set(decoded)=={'status','stage'};assert decoded['status'] in ['passed','failed'];assert decoded['stage'] in ['preflight','private_init','loopback_serve','ordinary_setup','ordinary_me_a','ordinary_me_b','normal_serve_close'];safe['driver_stdout']=decoded;safe['driver_stderr_empty']=(control/'stderr').stat().st_size==0
+  if closed and group_absent:
+-  if registry.exists():
+-   root=Path(json.loads(registry.read_text())['root']);assert root.parent==Path('/private/tmp') and root.name.startswith('detuned-readme-smoke-')
+-   if root.exists():
+-    info=root.lstat();assert stat.S_ISDIR(info.st_mode) and not root.is_symlink() and info.st_uid==os.getuid() and root.resolve()==root;shutil.rmtree(root)
+-   assert not root.exists();safe['registered_root_absent']=True
+   safe['status']='passed' if child.returncode==0 and not expired and safe['driver_stderr_empty'] else 'failed'
+ except Exception as error:
+  safe['status']='failed';safe['capture_error_name']=type(error).__name__ if type(error).__name__ in ['AssertionError','ValueError','OSError','TimeoutExpired'] else 'Error'
+@@ -49,7 +44,19 @@
+   except Exception:safe['cleanup_unverified']=True
+  safe['driver_actual_close']=closed;safe['registered_group_absent']=group_absent
+  # Never remove registry/control while actual driver/group absence is unproved.
+- if closed and group_absent:shutil.rmtree(control);safe['control_absent']=not control.exists()
++ if closed and group_absent:
++  try:
++   assert registry.exists()
++   root=Path(json.loads(registry.read_text())['root']);assert root.parent==Path('/private/tmp') and root.name.startswith('detuned-readme-smoke-')
++   if root.exists():
++    info=root.lstat();assert stat.S_ISDIR(info.st_mode) and not root.is_symlink() and info.st_uid==os.getuid() and root.resolve()==root;shutil.rmtree(root)
++   assert not root.exists();safe['registered_root_absent']=True
++  except Exception:
++   safe['registered_root_absent']=False;safe['cleanup_unverified']=True;safe['status']='failed'
++ if closed and group_absent and safe.get('registered_root_absent') is True:
++  try:shutil.rmtree(control);safe['control_absent']=not control.exists()
++  except Exception:safe['cleanup_unverified']=True;safe['status']='failed'
+  else:safe['cleanup_unverified']=True;safe['control_retained']=True;safe['status']='failed'
++ if safe.get('cleanup_unverified'):safe['status']='failed'
+  with (v/'readme-doc-smoke.capture.json').open('x') as f:os.chmod(f.name,0o600);json.dump(safe,f,indent=2);f.write('\n')
+  print(json.dumps(safe));raise SystemExit(0 if safe['status']=='passed' else 1)

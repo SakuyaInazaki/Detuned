@@ -1,0 +1,229 @@
+{
+  "status": "commands_prepared_not_released_not_run",
+  "commands": [
+    {
+      "gate": "build",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "source-noemit",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+        "--noEmit",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-4-c2b/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "gate": "new-and-adjacent",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/integration/m6-public-review-search.test.ts",
+        "tests/contracts/m6-public-review-search-contracts.test.ts",
+        "tests/contracts/m6-public-review-search-tools-cli.test.ts",
+        "tests/integration/m6-public-review-search-independent.test.ts",
+        "tests/integration/m2-search.test.ts",
+        "tests/contracts/m2-search-contracts.test.ts",
+        "tests/integration/m6-review-submissions.test.ts",
+        "tests/integration/m6-review-submissions-independent.test.ts",
+        "tests/integration/m6-review-private-artifacts.test.ts",
+        "tests/contracts/m6-review-tools.test.ts",
+        "tests/contracts/m6-review-client.test.ts"
+      ]
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "gate": "lint",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "gate": "schema",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+      ]
+    },
+    {
+      "gate": "core-once",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    },
+    {
+      "gate": "current-6",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs"
+      ]
+    },
+    {
+      "gate": "current-23",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs"
+      ]
+    },
+    {
+      "gate": "current-24",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs"
+      ]
+    },
+    {
+      "gate": "current-25",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs"
+      ]
+    },
+    {
+      "gate": "current-27",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs"
+      ]
+    },
+    {
+      "gate": "current-28",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs"
+      ]
+    },
+    {
+      "gate": "current-29",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+      ]
+    }
+  ],
+  "new_files": [
+    "tests/integration/m6-public-review-search.test.ts",
+    "tests/contracts/m6-public-review-search-contracts.test.ts",
+    "tests/contracts/m6-public-review-search-tools-cli.test.ts",
+    "tests/integration/m6-public-review-search-independent.test.ts"
+  ],
+  "adjacent_files": [
+    "tests/integration/m2-search.test.ts",
+    "tests/contracts/m2-search-contracts.test.ts",
+    "tests/integration/m6-review-submissions.test.ts",
+    "tests/integration/m6-review-submissions-independent.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/contracts/m6-review-tools.test.ts",
+    "tests/contracts/m6-review-client.test.ts"
+  ],
+  "pre_run_sources": [
+    {
+      "path": "package.json",
+      "sha256": "fa2ee4b7cccbd28dbd4cc9708d2b62eedf578d1b6e0a425493e0292787486af0"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "d99c716ebed63747eee8f55ec8c198e32b593fd6d431a9d9e07c0d15d7f16b5d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "985410289d868c23bdfdfdcbc3ca7b56b7300741e1fbd9cda5c21991355eb882"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88"
+    },
+    {
+      "path": "tests/integration/m2-search.test.ts",
+      "sha256": "9bf3e8e9379dcbd124357aa1201f8c30b51c00822e89ffa56ae625678a9d2b52"
+    },
+    {
+      "path": "tests/contracts/m2-search-contracts.test.ts",
+      "sha256": "763c1b383b2e0a7851ee4c65b754235b6bbaab90ef631121c42fb1403abefab7"
+    },
+    {
+      "path": "tests/integration/m6-review-submissions.test.ts",
+      "sha256": "770a8a7c298d322db3c93b21d2aa89efb7a39cf9beb59c949f76b3f56be0702f"
+    },
+    {
+      "path": "tests/integration/m6-review-submissions-independent.test.ts",
+      "sha256": "778cee4d7b03e1f6f4c6f789da1dd538070c8373a8d7dc111f725da6a47e0393"
+    },
+    {
+      "path": "tests/integration/m6-review-private-artifacts.test.ts",
+      "sha256": "978ba0f894a548eab4937b4eeaf005769d0144230a80bac03dba02da4370ece6"
+    },
+    {
+      "path": "tests/contracts/m6-review-tools.test.ts",
+      "sha256": "ffba1767e292dd2a665dc64ef7d5f6578bddf3373865cd04579a79395b721bc4"
+    },
+    {
+      "path": "tests/contracts/m6-review-client.test.ts",
+      "sha256": "a47c0be017724df6f3cd695ecc932413b2b6d9b24fdfd4028169d2532bb66a57"
+    },
+    {
+      "path": "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+      "sha256": "b10e410c76031d4540f5ac5aae377462931048ea2c8a3f247b6190d48773478c"
+    },
+    {
+      "path": "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "sha256": "ff8ece69ec3f1b05cc38f13ca9899294a693932f4c2c5c5ee588c3c29002983e"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs",
+      "sha256": "dbeea1fa86b5f020774c654dd83a1e155662013f82756944ed5b23f1e92b258d"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs",
+      "sha256": "3b1746c3474edb2d35bd2350d7391a0b8a3d6a4a643a6798d8ca0b3ae8eb1b13"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs",
+      "sha256": "d536d9c271c64b48e4e445ab583a42345e425aa7ee31700926a2a22b45ce75d4"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs",
+      "sha256": "c9f1a5eecdc9b24125696260d91676b802e438b37f2e1b4aa2863b3866840f63"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "sha256": "9996e5d4fc3ce1e8e2d35d80bac592827e2ba1ebeb503620ce2bc95a5bd90c5e"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "sha256": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c"
+    }
+  ],
+  "noemit_configuration_source": {
+    "path": "docs/reviews/2026-10-09-m6-4-c2a/verification/new-source-tsconfig.json",
+    "sha256": "173fa60a42c250a9e9607e02fe138b832e1f02f5c3325d1c92efec916f4a745e",
+    "delta": "Only files replaced with C2B four new tests; accepted compiler/path configuration preserved."
+  },
+  "binding": "A/B final author freezes pending. Before running, verify these source hashes and bind final A/B/D source hashes. Existing paths were actually checked; no missing path is recorded successful.",
+  "current": "Root approved current7 only; other18 previous evidence reused, not rerun."
+}

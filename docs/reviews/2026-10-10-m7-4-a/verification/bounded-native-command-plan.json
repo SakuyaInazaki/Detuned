@@ -1,0 +1,66 @@
+{
+  "status": "prepared_pending_B_review_root_release_no_runtime",
+  "runner": "docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs",
+  "runner_sha256": "656d38473b823fbb162ee75a669e7754fe7685e743e636e51ef3656286de401a",
+  "A_freeze_sha256": "7f9da969574b034f068c3808ad25433c2b44da62674cbdca06d4235d9b1df685",
+  "A_source_sha256": "ecebcdd61f6315995e64044093e2b0f621389f62f6f823d6acd32f1103f6c8be",
+  "contract": {
+    "callback": "trusted frozen plain ownership at worker/native/MCP stages; callback resolution before respective bootstrap/importACK",
+    "worker_fields": [
+      "stage",
+      "privateRoot",
+      "workerPID",
+      "workerPGID"
+    ],
+    "native_fields": [
+      "stage",
+      "privateRoot",
+      "workerPID",
+      "workerPGID",
+      "nativePID"
+    ],
+    "mcp_fields": [
+      "stage",
+      "privateRoot",
+      "workerPID",
+      "workerPGID",
+      "nativePID",
+      "mcpPID"
+    ],
+    "group": "workerPID===workerPGID; native detachedfalse andMCP samegroup verifiedbyA"
+  },
+  "registry": "Only this-run0700canonical controlDir/0600registry; safe ownership to trusted driverIPC parent-memory before diskcommit, then callback commit; no token/client/privatepath publicreport",
+  "budget_ms": {
+    "work": 50000,
+    "A_total_including_finally": 60000,
+    "A_emergency": 65000,
+    "D_driver_watchdog": 70000,
+    "group_TERM_KILL_grace": 1000,
+    "group_absence_wait": 1000,
+    "local_cleanup_wait": 1000
+  },
+  "commands": [
+    {
+      "mode": "reject-worker",
+      "command": "/usr/bin/env -i PATH=/opt/homebrew/bin:/usr/bin:/bin HOME=/Users/sakimi CI=true node docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs --output /Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-ownership-reject-result.json --mode reject-worker",
+      "expected": "failed1 withactualcleanupverified; no nativebootstrap",
+      "release": "not yet authorized"
+    },
+    {
+      "mode": "hold-worker",
+      "command": "/usr/bin/env -i PATH=/opt/homebrew/bin:/usr/bin:/bin HOME=/Users/sakimi CI=true node docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs --output /Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-ownership-hold-result.json --mode hold-worker",
+      "expected": "failed1 withactualcleanupverified; no nativebootstrap",
+      "release": "not yet authorized"
+    },
+    {
+      "mode": "normal",
+      "command": "/usr/bin/env -i PATH=/opt/homebrew/bin:/usr/bin:/bin HOME=/Users/sakimi CI=true node docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs --output /Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-native-result-v2.json --mode normal",
+      "expected": "actualnative outcome not prefilled",
+      "release": "not yet authorized"
+    }
+  ],
+  "preserved": "firstcore967/155 and firstnative3.206sfail and guardfirstfail/secondpass; no corebuildrepeat",
+  "controlled_expected_failure": "Producer andcapture exit1/reportfailed preserved; controlled_expected_failure_verified=true only real worker/group absence/root absence/actualdriverclose and native/MCPregistrationfalse; not wrapped success",
+  "normal": "same supervised publicexport as CLI, trusted callback onlyownership not writes/client exposure; originalfixedbinary/policy/ordinarycontrol no prompt/modelrequest",
+  "cleanup": "onlyregistered exactworkerPGID/own driver and roots; actualdriverclose awaited; oncegroupabsence verified retiredIDs neverkillagain; no process census; unknown/unverified cleanup remains failure"
+}

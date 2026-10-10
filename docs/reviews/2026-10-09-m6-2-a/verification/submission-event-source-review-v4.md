@@ -1,0 +1,4 @@
+# SD10 EventService 静态closure（2026-10-09）
+
+只读现A冻结EventService，未运行任何检查。publicEvent:58–64先核同space/public，artifact.created/redacted再查真实artifact同space且visibility=space；因此历史误标public的review_assignment附件也拒绝。pending重建:195–197和新poll:204–207都使用同一bool，无admin例外。正常space附件仍通过该scope条件。
+新poll仍先更新through再过滤，batch/cursor创建与显式ACK路径未在此差分改变；pending仍保原batch与cursor，不自动ACK。揭示不会提升artifact静态visibility，因此闲置private附件生命周期事件也不会公开。A/B原报告及SD10首红保留。此为源码结论，运行closure以D真实证据为准。

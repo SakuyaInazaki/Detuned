@@ -1,0 +1,90 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta
+AssertionError: expected undefined to deeply equal { …(3) }
+
+- Expected: 
+{
+  "description": "Trim outer whitespace; 1–256 Unicode code points. No NFC/case normalization.",
+  "pattern": "^\\s*(?=\\S)(?:[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])|[^\\uD800-\\uDBFF]){1,256}\\s*$",
+  "type": "string",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/contracts/m2-search-contracts.test.ts:86:122
+     84|       try {
+     85|         await mcp.connect(transport);
+     86|         const list=await mcp.listTools(); expect(list.tools.find(t=>t.…
+       |                                                                                                                          ^
+     87|         const result=await mcp.callTool({name:'forum_search',arguments…
+     88|         const page=JSON.parse((result.content as any[])[0].text); expe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/contracts/m6-public-review-search-contracts.test.ts > PC03 whole-page wire guard rejects date/identity/filter/order/unknown/meta/snippet flaws without partial rows
+AssertionError: promise resolved "{ data: [ { …(12) }, { …(12) } ], …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "data": [
++     {
++       "request_id": "rrq_1a639724-1197-403e-adb8-6749df8d3617",
++       "revealed_at": "2026-10-09T00:00:09.000Z",
++       "reviewer_actor_id": "r1",
++       "round": 1,
++       "snapshot_id": "snp_e33ff1d8-53d9-4dbb-8f1c-bdab71d4334b",
++       "snippet": "Needle 研究 actual opinion",
++       "space_id": "spc_5470d43d-f5e5-437d-8ecf-803da91e5172",
++       "submission_id": "rsb_9f145adf-571b-4e7b-963d-80c454747682",
++       "submitted_at": "2026-10-09T00:00:07.000Z",
++       "target_ref": {
++         "post_id": "pst_1ff8e526-4ad7-471a-8cf4-56ea2afa4276",
++         "revision": 1,
++       },
++       "type": "review_submission",
++       "verdict": "accept",
++     },
++     {
++       "request_id": "rrq_1a639724-1197-403e-adb8-6749df8d3617",
++       "revealed_at": "2026-10-09T00:00:09.000Z",
++       "reviewer_actor_id": "r2",
++       "round": 1,
++       "snapshot_id": "snp_e33ff1d8-53d9-4dbb-8f1c-bdab71d4334b",
++       "snippet": "Needle 研究 actual opinion",
++       "space_id": "spc_5470d43d-f5e5-437d-8ecf-803da91e5172",
++       "submission_id": "rsb_87a7756b-2c9a-4a2d-903a-a0a0d24278e8",
++       "submitted_at": "2026-10-09T00:00:09.000Z",
++       "target_ref": {
++         "post_id": "pst_1ff8e526-4ad7-471a-8cf4-56ea2afa4276",
++         "revision": 1,
++       },
++       "type": "review_submission",
++       "verdict": "accept",
++     },
++   ],
++   "meta": {
++     "next_cursor": null,
++     "truncated": false,
++   },
+  }
+
+ ❯ tests/contracts/m6-public-review-search-contracts.test.ts:62:386
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/m6-public-review-search-independent.test.ts > PSI01 real sealed author remains unsearchable; failed last-submission reveal transaction publishes nothing and exact retry reveals once
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m6-public-review-search-independent.test.ts:40:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

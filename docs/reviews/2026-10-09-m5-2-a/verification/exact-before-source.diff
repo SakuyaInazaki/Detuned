@@ -1,0 +1,278 @@
+--- fresh/packages/server/src/app.ts
++++ current/packages/server/src/app.ts
+@@ -1,3 +1,7 @@
++import type { Server as HttpServer } from 'node:http';
++import type { Server as HttpsServer } from 'node:https';
++import { resolveServerTlsOptions, type ServerTlsOptions } from './tls-config.js';
++import { trackTlsSockets } from './tls-sockets.js';
+ import {resolveWebAssetsDir,isWebStaticRequest,staticWebRoutes} from './static-web.js';
+ import {authRoutes} from './routes/auth.js';
+ import {resolveWebAuthConfig,checkWebRequest,readWebCookie,readCsrf,uniqueHeader} from './web-auth.js';
+@@ -60,6 +64,7 @@
+ 
+ export interface AppOptions {
+   storage: StoragePort;
++  tls?: ServerTlsOptions;
+   webOrigin?: string;
+   webAssetsDir?: string;
+   allowInsecureLoopback?: boolean;
+@@ -77,8 +82,12 @@
+   exportLimits?: { max_raw_bytes?: number; max_line_bytes?: number; max_total_bytes?: number; max_records?: number; deadline_ms?: number; max_active?: number };
+ }
+ 
+-export function buildApp(options: AppOptions): FastifyInstance {
++export type ServerApp = FastifyInstance<HttpServer | HttpsServer>;
++
++export function buildApp(options: AppOptions): ServerApp {
++  const tls = options.tls === undefined ? undefined : resolveServerTlsOptions(options.tls);
+   const webConfig=resolveWebAuthConfig(options);
++  if (tls && webConfig && !webConfig.origin.startsWith('https://')) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS Web requires an HTTPS origin.', 400, false);
+   const webAssetsDir=resolveWebAssetsDir(options.webAssetsDir,webConfig?.origin);
+   const resourceLimits = resolveResourceLimits(options.resourceLimits);
+   const writeRateLimits = resolveWriteRateLimits(options.writeRateLimits);
+@@ -126,26 +135,22 @@
+     ? new ArtifactService(options.storage, options.artifactBlobs, authService, idempotency, idGen, clock, artifactLimits, resourceLimits)
+     : undefined;
+ 
+-  const app = Fastify({
+-    logger: false,
+-    requestIdHeader: false,
+-    // Finite native HTTP allowance for URL-encoded search carriers and normal headers.
+-    http: { maxHeaderSize: 65536 },
+-    ajv: {
+-      customOptions: {
+-        removeAdditional: false,
+-        useDefaults: true,
+-        coerceTypes: false,
+-        allErrors: true,
+-      },
+-    },
+-  });
++  const common = {
++    logger: false as const,
++    requestIdHeader: false as const,
++    ajv: { customOptions: { removeAdditional: false, useDefaults: true, coerceTypes: false, allErrors: true } },
++  };
++  const app: ServerApp = tls
++    ? Fastify({ ...common, https: { ...tls, minVersion: 'TLSv1.2', maxHeaderSize: 65536 } })
++    : Fastify({ ...common, http: { maxHeaderSize: 65536 } });
++  const tlsSockets = tls ? trackTlsSockets(app.server) : undefined;
+ 
+   const resources = new RuntimeResources();
+   app.decorate('runtimeResources', resources);
+   app.decorate('detunedBeginDraining', () => { operationsService.beginDraining(); resources.beginClosing(); });
+   installRequestLogging(app, options.requestLogSink);
+-  app.addHook('preClose', async () => { app.detunedBeginDraining(); webSessions?.close(); await resources.waitForIdle(); });
++  app.addHook('preClose', async () => { app.detunedBeginDraining(); webSessions?.close(); await resources.waitForIdle(); await tlsSockets?.drain(); });
++  app.addHook('onClose', async () => { tlsSockets?.dispose(); });
+   app.addHook('onRequest', async (req,reply) => {
+     if(webConfig){if(req.routeOptions.url===WEB_AUTH_PATH||req.headers.cookie!==undefined)reply.header('cache-control','no-store');checkWebRequest(req,webConfig);if(req.routeOptions.url===WEB_AUTH_PATH&&req.method==='POST'){checkWebRequest(req,webConfig,true);webSessions!.admitLoginAttempt();}}
+ 
+--- fresh/packages/server/src/index.ts
++++ current/packages/server/src/index.ts
+@@ -6,3 +6,5 @@
+ export {resolveWebAuthConfig} from './web-auth.js';
+ 
+ export {resolveWebAssetsDir} from './static-web.js';
++
++export { loadServerTlsOptions, type ServerTlsOptions } from './tls-config.js';
+--- fresh/packages/cli/src/index.ts
++++ current/packages/cli/src/index.ts
+@@ -17,7 +17,7 @@
+ import { FileRequestKeyStore } from '@detuned/client/node';
+ import { DetunedError, ErrorCode, resolveArtifactLimits, resolveWriteRateLimits, resolveResourceLimits } from '@detuned/protocol';
+ import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, openAndCoordinateDatabase, DirectoryLock, backupOffline, restoreBackup, importSpace, assertDataDirReady, MaintenanceError, ImportError, upgradeOffline, UpgradeError } from '@detuned/storage-sqlite';
+-import { buildApp, resolveWebAuthConfig, resolveWebAssetsDir, ArtifactFileStore } from '@detuned/server';
++import { buildApp, resolveWebAuthConfig, resolveWebAssetsDir, ArtifactFileStore, loadServerTlsOptions } from '@detuned/server';
+ 
+ function mapExitCode(err: any): number {
+   if (err instanceof UpgradeError) return err.code === 'INVALID_OPTIONS' || err.code === 'OFFLINE_REQUIRED' ? 2 : 1;
+@@ -300,6 +300,8 @@
+   .option('--max-database-bytes <bytes>', '主数据库页额度（默认1GiB）')
+   .option('--max-artifact-bytes <bytes>', '实例登记附件累计字节额度（默认4GiB）')
+   .option('--max-artifact-objects <count>', '实例登记附件对象额度（默认10000）')
++  .option('--tls-cert-file <file>', 'TLS PEM证书链文件（须同时tls-key-file）')
++  .option('--tls-key-file <file>', 'TLS未加密PEM私钥文件（须同时tls-cert-file）')
+   .option('--web-assets-dir <dir>', 'Web构建目录（须同时web-origin）')
+   .option('--web-origin <origin>', '启用同源Web认证的精确origin')
+   .option('--web-allow-insecure-loopback', '允许仅loopback HTTP Web认证')
+@@ -308,12 +310,15 @@
+     const isJson = Boolean(program.opts().json);
+     let lock: DirectoryLock | null = null;
+     let db: Database.Database | null = null;
+-    let app: any = null;
++    let app: ReturnType<typeof buildApp> | null = null;
+     let requestLogs: ReturnType<typeof createRequestLogWriter> | undefined;
+     let shutdown: ReturnType<typeof createServeShutdown> | undefined;
+ 
+     try {
++      if ((options.tlsCertFile !== undefined) !== (options.tlsKeyFile !== undefined)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS certificate and key files must be provided together.', 400);
++      const tls = options.tlsCertFile !== undefined ? await loadServerTlsOptions(options.tlsCertFile, options.tlsKeyFile) : undefined;
+       const webConfig=resolveWebAuthConfig({webOrigin:options.webOrigin,allowInsecureLoopback:options.webAllowInsecureLoopback});
++      if (tls && webConfig && !webConfig.secure) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS Web authentication requires an HTTPS origin.', 400);
+       const webAssetsDir=resolveWebAssetsDir(options.webAssetsDir,webConfig?.origin,path.resolve(options.dataDir));
+       if(webConfig&&!webConfig.secure&&!['localhost','127.0.0.1','::1'].includes(options.host))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Insecure Web authentication requires a loopback listener.',400);
+       const shutdownTimeoutMs = parseShutdownTimeout(options.shutdownTimeoutMs);
+@@ -379,7 +384,7 @@
+       // This process owns the existing DirectoryLock; no request can be active before listen.
+       await artifactBlobs.cleanupOrphans(storage.listArtifactStorageKeys());
+       if (options.requestLogs !== false) requestLogs = createRequestLogWriter(process.stderr);
+-      app = buildApp({ webAssetsDir, webOrigin: options.webOrigin, allowInsecureLoopback: options.webAllowInsecureLoopback, storage, requestLogSink: requestLogs?.write, artifactBlobs, artifactLimits, artifactMaxUploads, writeRateLimits, resourceLimits });
++      app = buildApp({ tls, webAssetsDir, webOrigin: options.webOrigin, allowInsecureLoopback: options.webAllowInsecureLoopback, storage, requestLogSink: requestLogs?.write, artifactBlobs, artifactLimits, artifactMaxUploads, writeRateLimits, resourceLimits });
+       const port = parseInt(options.port, 10);
+       const host = options.host;
+ 
+@@ -400,7 +405,7 @@
+       if (!isJson) {
+         const address = app.server.address();
+         const boundPort = address && typeof address === 'object' ? address.port : port;
+-        process.stderr.write(`Detuned 服务已启动: http://${host}:${boundPort}\n数据目录: ${dataDir}\n附件限额: file=${artifactLimits.max_file_bytes} space=${artifactLimits.max_space_bytes} uploads=${artifactMaxUploads}\n`);
++        process.stderr.write(`Detuned 服务已启动: ${tls ? 'https' : 'http'}://${host}:${boundPort}\n数据目录: ${dataDir}\n附件限额: file=${artifactLimits.max_file_bytes} space=${artifactLimits.max_space_bytes} uploads=${artifactMaxUploads}\n`);
+       }
+     } catch (err: any) {
+       if (shutdown) {
+--- fresh/scripts/integrations/web/fixtures.ts
++++ current/scripts/integrations/web/fixtures.ts
+@@ -1,6 +1,11 @@
+ import {test as base, expect, type Page} from '@playwright/test';
+ import {createServer, request as httpRequest, type Server, type ServerResponse} from 'node:http';
+-import {mkdtemp, rm, stat, mkdir, appendFile} from 'node:fs/promises';
++import {mkdtemp, rm, stat, mkdir, appendFile, readFile, writeFile, chmod} from 'node:fs/promises';
++import {request as httpsRequest} from 'node:https';
++import {execFile} from 'node:child_process';
++import {promisify} from 'node:util';
++import {X509Certificate, createHash} from 'node:crypto';
++import {isIP} from 'node:net';
+ import {fileURLToPath} from 'node:url';
+ import path from 'node:path';
+ import Database from 'better-sqlite3';
+@@ -82,7 +87,7 @@
+   response.writeHead(503, {'content-type': 'application/json', 'cache-control': 'no-store'});
+   response.end(JSON.stringify({api_version: '1', request_id: 'private-proxy', error: {code: 'TEMPORARILY_UNAVAILABLE', message: 'Private fixture response unavailable.', retryable: true}}));
+ }
+-async function createFixture(): Promise<{forum: ForumFixture; dispose: () => Promise<void>}> {
++async function createFixture(tlsMaterial?: TlsMaterial): Promise<{forum: ForumFixture; dispose: () => Promise<void>}> {
+   // Fail before creating a DB when the explicitly built Web bundle is absent.
+   const webAssetsDir = path.join(repository, 'packages/web/dist');
+   if (!(await stat(path.join(webAssetsDir, 'index.html'))).isFile()) throw new Error('Build the private Web test bundle first.');
+@@ -165,11 +170,22 @@
+   }
+   try {
+     baseURL = await listen(proxy);
++    if (tlsMaterial) {baseURL = baseURL.replace('http:', 'https:'); await new Promise<void>((resolve, reject) => proxy.close(error => error ? reject(error) : resolve()));}
+     const artifactBlobs = await ArtifactFileStore.create(owned);
+-    app = buildApp({artifactBlobs, storage: new SqliteStorage(db), clock, webOrigin: baseURL, allowInsecureLoopback: true, webAssetsDir});
++    app = buildApp({artifactBlobs, storage: new SqliteStorage(db), clock, webOrigin: baseURL, allowInsecureLoopback: !tlsMaterial, webAssetsDir, ...(tlsMaterial ? {tls: {cert: tlsMaterial.cert, key: tlsMaterial.key}} : {})});
++    if (tlsMaterial) app.addHook('onResponse', async (request, response) => {
++      const url = new URL(request.url, baseURL);
++      if (typeof request.headers.authorization !== 'string') browserAccessed = true;
++      httpEvents.push({method: request.method, path: url.pathname, status: response.statusCode});
++    });
+     let key = 0;
+     async function seed(method: 'POST' | 'PATCH' | 'DELETE', route: string, payload?: Json): Promise<Json> {
+       clock.refill();
++      if (upstream && tlsMaterial) {
++        const response = await tlsRequestJson(baseURL + '/api/v1' + route, tlsMaterial.ca, {method, headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`, ...(payload === undefined ? {} : {'content-type': 'application/json'})}, ...(payload === undefined ? {} : {body: JSON.stringify(payload)})});
++        if (response.status >= 300) throw new Error(`Private TLS seed rejected (${response.status}).`);
++        return json(response.data.data);
++      }
+       if (upstream) {
+         const result = await fetch(baseURL + '/api/v1' + route, {method, headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`, ...(payload === undefined ? {} : {'content-type': 'application/json'})}, ...(payload === undefined ? {} : {body: JSON.stringify(payload)}), signal: AbortSignal.timeout(5000)});
+         if (result.status >= 300) throw new Error(`Private fixture seed rejected (${result.status}).`);
+@@ -216,10 +232,10 @@
+       return Number(json(db.prepare('SELECT current_revision FROM spaces WHERE id=?').get(id)).current_revision);
+     }
+     const post = await seedNote({title: 'Fixture source', body: 'Original fixed research body.'});
+-    await app.listen({host: '127.0.0.1', port: 0});
++    await app.listen({host: '127.0.0.1', port: tlsMaterial ? Number(new URL(baseURL).port) : 0});
+     const address = app.server.address();
+     if (!address || typeof address === 'string') throw new Error('Private upstream listener unavailable.');
+-    upstream = `http://127.0.0.1:${address.port}`;
++    upstream = `${tlsMaterial ? 'https' : 'http'}://127.0.0.1:${address.port}`;
+     const forum: ForumFixture = {
+       baseURL, space, hidden, alternate, thread, post,
+       evidencePath(relative) {if (path.isAbsolute(relative) || relative.split(/[\\/]/).includes('..')) throw new Error('Private evidence path invalid.'); return path.join(evidenceRoot, relative);},
+@@ -301,7 +317,7 @@
+       },
+       businessCounts() {return Object.fromEntries(['threads', 'posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records', 'artifacts', 'revision_artifacts'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
+       httpEvents,
+-      faultNext(match, fault) {const entered = deferred(), released = deferred(); pending.push({...match, fault, entered, released}); return {entered: entered.promise, release: released.resolve};},
++      faultNext(match, fault) {if (tlsMaterial) throw new Error('Direct TLS fixture has no fault proxy.'); const entered = deferred(), released = deferred(); pending.push({...match, fault, entered, released}); return {entered: entered.promise, release: released.resolve};},
+     };
+     return {forum, dispose};
+   } catch {await dispose(); throw new Error('Private browser fixture setup failed.');}
+@@ -314,3 +330,55 @@
+   },
+ });
+ export {expect};
++
++
++/** Private certificates exist only while the actual TLS worker runs; no repository PEM or global trust. */
++export type TlsMaterial = {owned: string; ca: Buffer; cert: Buffer; key: Buffer; spki: string};
++async function createTlsMaterial(): Promise<TlsMaterial> {
++  const owned = await mkdtemp('/private/tmp/detuned-browser-tls-');
++  const run = promisify(execFile);
++  const openssl = '/opt/homebrew/bin/openssl';
++  try {
++    await run(openssl, ['req','-x509','-newkey','rsa:2048','-nodes','-sha256','-days','2','-subj','/CN=Detuned Private Test CA','-keyout',path.join(owned,'ca.key'),'-out',path.join(owned,'ca.crt')], {env:{PATH:process.env.PATH??'/usr/bin:/bin'},timeout:15000});
++    await run(openssl, ['req','-newkey','rsa:2048','-nodes','-sha256','-subj','/CN=localhost','-keyout',path.join(owned,'leaf.key'),'-out',path.join(owned,'leaf.csr')], {env:{PATH:process.env.PATH??'/usr/bin:/bin'},timeout:15000});
++    await writeFile(path.join(owned,'extensions.txt'),'subjectAltName=DNS:localhost,IP:127.0.0.1\nextendedKeyUsage=serverAuth\nbasicConstraints=CA:FALSE\n',{mode:0o600});
++    await run(openssl, ['x509','-req','-sha256','-days','2','-in',path.join(owned,'leaf.csr'),'-CA',path.join(owned,'ca.crt'),'-CAkey',path.join(owned,'ca.key'),'-CAcreateserial','-extfile',path.join(owned,'extensions.txt'),'-out',path.join(owned,'leaf.crt')], {env:{PATH:process.env.PATH??'/usr/bin:/bin'},timeout:15000});
++    await chmod(path.join(owned,'ca.key'),0o600); await chmod(path.join(owned,'leaf.key'),0o600);
++    const ca=await readFile(path.join(owned,'ca.crt')),cert=await readFile(path.join(owned,'leaf.crt')),key=await readFile(path.join(owned,'leaf.key'));
++    const spki=createHash('sha256').update(new X509Certificate(cert).publicKey.export({type:'spki',format:'der'})).digest('base64');
++    return {owned,ca,cert,key,spki};
++  } catch {await rm(owned,{recursive:true,force:true}); throw new Error('Private TLS fixture generation failed.');}
++}
++export async function tlsRequestJson(url: string, ca: Buffer, options: {method?: string; headers?: Record<string,string>; body?: string}={}): Promise<{status: number; data: Json; headers: import('node:http').IncomingHttpHeaders}> {
++  return new Promise((resolve,reject)=>{
++    const hostname=new URL(url).hostname;
++    // Bind TLS verification to the connection URL, while independently testing HTTP Host policy.
++    const request=httpsRequest(url,{ca,rejectUnauthorized:true,servername:isIP(hostname)?'':hostname,method:options.method??'GET',headers:options.headers},response=>{
++      const chunks:Buffer[]=[];
++      response.on('data',bytes=>chunks.push(Buffer.from(bytes)));
++      response.on('end',()=>{try {resolve({status:response.statusCode??0,data:json(JSON.parse(Buffer.concat(chunks).toString())),headers:response.headers});} catch {reject(new Error('Private TLS response invalid.'));}});
++      response.on('error',()=>reject(new Error('Private TLS response failed.')));
++    });
++    request.on('error',()=>reject(new Error('Private TLS request failed.')));
++    request.setTimeout(5000,()=>request.destroy());
++    request.end(options.body);
++  });
++}
++export const tlsTest = test.extend<{}, {tlsMaterial: TlsMaterial}>({
++  tlsMaterial: [async ({},use)=>{
++    const material=await createTlsMaterial();
++    try {await use(material);} finally {
++      await rm(material.owned,{recursive:true,force:true});
++      await mkdir(evidenceRoot,{recursive:true});
++      await appendFile(path.join(evidenceRoot,'tls-certificate-cleanup.jsonl'),JSON.stringify({owned_temp:material.owned,temp_absent:await stat(material.owned).then(()=>false,()=>true)})+'\n');
++    }
++  },{scope:'worker'}],
++  browser: async ({playwright,tlsMaterial},use)=>{
++    const browser=await playwright.chromium.launch({channel:'chrome',headless:true,args:[`--ignore-certificate-errors-spki-list=${tlsMaterial.spki}`]});
++    try {await use(browser);} finally {await browser.close();}
++  },
++  forum: async ({tlsMaterial},use)=>{
++    const fixture=await createFixture(tlsMaterial);
++    try {await use(fixture.forum);} finally {await fixture.dispose();}
++  },
++});
+--- fresh/scripts/integrations/web/playwright.config.ts
++++ current/scripts/integrations/web/playwright.config.ts
+@@ -6,7 +6,7 @@
+ 
+ export default defineConfig({
+   testDir: fileURLToPath(new URL('.', import.meta.url)),
+-  testMatch: ['author.spec.ts', 'independent.spec.ts', 'm5-c.spec.ts', 'm5-d2.spec.ts', 'm5-e1.spec.ts', 'm5-e2.spec.ts'],
++  testMatch: ['author.spec.ts', 'independent.spec.ts', 'm5-c.spec.ts', 'm5-d2.spec.ts', 'm5-e1.spec.ts', 'm5-e2.spec.ts', 'm5-tls.spec.ts'],
+   fullyParallel: false,
+   workers: 1,
+   retries: 0,
+@@ -19,6 +19,7 @@
+     headless: true,
+     viewport: {width: 1280, height: 900},
+     serviceWorkers: 'block',
++    ignoreHTTPSErrors: false,
+     trace: 'off',
+     video: 'off',
+     screenshot: 'off',

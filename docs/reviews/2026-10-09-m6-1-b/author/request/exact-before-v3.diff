@@ -1,0 +1,653 @@
+--- before/packages/protocol/src/review.ts
++++ packages/protocol/src/review.ts
+@@ -96,7 +96,8 @@
+ export type FinalizeReviewRequest = Static<typeof FinalizeReviewRequestSchema>;
+ 
+ export const CancelReviewRequestSchema = Type.Object({
+-  reason: Type.String({ minLength: 1, maxLength: 500 }),
++  expected_version: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }),
++  reason: nonBlank(500),
+ }, { additionalProperties: false });
+ 
+ export type CancelReviewRequest = Static<typeof CancelReviewRequestSchema>;
+@@ -104,3 +105,63 @@
+ export function isSnapshotReviewPolicy(value: unknown): value is Static<typeof ReviewPolicySchema> {
+   return Value.Check(ReviewPolicySchema, value);
+ }
++
++const reviewId = Type.String({ minLength: 1 });
++const reviewPositive = Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER });
++const reviewHash = Type.String({ minLength: 64, maxLength: 64, pattern: '^[0-9a-f]{64}$' });
++export const ReviewSnapshotRecordSchema = Type.Object({
++  id: reviewId, space_id: reviewId, manifest_json: Type.String(), manifest_sha256: reviewHash,
++  policy_revision: reviewPositive, rules_revision: reviewPositive, target_ref: snapshotRef,
++  created_by: reviewId, created_at: Type.String({ format: 'date-time' }),
++}, { additionalProperties: false });
++export type ReviewSnapshotRecord = Static<typeof ReviewSnapshotRecordSchema>;
++export const ReviewSnapshotItemRecordSchema = Type.Object({
++  snapshot_id: reviewId,
++  item_type: Type.Union([Type.Literal('target_post'), Type.Literal('dependency_post'), Type.Literal('artifact'), Type.Literal('space_rules')]),
++  item_id: reviewId, revision: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
++  sha256: Type.Union([reviewHash, Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewSnapshotItemRecord = Static<typeof ReviewSnapshotItemRecordSchema>;
++export const ReviewRequestRecordSchema = Type.Object({
++  id: reviewId, space_id: reviewId, target_ref: snapshotRef, snapshot_id: reviewId,
++  round: reviewPositive, phase: ReviewPhaseSchema, version: reviewPositive,
++  requested_by: reviewId, created_at: Type.String({ format: 'date-time' }),
++  changed_by: reviewId, changed_at: Type.String({ format: 'date-time' }), reason: Type.Union([Type.String(), Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewRequestRecord = Static<typeof ReviewRequestRecordSchema>;
++export const ReviewRequestVersionRecordSchema = Type.Object({
++  request_id: reviewId, version: reviewPositive, phase: ReviewPhaseSchema,
++  changed_by: reviewId, changed_at: Type.String({ format: 'date-time' }), reason: Type.Union([Type.String(), Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewRequestVersionRecord = Static<typeof ReviewRequestVersionRecordSchema>;
++export const ReviewAssignmentRecordSchema = Type.Object({
++  request_id: reviewId, reviewer_actor_id: reviewId, group_at_assignment: Type.Union([Type.String(), Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewAssignmentRecord = Static<typeof ReviewAssignmentRecordSchema>;
++export const ReviewRequestViewSchema = Type.Object({
++  ...ReviewRequestRecordSchema.properties, snapshot_sha256: reviewHash,
++  rules_revision: reviewPositive, policy_revision: reviewPositive,
++  reviewer_actor_ids: Type.Array(reviewId, { minItems: 1, maxItems: 5, uniqueItems: true }),
++}, { additionalProperties: false });
++export type ReviewRequestView = Static<typeof ReviewRequestViewSchema>;
++export function isCancelReviewRequest(value: unknown): value is CancelReviewRequest {
++  return Value.Check(CancelReviewRequestSchema, value);
++}
++
++export const ReviewSnapshotManifestSchema = Type.Object({
++  manifest_version: Type.Literal(1), space_id: reviewId,
++  target: Type.Object({ ref: snapshotRef, content_hash: reviewHash, statement: nonBlank(5000),
++    assumptions: Type.Array(Type.String({ maxLength: 1000 })), scope: nonBlank(1000), falsification_plan: nonBlank(2000) }, { additionalProperties: false }),
++  dependencies: Type.Array(Type.Object({ ref: snapshotRef, content_hash: reviewHash }, { additionalProperties: false }), { maxItems: 32 }),
++  artifacts: Type.Array(Type.Object({ artifact_id: reviewId, sha256: reviewHash,
++    bytes: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }) }, { additionalProperties: false }), { maxItems: 64 }),
++  code_refs: CreateReviewRequestSchema.properties.code_refs,
++  rules_revision: reviewPositive, policy_revision: reviewPositive, review_policy: ReviewPolicySchema,
++  check_profiles: Type.Array(Type.Object({ check_name: Type.String({ minLength: 1, pattern: '\\S' }), config_sha256: reviewHash,
++    verifier_actor_ids: Type.Array(reviewId, { maxItems: 128, uniqueItems: true }), description: Type.String() }, { additionalProperties: false }), { maxItems: 32 }),
++  contributors: Type.Array(reviewId, { maxItems: 4096, uniqueItems: true }), reproduction_instructions: nonBlank(16000),
++}, { additionalProperties: false });
++export type ReviewSnapshotManifestData = Static<typeof ReviewSnapshotManifestSchema>;
++export function isReviewSnapshotManifest(value: unknown): value is ReviewSnapshotManifestData {
++  return Value.Check(ReviewSnapshotManifestSchema, value);
++}
+--- before/packages/protocol/src/events.ts
++++ packages/protocol/src/events.ts
+@@ -15,6 +15,7 @@
+   Type.Literal('artifact.created'),
+   Type.Literal('artifact.redacted'),
+   Type.Literal('review.requested'),
++  Type.Literal('review.cancelled'),
+   Type.Literal('review.revealed'),
+   Type.Literal('review.finalized'),
+   Type.Literal('review.invalidated'),
+--- before/packages/core/src/ports/storage.ts
++++ packages/core/src/ports/storage.ts
+@@ -1,5 +1,6 @@
+ import type { SpaceExportSnapshot } from './space-export-snapshot.js';
+ import {
++  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord,
+   Actor,
+   ResourceLimits,
+   StorageOperationalStatus,
+@@ -72,6 +73,17 @@
+   getExportEventSeq(spaceId: string): string;
+   hasExportRedactionAfter(spaceId: string, afterSeq: string, throughSeq: string): boolean;
+ 
++  // Formal request foundation. Aggregate writes require the caller's shared write transaction.
++  createReviewSnapshot(record: ReviewSnapshotRecord, items: ReviewSnapshotItemRecord[]): void;
++  findReviewSnapshotById(id: string): ReviewSnapshotRecord | null;
++  listReviewSnapshotItems(snapshotId: string): ReviewSnapshotItemRecord[];
++  getNextReviewRequestRound(spaceId: string, targetPostId: string): number;
++  createReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord, assignments: ReviewAssignmentRecord[]): void;
++  findReviewRequestById(id: string): ReviewRequestRecord | null;
++  findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null;
++  listReviewAssignments(requestId: string): ReviewAssignmentRecord[];
++  updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void;
++
+   // Actors & Credentials
+   findActorById(id: string): Actor | null;
+   createActor(actor: Actor): void;
+--- before/packages/core/src/services/idempotency-service.ts
++++ packages/core/src/services/idempotency-service.ts
+@@ -4,6 +4,7 @@
+ import { ClockPort } from '../ports/clock.js';
+ import { WriteRateLimiter } from './write-rate-limiter.js';
+ import { isDeepStrictEqual as equal } from 'node:util';
++import { reconstructReviewRequestView, reviewResync } from './review-request-records.js';
+ 
+ export type NestedRelationRef = {
+   id: string;
+@@ -12,6 +13,7 @@
+ };
+ 
+ export type IdempotencyResultRef =
++  | { v: 1; kind: 'review.request.create' | 'review.request.cancel'; request_id: string; request_version: number; snapshot_id: string; manifest_sha256: string }
+   | { v: 1; kind: 'artifact'; artifact_id: string }
+   | {
+       v: 1;
+@@ -76,6 +78,8 @@
+     };
+ 
+ export type OperationFamily =
++  | 'review.request.create'
++  | 'review.request.cancel'
+   | 'artifact.create'
+   | 'space.create'
+   | 'space.patch'
+@@ -100,6 +104,12 @@
+     throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '操作标识为空或无效。', 422);
+   }
+ 
++  if (operation === 'review.request.create') return { family: 'review.request.create', expectedKind: 'review.request.create' };
++  if (operation.startsWith('review.request.cancel:')) {
++    const targetId = operation.slice('review.request.cancel:'.length);
++    if (!targetId || targetId.trim() !== targetId) throw reviewResync();
++    return { family: 'review.request.cancel', expectedKind: 'review.request.cancel', targetId };
++  }
+   if (operation === 'artifact.create') return { family: 'artifact.create', expectedKind: 'artifact' };
+   if (operation === 'space.create') {
+     return { family: 'space.create', expectedKind: 'space' };
+@@ -191,6 +201,8 @@
+ export type RegisteredUnreplayableReason = (typeof REGISTERED_UNREPLAYABLE_REASONS)[number];
+ 
+ export const allowedKeysByKind: Record<string, string[]> = {
++  'review.request.create': ['v','kind','request_id','request_version','snapshot_id','manifest_sha256'],
++  'review.request.cancel': ['v','kind','request_id','request_version','snapshot_id','manifest_sha256'],
+   artifact: ['v', 'kind', 'artifact_id'],
+   space: ['v', 'kind', 'space_id', 'revision'],
+   'thread.create': ['v', 'kind', 'thread_id', 'thread_version', 'initial_post_id', 'initial_post_revision', 'relation_ids', 'relations'],
+@@ -618,6 +630,11 @@
+   spaceId: string,
+   parsed: any
+ ): void {
++  if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
++    const ref = validateResultRef(operation, parsed);
++    validateResultRefSemantics(storage, operation, spaceId, ref);
++    return;
++  }
+   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+     throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '幂等引用必须为对象。', 422);
+   }
+@@ -718,6 +735,12 @@
+ 
+   // Required field checks per kind & entity existence
+   switch (parsed.kind) {
++    case 'review.request.create':
++    case 'review.request.cancel': {
++      const ref = validateResultRef(operation, parsed);
++      validateResultRefSemantics(storage, operation, spaceId, ref);
++      break;
++    }
+     case 'artifact': {
+       const ref = validateResultRef(operation, parsed);
+       validateResultRefSemantics(storage, operation, spaceId, ref);
+@@ -948,6 +971,20 @@
+ }
+ 
+ export function validateResultRef(operation: string, raw: unknown): IdempotencyResultRef {
++  const reviewOperation = parseOperation(operation);
++  if (reviewOperation.family === 'review.request.create' || reviewOperation.family === 'review.request.cancel') {
++    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw reviewResync();
++    const obj = raw as Record<string, unknown>;
++    const keys = ['v','kind','request_id','request_version','snapshot_id','manifest_sha256'];
++    if (Object.keys(obj).length !== keys.length || Object.keys(obj).some(key => !keys.includes(key)) || obj.v !== 1 ||
++        obj.kind !== reviewOperation.expectedKind || typeof obj.request_id !== 'string' || !obj.request_id ||
++        typeof obj.snapshot_id !== 'string' || !obj.snapshot_id || typeof obj.manifest_sha256 !== 'string' ||
++        obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
++        obj.request_version !== (reviewOperation.family === 'review.request.create' ? 1 : 2) ||
++        (reviewOperation.targetId !== undefined && obj.request_id !== reviewOperation.targetId)) throw reviewResync();
++    return obj as IdempotencyResultRef;
++  }
++
+   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+     throw new DetunedError(
+       ErrorCode.RESYNC_REQUIRED,
+@@ -978,6 +1015,7 @@
+   }
+ 
+   const validKinds = [
++    'review.request.create', 'review.request.cancel',
+     'artifact',
+     'space',
+     'thread.create',
+@@ -1058,6 +1096,15 @@
+ 
+   // Required field checks per kind
+   switch (obj.kind) {
++    case 'review.request.create':
++    case 'review.request.cancel': {
++      if (typeof obj.request_id !== 'string' || !obj.request_id || typeof obj.snapshot_id !== 'string' || !obj.snapshot_id ||
++          !Number.isSafeInteger(obj.request_version) || obj.request_version < 1 ||
++          typeof obj.manifest_sha256 !== 'string' || obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
++          (obj.kind === 'review.request.create' ? obj.request_version !== 1 : obj.request_version !== 2) ||
++          (parsedOp.targetId !== undefined && parsedOp.targetId !== obj.request_id)) throw reviewResync();
++      return obj as IdempotencyResultRef;
++    }
+     case 'artifact': {
+       if (typeof obj.artifact_id !== 'string' || !obj.artifact_id.trim()) throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件引用缺少 artifact_id。', 422);
+       return obj as IdempotencyResultRef;
+@@ -1237,6 +1284,14 @@
+   const parsedOp = parseOperation(operation);
+ 
+   switch (ref.kind) {
++    case 'review.request.create':
++    case 'review.request.cancel': {
++      const view = reconstructReviewRequestView(tx, spaceId, ref.request_id, ref.request_version);
++      if (view.snapshot_id !== ref.snapshot_id || view.snapshot_sha256 !== ref.manifest_sha256 ||
++          (parsedOp.targetId !== undefined && parsedOp.targetId !== view.id) ||
++          (ref.kind === 'review.request.create' ? view.phase !== 'collecting' : view.phase !== 'cancelled')) throw reviewResync();
++      break;
++    }
+     case 'artifact': {
+       const artifact = tx.findArtifactById(ref.artifact_id);
+       if (!artifact || artifact.space_id !== spaceId) throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件幂等引用作用域不匹配。', 422);
+@@ -1425,6 +1480,11 @@
+   let ref: IdempotencyResultRef;
+ 
+   switch (parsedOp.family) {
++    case 'review.request.create':
++    case 'review.request.cancel': {
++      ref = { v:1,kind:parsedOp.family,request_id:result.id,request_version:result.version,snapshot_id:result.snapshot_id,manifest_sha256:result.snapshot_sha256 };
++      break;
++    }
+     case 'artifact.create': {
+       if (typeof result.id !== 'string' || !result.id.trim()) throw new DetunedError(ErrorCode.VALIDATION_ERROR, '附件创建结果缺少id。', 400);
+       ref = { v: 1, kind: 'artifact', artifact_id: result.id };
+@@ -2292,6 +2352,13 @@
+ }
+ 
+ export function reconstructResult(tx: StoragePort, operation: string, resultRefStr: string, spaceId?: string): any {
++  if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
++    let parsed: unknown;
++    try { parsed = JSON.parse(resultRefStr); } catch { throw reviewResync(); }
++    const ref = validateResultRef(operation, parsed);
++    return reconstructFromValidRef(tx, operation, ref, spaceId);
++  }
++
+   let parsed: any;
+   try {
+     parsed = JSON.parse(resultRefStr);
+@@ -2385,6 +2452,8 @@
+   }
+ 
+   switch (ref.kind) {
++    case 'review.request.create':
++    case 'review.request.cancel': return reconstructReviewRequestView(tx, spaceId ?? 'instance', ref.request_id, ref.request_version);
+     case 'artifact': return toArtifactMetadata(tx.findArtifactById(ref.artifact_id)!);
+     case 'space': {
+       if (parsedOp.family === 'space.create') {
+--- before/packages/core/src/services/event-service.ts
++++ packages/core/src/services/event-service.ts
+@@ -208,6 +208,10 @@
+             const source = tx.findPostById(rel.source_post_id), target = tx.findPostById(rel.target_post_id);
+             if (!(source?.space_id === spaceId && sub.thread_ids.includes(source.thread_id)) &&
+                 !(target?.space_id === spaceId && sub.thread_ids.includes(target.thread_id))) continue;
++          } else if (ev.type === 'review.requested' || ev.type === 'review.cancelled') {
++            const request = tx.findReviewRequestById(ev.object_id);
++            const target = request?.space_id === spaceId ? tx.findPostById(request.target_ref.post_id) : null;
++            if (!target || target.space_id !== spaceId || !sub.thread_ids.includes(target.thread_id)) continue;
+           } else continue;
+         }
+         events.push(ev);
+--- before/packages/core/src/services/review-request-records.ts
++++ packages/core/src/services/review-request-records.ts
+@@ -0,0 +1,110 @@
++import { createHash } from 'node:crypto';
++import { isDeepStrictEqual } from 'node:util';
++import { DetunedError, ErrorCode, isReviewSnapshotManifest, type ReviewSnapshotRecord,
++  type ReviewSnapshotItemRecord, type ReviewSnapshotManifestData, type ReviewRequestView } from '@detuned/protocol';
++import { type StoragePort } from '../ports/storage.js';
++const cmp=(a:string,b:string)=>a<b?-1:a>b?1:0;
++const goodHash=(v:unknown):v is string=>typeof v==='string'&&v.length===64&&/^[0-9a-f]+$/.test(v);
++const positive=(v:number)=>Number.isSafeInteger(v)&&v>0;
++const id=(v:unknown):v is string=>typeof v==='string'&&v.length>0;
++export const reviewResync=()=>new DetunedError(ErrorCode.RESYNC_REQUIRED,'Stored review material cannot be safely reconstructed.',409);
++const missing=()=>new DetunedError(ErrorCode.NOT_FOUND,'Review material does not exist or is not accessible.',404);
++const redacted=()=>new DetunedError(ErrorCode.CONTENT_REDACTED,'Review material has been redacted.',410);
++function postPrivacy(storage:StoragePort,spaceId:string,postId:string){
++  const post=storage.findPostById(postId);
++  if(!post||post.space_id!==spaceId)throw missing();
++  if(post.lifecycle==='redacted')throw redacted();
++}
++export function reviewSnapshotItems(snapshotId:string,manifest:ReviewSnapshotManifestData):ReviewSnapshotItemRecord[]{
++  return [
++    {snapshot_id:snapshotId,item_type:'target_post',item_id:manifest.target.ref.post_id,revision:manifest.target.ref.revision,sha256:manifest.target.content_hash},
++    ...manifest.dependencies.map(d=>({snapshot_id:snapshotId,item_type:'dependency_post' as const,item_id:d.ref.post_id,revision:d.ref.revision,sha256:d.content_hash})),
++    ...manifest.artifacts.map(a=>({snapshot_id:snapshotId,item_type:'artifact' as const,item_id:a.artifact_id,revision:0,sha256:a.sha256})),
++    {snapshot_id:snapshotId,item_type:'space_rules',item_id:manifest.space_id,revision:manifest.rules_revision,sha256:null},
++  ];
++}
++const itemKey=(i:ReviewSnapshotItemRecord)=>JSON.stringify([i.item_type,i.item_id,i.revision]);
++
++/** Only raw SHA/header/item/visibility checks here; JCS belongs exclusively to the review module. */
++export function readReviewSnapshotRecords(storage:StoragePort,spaceId:string,snapshotId:string):
++  {record:ReviewSnapshotRecord;manifest:ReviewSnapshotManifestData}{
++  const record=storage.findReviewSnapshotById(snapshotId);
++  if(!record||record.space_id!==spaceId)throw missing();
++  if(!record.target_ref||!id(record.target_ref.post_id))throw reviewResync();
++  postPrivacy(storage,spaceId,record.target_ref.post_id);
++  if(record.id!==snapshotId||!positive(record.target_ref.revision)||!positive(record.policy_revision)||!positive(record.rules_revision)||
++    !id(record.created_by)||!id(record.created_at)||typeof record.manifest_json!=='string'||Buffer.byteLength(record.manifest_json,'utf8')>262144||
++    !goodHash(record.manifest_sha256)||createHash('sha256').update(record.manifest_json,'utf8').digest('hex')!==record.manifest_sha256)throw reviewResync();
++  let manifest:ReviewSnapshotManifestData;
++  try{const value:unknown=JSON.parse(record.manifest_json);if(!isReviewSnapshotManifest(value))throw reviewResync();manifest=value;}
++  catch(error){if(error instanceof DetunedError)throw error;throw reviewResync();}
++  for(const ref of [manifest.target.ref,...manifest.dependencies.map(d=>d.ref)])postPrivacy(storage,spaceId,ref.post_id);
++  for(const entry of manifest.artifacts){const artifact=storage.findArtifactById(entry.artifact_id);
++    if(!artifact||artifact.space_id!==spaceId||artifact.visibility!=='space')throw missing();
++    if(artifact.state==='redacted')throw redacted();
++    if(artifact.sha256!==entry.sha256||artifact.bytes!==entry.bytes)throw reviewResync();
++  }
++  if(manifest.space_id!==spaceId||!isDeepStrictEqual(manifest.target.ref,record.target_ref)||manifest.rules_revision!==record.rules_revision||manifest.policy_revision!==record.policy_revision)throw reviewResync();
++  for(const entry of [manifest.target,...manifest.dependencies]){
++    const metadata=storage.getPostRevisionMetadata(entry.ref.post_id,entry.ref.revision);
++    if(!metadata||metadata.content_hash!==entry.content_hash)throw reviewResync();
++  }
++  let rules;try{rules=storage.getSpaceRevision(spaceId,manifest.rules_revision);}catch(error){if(error instanceof SyntaxError)throw reviewResync();throw error;}
++  if(!rules||!rules.review_policy||!Array.isArray(rules.review_policy.required_checks)||!rules.check_profiles||typeof rules.check_profiles!=='object')throw reviewResync();
++  const expected=reviewSnapshotItems(snapshotId,manifest),actual=storage.listReviewSnapshotItems(snapshotId);
++  if(new Set(expected.map(itemKey)).size!==expected.length||actual.length!==expected.length||
++    !isDeepStrictEqual([...expected].sort((a,b)=>cmp(itemKey(a),itemKey(b))),[...actual].sort((a,b)=>cmp(itemKey(a),itemKey(b)))))throw reviewResync();
++  // Set-like input fields have explicit canonical order; meaningful arrays remain untouched.
++  const checks=[...manifest.review_policy.required_checks].sort(cmp);
++  if(checks.some(n=>!id(n)||!/\S/.test(n))||checks.length>32||new Set(checks).size!==checks.length||
++    !isDeepStrictEqual(checks,manifest.review_policy.required_checks)||
++    !isDeepStrictEqual(manifest.check_profiles.map(p=>p.check_name),checks))throw reviewResync();
++  const normalizePolicy={...rules.review_policy,required_checks:[...rules.review_policy.required_checks].sort(cmp)};
++  if(!isDeepStrictEqual(normalizePolicy,manifest.review_policy))throw reviewResync();
++  for(const profile of manifest.check_profiles){const original=Object.hasOwn(rules.check_profiles,profile.check_name)?rules.check_profiles[profile.check_name]:undefined;
++    if(!original||!Array.isArray(original.verifier_actor_ids)||!isDeepStrictEqual(profile,{check_name:profile.check_name,config_sha256:original.config_sha256,
++      verifier_actor_ids:[...original.verifier_actor_ids].sort(cmp),description:original.description}))throw reviewResync();}
++  const ordered = <T>(items:T[],key:(item:T)=>string) => {
++    const keys=items.map(key);return new Set(keys).size===keys.length&&isDeepStrictEqual(keys,[...keys].sort(cmp));
++  };
++  const refs=manifest.dependencies.map(d=>JSON.stringify([d.ref.post_id,d.ref.revision]));
++  if(new Set(refs).size!==refs.length||manifest.dependencies.some(d=>isDeepStrictEqual(d.ref,manifest.target.ref))||
++    !isDeepStrictEqual(manifest.dependencies,[...manifest.dependencies].sort((a,b)=>cmp(a.ref.post_id,b.ref.post_id)||a.ref.revision-b.ref.revision))||
++    !ordered(manifest.artifacts,a=>a.artifact_id)||!ordered(manifest.contributors,a=>a)||
++    !isDeepStrictEqual(manifest.code_refs,[...manifest.code_refs].sort((a,b)=>cmp(a.repository,b.repository)||cmp(a.commit,b.commit)||cmp(a.source_artifact_id,b.source_artifact_id)))||
++    new Set(manifest.code_refs.map(c=>JSON.stringify([c.repository,c.commit,c.source_artifact_id]))).size!==manifest.code_refs.length||
++    manifest.code_refs.some(c=>!manifest.artifacts.some(a=>a.artifact_id===c.source_artifact_id)))throw reviewResync();
++  let nodes=0;const stack:{value:unknown;depth:number}[]=[{value:manifest,depth:0}];
++  while(stack.length){const item=stack.pop()!;if(++nodes>20000||item.depth>64)throw reviewResync();
++    if(item.value!==null&&typeof item.value==='object')for(const value of Object.values(item.value))stack.push({value,depth:item.depth+1});}
++  return {record,manifest};
++}
++
++export function reconstructReviewRequestView(storage:StoragePort,spaceId:string,requestId:string,version?:number):ReviewRequestView{
++  const head=storage.findReviewRequestById(requestId);
++  if(!head||head.space_id!==spaceId)throw missing();
++  if(!head.target_ref||!id(head.target_ref.post_id))throw reviewResync();
++  postPrivacy(storage,spaceId,head.target_ref.post_id);
++  if(head.id!==requestId||!positive(head.round)||!positive(head.version)||!id(head.requested_by)||!id(head.created_at))throw reviewResync();
++  const storedVersion=storage.findReviewRequestVersion(requestId,version??head.version);
++  const snapshot=readReviewSnapshotRecords(storage,spaceId,head.snapshot_id);
++  if(!storedVersion||storedVersion.request_id!==requestId||!positive(storedVersion.version)||storedVersion.version>(head.version)||
++    !id(storedVersion.changed_by)||!id(storedVersion.changed_at)||!['collecting','cancelled'].includes(storedVersion.phase)||
++    (storedVersion.phase==='collecting'?(storedVersion.version!==1||storedVersion.reason!==null||storedVersion.changed_by!==head.requested_by||storedVersion.changed_at!==head.created_at):(storedVersion.version!==2||typeof storedVersion.reason!=='string'||!/\S/.test(storedVersion.reason)||storedVersion.reason.length>500))||
++    !isDeepStrictEqual(snapshot.record.target_ref,head.target_ref))throw reviewResync();
++  if((version===undefined||version===head.version)&&!isDeepStrictEqual(
++    {request_id:head.id,version:head.version,phase:head.phase,changed_by:head.changed_by,changed_at:head.changed_at,reason:head.reason},storedVersion))throw reviewResync();
++  const assignments=storage.listReviewAssignments(requestId);
++  const reviewers=assignments.map(a=>a.reviewer_actor_id).sort(cmp);
++  if(assignments.some(a=>a.request_id!==requestId||!id(a.reviewer_actor_id)||(a.group_at_assignment!==null&&typeof a.group_at_assignment!=='string'))||
++    reviewers.length!==snapshot.manifest.review_policy.required_reviewers||new Set(reviewers).size!==reviewers.length||
++    reviewers.some(actorId=>snapshot.manifest.contributors.includes(actorId)))throw reviewResync();
++  if(snapshot.manifest.review_policy.distinct_independence_groups){
++    const groups=assignments.map(a=>a.group_at_assignment);
++    if(groups.some(group=>typeof group!=='string'||!/\S/.test(group))||new Set(groups).size!==groups.length)throw reviewResync();
++  }
++  return {id:head.id,space_id:head.space_id,target_ref:{...head.target_ref},snapshot_id:head.snapshot_id,
++    snapshot_sha256:snapshot.record.manifest_sha256,rules_revision:snapshot.record.rules_revision,policy_revision:snapshot.record.policy_revision,
++    round:head.round,phase:storedVersion.phase,version:storedVersion.version,requested_by:head.requested_by,created_at:head.created_at,
++    changed_by:storedVersion.changed_by,changed_at:storedVersion.changed_at,reason:storedVersion.reason,reviewer_actor_ids:reviewers};
++}
+--- before/packages/core/src/index.ts
++++ packages/core/src/index.ts
+@@ -34,3 +34,4 @@
+ export * from './services/web-session-service.js';
+ 
+ export * from './services/post-catalog-read-service.js';
++export * from './services/review-request-records.js';
+--- before/modules/review/src/request-service.ts
++++ modules/review/src/request-service.ts
+@@ -0,0 +1,106 @@
++import { createHash } from 'node:crypto';
++import { type CreateReviewRequest, type CancelReviewRequest, type ReviewRequestView, type ReviewAssignmentRecord,
++  type ReviewRequestRecord, type ReviewRequestVersionRecord, type ReviewSnapshotManifestData,
++  isCreateReviewRequest, isCancelReviewRequest, DetunedError, ErrorCode } from '@detuned/protocol';
++import { type StoragePort, type ClockPort, type IdGeneratorPort, AuthService,
++  type AuthenticatedContext, IdempotencyService, readReviewSnapshotRecords, reconstructReviewRequestView,
++  reviewSnapshotItems, reviewResync } from '@detuned/core';
++import { type ReviewModule } from './index.js';
++import { canonicalizeReviewJson } from './canonical-json.js';
++const cmp=(a:string,b:string)=>a<b?-1:a>b?1:0;
++const invalid=()=>new DetunedError(ErrorCode.VALIDATION_ERROR,'Formal review request requirements are not satisfied.',400);
++const missing=()=>new DetunedError(ErrorCode.NOT_FOUND,'Review material does not exist or is not accessible.',404);
++const forbidden=()=>new DetunedError(ErrorCode.FORBIDDEN,'This review request operation requires its requester or space maintenance authority.',403);
++
++/** Internal only: fixed assignments and collecting/cancelled heads, no submissions or public endpoint. */
++export class ReviewRequestService {
++  constructor(private readonly storage:StoragePort,private readonly authService:AuthService,
++    private readonly idempotency:IdempotencyService,private readonly clock:ClockPort,
++    private readonly idGen:IdGeneratorPort,private readonly builder:ReviewModule){}
++
++  private readAuth(auth:AuthenticatedContext,spaceId:string,write=false){
++    const current=this.authService.refreshContext(auth);
++    return this.authService.requireSpaceAccess(current,spaceId,write?'contributor':'observer');
++  }
++  private target(auth:AuthenticatedContext,spaceId:string,postId:string){
++    const current=this.readAuth(auth,spaceId,true),post=this.storage.findPostById(postId);
++    if(!post||post.space_id!==spaceId)throw missing();
++    if(post.lifecycle==='redacted')throw new DetunedError(ErrorCode.CONTENT_REDACTED,'Review material has been redacted.',410);
++    if(post.author_id!==current.actor.id&&current.spaceRole!=='maintainer'&&current.spaceRole!=='owner')throw forbidden();
++    return current;
++  }
++  private cancelAuth(auth:AuthenticatedContext,spaceId:string,requestId:string){
++    const current=this.readAuth(auth,spaceId,true),head=this.storage.findReviewRequestById(requestId);
++    if(!head||head.space_id!==spaceId)throw missing();
++    // Privacy is checked before ownership and version errors; no stored manifest can restore redacted material.
++    reconstructReviewRequestView(this.storage,spaceId,requestId);
++    if(head.requested_by!==current.actor.id&&current.spaceRole!=='maintainer'&&current.spaceRole!=='owner')throw forbidden();
++    return {current,head};
++  }
++
++  createRequest(auth:AuthenticatedContext,spaceId:string,req:CreateReviewRequest,requestKey:string):ReviewRequestView{
++    return this.storage.transaction(tx=>{
++      this.readAuth(auth,spaceId,true);
++      if(!isCreateReviewRequest(req))throw invalid();
++      const current=this.target(auth,spaceId,req.target_ref.post_id);
++      return this.idempotency.executeIdempotent(current.actor.id,spaceId,'review.request.create',requestKey,req,201,()=>{
++        const {manifest,manifestHash}=this.builder.generateSnapshotManifest(current,spaceId,req);
++        const policy=manifest.review_policy;
++        if(!policy.enabled||!policy.exclude_contributors||!policy.distinct_actors||!policy.seal_until_all_submitted||!policy.invalidate_on_revision||
++          req.reviewer_actor_ids.length!==policy.required_reviewers)throw invalid();
++        const reviewers=[...req.reviewer_actor_ids].sort(cmp),groups=new Set<string>();
++        const assignments:ReviewAssignmentRecord[]=reviewers.map(reviewer_actor_id=>{
++          const actor=tx.findActorById(reviewer_actor_id),member=tx.getMembership(spaceId,reviewer_actor_id);
++          if(!actor||actor.disabled_at||!['human','agent'].includes(actor.kind)||!member||!member.active||!member.reviewer_eligible||manifest.contributors.includes(reviewer_actor_id))throw invalid();
++          if(policy.distinct_independence_groups){const group=member.independence_group;
++            if(typeof group!=='string'||!/\S/.test(group)||groups.has(group))throw invalid();groups.add(group);}
++          return {request_id:'',reviewer_actor_id,group_at_assignment:member.independence_group};
++        });
++        const now=this.clock.nowIso(),snapshotId=this.idGen.generateId('snp'),requestId=this.idGen.generateId('rrq');
++        const round=tx.getNextReviewRequestRound(spaceId,req.target_ref.post_id);
++        if(!Number.isSafeInteger(round)||round<1)throw reviewResync();
++        const canonical=canonicalizeReviewJson(manifest);
++        if(createHash('sha256').update(canonical,'utf8').digest('hex')!==manifestHash)throw reviewResync();
++        tx.createReviewSnapshot({id:snapshotId,space_id:spaceId,manifest_json:canonical,manifest_sha256:manifestHash,
++          target_ref:{...manifest.target.ref},policy_revision:manifest.policy_revision,rules_revision:manifest.rules_revision,created_by:current.actor.id,created_at:now},
++          reviewSnapshotItems(snapshotId,manifest));
++        const record:ReviewRequestRecord={id:requestId,space_id:spaceId,target_ref:{...req.target_ref},snapshot_id:snapshotId,round,
++          phase:'collecting',version:1,requested_by:current.actor.id,created_at:now,changed_by:current.actor.id,changed_at:now,reason:null};
++        const version:ReviewRequestVersionRecord={request_id:requestId,version:1,phase:'collecting',changed_by:current.actor.id,changed_at:now,reason:null};
++        tx.createReviewRequest(record,version,assignments.map(a=>({...a,request_id:requestId})));
++        tx.appendEvent(spaceId,{id:this.idGen.generateId('evt'),space_id:spaceId,type:'review.requested',object_id:requestId,
++          revision:1,visibility:'public',actor_id:current.actor.id,created_at:now});
++        return reconstructReviewRequestView(tx,spaceId,requestId,1);
++      },()=>{this.target(auth,spaceId,req.target_ref.post_id);}).data;
++    });
++  }
++
++  getRequest(auth:AuthenticatedContext,spaceId:string,requestId:string):ReviewRequestView{
++    return this.storage.readSnapshot(()=>{this.readAuth(auth,spaceId);return reconstructReviewRequestView(this.storage,spaceId,requestId);});
++  }
++  getSnapshot(auth:AuthenticatedContext,spaceId:string,snapshotId:string):
++    {snapshot_id:string;space_id:string;manifest_sha256:string;manifest:ReviewSnapshotManifestData;created_by:string;created_at:string}{
++    return this.storage.readSnapshot(()=>{
++      this.readAuth(auth,spaceId);const {record,manifest}=readReviewSnapshotRecords(this.storage,spaceId,snapshotId);
++      try{if(canonicalizeReviewJson(manifest)!==record.manifest_json)throw reviewResync();}catch{throw reviewResync();}
++      return {snapshot_id:record.id,space_id:record.space_id,manifest_sha256:record.manifest_sha256,manifest,created_by:record.created_by,created_at:record.created_at};
++    });
++  }
++  cancelRequest(auth:AuthenticatedContext,spaceId:string,requestId:string,req:CancelReviewRequest,requestKey:string):ReviewRequestView{
++    return this.storage.transaction(tx=>{
++      const {current}=this.cancelAuth(auth,spaceId,requestId);
++      if(!isCancelReviewRequest(req))throw invalid();
++      return this.idempotency.executeIdempotent(current.actor.id,spaceId,`review.request.cancel:${requestId}`,requestKey,req,200,()=>{
++        const {head}=this.cancelAuth(auth,spaceId,requestId);
++        if(head.version!==req.expected_version)throw new DetunedError(ErrorCode.REVISION_CONFLICT,'Review request version has changed.',409);
++        if(head.phase!=='collecting')throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Only collecting review requests can be cancelled.',400);
++        const now=this.clock.nowIso(),version=head.version+1;
++        tx.updateReviewRequest({...head,phase:'cancelled',version,changed_by:current.actor.id,changed_at:now,reason:req.reason},
++          {request_id:requestId,version,phase:'cancelled',changed_by:current.actor.id,changed_at:now,reason:req.reason});
++        tx.appendEvent(spaceId,{id:this.idGen.generateId('evt'),space_id:spaceId,type:'review.cancelled',object_id:requestId,
++          revision:version,visibility:'public',actor_id:current.actor.id,created_at:now});
++        return reconstructReviewRequestView(tx,spaceId,requestId,version);
++      },()=>{this.cancelAuth(auth,spaceId,requestId);}).data;
++    });
++  }
++}
+--- before/modules/review/src/index.ts
++++ modules/review/src/index.ts
+@@ -134,3 +134,5 @@
+     });
+   }
+ }
++
++export * from './request-service.js';
+--- before/tests/integration/m6-review-requests.test.ts
++++ tests/integration/m6-review-requests.test.ts
+@@ -0,0 +1,98 @@
++import {beforeEach,afterEach,it,expect,vi} from 'vitest';
++import Database from 'better-sqlite3';
++import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
++import {buildApp} from '@detuned/server';
++import {AuthService,CryptoHasher,CryptoIdGenerator,IdempotencyService} from '@detuned/core';
++import {ReviewModule,ReviewRequestService} from '@detuned/module-review';
++import {CancelReviewRequestSchema,ToolReviewCancelOpSchema,DETUNED_TOOLS,type CreateReviewRequest} from '@detuned/protocol';
++import {Value} from '@sinclair/typebox/value';
++let db:Database.Database,storage:SqliteStorage,app:ReturnType<typeof buildApp>,service:ReviewRequestService;
++let auth:ReturnType<AuthService['authenticateToken']>,sid:string,pid:string,req:CreateReviewRequest;
++const clock={now:()=>new Date('2026-10-09T00:00:00Z'),nowIso:()=> '2026-10-09T00:00:00.000Z'};
++beforeEach(async()=>{
++ db=new Database(':memory:');const token=bootstrapDatabase(db).adminToken!;storage=new SqliteStorage(db);app=buildApp({storage,clock});await app.ready();
++ const headers={authorization:`Bearer ${token}`};
++ async function post(url:string,payload:Record<string,unknown>,key:string){const r=await app.inject({method:'POST',url,headers:{...headers,'idempotency-key':key},payload});expect(r.statusCode,r.body).toBe(201);return r.json().data;}
++ sid=(await post('/api/v1/spaces',{slug:'review-requests',objective:'o',rules:[]},'space')).space.id;
++ const tid=(await post(`/api/v1/spaces/${sid}/threads`,{title:'t'},'thread')).thread.id;
++ pid=(await post(`/api/v1/spaces/${sid}/threads/${tid}/posts`,{kind:'claim',title:'claim',summary:'s',body:'original',structured:{statement:'claim',assumptions:['a'],scope:'s',falsification_plan:'f'}},'claim')).post.id;
++ for(const id of ['r1','r2']){storage.createActor({id,kind:'human',display_name:id,created_at:clock.nowIso(),disabled_at:null});storage.upsertMembership({space_id:sid,actor_id:id,role:'observer',active:true,reviewer_eligible:true,independence_group:id});}
++ db.prepare("UPDATE space_revisions SET review_policy=json_set(review_policy,'$.required_checks',json('[]')) WHERE space_id=?").run(sid);
++ const hasher=new CryptoHasher(),as=new AuthService(storage,hasher,clock);auth=as.authenticateToken(token);
++ service=new ReviewRequestService(storage,as,new IdempotencyService(storage,hasher,clock),clock,new CryptoIdGenerator(),new ReviewModule(storage,hasher,clock,new CryptoIdGenerator(),as));
++ req={target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['r2','r1'],expected_policy_revision:1,reproduction_instructions:'run'};
++});
++afterEach(async()=>{vi.restoreAllMocks();await app.close();db.close();});
++const create=(key='create')=>service.createRequest(auth,sid,req,key);
++const counts=()=>Object.fromEntries(['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','events','idempotency_records'].map(t=>[t,(db.prepare(`SELECT count(*) n FROM ${t}`).get() as {n:number}).n]));
++it('RR01 fixed assignment/version and compact replay survive cancellation and later policy changes',()=>{
++ const first=create(),afterCreate=counts();expect(first.reviewer_actor_ids).toEqual(['r1','r2']);expect(first.phase).toBe('collecting');expect(create()).toEqual(first);expect(counts()).toEqual(afterCreate);
++ const cancelled=service.cancelRequest(auth,sid,first.id,{expected_version:1,reason:'stop'},'cancel');expect(cancelled).toMatchObject({version:2,phase:'cancelled',reason:'stop'});
++ db.prepare("INSERT INTO space_revisions SELECT space_id,2,objective,rules,json_set(review_policy,'$.enabled',json('false')),check_profiles,pinned_refs,editor_id,created_at FROM space_revisions WHERE space_id=? AND revision=1").run(sid);
++ db.prepare('UPDATE spaces SET current_revision=2,policy_revision=2 WHERE id=?').run(sid);
++ const stable=counts();expect(create()).toEqual(first);expect(service.cancelRequest(auth,sid,first.id,{expected_version:1,reason:'stop'},'cancel')).toEqual(cancelled);expect(counts()).toEqual(stable);
++ expect(service.getRequest(auth,sid,first.id)).toEqual(cancelled);expect(()=>create('fresh')).toThrow(expect.objectContaining({code:'REVISION_CONFLICT'}));
++ const refs=db.prepare("SELECT result_ref FROM idempotency_records WHERE operation LIKE 'review.request.%'").all() as {result_ref:string}[];expect(refs).toHaveLength(2);for(const row of refs){expect(JSON.parse(row.result_ref)).toMatchObject({v:1,manifest_sha256:first.snapshot_sha256});expect(row.result_ref).not.toContain('statement');}
++});
++it('RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation',()=>{
++ req.reviewer_actor_ids=['r1',auth.actor.id];expect(()=>create()).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));expect(counts().review_requests).toBe(0);req.reviewer_actor_ids=['r1','r2'];
++ const first=create();req.reproduction_instructions='changed';expect(()=>create()).toThrow(expect.objectContaining({statusCode:409}));req.reproduction_instructions='run';
++ expect(()=>service.cancelRequest(auth,sid,first.id,{expected_version:2,reason:'stop'},'badversion')).toThrow(expect.objectContaining({code:'REVISION_CONFLICT'}));
++ service.cancelRequest(auth,sid,first.id,{expected_version:1,reason:'stop'},'cancel');expect(()=>service.cancelRequest(auth,sid,first.id,{expected_version:2,reason:'again'},'freshcancel')).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));
++});
++it('RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous',()=>{
++ const before=counts(),append=vi.spyOn(storage,'appendEvent').mockImplementation(()=>{throw new Error('controlled transaction failure');});expect(()=>create()).toThrow('controlled transaction failure');expect(counts()).toEqual(before);append.mockRestore();
++ const one=create(),two=create('second');expect([one.round,two.round]).toEqual([1,2]);expect(counts().snapshots).toBe(2);expect(counts().review_assignments).toBe(4);
++});
++it('RR04 historical material reads stay detached but redaction and revoked credential gate replay',()=>{
++ const first=create(),snap=service.getSnapshot(auth,sid,first.snapshot_id);snap.manifest.target.assumptions.push('local');expect(service.getSnapshot(auth,sid,first.snapshot_id).manifest.target.assumptions).toEqual(['a']);
++ db.prepare('UPDATE posts SET current_revision=2 WHERE id=?').run(pid);expect(create()).toEqual(first);expect(service.getSnapshot(auth,sid,first.snapshot_id).manifest.target.ref.revision).toBe(1);
++ db.prepare("UPDATE posts SET lifecycle='redacted' WHERE id=?").run(pid);expect(()=>create()).toThrow(expect.objectContaining({code:'CONTENT_REDACTED'}));expect(()=>service.getSnapshot(auth,sid,first.snapshot_id)).toThrow(expect.objectContaining({code:'CONTENT_REDACTED'}));
++ db.prepare('UPDATE credentials SET revoked_at=? WHERE id=?').run(clock.nowIso(),auth.credential.id);expect(()=>service.getRequest(auth,sid,first.id)).toThrow(expect.objectContaining({code:'UNAUTHENTICATED'}));
++});
++it('RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material',()=>{
++ db.prepare("UPDATE space_revisions SET review_policy=json_set(review_policy,'$.distinct_independence_groups',json('true')) WHERE space_id=?").run(sid);
++ const first=create(),snapshot=storage.findReviewSnapshotById(first.snapshot_id)!;
++ db.prepare("UPDATE review_assignments SET reviewer_actor_id=? WHERE request_id=? AND reviewer_actor_id='r1'").run(auth.actor.id,first.id);
++ expect(()=>service.getRequest(auth,sid,first.id)).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED',statusCode:409}));expect(()=>create()).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED',statusCode:409}));
++ db.prepare("UPDATE review_assignments SET reviewer_actor_id='r1' WHERE request_id=? AND reviewer_actor_id=?").run(first.id,auth.actor.id);
++ db.prepare("UPDATE review_assignments SET group_at_assignment='r2' WHERE request_id=? AND reviewer_actor_id='r1'").run(first.id);expect(()=>create()).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED',statusCode:409}));
++ db.prepare("UPDATE review_assignments SET group_at_assignment='  ' WHERE request_id=? AND reviewer_actor_id='r1'").run(first.id);expect(()=>service.getRequest(auth,sid,first.id)).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED',statusCode:409}));
++ db.prepare("UPDATE review_assignments SET group_at_assignment='r1' WHERE request_id=? AND reviewer_actor_id='r1'").run(first.id);
++ db.prepare("UPDATE snapshots SET manifest_json='{}' WHERE id=?").run(first.snapshot_id);expect(()=>service.getSnapshot(auth,sid,first.snapshot_id)).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED'}));
++ db.prepare('UPDATE snapshots SET manifest_json=? WHERE id=?').run(snapshot.manifest_json,first.snapshot_id);
++ db.prepare("UPDATE snapshot_items SET sha256=? WHERE snapshot_id=? AND item_type='target_post'").run('b'.repeat(64),first.snapshot_id);expect(()=>create()).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED'}));
++ db.prepare("UPDATE snapshot_items SET sha256=? WHERE snapshot_id=? AND item_type='target_post'").run(JSON.parse(snapshot.manifest_json).target.content_hash,first.snapshot_id);
++ db.prepare("UPDATE idempotency_records SET result_ref=json_set(result_ref,'$.unexpected','private') WHERE operation='review.request.create'").run();expect(()=>create()).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED',statusCode:409}));
++});
++it('RR06 requester-only cancellation, current membership and reopened immutable history retain their authority',()=>{
++ const hasher=new CryptoHasher(),as=new AuthService(storage,hasher,clock);
++ storage.createActor({id:'other',kind:'human',display_name:'other',created_at:clock.nowIso(),disabled_at:null});
++ storage.upsertMembership({space_id:sid,actor_id:'other',role:'contributor',active:true,reviewer_eligible:false,independence_group:null});
++ storage.createCredential({id:'other-credential',actor_id:'other',token_hash:hasher.sha256('owned-other'),allowed_space_ids:[sid],capabilities:['read','write'],expires_at:null,revoked_at:null,created_at:clock.nowIso()});
++ const other=as.authenticateToken('owned-other');
++ expect(()=>service.createRequest(other,sid,req,'other-create')).toThrow(expect.objectContaining({code:'FORBIDDEN'}));
++ const first=create();
++ // Being target author later is not authority to cancel someone else's request.
++ db.prepare('UPDATE posts SET author_id=? WHERE id=?').run('other',pid);
++ expect(()=>service.cancelRequest(other,sid,first.id,{expected_version:1,reason:'stop'},'other-cancel')).toThrow(expect.objectContaining({code:'FORBIDDEN'}));
++ storage.upsertMembership({...storage.getMembership(sid,'other')!,role:'maintainer'});
++ const cancelled=service.cancelRequest(other,sid,first.id,{expected_version:1,reason:'maintenance'},'maintenance');expect(cancelled.changed_by).toBe('other');
++ const reopened=new Database(db.serialize());
++ try{const ss=new SqliteStorage(reopened),aa=new AuthService(ss,hasher,clock),builder=new ReviewModule(ss,hasher,clock,new CryptoIdGenerator(),aa),rr=new ReviewRequestService(ss,aa,new IdempotencyService(ss,hasher,clock),clock,new CryptoIdGenerator(),builder);
++  expect(rr.getRequest(other,sid,first.id)).toEqual(cancelled);expect(rr.getSnapshot(other,sid,first.snapshot_id).manifest_sha256).toBe(first.snapshot_sha256);
++  expect(rr.cancelRequest(other,sid,first.id,{expected_version:1,reason:'maintenance'},'maintenance')).toEqual(cancelled);
++  ss.upsertMembership({...ss.getMembership(sid,'other')!,active:false});expect(()=>rr.getRequest(other,sid,first.id)).toThrow(expect.objectContaining({code:'NOT_FOUND',statusCode:404}));
++ }finally{reopened.close();}
++});
++
++it('RR07 inactive cancel tool derives the strict DTO without placing transport keys in its body',()=>{
++ const body={expected_version:1,reason:'stop'},tool={space_id:'s',request_key:'k',op:'cancel',request_id:'r',...body};
++ expect(Value.Check(CancelReviewRequestSchema,body)).toBe(true);expect(Value.Check(ToolReviewCancelOpSchema,tool)).toBe(true);
++ const {expected_version:ignored,...missing}=tool;void ignored;expect(Value.Check(ToolReviewCancelOpSchema,missing)).toBe(false);
++ expect(Value.Check(ToolReviewCancelOpSchema,{...tool,reason:'  '})).toBe(false);
++ expect(Value.Check(CancelReviewRequestSchema,{...body,request_key:'k'})).toBe(false);
++ expect(ToolReviewCancelOpSchema.properties.expected_version).toBe(CancelReviewRequestSchema.properties.expected_version);
++ expect(ToolReviewCancelOpSchema.properties.reason).toBe(CancelReviewRequestSchema.properties.reason);
++ expect(DETUNED_TOOLS.map(t=>t.name)).not.toContain('forum_review');
++});
+--- before/packages/protocol/src/tools.ts
++++ packages/protocol/src/tools.ts
+@@ -8,7 +8,7 @@
+ import { PostRefSchema, EvidenceRefSchema } from './common.js';
+ import { RelationTypeSchema } from './relations.js';
+ import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema } from './events.js';
+-import { CreateReviewRequestSchema, ReviewVerdictSchema, ReviewCompletionStatusSchema, ReviewPhaseSchema } from './review.js';
++import { CreateReviewRequestSchema, CancelReviewRequestSchema, ReviewVerdictSchema, ReviewCompletionStatusSchema, ReviewPhaseSchema } from './review.js';
+ 
+ export const ToolContextParamsSchema = Type.Object({
+   space_id: Type.String({ minLength: 1 }),
+@@ -229,7 +229,7 @@
+   request_key: Type.String({ minLength: 1, maxLength: 128 }),
+   op: Type.Literal('cancel'),
+   request_id: Type.String({ minLength: 1 }),
+-  reason: Type.String({ minLength: 1, maxLength: 500 }),
++  ...CancelReviewRequestSchema.properties,
+ }, { additionalProperties: false });
+ 
+ export const ToolReviewParamsUnion = Type.Union([

@@ -132,4 +132,115 @@ export declare const CreateSessionRequestSchema: import("@sinclair/typebox").TOb
     metadata: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TRecord<import("@sinclair/typebox").TString, import("@sinclair/typebox").TUnknown>>;
 }>;
 export type CreateSessionRequest = Static<typeof CreateSessionRequestSchema>;
+export declare const SpaceRevisionRefSchema: import("@sinclair/typebox").TObject<{
+    space_id: import("@sinclair/typebox").TString;
+    revision: import("@sinclair/typebox").TInteger;
+}>;
+export type SpaceRevisionRef = Static<typeof SpaceRevisionRefSchema>;
+export declare const SpaceRulesDocumentSchema: import("@sinclair/typebox").TObject<{
+    objective: import("@sinclair/typebox").TString;
+    rules: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>;
+}>;
+export type SpaceRulesDocument = Static<typeof SpaceRulesDocumentSchema>;
+export declare function encodeSpaceRulesDocument(document: SpaceRulesDocument): string;
+export declare const SPACE_REVISION_READ_LIMITS: Readonly<{
+    cursor_chars: 4096;
+    cursor_ttl_seconds: 86400;
+}>;
+export declare const SPACE_REVISION_CURSOR_ERROR_MESSAGE = "\u7A7A\u95F4\u4FEE\u8BA2\u6E38\u6807\u65E0\u6548\uFF0C\u8BF7\u53BB\u6389 cursor \u91CD\u65B0\u8BFB\u53D6\u6307\u5B9A\u4FEE\u8BA2\u3002";
+export declare const SpaceRevisionReadQuerySchema: import("@sinclair/typebox").TObject<{
+    max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    cursor: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+}>;
+export type SpaceRevisionReadQuery = Static<typeof SpaceRevisionReadQuerySchema>;
+export declare function validateSpaceRevisionReadQuery(query: SpaceRevisionReadQuery): void;
+export declare const SpaceRevisionReadCursorPayloadSchema: import("@sinclair/typebox").TObject<{
+    v: import("@sinclair/typebox").TLiteral<1>;
+    purpose: import("@sinclair/typebox").TLiteral<"space_revision_read">;
+    actor_id: import("@sinclair/typebox").TString;
+    space_id: import("@sinclair/typebox").TString;
+    revision: import("@sinclair/typebox").TInteger;
+    byte_offset: import("@sinclair/typebox").TInteger;
+    exp: import("@sinclair/typebox").TInteger;
+}>;
+export type SpaceRevisionReadCursorPayload = Static<typeof SpaceRevisionReadCursorPayloadSchema>;
+export declare function isSpaceRevisionReadCursorPayload(value: unknown): value is SpaceRevisionReadCursorPayload;
+export declare const SpaceRevisionPageSchema: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TObject<{
+    data: import("@sinclair/typebox").TObject<{
+        complete: import("@sinclair/typebox").TLiteral<false>;
+        ref: import("@sinclair/typebox").TObject<{
+            space_id: import("@sinclair/typebox").TString;
+            revision: import("@sinclair/typebox").TInteger;
+        }>;
+        encoding: import("@sinclair/typebox").TLiteral<"json">;
+        chunk: import("@sinclair/typebox").TString;
+        start_byte: import("@sinclair/typebox").TInteger;
+        end_byte: import("@sinclair/typebox").TInteger;
+    }>;
+    meta: import("@sinclair/typebox").TObject<{
+        truncated: import("@sinclair/typebox").TLiteral<true>;
+        next_cursor: import("@sinclair/typebox").TString;
+    }>;
+}>, import("@sinclair/typebox").TObject<{
+    data: import("@sinclair/typebox").TObject<{
+        complete: import("@sinclair/typebox").TLiteral<true>;
+        ref: import("@sinclair/typebox").TObject<{
+            space_id: import("@sinclair/typebox").TString;
+            revision: import("@sinclair/typebox").TInteger;
+        }>;
+        encoding: import("@sinclair/typebox").TLiteral<"json">;
+        chunk: import("@sinclair/typebox").TString;
+        start_byte: import("@sinclair/typebox").TInteger;
+        end_byte: import("@sinclair/typebox").TInteger;
+    }>;
+    meta: import("@sinclair/typebox").TObject<{
+        truncated: import("@sinclair/typebox").TLiteral<false>;
+        next_cursor: import("@sinclair/typebox").TNull;
+    }>;
+}>]>;
+export type SpaceRevisionPage = Static<typeof SpaceRevisionPageSchema>;
+export declare const SpaceRevisionEnvelopeSchema: import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+    data: import("@sinclair/typebox").TObject<{
+        complete: import("@sinclair/typebox").TLiteral<false>;
+        ref: import("@sinclair/typebox").TObject<{
+            space_id: import("@sinclair/typebox").TString;
+            revision: import("@sinclair/typebox").TInteger;
+        }>;
+        encoding: import("@sinclair/typebox").TLiteral<"json">;
+        chunk: import("@sinclair/typebox").TString;
+        start_byte: import("@sinclair/typebox").TInteger;
+        end_byte: import("@sinclair/typebox").TInteger;
+    }>;
+    meta: import("@sinclair/typebox").TObject<{
+        truncated: import("@sinclair/typebox").TLiteral<true>;
+        next_cursor: import("@sinclair/typebox").TString;
+    }>;
+    api_version: import("@sinclair/typebox").TLiteral<"1">;
+    request_id: import("@sinclair/typebox").TString;
+} | {
+    data: import("@sinclair/typebox").TObject<{
+        complete: import("@sinclair/typebox").TLiteral<true>;
+        ref: import("@sinclair/typebox").TObject<{
+            space_id: import("@sinclair/typebox").TString;
+            revision: import("@sinclair/typebox").TInteger;
+        }>;
+        encoding: import("@sinclair/typebox").TLiteral<"json">;
+        chunk: import("@sinclair/typebox").TString;
+        start_byte: import("@sinclair/typebox").TInteger;
+        end_byte: import("@sinclair/typebox").TInteger;
+    }>;
+    meta: import("@sinclair/typebox").TObject<{
+        truncated: import("@sinclair/typebox").TLiteral<false>;
+        next_cursor: import("@sinclair/typebox").TNull;
+    }>;
+    api_version: import("@sinclair/typebox").TLiteral<"1">;
+    request_id: import("@sinclair/typebox").TString;
+}>[]>;
+export type SpaceRevisionEnvelope = {
+    api_version: '1';
+    request_id: string;
+} & SpaceRevisionPage;
+export declare function buildSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): SpaceRevisionEnvelope;
+export declare function serializeSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): string;
+export declare function spaceRevisionEnvelopeBytes(requestId: string, page: SpaceRevisionPage): number;
 //# sourceMappingURL=spaces.d.ts.map

@@ -1,0 +1,170 @@
+--- packages/core/src/services/idempotency-service.ts (fresh exact before)
++++ packages/core/src/services/idempotency-service.ts (current)
+@@ -4,6 +4,9 @@
+ import { ClockPort } from '../ports/clock.js';
+ import { WriteRateLimiter } from './write-rate-limiter.js';
+ import { isDeepStrictEqual as equal } from 'node:util';
++import { validateStoredReviewSubmissionReference, validateReviewSubmissionRecords, assertReviewSubmissionPostEvidencePrivacy, reviewSubmissionAcknowledgement, type ReviewSubmissionResultReference } from './review-submission-records.js';
++import { assertStoredSubmissionEvidencePrivacy, validateStoredReviewArtifactReference, reconstructReviewArtifactResult } from './review-artifact-access.js';
++import { readReviewSnapshotRecords } from './review-request-records.js';
+ import { reconstructReviewRequestView, validatePersistedReviewRequestBinding, reviewResync } from './review-request-records.js';
+ 
+ export type NestedRelationRef = {
+@@ -13,7 +16,9 @@
+ };
+ 
+ export type IdempotencyResultRef =
++  | ReviewSubmissionResultReference
+   | { v: 1; kind: 'review.request.create' | 'review.request.cancel'; request_id: string; request_version: number; snapshot_id: string; manifest_sha256: string }
++  | { v: 1; kind: 'artifact.review'; artifact_id: string; assignment_id:string }
+   | { v: 1; kind: 'artifact'; artifact_id: string }
+   | {
+       v: 1;
+@@ -78,6 +83,8 @@
+     };
+ 
+ export type OperationFamily =
++  | 'review.submission.create'
++  | 'artifact.review.create'
+   | 'review.request.create'
+   | 'review.request.cancel'
+   | 'artifact.create'
+@@ -104,6 +111,8 @@
+     throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '操作标识为空或无效。', 422);
+   }
+ 
++  if(operation.startsWith('review.submission.create:')){const targetId=operation.slice('review.submission.create:'.length);if(!targetId||targetId.trim()!==targetId)throw reviewResync();return {family:'review.submission.create',expectedKind:'review.submission',targetId};}
++  if(operation.startsWith('artifact.review.create:')){const targetId=operation.slice('artifact.review.create:'.length);if(!targetId||targetId.trim()!==targetId)throw reviewResync();return {family:'artifact.review.create',expectedKind:'artifact.review',targetId};}
+   if (operation === 'review.request.create') return { family: 'review.request.create', expectedKind: 'review.request.create' };
+   if (operation.startsWith('review.request.cancel:')) {
+     const targetId = operation.slice('review.request.cancel:'.length);
+@@ -630,6 +639,8 @@
+   spaceId: string,
+   parsed: any
+ ): void {
++  if(operation.startsWith('artifact.review.create:')){validateResultRef(operation,parsed);validateStoredReviewArtifactReference(storage,operation,spaceId,parsed);return;}
++  if(operation.startsWith('review.submission.create:')){validateResultRef(operation,parsed);validateStoredReviewSubmissionReference(storage,operation,spaceId,parsed);return;}
+   if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
+     const ref = validateResultRef(operation, parsed);
+     validateResultRefSemantics(storage, operation, spaceId, ref);
+@@ -971,6 +982,22 @@
+ }
+ 
+ export function validateResultRef(operation: string, raw: unknown): IdempotencyResultRef {
++  if(operation.startsWith('artifact.review.create:')){
++    if(!raw||typeof raw!=='object'||Array.isArray(raw))throw reviewResync();
++    const r=raw as Record<string,unknown>,keys=['v','kind','artifact_id','assignment_id'];
++    if(Object.keys(r).length!==keys.length||Object.keys(r).some(k=>!keys.includes(k))||r.v!==1||r.kind!=='artifact.review'||
++      typeof r.artifact_id!=='string'||!r.artifact_id||typeof r.assignment_id!=='string'||!r.assignment_id||operation!==`artifact.review.create:${r.assignment_id}`)throw reviewResync();
++    return r as {v:1;kind:'artifact.review';artifact_id:string;assignment_id:string};
++  }
++  if(operation.startsWith('review.submission.create:')){
++    if(!raw||typeof raw!=='object'||Array.isArray(raw))throw reviewResync();
++    const r=raw as Record<string,unknown>,keys=['v','kind','submission_id','assignment_id','request_id','request_version','snapshot_id','manifest_sha256'];
++    if(Object.keys(r).length!==keys.length||Object.keys(r).some(k=>!keys.includes(k))||r.v!==1||r.kind!=='review.submission'||
++      ['submission_id','assignment_id','request_id','snapshot_id'].some(k=>typeof r[k]!=='string'||!r[k])||
++      !Number.isSafeInteger(r.request_version)||(r.request_version as number)<2||typeof r.manifest_sha256!=='string'||!/^[0-9a-f]{64}$/.test(r.manifest_sha256)||
++      operation!==`review.submission.create:${r.request_id}`)throw reviewResync();
++    return r as unknown as ReviewSubmissionResultReference;
++  }
+   const reviewOperation = parseOperation(operation);
+   if (reviewOperation.family === 'review.request.create' || reviewOperation.family === 'review.request.cancel') {
+     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw reviewResync();
+@@ -980,7 +1007,7 @@
+         obj.kind !== reviewOperation.expectedKind || typeof obj.request_id !== 'string' || !obj.request_id ||
+         typeof obj.snapshot_id !== 'string' || !obj.snapshot_id || typeof obj.manifest_sha256 !== 'string' ||
+         obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
+-        obj.request_version !== (reviewOperation.family === 'review.request.create' ? 1 : 2) ||
++        (reviewOperation.family === 'review.request.create' ? obj.request_version !== 1 : !Number.isSafeInteger(obj.request_version) || (obj.request_version as number) < 2) ||
+         (reviewOperation.targetId !== undefined && obj.request_id !== reviewOperation.targetId)) throw reviewResync();
+     return obj as IdempotencyResultRef;
+   }
+@@ -1101,7 +1128,7 @@
+       if (typeof obj.request_id !== 'string' || !obj.request_id || typeof obj.snapshot_id !== 'string' || !obj.snapshot_id ||
+           !Number.isSafeInteger(obj.request_version) || obj.request_version < 1 ||
+           typeof obj.manifest_sha256 !== 'string' || obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
+-          (obj.kind === 'review.request.create' ? obj.request_version !== 1 : obj.request_version !== 2) ||
++          (obj.kind === 'review.request.create' ? obj.request_version !== 1 : obj.request_version < 2) ||
+           (parsedOp.targetId !== undefined && parsedOp.targetId !== obj.request_id)) throw reviewResync();
+       return obj as IdempotencyResultRef;
+     }
+@@ -1277,6 +1304,13 @@
+   spaceId: string,
+   ref: IdempotencyResultRef | any
+ ): void {
++  if(operation.startsWith('artifact.review.create:')){validateStoredReviewArtifactReference(tx,operation,spaceId,ref);return;}
++  if(operation.startsWith('review.submission.create:')){
++    validateStoredReviewSubmissionReference(tx,operation,spaceId,ref);
++    const s=validateReviewSubmissionRecords(tx,spaceId,(ref as ReviewSubmissionResultReference).submission_id);
++    readReviewSnapshotRecords(tx,spaceId,(ref as ReviewSubmissionResultReference).snapshot_id);
++    assertReviewSubmissionPostEvidencePrivacy(tx,spaceId,s);assertStoredSubmissionEvidencePrivacy(tx,spaceId,s);return;
++  }
+   if (ref.kind === 'unreplayable') {
+     return;
+   }
+@@ -1467,7 +1501,7 @@
+   }
+ }
+ 
+-export function extractResultRef(operation: string, result: any): string {
++export function extractResultRef(operation: string, result: any, storage?: StoragePort): string {
+   if (!result || typeof result !== 'object') {
+     throw new DetunedError(
+       ErrorCode.VALIDATION_ERROR,
+@@ -1480,6 +1514,16 @@
+   let ref: IdempotencyResultRef;
+ 
+   switch (parsedOp.family) {
++    case 'review.submission.create': {
++      if(!storage||typeof result.submission_id!=='string')throw reviewResync();
++      const submission=validateReviewSubmissionRecords(storage,storage.findReviewRequestById(parsedOp.targetId!)?.space_id??'instance',result.submission_id);
++      const head=storage.findReviewRequestById(submission.request_id);
++      if(!head||submission.request_id!==parsedOp.targetId||!equal(result,reviewSubmissionAcknowledgement(submission)))throw reviewResync();
++      ref={v:1,kind:'review.submission',submission_id:submission.id,assignment_id:submission.assignment_id,request_id:submission.request_id,
++        request_version:submission.request_version,snapshot_id:head.snapshot_id,manifest_sha256:submission.snapshot_sha256};
++      break;
++    }
++    case 'artifact.review.create': {ref={v:1,kind:'artifact.review',artifact_id:result.id,assignment_id:result.review_assignment_id};break;}
+     case 'review.request.create':
+     case 'review.request.cancel': {
+       ref = { v:1,kind:parsedOp.family,request_id:result.id,request_version:result.version,snapshot_id:result.snapshot_id,manifest_sha256:result.snapshot_sha256 };
+@@ -2352,6 +2396,21 @@
+ }
+ 
+ export function reconstructResult(tx: StoragePort, operation: string, resultRefStr: string, spaceId?: string): any {
++  if(operation.startsWith('artifact.review.create:')){
++    let raw:unknown;try{raw=JSON.parse(resultRefStr);}catch{throw reviewResync();}
++    validateStoredReviewArtifactReference(tx,operation,spaceId??'instance',raw);
++    const ref=validateResultRef(operation,raw) as {artifact_id:string};
++    return reconstructReviewArtifactResult(tx,spaceId??'instance',ref.artifact_id);
++  }
++  if(operation.startsWith('review.submission.create:')){
++    let raw:unknown;try{raw=JSON.parse(resultRefStr);}catch{throw reviewResync();}
++    validateStoredReviewSubmissionReference(tx,operation,spaceId??'instance',raw);
++    const ref=validateResultRef(operation,raw) as ReviewSubmissionResultReference;
++    const submission=validateReviewSubmissionRecords(tx,spaceId??'instance',ref.submission_id);
++    readReviewSnapshotRecords(tx,spaceId??'instance',ref.snapshot_id);
++    assertReviewSubmissionPostEvidencePrivacy(tx,spaceId??'instance',submission);assertStoredSubmissionEvidencePrivacy(tx,spaceId??'instance',submission);
++    return reviewSubmissionAcknowledgement(submission);
++  }
+   if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
+     let parsed: unknown;
+     try { parsed = JSON.parse(resultRefStr); } catch { throw reviewResync(); }
+@@ -2716,6 +2775,8 @@
+         }
+         // Identical request retry: reconstruct result applying current redaction/visibility
+         const reconstructed = reconstructResult(tx, operation, existing.result_ref, spaceId) as T;
++        if(operation.startsWith('review.submission.create:')&&(reconstructed as {reviewer_actor_id?:unknown}).reviewer_actor_id!==actorId)throw reviewResync();
++        if(operation.startsWith('artifact.review.create:')&&(reconstructed as {owner_id?:unknown}).owner_id!==actorId)throw reviewResync();
+         return { data: reconstructed, isReplay: true };
+       }
+ 
+@@ -2726,7 +2787,7 @@
+       const result = action(tx);
+ 
+       // Save idempotency record with compact reference only
+-      const resultRef = extractResultRef(operation, result);
++      const resultRef = extractResultRef(operation, result, tx);
+       const parsedRef = JSON.parse(resultRef);
+       validateResultRef(operation, parsedRef);
+       validateResultRefSemantics(tx, operation, spaceId, parsedRef);

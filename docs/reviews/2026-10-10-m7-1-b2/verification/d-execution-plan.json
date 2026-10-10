@@ -1,0 +1,128 @@
+{
+  "status": "prepared_not_released_not_run",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "source-noemit",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+        "--noEmit",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-1-b2/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "gate": "new-and-adjacent",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/contracts/m7-check-cli.test.ts",
+        "tests/contracts/m7-check-tools.test.ts",
+        "tests/contracts/m7-check-cli-tools-independent.test.ts",
+        "tests/contracts/m6-review-cli.test.ts",
+        "tests/contracts/m6-review-tools.test.ts",
+        "tests/contracts/m6-review-tools-independent.test.ts",
+        "tests/integration/m4-artifact-client-cli-independent.test.ts",
+        "tests/contracts/m7-check-http-client-independent.test.ts",
+        "tests/contracts/r4-c-contracts.test.ts",
+        "tests/contracts/m4-mcp-schema.test.ts",
+        "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+        "tests/contracts/m4-pi-runtime.test.ts"
+      ]
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "gate": "lint",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "gate": "schema",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+      ]
+    },
+    {
+      "gate": "core-once",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    },
+    {
+      "gate": "current-28",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-10-m7-1-b1/verification/adapters/check-c-completion-v3.mjs"
+      ]
+    },
+    {
+      "gate": "current-29",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+      ]
+    }
+  ],
+  "new_files": [
+    "tests/contracts/m7-check-cli.test.ts",
+    "tests/contracts/m7-check-tools.test.ts",
+    "tests/contracts/m7-check-cli-tools-independent.test.ts"
+  ],
+  "adjacent_files": [
+    "tests/contracts/m6-review-cli.test.ts",
+    "tests/contracts/m6-review-tools.test.ts",
+    "tests/contracts/m6-review-tools-independent.test.ts",
+    "tests/integration/m4-artifact-client-cli-independent.test.ts",
+    "tests/contracts/m7-check-http-client-independent.test.ts",
+    "tests/contracts/r4-c-contracts.test.ts",
+    "tests/contracts/m4-mcp-schema.test.ts",
+    "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+    "tests/contracts/m4-pi-runtime.test.ts"
+  ],
+  "rationale": "CLI JSON/key/safeIO; review tools dispatch and realstdio; B1 check typed methods; r4c installed Pi public validator fullcatalog; MCP schemas/wrapped and Pi runtime unchanged validation/binding boundary",
+  "current_rationale": "root requested B1v3 wholeoperation media/JSON congruence after tools schema extension;29 canonical tool/client/Pi boundary; only28/29 once, no historic25matrix",
+  "source_hashes": {
+    "tests/contracts/m6-review-cli.test.ts": "58a823f8fe4675fb5a57481f2e883a9e75c3a1113052807ab5c843efa17ddbfb",
+    "tests/contracts/m6-review-tools.test.ts": "ffba1767e292dd2a665dc64ef7d5f6578bddf3373865cd04579a79395b721bc4",
+    "tests/contracts/m6-review-tools-independent.test.ts": "94ae452d6bce13ea942d6273ebd13bbdcc045a00519cee738a45fd685116d709",
+    "tests/integration/m4-artifact-client-cli-independent.test.ts": "2f0c3031d47acd63500fe8395e1fb4ddae0d54f3cd6aeb80e72b4505c0d8f58d",
+    "tests/contracts/m7-check-http-client-independent.test.ts": "f3fcbb6e782940a4c992967cfb5a59a001a9902e56272b9dc18ed1c46b625637",
+    "tests/contracts/r4-c-contracts.test.ts": "7abd2a30be023215eb01b78dd73ec5606db27b889e2caba542d6660667266b3b",
+    "tests/contracts/m4-mcp-schema.test.ts": "6be257ff7f4cba517ddf36a53df297c6863153fd1388abdfd39834adb352a52e",
+    "tests/contracts/m4-mcp-wrapped-independent.test.ts": "a08904045155735719b94c495234c05fc5e46059cc2a352e761a865f5b8a91f0",
+    "tests/contracts/m4-pi-runtime.test.ts": "7e09fadc46b9aa1ded7cf5d0373462270f2ddf283a023aaf112cbdd14c8df4c9",
+    "docs/reviews/2026-10-10-m7-1-b1/verification/adapters/check-c-completion-v3.mjs": "ccff59339e7a64207bef878df55a4a195ad1acd4043ff3ed206b3d925b0807de",
+    "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c"
+  },
+  "limits": "workspace1 worker1 fileserial originaltimeouts; build immediate full dist inventory; no runtime until root release"
+}

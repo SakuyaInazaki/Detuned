@@ -1,0 +1,17 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-backup-recovery.test.ts:71:3
+     69|     }
+     70|   });
+     71|   it('rejects manifest shape, traversal, duplicates, wrong versions an…
+       |   ^
+     72|     const cases: ((value: BackupManifest) => void)[] = [
+     73|       value => { (value as any).extra = true; }, value => { value.vers…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

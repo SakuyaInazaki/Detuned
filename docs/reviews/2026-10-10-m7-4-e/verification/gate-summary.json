@@ -1,0 +1,397 @@
+{
+  "status": "actual limited gates passed; pending root acceptance and metadata audit",
+  "root_acceptance": "pending root actual review",
+  "sealed": false,
+  "pins": {
+    "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+    "new_test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+    "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+    "binding_sha256": "8a5f5d94470f0d79add2efe9c12cbf833a514a6b57b6e999f61ab18f87759e20"
+  },
+  "first_local_gates": {
+    "source-syntax": {
+      "gate": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08783908301847987,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/source-syntax-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/source-syntax-first.stderr.txt",
+      "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+      "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+      "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+      "status": "passed",
+      "native_run": false
+    },
+    "capture-syntax": {
+      "gate": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.07474899999215268,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/capture-syntax-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/capture-syntax-first.stderr.txt",
+      "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+      "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+      "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+      "status": "passed",
+      "native_run": false
+    },
+    "new-source-noemit": {
+      "gate": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/new-source-tsconfig.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.774742542009335,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/new-source-noemit-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/new-source-noemit-first.stderr.txt",
+      "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+      "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+      "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+      "status": "passed",
+      "native_run": false
+    },
+    "new-single-file-focused": {
+      "gate": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-codex-launcher.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.5175590830040164,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/new-single-file-focused-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/new-single-file-focused-first.stderr.txt",
+      "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+      "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+      "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+      "status": "passed",
+      "native_run": false
+    }
+  },
+  "first_native": {
+    "argv": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture.mjs",
+      "--output",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-first-result.json"
+    ],
+    "outer_pid": 85605,
+    "exit_code": 1,
+    "elapsed_seconds": 8.267638999997871,
+    "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/normal-native-first.stdout.txt",
+    "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/normal-native-first.stderr.txt",
+    "producer_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-first-result.json",
+    "capture_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-first-result.json.capture.json",
+    "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+    "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+    "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+    "status": "failed",
+    "retry": false
+  },
+  "first_native_conclusion": "failed 40 catalogue polls; startup ready but0tools; no tool/checkmatrix certification; all registeredresourcecleanup verified",
+  "red": {
+    "argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/contracts/m7-codex-launcher.test.ts",
+      "-t",
+      "^CL02 ",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 2.227560832980089,
+    "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+    "test_sha256": "7a5f4b467bcafd708118d880c756a237893d99b34b02d925d9bc58e9b9ac83f6",
+    "status": "actual failed",
+    "expected_red": true,
+    "retry": false
+  },
+  "red_conclusion": "actual missingPIDregistration contract failure; childclose nullSIGTERM/1null and allownedabsence; no capturedEEXIST claim",
+  "static_rejections": [
+    "A fb69 source settlement/candidate loop finding preserved by A r1-v2 evidence",
+    "D a194 capture firstcandidate failure skipsremaining; snapshot/diff retained",
+    "D v3 staticpreparation count-versusbool mismatch; snapshot/receipt retained, zero runtime"
+  ],
+  "r1_local_gates": {
+    "source-syntax": {
+      "gate": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0718487499980256,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-source-syntax-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-source-syntax-first.stderr.txt",
+      "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+      "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+      "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+      "status": "passed",
+      "native_run": false
+    },
+    "capture-syntax": {
+      "gate": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.07719754101708531,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-capture-syntax-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-capture-syntax-first.stderr.txt",
+      "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+      "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+      "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+      "status": "passed",
+      "native_run": false
+    },
+    "new-source-noemit": {
+      "gate": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/new-source-tsconfig.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7306046249868814,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-new-source-noemit-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-new-source-noemit-first.stderr.txt",
+      "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+      "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+      "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+      "status": "passed",
+      "native_run": false
+    },
+    "new-single-file-focused": {
+      "gate": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-codex-launcher.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.2461460000195075,
+      "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-new-single-file-focused-first.stdout.txt",
+      "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-new-single-file-focused-first.stderr.txt",
+      "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+      "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+      "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+      "status": "passed",
+      "native_run": false
+    }
+  },
+  "r1_reject_second": {
+    "argv": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs",
+      "--output",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-reject-second-mcp-first-result.json",
+      "--mode",
+      "reject-second-mcp"
+    ],
+    "outer_pid": 88604,
+    "exit_code": 0,
+    "elapsed_seconds": 4.267849874973763,
+    "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/reject-second-mcp-first.stdout.txt",
+    "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/reject-second-mcp-first.stderr.txt",
+    "producer_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-reject-second-mcp-first-result.json",
+    "capture_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-reject-second-mcp-first-result.json.capture.json",
+    "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+    "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+    "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+    "status": "passed",
+    "retry": false
+  },
+  "r1_normal": {
+    "argv": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs",
+      "--output",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-r1-first-result.json"
+    ],
+    "outer_pid": 88763,
+    "exit_code": 0,
+    "elapsed_seconds": 2.067569291975815,
+    "stdout_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-normal-native-first.stdout.txt",
+    "stderr_path": "docs/reviews/2026-10-10-m7-4-e/verification/r1-normal-native-first.stderr.txt",
+    "producer_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-r1-first-result.json",
+    "capture_path": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-r1-first-result.json.capture.json",
+    "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+    "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+    "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+    "status": "passed",
+    "retry": false
+  },
+  "current_focused": "2/2 singlefilepass; originaldefault5s/own4s/1MiB unchanged; no newfull claim",
+  "normal_methods": {
+    "initialize": 1,
+    "initialized": 1,
+    "thread/start": 1,
+    "mcpServerStatus/list": 1,
+    "mcpServer/tool/call": 19
+  },
+  "normal_tools": [
+    "forum_ack",
+    "forum_context",
+    "forum_poll",
+    "forum_publish",
+    "forum_read",
+    "forum_relate",
+    "forum_review",
+    "forum_search",
+    "forum_subscribe"
+  ],
+  "normal_checks": {
+    "reads": [
+      "check_run",
+      "check_snapshot",
+      "check_post_revision",
+      "check_receipt",
+      "check_artifact",
+      "required_checks"
+    ],
+    "invalid_before_prepare_http": 0,
+    "reason_500": true,
+    "scope_denied": true,
+    "artifact_metadata_only": true,
+    "ack_delta": 0,
+    "pending_unchanged": true,
+    "cancelled": true
+  },
+  "normal_source_supervision": {
+    "work_budget_ms": 75000,
+    "total_budget_ms": 90000,
+    "initializer_settled": true,
+    "registration_tasks_settled": true,
+    "mcp_watch_settled": true,
+    "observer_tasks_settled": true,
+    "final_discovery_settled": true,
+    "final_discovery_completed": true,
+    "fork_pid_present": true,
+    "fork_pid_valid": true,
+    "bootstrap_sent": true,
+    "group_probe": "absent",
+    "worker_registered": true,
+    "native_registered": true,
+    "mcp_candidate_received": true,
+    "mcp_candidate_count": 2,
+    "mcp_candidate_observed_count": 2,
+    "mcp_proven_count": 2,
+    "mcp_confirmed_observer_count": 2,
+    "mcp_authorized_count": 2,
+    "mcp_acknowledged_count": 2,
+    "mcp_candidate_coverage_verified": true,
+    "mcp_coverage_reason": "complete",
+    "mcp_candidate_observed": true,
+    "mcp_registered": true,
+    "mcp_acknowledged": true,
+    "mcp_same_worker_group": false,
+    "mcp_parent_verified": true,
+    "mcp_placement": "independent",
+    "confirmed_mcp_group_count": 2,
+    "mcp_group_probe": "absent",
+    "mcp_phase": "acknowledged",
+    "mcp_candidate_probe": "absent"
+  },
+  "normal_cleanup": {
+    "flights_settled": true,
+    "children_closed": true,
+    "forbidden_closed": true,
+    "app_closed": true,
+    "db_closed": true,
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "mcp_candidate_coverage_verified": true,
+    "candidates_positively_absent": 2,
+    "candidate_absence_failures": 0,
+    "mcp_candidates_absent": true,
+    "confirmed_mcp_groups_absent": true,
+    "private_directory_removed": true
+  },
+  "normal_capture_cleanup": {
+    "driver_actual_close": true,
+    "ownership_tasks_settled": true,
+    "registration_evidence_present": true,
+    "registered_direct_children_absent": true,
+    "registered_groups_absent": true,
+    "mcp_candidate_count": 2,
+    "candidate_coverage_verified": true,
+    "mcp_candidate_presence": "absent",
+    "mcp_candidate_absence_attempt_count": 2,
+    "mcp_candidate_absent_count": 2,
+    "mcp_candidate_present_count": 0,
+    "mcp_candidate_unknown_count": 0,
+    "independently_registered_candidates_absent": true,
+    "source_candidate_received": true,
+    "source_mcp_registered": true,
+    "source_settlement_verified": true,
+    "independent_group_proof_coverage_verified": true,
+    "mcp_proof_count": 2,
+    "proof_placement_counts": {
+      "worker": 0,
+      "independent": 2
+    },
+    "source_acknowledged_count": 2,
+    "registered_mcp_candidates_absent": true,
+    "empty_registry_is_not_global_cleanup_proof": false,
+    "registered_roots_absent": true,
+    "control_directory_absent": true
+  },
+  "actual_close": {
+    "native": {
+      "code": null,
+      "signal": "SIGTERM",
+      "spawn_error": false
+    },
+    "driver": {
+      "code": 0,
+      "signal": null
+    }
+  },
+  "not_run": [
+    "R1 standaloneguard",
+    "oldreject replays",
+    "full core suite",
+    "workspace build",
+    "workspace type",
+    "workspace lint",
+    "schema/current checks",
+    "model/prompt/login",
+    "otherhost/profile/version/portability"
+  ],
+  "reused": "historical full967/155 only;555dist unchanged; sealed standaloneguard policy/minenv bindings, no rerun",
+  "limitations": [
+    "fixedCodex0.144.6 ownlocal no-model control profile only",
+    "exact9catalogue is not fullbehaviorcertification for allnine tools",
+    "runtime2candidates only; cap64/overflow/malformed/unsettled failure paths staticallyreviewed, not exhaustivelyruntimeinjected",
+    "registered exactPID/PGID/root evidence only, no globalprocess proof",
+    "originalnativefailure retained; R1 mechanism explains incompatibility but originalrawEEXIST was not captured"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "status": "root_scope_addendum_11_existing_5_missing",
+  "existing": {
+    "packages/core/src/services/check-service.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/protocol/src/review.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/protocol/src/response-guards.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/protocol/src/openapi.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/server/src/app.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/server/src/routes/artifacts.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/client/src/client.ts": {
+      "owner": "B",
+      "state": "existing"
+    },
+    "packages/client/src/artifact-transfer.ts": {
+      "owner": "B",
+      "state": "existing"
+    },
+    "modules/review/src/canonical-json.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/protocol/src/index.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/client/src/request-key.ts": {
+      "owner": "B",
+      "state": "existing",
+      "scope": "add check.run.create:true/check.run.invalidate:true targets only; create=request_id/invalidate=run_id; no format/namespace/lock change"
+    }
+  },
+  "new": {
+    "packages/server/src/routes/checks.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/contracts/m7-check-http.test.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/contracts/m7-check-client.test.ts": {
+      "owner": "B",
+      "state": "missing"
+    },
+    "tests/contracts/m7-check-http-client-independent.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    },
+    "packages/protocol/src/review-canonical.ts": {
+      "owner": "A",
+      "state": "missing"
+    }
+  },
+  "protected": [
+    "packages/web/**",
+    "packages/cli/**",
+    "packages/mcp/**",
+    "packages/protocol/src/tools.ts",
+    "packages/storage-sqlite/**",
+    "integrations/**",
+    "all sealed review packages"
+  ],
+  "notes": [
+    "No schema/port changes; no allattempt directory.",
+    "Root approved single portable JCS implementation move, unchanged algorithm/limits/three exports; module re-export and explicit protocol index export. No write authorization before fresh dispatch.",
+    "Existing generic client/artifact APIs and domain idempotency projection remain intact."
+  ],
+  "source_owner_sha256": "61a63ed42f259c75cf3259b5a6410030281785cfc0e62dbb55fd8f572c3316e4"
+}

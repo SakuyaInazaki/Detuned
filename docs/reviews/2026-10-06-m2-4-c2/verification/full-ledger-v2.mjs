@@ -1,0 +1,3 @@
+import {writeFile} from 'node:fs/promises';
+import {auditRun} from './verify-audit-v2.mjs';
+const started=Date.now();const result=await auditRun('/private/tmp/detuned-c2-load-full-v3-a1','/private/tmp/detuned-c2-seed-full-20261006-v3-a1','/private/tmp/detuned-c2-load-full-private-v3-a1/runtime.db');result.audit_elapsed_ms=Date.now()-started;result.event_count_algorithm='single full-space stream, count only exact (type,object_id,revision) targets; same SQL predicate semantics';await writeFile('docs/reviews/2026-10-06-m2-4-c2/verification/full-ledger-v2.json',JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));

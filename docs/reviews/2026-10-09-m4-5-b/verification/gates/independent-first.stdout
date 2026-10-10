@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m4-mcp-wrapped-independent.test.ts (5 tests | 5 failed) 203ms
+   × wrapped independent default/explicit flat advertises the original eight schemas; wrapped nests every canonical keyword exactly with no HTTP 84ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback 48ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post 24ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK 24ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent invalid startup modes exit safely without environment/token output or HTTP 22ms
+     → listen EPERM: operation not permitted 127.0.0.1
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  03:18:05
+   Duration  951ms (transform 251ms, setup 0ms, collect 515ms, tests 203ms, environment 0ms, prepare 42ms)
+

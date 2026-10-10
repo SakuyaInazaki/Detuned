@@ -1,8 +1,12 @@
-import { randomBytes, createHash } from 'node:crypto';
+import { randomBytes, randomUUID, createHash } from 'node:crypto';
 import Database from 'better-sqlite3';
 import { DetunedError, ErrorCode } from '@detuned/protocol';
 import {
   validateResultRef,
+  validateStoredReviewRequestReference,
+  validateStoredReviewDecisionReference,
+  validateStoredReviewSubmissionReference,
+  validateStoredReviewArtifactReference,
   validateResultRefSemantics,
   hasForbiddenContent,
   parseOperation,
@@ -17,13 +21,19 @@ import {
   SCHEMA_MIGRATIONS_DDL,
   INSTANCE_METADATA_DDL,
   THREAD_VERSIONS_DDL,
+  V5_SCHEMA_TABLES,
+  V6_SCHEMA_TABLES,
+  CHECK_TABLES_DDL,
+  V4_SCHEMA_TABLES,
+  V3_SCHEMA_TABLES,
+  REVIEW_TABLES_DDL,
   V2_SCHEMA_TABLES,
   V1_SCHEMA_TABLES,
   verifyTableStructure,
   verifyDatabaseStructure,
 } from './schema.js';
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 6;
 
 export interface BootstrapResult {
   isNewInstance: boolean;
@@ -60,7 +70,9 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
 
   // 2. Check for unknown tables (G05)
   const knownTables = new Set([
-    ...Object.keys(V2_SCHEMA_TABLES),
+    ...Object.keys(V6_SCHEMA_TABLES),
+    ...Object.keys(V4_SCHEMA_TABLES),
+    ...Object.keys(V3_SCHEMA_TABLES),
     'post_fts',
     'post_fts_data',
     'post_fts_idx',
@@ -96,6 +108,10 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
       return { kind: 'future', maxVersion: maxVerRow.max_v };
     }
 
+    if (appliedVersions.includes(6) && ![1,2,3,4,5].every(v => appliedVersions.includes(v))) return {kind:'corrupt',reason:'数据库迁移记录不连续。'};
+    if (appliedVersions.includes(5) && ![1,2,3,4].every(v => appliedVersions.includes(v))) return {kind:'corrupt',reason:'数据库迁移记录不连续。'};
+    if (appliedVersions.includes(4) && ![1,2,3].every(v => appliedVersions.includes(v))) return {kind:'corrupt',reason:'数据库迁移记录不连续。'};
+    if (appliedVersions.includes(3) && (!appliedVersions.includes(1) || !appliedVersions.includes(2))) return {kind:'corrupt',reason:'数据库迁移记录不连续。'};
     // Contradictory migration markers (H04)
     if (appliedVersions.includes(2) && !appliedVersions.includes(1)) {
       return {
@@ -107,6 +123,10 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
 
   // 4. Check unpopulated schema (appliedVersions.length === 0)
   if (appliedVersions.length === 0) {
+    const hasAllV6 = Object.keys(V6_SCHEMA_TABLES).every(t => tableSet.has(t));
+    const hasAllV5 = Object.keys(V5_SCHEMA_TABLES).every(t => tableSet.has(t));
+    const hasAllV4 = Object.keys(V4_SCHEMA_TABLES).every(t => tableSet.has(t));
+    const hasAllV3 = Object.keys(V3_SCHEMA_TABLES).every((t) => tableSet.has(t));
     const hasAllV2 = Object.keys(V2_SCHEMA_TABLES).every((t) => tableSet.has(t));
     const hasAllV1 = Object.keys(V1_SCHEMA_TABLES).every((t) => tableSet.has(t));
 
@@ -127,7 +147,7 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
       'actors', 'credentials', 'relations', 'relation_resolutions',
       'decisions', 'evidence', 'idempotency_records', 'idempotency_markers',
       'events', 'event_batches', 'consumers', 'redactions', 'memberships',
-      'sessions', 'space_revisions'
+      'sessions', 'space_revisions', 'snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments', 'review_submissions', 'review_decisions'
     ].filter((t) => tableSet.has(t));
 
     if (userTables.length > 0) {
@@ -138,6 +158,17 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
       }
     }
 
+    if (hasAllV6 && verifyDatabaseStructure(db,6).valid) return {kind:'blank'};
+    if (tableSet.has('check_runs') || tableSet.has('check_run_versions') || tableSet.has('check_receipts') || tableSet.has('check_run_credentials')) return {kind:'corrupt',reason:'数据库包含不完整的版本 6 结构。'};
+    if (hasAllV5 && verifyDatabaseStructure(db,5).valid) return {kind:'blank'};
+    if (tableSet.has('review_decisions')) return {kind:'corrupt',reason:'数据库包含不完整的版本 5 结构。'};
+    if (hasAllV4 && verifyDatabaseStructure(db,4).valid) return {kind:'blank'};
+    if (tableSet.has('review_submissions')) return {kind:'corrupt',reason:'数据库包含不完整的版本 4 结构。'};
+    if (hasAllV3) {
+      const struct = verifyDatabaseStructure(db, 3);
+      return struct.valid ? {kind:'blank'} : {kind:'corrupt',reason:struct.reason};
+    }
+    if (Object.keys(V3_SCHEMA_TABLES).some(t => !Object.hasOwn(V2_SCHEMA_TABLES,t) && tableSet.has(t))) return {kind:'corrupt',reason:'数据库包含不完整的版本 3 结构。'};
     if (hasAllV2) {
       const struct = verifyDatabaseStructure(db, 2);
       if (struct.valid) {
@@ -169,9 +200,13 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
     };
   }
 
+  if (!appliedVersions.includes(3) && Object.keys(V3_SCHEMA_TABLES).some(t => !Object.hasOwn(V2_SCHEMA_TABLES,t) && tableSet.has(t))) return {kind:'corrupt',reason:'数据库结构与版本 3 迁移记录矛盾。'};
+  if (!appliedVersions.includes(6) && ['check_runs','check_run_versions','check_receipts','check_run_credentials'].some(t => tableSet.has(t))) return {kind:'corrupt',reason:'数据库结构与版本 6 迁移记录矛盾。'};
+  if (!appliedVersions.includes(5) && tableSet.has('review_decisions')) return {kind:'corrupt',reason:'数据库结构与版本 5 迁移记录矛盾。'};
+  if (!appliedVersions.includes(4) && tableSet.has('review_submissions')) return {kind:'corrupt',reason:'数据库结构与版本 4 迁移记录矛盾。'};
   // 5. Target is v2 (appliedVersions includes 2)
   if (appliedVersions.includes(2)) {
-    const v2Struct = verifyDatabaseStructure(db, 2);
+    const v2Struct = verifyDatabaseStructure(db, appliedVersions.includes(6) ? 6 : appliedVersions.includes(5) ? 5 : appliedVersions.includes(4) ? 4 : appliedVersions.includes(3) ? 3 : 2);
     if (!v2Struct.valid) {
       return {
         kind: 'corrupt',
@@ -199,7 +234,7 @@ export function classifyDatabase(db: Database.Database): ClassificationResult {
       };
     }
 
-    return { kind: 'current_initialized' };
+    return appliedVersions.includes(6) ? {kind:'current_initialized',maxVersion:6} : {kind:'supported_legacy',maxVersion:appliedVersions.includes(5)?5:appliedVersions.includes(4)?4:appliedVersions.includes(3)?3:2};
   }
 
   // 6. Target is v1
@@ -332,7 +367,8 @@ function migrateSingleRef(
   operation: string,
   resultRefStr: string,
   key: string,
-  spaceId: string
+  spaceId: string,
+  actorId: string
 ): string | null {
   // Parsing errors are NOT caught here; let SyntaxError propagate and abort migration (G04)
   let parsed: any;
@@ -349,6 +385,30 @@ function migrateSingleRef(
   // Version guard (H05)
   if (parsed.v !== undefined && parsed.v !== 1) {
     throw new Error(`不支持的引用版本或未来版本引用 (op=${operation}, key=${key}, v=${parsed.v})`);
+  }
+
+  // Maintenance validates immutable formal references without reconstructing public content.
+  if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
+    validateStoredReviewRequestReference(new SqliteStorage(db), operation, spaceId, parsed);
+    return resultRefStr;
+  }
+
+  if (operation.startsWith('review.request.finalize:')) {
+    validateStoredReviewDecisionReference(new SqliteStorage(db), operation, spaceId, parsed);
+    if (new SqliteStorage(db).findReviewDecisionByRequestId(parsed.request_id)?.actor_id !== actorId) throw new Error('Stored review decision reference scope is invalid.');
+    return resultRefStr;
+  }
+
+  if (operation.startsWith('review.submission.create:')) {
+    validateStoredReviewSubmissionReference(new SqliteStorage(db), operation, spaceId, parsed);
+    if (new SqliteStorage(db).findReviewSubmissionById(parsed.submission_id)?.reviewer_actor_id !== actorId) throw new Error('Stored review reference scope is invalid.');
+    return resultRefStr;
+  }
+
+  if (operation.startsWith('artifact.review.create:')) {
+    validateStoredReviewArtifactReference(new SqliteStorage(db), operation, spaceId, parsed);
+    if (new SqliteStorage(db).findArtifactById(parsed.artifact_id)?.owner_id !== actorId) throw new Error('Stored review artifact reference scope is invalid.');
+    return resultRefStr;
   }
 
   // Already new typed format
@@ -511,7 +571,7 @@ export function migrateIdempotencyRecords(db: Database.Database): void {
 
   for (const row of rows) {
     if (!row.result_ref) continue;
-    const migrated = migrateSingleRef(db, row.operation, row.result_ref, row.key, row.space_id);
+    const migrated = migrateSingleRef(db, row.operation, row.result_ref, row.key, row.space_id, row.actor_id);
     if (migrated !== null && migrated !== row.result_ref) {
       updateStmt.run(migrated, row.actor_id, row.space_id, row.operation, row.key);
     }
@@ -541,15 +601,38 @@ function applyMigrations(db: Database.Database): void {
     // Remove OR IGNORE to allow SQLite triggers / faults to propagate (G03)
     db.exec(`INSERT INTO thread_versions (thread_id, version, title, state, created_at)
       SELECT id, version, title, state, updated_at FROM threads;`);
-    migrateIdempotencyRecords(db);
     db.prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (2, ?)').run(
       new Date().toISOString()
     );
     applied.add(2);
-  } else {
-    // If already at version 2, still check and migrate any legacy records
-    migrateIdempotencyRecords(db);
   }
+  if (!applied.has(3)) {
+    db.exec(REVIEW_TABLES_DDL);
+    db.prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (3, ?)').run(new Date().toISOString());
+  }
+  if (!applied.has(4)) {
+    const columns = (table:string) => (db.prepare(`PRAGMA table_info("${table}")`).all() as {name:string}[]).map(r => r.name);
+    if (!columns('review_requests').includes('submitted_count')) db.exec('ALTER TABLE review_requests ADD COLUMN submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5)');
+    if (!columns('review_request_versions').includes('submitted_count')) db.exec('ALTER TABLE review_request_versions ADD COLUMN submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5)');
+    if (!columns('review_assignments').includes('id')) {
+      db.exec('ALTER TABLE review_assignments ADD COLUMN id TEXT');
+      const rows = db.prepare('SELECT request_id,reviewer_actor_id FROM review_assignments').all() as {request_id:string;reviewer_actor_id:string}[];
+      for (const row of rows) db.prepare('UPDATE review_assignments SET id=? WHERE request_id=? AND reviewer_actor_id=?').run('ras_'+randomUUID(),row.request_id,row.reviewer_actor_id);
+      db.exec('CREATE TABLE review_assignments_stage4 (id TEXT NOT NULL UNIQUE,request_id TEXT NOT NULL REFERENCES review_requests(id),reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),group_at_assignment TEXT,PRIMARY KEY(request_id,reviewer_actor_id)); INSERT INTO review_assignments_stage4 SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments; DROP TABLE review_assignments; ALTER TABLE review_assignments_stage4 RENAME TO review_assignments;');
+    }
+    db.exec(REVIEW_TABLES_DDL);
+    db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(4,?)').run(new Date().toISOString());
+  }
+  if (!applied.has(5)) {
+    db.exec(REVIEW_TABLES_DDL);
+    db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(5,?)').run(new Date().toISOString());
+  }
+  if (!applied.has(6)) {
+    db.exec(CHECK_TABLES_DDL);
+    db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(6,?)').run(new Date().toISOString());
+  }
+  migrateIdempotencyRecords(db);
+
 }
 
 export function bootstrapDatabase(
@@ -688,6 +771,8 @@ export function openAndCoordinateDatabase(
       403
     );
   }
+
+  if (classification.kind === 'supported_legacy') throw new DetunedError(ErrorCode.FORBIDDEN, '旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。', 403);
 
   if (mode === 'serve') {
     if (classification.kind === 'blank') {

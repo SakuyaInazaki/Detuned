@@ -1,0 +1,21 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context-focus.test.ts > M2.4-C.1 focused context current snapshot > F01: valid archived own-thread focus adds current metadata; no-focus retains original shape
+DetunedError: 本阶段不支持 focus_thread_id，请去掉该参数读取空间上下文。
+ ❯ packages/core/src/services/context-service.ts:40:15
+     38|       }
+     39|       if (query.focus_thread_id !== undefined) {
+     40|         throw new DetunedError(ErrorCode.VALIDATION_ERROR, '本阶段不支持 foc…
+       |               ^
+     41|       }
+     42|       if (!budget || typeof budget.request_id !== 'string') {
+ ❯ sqliteTransaction.read packages/storage-sqlite/src/sqlite-storage.ts:67:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:75:38
+ ❯ ContextService.getContext packages/core/src/services/context-service.ts:32:35
+ ❯ read tests/integration/m2-context-focus.test.ts:19:40
+ ❯ tests/integration/m2-context-focus.test.ts:21:335
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

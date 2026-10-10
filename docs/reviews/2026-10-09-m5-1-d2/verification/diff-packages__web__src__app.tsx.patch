@@ -1,0 +1,181 @@
+--- before/packages/web/src/app.tsx
++++ packages/web/src/app.tsx
+@@ -1,8 +1,9 @@
+ import { useEffect, useRef, useState, type FormEvent } from 'react';
+ import { DetunedClient, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
+-import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, POST_KINDS } from '@detuned/protocol';
++import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, type PostRevisionMetadata, type RevisionArtifactCatalogItem, type ArtifactMetadata, POST_KINDS } from '@detuned/protocol';
+ import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
+-import { appendContent, CONTENT_BUDGET, initialContent, type FixedContent } from './content.js';
++import { RevisionEvidence } from './revision-evidence.js';
++import { appendContent, CONTENT_BUDGET, initialContent, compareDocuments, type ContentComparison, type FixedContent } from './content.js';
+ 
+ type SpaceItem = { id: string; slug: string };
+ type ThreadItem = { id: string; title: string; state: 'open' | 'archived' };
+@@ -11,6 +12,7 @@
+ type SpaceView = 'discussion' | 'search' | 'failures';
+ type ResultReading = { origin: 'search' | 'failures'; threadId: string; postId: string; revision: number };
+ type ThreadIntent = { body: CreateThreadRequest; key: string; spaceId: string };
++type UploadIntent = { file: File; key: string; spaceId: string };
+ type Intent = { body: CreatePostRequest; key: string; spaceId: string; threadId: string };
+ const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+ function spaces(data: unknown): SpaceItem[] {
+@@ -106,10 +108,36 @@
+   const [failureResults, setFailureResults] = useState<FailureItem[]>([]);
+   const [failuresLoaded, setFailuresLoaded] = useState(false);
+   const [failureKeyword, setFailureKeyword] = useState('');
++  const [revisions, setRevisions] = useState<PostRevisionMetadata[]>([]);
++  const [revisionCursor, setRevisionCursor] = useState<string | null>(null);
++  const [revisionsLoaded, setRevisionsLoaded] = useState(false);
++  const [catalogCurrent, setCatalogCurrent] = useState<number | null>(null);
++  const [compareFirst, setCompareFirst] = useState('');
++  const [compareSecond, setCompareSecond] = useState('');
++  const [comparison, setComparison] = useState<ContentComparison | null>(null);
++  const [comparisonStatus, setComparisonStatus] = useState('');
++  const [artifacts, setArtifacts] = useState<RevisionArtifactCatalogItem[]>([]);
++  const [artifactCursor, setArtifactCursor] = useState<string | null>(null);
++  const [artifactsLoaded, setArtifactsLoaded] = useState(false);
++  const [selectedFile, setSelectedFile] = useState<File | null>(null);
++  const [fileInputVersion, setFileInputVersion] = useState(0);
++  const [uploadIntent, setUploadIntent] = useState<UploadIntent | null>(null);
++  const [uploaded, setUploaded] = useState<ArtifactMetadata[]>([]);
+   const pending = useRef(false);
++
++  function clearEvidence() {
++    setRevisions([]); setRevisionCursor(null); setRevisionsLoaded(false); setCatalogCurrent(null);
++    setCompareFirst(''); setCompareSecond(''); setComparison(null); setComparisonStatus('');
++    setArtifacts([]); setArtifactCursor(null); setArtifactsLoaded(false);
++    clearUploads();
++  }
++  function clearUploads() {
++    setSelectedFile(null); setUploadIntent(null); setUploaded([]); setFileInputVersion(value => value + 1);
++  }
+ 
+   function newGeneration() {
+     generation.current += 1;
++    clearEvidence();
+     controller.current.abort();
+     controller.current = new AbortController();
+     pending.current = false;
+@@ -128,7 +156,7 @@
+     setSpacePage([]); setSpaceCursor(null); setSpace(null); setThreadPage([]); setThreadCursor(null);
+     setThread(null); setPostPage([]); setPostCursor(null); setContent(null); clearComposer();
+   }
+-  function clearComposer() { setTitle(''); setSummary(''); setBody(''); setReply(null); setIntent(null); }
++  function clearComposer() { clearUploads(); setTitle(''); setSummary(''); setBody(''); setReply(null); setIntent(null); }
+   function ticket() { return { id: generation.current, signal: controller.current.signal }; }
+   async function run(work: (signal: AbortSignal) => Promise<void>, success: string) {
+     if (pending.current || sessionState !== 'authenticated') return;
+@@ -340,10 +368,87 @@
+       const value = appendContent(fixed, page); if (id === generation.current) setContent(value);
+     }, '固定修订下一段已加载。');
+   }
++  function loadRevisionCatalog(cursor?: string) {
++    if (!space || !content) return;
++    const fixed = content;
++    void run(async signal => {
++      const id = generation.current;
++      const page = await client.getPostRevisionCatalog(space.id, fixed.postId, { limit: 20, max_bytes: CONTENT_BUDGET, ...(cursor ? { cursor } : {}) }, { signal });
++      if (id !== generation.current) return;
++      // Retain at most the active 20-item page plus the explicitly chosen versions.
++      setRevisions(page.data.revisions); setRevisionCursor(page.meta.next_cursor); setRevisionsLoaded(true); setCatalogCurrent(page.data.current_revision);
++      setComparison(null); setComparisonStatus('');
++    }, '修订目录已加载；固定正文没有切换。');
++  }
++  function loadRevisionArtifacts(cursor?: string) {
++    if (!space || !content) return;
++    const fixed = content;
++    void run(async signal => {
++      const id = generation.current;
++      const page = await client.getPostRevisionArtifacts(space.id, fixed.postId, fixed.revision, { limit: 20, max_bytes: CONTENT_BUDGET, ...(cursor ? { cursor } : {}) }, { signal });
++      if (id !== generation.current) return;
++      setArtifacts(page.data.artifacts); setArtifactCursor(page.meta.next_cursor); setArtifactsLoaded(true);
++    }, '固定修订的附件目录已加载。');
++  }
++  async function readForComparison(spaceId: string, postId: string, revision: number, signal: AbortSignal): Promise<FixedContent> {
++    let value = initialContent(postId, revision);
++    do {
++      const page = await client.getPostRevisionContent(spaceId, postId, revision, { max_bytes: CONTENT_BUDGET, ...(value.cursor ? { cursor: value.cursor } : {}) }, { signal });
++      value = appendContent(value, page);
++      if (signal.aborted) throw new UserAbortError();
++      // A >1 MiB document remains explicitly incomplete for comparison.
++      if (value.rawMode) break;
++    } while (!value.complete && value.cursor);
++    return value;
++  }
++  function compareRevisions() {
++    if (!space || !content || !compareFirst || !compareSecond) return;
++    const fixed = content; const first = Number(compareFirst); const second = Number(compareSecond);
++    if (!Number.isSafeInteger(first) || first < 1 || !Number.isSafeInteger(second) || second < 1) return;
++    setComparison(null); setComparisonStatus('正在读取两个固定版本，尚未完成全部对比。');
++    void run(async signal => {
++      const id = generation.current;
++      let before: FixedContent; let after: FixedContent;
++      try { before = await readForComparison(space.id, fixed.postId, first, signal); after = await readForComparison(space.id, fixed.postId, second, signal); }
++      catch (cause) { if (id === generation.current) setComparisonStatus('未完成全部对比：读取失败，可明确重试或分别打开修订。'); throw cause; }
++      if (id !== generation.current) return;
++      const result = compareDocuments(before, after);
++      setComparison(result);
++      setComparisonStatus(result ? '两个固定版本已完整读取，五字段对比完成。' : '未完成全部对比：正文未完整、超过 1 MiB 或结构超过比较预算。可分别打开修订继续分段阅读。');
++    }, '比较请求已结束，请查看五字段比较状态。');
++  }
++  function downloadRevisionArtifact(artifactId: string) {
++    if (!space || !content || !artifacts.some(item => item.id === artifactId && item.state === 'ready' && item.bytes <= 26_214_400)) return;
++    const spaceId = space.id;
++    void run(async signal => {
++      const id = generation.current;
++      const result = await client.downloadArtifact(spaceId, artifactId, { signal });
++      if (id !== generation.current || signal.aborted) return;
++      // Every auth/space/ref change increments generation; no late result may trigger a download.
++      const url = URL.createObjectURL(new Blob([result.bytes.slice().buffer], { type: 'application/octet-stream' }));
++      const link = document.createElement('a');
++      try { link.href = url; link.download = `artifact-${artifactId}`; document.body.append(link); link.click(); }
++      finally { link.remove(); URL.revokeObjectURL(url); }
++      setStatus(`附件 ${artifactId} 已验证并交给浏览器下载。`);
++    }, '附件完整性已验证，下载已触发。');
++  }
++  function uploadFile(retry?: UploadIntent) {
++    if (!space || !thread || intent || pending.current || sessionState !== 'authenticated' || (!retry && !selectedFile)) return;
++    const operation = retry ?? { file: selectedFile!, spaceId: space.id, key: `web_artifact_${crypto.randomUUID()}` };
++    if (operation.file.size > 26_214_400) { setError('所选附件超过 25 MiB 上传上限。'); return; }
++    setUploadIntent(operation);
++    void run(async signal => {
++      const id = generation.current;
++      const metadata = await client.uploadArtifact(operation.spaceId, operation.file, {}, operation.key, { signal });
++      if (id !== generation.current) return;
++      setUploaded(items => items.some(item => item.id === metadata.id) ? items : [...items, metadata]);
++      setUploadIntent(null); setSelectedFile(null); setFileInputVersion(value => value + 1);
++    }, '附件已上传，尚未关联帖子；发布笔记成功后才绑定。');
++  }
+   async function publish(event: FormEvent, retryIntent?: Intent) {
+-    event.preventDefault(); if (!space || !thread || pending.current || sessionState !== 'authenticated') return;
++    event.preventDefault(); if (!space || !thread || pending.current || sessionState !== 'authenticated' || uploadIntent || selectedFile) return;
+     const operation: Intent = retryIntent ?? { spaceId: space.id, threadId: thread.id, key: `web_${crypto.randomUUID()}`,
+-      body: { kind: 'note', title, summary, body, ...(reply ? { refs: [{ type: 'cites', target_ref: { post_id: reply.postId, revision: reply.revision } }] } : {}) } };
++      body: { kind: 'note', title, summary, body, ...(uploaded.length ? { artifact_ids: uploaded.map(item => item.id) } : {}), ...(reply ? { refs: [{ type: 'cites', target_ref: { post_id: reply.postId, revision: reply.revision } }] } : {}) } };
+     setIntent(operation);
+     await run(async signal => {
+       const id = generation.current; const result: { data: unknown } = await client.createPost(operation.spaceId, operation.threadId, operation.body, operation.key, { signal });
+@@ -403,9 +508,21 @@
+           {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+             {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><pre className="body-text">{content.document.body}</pre><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+             <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button><button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button></div>
++            <RevisionEvidence busy={busy} revisions={revisions} currentRevision={catalogCurrent} revisionsLoaded={revisionsLoaded} revisionCursor={revisionCursor}
++              loadRevisions={loadRevisionCatalog} openRevision={revision => openPost(content.postId, revision, resultReading?.threadId)}
++              first={compareFirst} second={compareSecond} selectFirst={value => { setCompareFirst(value); setComparison(null); setComparisonStatus(''); }} selectSecond={value => { setCompareSecond(value); setComparison(null); setComparisonStatus(''); }}
++              compare={compareRevisions} comparison={comparison} comparisonStatus={comparisonStatus}
++              artifacts={artifacts} artifactsLoaded={artifactsLoaded} artifactCursor={artifactCursor} loadArtifacts={loadRevisionArtifacts} download={downloadRevisionArtifact}/>
+           </section>}
+           {thread && view === 'discussion' && <section className="panel composer" aria-labelledby="compose-heading"><h2 id="compose-heading">发布笔记</h2><p>{reply ? `引用帖子 ${reply.postId} 的修订 ${reply.revision}。回应会保留这个版本的引用。` : '发布到当前主题，研究内容只按纯文本显示。'}</p>
+-            <form onSubmit={e => void publish(e)}><fieldset disabled={busy || intent !== null}><label htmlFor="post-title">帖子标题</label><input id="post-title" value={title} onChange={e => setTitle(e.target.value)} maxLength={160} required/><label htmlFor="post-summary">摘要</label><textarea id="post-summary" value={summary} onChange={e => setSummary(e.target.value)} maxLength={280} required rows={2}/><label htmlFor="post-body">正文</label><textarea id="post-body" value={body} onChange={e => setBody(e.target.value)} rows={7} required/></fieldset><div className="paging"><button type="submit" disabled={busy || intent !== null}>发布笔记</button>{intent && <button type="button" disabled={busy} onClick={e => void publish(e, intent)}>用同一请求重试发布</button>}{intent && <button type="button" className="quiet" disabled={busy} onClick={() => { setIntent(null); setStatus('已转为可编辑的新意图；原请求可能已经提交，请先核对帖子目录。'); }}>编辑为新意图</button>}{reply && !intent && <button type="button" className="quiet" disabled={busy} onClick={() => setReply(null)}>取消引用</button>}</div></form>
++            <div className="upload-controls"><label htmlFor="attachment-file">选择附件文件</label><input key={fileInputVersion} id="attachment-file" type="file" disabled={busy || intent !== null || uploadIntent !== null} onChange={event => { setSelectedFile(event.target.files?.[0] ?? null); setError(''); }}/>
++              <p>单文件最多 25 MiB；逐个上传后，可在同一笔记中一起关联。</p>
++              <div className="paging"><button type="button" disabled={busy || !selectedFile || uploadIntent !== null || intent !== null} onClick={() => uploadFile()}>上传所选附件</button>
++                {uploadIntent && <button type="button" disabled={busy} onClick={() => uploadFile(uploadIntent)}>用同一请求重试上传</button>}
++                {(selectedFile || uploadIntent) && <button type="button" className="quiet" disabled={busy || intent !== null} onClick={() => { setSelectedFile(null); setUploadIntent(null); setFileInputVersion(value => value + 1); setStatus('已放弃当前上传意图；先前上传可能已提交，未绑定附件不会自动删除。'); }}>放弃当前上传意图</button>}</div>
++              {uploaded.length > 0 && <div aria-label="待绑定附件"><h3>待绑定附件</h3><p>上传尚不等于关联；下一次发布成功才绑定到该笔记。</p><ul>{uploaded.map(item => <li key={item.id}><span>{item.id} · {item.bytes.toLocaleString()} 字节 · {item.mime}</span>{!intent && <button className="quiet" disabled={busy} onClick={() => setUploaded(items => items.filter(value => value.id !== item.id))}>移除待绑定附件 {item.id}</button>}</li>)}</ul></div>}
++            </div>
++            <form onSubmit={e => void publish(e)}><fieldset disabled={busy || intent !== null}><label htmlFor="post-title">帖子标题</label><input id="post-title" value={title} onChange={e => setTitle(e.target.value)} maxLength={160} required/><label htmlFor="post-summary">摘要</label><textarea id="post-summary" value={summary} onChange={e => setSummary(e.target.value)} maxLength={280} required rows={2}/><label htmlFor="post-body">正文</label><textarea id="post-body" value={body} onChange={e => setBody(e.target.value)} rows={7} required/></fieldset><div className="paging"><button type="submit" disabled={busy || intent !== null || uploadIntent !== null || selectedFile !== null}>发布笔记</button>{intent && <button type="button" disabled={busy} onClick={e => void publish(e, intent)}>用同一请求重试发布</button>}{intent && <button type="button" className="quiet" disabled={busy} onClick={() => { setIntent(null); setStatus('已转为可编辑的新意图；原请求可能已经提交，请先核对帖子目录。'); }}>编辑为新意图</button>}{reply && !intent && <button type="button" className="quiet" disabled={busy} onClick={() => setReply(null)}>取消引用</button>}</div></form>
+           </section>}
+         </section>
+       </div>}

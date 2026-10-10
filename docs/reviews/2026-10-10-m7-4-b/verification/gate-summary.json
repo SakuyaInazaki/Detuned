@@ -1,0 +1,43 @@
+{
+  "status": "pass with first failures retained",
+  "noemit_first": {
+    "exit": 2,
+    "reason": "D response fixture status vsdata.status"
+  },
+  "noemit_repair": {
+    "exit": 0,
+    "elapsed": 1.223
+  },
+  "focused_first": {
+    "exit": 1,
+    "passed": 16,
+    "total": 23,
+    "elapsed": 6.764,
+    "scope": "default sandbox, actual localhost denial subsequently established"
+  },
+  "loopback_probe": {
+    "listen": false,
+    "code": "EPERM",
+    "closed": true,
+    "elapsed": 0.073
+  },
+  "focused_related_same5files": {
+    "exit": 0,
+    "tests": 23,
+    "files": 5,
+    "elapsed": 12.297,
+    "permission": "auto_review require_escalated approved bounded localhost tests"
+  },
+  "new_cases": 3,
+  "reused": "M7.4-A full967/155 and unchanged555dist; not B runtime",
+  "not_run": [
+    "new build",
+    "full",
+    "workspace type/lint/schema",
+    "current probes",
+    "Docker/container/Linux",
+    "minimumNode22 install"
+  ],
+  "integrity": "final-integrity.json",
+  "cleanup": "cleanup.json"
+}

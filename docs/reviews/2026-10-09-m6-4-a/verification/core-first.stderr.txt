@@ -1,0 +1,29 @@
+$ vitest run --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/r4-c-route-contracts.test.ts > C.3-GATE complete API-v1 route contracts > G01: compares every actual API-v1 method/path and every body schema, including absence
+AssertionError: expected undefined to deeply equal { unknown_fields: 'reject', …(4) }
+
+- Expected: 
+{
+  "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+  "integer": "decimal digits only after trimming, safe integer, no body coercion",
+  "omitted": "use declared default, otherwise undefined; required parameters reject",
+  "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+  "unknown_fields": "reject",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/contracts/r4-c-route-contracts.test.ts:63:36
+     61|       const op = spec.paths[route.path][route.method];
+     62|       expect(json(op.requestBody?.content['application/json']?.schema …
+     63|       expect(op['x-query-policy']).toEqual(QUERY_TRANSPORT_POLICY);
+       |                                    ^
+     64|       const pathNames = [...route.path.matchAll(/\{([^}]+)\}/g)].map(m…
+     65|       expect((op.parameters ?? []).filter(p => p.in === 'path').map(p …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

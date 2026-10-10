@@ -1,0 +1,113 @@
+{
+  "unique_cases": 12,
+  "new_cases": 4,
+  "selected_old_cases": 8,
+  "first_run": {
+    "stage": "selected-browser-first",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test:e2e",
+      "--grep",
+      "E20[1-4]|human reads a fixed revision|BI03|BI04|BI05|C02|D202|D204|E102"
+    ],
+    "exit_code": 1,
+    "seconds": 38.97,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e2/verification/browser-selected-browser-first"
+  },
+  "first_passed": 10,
+  "first_failed": 2,
+  "targeted_run": {
+    "stage": "browser-two-fixtures-second",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test:e2e",
+      "--grep",
+      "E201|E203"
+    ],
+    "exit_code": 0,
+    "seconds": 4.183,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-e2/verification/browser-browser-two-fixtures-second"
+  },
+  "targeted_passed": 2,
+  "composite_note": "12unique =first10 plussecond E201/E203; no original successful case repeated",
+  "cases": [
+    {
+      "case": "author normal discussion",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "BI03 post unknown result",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "BI04 logout/generation",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "BI05 fixed UTF8/historical1MiB",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "C02 fixed search/correct thread cites",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "D202 upload/post replay/binding/SHA download",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "D204 catalog/compare/upload/download generation",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "E102 fixed UTF8 rules/historical fallback",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "E202 Markdown security/keyboard/viewport",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "E204 sort directory/body generation",
+      "final_passed": true,
+      "pass_run": "first"
+    },
+    {
+      "case": "E201 chronological pages/fixed old revision",
+      "final_passed": true,
+      "pass_run": "second targeted",
+      "first_fixture_failed": true
+    },
+    {
+      "case": "E203 input/AST budgets/recovery",
+      "final_passed": true,
+      "pass_run": "second targeted",
+      "first_fixture_failed": true
+    }
+  ],
+  "actual_chrome": "155, installed channel chrome, private nonpersistent context",
+  "evidence_controls": {
+    "trace": false,
+    "HAR": false,
+    "video": false,
+    "storageState": false,
+    "remote_resource_requested": false,
+    "user_profile_read": false
+  },
+  "cleanup_count": 14,
+  "historical_budget_body_note": "131072/131073 UTF8 bytes only synthetic owned historical seed; productionHTTP65536 unchanged. AST depth70 and20003nodes are legal small HTTP inputs.",
+  "screenshots": [
+    "browser-selected-browser-first/screenshots/e2-markdown-desktop.png",
+    "browser-selected-browser-first/screenshots/e2-markdown-narrow.png"
+  ],
+  "parent_visual_acceptance": "Root actually reviewed both current safe viewports and accepted shown range; no extra capture required."
+}

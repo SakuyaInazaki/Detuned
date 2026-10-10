@@ -1,0 +1,7 @@
+tests/integration/historical-http-replay.test.ts(27,32): error TS2345: Argument of type '{ payload?: {} | null | undefined; method: "POST"; url: string; headers: { 'idempotency-key'?: string | undefined; authorization: string; }; }' is not assignable to parameter of type 'string | InjectOptions'.
+  Type '{ payload?: {} | null | undefined; method: "POST"; url: string; headers: { 'idempotency-key'?: string | undefined; authorization: string; }; }' is not assignable to type 'InjectOptions'.
+    Types of property 'payload' are incompatible.
+      Type '{} | null | undefined' is not assignable to type 'InjectPayload | undefined'.
+        Type 'null' is not assignable to type 'InjectPayload | undefined'.
+tests/integration/historical-http-replay.test.ts(28,24): error TS2339: Property 'statusCode' does not exist on type 'void & Promise<Response> & Chain'.
+tests/integration/historical-http-replay.test.ts(28,44): error TS2339: Property 'json' does not exist on type 'void & Promise<Response> & Chain'.

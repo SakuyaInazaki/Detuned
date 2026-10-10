@@ -1,0 +1,60 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 12 tests using 1 worker
+
+  ✓   1 scripts/integrations/web/author.spec.ts:3:1 › human reads a fixed revision, publishes a note and cited response, then confirms logout (1.2s)
+  ✓   2 scripts/integrations/web/independent.spec.ts:97:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (8.1s)
+  ✓   3 scripts/integrations/web/independent.spec.ts:118:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (565ms)
+  ✓   4 scripts/integrations/web/independent.spec.ts:136:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (1.9s)
+  ✓   5 scripts/integrations/web/m5-c.spec.ts:57:1 › C02 real search filters/cursor, fixed old result and return preserve applied page (1.0s)
+  ✓   6 scripts/integrations/web/m5-d2.spec.ts:71:1 › D202 real upload and publish each recover same intent once, exact binding and verified explicit download (16.2s)
+  ✓   7 scripts/integrations/web/m5-d2.spec.ts:166:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation (1.4s)
+  ✓   8 scripts/integrations/web/m5-e1.spec.ts:62:1 › E102 omitted UTF8 rules read one fixed revision, latest update never switches and historical giant degrades honestly (1.8s)
+  ✘   9 scripts/integrations/web/m5-e2.spec.ts:33:1 › E201 actual server time order spans pages, historical unknown remains last and old revision stays fixed (487ms)
+  ✓  10 scripts/integrations/web/m5-e2.spec.ts:53:1 › E202 CommonMark is bounded plain research: safe links only, no HTML or remote images, exact keyboard original (819ms)
+  ✘  11 scripts/integrations/web/m5-e2.spec.ts:68:1 › E203 UTF8 exact128KiB/over limit and actual AST exceptions degrade locally then source recovers (147ms)
+  ✓  12 scripts/integrations/web/m5-e2.spec.ts:85:1 › E204 held new-sort directory and fixed Markdown body never cross space or logout generation (1.0s)
+
+
+  1) scripts/integrations/web/m5-e2.spec.ts:33:1 › E201 actual server time order spans pages, historical unknown remains last and old revision stays fixed 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      43 |   const second=await page.locator('.post-directory li small').allTextContents();expect(second).toEqual(expected.slice(20));
+      44 |   const requests=forum.httpEvents.filter(e=>e.path===`/api/v1/spaces/${forum.space.id}/threads/${forum.thread.id}/posts`);
+    > 45 |   expect(requests.every(e=>e.query?.sort==='created_at_asc')).toBe(true);expect(requests.at(-1)?.query?.cursor!==undefined).toBe(true);
+         |                                                               ^
+      46 |   const selected=posts.find(p=>p.id===expected[20])!;await forum.revisePost(selected,{body:'Changed latest body must not replace selected R1'});
+      47 |   await open(page,selected.id);const region=page.getByRole('region',{name:'正文内容',exact:true});
+      48 |   const oldBody=selected.id===forum.post.id?'Original fixed research body.':`Actual chronological body ${Number(selected.title.split(' ').at(-1))}`;
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e2.spec.ts:45:63
+
+    Error Context: docs/reviews/2026-10-09-m5-1-e2/verification/browser-selected-browser-first/playwright-output/m5-e2-E201-actual-server-t-624da-nd-old-revision-stays-fixed/error-context.md
+
+  2) scripts/integrations/web/m5-e2.spec.ts:68:1 › E203 UTF8 exact128KiB/over limit and actual AST exceptions degrade locally then source recovers 
+
+    Error: Private fixture seed rejected (422).
+
+       at fixtures.ts:174
+
+      172 |       if (upstream) {
+      173 |         const result = await fetch(baseURL + '/api/v1' + route, {method, headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`, ...(payload === undefined ? {} : {'content-type': 'application/json'})}, ...(payload === undefined ? {} : {body: JSON.stringify(payload)}), signal: AbortSignal.timeout(5000)});
+    > 174 |         if (result.status >= 300) throw new Error(`Private fixture seed rejected (${result.status}).`);
+          |                                         ^
+      175 |         return json(json(await result.json()).data);
+      176 |       }
+      177 |       const response = await app!.inject({method, url: '/api/v1' + route, headers: {host: new URL(baseURL).host, authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`}, ...(payload === undefined ? {} : {payload})});
+        at seed (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/fixtures.ts:174:41)
+        at seedPost (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/fixtures.ts:200:25)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e2.spec.ts:71:19
+
+    Error Context: docs/reviews/2026-10-09-m5-1-e2/verification/browser-selected-browser-first/playwright-output/m5-e2-E203-UTF8-exact128Ki-e5979-ocally-then-source-recovers/error-context.md
+
+  2 failed
+    scripts/integrations/web/m5-e2.spec.ts:33:1 › E201 actual server time order spans pages, historical unknown remains last and old revision stays fixed 
+    scripts/integrations/web/m5-e2.spec.ts:68:1 › E203 UTF8 exact128KiB/over limit and actual AST exceptions degrade locally then source recovers 
+  10 passed (38.4s)
+[ELIFECYCLE] Command failed with exit code 1.

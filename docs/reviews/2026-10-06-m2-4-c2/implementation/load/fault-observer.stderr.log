@@ -1,0 +1,15 @@
+node:internal/fs/promises:1287
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/private/tmp/detuned-c2-load-fault-v3-a1/automatic-gates.json'
+    at async open (node:internal/fs/promises:1287:25)
+    at async readFile (node:internal/fs/promises:1935:14)
+    at async file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-c2/implementation/load/fault-observer.mjs:33:26 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/tmp/detuned-c2-load-fault-v3-a1/automatic-gates.json'
+}
+
+Node.js v26.3.0

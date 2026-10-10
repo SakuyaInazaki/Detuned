@@ -1,0 +1,13 @@
+--- tests/contracts/m6-review-http-independent.test.ts:pre-json-mime
++++ tests/contracts/m6-review-http-independent.test.ts:json-mime-replay
+@@ -67,6 +67,10 @@
+  const f=await fixture(),r=await f.make();expect(Object.hasOwn(r,'submitted_count')).toBe(false);expect((await f.client().getReviewSnapshot(f.sid,r.snapshot_id)).manifest_sha256).toBe(r.snapshot_sha256);
+  const own=await f.client(f.actors.one).getOwnReviewAssignment(f.sid,r.id);expect(own).toMatchObject({request_id:r.id,reviewer_actor_id:f.actors.one,snapshot_sha256:r.snapshot_sha256});
+  const file=new Blob(['Owned short private bytes'],{type:'text/plain'}),art=await f.client(f.actors.one).uploadReviewArtifact(f.sid,r.id,file,{},'private-upload');expect(art.visibility).toBe('review_assignment');
++ // Real no-filename JSON MIME metadata replays the ordinary FormData string upload, same bytes/MIME/key.
++ const boundary='owned-json-mime-boundary',mimeBody=`--${boundary}\r\nContent-Disposition: form-data; name="metadata"\r\nContent-Type: application/json\r\n\r\n{}\r\n--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="upload.bin"\r\nContent-Type: text/plain\r\n\r\nOwned short private bytes\r\n--${boundary}--\r\n`;
++ const mimeBefore=f.counts(),mimeFiles=await f.artifactFiles();const mimeResponse=await fetch(f.url+route(f,r.id,'/artifacts'),{method:'POST',headers:{authorization:'Bearer '+f.tokens.get(f.actors.one),'idempotency-key':'private-upload','content-type':'multipart/form-data; boundary='+boundary},body:mimeBody});expect(mimeResponse.status).toBe(201);expect(object(object(await mimeResponse.json()).data)).toEqual(art);expect(f.counts()).toEqual(mimeBefore);expect(await f.artifactFiles()).toEqual(mimeFiles);
++ console.info(JSON.stringify({checkpoint:'H01-json-mime-same-key-replay',status:mimeResponse.status,exact_metadata:true,db_unchanged:true,staging_and_objects_unchanged:true}));
+  const first=await f.client(f.actors.one).submitReview(f.sid,r.id,await f.prepare(r,f.actors.one,[{kind:'artifact',artifact_id:art.id}]),'first-review');
+  expect((await f.client(f.actors.one).getReviewSubmission(f.sid,first.submission_id)).revealed_at).toBeNull();expect((await f.client(f.actors.two).listReviewSubmissions(f.sid,r.id)).submissions).toEqual([]);
+  const hidden=await f.client(f.actors.reader).getReviewRequest(f.sid,r.id);expect(hidden).toMatchObject({submitted_count:1,changed_by:null});

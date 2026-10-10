@@ -1,0 +1,35 @@
+{
+  "observations": [
+    {
+      "name": "new_directory_route_missing",
+      "status": 404,
+      "body": {
+        "message": "Route GET:/api/v1/spaces/spc_f6aeb509-ad46-4e3c-a80f-d1b6d97449c5/threads/thd_95c2c1a8-e31c-4f49-903e-1ada5c32930e/posts?max_bytes=4096 not found",
+        "error": "Not Found",
+        "statusCode": 404
+      }
+    },
+    {
+      "name": "old_http_directory_preserved",
+      "status": 200,
+      "post_count": 1,
+      "meta": {
+        "truncated": false,
+        "next_cursor": null
+      }
+    },
+    {
+      "name": "new_tool_kind_missing",
+      "code": "VALIDATION_ERROR",
+      "status": 400,
+      "message": "forum_read 参数组合不合法；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，artifact/review尚未支持。"
+    },
+    {
+      "name": "new_cli_entry_missing",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: unknown command 'thread'\n(Did you mean read?)\n"
+    }
+  ],
+  "status": "new route/tool/CLI absence and old HTTP directory actually observed; no new behavior implemented"
+}

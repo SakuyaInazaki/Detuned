@@ -1,0 +1,105 @@
+$ vitest run tests/contracts/m6-review-http.test.ts tests/contracts/m6-review-client.test.ts tests/contracts/m6-review-http-independent.test.ts --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H01 real HTTP/shared-client twelve entrances preserve independent sessions, sealed rows, reveal and immutable exact replay
+SqliteError: no such table: review_snapshots
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/contracts/m6-review-http-independent.test.ts:53:59
+
+ ❯ Object.counts tests/contracts/m6-review-http-independent.test.ts:53:45
+ ❯ tests/contracts/m6-review-http-independent.test.ts:75:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+SqliteError: no such table: review_snapshots
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/contracts/m6-review-http-independent.test.ts:53:59
+
+ ❯ Object.counts tests/contracts/m6-review-http-independent.test.ts:53:45
+ ❯ tests/contracts/m6-review-http-independent.test.ts:81:102
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H03 revealed cancellation preserves only explicitly cited private evidence and redaction remains private to ordinary reads
+AssertionError: expected undefined to be 404 // Object.is equality
+
+- Expected: 
+404
+
++ Received: 
+undefined
+
+ ❯ error tests/contracts/m6-review-http-independent.test.ts:25:262
+
+ ❯ tests/contracts/m6-review-http-independent.test.ts:98:86
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H04 real stale/incomplete/version/check-required failures and revoked authority preserve historical response boundaries
+SqliteError: no such table: review_snapshots
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/contracts/m6-review-http-independent.test.ts:53:59
+
+ ❯ Object.counts tests/contracts/m6-review-http-independent.test.ts:53:45
+ ❯ tests/contracts/m6-review-http-independent.test.ts:106:58
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H05 actual multipart stream races revalidate current membership/material, abort cleanly and drain without committing
+SqliteError: no such table: review_snapshots
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/contracts/m6-review-http-independent.test.ts:53:59
+
+ ❯ Object.counts tests/contracts/m6-review-http-independent.test.ts:53:45
+ ❯ tests/contracts/m6-review-http-independent.test.ts:119:130
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/contracts/m6-review-http.test.ts > RH01 real HTTP complete vertical and exact immutable confirmations
+AssertionError: {"api_version":"1","request_id":"req-9","error":{"code":"VALIDATION_ERROR","message":"Formal review submission requirements are not satisfied.","retryable":false}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ data tests/contracts/m6-review-http.test.ts:20:56
+
+ ❯ tests/contracts/m6-review-http.test.ts:53:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/contracts/m6-review-http.test.ts > RH02 sealed list, private multipart owner scope and real file bytes/cache
+AssertionError: {"api_version":"1","request_id":"req-b","error":{"code":"VALIDATION_ERROR","message":"Formal review submission requirements are not satisfied.","retryable":false}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ data tests/contracts/m6-review-http.test.ts:20:56
+
+ ❯ tests/contracts/m6-review-http.test.ts:75:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/contracts/m6-review-http.test.ts > RH03 strict schema/query/key rejection and response guards do not relax old shapes
+AssertionError: {"api_version":"1","request_id":"req-a","error":{"code":"RESYNC_REQUIRED","message":"Stored review material cannot be safely reconstructed.","retryable":false}}: expected 409 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 409
+
+ ❯ data tests/contracts/m6-review-http.test.ts:20:56
+
+ ❯ create tests/contracts/m6-review-http.test.ts:30:53
+ ❯ tests/contracts/m6-review-http.test.ts:94:108
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+

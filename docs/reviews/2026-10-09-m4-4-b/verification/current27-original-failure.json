@@ -1,0 +1,354 @@
+{
+  "exit_code": 1,
+  "stdout_read_in_full": true,
+  "stderr_read_in_full": true,
+  "stderr_empty": true,
+  "original_probe": {
+    "probes": [
+      {
+        "id": "AC01",
+        "name": "C01 query/body/reference validation rejects without side effects",
+        "passes": true,
+        "cases": [
+          {
+            "name": "unknown_query",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "duplicate_cursor",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "duplicate_tags",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "invalid_state",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "explicit_empty_revision",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "missing_actor_reference",
+            "status": 404,
+            "code": "NOT_FOUND",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "malformed_json",
+            "status": 400,
+            "code": "VALIDATION_ERROR",
+            "state_unchanged": true,
+            "passes": true
+          },
+          {
+            "name": "revoke_unknown_body",
+            "status": 400,
+            "credential_revoked": false,
+            "passes": true
+          },
+          {
+            "name": "client_poll_omitted_optional_query",
+            "resolved": true,
+            "explicit_empty_object_resolved": true,
+            "passes": true
+          }
+        ],
+        "positive_status": 200
+      },
+      {
+        "id": "AC02",
+        "name": "C02 validates known successful envelope fields",
+        "passes": true,
+        "cases": [
+          {
+            "name": "wrong_api_version",
+            "resolved": false,
+            "error": {
+              "name": "ClientProtocolError",
+              "code": null,
+              "status": null,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "\u4e0d\u652f\u6301\u7684 API \u7248\u672c: 999"
+            },
+            "passes": true
+          },
+          {
+            "name": "null_request_id",
+            "resolved": false,
+            "error": {
+              "name": "ClientProtocolError",
+              "code": null,
+              "status": null,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "\u54cd\u5e94\u4f53\u7f3a\u5c11\u6709\u6548\u7684 request_id\u3002"
+            },
+            "passes": true
+          },
+          {
+            "name": "object_request_id",
+            "resolved": false,
+            "error": {
+              "name": "ClientProtocolError",
+              "code": null,
+              "status": null,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "\u54cd\u5e94\u4f53\u7f3a\u5c11\u6709\u6548\u7684 request_id\u3002"
+            },
+            "passes": true
+          },
+          {
+            "name": "error_and_data",
+            "resolved": false,
+            "error": {
+              "name": "ClientProtocolError",
+              "code": null,
+              "status": null,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "\u6210\u529f\u54cd\u5e94\u4e2d\u4e0d\u80fd\u5305\u542b error \u5b57\u6bb5\u3002"
+            },
+            "passes": true
+          }
+        ],
+        "positive": {
+          "resolved": true,
+          "value": {
+            "data": false
+          }
+        }
+      },
+      {
+        "id": "AC03",
+        "name": "C02 preserves server errors independently of message wording",
+        "passes": true,
+        "cases": [
+          {
+            "message": "revision conflict",
+            "resolved": false,
+            "error": {
+              "name": "DetunedError",
+              "code": "REVISION_CONFLICT",
+              "status": 409,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": true,
+              "message": "revision conflict"
+            },
+            "passes": true
+          },
+          {
+            "message": "transaction aborted because revision changed",
+            "resolved": false,
+            "error": {
+              "name": "DetunedError",
+              "code": "REVISION_CONFLICT",
+              "status": 409,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": true,
+              "message": "transaction aborted because revision changed"
+            },
+            "passes": true
+          }
+        ]
+      },
+      {
+        "id": "AC04",
+        "name": "C02 network/status retry policy and Retry-After",
+        "passes": true,
+        "cases": [
+          {
+            "mode": "fetch_cause_econnrefused",
+            "calls": 2,
+            "keys": [
+              "r20-stable-key",
+              "r20-stable-key"
+            ],
+            "scheduled_delays_ms": [
+              1000
+            ],
+            "resolved": true,
+            "value": {
+              "data": {
+                "ok": true
+              }
+            },
+            "passes": true
+          },
+          {
+            "mode": "retry_after_503",
+            "calls": 2,
+            "keys": [
+              "r20-stable-key",
+              "r20-stable-key"
+            ],
+            "scheduled_delays_ms": [
+              60000
+            ],
+            "resolved": true,
+            "value": {
+              "data": {
+                "ok": true
+              }
+            },
+            "passes": true
+          },
+          {
+            "mode": "retryable_400",
+            "calls": 1,
+            "keys": [
+              "r20-stable-key"
+            ],
+            "scheduled_delays_ms": [],
+            "resolved": false,
+            "error": {
+              "name": "DetunedError",
+              "code": "VALIDATION_ERROR",
+              "status": 400,
+              "isUserAbort": false,
+              "isTimeout": false,
+              "isDetunedError": true,
+              "message": "bad input"
+            },
+            "passes": true
+          }
+        ]
+      },
+      {
+        "id": "AC05",
+        "name": "C02 cancellation phases, final listener cleanup, and timeout positive controls",
+        "passes": true,
+        "cases": [
+          {
+            "phase": "before_request",
+            "calls": 0,
+            "backoffReached": false,
+            "final_abort_listeners": 0,
+            "resolved": false,
+            "error": {
+              "name": "UserAbortError",
+              "code": null,
+              "status": null,
+              "isUserAbort": true,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "Operation aborted by user"
+            },
+            "passes": true
+          },
+          {
+            "phase": "headers",
+            "calls": 1,
+            "backoffReached": false,
+            "final_abort_listeners": 0,
+            "resolved": false,
+            "error": {
+              "name": "UserAbortError",
+              "code": null,
+              "status": null,
+              "isUserAbort": true,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "Operation aborted by user"
+            },
+            "passes": true
+          },
+          {
+            "phase": "body",
+            "calls": 1,
+            "backoffReached": false,
+            "final_abort_listeners": 0,
+            "resolved": false,
+            "error": {
+              "name": "UserAbortError",
+              "code": null,
+              "status": null,
+              "isUserAbort": true,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "Operation aborted by user"
+            },
+            "passes": true
+          },
+          {
+            "phase": "backoff",
+            "calls": 1,
+            "backoffReached": true,
+            "final_abort_listeners": 0,
+            "resolved": false,
+            "error": {
+              "name": "UserAbortError",
+              "code": null,
+              "status": null,
+              "isUserAbort": true,
+              "isTimeout": false,
+              "isDetunedError": false,
+              "message": "Operation aborted by user"
+            },
+            "passes": true
+          },
+          {
+            "phase": "timeout",
+            "calls": 1,
+            "backoffReached": false,
+            "final_abort_listeners": 0,
+            "resolved": false,
+            "error": {
+              "name": "TimeoutError",
+              "code": null,
+              "status": null,
+              "isUserAbort": false,
+              "isTimeout": true,
+              "isDetunedError": false,
+              "message": "Request timed out after 5ms"
+            },
+            "passes": true
+          }
+        ]
+      },
+      {
+        "id": "AC06",
+        "name": "C03 registered Pi command/tool controlled positive and failure paths",
+        "passes": false,
+        "probe_error": {
+          "name": "TypeError",
+          "code": null,
+          "status": null,
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": false,
+          "message": "pi.on is not a function"
+        }
+      }
+    ],
+    "passed": 5,
+    "failed": 1
+  },
+  "status": "Original archived probe failed; no changes to old evidence. Compatibility adapter awaiting parent authorization."
+}

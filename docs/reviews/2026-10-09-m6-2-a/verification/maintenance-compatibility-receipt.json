@@ -1,0 +1,78 @@
+{
+  "kind": "bounded independent genuine schema2/3 original backup APIs -> current4 restore, actual CLI and wire compatibility",
+  "checks": [
+    {
+      "name": "actual original schema2 API backup restores only new schema4 stage",
+      "source_hash_unchanged": true,
+      "formal_tables_empty": true,
+      "old_token_rejected": true
+    },
+    {
+      "name": "actual CLI legacy refusal",
+      "mode": "init",
+      "exit": 3,
+      "signal": null,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "actual CLI legacy refusal",
+      "mode": "serve",
+      "exit": 3,
+      "signal": null,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "actual CLI legacy refusal",
+      "mode": "init",
+      "exit": 3,
+      "signal": null,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "actual CLI legacy refusal",
+      "mode": "serve",
+      "exit": 3,
+      "signal": null,
+      "error_code": "FORBIDDEN",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "genuine original3 API backup ->4 preserves exact original service base responses and compact refs",
+      "original_replays_exact": true,
+      "source_backup_unchanged": true,
+      "old_token_rejected": true
+    },
+    {
+      "name": "actual wire1-source2 import",
+      "formal_empty": true,
+      "schema_version": 4
+    },
+    {
+      "name": "actual wire2-source3 import",
+      "formal_empty": true,
+      "schema_version": 4
+    },
+    {
+      "name": "actual wire2-source4 import",
+      "formal_empty": true,
+      "schema_version": 4
+    },
+    {
+      "name": "chain-valid mixed contract rejects wire1-source3",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "name": "chain-valid mixed contract rejects wire2-source2",
+      "error_code": "INVALID_INPUT"
+    },
+    {
+      "name": "chain-valid mixed contract rejects wire2-not-enabled",
+      "error_code": "INVALID_INPUT"
+    }
+  ],
+  "cleanup_removed": true,
+  "status": "passed"
+}

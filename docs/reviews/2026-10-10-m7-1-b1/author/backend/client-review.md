@@ -1,0 +1,9 @@
+# Independent static review of B client source
+
+Bound freeze SHA 1c953e5036d65c4a9a7c3ade58545508e09ae1325807f8b30a35768f5203addc and source.diff SHA a269386db608aab5f27e99d8b79ce2eee429386e438c372691259085205266b0. All four actual source hashes match their manifest. No product edits or execution by A.
+
+Twelve typed methods target the approved routes and canonical views. Receipt/log logicalOperationId is rejected before Blob slicing, HTTP, persistent preparation or getMe; per-call automatic key is stable for internal retries. Ordinary create/invalidate preserve prepareWriteKey and narrow request/run scopes with two explicit allowlist additions, without persistence format changes. Issuer excludes key options and body extra keys, disables request retries, and checks strict once-response DTO.
+
+Snapshot uses one portable canonicalizer and actual WebCrypto SHA256 over canonical UTF8, checks manifest_sha256, catches invalid canonical payload safely and honors cancellation. Scoped artifact download adds an optional run target to the existing bounded integrity/EOF/MIME/hash/cancel/late-disposal path; omitted target retains previous generic path. Exact scoped URL guard rejects foreign or generic URLs before content fetch. Upload snapshots immutable bytes once and reconstructs FormData per retry, binds returned size/hash/MIME/ready state.
+
+Nine controlled transport contracts are labelled as such; they do not claim actual SQLite, authorization, server atomicity, browser or host verification. Tests cover strict DTO/order/null/cross-binding, actual JCS hash mismatch, zero-I/O options rejection, issuer retry0, stable retry keys, scoped URL/integrity and late cancellation; actual HTTP semantics are A/D tests. No actionable static blocker found. Pending D runtime/required old regressions.

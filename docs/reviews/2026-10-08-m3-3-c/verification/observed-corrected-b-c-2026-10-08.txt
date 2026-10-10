@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m3-offline-upgrade-contract.test.ts (3 tests) 1184ms
+   ✓ UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator  760ms
+   ✓ UP B03: built local migrate maps offline/options failures without network or tokenfile reads  418ms
+ ✓ tests/integration/m3-upgrade-independent.test.ts (4 tests) 5642ms
+   ✓ M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip  1701ms
+   ✓ M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime  898ms
+   ✓ M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes  1378ms
+   ✓ M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets  1664ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  06:49:58
+   Duration  5.86s (transform 47ms, setup 0ms, collect 115ms, tests 6.83s, environment 0ms, prepare 66ms)
+

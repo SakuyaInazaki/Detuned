@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m3-events-contract.test.ts (7 tests | 1 failed | 6 skipped) 248ms
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E01: legal positive wait actually waits at an empty consumer without creating or acknowledging a batch
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E02: existing strict poll schema defaults and bounds reach the async service unchanged
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E03: a completed request body is not cancellation, but client user abort cancels the live HTTP wait
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E04: client timeout cancels the same server wait and does not retry or acknowledge
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E05: app shutdown aborts active waits before socket drain and returns retryable 503
+   ↓ M3.1 event HTTP and adapter cancellation contracts > E06: lost HTTP delivery preserves the actual persisted batch for redelivery and explicit ack only
+   × M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch 247ms
+     → MCP error -32000: Connection closed
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests | 4 skipped) 527ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  364ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed | 10 skipped (13)
+   Start at  22:25:55
+   Duration  1.04s (transform 277ms, setup 0ms, collect 774ms, tests 775ms, environment 0ms, prepare 70ms)
+

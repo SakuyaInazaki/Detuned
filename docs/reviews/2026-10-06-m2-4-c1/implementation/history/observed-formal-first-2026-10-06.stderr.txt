@@ -1,0 +1,30 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content
+AssertionError: expected 'redacted' to be 'db0fb223a389353c65b1ea1f3b35f5000d927…' // Object.is equality
+
+Expected: "db0fb223a389353c65b1ea1f3b35f5000d927c59c0e68e1c668b41e78db37f59"
+Received: "redacted"
+
+ ❯ tests/integration/historical-http-replay.test.ts:98:44
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay
+AssertionError: expected 'UNAUTHENTICATED' to be 'UNAUTHORIZED' // Object.is equality
+
+Expected: "UNAUTHORIZED"
+Received: "UNAUTHENTICATED"
+
+ ❯ tests/integration/historical-http-replay.test.ts:107:140
+    105|     expect((await call(`/api/v1/admin/credentials/${credentialId}/revo…
+    106|     const before = snapshot();
+    107|     for (const c of expected.cases) { const r = await call(c.url, c.pa…
+       |                                                                                                                                            ^
+    108|     expect(snapshot()).toEqual(before);
+    109|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

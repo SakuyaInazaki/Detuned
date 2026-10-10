@@ -1,0 +1,9 @@
+# SD08 / SD09 first independent counterexamples
+
+The bounded source test ran with one worker and no file parallelism; exit 1, 1.659 seconds, two cases failed and seven unselected. Complete output is [stdout](sd08-sd09-first.stdout.txt) / [stderr](sd08-sd09-first.stderr.txt), with the [command receipt](sd08-sd09-first.json). Original counterexample bytes are retained in [first source](sd08-sd09-first-source.ts).
+
+SD08: readonly and revealed-readonly fixed assignment reads returned FORBIDDEN; later eligibility loss and cancellation returned VALIDATION_ERROR. Those reads should retain the immutable own assignment for a currently authorized space reader. New submit/upload write gates and inactive-membership rejection were exercised and remained effective.
+
+SD09: changed target revision, changed dependency during real staging, changed policy after real physical publication, withdrawn target, and missing snapshot artifact each incorrectly committed a new artifact/event/idempotency record and retained the published blob. Actual RedactionService redaction already returned CONTENT_REDACTED with no added database or physical side effects. This is a real SQLite and ArtifactFileStore pipeline, without fabricated data responses. Lifecycle/readiness direct database transitions are explicitly owned historical/physical fault fixtures; revision transitions use PostService.
+
+Root has assigned limited shared current-material validation and readonly assignment fixes to the implementation owners. No product source was edited by D. After the first failed test, the current case additionally isolates cancellation from the eligibility write gate and preserves successful original upload replay/read after a new material revision as a positive control. These additions await repaired source verification.

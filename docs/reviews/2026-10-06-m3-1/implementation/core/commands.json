@@ -1,0 +1,39 @@
+[
+  {
+    "name": "before-first",
+    "command": "pnpm exec vitest run tests/integration/m3-event-core.test.ts",
+    "exit": 1,
+    "tests": "0/3 (3 real expected regressions red)"
+  },
+  {
+    "name": "after-first",
+    "command": "pnpm exec vitest run tests/integration/m3-event-core.test.ts",
+    "exit": 0,
+    "tests": "3/3"
+  },
+  {
+    "name": "after-expanded-first",
+    "command": "pnpm exec vitest run tests/integration/m3-event-core.test.ts",
+    "exit": 0,
+    "tests": "11/11"
+  },
+  {
+    "name": "typecheck-first",
+    "command": "pnpm exec tsc -p docs/reviews/2026-10-06-m3-1/implementation/core/source-typecheck-config.json --noEmit",
+    "exit": 0
+  },
+  {
+    "name": "before-wait",
+    "command": "node docs/reviews/2026-10-06-m3-1/implementation/core/before-wait.mjs",
+    "exit": 1,
+    "classification": "own probe relative root import off by one; retained first script/stderr; not behavioral counterexample"
+  },
+  {
+    "name": "before-wait-second",
+    "command": "node docs/reviews/2026-10-06-m3-1/implementation/core/before-wait.mjs",
+    "exit": 0,
+    "requested_wait_ms": 1000,
+    "elapsed_ms": 0.245791,
+    "classification": "accepted old dist valid request returns immediate null, no writes; behavior absence not minimum wait violation"
+  }
+]

@@ -1,0 +1,39 @@
+--- a/packages/protocol/src/response-guards.ts
++++ b/packages/protocol/src/response-guards.ts
+@@ -192,7 +192,7 @@
+ }
+ const checkRunWire=checkWireSchema(CheckRunViewSchema),checkReceiptWire=checkWireSchema(CheckReceiptViewSchema),checkSnapshotWire=checkWireSchema(CheckSnapshotViewSchema),checkPostWire=checkWireSchema(CheckPostRevisionViewSchema),checkIssueWire=checkWireSchema(IssueCheckRunCredentialDataSchema),checkDirectoryWire=checkWireSchema(RequiredChecksViewSchema);
+ export function isCheckRunView(value:unknown,spaceId:string,runId:string):value is CheckRunView {
+- return Value.Check(checkRunWire,value)&&value.space_id===spaceId&&value.id===runId&&[value.id,value.space_id,value.request_id,value.snapshot_id,value.verifier_actor_id,value.created_by,value.changed_by].every(isUnicodeReviewId)&&!!value.check_name.trim()&&(value.state==='pending'?value.version===1&&value.changed_by===value.created_by&&value.changed_at===value.created_at:value.version>=2)&&isCheckInstant(value.created_at)&&isCheckInstant(value.changed_at)&&Date.parse(value.changed_at)>=Date.parse(value.created_at)&&((value.state==='invalidated')===(value.invalidation_reason!==null))&&(value.invalidation_reason===null||!!value.invalidation_reason.trim());
++ return Value.Check(checkRunWire,value)&&value.space_id===spaceId&&value.id===runId&&[value.id,value.space_id,value.request_id,value.snapshot_id,value.verifier_actor_id,value.created_by,value.changed_by].every(isUnicodeReviewId)&&!!value.check_name.trim()&&(value.state==='pending'?value.version===1&&value.changed_by===value.created_by&&value.changed_at===value.created_at:value.version>=2)&&isCheckInstant(value.created_at)&&isCheckInstant(value.changed_at)&&((value.state==='invalidated')===(value.invalidation_reason!==null))&&(value.invalidation_reason===null||(!!value.invalidation_reason.trim()&&[...value.invalidation_reason].length<=500));
+ }
+ export function isCheckReceiptView(value:unknown,spaceId:string,runId:string):value is CheckReceiptView {
+  if(!Value.Check(checkReceiptWire,value)||value.space_id!==spaceId||value.check_run_id!==runId||![value.space_id,value.check_run_id,value.verifier_actor_id,value.logs_artifact_id].every(isUnicodeReviewId)||!isCheckInstant(value.received_at))return false;
+--- a/packages/server/src/app.ts
++++ b/packages/server/src/app.ts
+@@ -175,7 +175,7 @@
+   app.addHook('onClose', async () => { tlsSockets?.dispose(); });
+   app.addHook('onRequest', async (req,reply) => {
+     if(webConfig&&(req.routeOptions.url===WEB_AUTH_PATH||req.headers.cookie!==undefined))reply.header('cache-control','no-store');
+-    if(/\/review-(?:requests|snapshots|submissions)(?:\/|$)/.test(req.routeOptions.url??''))reply.header('Cache-Control','private, no-store');
++    if(/\/(?:review-(?:requests|snapshots|submissions)|check-runs)(?:\/|$)/.test(req.routeOptions.url??''))reply.header('Cache-Control','private, no-store');
+     if(webConfig){checkWebRequest(req,webConfig);if(req.routeOptions.url===WEB_AUTH_PATH&&req.method==='POST'){checkWebRequest(req,webConfig,true);webSessions!.admitLoginAttempt();}}
+ 
+     if (resources.closing && !['/api/v1/health/live', '/api/v1/health/ready'].includes(req.routeOptions.url ?? '')) throw new DetunedError(ErrorCode.SERVICE_NOT_READY, '服务正在关闭。', 503, true, { ready: false });
+--- a/packages/protocol/src/openapi.ts
++++ b/packages/protocol/src/openapi.ts
+@@ -1,4 +1,4 @@
+-import { CheckRunViewSchema,CheckReceiptViewSchema,CheckSnapshotViewSchema,CheckPostRevisionViewSchema,IssueCheckRunCredentialRequestSchema,IssueCheckRunCredentialDataSchema,RequiredChecksViewSchema,CreateCheckRunSchema,InvalidateCheckRunSchema,SubmitCheckReceiptSchema } from './review.js';
++import { CheckPostParamsSchema,CheckRunViewSchema,CheckReceiptViewSchema,CheckSnapshotViewSchema,CheckPostRevisionViewSchema,IssueCheckRunCredentialRequestSchema,IssueCheckRunCredentialDataSchema,RequiredChecksViewSchema,CreateCheckRunSchema,InvalidateCheckRunSchema,SubmitCheckReceiptSchema } from './review.js';
+ import { ReviewSubmissionSearchQuerySchema, PublicReviewSubmissionSearchItemSchema, PublicReviewSubmissionSearchPageSchema, SearchSourceQuerySchema } from './search.js';
+ import { PostReviewRequestsQuerySchema,PostReviewRequestsEnvelopeSchema,CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
+ import { ReviewArtifactMetadataSchema } from './artifacts.js';
+@@ -757,7 +757,7 @@
+   const checkBase='/spaces/{space_id}/check-runs',checkRun=checkBase+'/{run_id}';
+   const checkOperation=(response:TSchema,status:string,names:string[],body?:TSchema,issuer=false)=>{
+     const op=reviewOperation(response,status,body);
+-    return {...op,parameters:[reviewParameter('space_id'),...names.map(reviewParameter),...(body&&!issuer?[{name:'Idempotency-Key',in:'header',required:true,schema:NONBLANK_STRING_SCHEMA}]:[])],description:issuer?'Maintainer-only once credential issuance; Idempotency-Key prohibited. No automatic retry; response private, no-store.':'Scoped check read/write; current core authorization and fixed material privacy apply. Verify credentials access only their bound run. No sealed initial opinions. Responses private, no-store.'};
++    return {...op,parameters:[reviewParameter('space_id'),...names.map(name=>name==='revision'?{...reviewParameter(name),schema:CheckPostParamsSchema.properties.revision,description:'Positive decimal revision without leading zero; server requires a positive safe integer (at most 9007199254740991).'}:reviewParameter(name)),...(body&&!issuer?[{name:'Idempotency-Key',in:'header',required:true,schema:NONBLANK_STRING_SCHEMA}]:[])],description:issuer?'Maintainer-only once credential issuance; Idempotency-Key prohibited. No automatic retry; response private, no-store.':'Scoped check read/write; current core authorization and fixed material privacy apply. Verify credentials access only their bound run. No sealed initial opinions. Responses private, no-store.'};
+   };
+   const checkUpload={...checkOperation(ArtifactMetadataSchema,'201',['run_id'],Type.Object({})),requestBody:{required:true,content:{'multipart/form-data':{schema:Type.Object({file:Type.String({format:'binary'}),metadata:Type.Optional(Type.Object({},{additionalProperties:false}))},{additionalProperties:false}),encoding:{metadata:{contentType:'application/json'}}}}}};
+   const checkPaths={

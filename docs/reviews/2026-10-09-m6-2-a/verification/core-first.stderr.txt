@@ -1,0 +1,104 @@
+$ vitest run --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B09: openAndCoordinateDatabase rejects future schema versions and unknown databases before DDL mutation
+AssertionError: expected [Function] to throw error matching /migrate/ but got '实例持久密钥缺失或损坏。数据库结构与版本 4 迁移记录矛盾。请检查数据库或…'
+
+- Expected: 
+/migrate/
+
++ Received: 
+"实例持久密钥缺失或损坏。数据库结构与版本 4 迁移记录矛盾。请检查数据库或联系管理员。"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:838:71
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip
+AssertionError: expected 4 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 4
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:25:425
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets
+AssertionError: expected 4 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 4
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:45:565
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/integration/m6-review-requests-independent.test.ts > DI03 current requester-only cancel and immutable historical replay survive later policy, cancellation and real database reopen
+AssertionError: expected { …(17) } to deeply equal { …(16) }
+
+- Expected
++ Received
+
+@@ -14,10 +14,11 @@
+    "round": 1,
+    "rules_revision": 1,
+    "snapshot_id": "snp_0e59769d-9684-4066-8052-42cb5393c870",
+    "snapshot_sha256": "fe9bd2ba4cf9d924eccbed9e2b68123668a3ef72a3d267a2e26b683872f35015",
+    "space_id": "spc-review-independent",
++   "submitted_count": 0,
+    "target_ref": {
+      "post_id": "pst-claim",
+      "revision": 1,
+    },
+    "version": 2,
+
+ ❯ tests/integration/m6-review-requests-independent.test.ts:89:71
+     87|  expect(create(f,'history',creator)).toEqual(first);
+     88|  expect(f.service.cancelRequest(f.context(creator),f.sid,first.id,{exp…
+     89|  expect(f.service.getRequest(f.context(f.ids.reader),f.sid,first.id)).…
+       |                                                                       ^
+     90|  rejected(()=>create(f,'history',creator,{...f.request,reproduction_in…
+     91|  rejected(()=>f.service.cancelRequest(f.context(creator),f.sid,first.i…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/integration/m6-review-requests-independent.test.ts > DI07 legitimate target dependency or artifact redaction must not prevent ordinary schema3 reopen, while reads and replay remain gone
+AssertionError: expected { …(17) } to deeply equal { …(16) }
+
+- Expected
++ Received
+
+@@ -14,10 +14,11 @@
+    "round": 1,
+    "rules_revision": 1,
+    "snapshot_id": "snp_a8876017-c249-4686-a2b6-7919fc8ec09b",
+    "snapshot_sha256": "6a4b88e5c2883bc08f62339998806b3d05f1cdc7c3458a78a23dbd5f6aff66e1",
+    "space_id": "spc-review-independent",
++   "submitted_count": 0,
+    "target_ref": {
+      "post_id": "pst-safe",
+      "revision": 1,
+    },
+    "version": 1,
+
+ ❯ tests/integration/m6-review-requests-independent.test.ts:175:71
+    173|   rejected(()=>f.service.getRequest(f.context(f.ids.reader),f.sid,affe…
+    174|   rejected(()=>create(f,'m01-affected',f.ids.author,req),'CONTENT_REDA…
+    175|   expect(f.service.getRequest(f.context(f.ids.reader),f.sid,safe.id)).…
+       |                                                                       ^
+    176|   expect(f.service.getSnapshot(f.context(f.ids.reader),f.sid,safe.snap…
+    177|   expect(f.db.prepare("SELECT result_ref FROM idempotency_records WHER…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

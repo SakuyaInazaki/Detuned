@@ -1,0 +1,48 @@
+{
+  "status": "planning_candidates_pending_m7_3_seal_actual_fresh_root_dispatch",
+  "existing": {
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": {
+      "owner": "A",
+      "state": "existing",
+      "sha256": "73ac00322b23b7c79821b5e4617272300fd4866cd49dac42457c054c5555fa9c",
+      "bytes": 16921,
+      "scope": "append dedicated checks scenario/case; preserve old six scenarios and assertions"
+    },
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": {
+      "owner": "A",
+      "state": "existing",
+      "sha256": "a25e6dbb07bc6261de57d91443ab428f13af7c749eb6b3d2e212a775c48281a7",
+      "bytes": 2605,
+      "scope": "append dedicated checks scenario/case; preserve old six scenarios and assertions"
+    }
+  },
+  "new": {
+    "scripts/integrations/claude-check-probe.mjs": {
+      "owner": "A",
+      "state": "missing",
+      "scope": "optional fixed protected native probe, not core CI host dependency"
+    },
+    "tests/contracts/m7-pi-native-checks-independent.test.ts": {
+      "owner": "D",
+      "state": "missing",
+      "scope": "independent real fixed Pi SDK check scenario"
+    }
+  },
+  "counts": {
+    "existing": 2,
+    "missing": 2,
+    "A_existing": 2,
+    "A_missing": 1,
+    "D_missing": 1
+  },
+  "B": "independent static review only",
+  "runtime": "D sole serial window; Claude optional installed-native external evidence",
+  "protected": [
+    "all packages and protocol/adapter/core/client business",
+    "normal docs and compatibility.json",
+    "old probes and sealed evidence",
+    "old temporary directories",
+    "user global config/accounts/models"
+  ],
+  "product_write_authorization": false
+}

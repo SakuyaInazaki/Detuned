@@ -1,0 +1,730 @@
+{
+  "format_version": 1,
+  "scope": "D01 steps1–3 only; no model or review",
+  "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+  "actors": [
+    "d01-A",
+    "d01-B",
+    "d01-C"
+  ],
+  "original_ref": {
+    "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+    "revision": 1
+  },
+  "failure_ref": {
+    "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+    "revision": 1
+  },
+  "controller_records": [
+    {
+      "role": "controller",
+      "method": "POST",
+      "path": "/api/v1/spaces",
+      "request_key": "d01-controller-0",
+      "body": {
+        "slug": "d01-demo",
+        "objective": "确定性 D01 步骤1–3",
+        "rules": [
+          "作者报告不等于研究认证"
+        ]
+      },
+      "status": 201,
+      "response_bytes": 768,
+      "response": {
+        "api_version": "1",
+        "request_id": "req-1",
+        "data": {
+          "space": {
+            "id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "slug": "d01-demo",
+            "current_revision": 1,
+            "policy_revision": 1,
+            "acl_epoch": 2,
+            "created_at": "2026-10-06T13:06:16.213Z"
+          },
+          "revision": {
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "revision": 1,
+            "objective": "确定性 D01 步骤1–3",
+            "rules": [
+              "作者报告不等于研究认证"
+            ],
+            "review_policy": {
+              "enabled": true,
+              "required_reviewers": 2,
+              "exclude_contributors": true,
+              "distinct_actors": true,
+              "distinct_independence_groups": false,
+              "seal_until_all_submitted": true,
+              "invalidate_on_revision": true,
+              "required_checks": [
+                "reproduce"
+              ],
+              "allow_open_objections": false
+            },
+            "check_profiles": {},
+            "pinned_refs": [],
+            "editor_id": "act_admin_ce1b76a8946a",
+            "created_at": "2026-10-06T13:06:16.213Z"
+          }
+        }
+      }
+    },
+    {
+      "role": "A",
+      "method": "POST",
+      "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/threads",
+      "request_key": "d01-A-1",
+      "body": {
+        "title": "D01非负权最短路"
+      },
+      "status": 201,
+      "response_bytes": 322,
+      "response": {
+        "api_version": "1",
+        "request_id": "req-2",
+        "data": {
+          "thread": {
+            "id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "title": "D01非负权最短路",
+            "version": 1,
+            "state": "open",
+            "creator_id": "d01-A",
+            "created_at": "2026-10-06T13:06:16.221Z",
+            "updated_at": "2026-10-06T13:06:16.221Z"
+          }
+        }
+      }
+    },
+    {
+      "role": "A",
+      "method": "POST",
+      "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/threads/thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef/posts",
+      "request_key": "d01-A-2",
+      "body": {
+        "kind": "proposal",
+        "title": "首次发现即固定",
+        "summary": "待反驳的错误规则",
+        "body": "按邻接顺序首次发现顶点就固定距离，不再更新",
+        "structured": {
+          "statement": "非负权图首次发现某点即可固定其距离",
+          "assumptions": [
+            "非负权重"
+          ],
+          "scope": "有限非负权有向图",
+          "falsification_plan": "寻找小图反例"
+        }
+      },
+      "status": 201,
+      "response_bytes": 912,
+      "response": {
+        "api_version": "1",
+        "request_id": "req-3",
+        "data": {
+          "post": {
+            "id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+            "author_id": "d01-A",
+            "kind": "proposal",
+            "current_revision": 1,
+            "lifecycle": "active",
+            "created_at": "2026-10-06T13:06:16.224Z"
+          },
+          "revision": {
+            "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+            "revision": 1,
+            "title": "首次发现即固定",
+            "summary": "待反驳的错误规则",
+            "body": "按邻接顺序首次发现顶点就固定距离，不再更新",
+            "tags": [],
+            "structured": {
+              "statement": "非负权图首次发现某点即可固定其距离",
+              "assumptions": [
+                "非负权重"
+              ],
+              "scope": "有限非负权有向图",
+              "falsification_plan": "寻找小图反例"
+            },
+            "content_hash": "53130673b55f5380c62f2fde2d6d878a7c0d2bb67a5b886b9433472613c0ef32",
+            "editor_id": "d01-A",
+            "created_at": "2026-10-06T13:06:16.224Z"
+          },
+          "relations": []
+        }
+      }
+    },
+    {
+      "role": "B",
+      "method": "POST",
+      "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/threads/thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef/posts",
+      "request_key": "d01-B-3",
+      "body": {
+        "kind": "note",
+        "title": "三点图手算证据",
+        "summary": "固定可读材料",
+        "body": "s→a=10,s→b=1,b→a=1；错误规则 a=10，正确 s=0,b=1,a=2；由两步路径1+1=2。"
+      },
+      "status": 201,
+      "response_bytes": 757,
+      "response": {
+        "api_version": "1",
+        "request_id": "req-4",
+        "data": {
+          "post": {
+            "id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+            "author_id": "d01-B",
+            "kind": "note",
+            "current_revision": 1,
+            "lifecycle": "active",
+            "created_at": "2026-10-06T13:06:16.225Z"
+          },
+          "revision": {
+            "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+            "revision": 1,
+            "title": "三点图手算证据",
+            "summary": "固定可读材料",
+            "body": "s→a=10,s→b=1,b→a=1；错误规则 a=10，正确 s=0,b=1,a=2；由两步路径1+1=2。",
+            "tags": [],
+            "structured": {},
+            "content_hash": "a957dfada0a22967e5f8b6b565da39c2a2041bf08ec9105f2fbac1733b26d015",
+            "editor_id": "d01-B",
+            "created_at": "2026-10-06T13:06:16.225Z"
+          },
+          "relations": []
+        }
+      }
+    },
+    {
+      "role": "B",
+      "method": "POST",
+      "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/threads/thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef/posts",
+      "request_key": "d01-B-4",
+      "body": {
+        "kind": "failure",
+        "title": "D01三点反例",
+        "summary": "首次发现规则的适用反例",
+        "body": "反例否定首次发现固定规则，不否定 Dijkstra。",
+        "structured": {
+          "attempt": "邻接顺序 s→a 后 s→b",
+          "category": "counterexample",
+          "assumptions": [
+            "非负权重"
+          ],
+          "tested_scope": "三顶点有向非负权图；首发现不松弛规则",
+          "expected": "a=2,b=1",
+          "observed": "错误规则 a=10，正确距离2",
+          "evidence_refs": [
+            {
+              "kind": "post",
+              "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+              "revision": 1
+            },
+            {
+              "kind": "post",
+              "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+              "revision": 1
+            }
+          ],
+          "evidence_state": "provided",
+          "ruled_out": "负权边不是原因",
+          "not_ruled_out": [
+            "负权图的其它算法",
+            "更大图实现细节"
+          ],
+          "retry_when": [
+            "最小暂定距离出队确认并逐边松弛"
+          ]
+        }
+      },
+      "status": 201,
+      "response_bytes": 1355,
+      "response": {
+        "api_version": "1",
+        "request_id": "req-5",
+        "data": {
+          "post": {
+            "id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+            "author_id": "d01-B",
+            "kind": "failure",
+            "current_revision": 1,
+            "lifecycle": "active",
+            "created_at": "2026-10-06T13:06:16.226Z"
+          },
+          "revision": {
+            "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+            "revision": 1,
+            "title": "D01三点反例",
+            "summary": "首次发现规则的适用反例",
+            "body": "反例否定首次发现固定规则，不否定 Dijkstra。",
+            "tags": [],
+            "structured": {
+              "attempt": "邻接顺序 s→a 后 s→b",
+              "category": "counterexample",
+              "assumptions": [
+                "非负权重"
+              ],
+              "tested_scope": "三顶点有向非负权图；首发现不松弛规则",
+              "expected": "a=2,b=1",
+              "observed": "错误规则 a=10，正确距离2",
+              "evidence_refs": [
+                {
+                  "kind": "post",
+                  "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+                  "revision": 1
+                },
+                {
+                  "kind": "post",
+                  "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+                  "revision": 1
+                }
+              ],
+              "evidence_state": "provided",
+              "ruled_out": "负权边不是原因",
+              "not_ruled_out": [
+                "负权图的其它算法",
+                "更大图实现细节"
+              ],
+              "retry_when": [
+                "最小暂定距离出队确认并逐边松弛"
+              ]
+            },
+            "content_hash": "b38a29592f83c1e335acbacbc00ab7f123b7444159267f32f5b0ef37ddc5ab68",
+            "editor_id": "d01-B",
+            "created_at": "2026-10-06T13:06:16.226Z"
+          },
+          "relations": []
+        }
+      }
+    }
+  ],
+  "journey": {
+    "inputs": {
+      "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+      "query": "D01三点反例"
+    },
+    "documents": [
+      {
+        "ref": {
+          "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+          "revision": 1
+        },
+        "document_sha256": "677f2061b215d7bc0bc5ffabddb03deb5f42f9473696b8513c06024a74fc959f",
+        "content": {
+          "title": "D01三点反例",
+          "summary": "首次发现规则的适用反例",
+          "body": "反例否定首次发现固定规则，不否定 Dijkstra。",
+          "tags": [],
+          "structured": {
+            "attempt": "邻接顺序 s→a 后 s→b",
+            "category": "counterexample",
+            "assumptions": [
+              "非负权重"
+            ],
+            "tested_scope": "三顶点有向非负权图；首发现不松弛规则",
+            "expected": "a=2,b=1",
+            "observed": "错误规则 a=10，正确距离2",
+            "evidence_refs": [
+              {
+                "kind": "post",
+                "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+                "revision": 1
+              },
+              {
+                "kind": "post",
+                "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+                "revision": 1
+              }
+            ],
+            "evidence_state": "provided",
+            "ruled_out": "负权边不是原因",
+            "not_ruled_out": [
+              "负权图的其它算法",
+              "更大图实现细节"
+            ],
+            "retry_when": [
+              "最小暂定距离出队确认并逐边松弛"
+            ]
+          }
+        }
+      },
+      {
+        "ref": {
+          "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+          "revision": 1
+        },
+        "document_sha256": "a54b4a186ab3172affcc7886693f6f7044bc85c655b56bd63ee486378b564151",
+        "content": {
+          "title": "首次发现即固定",
+          "summary": "待反驳的错误规则",
+          "body": "按邻接顺序首次发现顶点就固定距离，不再更新",
+          "tags": [],
+          "structured": {
+            "statement": "非负权图首次发现某点即可固定其距离",
+            "assumptions": [
+              "非负权重"
+            ],
+            "scope": "有限非负权有向图",
+            "falsification_plan": "寻找小图反例"
+          }
+        }
+      },
+      {
+        "ref": {
+          "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+          "revision": 1
+        },
+        "document_sha256": "5ae8a018dc991efff252b5637a5e147a0dec89ef5c68adf43042db026d098622",
+        "content": {
+          "title": "三点图手算证据",
+          "summary": "固定可读材料",
+          "body": "s→a=10,s→b=1,b→a=1；错误规则 a=10，正确 s=0,b=1,a=2；由两步路径1+1=2。",
+          "tags": [],
+          "structured": {}
+        }
+      }
+    ],
+    "created": {
+      "api_version": "1",
+      "request_id": "req-a",
+      "data": {
+        "post": {
+          "id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+          "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+          "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+          "author_id": "d01-C",
+          "kind": "proposal",
+          "current_revision": 1,
+          "lifecycle": "active",
+          "created_at": "2026-10-06T13:06:16.309Z"
+        },
+        "revision": {
+          "post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+          "revision": 1,
+          "title": "D01改进：出队确认与松弛",
+          "summary": "已知 Dijkstra 修正规则，非新数学成果或评审通过",
+          "body": "基于论坛固定引用 pst_98d881e9-ad2d-4ee3-8211-e18c2c265694@1 与 pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9@1。非负权重：最小暂定距离出队，跳过过时项，首次有效出队才 settle；逐边松弛并重新入队。三点图得到 a=2,b=1；兼容零权边、平行边及不可达点。",
+          "tags": [],
+          "structured": {
+            "statement": "非负权图采用最小距离优先队列出队确认，逐边松弛而非首次发现即固定",
+            "assumptions": [
+              "有限有向图",
+              "所有边权非负"
+            ],
+            "scope": "三顶点有向非负权图；首发现不松弛规则",
+            "falsification_plan": "核三点反例、零权边、平行边、不可达点及不同邻接顺序；与可信参考算法比较"
+          },
+          "content_hash": "d1f3e960a8a8a0444591a04abdcde04e6c50db9f7bc0793159107855b024e5e6",
+          "editor_id": "d01-C",
+          "created_at": "2026-10-06T13:06:16.309Z"
+        },
+        "relations": [
+          {
+            "id": "rel_c12f3279-0bda-4539-98fb-1d97fe8543e9",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "source_post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+            "source_revision": 1,
+            "target_post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+            "target_revision": 1,
+            "type": "cites",
+            "state": "resolved",
+            "version": 1,
+            "creator_id": "d01-C",
+            "created_at": "2026-10-06T13:06:16.309Z"
+          },
+          {
+            "id": "rel_cd3cd0f6-36d9-4baf-a31c-c2ab38825b42",
+            "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+            "source_post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+            "source_revision": 1,
+            "target_post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+            "target_revision": 1,
+            "type": "cites",
+            "state": "resolved",
+            "version": 1,
+            "creator_id": "d01-C",
+            "created_at": "2026-10-06T13:06:16.309Z"
+          }
+        ]
+      }
+    },
+    "records": [
+      {
+        "role": "C",
+        "method": "GET",
+        "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/search?q=D01%E4%B8%89%E7%82%B9%E5%8F%8D%E4%BE%8B&limit=100",
+        "status": 200,
+        "response_bytes": 392,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-6",
+          "data": [
+            {
+              "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+              "revision": 1,
+              "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+              "kind": "failure",
+              "title": "D01三点反例",
+              "summary": "首次发现规则的适用反例",
+              "tags": [],
+              "snippet": "<b>D01三点反例</b>",
+              "created_at": "2026-10-06T13:06:16.226Z"
+            }
+          ],
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "role": "C",
+        "method": "GET",
+        "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/posts/pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9/revisions/1?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1234,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-7",
+          "data": {
+            "ref": {
+              "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+              "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+              "revision": 1
+            },
+            "post_kind": "failure",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"D01三点反例\",\"summary\":\"首次发现规则的适用反例\",\"body\":\"反例否定首次发现固定规则，不否定 Dijkstra。\",\"tags\":[],\"structured\":{\"attempt\":\"邻接顺序 s→a 后 s→b\",\"category\":\"counterexample\",\"assumptions\":[\"非负权重\"],\"tested_scope\":\"三顶点有向非负权图；首发现不松弛规则\",\"expected\":\"a=2,b=1\",\"observed\":\"错误规则 a=10，正确距离2\",\"evidence_refs\":[{\"kind\":\"post\",\"post_id\":\"pst_98d881e9-ad2d-4ee3-8211-e18c2c265694\",\"revision\":1},{\"kind\":\"post\",\"post_id\":\"pst_a463f85b-8a64-45bd-9752-582c1bcabf22\",\"revision\":1}],\"evidence_state\":\"provided\",\"ruled_out\":\"负权边不是原因\",\"not_ruled_out\":[\"负权图的其它算法\",\"更大图实现细节\"],\"retry_when\":[\"最小暂定距离出队确认并逐边松弛\"]}}",
+            "start_byte": 0,
+            "end_byte": 786,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "role": "C",
+        "method": "GET",
+        "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/posts/pst_98d881e9-ad2d-4ee3-8211-e18c2c265694/revisions/1?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 743,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-8",
+          "data": {
+            "ref": {
+              "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+              "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+              "revision": 1
+            },
+            "post_kind": "proposal",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"首次发现即固定\",\"summary\":\"待反驳的错误规则\",\"body\":\"按邻接顺序首次发现顶点就固定距离，不再更新\",\"tags\":[],\"structured\":{\"statement\":\"非负权图首次发现某点即可固定其距离\",\"assumptions\":[\"非负权重\"],\"scope\":\"有限非负权有向图\",\"falsification_plan\":\"寻找小图反例\"}}",
+            "start_byte": 0,
+            "end_byte": 342,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "role": "C",
+        "method": "GET",
+        "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/posts/pst_a463f85b-8a64-45bd-9752-582c1bcabf22/revisions/1?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 572,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-9",
+          "data": {
+            "ref": {
+              "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+              "post_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+              "revision": 1
+            },
+            "post_kind": "note",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"三点图手算证据\",\"summary\":\"固定可读材料\",\"body\":\"s→a=10,s→b=1,b→a=1；错误规则 a=10，正确 s=0,b=1,a=2；由两步路径1+1=2。\",\"tags\":[],\"structured\":{}}",
+            "start_byte": 0,
+            "end_byte": 191,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "role": "C",
+        "method": "POST",
+        "path": "/api/v1/spaces/spc_22b033fd-4a80-475a-8225-63e0252a1b54/threads/thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef/posts",
+        "request_key": "d01-C-4",
+        "body": {
+          "kind": "proposal",
+          "title": "D01改进：出队确认与松弛",
+          "summary": "已知 Dijkstra 修正规则，非新数学成果或评审通过",
+          "body": "基于论坛固定引用 pst_98d881e9-ad2d-4ee3-8211-e18c2c265694@1 与 pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9@1。非负权重：最小暂定距离出队，跳过过时项，首次有效出队才 settle；逐边松弛并重新入队。三点图得到 a=2,b=1；兼容零权边、平行边及不可达点。",
+          "structured": {
+            "statement": "非负权图采用最小距离优先队列出队确认，逐边松弛而非首次发现即固定",
+            "assumptions": [
+              "有限有向图",
+              "所有边权非负"
+            ],
+            "scope": "三顶点有向非负权图；首发现不松弛规则",
+            "falsification_plan": "核三点反例、零权边、平行边、不可达点及不同邻接顺序；与可信参考算法比较"
+          },
+          "refs": [
+            {
+              "type": "cites",
+              "target_ref": {
+                "post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+                "revision": 1
+              }
+            },
+            {
+              "type": "cites",
+              "target_ref": {
+                "post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+                "revision": 1
+              }
+            }
+          ]
+        },
+        "status": 201,
+        "response_bytes": 2137,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-a",
+          "data": {
+            "post": {
+              "id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+              "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+              "thread_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+              "author_id": "d01-C",
+              "kind": "proposal",
+              "current_revision": 1,
+              "lifecycle": "active",
+              "created_at": "2026-10-06T13:06:16.309Z"
+            },
+            "revision": {
+              "post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+              "revision": 1,
+              "title": "D01改进：出队确认与松弛",
+              "summary": "已知 Dijkstra 修正规则，非新数学成果或评审通过",
+              "body": "基于论坛固定引用 pst_98d881e9-ad2d-4ee3-8211-e18c2c265694@1 与 pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9@1。非负权重：最小暂定距离出队，跳过过时项，首次有效出队才 settle；逐边松弛并重新入队。三点图得到 a=2,b=1；兼容零权边、平行边及不可达点。",
+              "tags": [],
+              "structured": {
+                "statement": "非负权图采用最小距离优先队列出队确认，逐边松弛而非首次发现即固定",
+                "assumptions": [
+                  "有限有向图",
+                  "所有边权非负"
+                ],
+                "scope": "三顶点有向非负权图；首发现不松弛规则",
+                "falsification_plan": "核三点反例、零权边、平行边、不可达点及不同邻接顺序；与可信参考算法比较"
+              },
+              "content_hash": "d1f3e960a8a8a0444591a04abdcde04e6c50db9f7bc0793159107855b024e5e6",
+              "editor_id": "d01-C",
+              "created_at": "2026-10-06T13:06:16.309Z"
+            },
+            "relations": [
+              {
+                "id": "rel_c12f3279-0bda-4539-98fb-1d97fe8543e9",
+                "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+                "source_post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+                "source_revision": 1,
+                "target_post_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+                "target_revision": 1,
+                "type": "cites",
+                "state": "resolved",
+                "version": 1,
+                "creator_id": "d01-C",
+                "created_at": "2026-10-06T13:06:16.309Z"
+              },
+              {
+                "id": "rel_cd3cd0f6-36d9-4baf-a31c-c2ab38825b42",
+                "space_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+                "source_post_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+                "source_revision": 1,
+                "target_post_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+                "target_revision": 1,
+                "type": "cites",
+                "state": "resolved",
+                "version": 1,
+                "creator_id": "d01-C",
+                "created_at": "2026-10-06T13:06:16.309Z"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "events": [
+    {
+      "seq": 1,
+      "type": "space.revised",
+      "object_id": "spc_22b033fd-4a80-475a-8225-63e0252a1b54",
+      "actor_id": "act_admin_ce1b76a8946a"
+    },
+    {
+      "seq": 2,
+      "type": "thread.created",
+      "object_id": "thd_0b54fa2c-e7c5-4b0f-a432-7fe5f98480ef",
+      "actor_id": "d01-A"
+    },
+    {
+      "seq": 3,
+      "type": "post.created",
+      "object_id": "pst_98d881e9-ad2d-4ee3-8211-e18c2c265694",
+      "actor_id": "d01-A"
+    },
+    {
+      "seq": 4,
+      "type": "post.created",
+      "object_id": "pst_a463f85b-8a64-45bd-9752-582c1bcabf22",
+      "actor_id": "d01-B"
+    },
+    {
+      "seq": 5,
+      "type": "post.created",
+      "object_id": "pst_bde3bda6-4d40-4ed7-a77c-e34f195803c9",
+      "actor_id": "d01-B"
+    },
+    {
+      "seq": 6,
+      "type": "relation.created",
+      "object_id": "rel_c12f3279-0bda-4539-98fb-1d97fe8543e9",
+      "actor_id": "d01-C"
+    },
+    {
+      "seq": 7,
+      "type": "relation.created",
+      "object_id": "rel_cd3cd0f6-36d9-4baf-a31c-c2ab38825b42",
+      "actor_id": "d01-C"
+    },
+    {
+      "seq": 8,
+      "type": "post.created",
+      "object_id": "pst_6bcdb982-2d9a-4481-8f94-61d49234fe94",
+      "actor_id": "d01-C"
+    }
+  ]
+}

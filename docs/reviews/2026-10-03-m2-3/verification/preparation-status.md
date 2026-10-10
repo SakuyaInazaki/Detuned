@@ -1,0 +1,13 @@
+Final execution completed: verification.md / coverage.json authoritative,24 files252 tests,current29/29,SQ01–08/native/KV/history pass. Preparation text below records earlier status, not unresolved execution.
+
+# Preparation status
+
+Baseline and SQ01–SQ09 matrix complete. Only owned verification files written; product/formal tests/all historical evidence untouched. Product execution not started. DTO/budget/TTL approval and final stable freeze pending. Latest M2.2-B accepted verification and next-task/next-step-facts read together with latest AGENTS/README/docs00/08/11 and search-related docs03/04/09.
+
+baseline.json preserves current HEAD/dirty state and all1953 previous review/evidence files, including entire M2.2-B. Four SQL/archive files and two runtime schema/profile files are separately frozen. All117 product/config/test and33 current docs/material captured;208 tracked/32 untracked dist separately identified. Uncommitted prior implementations are baseline, never reset.
+
+No fake schema probe, no product runtime import, no model/host invocation, no broad command execution. Initial discovery found current M2.3 directory absent; created only verification directory, a preparation filesystem fact rather than a product check failure.
+
+Parent approved final contract subsequently. New `check-search-http.mjs` is prepared and node --check exit0 only: Unicode/literal/tag-only q, all-exact tags and legacy CSV, small ID DESC pages with normalization and limit changes, invalid/expired/binding cursors, auth-before-invalid cursor, two-branch lifecycle, and actual localhost app+shared client encoded URL >16KiB. Nothing imported/executed yet. Budget SQ08 remains a finite fixture bound to eventual injectable implementation interface; SQ09 remains full/integrity. Payload v1/purpose/search/hash/sort,24hTTL,4096 cursor,8192 tags input,5000 candidate/262144 items-byte boundaries follow parent freeze. No assumed standalone CPU/envelope bound.
+
+A frozen actual SearchService(storage,authService,cursorDependencies,limits) read. SQ08 now prepared against that exact constructor using real SQLite and low limit injection: short query over complete property candidates422, narrowing exacttag returns distant matching item, longFTS matching candidate overflow422, items JSON byte cap1→422. No storage mocking or silent-prefix empty result. Syntax check exit0 again; still not executed. Current protocol lookahead refinement does not alter any independently assumed query meaning. Final run will execute prior KV and actual historical probes read-only with new output paths, protecting old1953 evidence.

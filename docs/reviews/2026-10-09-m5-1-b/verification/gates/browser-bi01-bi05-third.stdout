@@ -1,0 +1,55 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 2 tests using 1 worker
+
+  ✘  1 scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout (5.4s)
+  ✘  2 scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (1.9s)
+
+
+  1) scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('当前页暂无归档主题。', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('当前页暂无归档主题。', { exact: true }) with timeout 5000ms
+      - waiting for getByText('当前页暂无归档主题。', { exact: true })
+
+
+      40 |   const filter = page.getByRole('combobox', {name: '主题状态', exact: true});
+      41 |   await filter.focus(); await page.keyboard.press('End'); await page.keyboard.press('Enter');
+    > 42 |   await expect(page.getByText('当前页暂无归档主题。', {exact: true})).toBeVisible();
+         |                                                             ^
+      43 |   await filter.focus(); await page.keyboard.press('Home'); await page.keyboard.press('Enter');
+      44 |   const thread = page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true});
+      45 |   await thread.focus(); await page.keyboard.press('Enter');
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:42:61
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI01-real-cook-2518c--keyboard-and-narrow-layout/error-context.md
+
+  2) scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      156 |   await expect(page.getByText(/已超过本地 1 MiB/)).toBeVisible();
+      157 |   await expect(page.locator('.reading article')).toHaveCount(0);
+    > 158 |   expect(observedBytes > 1048576 && pages > 1 && continuous && fixed).toBe(true);
+          |                                                                       ^
+      159 |   await expect(page.locator('.reading pre')).toHaveCount(1);
+      160 |   await page.getByRole('button', {name: '从首段重开', exact: true}).click();
+      161 |   await expect(page.getByText(/已超过本地 1 MiB/)).toHaveCount(0);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:158:71
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI05-UTF-8-fix-d0638-historical-1MiB-degradation/error-context.md
+
+  2 failed
+    scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+    scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+[ELIFECYCLE] Command failed with exit code 1.

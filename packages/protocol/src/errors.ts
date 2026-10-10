@@ -1,6 +1,11 @@
 import { Type, Static } from '@sinclair/typebox';
 
 export const ErrorCode = {
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  SERVICE_NOT_READY: 'SERVICE_NOT_READY',
+  EXPORT_INVALIDATED: 'EXPORT_INVALIDATED',
+  EXPORT_LIMIT_EXCEEDED: 'EXPORT_LIMIT_EXCEEDED',
+  EXPORT_UNAVAILABLE: 'EXPORT_UNAVAILABLE',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   UNAUTHENTICATED: 'UNAUTHENTICATED',
   FORBIDDEN: 'FORBIDDEN',
@@ -25,6 +30,11 @@ export const ErrorCode = {
 export type ErrorCodeType = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export const ErrorCodeSchema = Type.Union([
+  Type.Literal('INTERNAL_ERROR'),
+  Type.Literal('SERVICE_NOT_READY'),
+  Type.Literal('EXPORT_INVALIDATED'),
+  Type.Literal('EXPORT_LIMIT_EXCEEDED'),
+  Type.Literal('EXPORT_UNAVAILABLE'),
   Type.Literal('VALIDATION_ERROR'),
   Type.Literal('UNAUTHENTICATED'),
   Type.Literal('FORBIDDEN'),
@@ -64,6 +74,8 @@ export const ApiErrorResponseSchema = Type.Object({
 export type ApiErrorResponse = Static<typeof ApiErrorResponseSchema>;
 
 export class DetunedError extends Error {
+  public readonly isDetunedError = true;
+  public readonly isTransportError = false;
   public readonly code: ErrorCodeType;
   public readonly statusCode: number;
   public readonly retryable: boolean;

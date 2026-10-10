@@ -1,0 +1,21 @@
+# M7.4-D D actual-pin 静审
+
+2026-10-10；零runtime。当前source仍fd773…dafb，实际test `115c7807619614c4c0786ad8d7616b0da2b85b0b2ed281367507f8de791f1ce3`、capture `b501f08c2429e4b04b5888ad49e48385202ca012f8f1241c6495fb7714b498b8`、plan `81d51f54509f77a83877f7cbc687e1dbbb282fa14f271215b6d01752ac0be880`、guard binding `f4efbc6410006cd9f41ae4cb483ee90a0006ced0aa7c43a8d5c3883925e97e40` 重算匹配ready。前述A source静审不重复。
+
+## 八项真实回归的范围
+
+CP01为实际production helper/internal ps的sameworker direct child正例，观察阶段persist frozen proof、确认后才发harmless ACK。CP02错误actual ownparent在sameUID下拒绝；CP03非法selector/退出exact childquery拒绝；CP04 candidate observer拒绝；CP05 confirmed observer拒绝；CP06 confirmed await期间取消且最终gate拒绝；CP07提前取消不调用observer。负例都没有fixture ACK/import，spy范围内无helper signal；fixture自己清退不冒充被拒候选的权限。所有journey实际parent close、child_closed、positive candidate及group absence后才删自有root，默认5000ms及4000ms watchdog保持。
+
+CP08调用实际生产createTrustedMcpLauncher factory，非镜像/字符串snapshot；真实Node own detached child，exactUID/direct test父/组身份，读取实际mcp-pid与0600。ACK前发送initialize并观察100ms无stdout/response；ACK后收到实际built main initialize、tools/list exact九名；stdin EOF期望actualclose0/null、空stderr、positivePID及原组absence，失败finally只自有child/group，未证absence保root。固定token只供本地无HTTP工具发现，未调用模型/native/HTTP工具。它测试实际入口与EOF，不能升级Claude宿主矩阵或完整profile认证；八项尚未运行。
+
+## Capture 与最小门禁
+
+trusted driver在private registry登记root/worker/native/candidate；worker与native独立exact UID/direct父/原组查询。MCP driver与outer分别exact ps绑定其已登记native及same-worker组，再外层持久signal-authorities、memory登记并ACK observer；source权限仍在observer成功后finalgate，不复制source boolean赋权。独立组保持拒绝，candidate仅positive presence probe，无新增candidate signal。
+
+outer normal失败或坏driver输出仍进入finally：停止actual owned driver、settle ownership tasks、独立尝试所有原confirmed worker组，再candidate coverage/positive absence、producer事实核对与root/control清退；unknown/present/producer缺失/registry异常标unverified并保目录，原失败优先。fallback private registry来自trusted driver已独立proof的记录，去掉MCP proof不得凭其提升MCP确认；normal仍需driver/outer完整一致stage，不能因cleanup成功升级normal为pass。
+
+reject-worker必须exact3stage、driver1/null和failed、source原worker group confirmed但observer completed false、bootstrap/native/MCP/ACK false、initializer/registration settled、actualclose/group/root清退；最后outer全组/candidate coverage/root/control absence齐全才expectedpass。不是任意exit1即pass，不复写旧v13 EPERM失败。
+
+source50/60/65与outer70/75责任保持；outer绝对deadline开于setup前，不为业务增时。guard绑定实际原policy raw/native args-env与四pure范围，旧A actualguard仅字节复用；static preparation regex首次失败保留，未称runtime。门禁仅source/capture syntax、新test source noEmit、单文件8case worker1串行；controlled reject与normal各另root单独释放，必要outer require_escalated、strictchild不变，无full或重复安装/模型/Linux认证。
+
+无可行动static blocker；建议root释放此最小local gate。此审查不授权runtime、不预判8pass/native成功，也不要求无风险更多测试。后续若small fix须保留本pin与delta再增量核对。

@@ -1,0 +1,150 @@
+--- before/packages/web/src/app.tsx
++++ after/packages/web/src/app.tsx
+@@ -1,16 +1,17 @@
+ import { useEffect, useRef, useState, type FormEvent } from 'react';
+ import { DetunedClient, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
+-import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, type PostRevisionMetadata, type RevisionArtifactCatalogItem, type ArtifactMetadata, POST_KINDS } from '@detuned/protocol';
++import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, type PostRevisionMetadata, type RevisionArtifactCatalogItem, type ArtifactMetadata, type MeResponse, isMeResponse, POST_KINDS } from '@detuned/protocol';
+ import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
++import { SpaceOverview, PersonalSettings, parseOverview, type OverviewData } from './space-overview.js';
+ import { RevisionEvidence } from './revision-evidence.js';
+-import { appendContent, CONTENT_BUDGET, initialContent, compareDocuments, type ContentComparison, type FixedContent } from './content.js';
++import { appendContent, CONTENT_BUDGET, initialContent, compareDocuments, type ContentComparison, type FixedContent, initialRules, appendRules, type FixedRules } from './content.js';
+ 
+ type SpaceItem = { id: string; slug: string };
+ type ThreadItem = { id: string; title: string; state: 'open' | 'archived' };
+ type PostItem = { id: string; kind: string; current_revision: number; lifecycle: string };
+ type SessionState = 'restoring' | 'anonymous' | 'authenticated' | 'logout-pending';
+-type SpaceView = 'discussion' | 'search' | 'failures';
+-type ResultReading = { origin: 'search' | 'failures'; threadId: string; postId: string; revision: number };
++type SpaceView = 'overview' | 'discussion' | 'search' | 'failures' | 'settings';
++type ResultReading = { origin: 'overview' | 'search' | 'failures'; threadId: string; postId: string; revision: number };
+ type ThreadIntent = { body: CreateThreadRequest; key: string; spaceId: string };
+ type UploadIntent = { file: File; key: string; spaceId: string };
+ type Intent = { body: CreatePostRequest; key: string; spaceId: string; threadId: string };
+@@ -84,13 +85,16 @@
+   const [postPage, setPostPage] = useState<PostItem[]>([]);
+   const [postCursor, setPostCursor] = useState<string | null>(null);
+   const [content, setContent] = useState<FixedContent | null>(null);
++  const [overview, setOverview] = useState<OverviewData | null>(null);
++  const [fixedRules, setFixedRules] = useState<FixedRules | null>(null);
++  const [personalMe, setPersonalMe] = useState<MeResponse | null>(null);
+   const [resultReading, setResultReading] = useState<ResultReading | null>(null);
+   const [title, setTitle] = useState('');
+   const [summary, setSummary] = useState('');
+   const [body, setBody] = useState('');
+   const [reply, setReply] = useState<{ postId: string; revision: number } | null>(null);
+   const [intent, setIntent] = useState<Intent | null>(null);
+-  const [view, setView] = useState<SpaceView>('discussion');
++  const [view, setView] = useState<SpaceView>('overview');
+   const [showThreadForm, setShowThreadForm] = useState(false);
+   const [newThreadTitle, setNewThreadTitle] = useState('');
+   const [withFirstPost, setWithFirstPost] = useState(false);
+@@ -146,7 +150,7 @@
+     return generation.current;
+   }
+   function clearSpaceViews() {
+-    setView('discussion'); setResultReading(null); setShowThreadForm(false); setNewThreadTitle(''); setWithFirstPost(false);
++    setView('overview'); setOverview(null); setFixedRules(null); setPersonalMe(null); setResultReading(null); setShowThreadForm(false); setNewThreadTitle(''); setWithFirstPost(false);
+     setFirstTitle(''); setFirstSummary(''); setFirstBody(''); setThreadIntent(null);
+     setSearchQ(''); setSearchKind(''); setSearchThread(''); setSearchTags(''); setSearchQuery(null);
+     setSearchResults([]); setSearchCursor(null); setFailureResults([]); setFailuresLoaded(false); setFailureKeyword('');
+@@ -225,11 +229,37 @@
+   function selectSpace(value: SpaceItem) {
+     newGeneration(); clearSpaceViews(); setSpace(value); setThread(null); setPostPage([]); setContent(null); clearComposer();
+     setThreadPage([]); setThreadCursor(null); setThreadState('open');
+-    void run(async signal => {
+-      const id = generation.current; const result = await client.listThreads(value.id, 'open', 20, undefined, { signal });
+-      const items = threads(result.data); const next = nextCursor(result.meta);
+-      if (id === generation.current) { setThreadPage(items); setThreadCursor(next); }
+-    }, '主题已加载。');
++    loadOverview(value);
++  }
++  function loadOverview(selected = space) {
++    if (!selected) return;
++    void run(async signal => {
++      const id = generation.current;
++      const page = await client.getContext(selected.id, { max_bytes: CONTENT_BUDGET }, { signal });
++      const value = parseOverview(page, selected.id);
++      if (id === generation.current) setOverview(value);
++    }, '空间概览已加载；材料可能受数量与预算限制。');
++  }
++  function loadPersonalMe() {
++    setPersonalMe(null);
++    void run(async signal => {
++      const id = generation.current; const result = await client.getMe({ signal });
++      if (!isMeResponse(result.data)) throw new ClientProtocolError('Invalid current identity.');
++      if (id === generation.current) setPersonalMe(result.data);
++    }, '当前身份与凭据能力已读取；具体权限仍由服务端判断。');
++  }
++  function readFixedRules(restart = false) {
++    if (!space || !overview || pending.current || sessionState !== 'authenticated') return;
++    const fixed = fixedRules && fixedRules.spaceId === space.id ? fixedRules : initialRules(space.id, overview.revision);
++    if (!restart && fixed.complete) return;
++    const before = restart ? initialRules(fixed.spaceId, fixed.revision) : fixed;
++    setFixedRules(before);
++    void run(async signal => {
++      const id = generation.current;
++      const page = await client.getSpaceRevision(before.spaceId, before.revision, { max_bytes: CONTENT_BUDGET, ...(before.cursor ? { cursor: before.cursor } : {}) }, { signal });
++      const value = appendRules(before, page);
++      if (id === generation.current) setFixedRules(value);
++    }, '固定空间规则分段已加载。');
+   }
+   function loadThreads(state: 'open' | 'archived', cursor?: string) {
+     if (!space) return;
+@@ -252,7 +282,7 @@
+   function openPost(postId: string, revision: number, resultThreadId?: string) {
+     if (!space) return;
+     newGeneration();
+-    setResultReading(view !== 'discussion' && resultThreadId ? { origin: view, threadId: resultThreadId, postId, revision }
++    setResultReading((view === 'search' || view === 'failures') && resultThreadId ? { origin: view, threadId: resultThreadId, postId, revision }
+       : resultReading && resultThreadId === resultReading.threadId && postId === resultReading.postId && revision === resultReading.revision ? resultReading : null);
+     const initial = initialContent(postId, revision); setContent(initial); setReply(null); setIntent(null);
+     void run(async signal => {
+@@ -263,7 +293,10 @@
+   function switchView(next: SpaceView) {
+     if (!space || next === view && !content) return;
+     newGeneration(); setView(next); setContent(null); setResultReading(null); setReply(null);
+-    if (next === 'failures' && !failuresLoaded) loadFailures();
++    if (next === 'overview') loadOverview(space);
++    else if (next === 'settings') loadPersonalMe();
++    else if (next === 'discussion' && !threadPage.length) loadThreads(threadState);
++    else if (next === 'failures' && !failuresLoaded) loadFailures();
+     else setStatus(next === 'discussion' ? '讨论页面。' : next === 'search' ? '输入关键词搜索当前空间。' : '失败作者报告。');
+   }
+   function changeSearchDraft(update: () => void) {
+@@ -301,9 +334,9 @@
+     submitSearch(undefined, undefined, { q: failureKeyword, kind: 'failure', limit: 20 });
+   }
+   function returnToResults() {
+-    const origin = resultReading?.origin ?? (view === 'search' ? 'search' : 'failures');
++    const origin = resultReading?.origin ?? (view === 'overview' ? 'overview' : view === 'search' ? 'search' : 'failures');
+     newGeneration(); setView(origin); setContent(null); setResultReading(null); setReply(null);
+-    setStatus(origin === 'search' ? '已返回原搜索结果与筛选。' : '已返回失败报告。');
++    setStatus(origin === 'overview' ? '已返回空间概览。' : origin === 'search' ? '已返回原搜索结果与筛选。' : '已返回失败报告。');
+   }
+   function enterReferencedThread() {
+     if (!space || !content || !resultReading || pending.current || sessionState !== 'authenticated') return;
+@@ -483,7 +516,9 @@
+         <section className="discussion" aria-label="讨论内容">
+           <nav className="breadcrumbs" aria-label="当前位置"><span>空间</span>{space && <><span aria-hidden="true">/</span><button onClick={() => selectSpace(space)}>{space.slug}</button></>}{thread && view === 'discussion' && <><span aria-hidden="true">/</span><button onClick={() => loadPosts(thread)}>{thread.title}</button></>}</nav>
+           {!space && <div className="panel welcome"><h2>选择一个空间</h2><p>这里仅显示当前身份可见的研究。论坛文本不会作为程序执行。</p></div>}
+-          {space && <nav className="space-nav" aria-label="空间页面"><button className="quiet" aria-current={view === 'discussion' ? 'page' : undefined} onClick={() => switchView('discussion')}>讨论</button><button className="quiet" aria-current={view === 'search' ? 'page' : undefined} onClick={() => switchView('search')}>搜索</button><button className="quiet" aria-current={view === 'failures' ? 'page' : undefined} onClick={() => switchView('failures')}>失败报告</button></nav>}
++          {space && <nav className="space-nav" aria-label="空间页面"><button className="quiet" aria-current={view === 'overview' ? 'page' : undefined} onClick={() => switchView('overview')}>概览</button><button className="quiet" aria-current={view === 'discussion' ? 'page' : undefined} onClick={() => switchView('discussion')}>讨论</button><button className="quiet" aria-current={view === 'search' ? 'page' : undefined} onClick={() => switchView('search')}>搜索</button><button className="quiet" aria-current={view === 'failures' ? 'page' : undefined} onClick={() => switchView('failures')}>失败报告</button><button className="quiet" aria-current={view === 'settings' ? 'page' : undefined} onClick={() => switchView('settings')}>设置</button></nav>}
++          {space && view === 'overview' && !content && <SpaceOverview value={overview} busy={busy} refresh={() => loadOverview()} open={(postId, revision) => openPost(postId, revision)} rules={fixedRules} readRules={readFixedRules}/>}
++          {space && view === 'settings' && <PersonalSettings me={personalMe} spaceId={space.id} busy={busy} refresh={loadPersonalMe}/>}
+           {space && view === 'discussion' && <section className="panel" aria-labelledby="new-thread-heading"><div className="section-heading"><h2 id="new-thread-heading">新主题</h2><button className="quiet" aria-expanded={showThreadForm} onClick={() => setShowThreadForm(!showThreadForm)}>新建主题</button></div>
+             {showThreadForm && <form onSubmit={e => void createThread(e)}><fieldset disabled={busy || threadIntent !== null}><label htmlFor="new-thread-title">主题标题</label><input id="new-thread-title" value={newThreadTitle} onChange={e => setNewThreadTitle(e.target.value)} maxLength={160} required/><label className="check-label"><input type="checkbox" checked={withFirstPost} onChange={e => setWithFirstPost(e.target.checked)}/>同时发布首帖</label>
+               {withFirstPost && <><label htmlFor="first-title">首帖标题</label><input id="first-title" value={firstTitle} onChange={e => setFirstTitle(e.target.value)} maxLength={160} required/><label htmlFor="first-summary">首帖摘要</label><textarea id="first-summary" value={firstSummary} onChange={e => setFirstSummary(e.target.value)} maxLength={280} rows={2} required/><label htmlFor="first-body">首帖正文</label><textarea id="first-body" value={firstBody} onChange={e => setFirstBody(e.target.value)} rows={5} required/></>}</fieldset>
+@@ -505,9 +540,9 @@
+             <ul className="post-directory">{postPage.map(item => <li key={item.id}><div><strong>{item.kind}</strong><small>{item.id}</small><span>{item.lifecycle}</span></div><button onClick={() => openPost(item.id, item.current_revision)}>查看修订 {item.current_revision}</button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadPosts(thread)}>帖子首页</button>{postCursor && <button disabled={busy} onClick={() => loadPosts(thread, postCursor)}>下一页帖子</button>}</div>
+           </section>}
+-          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
++          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'overview' ? '返回空间概览' : (resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{view === 'overview' && <p className="reference">当前从概览打开固定正文；可在所属主题内阅读后引用。</p>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+             {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><pre className="body-text">{content.document.body}</pre><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+-            <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button><button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button></div>
++            <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button>{view !== 'overview' && <button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button>}</div>
+             <RevisionEvidence busy={busy} revisions={revisions} currentRevision={catalogCurrent} revisionsLoaded={revisionsLoaded} revisionCursor={revisionCursor}
+               loadRevisions={loadRevisionCatalog} openRevision={revision => openPost(content.postId, revision, resultReading?.threadId)}
+               first={compareFirst} second={compareSecond} selectFirst={value => { setCompareFirst(value); setComparison(null); setComparisonStatus(''); }} selectSecond={value => { setCompareSecond(value); setComparison(null); setComparisonStatus(''); }}

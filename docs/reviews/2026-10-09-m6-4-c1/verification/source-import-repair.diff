@@ -1,0 +1,15 @@
+--- first/fixtures.ts
++++ current/fixtures.ts
+@@ -9,9 +9,9 @@
+ import {fileURLToPath} from 'node:url';
+ import path from 'node:path';
+ import Database from 'better-sqlite3';
+-import {buildApp, ArtifactFileStore} from '../../../packages/server/dist/index.js';
+-import {bootstrapDatabase, SqliteStorage} from '../../../packages/storage-sqlite/dist/index.js';
+-import {CryptoHasher} from '../../../packages/core/dist/index.js';
++import {buildApp, ArtifactFileStore} from '@detuned/server';
++import {bootstrapDatabase, SqliteStorage} from '@detuned/storage-sqlite';
++import {CryptoHasher} from '@detuned/core';
+ 
+ const repository = fileURLToPath(new URL('../../../', import.meta.url));
+ const evidenceRoot = path.resolve(process.env.DETUNED_WEB_EVIDENCE_DIR ?? path.join(repository, 'test-results/web'));

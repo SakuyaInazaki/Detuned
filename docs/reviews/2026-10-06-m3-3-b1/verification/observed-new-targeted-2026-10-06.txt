@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-space-export.test.ts (10 tests) 114ms
+ ✓ tests/contracts/m3-space-export-contract.test.ts (6 tests) 527ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject  478ms
+stdout | tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+B1 bounded material samples {"rows":640,"bodyBytes":41943040,"wireBytes":42399852,"receiverMaxHeap":22902432,"receiverSamples":25,"serverMaxHeap":36834696,"serverSamples":1,"serverHeapBefore":33791224}
+
+ ❯ tests/integration/m3-export-independent.test.ts (4 tests | 2 failed) 3958ms
+   × B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records 464ms
+     → Cannot read properties of undefined (reading 'id')
+   × B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end 617ms
+     → expected 400 to be less than 300
+   ✓ B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial  476ms
+   ✓ B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink  2400ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 18 passed (20)
+     Errors  1 error
+   Start at  23:51:25
+   Duration  4.50s (transform 289ms, setup 0ms, collect 1.00s, tests 4.60s, environment 0ms, prepare 117ms)
+

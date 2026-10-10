@@ -1,0 +1,26 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M7.4-A fixed Pi ordinary check branches > native checks prepares no invalid input and performs real two-write/six-read calls
+AssertionError: expected { exit: { code: null, …(1) }, …(2) } to deeply equal { …(3) }
+
+- Expected
++ Received
+
+  {
+    "exit": {
+-     "code": 0,
+-     "signal": null,
++     "code": null,
++     "signal": "SIGKILL",
+    },
+-   "killed": false,
++   "killed": true,
+    "stderr": "",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:35:32
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

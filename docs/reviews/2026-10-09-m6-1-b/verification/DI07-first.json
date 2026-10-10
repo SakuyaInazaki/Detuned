@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m6-review-requests-independent.test.ts",
+    "-t",
+    "DI07",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 1,
+  "seconds": 1.515,
+  "workers": 1,
+  "file_parallelism": false,
+  "log": "docs/reviews/2026-10-09-m6-1-b/verification/DI07-first.log"
+}

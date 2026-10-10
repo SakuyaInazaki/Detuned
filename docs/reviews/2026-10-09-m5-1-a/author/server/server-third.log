@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts (5 tests | 1 failed) 189ms
+   ✓ WA01 human login/refresh/logout keeps standard envelopes, strict secure cookie and no-store, and never writes diagnostic session 86ms
+   ✓ WA02 enforces Host/Origin on all entry paths and CSRF on cookie writes, preserves same-origin reads and Bearer CLI 33ms
+   ✓ WA03 rejects body/agent/malformed or repeated cookie/header input, invalid login cannot revoke old cookie 42ms
+   × WA04 revocation and member ACL loss remain immediate service decisions; disabled Web preserves Bearer behavior 27ms
+     → expected 404 to be 200 // Object.is equality
+   ✓ WA05 rejects malformed origin/config before startup and permits only explicit loopback HTTP 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-web-auth-server.test.ts > WA04 revocation and member ACL loss remain immediate service decisions; disabled Web preserves Bearer behavior
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts:11:282
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  03:40:50
+   Duration  784ms (transform 215ms, setup 0ms, collect 398ms, tests 189ms, environment 0ms, prepare 27ms)
+

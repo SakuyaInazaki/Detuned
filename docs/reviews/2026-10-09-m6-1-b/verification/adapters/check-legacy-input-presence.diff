@@ -1,0 +1,32 @@
+--- docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-legacy-input-presence.mjs
+@@ -5,11 +5,15 @@
+ import { join } from 'node:path';
+ import { createRequire } from 'node:module';
+ import { isDeepStrictEqual as equal } from 'node:util';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+-import { extractResultRef, IdempotencyService, CryptoHasher } from '../../../packages/core/dist/index.js';
+-
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { extractResultRef, IdempotencyService, CryptoHasher } from '../../../../../packages/core/dist/index.js';
++
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const dir = mkdtempSync(join(tmpdir(), 'detuned-r13-review-'));
+ const db = new Database(join(dir, 'source.sqlite'));
+@@ -38,7 +42,7 @@
+ function clone(name, logicalV1 = false) {
+   const path = join(dir, `${name}.sqlite`); writeFileSync(path, db.serialize());
+   const database = new Database(path);
+-  if (logicalV1) database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++  if (logicalV1) database.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+   return { path, database };
+ }
+ function setRef(database, key, value) {

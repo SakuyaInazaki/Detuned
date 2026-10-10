@@ -1,0 +1,47 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 10 tests using 1 worker
+
+  ✓   1 scripts/integrations/web/author.spec.ts:3:1 › human reads a fixed revision, publishes a note and cited response, then confirms logout (1.2s)
+  ✓   2 scripts/integrations/web/independent.spec.ts:97:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (8.2s)
+  ✓   3 scripts/integrations/web/independent.spec.ts:118:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (571ms)
+  ✓   4 scripts/integrations/web/m5-c.spec.ts:57:1 › C02 real search filters/cursor, fixed old result and return preserve applied page (985ms)
+  ✓   5 scripts/integrations/web/m5-d2.spec.ts:71:1 › D202 real upload and publish each recover same intent once, exact binding and verified explicit download (16.7s)
+  ✓   6 scripts/integrations/web/m5-d2.spec.ts:166:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation (1.5s)
+  ✘   7 scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK (469ms)
+  ✓   8 scripts/integrations/web/m5-e1.spec.ts:52:1 › E102 omitted UTF8 rules read one fixed revision, latest update never switches and historical giant degrades honestly (1.9s)
+  ✓   9 scripts/integrations/web/m5-e1.spec.ts:84:1 › E103 settings show actual server identity and permissions, refreshed withdrawal cannot authorize writes (790ms)
+  ✓  10 scripts/integrations/web/m5-e1.spec.ts:103:1 › E104 held context changes space and held fixed rules after logout cannot refill (681ms)
+
+
+  1) scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('.body-text')
+    Expected: "Pinned fixed original body"
+    Error: strict mode violation: locator('.body-text') resolved to 3 elements:
+        1) <pre class="body-text">E1 ordinary objective</pre> aka getByText('E1 ordinary objective')
+        2) <pre class="body-text"><script>window.e1ResearchExecuted=true</script><i…</pre> aka getByText('<script>window.')
+        3) <pre class="body-text">Research rules remain plain text</pre> aka getByText('Research rules remain plain')
+
+    Call log:
+      - Expect "toHaveText" locator('.body-text') with timeout 5000ms
+      - waiting for locator('.body-text')
+
+
+      35 |   await navigation(page,'概览');
+      36 |   const pinned=page.getByRole('button',{name:'查看置顶修订 1',exact:true});await pinned.focus();await page.keyboard.press('Enter');
+    > 37 |   await expect(page.locator('.body-text')).toHaveText('Pinned fixed original body');
+         |                                            ^
+      38 |   expect(await page.getByRole('button',{name:'进入主题并引用',exact:true}).count()).toBe(0);
+      39 |   const reply=page.getByRole('button',{name:'引用回复',exact:true});expect(await reply.count()===0||await reply.isDisabled()).toBe(true);
+      40 |   await page.getByRole('button',{name:'返回空间概览',exact:true}).click();
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e1.spec.ts:37:44
+
+    Error Context: docs/reviews/2026-10-09-m5-1-e1/verification/browser-selected-browser-first/playwright-output/m5-e1-E101-ordinary-and-em-aece1-narrow-keyboard-without-ACK/error-context.md
+
+  1 failed
+    scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK 
+  9 passed (36.1s)
+[ELIFECYCLE] Command failed with exit code 1.

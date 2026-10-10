@@ -1,3 +1,5 @@
+import { serializeContextEnvelope, serializeSpaceRevisionEnvelope } from '@detuned/protocol';
+import { LIST_LIMIT, CONTEXT_BYTES, integerQueryOptions, isNonblankString } from '@detuned/protocol';
 import { FastifyPluginAsync } from 'fastify';
 import {
   CreateSpaceRequest,
@@ -9,21 +11,23 @@ import {
   DetunedError,
   ErrorCode,
 } from '@detuned/protocol';
-import { SpaceService, ContextService, AuthenticatedContext } from '@detuned/core';
+import { SpaceService, ContextService, SpaceRevisionReadService, AuthenticatedContext } from '@detuned/core';
 import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
 
 export const spaceRoutes: FastifyPluginAsync = async (app) => {
   const spaceService = (app as any).spaceService as SpaceService;
   const contextService = (app as any).contextService as ContextService;
   const storage = (app as any).storage;
+  const authService = (app as any).authService;
 
   app.get('/spaces', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const query = req.query as { limit?: unknown; cursor?: unknown };
     validateAllowedQueryParams(query, ['limit', 'cursor']);
-    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 20 }) ?? 20;
+    const limit = parseIntegerQuery(query?.limit, 'limit', integerQueryOptions(LIST_LIMIT)) ?? 20;
     const cursor = parseStringQuery(query?.cursor, 'cursor');
 
+    authService.requireOrdinaryAccess(authService.refreshContext(auth));
     const result = storage.listVisibleSpaces(
       auth.actor.id,
       limit,
@@ -47,7 +51,7 @@ export const spaceRoutes: FastifyPluginAsync = async (app) => {
     async (req, reply) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',
@@ -73,7 +77,7 @@ export const spaceRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id } = req.params as { space_id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',
@@ -109,27 +113,33 @@ export const spaceRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  app.get('/spaces/:space_id/context', async (req) => {
+  app.get('/spaces/:space_id/revisions/:revision', async (req, reply) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    const { space_id, revision: rawRevision } = req.params as { space_id: string; revision: string };
+    const revision = parseIntegerQuery(rawRevision, 'revision', { required: true, min: 1, max: Number.MAX_SAFE_INTEGER })!;
+    const query = req.query as { max_bytes?: unknown; cursor?: unknown };
+    validateAllowedQueryParams(query, ['max_bytes', 'cursor']);
+    const maxBytes = parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES));
+    const cursor = parseStringQuery(query.cursor, 'cursor', { allowEmpty: true });
+    const service = (app as any).spaceRevisionReadService as SpaceRevisionReadService;
+    const page = service.getRevision(auth, space_id, revision, { max_bytes: maxBytes, cursor }, { request_id: req.id });
+    return reply.type('application/json; charset=utf-8').send(serializeSpaceRevisionEnvelope(req.id, page));
+  });
+
+  app.get('/spaces/:space_id/context', async (req, reply) => {
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id } = req.params as { space_id: string };
     const query = req.query as { max_bytes?: unknown; focus_thread_id?: unknown };
     validateAllowedQueryParams(query, ['max_bytes', 'focus_thread_id']);
 
-    const maxBytes = parseIntegerQuery(query?.max_bytes, 'max_bytes', { min: 4096, max: 65536, defaultValue: 12288 }) ?? 12288;
-    const focusThreadId = parseStringQuery(query?.focus_thread_id, 'focus_thread_id');
-    const { data, truncated } = contextService.getContext(auth, space_id, {
+    const maxBytes = parseIntegerQuery(query?.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES)) ?? 12288;
+    const focusThreadId = parseStringQuery(query?.focus_thread_id, 'focus_thread_id', { allowEmpty: true });
+    const page = contextService.getContext(auth, space_id, {
       max_bytes: maxBytes,
       focus_thread_id: focusThreadId,
-    });
+    }, { request_id: req.id });
 
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data,
-      meta: {
-        truncated,
-        next_cursor: null,
-      },
-    };
+    // Send the same compact encoding used by core; transport never trims facts.
+    return reply.type('application/json; charset=utf-8').send(serializeContextEnvelope(req.id, page));
   });
 };

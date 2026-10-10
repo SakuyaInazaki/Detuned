@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 118ms
+ ✓ tests/integration/historical-http-replay.test.ts (7 tests) 539ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (7 tests) 5754ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V3 updates and frozen V1/V2 remain unchanged  682ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1107ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  365ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V3' profile in sync check and successfully repairs it via generate-schema (AB03)  654ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  714ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  573ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1638ms
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  13:33:05
+   Duration  6.02s (transform 560ms, setup 0ms, collect 1.06s, tests 6.41s, environment 0ms, prepare 144ms)
+

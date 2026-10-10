@@ -1,0 +1,27 @@
+# M7.2 fixed external verifier: bounded facts
+
+Planning only; no source, task/owner authorization, execution or fixture generation. Current B1 fixes/gate take priority. Root chose a short-lived local process using B1 shared client, no VM/model/install/general executor. No evaluated/imported forum code.
+
+## Actual material expression
+
+examples/shortest-path-scenario.md fixes directed nonnegative graphs, zero/parallel/equal-distance edges and unreachable=null. The first-discovery candidate must fail s→a=10,s→b=1,b→a=1 (a=2). Correct relaxation candidate must cover this, zero edges, unreachable, adjacency permutations and fixed-seed small graphs against an independent simple reference. Performance is not the acceptance criterion. docs/09 D01 requires real evidence and accepted fixed snapshot followed by revision/objection invalidity, not a claim of frontier progress.
+
+ReviewSnapshotManifestSchema (protocol/review.ts) contains fixed target/dependency refs+content_hash, up to64 artifact IDs/SHA/byte lengths, up to16 code_refs(repository,40/64lowerhex commit,source_artifact_id,reproduction_instructions), frozen required_checks and check_profiles(name,config_sha256,allowed actors,description). Source artifact must be included in snapshot by existing intrinsic checks. No artifact filename or semantic role field exists in the manifest. Snapshot can therefore carry exact trusted candidate/checker/test/config bytes as public artifacts, chosen by a repository-owned fixed descriptor's SHA/bytes; this is a proposed material convention, not a new DTO. Duplicate matching SHA means identical required bytes; no arbitrary content execution follows from any artifact ID or untrusted repository string.
+
+Check profile config_sha256 is an opaque hash, not a persisted config body. A fixed local descriptor/config byte file must supply the authoritative expected bytes/hash; compare its digest to frozen manifest profile and run.check_config_sha256. Description/reproduction prose must never select executable paths or override seeds/expected values. Request/run IDs need explicit input; ordinary issuer is separate from verifier and verify token only fetches its bound run/material.
+
+## Reusable concrete helpers
+
+B1 client getCheckRun/getCheckSnapshot/getCheckPostRevision/downloadCheckArtifact validate scope and fixed references, snapshot shared JCS+WebCrypto actual SHA, and artifact raw bytes/EOF/size/MIME/hash/exact scoped URL. Fetch source bytes only through manifest-listed artifact IDs and compare byte-for-byte/hash against the repository-owned known files; then execute only already-known local static candidate/checker functions. Never write fetched source to an executable file or import/eval it. Actual artifact hash differs from post content_hash semantics: core/post-service hashes title+summary+body+canonical structured; do not label a bare body SHA as that post hash.
+
+uploadCheckArtifact and submitCheckReceipt permit explicit stable request keys without getMe or persistent logicalOperationId. Receipt requires matching snapshot/config hashes, actual log provenance, result pass/fail/error, environment/tool_versions/execution_steps, strict instants and exit_code0 for pass. Key/receipt ID can be held in process for retries; token/header must never enter log or error records. Log upload must occur while run pending/request active, followed by receipt; bounded async authorization is already core-managed. Current-run rotation/expiry/revocation may reject new operations; no adapter should bypass it.
+
+scripts/scale/d01.mjs is the existing partial demonstration/recovery script with raw HTTP, post-revision chunk reconstruction and optional short process spawn. It is not an implemented fixed algorithm verifier or complete D01 steps5–7. Its failure record preserves applicability/evidence/not_ruled_out/retry_when; reuse those meanings without treating environment failure as an algorithm counterexample.
+
+## Proposed new paths for root to decide
+
+Missing candidate/checker assets could live under examples/d01-fixed/{candidate-first-discovery.mjs,candidate-relaxation.mjs,reference.mjs,cases.json,config.json,manifest.json}; a short-lived runner scripts/checks/d01-fixed-verifier.mjs and tests/integration/m7-fixed-verifier.test.ts. These are path candidates only, no files created or owner declared. Runner imports only fixed local modules; repository manifest pins actual source/checker/reference/cases/config SHA. Existing examples/shortest-path-scenario.md or scripts/scale/d01.mjs need ownership only if root later asks to wire full scenario; no such edits now.
+
+## Specific constraints/conflicts
+
+The repository currently has no fixed executable candidate/checker asset set or frozen config bytes for D01; documentation is the scenario specification, not executable/hash provenance. Manifest artifact entries have no roles, so root must approve the local descriptor convention. A profile can authorize a service actor without reviewer membership; do not create ordinary membership for verifier. Receipt environment/tools/instants are bounded self-reports, not trusted execution/time attestation. Pass/fail must come from the fixed independent comparison; malformed material, hash/config mismatch, execution exception/resource/network error must be reported separately as error or safe preflight rejection, never falsely credited as failure of an algorithm family. Full D01 role/review/restart orchestration remains a separate scope decision, not already completed by running this verifier.

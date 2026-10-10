@@ -1,0 +1,77 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-typed-writes.test.ts (8 tests | 8 failed) 49ms
+   × M2.2-A new typed writes and historical replay > T01: weak initial failure path rejects missing evidence_state atomically 16ms
+     → expected [Function] to throw an error
+   × M2.2-A new typed writes and historical replay > T02: proposal uses one strict rule across all three entry points 5ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: claim uses one strict rule across all three entry points 4ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: failure uses one strict rule across all three entry points 4ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: summary uses one strict rule across all three entry points 5ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T03: failure provided requires real fixed evidence and unverified requires nonblank reason 4ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T04: fixed old versions remain readable after new revisions/withdrawal; new refs reject wrong/cross-space/redacted targets 7ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T05: genuine baseline success replays same raw key after restart while new key rejects; changed payload still conflicts 5ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T01: weak initial failure path rejects missing evidence_state atomically
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m2-typed-writes.test.ts:23:112
+     21|   it('T01: weak initial failure path rejects missing evidence_state at…
+     22|     const { evidence_state, ...bad } = failure(); const before = count…
+     23|     expect(() => threads.createThread(auth, sid, { title:'bad', initia…
+       |                                                                                                                ^
+     24|     expect(counts()).toEqual(before);
+     25|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: proposal uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: claim uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: failure uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: summary uses one strict rule across all three entry points
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:33:44
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T03: failure provided requires real fixed evidence and unverified requires nonblank reason
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:40:118
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T04: fixed old versions remain readable after new revisions/withdrawal; new refs reject wrong/cross-space/redacted targets
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:54:185
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T05: genuine baseline success replays same raw key after restart while new key rejects; changed payload still conflicts
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:67:64
+     65|     const beforeRecord=db.prepare("SELECT * FROM idempotency_records W…
+     66|     expect(threads.createThread(auth,sid,req,'legacy')).toEqual(first);
+     67|     expect(() => threads.createThread(auth,sid,req,'new-key')).toThrow…
+       |                                                                ^
+     68|     db.close(); db=new Database(join(dir,'db.sqlite')); openAndCoordin…
+     69|     expect(threads.createThread(auth,sid,req,'legacy')).toEqual(first);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  14:52:20
+   Duration  800ms (transform 188ms, setup 0ms, collect 291ms, tests 49ms, environment 0ms, prepare 67ms)
+

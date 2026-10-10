@@ -1,0 +1,94 @@
+{
+  "package": "M6.3-A",
+  "owner": "A",
+  "state": "source frozen; verification not run by author",
+  "files": [
+    {
+      "path": "packages/protocol/src/review.ts",
+      "sha256": "b9283efe51d0beb8c2ed18d472ad103a278b2e41cd4e2780aaaa966047f28d91",
+      "bytes": 14386
+    },
+    {
+      "path": "packages/protocol/src/tools.ts",
+      "sha256": "ceacdba11660359f075d0956c47b9fb88daa56122f3302ca2a7f04bbc8af0100",
+      "bytes": 13085
+    },
+    {
+      "path": "packages/protocol/src/events.ts",
+      "sha256": "6e89d8c83605a507bf796c97b6b7583ce5699bc63648d00d52b6c0740e1e4b99",
+      "bytes": 4831
+    },
+    {
+      "path": "packages/core/src/ports/storage.ts",
+      "sha256": "6fd1a4d0693bf67d68e00cabd7f31dffa68c70290f99d2b8d8dc40c7d8a5f127",
+      "bytes": 10156
+    },
+    {
+      "path": "packages/core/src/services/idempotency-service.ts",
+      "sha256": "9c1529a6c9486ad3ce98791769e135afcae0d600ce05b83d33c5aedcb4f52d3e",
+      "bytes": 125438
+    },
+    {
+      "path": "packages/core/src/services/review-request-records.ts",
+      "sha256": "7650b6388ae26ba88a80e33625914e29ac0b1469e9bb7dbc58ae6bfc6861f10f",
+      "bytes": 15033
+    },
+    {
+      "path": "packages/core/src/services/review-decision-records.ts",
+      "sha256": "ba0db81e95bdc5f1df0d9527d032b0b7c2722aeb15f390c9bf350e7ba292d45f",
+      "bytes": 5598
+    },
+    {
+      "path": "packages/core/src/services/review-lifecycle.ts",
+      "sha256": "8d6329afd025488d8b00b57204112ffb52b8ee609d3da355036a5f87987385e3",
+      "bytes": 4945
+    },
+    {
+      "path": "packages/core/src/services/event-service.ts",
+      "sha256": "bfb91959b08bc56279127f6d485ccc02c1af358e0201aee1f71798a3bad65342",
+      "bytes": 14383
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "sha256": "3693eebe9a95355b940b80d682bc25d296b9a6b3a853be7a01239b9abae9f42d",
+      "bytes": 1593
+    },
+    {
+      "path": "modules/review/src/request-service.ts",
+      "sha256": "0da4493fde816e94f9f323038fe1f411d29566249585c09e432da7b72567a266",
+      "bytes": 8887
+    },
+    {
+      "path": "modules/review/src/finalization-service.ts",
+      "sha256": "ca9bef21a95ebb60ab205a751772a64082c3bbaa2195c69f2df3b405e9560f19",
+      "bytes": 6554
+    },
+    {
+      "path": "modules/review/src/status-service.ts",
+      "sha256": "527be2ee87d31485c777045abe54f9f0afc40aedd937805759cf176c8055da7a",
+      "bytes": 1250
+    },
+    {
+      "path": "modules/review/src/index.ts",
+      "sha256": "e6da24cd3d4dff7dd338c809425d61e3d22889a4adab344bef26447013c8d922",
+      "bytes": 9343
+    },
+    {
+      "path": "tests/integration/m6-review-finalization.test.ts",
+      "sha256": "0afb60a49eacbb515ce94b6c62dd385d973d53dab1f7ce7b03b811050854ceae",
+      "bytes": 10092
+    },
+    {
+      "path": "tests/integration/m6-review-status.test.ts",
+      "sha256": "abbb594967a1cf492c48106512fc69186f773a70059cce7e343c29f49d9f7bdc",
+      "bytes": 6361
+    }
+  ],
+  "checks_run": [],
+  "formal_cases_written": {
+    "m6-review-finalization.test.ts": 6,
+    "m6-review-status.test.ts": 3
+  },
+  "protected_behavior": "old create/cancel/submit confirmations, compacts, old Hasher/JCS/builder remain; no public review route/tool or checks table",
+  "writers_stopped": true
+}

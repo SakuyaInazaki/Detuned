@@ -1,0 +1,77 @@
+{
+  "head_unchanged": true,
+  "counts": {
+    "product_source_config_test_hashes": 204,
+    "current_document_hashes": 43,
+    "mutable_status_document_hashes": 5,
+    "protected_review_probe_log_evidence_hashes": 4008,
+    "frozen_sql_archive_hashes": 4,
+    "schema_profile_hashes": 2,
+    "tracked_build_artifact_hashes": 208,
+    "untracked_build_artifact_hashes": 116
+  },
+  "delta": {
+    "product_source_config_test_hashes": {
+      "added": [
+        "packages/core/src/services/admin-service.ts",
+        "packages/core/src/services/write-rate-limiter.ts",
+        "packages/protocol/src/write-limits.ts",
+        "tests/contracts/m3-write-limits-contract.test.ts",
+        "tests/helpers/m3-write-limits-worker.mjs",
+        "tests/integration/m3-write-limits-independent.test.ts",
+        "tests/integration/m3-write-rate-limit.test.ts"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/cli/src/index.ts",
+        "packages/core/src/index.ts",
+        "packages/core/src/services/auth-service.ts",
+        "packages/core/src/services/event-service.ts",
+        "packages/core/src/services/idempotency-service.ts",
+        "packages/core/src/services/post-service.ts",
+        "packages/core/src/services/relation-service.ts",
+        "packages/core/src/services/space-service.ts",
+        "packages/core/src/services/thread-service.ts",
+        "packages/protocol/src/index.ts",
+        "packages/server/src/app.ts",
+        "packages/server/src/routes/admin.ts",
+        "scripts/scale/run-server.mjs",
+        "tests/contracts/m2-thread-posts-read-contracts.test.ts",
+        "tests/integration/m0-m1-r4-b-regression.test.ts",
+        "tests/integration/m2-thread-posts-read.test.ts"
+      ]
+    },
+    "current_document_hashes": {
+      "added": [
+        "examples/write-limits.md"
+      ],
+      "removed": [],
+      "changed": [
+        "docs/04-protocol.md",
+        "docs/07-security-operations.md",
+        "docs/12-decisions.md"
+      ]
+    },
+    "mutable_status_document_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "schema_profile_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "status": "pending_parent"
+}

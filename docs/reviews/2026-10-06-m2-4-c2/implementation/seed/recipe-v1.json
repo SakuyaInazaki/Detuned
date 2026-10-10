@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "recipe_id": "detuned-c2-v1",
+  "seed": "detuned-c2-v1",
+  "clock": "2026-01-01T00:00:00.000Z",
+  "profiles": {
+    "smoke": {"posts":1000,"events":10000,"threads":40,"relations":40,"clients":20},
+    "full": {"posts":100000,"events":1000000,"threads":1000,"relations":1000,"clients":20}
+  },
+  "kind_slots": ["note","note","note","note","note","proposal","proposal","failure","summary","claim"],
+  "latest_body_bytes": {"short":384,"medium":2048,"long":16384},
+  "body_bucket_percent": {"short":90,"medium":9,"long":1},
+  "historical_body_bytes":128,
+  "archived_thread_percent":10,
+  "minimum_free_bytes":6442450944,
+  "maximum_baseline_bytes":2684354560,
+  "maximum_runtime_total_bytes":8589934592,
+  "batch_rows":2000,
+  "discovery_query":"C2三点反例"
+}

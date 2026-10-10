@@ -1,3 +1,4 @@
+import { markReviewRequestsStale } from './review-lifecycle.js';
 import {
   Space,
   SpaceRevision,
@@ -14,6 +15,7 @@ import { IdGeneratorPort } from '../ports/id-generator.js';
 import { ClockPort } from '../ports/clock.js';
 import { AuthService, AuthenticatedContext } from './auth-service.js';
 import { IdempotencyService } from './idempotency-service.js';
+import { WriteRateLimiter } from './write-rate-limiter.js';
 
 const DEFAULT_REVIEW_POLICY: ReviewPolicy = {
   enabled: true,
@@ -33,7 +35,8 @@ export class SpaceService {
     private readonly idGen: IdGeneratorPort,
     private readonly clock: ClockPort,
     private readonly authService: AuthService,
-    private readonly idempotency: IdempotencyService
+    private readonly idempotency: IdempotencyService,
+    private readonly writeRateLimiter: WriteRateLimiter = authService.writeRateLimiter
   ) {}
 
   createSpace(
@@ -180,6 +183,7 @@ export class SpaceService {
         };
 
         tx.updateSpace(updatedSpace, newRevision);
+        if (policyChanged) markReviewRequestsStale(tx,spaceId,{kind:'policy',objectId:spaceId,actorId:auth.actor.id,changedAt:now});
 
         tx.appendEvent(spaceId, {
           id: this.idGen.generateId('evt'),
@@ -203,6 +207,7 @@ export class SpaceService {
     req: CreateSessionRequest
   ): Session {
     this.authService.requireSpaceAccess(auth, spaceId, 'observer');
+    this.writeRateLimiter.admit(auth.actor.id);
 
     const session: Session = {
       id: this.idGen.generateId('ses'),

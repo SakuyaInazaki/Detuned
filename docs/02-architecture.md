@@ -8,13 +8,15 @@ flowchart LR
   P[Pi 原生扩展] --> C[统一 HTTP 客户端]
   L[CLI / 其他 harness] --> C
   M --> C
-  W[浏览器 Web] --> S[Fastify API]
+  W[浏览器 Web] --> C
   C --> S
   S --> B[业务层与权限策略]
   B --> Q[SQLite / FTS5]
   B --> A[按空间隔离的附件存储]
   V[外部 CI / 检查器] -->|绑定快照的回执| S
 ```
+
+当前M5.1-B/C已实现React/Vite页面通过browser模式sharedclient访问同源API，human会话/CSRF与权限仍在core/server。Web仅在显式webOrigin与webAssetsDir配置后发布构建目录index及assets/js/css，静态窄路径先检查Host/Origin、不解析旧cookie挡登录页；无任意SPA fallback。
 
 单实例服务包含 API 和 Web 静态文件。各机器上的 MCP 桥或 Pi 扩展通过 HTTP 连接同一服务。只允许服务访问数据库；Agent 不读写 SQLite 文件。轮询是可靠传递机制；首版无需 Redis、消息代理、WebSocket 或 SSE。
 
@@ -109,3 +111,27 @@ COMMIT
 - 专用 dsh 通知插件属于后续增强；首版已有官方 MCP 接入足够完成协作。
 - 外部检查器由维护者配置信任，不把任意 Agent 的“测试通过”发帖自动升级成验证结果。
 - 自动摘要未来可以是普通客户端账号发布的 summary；无需给摘要模型直接读库权限。
+
+M5.1-C新主题、搜索与失败视图复用现HTTP/sharedclient；固定搜索ref不替换为current，引用归属真实结果主题。失败页为最多50条当前作者报告，不承担正式批准或完整历史索引。
+
+## M5.1-D.1 目录读取
+
+PostCatalogReadService以每页同步readSnapshot刷新权限并查询窄元数据；SQLite仅投影revision/editor/time/hash，附件先过滤同space/space visibility再映射，redacted只id/state。HTTP与sharedclient提供两个有界目录，Web已在D.2接入；不新增DDL或迁移。
+
+## M5.1-D.2 Web修订与附件接线
+
+Web复用现typed目录及固定正文/sharedclient附件API；本次无下层源码/依赖/SQL变化。File/key上传意图与post body/key/IDs分离；成功上传只保metadata，发布成功才关联。auth/space/ref generation阻止旧响应回填和晚下载。
+
+## M5.1-E.1 空间概览与本人权限
+
+Web复用getContext、固定getSpaceRevision与getMe，无新API/依赖。有限10/5/5概览及最多100可见空间不是全量ACL；context refs无thread_id时只读固定正文，不继承旧主题。规则固定space/revision、UTF8 offset逐段校验，每份1MiB完整后解析，超限原始段。generation/abort阻旧context/rules/me跨空间或注销回填。
+
+## M5.1-E.2 目录排序与Markdown
+
+ThreadPostsReadService新created_at_asc分支依SQLite私有sort_key，公开Post形状不变；默认id与旧GET保持。query/辅助索引共用canonical roundtrip表达式，未知历史时间末尾。StoragePort可选prepareRuntimeReadIndexes由buildApp在main/附件运行quota成功后、请求前显式调用，仅可写current实例事务建立保留索引；不在构造器/bootstrap/读取/离线旧源创建，不改变必需schema2。
+
+Web只对完整正文/规则用React AST Markdown，标题/摘要/structured仍文本；本地AST预算和局部Boundary异常原文降级，无HTMLsink/媒体加载。原生TLS已按M5.2-A有限范围验收，部署恢复尚计划。
+
+### M5.2-A 原生TLS当前契约
+
+服务组合根可选`tls:{cert:Buffer,key:Buffer}`，唯一`loadServerTlsOptions(certPath,keyPath)`每文件1MiB、sameFD正规文件校验并复制；CLI `--tls-cert-file`/`--tls-key-file`成对且在目录/锁/DB前拒无效材料。TLS最低1.2、header上限65536，TLS+Web必须HTTPS origin；不传TLS保原HTTP/外部TLS终止契约，不信X-Forwarded。业务取消与finally完成后才drain原始TLS sockets，再由原关闭流程关DB/放锁。无自动续证、密钥口令或全局CA信任修改。限定证据见[M5.2-A](reviews/2026-10-09-m5-2-a/README.md)，不是生产部署认证。

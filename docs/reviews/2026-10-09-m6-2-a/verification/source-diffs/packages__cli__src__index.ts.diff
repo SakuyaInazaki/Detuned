@@ -1,0 +1,11 @@
+--- packages/cli/src/index.ts (fresh exact before)
++++ packages/cli/src/index.ts (current)
+@@ -215,7 +215,7 @@
+     }
+   });
+ 
+-program.command('migrate').description('离线复制旧schema1或schema2实例并升级到新schema3目录；保留原目录回退')
++program.command('migrate').description('离线复制旧schema1、schema2或schema3实例并升级到新schema4目录；保留原目录回退')
+   .option('--offline', '显式确认离线升级，活跃服务持锁时拒绝')
+   .requiredOption('--data-dir <dir>', '旧schema1或schema2源目录')
+   .requiredOption('--output <dir>', '不存在的新schema3目录')

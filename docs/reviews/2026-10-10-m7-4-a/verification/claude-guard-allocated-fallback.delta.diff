@@ -1,0 +1,27 @@
+--- guard-before-fallback
++++ guard-after-fallback
+@@ -12,13 +12,13 @@
+ const hash=b=>createHash('sha256').update(b).digest('hex');
+ async function streamedHash(file){const d=createHash('sha256');for await(const b of createReadStream(file,{highWaterMark:65536}))d.update(b);return d.digest('hex');}
+ const args=process.argv.slice(2);assert.equal(args.length,2);assert.equal(args[0],'--output');const output=path.resolve(args[1]);assert.equal(path.dirname(output),path.join(repo,'docs/reviews/2026-10-10-m7-4-a/verification'));
+-let owned,allowed,forbidden,child,childState,timeout,originalFailure;let allowedHits=0,forbiddenHits=0;
++let allocated,owned,allowed,forbidden,child,childState,timeout,originalFailure;let allowedHits=0,forbiddenHits=0;
+ const report={status:'pending',source_sha256:sourceSHA,binary_sha256:binarySHA,binary_launched:false,model_calls:0,guard:{},cleanup:{}};
+ try{
+  const actual=await fs.readFile(source,'utf8');assert.equal(hash(actual),sourceSHA);
+  assert.equal(await fs.realpath(binary),binary);const info=await fs.stat(binary);assert.equal(info.isFile(),true);assert.equal(info.size,222245312);assert.equal(await streamedHash(binary),binarySHA);
+  const home=process.env.HOME;assert.equal(home,'/Users/sakimi');const template=actual.match(/const policy=`([^`]+)`;await fs\.writeFile\(profile,policy/);assert.ok(template);report.policy_template_sha256=hash(template[1]);
+- const allocated=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-guard-only-'));owned=await fs.realpath(allocated);const ownedStat=await fs.lstat(owned);report.canonical={allocated_alias_changed:allocated!==owned,owned_realpath_equal:await fs.realpath(owned)===owned,no_symlink:!ownedStat.isSymbolicLink(),directory:ownedStat.isDirectory(),mode0700:(ownedStat.mode&0o777)===0o700,current_uid:ownedStat.uid===process.getuid()};assert.ok(report.canonical.owned_realpath_equal&&report.canonical.no_symlink&&report.canonical.directory&&report.canonical.mode0700&&report.canonical.current_uid);
++ allocated=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-guard-only-'));owned=await fs.realpath(allocated);const ownedStat=await fs.lstat(owned);report.canonical={allocated_alias_changed:allocated!==owned,owned_realpath_equal:await fs.realpath(owned)===owned,no_symlink:!ownedStat.isSymbolicLink(),directory:ownedStat.isDirectory(),mode0700:(ownedStat.mode&0o777)===0o700,current_uid:ownedStat.uid===process.getuid()};assert.ok(report.canonical.owned_realpath_equal&&report.canonical.no_symlink&&report.canonical.directory&&report.canonical.mode0700&&report.canonical.current_uid);
+  allowed=createServer((_req,res)=>{allowedHits++;res.end('owned-allowed');});forbidden=createServer((_req,res)=>{forbiddenHits++;res.end('owned-forbidden');});
+  await new Promise((resolve,reject)=>{allowed.once('error',reject);allowed.listen(0,'127.0.0.1',resolve);});await new Promise((resolve,reject)=>{forbidden.once('error',reject);forbidden.listen(0,'127.0.0.1',resolve);});
+  const port=allowed.address().port,forbiddenPort=forbidden.address().port,sentinel=path.join(owned,'forbidden-sentinel');await fs.writeFile(sentinel,'owned-negative',{mode:0o600});report.canonical.sentinel_realpath_equal=await fs.realpath(sentinel)===sentinel;assert.equal(report.canonical.sentinel_realpath_equal,true);
+@@ -36,7 +36,7 @@
+  if(child&&!childState.closed){try{const close=new Promise(resolve=>child.once('close',resolve));child.kill('SIGKILL');await close;}catch{failures.push('child');}}
+  report.cleanup.child_closed=!child||childState.closed;
+  for(const [name,server]of [['allowed',allowed],['forbidden',forbidden]]){try{if(server?.listening)await new Promise((resolve,reject)=>server.close(error=>error?reject(error):resolve()));report.cleanup[name+'_closed']=true;}catch{failures.push(name);}}
+- try{if(owned)await fs.rm(owned,{recursive:true,force:true});report.cleanup.private_directory_removed=true;}catch{failures.push('private_directory');}
++ try{const cleanupRoot=owned??allocated;if(cleanupRoot)await fs.rm(cleanupRoot,{recursive:true,force:true});let absent=!cleanupRoot;if(cleanupRoot){try{await fs.lstat(cleanupRoot);}catch(error){if(error.code!=='ENOENT')throw error;absent=true;}}assert.equal(absent,true);report.cleanup.private_directory_removed=true;report.cleanup.private_directory_absent=absent;report.cleanup.allocated_fallback_used=Boolean(allocated&&!owned);}catch{failures.push('private_directory');}
+  if(failures.length){report.cleanup.failures=failures;report.status='failed';process.exitCode=1;}
+  await fs.writeFile(output,JSON.stringify(report,null,2)+'\n',{flag:'wx',mode:0o600});
+ }

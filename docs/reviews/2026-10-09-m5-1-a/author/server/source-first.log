@@ -1,0 +1,83 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/core/m5-web-session.test.ts (6 tests) 17ms
+ ❯ tests/contracts/m5-web-auth-server.test.ts (5 tests | 4 failed) 167ms
+   × WA01 human login/refresh/logout keeps standard envelopes, strict secure cookie and no-store, and never writes diagnostic session 81ms
+     → expected 400 to be 201 // Object.is equality
+   × WA02 enforces Host/Origin on all entry paths and CSRF on cookie writes, preserves same-origin reads and Bearer CLI 38ms
+     → expected 400 to be 201 // Object.is equality
+   × WA03 rejects body/agent/malformed or repeated cookie/header input, invalid login cannot revoke old cookie 25ms
+     → expected 400 to be 201 // Object.is equality
+   × WA04 revocation and member ACL loss remain immediate service decisions; disabled Web preserves Bearer behavior 23ms
+     → expected 400 to be 201 // Object.is equality
+   ✓ WA05 rejects malformed origin/config before startup and permits only explicit loopback HTTP 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-web-auth-server.test.ts > WA01 human login/refresh/logout keeps standard envelopes, strict secure cookie and no-store, and never writes diagnostic session
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ login tests/contracts/m5-web-auth-server.test.ts:7:200
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts:8:181
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/m5-web-auth-server.test.ts > WA02 enforces Host/Origin on all entry paths and CSRF on cookie writes, preserves same-origin reads and Bearer CLI
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ login tests/contracts/m5-web-auth-server.test.ts:7:200
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts:9:167
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/m5-web-auth-server.test.ts > WA03 rejects body/agent/malformed or repeated cookie/header input, invalid login cannot revoke old cookie
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ login tests/contracts/m5-web-auth-server.test.ts:7:200
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts:10:158
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/contracts/m5-web-auth-server.test.ts > WA04 revocation and member ACL loss remain immediate service decisions; disabled Web preserves Bearer behavior
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ login tests/contracts/m5-web-auth-server.test.ts:7:200
+
+ ❯ tests/contracts/m5-web-auth-server.test.ts:11:163
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 7 passed (11)
+   Start at  03:39:39
+   Duration  875ms (transform 285ms, setup 0ms, collect 800ms, tests 185ms, environment 0ms, prepare 86ms)
+

@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 44ms
+ ✓ tests/integration/m2-context.test.ts (7 tests) 83ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  20:27:03
+   Duration  581ms (transform 169ms, setup 0ms, collect 546ms, tests 128ms, environment 0ms, prepare 68ms)
+

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "packages/storage-sqlite/scripts/generate-schema.mjs"
+  ],
+  "purpose": "necessary second generation after schema4 physical column order corrected to match actual legacy3 ALTER; first success retained",
+  "input_hashes": {
+    "packages/storage-sqlite/src/schema.sql": "2cde4c6df6a231f0eb0a5281df8c90b4013588ee50f7e2603815476405510ae2",
+    "tests/fixtures/historical-v3-schema.sql": "cf14b7cbe4c8b99e0f7c880ba9a45bd7c63a53d740f76b09d017b22ed21a5cd0",
+    "packages/storage-sqlite/scripts/generate-schema.mjs": "06b0f42caee23347523f40547da6735ffceec9fe654a307732fa46dc5efa28f8"
+  },
+  "exit_code": 0,
+  "seconds": 0.095,
+  "generated_schema_sha256": "ccaaf6db6bb285e197f0a034833a3998b3f8813f9fcc7f51fb0256b2b48e5145"
+}

@@ -1,0 +1,15 @@
+/app/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5
+	return this[cppdb].prepare(sql, this, false, false);
+	                   ^
+
+SqliteError: no such column: title
+    at Database.prepare (/app/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21)
+    at file:///tmp/d01-smoke-oracle.mjs:19:15
+    at sqliteTransaction (/app/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24)
+    at fs.rm (file:///tmp/d01-smoke-oracle.mjs:26:8)
+    at file:///app/scripts/integrations/deployment/d01-recovery.mjs:60:78
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'SQLITE_ERROR'
+}
+
+Node.js v22.23.3

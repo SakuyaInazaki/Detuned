@@ -1,0 +1,31 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-event-recovery.test.ts > T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected
+AssertionError: expected 200 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 200
+
+ ❯ tests/integration/m3-event-recovery.test.ts:26:547
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m3-event-recovery.test.ts > T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans
+AssertionError: expected 103 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 103
+
+ ❯ tests/integration/m3-event-recovery.test.ts:31:1130
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

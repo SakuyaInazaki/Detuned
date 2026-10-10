@@ -1,0 +1,10 @@
+file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs:30
+  if (response.status >= 400) throw new Error(`Fixture setup failed: ${response.status} ${response.body.error?.code}`);
+                                    ^
+
+Error: Fixture setup failed: 429 RATE_LIMITED
+    at data (file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs:30:37)
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs:191:5
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.3.0

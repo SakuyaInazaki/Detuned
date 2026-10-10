@@ -1,0 +1,127 @@
+{
+  "version": "2.1.282",
+  "environment_keys": [
+    "PATH",
+    "CI",
+    "HOME (unchanged inherited value)",
+    "CLAUDE_CODE_TMPDIR (owned)",
+    "CLAUDE_CONFIG_DIR (owned)"
+  ],
+  "messages": [
+    {
+      "type": "system",
+      "subtype": "commands_changed"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    }
+  ],
+  "http": [],
+  "cleanup": {
+    "child_reaped": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "control_kind": "installed-internal-not-public-SDK",
+  "guard": {
+    "exit": 0,
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "profile_sha256": "1053d13d0bac3a89173e32a84fd242eae52fffd6846e53ae44f7e0b7749fb2ca",
+  "help": {
+    "exit": 0,
+    "stderr_bytes": 0,
+    "failure_category": null,
+    "flags": [
+      {
+        "flag": "--bare",
+        "present": true
+      },
+      {
+        "flag": "--input-format",
+        "present": true
+      },
+      {
+        "flag": "--output-format",
+        "present": true
+      },
+      {
+        "flag": "--verbose",
+        "present": true
+      },
+      {
+        "flag": "--setting-sources",
+        "present": true
+      },
+      {
+        "flag": "--settings",
+        "present": true
+      },
+      {
+        "flag": "--strict-mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--no-session-persistence",
+        "present": true
+      }
+    ]
+  },
+  "argv": [
+    "-f",
+    "<owned>/guard.sb",
+    "/Users/sakimi/.local/bin/claude",
+    "--bare",
+    "-p",
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--setting-sources",
+    "",
+    "--settings",
+    "<owned>/settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "<owned>/mcp.json",
+    "--no-session-persistence"
+  ],
+  "pid": 71957,
+  "initialize": {
+    "received": true,
+    "success": true
+  },
+  "status": {
+    "received": true,
+    "success": true,
+    "servers": [
+      {
+        "name": "detuned",
+        "status": "pending",
+        "tool_count": null
+      }
+    ]
+  },
+  "exact_eight": false,
+  "session_delta": 0,
+  "raw_stderr_bytes": 0,
+  "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr": "",
+  "no_user_prompt": true,
+  "exit": 0,
+  "signal": null,
+  "stderr_requires_private_review": false
+}

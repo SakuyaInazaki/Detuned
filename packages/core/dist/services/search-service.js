@@ -1,53 +1,146 @@
-import { DetunedError, ErrorCode, } from '@detuned/protocol';
+import { readPublicReviewSubmission } from './public-review-submission.js';
+import { readPublicReviewSearchCursor, createPublicReviewSearchCursor } from './review-submission-search-cursor.js';
+import { readReviewStatusFacts } from './review-status-facts.js';
+import { readSearchCursor, createSearchCursor } from './search-cursor.js';
+import { projectClaimMaterial, projectFailureMaterial, projectRelation, projectTargetRelations, REPORT_FLAGS } from './knowledge-projection.js';
+import { normalizeReviewSubmissionSearchQuery, foldReviewSearchText, compareReviewSubmissionIds, isUnicodeReviewId, normalizeSearchQuery, SEARCH_LIMITS, DetunedError, ErrorCode, isSnapshotReviewPolicy, } from '@detuned/protocol';
 export class SearchService {
     storage;
     authService;
-    constructor(storage, authService) {
+    cursorDependencies;
+    limits;
+    constructor(storage, authService, cursorDependencies, limits = { max_candidates: SEARCH_LIMITS.candidates, max_response_bytes: SEARCH_LIMITS.response_bytes }) {
         this.storage = storage;
         this.authService = authService;
+        this.cursorDependencies = cursorDependencies;
+        this.limits = limits;
     }
     search(auth, spaceId, query) {
-        this.authService.requireSpaceAccess(auth, spaceId, 'observer');
-        const q = query.q.trim();
-        if (q.length === 0 || q.length > 256) {
-            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '搜索查询字符串长度须在 1 到 256 字符之间。', 400);
+        this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer');
+        const normalized = normalizeSearchQuery(query);
+        const dependencies = this.cursorDependencies;
+        if (!dependencies)
+            throw new DetunedError(ErrorCode.TEMPORARILY_UNAVAILABLE, '搜索游标签名后端未配置。', 500);
+        const beforeId = readSearchCursor(dependencies, auth.actor.id, spaceId, normalized);
+        const result = this.storage.searchPosts(spaceId, normalized.q, {
+            kind: normalized.kind, tags: normalized.tags, thread_id: normalized.thread_id,
+        }, normalized.limit, beforeId, { max_candidates: this.limits.max_candidates });
+        if (Buffer.byteLength(JSON.stringify(result.items), 'utf8') > this.limits.max_response_bytes) {
+            throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, '搜索结果超过编码字节限额，请缩小条件或分页大小。', 422);
         }
-        const filters = {
-            kind: query.kind,
-            tags: query.tags,
-            thread_id: query.thread_id,
+        return {
+            items: result.items,
+            next_cursor: result.next_cursor ? createSearchCursor(dependencies, auth.actor.id, spaceId, normalized, result.next_cursor) : null,
         };
-        const limit = Math.min(Math.max(query.limit ?? 20, 1), 100);
-        return this.storage.searchPosts(spaceId, q, filters, limit, query.cursor);
+    }
+    searchPublicReviewSubmissions(auth, spaceId, query) {
+        return this.storage.readSnapshot(() => {
+            const current = this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer', 'read');
+            const normalized = normalizeReviewSubmissionSearchQuery(query), deps = this.cursorDependencies;
+            if (!deps)
+                throw new DetunedError(ErrorCode.TEMPORARILY_UNAVAILABLE, 'Search cursor backend is unavailable.', 500);
+            const cursor = readPublicReviewSearchCursor(deps, current.actor.id, spaceId, normalized);
+            const candidates = this.storage.listPublicReviewSubmissionCandidateIds(spaceId, { request_id: normalized.request_id, target_post_id: normalized.target_post_id }, this.limits.max_candidates);
+            if (candidates.length > this.limits.max_candidates)
+                throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Public review candidate limit exceeded; narrow request or target.', 422);
+            const items = [];
+            let more = false;
+            for (const id of candidates) {
+                if (!isUnicodeReviewId(id))
+                    throw new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Stored review metadata cannot be safely read.', 409);
+                if (cursor.before !== undefined && compareReviewSubmissionIds(id, cursor.before) >= 0)
+                    continue;
+                const visible = readPublicReviewSubmission(this.storage, spaceId, id);
+                if (!visible)
+                    continue;
+                const { submission, request } = visible, body = submission.payload;
+                const fields = [body.verdict, body.coverage, body.checks_performed, ...body.pending_requirements, ...body.limitations, body.independence_statement.statement];
+                let snippet;
+                for (const field of fields) {
+                    const index = foldReviewSearchText(field).indexOf(normalized.q);
+                    if (index < 0)
+                        continue;
+                    const points = Array.from(field), matchStart = Array.from(field.slice(0, index)).length, matchLength = Array.from(normalized.q).length;
+                    const start = Math.max(0, matchStart - 32), prefix = start > 0 ? '…' : '';
+                    let end = Math.min(points.length, start + 320 - prefix.length);
+                    if (end < points.length)
+                        end--; // reserve suffix ellipsis inside the 320-point cap
+                    if (end < matchStart + matchLength)
+                        throw new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Search snippet cannot safely fit.', 409);
+                    snippet = prefix + points.slice(start, end).join('') + (end < points.length ? '…' : '');
+                    break;
+                }
+                if (snippet === undefined)
+                    continue;
+                if (items.length === normalized.limit) {
+                    more = true;
+                    break;
+                }
+                items.push({ type: 'review_submission', submission_id: submission.id, space_id: spaceId, request_id: request.id, snapshot_id: request.snapshot_id, target_ref: { ...request.target_ref }, round: request.round, reviewer_actor_id: submission.reviewer_actor_id, verdict: body.verdict, submitted_at: submission.submitted_at, revealed_at: submission.revealed_at, snippet });
+            }
+            if (Buffer.byteLength(JSON.stringify(items), 'utf8') > this.limits.max_response_bytes)
+                throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Public review results exceed the response byte limit; reduce limit.', 422);
+            return { items, next_cursor: more ? createPublicReviewSearchCursor(deps, current.actor.id, spaceId, normalized, items.at(-1).submission_id, cursor.exp) : null };
+        });
     }
     getView(auth, spaceId, name) {
-        this.authService.requireSpaceAccess(auth, spaceId, 'observer');
-        if (name === 'failures') {
-            const result = this.storage.searchPosts(spaceId, '', { kind: 'failure' }, 50);
-            return { view: 'failures', items: result.items };
+        return this.storage.readSnapshot(() => {
+            this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer', 'read');
+            let policy;
+            if (name === 'findings' || name === 'failures') {
+                const space = this.storage.findSpaceById(spaceId);
+                const unsafePolicy = () => new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Stored space policy cannot be safely read.', 409);
+                if (!space || !Number.isSafeInteger(space.policy_revision) || space.policy_revision < 1)
+                    throw unsafePolicy();
+                let revision;
+                try {
+                    revision = this.storage.getSpaceRevision(spaceId, space.policy_revision);
+                }
+                catch (error) {
+                    // Only malformed persisted JSON is translated here. ACL and unrelated
+                    // storage failures keep their original meaning; no default policy is invented.
+                    if (error instanceof SyntaxError)
+                        throw unsafePolicy();
+                    throw error;
+                }
+                if (!revision || revision.space_id !== spaceId || revision.revision !== space.policy_revision || !isSnapshotReviewPolicy(revision.review_policy))
+                    throw unsafePolicy();
+                policy = revision.review_policy;
+            }
+            if (name === 'failures') {
+                const result = this.storage.searchPosts(spaceId, '', { kind: 'failure' }, 50);
+                return { view: 'failures', items: result.items.map(item => ({ ...item, kind: 'failure', type: 'failure', ...REPORT_FLAGS, ...this.reviewProjection(spaceId, item.post_id, policy), material: projectFailureMaterial(this.storage.getPostRevision(item.post_id, item.revision)?.structured), relations: projectTargetRelations(this.storage, spaceId, item.post_id) })) };
+            }
+            else if (name === 'findings') {
+                const claims = this.storage.searchPosts(spaceId, '', { kind: 'claim' }, 25);
+                return { view: 'findings', items: claims.items.map(item => ({ ...item, kind: 'claim', type: 'claim', ...REPORT_FLAGS, ...this.reviewProjection(spaceId, item.post_id, policy), material: projectClaimMaterial(this.storage.getPostRevision(item.post_id, item.revision)?.structured), relations: projectTargetRelations(this.storage, spaceId, item.post_id) })) };
+            }
+            else if (name === 'open-questions') {
+                const questions = this.storage.searchPosts(spaceId, '', { kind: 'question' }, 25);
+                const openChallenges = this.storage.listOpenChallenges(spaceId);
+                return {
+                    view: 'open-questions',
+                    items: [
+                        ...questions.items.map(item => ({ ...item, kind: 'question', type: 'question' })),
+                        ...openChallenges.flatMap(relation => {
+                            const projected = projectRelation(this.storage, spaceId, relation);
+                            return projected ? [{ ...projected, type: 'open_challenge', relation_type: 'challenges', state: 'open' }] : [];
+                        }),
+                    ],
+                };
+            }
+            throw new DetunedError(ErrorCode.NOT_FOUND, `未知视图 ${name}`, 404);
+        });
+    }
+    reviewProjection(spaceId, postId, policy) {
+        const latest = this.storage.listPostReviewRequests(spaceId, postId, 1).requests[0];
+        if (!latest) {
+            const status = policy.enabled ? 'not_requested' : 'not_enabled';
+            return { formal_review_status: status, formal_check_status: status, formal_review: null };
         }
-        else if (name === 'findings') {
-            const proposals = this.storage.searchPosts(spaceId, '', { kind: 'proposal' }, 25);
-            const claims = this.storage.searchPosts(spaceId, '', { kind: 'claim' }, 25);
-            return { view: 'findings', items: [...proposals.items, ...claims.items] };
-        }
-        else if (name === 'open-questions') {
-            const questions = this.storage.searchPosts(spaceId, '', { kind: 'question' }, 25);
-            const openChallenges = this.storage.listOpenChallenges(spaceId);
-            return {
-                view: 'open-questions',
-                items: [
-                    ...questions.items,
-                    ...openChallenges.map((c) => ({
-                        type: 'open_challenge',
-                        relation_id: c.id,
-                        source_ref: { post_id: c.source_post_id, revision: c.source_revision },
-                        target_ref: { post_id: c.target_post_id, revision: c.target_revision },
-                    })),
-                ],
-            };
-        }
-        throw new DetunedError(ErrorCode.NOT_FOUND, `未知视图 ${name}`, 404);
+        const status = readReviewStatusFacts(this.storage, spaceId, latest.id);
+        const summary = { ...status, space_id: spaceId, target_post_id: postId, round: latest.round, target_revision: latest.target_ref.revision, created_at: latest.created_at };
+        return { formal_review_status: status.phase, formal_check_status: status.verification_status, formal_review: summary };
     }
 }
 //# sourceMappingURL=search-service.js.map

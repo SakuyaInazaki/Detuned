@@ -1,0 +1,31 @@
+{
+  "status": "proposed_red_only_not_released_not_run",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build-red",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "red-two",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/contracts/m7-check-http-client-independent.test.ts",
+        "-t",
+        "^HI(09|10)"
+      ]
+    }
+  ],
+  "source_ready_sha256": "13e4ba28afc416480b37b62af070c69a5fc16d05e4564ba060dc029badbbeb41",
+  "scope": "current product v1 before fixes; exactly two new redexamples; no12focused/full/type/lint/schema/current",
+  "limits": "defaulttimeout unchanged; boundedownedtemporarySQLite/ephemerallocalhost only; preserve expected failures raw; no product edits"
+}

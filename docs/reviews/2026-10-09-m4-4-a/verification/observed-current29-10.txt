@@ -1,0 +1,15 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "runtime": "v26.3.0",
+  "mode": "real built CLI subprocess, owned DB, ephemeral loopback port",
+  "id": "T11",
+  "expected": "serve refuses unsupported schema 999 before listening, with a diagnostic",
+  "observed": {
+    "started": false,
+    "timed_out": false,
+    "exit_code": 3,
+    "explains_unsupported_version": true
+  },
+  "passes": true
+}

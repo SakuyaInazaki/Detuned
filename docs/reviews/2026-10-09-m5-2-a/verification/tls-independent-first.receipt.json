@@ -1,0 +1,168 @@
+{
+  "scope": "Independent real TLS CA/SAN/CLI/raw sockets/HTTP resources, no global trust/profile/models",
+  "checks": [
+    {
+      "name": "trusted private CA/hostname positives, actual wrong CA/hostname negatives and HTTPS header cap",
+      "passed": true,
+      "details": {
+        "explicit_CA_health": 200,
+        "wrong_CA_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+        "wrong_hostname_code": "ERR_TLS_CERT_ALTNAME_INVALID",
+        "header20k": 200,
+        "header66k": 431
+      }
+    },
+    {
+      "name": "real CLI bounded safe pre-data-dir failures and repeated same-process loader FD closure",
+      "passed": true,
+      "details": {
+        "cases": [
+          {
+            "case": "singleflag",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "missingfiles",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "symlink",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "FIFO",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "oversize",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "badPEM",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "mismatch",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "unreadable",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          },
+          {
+            "case": "HTTPweborigin",
+            "exit_code": 2,
+            "data_dir_absent": true,
+            "safe_output": true
+          }
+        ],
+        "repeated_loader_failures": 24,
+        "own_FD_count_before": 13,
+        "own_FD_count_after": 13
+      }
+    },
+    {
+      "name": "actual TLS CLI SIGTERM drains raw no-ClientHello, completed TLS no-HTTP and partial HTTP sockets before DB/lock release",
+      "passed": true,
+      "details": {
+        "raw_no_ClientHello": true,
+        "secure_no_HTTP": true,
+        "partial_HTTP": true,
+        "client_closed_before_signal": false,
+        "sigterm_sent": true,
+        "sigint_sent": true,
+        "exit_code": 0,
+        "signal": null,
+        "shutdown_ms": 5.554165999999896,
+        "all_socket_close_events": true,
+        "actual_DB_reopen": true,
+        "actual_lock_reacquired": true
+      }
+    },
+    {
+      "name": "TLS actual listen failure still closes DB and releases strict lock",
+      "passed": true,
+      "details": {
+        "exit_code": 1,
+        "signal": null,
+        "strict_lock_reacquired": true,
+        "actual_DB_reopened": true
+      }
+    },
+    {
+      "name": "actual TLS long poll and partial upload cancel, complete owned finally and stage cleanup before app/DB/lock",
+      "passed": true,
+      "details": {
+        "actual_long_poll": true,
+        "actual_partial_upload_stage": true,
+        "trace": [
+          "acquire0",
+          "acquire1",
+          "cancel0",
+          "cancel1",
+          "route_finally0",
+          "actual_stage_finally",
+          "route_finally1",
+          "app_closed",
+          "DB_closed",
+          "lock_released"
+        ],
+        "active_resources": 0,
+        "staging_empty": true,
+        "business_unchanged": true,
+        "client_preclosed": false
+      }
+    }
+  ],
+  "cleanup": [
+    {
+      "name": "trusted private CA/hostname positives, actual wrong CA/hostname negatives and HTTPS header cap",
+      "app_closed": true,
+      "db_closed": true,
+      "temp_absent": true
+    },
+    {
+      "name": "real CLI bounded safe pre-data-dir failures and repeated same-process loader FD closure",
+      "app_closed": true,
+      "db_closed": true,
+      "temp_absent": true
+    },
+    {
+      "name": "actual TLS CLI SIGTERM drains raw no-ClientHello, completed TLS no-HTTP and partial HTTP sockets before DB/lock release",
+      "app_closed": true,
+      "db_closed": true,
+      "temp_absent": true
+    },
+    {
+      "name": "TLS actual listen failure still closes DB and releases strict lock",
+      "app_closed": true,
+      "db_closed": true,
+      "temp_absent": true
+    },
+    {
+      "name": "actual TLS long poll and partial upload cancel, complete owned finally and stage cleanup before app/DB/lock",
+      "app_closed": true,
+      "db_closed": true,
+      "temp_absent": true
+    }
+  ],
+  "certificate_cleanup": {
+    "temp_absent": true
+  }
+}

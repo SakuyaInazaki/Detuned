@@ -1,0 +1,103 @@
+{
+  "scope": "Independent final Linux runtime image/container restart/HTTPS/offline restore, no browser/capacity certification",
+  "image_id": "sha256:2190f6a9739816322aee3164691acc2ec53d70da7dd7f7801ce2892fa43fcbc2",
+  "source_binding": {
+    "A_manifest_sha256": "346ad78562cc44fb7e0e008a0dd8af9927cba82e2f6846859a277495bd338bc6",
+    "B_manifest_sha256": "4b93dbdf350c867ee7de18aae1146739fdc9f8471db15394c17716315fe86004",
+    "build_third_inputs_sha256": "483c768add72b1904feb4cf2361c6669ab75cf5923c01217ff53f4df367a021f",
+    "health_helper_sha256": "603d2501b18af3325692e8b60324e3b2bb1f4432f6644b1470b1e9b96040a8d7",
+    "runtime_worker_sha256": "b097b6700f6f99120d704778284ffb65e722902e9f0223471429b99f9addcec8",
+    "runtime_orchestrator_sha256": "a4836e504a29f24e809c2ba24512c23a12428dc55a7d07c443a68a34f943186e"
+  },
+  "stages": [
+    "owned-volumes-certificate-material",
+    "explicit-init-final-runtime"
+  ],
+  "resource_ledger": [
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-d99f07a6ad-source",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-d99f07a6ad-backup",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-d99f07a6ad-restored",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-d99f07a6ad-tls",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-d99f07a6ad-fixture-material",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-d99f07a6ad-init",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-d99f07a6ad-runtime",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    }
+  ],
+  "status": "failed",
+  "runtime_seed": {
+    "ordinary_identities": 1,
+    "concurrency": 1,
+    "unique_write_requests": 1,
+    "replay_intent_requests": 1,
+    "unique_side_effects": 2,
+    "independent_pending_batches": 1,
+    "implicit_ack": false,
+    "elapsed_ms": 6.465166000000011,
+    "sample_count": 2,
+    "p95_method": "nearest-rank ceil(.95*n)-1",
+    "p95_ms": 4.257333999999986,
+    "max_ms": 4.257333999999986,
+    "downloaded_SHA_and_bytes_match": true
+  },
+  "failure": {
+    "stage": "explicit-init-final-runtime",
+    "exit_code": 1,
+    "signal": null,
+    "timeout": false,
+    "stderr_sha256": "d412436678af0818017768833251f525e64aa9f2df91398215505ea1a9702a0f",
+    "worker_safe_diagnostic": {
+      "phase": "transport",
+      "name": "AssertionError",
+      "code": "ERR_ASSERTION",
+      "operator": "strictEqual",
+      "source_line": "99"
+    }
+  },
+  "cleanup": {
+    "registered_resources": 7,
+    "all_registered_removed": true,
+    "certificate_temp_absent": true,
+    "owned_VM_retained": true
+  }
+}

@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > cancels real pending artifact JSON readers and rejects response-cap violations safely
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ tests/integration/m4-artifact-client.test.ts:135:95
+    133|       const pending = operation === 'upload' ? c.uploadArtifact('space…
+    134|       void pending.catch(() => {}); await entered; abort.abort();
+    135|       await expect(pending).rejects.toMatchObject({ name: 'UserAbortEr…
+       |                                                                                               ^
+    136|     }
+    137|     const cancel = vi.fn();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

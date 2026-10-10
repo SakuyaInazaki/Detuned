@@ -1,0 +1,45 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+AssertionError: expected [ 500, 500 ] to deeply equal [ 200, 200 ]
+
+- Expected
++ Received
+
+  [
+-   200,
+-   200,
++   500,
++   500,
+  ]
+
+ ❯ tests/integration/m4-consumer-lifecycle.test.ts:44:46
+     42|       const after = counts(f.db);
+     43|       console.log('consumer-lifecycle same-space observed', JSON.strin…
+     44|       expect(deleted.map(r => r.statusCode)).toEqual([200, 200]);
+       |                                              ^
+     45|       expect(after).toEqual({ ...before, consumers: 0, delivery_batche…
+     46|       expect(f.db.prepare('PRAGMA foreign_key_check').get()).toBeUndef…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+AssertionError: expected 404 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 404
+
+ ❯ tests/integration/m4-consumer-lifecycle.test.ts:56:151
+     54|       const id = (await f.ok(`/api/v1/spaces/${f.spaceB}/subscriptions…
+     55|       const before = counts(f.db); expect(before.consumers).toBe(1); e…
+     56|       const correctSpaceDenied = await f.call('DELETE', `/api/v1/space…
+       |                                                                                                                                                       ^
+     57|       const result = await f.call('DELETE', `/api/v1/spaces/${f.spaceA…
+     58|       const after = counts(f.db);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

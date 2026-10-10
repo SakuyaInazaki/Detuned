@@ -1,0 +1,29 @@
+{
+  "scope": "two fixed built CLI entry probes; signal only cleanup, not B2 shutdown certification",
+  "results": [
+    {
+      "request_logs_disabled": false,
+      "http_status": 200,
+      "request_completed_count": 1,
+      "whitelist_valid": true,
+      "stdout_empty": true,
+      "credential_in_stdout_or_stderr": false,
+      "owned_exit_code": 0,
+      "killed": false,
+      "passes": true
+    },
+    {
+      "request_logs_disabled": true,
+      "http_status": 200,
+      "request_completed_count": 0,
+      "whitelist_valid": null,
+      "stdout_empty": true,
+      "credential_in_stdout_or_stderr": false,
+      "owned_exit_code": 0,
+      "killed": false,
+      "passes": true
+    }
+  ],
+  "passed": 2,
+  "failed": 0
+}

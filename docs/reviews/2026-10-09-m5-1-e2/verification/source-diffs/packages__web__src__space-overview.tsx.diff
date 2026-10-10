@@ -1,0 +1,20 @@
+--- before-files/packages/web/src/space-overview.tsx
++++ packages/web/src/space-overview.tsx
+@@ -1,3 +1,4 @@
++import { SafeMarkdown } from './safe-markdown.js';
+ import { ClientProtocolError } from '@detuned/client';
+ import type { MeResponse } from '@detuned/protocol';
+ import type { FixedRules } from './content.js';
+@@ -42,10 +43,10 @@
+     {!value ? <p>概览尚未加载，可明确重试。</p> : <><p className="reference">固定空间修订 {value.revision} · 策略修订 {value.policyRevision}</p>
+       {value.truncated && <p className="notice">概览因预算截断；以下材料不是全空间完整列表。</p>}
+       <h3>研究目标</h3>{value.objective === null ? <p className="notice">目标与规则因预算省略，请读取固定空间规则。</p> : <pre className="body-text">{value.objective || '当前目标为空。'}</pre>}
+-      <h3>空间规则</h3>{value.rules === null ? <p>规则未内联，不代表没有规则。</p> : value.rules.length ? <ol>{value.rules.map((rule, i) => <li key={i}><pre className="body-text">{rule}</pre></li>)}</ol> : <p>此次返回的规则列表为空。</p>}
++      <h3>空间规则</h3>{value.rules === null ? <p>规则未内联，不代表没有规则。</p> : value.rules.length ? <ol>{value.rules.map((rule, i) => <li key={i}><SafeMarkdown source={rule} label={`空间规则 ${i + 1}`}/></li>)}</ol> : <p>此次返回的规则列表为空。</p>}
+       <section aria-labelledby="space-rules-heading"><h3 id="space-rules-heading">固定空间规则</h3><button disabled={props.busy} onClick={() => props.readRules(true)}>读取固定规则</button>
+         {props.rules && <>{props.rules.revision !== value.revision && <p className="notice">概览已有不同规则修订；这里仍读取原固定版本，不会自动替换。</p>}<p>固定修订 {props.rules.revision} · {props.rules.document ? '完整规则已读取' : '规则尚未完整显示'}</p>
+-          {props.rules.document ? <><h4>固定目标</h4><pre className="body-text">{props.rules.document.objective}</pre><h4>固定规则</h4><ol>{props.rules.document.rules.map((rule, i) => <li key={i}><pre>{rule}</pre></li>)}</ol></>
++          {props.rules.document ? <><h4>固定目标</h4><pre className="body-text">{props.rules.document.objective}</pre><h4>固定规则</h4><ol>{props.rules.document.rules.map((rule, i) => <li key={i}><SafeMarkdown source={rule} label={`固定规则 ${i + 1}`}/></li>)}</ol></>
+             : props.rules.rawMode ? <><p className="notice">超过本地 1 MiB 完整规则预算；仅显示当前原始 JSON 段，不代表完整规则。</p><pre>{props.rules.currentChunk}</pre></> : <p>已读取 {props.rules.accumulatedBytes.toLocaleString()} 字节，完整后才解析规则。</p>}
+           <div className="paging">{props.rules.cursor && <button disabled={props.busy} onClick={() => props.readRules()}>继续加载规则</button>}<button className="quiet" disabled={props.busy} onClick={() => props.readRules(true)}>从首段重开规则</button></div></>}
+       </section>

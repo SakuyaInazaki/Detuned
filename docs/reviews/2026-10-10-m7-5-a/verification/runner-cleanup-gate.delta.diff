@@ -1,0 +1,24 @@
+--- rejected-c75-runner
++++ cleanup-success-gated-runner
+@@ -391,10 +391,17 @@
+         # Root specifically permits successful suite awaited teardown + stagegroup
+         # absence evidence. Failure/deadline/unknown keeps exact root/ledger.
+         removed = False
+-        if status == 'passed' and left(True) > 0:
+-            try:
+-                removed = cleanup_successful_fixture()
+-            except Exception:
++        if status == 'passed':
++            if left(True) <= 0:
++                status = 'failed'
++                failure = 'CLEANUP_DEADLINE'
++            else:
++                try:
++                    removed = cleanup_successful_fixture()
++                except Exception:
++                    status = 'failed'
++                    failure = 'CLEANUP_UNVERIFIED'
++            if status == 'passed' and (not removed or ROOT.exists()):
+                 status = 'failed'
+                 failure = 'CLEANUP_UNVERIFIED'
+         if not originals_after:

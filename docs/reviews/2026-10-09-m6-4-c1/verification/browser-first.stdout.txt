@@ -1,0 +1,92 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 4 tests using 1 worker
+
+  ✘  1 scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision (6.3s)
+  ✘  2 scripts/integrations/web/m6-review.spec.ts:29:1 › CW02 required checks remain pending and incomplete finalization cannot invent a receipt; cancellation retains safe history (5.8s)
+  ✘  3 scripts/integrations/web/m6-review.spec.ts:35:1 › CW03 lost real committed response recovers the same intent/key once and session candidates never silently replace bindings (5.8s)
+  ✘  4 scripts/integrations/web/m6-review.spec.ts:40:1 › CW04 late directory/snapshot/session results do not refill a new scope or logged-out page; keyboard narrow viewport retains ordinary posts (5.8s)
+
+
+  1) scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision 
+
+    TimeoutError: locator.fill: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '正式评审', exact: true }).getByLabel('评审者身份 IDs', { exact: true })
+
+
+      13 | async function login(page:Page,forum:ForumFixture,name:ReviewIdentityName){await forum.loginReview(page,name);}
+      14 | async function logout(page:Page){await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();}
+    > 15 | async function create(panel:Locator,setup:ReviewSetup){await panel.getByText('创建评审请求',{exact:true}).first().click();await panel.getByLabel('预期政策版本',{exact:true}).fill(String(setup.policyRevision));await panel.getByLabel('评审者身份 IDs',{exact:true}).fill(JSON.stringify(setup.reviewerIds));await panel.getByLabel('复现说明',{exact:true}).fill('Independent ordinary browser recipe.');await panel.getByRole('button',{name:'创建评审请求',exact:true}).click();}
+         |                                                                                                                                                                                                                                                       ^
+      16 | async function open(panel:Locator,round=1){await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:`打开第 ${round} 轮`,exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toBeVisible();}
+      17 | async function ownSession(panel:Locator){await panel.getByRole('button',{name:'加载本人任务',exact:true}).click();await expect(panel.getByRole('button',{name:'开始初评',exact:true})).toBeEnabled();await panel.getByRole('button',{name:'开始初评',exact:true}).click();await expect(panel.getByRole('button',{name:'选用此会话',exact:true})).toBeVisible();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length===0).toBe(true);await panel.getByRole('button',{name:'选用此会话',exact:true}).click();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length>0).toBe(true);}
+      18 | async function submit(panel:Locator,marker:string,evidence:string[]=[]){await panel.getByLabel('覆盖范围',{exact:true}).fill(marker);await panel.getByLabel('已执行检查',{exact:true}).fill('Read fixed material; no external check receipt.');await panel.getByLabel('独立声明说明',{exact:true}).fill('Separate human and group.');await panel.getByLabel('我声明未参与这些材料',{exact:true}).check();await panel.getByLabel('我声明未接触其他初评意见',{exact:true}).check();await panel.getByLabel('证据固定引用',{exact:true}).fill(JSON.stringify(evidence.map(artifact_id=>({kind:'artifact',artifact_id}))));await panel.getByRole('button',{name:'提交完整初评',exact:true}).click();await expect(panel.getByText(/初评已保存：/)).toBeVisible();}
+        at create (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:15:247)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:22:201
+
+    Error Context: docs/reviews/2026-10-09-m6-4-c1/verification/browser-first/playwright-output/m6-review-CW01-ordinary-re-58007-reserve-historical-decision/error-context.md
+
+  2) scripts/integrations/web/m6-review.spec.ts:29:1 › CW02 required checks remain pending and incomplete finalization cannot invent a receipt; cancellation retains safe history 
+
+    TimeoutError: locator.fill: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '正式评审', exact: true }).getByLabel('评审者身份 IDs', { exact: true })
+
+
+      13 | async function login(page:Page,forum:ForumFixture,name:ReviewIdentityName){await forum.loginReview(page,name);}
+      14 | async function logout(page:Page){await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();}
+    > 15 | async function create(panel:Locator,setup:ReviewSetup){await panel.getByText('创建评审请求',{exact:true}).first().click();await panel.getByLabel('预期政策版本',{exact:true}).fill(String(setup.policyRevision));await panel.getByLabel('评审者身份 IDs',{exact:true}).fill(JSON.stringify(setup.reviewerIds));await panel.getByLabel('复现说明',{exact:true}).fill('Independent ordinary browser recipe.');await panel.getByRole('button',{name:'创建评审请求',exact:true}).click();}
+         |                                                                                                                                                                                                                                                       ^
+      16 | async function open(panel:Locator,round=1){await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:`打开第 ${round} 轮`,exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toBeVisible();}
+      17 | async function ownSession(panel:Locator){await panel.getByRole('button',{name:'加载本人任务',exact:true}).click();await expect(panel.getByRole('button',{name:'开始初评',exact:true})).toBeEnabled();await panel.getByRole('button',{name:'开始初评',exact:true}).click();await expect(panel.getByRole('button',{name:'选用此会话',exact:true})).toBeVisible();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length===0).toBe(true);await panel.getByRole('button',{name:'选用此会话',exact:true}).click();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length>0).toBe(true);}
+      18 | async function submit(panel:Locator,marker:string,evidence:string[]=[]){await panel.getByLabel('覆盖范围',{exact:true}).fill(marker);await panel.getByLabel('已执行检查',{exact:true}).fill('Read fixed material; no external check receipt.');await panel.getByLabel('独立声明说明',{exact:true}).fill('Separate human and group.');await panel.getByLabel('我声明未参与这些材料',{exact:true}).check();await panel.getByLabel('我声明未接触其他初评意见',{exact:true}).check();await panel.getByLabel('证据固定引用',{exact:true}).fill(JSON.stringify(evidence.map(artifact_id=>({kind:'artifact',artifact_id}))));await panel.getByRole('button',{name:'提交完整初评',exact:true}).click();await expect(panel.getByText(/初评已保存：/)).toBeVisible();}
+        at create (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:15:247)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:30:222
+
+    Error Context: docs/reviews/2026-10-09-m6-4-c1/verification/browser-first/playwright-output/m6-review-CW02-required-ch-2f791-lation-retains-safe-history/error-context.md
+
+  3) scripts/integrations/web/m6-review.spec.ts:35:1 › CW03 lost real committed response recovers the same intent/key once and session candidates never silently replace bindings 
+
+    TimeoutError: locator.fill: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '正式评审', exact: true }).getByLabel('评审者身份 IDs', { exact: true })
+
+
+      13 | async function login(page:Page,forum:ForumFixture,name:ReviewIdentityName){await forum.loginReview(page,name);}
+      14 | async function logout(page:Page){await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();}
+    > 15 | async function create(panel:Locator,setup:ReviewSetup){await panel.getByText('创建评审请求',{exact:true}).first().click();await panel.getByLabel('预期政策版本',{exact:true}).fill(String(setup.policyRevision));await panel.getByLabel('评审者身份 IDs',{exact:true}).fill(JSON.stringify(setup.reviewerIds));await panel.getByLabel('复现说明',{exact:true}).fill('Independent ordinary browser recipe.');await panel.getByRole('button',{name:'创建评审请求',exact:true}).click();}
+         |                                                                                                                                                                                                                                                       ^
+      16 | async function open(panel:Locator,round=1){await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:`打开第 ${round} 轮`,exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toBeVisible();}
+      17 | async function ownSession(panel:Locator){await panel.getByRole('button',{name:'加载本人任务',exact:true}).click();await expect(panel.getByRole('button',{name:'开始初评',exact:true})).toBeEnabled();await panel.getByRole('button',{name:'开始初评',exact:true}).click();await expect(panel.getByRole('button',{name:'选用此会话',exact:true})).toBeVisible();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length===0).toBe(true);await panel.getByRole('button',{name:'选用此会话',exact:true}).click();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length>0).toBe(true);}
+      18 | async function submit(panel:Locator,marker:string,evidence:string[]=[]){await panel.getByLabel('覆盖范围',{exact:true}).fill(marker);await panel.getByLabel('已执行检查',{exact:true}).fill('Read fixed material; no external check receipt.');await panel.getByLabel('独立声明说明',{exact:true}).fill('Separate human and group.');await panel.getByLabel('我声明未参与这些材料',{exact:true}).check();await panel.getByLabel('我声明未接触其他初评意见',{exact:true}).check();await panel.getByLabel('证据固定引用',{exact:true}).fill(JSON.stringify(evidence.map(artifact_id=>({kind:'artifact',artifact_id}))));await panel.getByRole('button',{name:'提交完整初评',exact:true}).click();await expect(panel.getByText(/初评已保存：/)).toBeVisible();}
+        at create (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:15:247)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:36:376
+
+    Error Context: docs/reviews/2026-10-09-m6-4-c1/verification/browser-first/playwright-output/m6-review-CW03-lost-real-c-7bcef-r-silently-replace-bindings/error-context.md
+
+  4) scripts/integrations/web/m6-review.spec.ts:40:1 › CW04 late directory/snapshot/session results do not refill a new scope or logged-out page; keyboard narrow viewport retains ordinary posts 
+
+    TimeoutError: locator.fill: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: '正式评审', exact: true }).getByLabel('评审者身份 IDs', { exact: true })
+
+
+      13 | async function login(page:Page,forum:ForumFixture,name:ReviewIdentityName){await forum.loginReview(page,name);}
+      14 | async function logout(page:Page){await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();}
+    > 15 | async function create(panel:Locator,setup:ReviewSetup){await panel.getByText('创建评审请求',{exact:true}).first().click();await panel.getByLabel('预期政策版本',{exact:true}).fill(String(setup.policyRevision));await panel.getByLabel('评审者身份 IDs',{exact:true}).fill(JSON.stringify(setup.reviewerIds));await panel.getByLabel('复现说明',{exact:true}).fill('Independent ordinary browser recipe.');await panel.getByRole('button',{name:'创建评审请求',exact:true}).click();}
+         |                                                                                                                                                                                                                                                       ^
+      16 | async function open(panel:Locator,round=1){await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:`打开第 ${round} 轮`,exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toBeVisible();}
+      17 | async function ownSession(panel:Locator){await panel.getByRole('button',{name:'加载本人任务',exact:true}).click();await expect(panel.getByRole('button',{name:'开始初评',exact:true})).toBeEnabled();await panel.getByRole('button',{name:'开始初评',exact:true}).click();await expect(panel.getByRole('button',{name:'选用此会话',exact:true})).toBeVisible();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length===0).toBe(true);await panel.getByRole('button',{name:'选用此会话',exact:true}).click();expect((await panel.getByLabel('初评论坛会话 ID',{exact:true}).inputValue()).length>0).toBe(true);}
+      18 | async function submit(panel:Locator,marker:string,evidence:string[]=[]){await panel.getByLabel('覆盖范围',{exact:true}).fill(marker);await panel.getByLabel('已执行检查',{exact:true}).fill('Read fixed material; no external check receipt.');await panel.getByLabel('独立声明说明',{exact:true}).fill('Separate human and group.');await panel.getByLabel('我声明未参与这些材料',{exact:true}).check();await panel.getByLabel('我声明未接触其他初评意见',{exact:true}).check();await panel.getByLabel('证据固定引用',{exact:true}).fill(JSON.stringify(evidence.map(artifact_id=>({kind:'artifact',artifact_id}))));await panel.getByRole('button',{name:'提交完整初评',exact:true}).click();await expect(panel.getByText(/初评已保存：/)).toBeVisible();}
+        at create (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:15:247)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:41:154
+
+    Error Context: docs/reviews/2026-10-09-m6-4-c1/verification/browser-first/playwright-output/m6-review-CW04-late-direct-1d0ad-port-retains-ordinary-posts/error-context.md
+
+  4 failed
+    scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision 
+    scripts/integrations/web/m6-review.spec.ts:29:1 › CW02 required checks remain pending and incomplete finalization cannot invent a receipt; cancellation retains safe history 
+    scripts/integrations/web/m6-review.spec.ts:35:1 › CW03 lost real committed response recovers the same intent/key once and session candidates never silently replace bindings 
+    scripts/integrations/web/m6-review.spec.ts:40:1 › CW04 late directory/snapshot/session results do not refill a new scope or logged-out page; keyboard narrow viewport retains ordinary posts 
+[ELIFECYCLE] Command failed with exit code 1.

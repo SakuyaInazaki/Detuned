@@ -1,0 +1,11 @@
+--- tests/integration/m2-knowledge-views.test.ts before
++++ tests/integration/m2-knowledge-views.test.ts after
+@@ -15,7 +15,7 @@
+   it('V01: findings contain only claims, reports and fixed relation provenance, never certification',()=>{
+     post('proposal',content,'proposal');const claim=post('claim',content,'claim'),source=post('note',{},'source');relation(source,claim,'supports','support');relation(source,claim,'reproduces','reproduction');relation(source,claim,'cites','citation');
+     posts.createRevision(auth,sid,claim.post.id,{title:'new',summary:'s',structured:content,expected_revision:1},'claim-new');
+-    const items=views.getView(auth,sid,'findings').items;expect(items).toHaveLength(1);expect(items[0]).toMatchObject({type:'claim',report_kind:'author_report',formal_review_status:'not_enabled',formal_check_status:'not_enabled'});
++    const items=views.getView(auth,sid,'findings').items;expect(items).toHaveLength(1);expect(items[0]).toMatchObject({type:'claim',report_kind:'author_report',formal_review_status:'not_requested',formal_check_status:'not_requested',formal_review:null});
+     expect(items[0].relations).toHaveLength(2);expect(items[0].relations[0]).toMatchObject({target_ref:{post_id:claim.post.id,revision:1},target_has_newer_revision:true,source_author_id:auth.actor.id,creator_id:auth.actor.id});
+   });
+   it('V02: historical invalid fields become null/missing without inventing failure facts',()=>{

@@ -1,0 +1,284 @@
+{
+  "scope": "C.1 finite local engineering independent verification plus separately accepted H-R1 durable real historical compatibility",
+  "formal": {
+    "tests": 333,
+    "files": 35,
+    "unique_full_suite_runs": 1,
+    "stdout": "observed-current29-03-2026-10-06.txt",
+    "new_C1_core": 9,
+    "new_C1_contracts": 6,
+    "new_HR1": 7,
+    "new_tests_are_included_not_added_twice": true
+  },
+  "current29": [
+    {
+      "index": 0,
+      "command": "pnpm build",
+      "exit_code": 0,
+      "stdout": "observed-build-2026-10-06.txt",
+      "stderr": "observed-build-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 1,
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "stdout": "observed-current29-01-2026-10-06.txt",
+      "stderr": "observed-current29-01-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 2,
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "stdout": "observed-current29-02-2026-10-06.txt",
+      "stderr": "observed-current29-02-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 3,
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "stdout": "observed-current29-03-2026-10-06.txt",
+      "stderr": "observed-current29-03-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 4,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-04-2026-10-06.txt",
+      "stderr": "observed-current29-04-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 5,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-05-2026-10-06.txt",
+      "stderr": "observed-current29-05-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 6,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-06-2026-10-06.txt",
+      "stderr": "observed-current29-06-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-07-2026-10-06.txt",
+      "stderr": "observed-current29-07-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-08-2026-10-06.txt",
+      "stderr": "observed-current29-08-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-09-2026-10-06.txt",
+      "stderr": "observed-current29-09-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-10-2026-10-06.txt",
+      "stderr": "observed-current29-10-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 11,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-11-2026-10-06.txt",
+      "stderr": "observed-current29-11-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 12,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-12-2026-10-06.txt",
+      "stderr": "observed-current29-12-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 13,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-13-2026-10-06.txt",
+      "stderr": "observed-current29-13-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 14,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-14-2026-10-06.txt",
+      "stderr": "observed-current29-14-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 15,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-15-2026-10-06.txt",
+      "stderr": "observed-current29-15-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 16,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-16-2026-10-06.txt",
+      "stderr": "observed-current29-16-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 17,
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-17-2026-10-06.txt",
+      "stderr": "observed-current29-17-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 18,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-18-2026-10-06.txt",
+      "stderr": "observed-current29-18-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 19,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-19-2026-10-06.txt",
+      "stderr": "observed-current29-19-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 20,
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-20-2026-10-06.txt",
+      "stderr": "observed-current29-20-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 21,
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-21-2026-10-06.txt",
+      "stderr": "observed-current29-21-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 22,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-22-2026-10-06.txt",
+      "stderr": "observed-current29-22-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 23,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-23-2026-10-06.txt",
+      "stderr": "observed-current29-23-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 24,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-24-2026-10-06.txt",
+      "stderr": "observed-current29-24-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 25,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-25-2026-10-06.txt",
+      "stderr": "observed-current29-25-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 26,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-26-2026-10-06.txt",
+      "stderr": "observed-current29-26-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 27,
+      "command": "node docs/reviews/2026-10-03-m2-1/verification/check-c-completion-v2.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-27-2026-10-06.txt",
+      "stderr": "observed-current29-27-2026-10-06.stderr.txt"
+    },
+    {
+      "index": 28,
+      "command": "node docs/reviews/2026-10-02-m0-m1-r22/check-c2-boundaries.mjs",
+      "exit_code": 0,
+      "stdout": "observed-current29-28-2026-10-06.txt",
+      "stderr": "observed-current29-28-2026-10-06.stderr.txt"
+    }
+  ],
+  "current29_passed": 29,
+  "build_runs": 1,
+  "actual_C1_independent_command_count": 49,
+  "C1_independent_successful_commands": 47,
+  "C1_probe_first_failures": [
+    {
+      "command": "node docs/reviews/2026-10-06-m2-4-c1/verification/check-focus-http.mjs",
+      "exit_code": 1,
+      "started_at": "2026-10-06T11:57:42.934493+00:00",
+      "finished_at": "2026-10-06T11:57:43.291371+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-c1/verification/observed-focus-http-first-2026-10-06.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-c1/verification/observed-focus-http-first-2026-10-06.stderr.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-06-m2-4-c1/verification/check-focus-tools-cli.mjs",
+      "exit_code": 1,
+      "started_at": "2026-10-06T11:59:18.523188+00:00",
+      "finished_at": "2026-10-06T11:59:19.385319+00:00",
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-c1/verification/observed-focus-tools-first-2026-10-06.txt",
+      "stderr_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-c1/verification/observed-focus-tools-first-2026-10-06.stderr.txt"
+    }
+  ],
+  "C1_final_probes": {
+    "HTTP": "observed-focus-http-second-2026-10-06.txt",
+    "WAL": "observed-focus-wal-first-2026-10-06.txt",
+    "tools": "observed-focus-tools-second-2026-10-06.txt",
+    "budget": "observed-focus-budget-first-2026-10-06.txt"
+  },
+  "prior_probes": {
+    "TP": 4,
+    "PR": 3,
+    "SR": 4,
+    "SQ": 1,
+    "KV": 1,
+    "all_original_13_scripts_exit_zero": true
+  },
+  "catalog": {
+    "operations": 38,
+    "business_routes": 38,
+    "body_operations": 20,
+    "json_request_bodies": 19,
+    "multipart_request_bodies": 1,
+    "placeholder_bodies": 0,
+    "AD_date_time_ignored_warning_lines": 44
+  },
+  "HR1": {
+    "implementation_self_test_commands": 12,
+    "implementation_self_test_successful_commands": 4,
+    "implementation_not_independent": true,
+    "actual_legacy_HTTP_successes": 3,
+    "new_formal_tests": 7,
+    "independent_probe_owner": "core agent",
+    "independent_probe_exit": 0,
+    "independent_report": "history-independent-review.md",
+    "independent_actual_result": "history-independent-http.json",
+    "coverage_gap_closed_with_new_durable_real_b8_source": true,
+    "not_original_M21_DB_restoration": true
+  },
+  "not_run": [
+    "Node22",
+    "clean installation",
+    "remote CI",
+    "real four-host model sessions/certification",
+    "100k load or long-duration stress"
+  ],
+  "old_A_provenance_difference": "original A focus missing400 now404; former huge rules422 already approved B1 ref downgrade; immutable original A not part of current29 and not run as all-green"
+}

@@ -11,6 +11,9 @@ import {
   DirectoryLock,
   SCHEMA_SQL,
   V2_SCHEMA_TABLES,
+  V3_SCHEMA_TABLES,
+  V4_SCHEMA_TABLES,
+  V6_SCHEMA_TABLES,
   V1_SCHEMA_TABLES,
   parseFts5Ddl,
 } from '../src/index.js';
@@ -156,7 +159,7 @@ describe('SqliteStorage and Bootstrap', () => {
       lock1.acquire();
 
       const lock2 = new DirectoryLock(tempDir);
-      expect(() => lock2.acquire()).toThrow(/数据目录已被其他 Detuned 实例锁定/);
+      expect(() => lock2.acquire()).toThrow(/数据目录被锁定或无法安全取得目录锁/);
 
       lock1.release();
 
@@ -188,6 +191,9 @@ describe('SqliteStorage and Bootstrap', () => {
     upgradedDb.prepare("INSERT INTO actors (id, kind, display_name, created_at) VALUES ('act_admin', 'human', 'Admin', ?)").run(new Date().toISOString());
     upgradedDb.prepare("INSERT INTO credentials (id, actor_id, token_hash, allowed_space_ids, capabilities, created_at) VALUES ('cred_admin', 'act_admin', 'hash', '[\"*\"]', '[\"admin\"]', ?)").run(new Date().toISOString());
 
+    expect(() => openAndCoordinateDatabase(upgradedDb, 'serve')).toThrow(/detuned migrate --offline/);
+    // Explicit owned-stage migration, followed by the current serve coordinator.
+    bootstrapDatabase(upgradedDb);
     openAndCoordinateDatabase(upgradedDb, 'serve');
 
     const getTableNames = (d: Database.Database) =>
@@ -232,12 +238,20 @@ describe('SqliteStorage and Bootstrap', () => {
   });
 
   it('asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql)', () => {
-    // 1. V2 Profile Parity against authoritative schema.sql
+    // 1. V2 Profile Parity against the frozen schema2 source
     const v2Db = new Database(':memory:');
-    const v2Sql = fs.readFileSync(path.resolve(__dirname, '../src/schema.sql'), 'utf8');
+    const v2Sql = fs.readFileSync(path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql'), 'utf8');
     v2Db.exec(v2Sql);
     const expectedV2 = extractDatabaseRequirements(v2Db);
     expect(V2_SCHEMA_TABLES).toEqual(expectedV2);
+    const v3Db = new Database(':memory:');
+    v3Db.exec(fs.readFileSync(path.resolve(__dirname, '../../../tests/fixtures/historical-v3-schema.sql'), 'utf8'));
+    expect(V3_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v3Db));
+    const v4Db = new Database(':memory:');
+    v4Db.exec(fs.readFileSync(path.resolve(__dirname, '../../../tests/fixtures/historical-v4-schema.sql'), 'utf8'));
+    expect(V4_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v4Db));
+    const v5Db = new Database(':memory:');v5Db.exec(SCHEMA_SQL);
+    expect(V6_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v5Db));v5Db.close();
 
     // 2. V1 Profile Parity against frozen historical fixture
     const v1Db = new Database(':memory:');
@@ -264,6 +278,8 @@ describe('SqliteStorage and Bootstrap', () => {
     const checkResult = spawnSync(process.execPath, [checkScriptPath], { encoding: 'utf8' });
     expect(checkResult.status).toBe(0);
 
+    v4Db.close();
+    v3Db.close();
     v2Db.close();
     v1Db.close();
     mutatedDb.close();

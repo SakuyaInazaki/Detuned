@@ -1,0 +1,36 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-post-revision-read.test.ts > M2.4-B.2.1 fixed stored post revision content > P02: fixed document does not drift after head updates, while current metadata updates on the next page
+TypeError: posts.revisePost is not a function
+ ❯ tests/integration/m2-post-revision-read.test.ts:61:57
+     59|   it('P02: fixed document does not drift after head updates, while cur…
+     60|     const expected = document(storage.getPostRevision(pid, 1)!);
+     61|     const result = joinPages(read, 1, 4096, () => posts.revisePost(aut…
+       |                                                         ^
+     62|     expect(JSON.parse(result.text)).toEqual(expected);
+     63|     expect(result.pages[0].data.has_newer_revision).toBe(false);
+ ❯ joinPages tests/integration/m2-post-revision-read.test.ts:42:26
+ ❯ tests/integration/m2-post-revision-read.test.ts:61:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-post-revision-read.test.ts > M2.4-B.2.1 fixed stored post revision content > P08: advancing clock between two nonterminal pages preserves original expiry and allows budget changes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m2-post-revision-read.test.ts:138:162
+    136|     const second = timed.getRevision(auth, sid, pid, 1, { max_bytes: 4…
+    137|     expect(signer.verify(second.meta.next_cursor!, secret, Math.floor(…
+    138|     const last = timed.getRevision(auth, sid, pid, 1, { max_bytes: 655…
+       |                                                                                                                                                                  ^
+    139|     expect(JSON.parse(first.data.chunk + second.data.chunk + last.data…
+    140|     now = exp * 1000; expect(timed.getRevision(auth, sid, pid, 1, { cu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

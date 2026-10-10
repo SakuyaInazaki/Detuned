@@ -1,0 +1,440 @@
+{
+  "entrypoint": "packages/storage-sqlite/dist/offline-backup.js",
+  "js_count": 67,
+  "bytes": 649735,
+  "files": {
+    "packages/storage-sqlite/dist/offline-backup.js": "2617ad923a048ebda31cf542a99a8b2be564527ca0278a129d7a5cf8f2065776",
+    "packages/storage-sqlite/dist/directory-state.js": "4c3f5494f211cfa1aedd156685f23ae96c2e7ac9216c0502346393f35cb416cb",
+    "packages/storage-sqlite/dist/sqlite-storage.js": "44c31964ff7d3ef0c593468b04b896d2b91bd99ba37e16066771bca97e00c9ef",
+    "packages/protocol/dist/index.js": "e97d7cafc32f331d911a6b474f2d43d9ad8ba120725c9a13599825c5a486d088",
+    "packages/protocol/dist/post-catalogs.js": "b76c69f5d6417ba47b97d74cf090bd2e30bc5436a653ac335bdc4564b27f212f",
+    "packages/protocol/dist/common.js": "7be15c14bbb126e90934666700559c532570870c95e409042589843e10ca1107",
+    "packages/protocol/dist/request-policies.js": "5a65fa02a139b36e33c22eace96ee4a1423a00cdcc603f530ce0cecce9ff7406",
+    "packages/protocol/dist/errors.js": "b0fc9f3a4a342146573703cd450a9e3214f9f9e6f992d3874ded546d2a7c1972",
+    "packages/protocol/dist/web-auth.js": "7aa7e870fe8c2c5ebf0558c04e50f583f7614dc21d9c12f9a9eee64a28f85e8e",
+    "packages/protocol/dist/actors.js": "37bc2f68018d7741b304b4aab0c2016b5f3eb65fa91cdacf77f326638936bb1c",
+    "packages/protocol/dist/response-guards.js": "ad433623f60a6058845da87d69dcf7d3c8fe70d9ffe59f49b2a3f90e1a4886a4",
+    "packages/protocol/dist/spaces.js": "64fac5b67446540e0a965a58745f8230dc03044284fe3d69b735dec14b005bbf",
+    "packages/protocol/dist/operations.js": "59e31fac6e65ce6d694cc83b2ce1565be7a469eafa1d57541166433b4407e26c",
+    "packages/protocol/dist/resource-limits.js": "ad401c00b5d8c27e9b0201afb77dc757273d3c639c2b3379ff5b4d7ad6e9b511",
+    "packages/protocol/dist/write-limits.js": "15a161ca4c144ebf47a3072eaa9ae1792f14af6d43059c7527c8239d230d0fc9",
+    "packages/protocol/dist/export-decoder.js": "991aed962c49959d6ff457b5ffe72a8eca54abb6a9f8fc1d0ea47d3b2f8391d5",
+    "packages/protocol/dist/export.js": "764cf2fb140bbd71bbf3a2c86f38f24ee4d6df214c552c9d3c707b3f6f60c70d",
+    "packages/protocol/dist/relations.js": "4ffc83db299554e2be1c2ade5efdf0a1daaf4eb5a1d9122542dc098c03ba2f00",
+    "packages/protocol/dist/posts.js": "304c74fec753a4dceecba022e4c6843f9b3c80edfc6e256d635f350bcee64d47",
+    "packages/protocol/dist/openapi.js": "41e6a63305c90df67d00532bf60a5d93a8f0853869b863a76ca7702ed8fb9220",
+    "packages/protocol/dist/admin.js": "1ef7743f91c89be2e9cc27d64dc99238b7b0e8d9c96f1100481832b7bfbd3741",
+    "packages/protocol/dist/events.js": "3256727b1e01dbef5326cc690376da9c41a256072979c2859211bc5438f23418",
+    "packages/protocol/dist/threads.js": "f7b2d9018b24ef6b16c5eaced290c09173f9d874698955b22f3966037d198723",
+    "packages/protocol/dist/artifacts.js": "8320d36b0887a4a28443257c585e357ab1587fd40da8b782e30ef6f6021fb47c",
+    "packages/protocol/dist/search.js": "c79e34e6ef74d02adb3c0845ae3b499c069b594dec70d2dc5e980c391a3fe9be",
+    "packages/protocol/dist/tools.js": "d9bf463f980d12d5f962e90be2553118f85f67aab80e91b6db5364dc561c4161",
+    "packages/protocol/dist/review.js": "b2f8c380da6140fc614d3b93900551a84c43b73fc2d7300547eec95eae62bbae",
+    "packages/core/dist/index.js": "8bdf9d13b431b47466183ba4930b889ce308bb159ddaa1b79cffed891b7abff3",
+    "packages/core/dist/services/post-catalog-read-service.js": "33ed07933c0a56a4b4167f30653ae3dd9ff851d78320bc5446767d4db207a676",
+    "packages/core/dist/services/web-session-service.js": "f925d2375dfa2df5802bce4bdb9fc269031462fe263242af40f289f741fbedfb",
+    "packages/core/dist/services/operations-service.js": "781b3a170dded905fd62072fa684769f4f270ee16cd7c08cb436bdff35e0f4f6",
+    "packages/core/dist/services/resource-quota.js": "acddacd14ad95ba2305bc2f675edb700d5fec6277cd609666fa0afdd3adc54df",
+    "packages/core/dist/services/admin-service.js": "b3e11901138e4d719b3b04d4b3d430c007c3afd57ffffbdd5d5d5f9ec44d4b1b",
+    "packages/core/dist/services/write-rate-limiter.js": "daa5e91bb208f1f1e8296d8697e45f149eb3c4a6f62522acba4bea419b87d298",
+    "packages/core/dist/services/space-export-service.js": "79bf4002e04de3ac0e5060acd4d5d34da4a6828e4a00065c736a40acca17e5f4",
+    "packages/core/dist/ports/space-export-snapshot.js": "5fc64e3275af5a86db8af4ff5769ac96428b94f2497abc9307249a7574cb2b55",
+    "packages/core/dist/services/thread-posts-read-service.js": "4de6032f10df8344eeb8037aadc19d22a5ae6d6da268eb07f7da32f767f7e98c",
+    "packages/core/dist/services/post-revision-read-service.js": "6212fdc388f4bb029d32ae05315410b97881332a7d1201daf8adc27cf13eba44",
+    "packages/core/dist/services/space-revision-read-service.js": "784cecc5aee0cfa32bc2acf3eaf0e18edcfe96615fec6077203324ebf91ec5fd",
+    "packages/core/dist/services/artifact-service.js": "b5c85d64d6f77164f77c7eeda7335b96ca5b0fb5e3c28e4f006dae37b460de3c",
+    "packages/core/dist/ports/blob-store.js": "0ac102f4b308b60c3bff5df7a4489f95c4d18c9be43ad25ffe7d5ce91e4d7265",
+    "packages/core/dist/services/redaction-service.js": "1fc3144a7594a26220fd5179b59b9be7c47a78003ef61a72b677735e31b85482",
+    "packages/core/dist/services/search-service.js": "4f5a8bb9e423de312d6763cf247b4cff6bf26f26c83bda3d702425270539bd68",
+    "packages/core/dist/services/knowledge-projection.js": "c3b2494c40b1eebe47c51dbaa859f55fc33efe2c982c00dc569fb53d0fa325b3",
+    "packages/core/dist/services/search-cursor.js": "4ef05091e8b88a1ad26478c73d21b4aa678a23aba69e497ed51e4b057e0dc17e",
+    "packages/core/dist/services/context-service.js": "200c29936271cb4b5ee9b528310c1c7d90bf511fc39e9e3293784b6f4231a5e8",
+    "packages/core/dist/ports/clock.js": "df8558ea868f66b4871e87a3ff81a0ab201ba85d47bdc683af438f58e4ab1571",
+    "packages/core/dist/services/event-service.js": "bc510c6a02d8416ccba77835a44a74b37994ef884eabd1e21b8f7caf10b45836",
+    "packages/core/dist/services/relation-service.js": "04c0ea3a45a3bdd629913ea6b7b6011a5737d6c2b21cce890384b07ea32f880b",
+    "packages/core/dist/services/post-service.js": "21ab77f14ee5709ee57662227cd99db8fe8ab1aab3d2fc99751a0c724a338744",
+    "packages/core/dist/services/artifact-references.js": "9f4d4a516a8490c3b451ea47038b091334ea52cd9f168133eeb988a076c034b9",
+    "packages/core/dist/services/typed-write-validation.js": "40145b6ecec28bf6dac706432cf0a5518c1192672cc4cc4cab8c1b98d8e1bed6",
+    "packages/core/dist/services/thread-service.js": "f4cb5286a9cdf28670a44568a7b65e27578b8e62ea851a8bd63c569f257776d1",
+    "packages/core/dist/services/space-service.js": "00c1a64840211e837ca47db660ee70ec81eb82a65c1e87803e0de7b7968c0ad4",
+    "packages/core/dist/services/idempotency-service.js": "eb637ab0262e8360851d704ed715db3bd8b46ae57069c01921143b85217fd77e",
+    "packages/core/dist/services/auth-service.js": "1d342dbd456e9cd3524541d69400268179dd9ff2bfaff52c357aa251a9079370",
+    "packages/core/dist/ports/token-signer.js": "e34401a926d0b0caae906c9d1fa4ba3d0dcedaf292e505222e596a89be62ca00",
+    "packages/core/dist/ports/hasher.js": "b9dfe74c5b38a29b151e347d372186cabd7e91d364f5d309a0c65cd7abd4b0ed",
+    "packages/core/dist/ports/id-generator.js": "34391819afa73468be3da4a39bd55669b9e291108ca2267f69eaf28fcdb9ddac",
+    "packages/core/dist/ports/storage.js": "aed4afbef764da20536803ef37fae7b44da7e85e08968cca1ef782c4e3843460",
+    "packages/storage-sqlite/dist/space-export-snapshot.js": "a6c2d2a2b9162f8440e397d1c81f2837312bed42ec9a326d2462a2fc0f948fac",
+    "packages/storage-sqlite/dist/sqlite-resource-limits.js": "f3930ac4d6bfd8b099e695df23c2725f85396f90bd8cb4e4e1042813ca322886",
+    "packages/storage-sqlite/dist/operational-status.js": "5c02e47e3199bd779bf97fdbaeda99c68167de572a14091d007589eb95660c04",
+    "packages/storage-sqlite/dist/bootstrap.js": "47d2428ade48d6806b7f304d2e05dd19005c39c6caa027b83df78943b2ba61b0",
+    "packages/storage-sqlite/dist/schema.js": "a5a76ffeca629a881ac6f69edc75a663806d7e052c10763b92c1e8f1ce0720e5",
+    "packages/storage-sqlite/dist/post-created-order-index.js": "76ab49e673819fe83b23aa39f20a4fcd13ffe3c5e8c9110956a053796ffd5914",
+    "packages/storage-sqlite/dist/lock.js": "a9b07b0a9f521f8d31f58580835d2c5478558c17a56fa8dd5992d4e5221ed188"
+  },
+  "imports": {
+    "packages/storage-sqlite/dist/offline-backup.js": [
+      "node:fs",
+      "node:fs/promises",
+      "node:path",
+      "node:crypto",
+      "better-sqlite3",
+      "./bootstrap.js",
+      "./lock.js",
+      "./sqlite-storage.js",
+      "./directory-state.js"
+    ],
+    "packages/storage-sqlite/dist/directory-state.js": [
+      "node:fs",
+      "node:path",
+      "node:crypto"
+    ],
+    "packages/storage-sqlite/dist/sqlite-storage.js": [
+      "./post-created-order-index.js",
+      "./operational-status.js",
+      "./sqlite-resource-limits.js",
+      "./space-export-snapshot.js",
+      "@detuned/core",
+      "@detuned/protocol"
+    ],
+    "packages/protocol/dist/index.js": [
+      "./errors.js",
+      "./common.js",
+      "./actors.js",
+      "./spaces.js",
+      "./threads.js",
+      "./posts.js",
+      "./relations.js",
+      "./artifacts.js",
+      "./events.js",
+      "./search.js",
+      "./review.js",
+      "./tools.js",
+      "./admin.js",
+      "./openapi.js",
+      "./request-policies.js",
+      "./export.js",
+      "./export-decoder.js",
+      "./write-limits.js",
+      "./resource-limits.js",
+      "./operations.js",
+      "./response-guards.js",
+      "./web-auth.js",
+      "./post-catalogs.js"
+    ],
+    "packages/protocol/dist/post-catalogs.js": [
+      "@sinclair/typebox",
+      "@sinclair/typebox/value",
+      "./errors.js",
+      "./request-policies.js",
+      "./common.js"
+    ],
+    "packages/protocol/dist/common.js": [
+      "./request-policies.js",
+      "@sinclair/typebox"
+    ],
+    "packages/protocol/dist/request-policies.js": [],
+    "packages/protocol/dist/errors.js": [
+      "@sinclair/typebox"
+    ],
+    "packages/protocol/dist/web-auth.js": [
+      "@sinclair/typebox",
+      "./actors.js"
+    ],
+    "packages/protocol/dist/actors.js": [
+      "@sinclair/typebox"
+    ],
+    "packages/protocol/dist/response-guards.js": [
+      "./post-catalogs.js",
+      "@sinclair/typebox",
+      "./web-auth.js",
+      "ajv-formats",
+      "@sinclair/typebox/value",
+      "./actors.js",
+      "./spaces.js"
+    ],
+    "packages/protocol/dist/spaces.js": [
+      "@sinclair/typebox/value",
+      "./request-policies.js",
+      "./errors.js",
+      "@sinclair/typebox",
+      "./common.js"
+    ],
+    "packages/protocol/dist/operations.js": [
+      "@sinclair/typebox",
+      "./common.js"
+    ],
+    "packages/protocol/dist/resource-limits.js": [
+      "@sinclair/typebox",
+      "./errors.js"
+    ],
+    "packages/protocol/dist/write-limits.js": [
+      "@sinclair/typebox",
+      "./errors.js"
+    ],
+    "packages/protocol/dist/export-decoder.js": [
+      "./export.js"
+    ],
+    "packages/protocol/dist/export.js": [
+      "@sinclair/typebox",
+      "@sinclair/typebox/value",
+      "./posts.js",
+      "./common.js",
+      "./errors.js",
+      "./relations.js"
+    ],
+    "packages/protocol/dist/relations.js": [
+      "@sinclair/typebox",
+      "./common.js"
+    ],
+    "packages/protocol/dist/posts.js": [
+      "@sinclair/typebox",
+      "@sinclair/typebox/value",
+      "./errors.js",
+      "./request-policies.js",
+      "./common.js",
+      "./relations.js"
+    ],
+    "packages/protocol/dist/openapi.js": [
+      "./post-catalogs.js",
+      "./web-auth.js",
+      "./operations.js",
+      "./export.js",
+      "./spaces.js",
+      "./actors.js",
+      "./spaces.js",
+      "@sinclair/typebox",
+      "./search.js",
+      "./common.js",
+      "./artifacts.js",
+      "./request-policies.js",
+      "./spaces.js",
+      "./threads.js",
+      "./posts.js",
+      "./relations.js",
+      "./events.js",
+      "./admin.js"
+    ],
+    "packages/protocol/dist/admin.js": [
+      "@sinclair/typebox",
+      "./actors.js",
+      "./spaces.js"
+    ],
+    "packages/protocol/dist/events.js": [
+      "@sinclair/typebox",
+      "@sinclair/typebox/value"
+    ],
+    "packages/protocol/dist/threads.js": [
+      "@sinclair/typebox/value",
+      "./request-policies.js",
+      "./errors.js",
+      "@sinclair/typebox",
+      "./posts.js"
+    ],
+    "packages/protocol/dist/artifacts.js": [
+      "ajv-formats",
+      "@sinclair/typebox/value",
+      "@sinclair/typebox"
+    ],
+    "packages/protocol/dist/search.js": [
+      "./threads.js",
+      "./spaces.js",
+      "./request-policies.js",
+      "@sinclair/typebox",
+      "./posts.js",
+      "@sinclair/typebox/value",
+      "./common.js",
+      "./relations.js",
+      "./errors.js"
+    ],
+    "packages/protocol/dist/tools.js": [
+      "./threads.js",
+      "@sinclair/typebox/value",
+      "./errors.js",
+      "./spaces.js",
+      "./search.js",
+      "@sinclair/typebox",
+      "./posts.js",
+      "./common.js",
+      "./relations.js",
+      "./events.js",
+      "./review.js"
+    ],
+    "packages/protocol/dist/review.js": [
+      "@sinclair/typebox/value",
+      "@sinclair/typebox",
+      "./spaces.js",
+      "./common.js"
+    ],
+    "packages/core/dist/index.js": [
+      "./ports/storage.js",
+      "./ports/clock.js",
+      "./ports/id-generator.js",
+      "./ports/hasher.js",
+      "./ports/token-signer.js",
+      "./services/auth-service.js",
+      "./services/idempotency-service.js",
+      "./services/space-service.js",
+      "./services/thread-service.js",
+      "./services/post-service.js",
+      "./services/relation-service.js",
+      "./services/event-service.js",
+      "./services/context-service.js",
+      "./services/search-service.js",
+      "./services/redaction-service.js",
+      "./ports/blob-store.js",
+      "./services/artifact-service.js",
+      "./services/space-revision-read-service.js",
+      "./services/post-revision-read-service.js",
+      "./services/thread-posts-read-service.js",
+      "./ports/space-export-snapshot.js",
+      "./services/space-export-service.js",
+      "./services/write-rate-limiter.js",
+      "./services/admin-service.js",
+      "./services/resource-quota.js",
+      "./services/operations-service.js",
+      "./services/web-session-service.js",
+      "./services/post-catalog-read-service.js"
+    ],
+    "packages/core/dist/services/post-catalog-read-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/web-session-service.js": [
+      "node:crypto",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/operations-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/resource-quota.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/admin-service.js": [
+      "node:crypto",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/write-rate-limiter.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/space-export-service.js": [
+      "node:crypto",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/ports/space-export-snapshot.js": [],
+    "packages/core/dist/services/thread-posts-read-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/post-revision-read-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/space-revision-read-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/artifact-service.js": [
+      "@detuned/protocol",
+      "./resource-quota.js"
+    ],
+    "packages/core/dist/ports/blob-store.js": [],
+    "packages/core/dist/services/redaction-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/search-service.js": [
+      "./search-cursor.js",
+      "./knowledge-projection.js",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/knowledge-projection.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/search-cursor.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/context-service.js": [
+      "./knowledge-projection.js",
+      "@detuned/protocol",
+      "../ports/clock.js"
+    ],
+    "packages/core/dist/ports/clock.js": [],
+    "packages/core/dist/services/event-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/relation-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/post-service.js": [
+      "./typed-write-validation.js",
+      "./artifact-references.js",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/artifact-references.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/typed-write-validation.js": [
+      "@detuned/protocol",
+      "./artifact-references.js"
+    ],
+    "packages/core/dist/services/thread-service.js": [
+      "./typed-write-validation.js",
+      "./artifact-references.js",
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/space-service.js": [
+      "@detuned/protocol"
+    ],
+    "packages/core/dist/services/idempotency-service.js": [
+      "@detuned/protocol",
+      "./write-rate-limiter.js",
+      "node:util"
+    ],
+    "packages/core/dist/services/auth-service.js": [
+      "@detuned/protocol",
+      "./write-rate-limiter.js"
+    ],
+    "packages/core/dist/ports/token-signer.js": [
+      "node:crypto"
+    ],
+    "packages/core/dist/ports/hasher.js": [
+      "node:crypto"
+    ],
+    "packages/core/dist/ports/id-generator.js": [
+      "node:crypto"
+    ],
+    "packages/core/dist/ports/storage.js": [],
+    "packages/storage-sqlite/dist/space-export-snapshot.js": [
+      "better-sqlite3",
+      "node:fs",
+      "@detuned/protocol"
+    ],
+    "packages/storage-sqlite/dist/sqlite-resource-limits.js": [
+      "@detuned/protocol",
+      "@detuned/core"
+    ],
+    "packages/storage-sqlite/dist/operational-status.js": [
+      "node:fs",
+      "./bootstrap.js"
+    ],
+    "packages/storage-sqlite/dist/bootstrap.js": [
+      "node:crypto",
+      "@detuned/protocol",
+      "@detuned/core",
+      "./sqlite-storage.js",
+      "./schema.js"
+    ],
+    "packages/storage-sqlite/dist/schema.js": [],
+    "packages/storage-sqlite/dist/post-created-order-index.js": [
+      "@detuned/protocol",
+      "@detuned/core",
+      "./bootstrap.js"
+    ],
+    "packages/storage-sqlite/dist/lock.js": [
+      "node:fs",
+      "node:path"
+    ]
+  },
+  "third_party_package_specifiers": [
+    "@sinclair/typebox",
+    "@sinclair/typebox/value",
+    "ajv-formats",
+    "better-sqlite3"
+  ],
+  "status": "static closure discovery only; not copied or executed; all candidate JS match fresh dist hashes"
+}

@@ -1,0 +1,47 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "SQ01-02",
+      "pass": true,
+      "literal_matrix": true
+    },
+    {
+      "id": "SQ03-04",
+      "pass": true,
+      "all_tags_exact": true,
+      "limit_not_bound": true,
+      "id_desc": true
+    },
+    {
+      "id": "SQ05-06",
+      "pass": true
+    },
+    {
+      "id": "SQ07",
+      "pass": true
+    },
+    {
+      "id": "SQ08",
+      "pass": true,
+      "short_candidate_overflow": 422,
+      "long_matching_overflow": 422,
+      "items_byte_overflow": 422,
+      "narrow_full_match": true,
+      "VM_CPU_bound_claimed": false
+    },
+    {
+      "id": "native-app-client",
+      "pass": true,
+      "encoded_url_over_16KiB": true,
+      "tags_json": true
+    }
+  ],
+  "pending_separate": [
+    "SQ09 formal/current29/integrity"
+  ],
+  "limits": [
+    "SQLite ASCII/nonASCII branch case behavior audited separately",
+    "no 100k performance or hard context budget claim"
+  ]
+}

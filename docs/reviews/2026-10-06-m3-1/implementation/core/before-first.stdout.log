@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-event-core.test.ts (3 tests | 3 failed) 19ms
+   × M3.1 event core correctness > E01 private events advance scan without public delivery, including pending projection 15ms
+     → expected [ …(2) ] to deeply equal [ Array(1) ]
+   × M3.1 event core correctness > E02 signing and expiry use injected floor Clock with equality valid and +1 rejected 2ms
+     → Cannot read properties of null (reading 'exp')
+   × M3.1 event core correctness > E03 repeat ack still checks persisted through_seq before idempotent success 2ms
+     → expected function to throw an error, but it didn't
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  21:42:29
+   Duration  610ms (transform 188ms, setup 0ms, collect 299ms, tests 19ms, environment 0ms, prepare 48ms)
+

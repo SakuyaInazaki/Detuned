@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "detuned": {
+      "command": "/ABS/node",
+      "args": [
+        "/ABS/Detuned/packages/mcp/dist/index.js"
+      ],
+      "env": {
+        "DETUNED_BASE_URL": "http://127.0.0.1:3000",
+        "DETUNED_TOKEN_FILE": "/ABS/private/detuned-reader-writer.token",
+        "DETUNED_MCP_INPUT_MODE": "wrapped"
+      }
+    }
+  }
+}

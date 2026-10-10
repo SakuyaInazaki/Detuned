@@ -1,12 +1,32 @@
+import { type CheckResultReference } from './check-records.js';
+import { type ReviewDecisionResultReference } from './review-decision-records.js';
 import { StoragePort } from '../ports/storage.js';
 import { HasherPort } from '../ports/hasher.js';
 import { ClockPort } from '../ports/clock.js';
+import { WriteRateLimiter } from './write-rate-limiter.js';
+import { type ReviewSubmissionResultReference } from './review-submission-records.js';
 export type NestedRelationRef = {
     id: string;
     version: number;
     state: 'open' | 'resolved';
 };
-export type IdempotencyResultRef = {
+export type IdempotencyResultRef = CheckResultReference | ReviewDecisionResultReference | ReviewSubmissionResultReference | {
+    v: 1;
+    kind: 'review.request.create' | 'review.request.cancel';
+    request_id: string;
+    request_version: number;
+    snapshot_id: string;
+    manifest_sha256: string;
+} | {
+    v: 1;
+    kind: 'artifact.review';
+    artifact_id: string;
+    assignment_id: string;
+} | {
+    v: 1;
+    kind: 'artifact';
+    artifact_id: string;
+} | {
     v: 1;
     kind: 'space';
     space_id: string;
@@ -59,7 +79,7 @@ export type IdempotencyResultRef = {
     op: string;
     reason: string;
 };
-export type OperationFamily = 'space.create' | 'space.patch' | 'thread.create' | 'thread.patch' | 'post.create' | 'post.revision' | 'post.withdraw' | 'relation.create' | 'relation.resolve' | 'relation.reopen' | 'admin.redaction';
+export type OperationFamily = 'check.run.create' | 'check.run.invalidate' | 'check.receipt.create' | 'artifact.check.create' | 'review.request.finalize' | 'review.submission.create' | 'artifact.review.create' | 'review.request.create' | 'review.request.cancel' | 'artifact.create' | 'space.create' | 'space.patch' | 'thread.create' | 'thread.patch' | 'post.create' | 'post.revision' | 'post.withdraw' | 'relation.create' | 'relation.resolve' | 'relation.reopen' | 'admin.redaction';
 export interface ParsedOperation {
     family: OperationFamily;
     expectedKind: IdempotencyResultRef['kind'];
@@ -108,7 +128,7 @@ export declare function validateNestedRelationsKnownFacts(storage: StoragePort, 
 export declare function validateStoredResultRefPrecheck(storage: StoragePort, operation: string, spaceId: string, parsed: any): void;
 export declare function validateResultRef(operation: string, raw: unknown): IdempotencyResultRef;
 export declare function validateResultRefSemantics(tx: StoragePort, operation: string, spaceId: string, ref: IdempotencyResultRef | any): void;
-export declare function extractResultRef(operation: string, result: any): string;
+export declare function extractResultRef(operation: string, result: any, storage?: StoragePort): string;
 export declare const encodeResult: typeof extractResultRef;
 export declare function normalizeLegacyResultRef(tx: StoragePort, operation: string, parsed: any, spaceId?: string): IdempotencyResultRef;
 export declare function reconstructResult(tx: StoragePort, operation: string, resultRefStr: string, spaceId?: string): any;
@@ -116,10 +136,14 @@ export declare class IdempotencyService {
     private readonly storage;
     private readonly hasher;
     private readonly clock;
-    constructor(storage: StoragePort, hasher: HasherPort, clock: ClockPort);
-    executeIdempotent<T>(actorId: string, spaceId: string, operation: string, key: string, payload: unknown, statusCode: number, action: (tx: StoragePort) => T): {
+    private readonly writeRateLimiter;
+    constructor(storage: StoragePort, hasher: HasherPort, clock: ClockPort, writeRateLimiter?: WriteRateLimiter);
+    executeIdempotent<T>(actorId: string, spaceId: string, operation: string, key: string, payload: unknown, statusCode: number, action: (tx: StoragePort) => T, beforeAdmission?: (tx: StoragePort) => void): {
         data: T;
         isReplay: boolean;
     };
 }
+/** Used exclusively by startup maintenance for the two formal request operations.
+ * Online reconstruction retains current ACL/material privacy; this emits no historical material. */
+export declare function validateStoredReviewRequestReference(storage: StoragePort, operation: string, spaceId: string, raw: unknown): void;
 //# sourceMappingURL=idempotency-service.d.ts.map

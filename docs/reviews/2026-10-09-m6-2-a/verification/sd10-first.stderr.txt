@@ -1,0 +1,60 @@
+$ vitest run tests/integration/m6-review-submissions-independent.test.ts --maxWorkers=1 --no-file-parallelism -t SD10
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-submissions-independent.test.ts > SD10 real private artifact redaction is not disclosed through an ordinary public consumer while public artifact redaction remains visible
+AssertionError: expected [ { stage: 'new-reader', …(3) }, …(5) ] to deeply equal [ { stage: 'new-reader', …(3) }, …(5) ]
+
+- Expected
++ Received
+
+  [
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 1,
+      "public_redaction_visible": 1,
+      "stage": "new-reader",
+    },
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 1,
+      "public_redaction_visible": 1,
+      "stage": "new-admin",
+    },
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 2,
+      "public_redaction_visible": 1,
+      "stage": "historical-reader",
+    },
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 2,
+      "public_redaction_visible": 1,
+      "stage": "pending-reader",
+    },
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 2,
+      "public_redaction_visible": 1,
+      "stage": "historical-admin",
+    },
+    {
+      "ack_seq": 0,
+-     "private_ids_visible": 0,
++     "private_ids_visible": 2,
+      "public_redaction_visible": 1,
+      "stage": "pending-admin",
+    },
+  ]
+
+ ❯ tests/integration/m6-review-submissions-independent.test.ts:311:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

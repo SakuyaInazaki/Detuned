@@ -1,0 +1,86 @@
+{
+  "state": "B2 finite browser composite passed; not final C1 acceptance; B3 product repair pending checks",
+  "unique_cases": 4,
+  "pass_sources": {
+    "CW01": "browser-author-selected-first.json",
+    "CW02": "browser-locator-corrected-first.json",
+    "CW03": "browser-locator-corrected-first.json",
+    "CW04": "browser-locator-corrected-first.json"
+  },
+  "runs": [
+    {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/m6-review.spec.ts",
+        "--workers=1"
+      ],
+      "exit_code": 1,
+      "seconds": 33.886,
+      "runner_pid": 73778,
+      "stdout": "browser-first.stdout.txt",
+      "stderr": "browser-first.stderr.txt",
+      "source_freeze": "independent-source-freeze.json",
+      "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+    },
+    {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/m6-review.spec.ts",
+        "--workers=1"
+      ],
+      "exit_code": 1,
+      "seconds": 26.895,
+      "runner_pid": 74084,
+      "stdout": "browser-locator-corrected-first.stdout.txt",
+      "stderr": "browser-locator-corrected-first.stderr.txt",
+      "source_freeze": "independent-source-freeze-v3.json",
+      "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+    },
+    {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/m6-review.spec.ts",
+        "--workers=1",
+        "--grep",
+        "^CW01"
+      ],
+      "exit_code": 1,
+      "seconds": 0.919,
+      "runner_pid": 74333,
+      "stdout": "browser-author-corrected-first.stdout.txt",
+      "stderr": "browser-author-corrected-first.stderr.txt",
+      "source_freeze": "independent-source-freeze-v4.json",
+      "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+    },
+    {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/m6-review.spec.ts",
+        "--workers=1",
+        "--grep",
+        "CW01 ordinary requester"
+      ],
+      "exit_code": 0,
+      "seconds": 10.432,
+      "runner_pid": 74382,
+      "stdout": "browser-author-selected-first.stdout.txt",
+      "stderr": "browser-author-selected-first.stderr.txt",
+      "source_freeze": "independent-source-freeze-v4.json",
+      "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+    }
+  ],
+  "failures_retained": [
+    "first four exact-label locator timeout before POST",
+    "second CW01 admin-author revision403 after accepted decision",
+    "anchored grep No tests found (zero test execution)"
+  ],
+  "screenshots": [
+    "browser-author-selected-first/screenshots/c1-review-desktop.png",
+    "browser-author-selected-first/screenshots/c1-review-status-narrow.png"
+  ],
+  "notes": "First3 passes remain true B2 evidence; subsequent B3 four-case regression is distinct source version, not first-round green."
+}

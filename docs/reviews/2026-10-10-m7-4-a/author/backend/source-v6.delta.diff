@@ -1,0 +1,65 @@
+--- a/tests/fixtures/pi-runtime/native-lifecycle.mjs
++++ b/tests/fixtures/pi-runtime/native-lifecycle.mjs
+@@ -228,8 +228,8 @@
+ async function runPiChecks() {
+   const {prepareOrdinaryCheckFixture,exerciseOrdinaryCheckBranches,nativeCheckNames}=await import('../../../scripts/integrations/claude-check-probe.mjs');
+   const {ArtifactFileStore}=await import('../../../packages/server/dist/index.js');
+-  const dir=process.argv[3];assert.equal(typeof dir,'string');assert.equal(process.argv.length,4);assert.equal(await fs.realpath(dir),dir);const rootStat=await fs.lstat(dir);assert.ok(rootStat.isDirectory()&&!rootStat.isSymbolicLink());assert.equal(rootStat.mode&0o777,0o700);assert.deepEqual(await fs.readdir(dir),[]);let db,app,host,originalFailure,body;
+-  const stage=(label,error)=>{if(budgetAbort.signal.aborted&&!label.includes('cleanup')&&label!=='catch'){const failure=new Error('Checks cancelled');failure.code='CHECKS_DEADLINE';throw failure;}const value={stage:label};if(error){value.error_name=/^[A-Za-z0-9_]{1,64}$/.test(error.name??'')?error.name:'Error';if(/^[A-Z0-9_]{1,64}$/.test(error.code??''))value.error_code=error.code;}if(process.connected)process.send(value,()=>{});};
++  const dir=process.argv[3];assert.equal(typeof dir,'string');assert.equal(process.argv.length,4);assert.equal(await fs.realpath(dir),dir);const rootStat=await fs.lstat(dir);assert.ok(rootStat.isDirectory()&&!rootStat.isSymbolicLink());assert.equal(rootStat.mode&0o777,0o700);assert.deepEqual(await fs.readdir(dir),[]);let db,app,host,originalFailure,body;const ownedSockets=new Map();let acceptedSockets=0,closedSockets=0;
++  const stage=(label,error,counts={})=>{if(budgetAbort.signal.aborted&&!label.includes('cleanup')&&label!=='catch'){const failure=new Error('Checks cancelled');failure.code='CHECKS_DEADLINE';throw failure;}const value={stage:label};for(const key of ['active_count','connections'])if(Number.isSafeInteger(counts[key])&&counts[key]>=0)value[key]=counts[key];if(error){value.error_name=/^[A-Za-z0-9_]{1,64}$/.test(error.name??'')?error.name:'Error';if(/^[A-Z0-9_]{1,64}$/.test(error.code??''))value.error_code=error.code;}if(process.connected)process.send(value,()=>{});};
+   const bounded=async(promise,signal,ms)=>{let timer,listener;try{return await Promise.race([promise,new Promise((_,reject)=>{const fail=()=>{const error=new Error('Bounded checks wait');error.code='CHECKS_DEADLINE';reject(error);};if(signal?.aborted)fail();else if(signal){listener=fail;signal.addEventListener('abort',listener,{once:true});}if(ms!==undefined)timer=setTimeout(fail,ms);})]);}finally{clearTimeout(timer);if(listener)signal.removeEventListener('abort',listener);}};
+   const budgetAbort=new AbortController();const deadline=setTimeout(()=>budgetAbort.abort(),60000);
+   const evidence={mode:'checks',metadata,model_calls:0,tools:[],checks:{},cleanup:{host_disposed:false,app_closed:false,db_closed:false,private_directory_removed:false}};
+@@ -238,6 +238,7 @@
+     body=(async()=>{
+     db=new Database(path.join(dir,'private.sqlite'));const boot=bootstrapDatabase(db);const blobs=await ArtifactFileStore.create(dir);
+     app=buildApp({storage:new SqliteStorage(db,{dataDir:dir}),artifactBlobs:blobs,writeRateLimits:{per_minute:60000,burst:10000}});
++    app.server.on('connection',socket=>{acceptedSockets++;const closed=new Promise(resolve=>socket.once('close',()=>{closedSockets++;ownedSockets.delete(socket);resolve();}));ownedSockets.set(socket,closed);});
+     const requests=[];let waitingEntered;app.addHook('onRequest',async req=>{requests.push({method:req.method,path:req.url.split('?')[0]});if(waitingEntered&&req.url.includes('/consumers/'+waitingEntered.id+'/poll'))waitingEntered.resolve();});
+     await app.listen({host:'127.0.0.1',port:0});const url='http://127.0.0.1:'+app.server.address().port;
+     const admin=new DetunedClient({baseUrl:url,token:boot.adminToken,maxRetries:0,timeoutMs:2000});const fixture=await prepareOrdinaryCheckFixture(admin,url);
+@@ -267,7 +268,16 @@
+   finally {
+     let cleanupFailure;const attempt=async(label,action,done)=>{stage(label+'-begin');try{await bounded(Promise.resolve().then(action),undefined,2000);done();stage(label+'-done');}catch(error){cleanupFailure??=error;stage(label+'-fail',error);}};
+     if(host)await attempt('host-cleanup',()=>host.dispose(),()=>{evidence.cleanup.host_disposed=true;});
+-    if(app)await attempt('app-cleanup',()=>app.close(),()=>{evidence.cleanup.app_closed=true;});
++    if(app)await attempt('app-cleanup',async()=>{
++      stage('business-drain-begin',undefined,{active_count:app.runtimeResources.activeCount});app.detunedBeginDraining();
++      evidence.cleanup.transport={active_before_drain:app.runtimeResources.activeCount};
++      await app.runtimeResources.waitForIdle();assert.equal(app.runtimeResources.activeCount,0);
++      evidence.cleanup.transport.active_after_drain=app.runtimeResources.activeCount;stage('business-drain-done',undefined,{active_count:app.runtimeResources.activeCount});
++      const sockets=[...ownedSockets.entries()];evidence.cleanup.transport.connections_before_close=sockets.length;stage('socket-close-begin',undefined,{connections:sockets.length});
++      for(const[socket]of sockets)socket.destroy();await Promise.all(sockets.map(([,closed])=>closed));assert.equal(ownedSockets.size,0);
++      evidence.cleanup.transport.connections_after_close=ownedSockets.size;evidence.cleanup.transport.accepted_connections=acceptedSockets;evidence.cleanup.transport.closed_connections=closedSockets;stage('socket-close-done',undefined,{connections:ownedSockets.size});
++      await app.close();stage('app-actual-close');
++    },()=>{evidence.cleanup.app_closed=true;});
+     if(db)await attempt('db-cleanup',()=>{db.close();},()=>{evidence.cleanup.db_closed=true;});
+     await attempt('directory-cleanup',()=>fs.rm(dir,{recursive:true,force:true}),()=>{evidence.cleanup.private_directory_removed=true;});
+     clearTimeout(deadline);if(process.connected)process.disconnect();
+--- a/tests/contracts/m4-pi-native-lifecycle.test.ts
++++ b/tests/contracts/m4-pi-native-lifecycle.test.ts
+@@ -31,12 +31,12 @@
+   const {mkdtemp,chmod,realpath,rm,access}=await import('node:fs/promises');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+   const privateRoot=await realpath(await mkdtemp(join(tmpdir(),'detuned-pi-checks-parent-')));await chmod(privateRoot,0o700);
+   let stdout='',stderr='',killed=false,lastStage='parent-created',exit:{code:number|null;signal:NodeJS.Signals|null}|undefined;
+-  const stages:string[]=[];const caught:{error_name?:string;error_code?:string}={};const diagnostic=()=>JSON.stringify({lastStage,stages,caught});
++  const stages:string[]=[];const caught:{error_name?:string;error_code?:string}={};const counts:Record<string,{active_count?:number;connections?:number}>={};const diagnostic=()=>JSON.stringify({lastStage,stages,caught,counts});
+   try {
+    const child=spawn(process.execPath,[helper,'checks',privateRoot],{env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true'},stdio:['ignore','pipe','pipe','ipc']});
+    child.on('message',value=>{
+     if(typeof value!=='object'||value===null||!('stage'in value)||typeof value.stage!=='string'||!/^[A-Za-z-]{1,64}$/.test(value.stage))return;
+-    lastStage=value.stage;if(stages.length<64)stages.push(value.stage);
++    lastStage=value.stage;if(stages.length<64){stages.push(value.stage);const observed:{active_count?:number;connections?:number}={};if('active_count'in value&&typeof value.active_count==='number'&&Number.isSafeInteger(value.active_count)&&value.active_count>=0)observed.active_count=value.active_count;if('connections'in value&&typeof value.connections==='number'&&Number.isSafeInteger(value.connections)&&value.connections>=0)observed.connections=value.connections;counts[value.stage]=observed;}
+     if(value.stage==='catch'){
+      if('error_name'in value&&typeof value.error_name==='string'&&/^[A-Za-z0-9_]{1,64}$/.test(value.error_name))caught.error_name=value.error_name;
+      if('error_code'in value&&typeof value.error_code==='string'&&/^[A-Za-z0-9_]{1,64}$/.test(value.error_code))caught.error_code=value.error_code;
+@@ -50,6 +50,8 @@
+   // The child only emits white-listed evidence; no credentials/raw HTTP are captured.
+   expect({exit,killed,stderr},diagnostic()).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
+   expect(evidence).toMatchObject({mode:'checks',passed:true,model_calls:0,metadata:{version:'0.87.1'},checks:{invalid_before_prepare_http:0,reason_500:true,scope_denied:true,artifact_metadata_only:true,ack_delta:0,pending_unchanged:true,cancelled:true},cleanup:{host_disposed:true,app_closed:true,private_directory_removed:true}});
++  expect(counts['business-drain-done']?.active_count,diagnostic()).toBe(0);expect(counts['socket-close-done']?.connections,diagnostic()).toBe(0);
++  expect(evidence.cleanup.transport.active_after_drain).toBe(0);expect(evidence.cleanup.transport.connections_after_close).toBe(0);for(const key of ['active_before_drain','connections_before_close','accepted_connections','closed_connections'])expect(Number.isSafeInteger(evidence.cleanup.transport[key])&&evidence.cleanup.transport[key]>=0).toBe(true);expect(evidence.cleanup.transport.closed_connections).toBe(evidence.cleanup.transport.accepted_connections);
+   expect(evidence.tools).toHaveLength(9);expect(evidence.checks.reads).toEqual(['check_run','check_snapshot','check_post_revision','check_receipt','check_artifact','required_checks']);
+  },80000);
+ });

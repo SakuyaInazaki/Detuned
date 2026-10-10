@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test:e2e",
+    "scripts/integrations/web/author.spec.ts",
+    "scripts/integrations/web/independent.spec.ts",
+    "scripts/integrations/web/m5-c.spec.ts",
+    "scripts/integrations/web/m5-d2.spec.ts",
+    "scripts/integrations/web/m5-e1.spec.ts",
+    "scripts/integrations/web/m5-e2.spec.ts",
+    "scripts/integrations/web/m5-tls.spec.ts",
+    "--workers=1"
+  ],
+  "exit_code": 0,
+  "seconds": 71.071,
+  "runner_pid": 75941,
+  "stdout": "old-browser-first.stdout.txt",
+  "stderr": "old-browser-first.stderr.txt",
+  "source_freeze": "independent-source-freeze-v5.json",
+  "concurrency": "global one; workspace1/test worker1/file serial; original timeouts",
+  "env_overrides": {
+    "npm_config_userconfig": "/dev/null",
+    "npm_config_globalconfig": "/dev/null",
+    "CI": "1",
+    "DETUNED_WEB_EVIDENCE_DIR": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-4-c1/verification/old-browser-first"
+  }
+}

@@ -1,0 +1,40 @@
+--- docs/reviews/2026-10-03-m2-1/verification/check-c-completion-v2.mjs
++++ docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs
+@@ -4,19 +4,23 @@
+ import { createRequire } from 'node:module';
+ import { getEventListeners } from 'node:events';
+ import { performance } from 'node:perf_hooks';
+-import { buildApp } from '../../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase } from '../../../../packages/storage-sqlite/dist/index.js';
+-import { DetunedClient, UserAbortError, TimeoutError } from '../../../../packages/client/dist/index.js';
+-import { DetunedError, generateOpenApiSpec, CreateSpaceRequestSchema } from '../../../../packages/protocol/dist/index.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { DetunedClient, UserAbortError, TimeoutError } from '../../../../../packages/client/dist/index.js';
++import { DetunedError, generateOpenApiSpec, CreateSpaceRequestSchema } from '../../../../../packages/protocol/dist/index.js';
+ 
+ const require = createRequire(import.meta.url);
+ const Database = require('better-sqlite3');
+-const serverRequire = createRequire(new URL('../../../../packages/server/dist/app.js', import.meta.url));
++const serverRequire = createRequire(new URL('../../../../../packages/server/dist/app.js', import.meta.url));
+ const fastifyRequire = createRequire(serverRequire.resolve('fastify'));
+ const compilerRequire = createRequire(fastifyRequire.resolve('@fastify/ajv-compiler'));
+ const Ajv = compilerRequire('ajv');
+ const original = { fetch: globalThis.fetch, setTimeout: globalThis.setTimeout,
+   clearTimeout: globalThis.clearTimeout, random: Math.random };
++const apiV1Operations = spec => Object.entries(spec.paths).flatMap(([path, methods]) =>
++  Object.entries(methods).filter(([method, op]) => ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'].includes(method) &&
++    (op.servers ?? methods.servers ?? spec.servers ?? []).some(server => new URL(server.url, 'http://contract.invalid').pathname.replace(/\/$/, '') === '/api/v1'))
++    .map(([method, op]) => ({ path, method, op })));
+ const probes = [];
+ const env = data => ({ api_version: '1', request_id: 'r21-controlled', data });
+ const busy = { api_version: '1', request_id: 'r21-controlled',
+@@ -113,7 +117,7 @@
+       cases.push({ name, openapi_accepts: specValid, protocol_accepts: protocolValid,
+         http_status: r.statusCode, passes: specValid === protocolValid && protocolValid === httpValid });
+     }
+-    const operations = Object.entries(spec.paths).flatMap(([path, ms]) => Object.entries(ms).map(([method, op]) => ({ path, method, op })));
++    const operations = apiV1Operations(spec);
+     const bodyOps = operations.filter(o => o.op.requestBody);
+     const placeholderBodies = bodyOps.filter(o => JSON.stringify(o.op.requestBody.content['application/json']?.schema) === '{"type":"object"}');
+     const actual = routes.filter(r => r.path.startsWith('/api/v1/') && r.method !== 'HEAD').map(r => ({ method: r.method.toLowerCase(), path: r.path.replace(/^\/api\/v1/, '').replace(/:([^/]+)/g, '{$1}'), schema: r.schema }));

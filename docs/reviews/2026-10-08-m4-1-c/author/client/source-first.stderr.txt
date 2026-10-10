@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m4-admin-client.test.ts > M4.1-C existing administration shared client > persistent redaction uses one null-target tuple and real server payload409, identity and cancellation guards
+TypeError: Cannot read properties of undefined (reading 'initial_post')
+ ❯ tests/integration/m4-admin-client.test.ts:77:70
+     75|       }));
+     76|       const c = client({ token, requestKeyStore: { async getOrCreate(s…
+     77|       const body = { target_type: 'post' as const, target_id: thread.i…
+       |                                                                      ^
+     78|       const result = await c.redact(space, body, undefined, opts);
+     79|       expect(await c.redact(space, body, undefined, opts)).toEqual(res…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

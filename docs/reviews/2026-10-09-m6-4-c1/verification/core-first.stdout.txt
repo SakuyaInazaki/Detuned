@@ -1,0 +1,382 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m4-read-cli-independent.test.ts (4 tests) 34121ms
+   ✓ M4 independent built CLI identities and isolated list/history pages retain existing fixed reads  3132ms
+   ✓ M4 independent search legacy array and signed page cursor retain server binding and local invalid limits send no HTTP  3921ms
+   ✓ M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths  25963ms
+   ✓ M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior  1104ms
+ ✓ tests/contracts/m4-cli-boundaries-independent.test.ts (5 tests) 15154ms
+   ✓ E independent four single credential sources and anonymous/conflicting sources preserve real authorization  2117ms
+   ✓ E independent selected files fail safely without fallback or any HTTP  1198ms
+   ✓ E independent diagnostic argv consumption and genuine help/version emit once without HTTP  1543ms
+   ✓ E independent action parse/protocol/transport errors never disclose raw local markers  9886ms
+   ✓ E independent real credential success preserves exactly one stdout token and ordinary data output  409ms
+ ✓ tests/contracts/m4-read-cli-contract.test.ts (4 tests) 11968ms
+   ✓ RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP  1508ms
+   ✓ RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request  1452ms
+   ✓ RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits  9006ms
+ ✓ tests/integration/m4-artifact-client-cli-independent.test.ts (5 tests) 8320ms
+   ✓ AB C01 ordinary identity binary and empty built CLI transfer agrees with independent HTTP/hash and private files  1429ms
+   ✓ AB C02 fresh CLI processes recover persistent intent across token rotation while actor/space keys remain independent  2168ms
+   ✓ AB C03 file targets and concurrent CLI publishers preserve winner; invalid inputs do not reach HTTP  1923ms
+   ✓ AB C04 controlled content transport ignores content_url and never publishes hash-mismatch or truncated bytes  1157ms
+   ✓ AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes  1644ms
+ ✓ tests/contracts/m3-request-key-cli.test.ts (5 tests) 7774ms
+   ✓ M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes  1150ms
+   ✓ M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output  3019ms
+   ✓ M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests  2637ms
+   ✓ M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created  770ms
+ ✓ tests/integration/m4-admin-cli-independent.test.ts (4 tests) 7501ms
+   ✓ AC C01 real new CLI stdin management lifecycle creates scoped nonadmin credentials and changes actual write authority  1595ms
+   ✓ AC C02 ordinary seven management operations cannot mutate nonempty state; space owner can manage members and redact but cannot mint credentials  2270ms
+   ✓ AC C03 real CLI persistent post/artifact redaction recovers records, conflicts on changed body and rechecks current owner permission  1950ms
+   ✓ AC C04 real upstream commit followed by proxy response loss never retries actor/credential and full retryable errors remain single attempt  1686ms
+ ✓ tests/integration/m3-upgrade-independent.test.ts (4 tests) 7086ms
+   ✓ M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip  2018ms
+   ✓ M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime  1056ms
+   ✓ M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes  1789ms
+   ✓ M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets  2222ms
+ ✓ tests/integration/m3-shutdown-independent.test.ts (5 tests) 6808ms
+   ✓ M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release  471ms
+   ✓ M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles  629ms
+   ✓ M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown  924ms
+   ✓ M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan  1914ms
+   ✓ M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors  2870ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (9 tests) 6689ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V5 updates and frozen V1/V2/V3/V4 remain unchanged  570ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1082ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  362ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V4' profile in sync check and successfully repairs it via generate-schema (AB03)  589ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V5' profile in sync check and successfully repairs it via generate-schema (AB03)  605ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V3' profile in sync check and successfully repairs it via generate-schema (AB03)  596ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  589ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  607ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1664ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 6364ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  730ms
+ ✓ tests/integration/m3-import-independent.test.ts (4 tests) 7065ms
+   ✓ B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing  966ms
+   ✓ B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target  2211ms
+   ✓ B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes  1283ms
+   ✓ B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target  2604ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (26 tests) 6118ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3418ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1467ms
+ ✓ tests/integration/m3-backup-recovery-independent.test.ts (4 tests) 7098ms
+   ✓ M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch  2454ms
+   ✓ M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup  983ms
+   ✓ M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets  2396ms
+   ✓ M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes  1264ms
+stdout | tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+B1 bounded material samples {"rows":640,"bodyBytes":41943040,"wireBytes":42399846,"receiverMaxHeap":35139688,"receiverSamples":26,"serverMaxHeap":41787768,"serverSamples":1,"serverHeapBefore":33362648}
+
+ ✓ tests/integration/m3-export-independent.test.ts (4 tests) 4988ms
+   ✓ B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records  919ms
+   ✓ B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end  859ms
+   ✓ B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial  570ms
+   ✓ B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink  2640ms
+ ✓ tests/integration/m3-backup-recovery.test.ts (11 tests) 4656ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  399ms
+   ✓ M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup  2088ms
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  1038ms
+   ✓ M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail  334ms
+ ✓ tests/integration/m3-request-key-recovery.test.ts (6 tests) 4731ms
+   ✓ M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes  923ms
+   ✓ M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets  713ms
+   ✓ M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material  487ms
+   ✓ M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay  700ms
+   ✓ M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST  1644ms
+ ✓ tests/contracts/m4-write-consume-cli.test.ts (4 tests) 4336ms
+   ✓ WD B02: space/thread writes preserve body/key/data and existing group reads  1620ms
+   ✓ WD B03: sessions are distinct same-actor records and delivered consumer termination keeps forum data  1155ms
+   ✓ WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP  1560ms
+ ✓ tests/integration/m3-resource-limits-independent.test.ts (4 tests) 3867ms
+   ✓ M3.4-A2 independent natural bounded research fills real main database, rolls back failed post/event/idempotency and keeps reads usable  454ms
+   ✓ M3.4-A2 independent real uploads race global bytes and object quotas, replay and restarted service preserve registered usage  1455ms
+   ✓ M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation  849ms
+   ✓ M3.4-A2 independent published artifact real allocation FULL cleans this call files and CLI invalid resource config is rejected before mkdir  1108ms
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session
+Native legal control: HTTP cap=1 me=1 session=1 post=1 ack=0; SQLite sessions=1 posts=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested shape before business HTTP with actual upstream/DB evidence
+Native rejected Me nested shape: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested extra field before business HTTP with actual upstream/DB evidence
+Native rejected Me nested extra field: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence
+Native rejected Me created_at invalid calendar date: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence
+Native rejected Me disabled_at invalid date-time: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence
+Native rejected Session wrong field type: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence
+Native rejected Session extra field: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence
+Native rejected Session invalid calendar date: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence
+Native rejected Session metadata wrong shape: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+ ✓ tests/contracts/m4-runtime-binding-native.test.ts (9 tests) 3805ms
+   ✓ M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session  374ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Me nested shape before business HTTP with actual upstream/DB evidence  308ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Me nested extra field before business HTTP with actual upstream/DB evidence  307ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence  555ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence  554ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence  557ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence  554ms
+ ✓ tests/integration/m3-write-limits-independent.test.ts (4 tests) 3634ms
+   ✓ M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps  537ms
+   ✓ M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent  489ms
+   ✓ M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records  491ms
+   ✓ M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget  2115ms
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native identity uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"identity","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"exit"},{"type":"session_start","reason":"new","generation":1,"phase":"enter"},{"type":"session_start","reason":"new","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"ninth_review":{"actual_session":true,"assignment_actor_b":true,"diagnostic_unchanged":true,"session_delta":1,"ack_delta":0},"veto_preserves_runtime":true,"new_generation_b":true,"ordinary_actor_denied_space":"NOT_FOUND","passed":true}
+
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native new uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"new","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"exit"},{"type":"session_start","reason":"new","generation":1,"phase":"enter"},{"type":"session_start","reason":"new","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native switch uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"switch","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"resume","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"resume","generation":1,"phase":"exit"},{"type":"session_start","reason":"resume","generation":1,"phase":"enter"},{"type":"session_start","reason":"resume","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native fork uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"fork","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"fork","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"fork","generation":1,"phase":"exit"},{"type":"session_start","reason":"fork","generation":1,"phase":"enter"},{"type":"session_start","reason":"fork","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native reload uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"reload","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"reload","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"reload","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"closed_extension_no_http":true,"replacement_uses_b":true,"reload_reactivated_without_start":true,"passed":true}
+
+stdout | tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native shutdown uses isolated ordinary credentials and awaited lifecycle cleanup
+{"mode":"shutdown","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"quit","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"quit","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_review","forum_search","forum_subscribe"],"activation_and_start_http":0,"invalid_review_before_prepare_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"closed_extension_no_http":true,"passed":true}
+
+ ✓ tests/contracts/m4-pi-native-lifecycle.test.ts (6 tests) 3879ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native identity uses isolated ordinary credentials and awaited lifecycle cleanup  824ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native new uses isolated ordinary credentials and awaited lifecycle cleanup  583ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native switch uses isolated ordinary credentials and awaited lifecycle cleanup  594ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native fork uses isolated ordinary credentials and awaited lifecycle cleanup  600ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native reload uses isolated ordinary credentials and awaited lifecycle cleanup  670ms
+   ✓ M4.4-B independent real Pi 0.87.1 SDK lifecycle > native shutdown uses isolated ordinary credentials and awaited lifecycle cleanup  608ms
+ ✓ tests/contracts/m3-backup-cli.test.ts (5 tests) 3587ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  1019ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config  971ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses  596ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  670ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  330ms
+ ✓ tests/contracts/m4-admin-cli.test.ts (4 tests) 3292ms
+   ✓ AC B02: actual CLI actor credential membership flow returns data once and identity/revoke/deactivate take effect  1224ms
+   ✓ AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP  862ms
+   ✓ AC B04: redact strips input key, preserves explicit priority and persistent intent conflicts without storing body  1205ms
+ ✓ tests/contracts/m4-mcp-lifecycle-independent.test.ts (6 tests) 3410ms
+   ✓ MCP independent official stdio discovery is nine tools and zero HTTP/session, native processes isolate real identities  892ms
+   ✓ MCP independent small result/page and large text summary retain complete structured research data  312ms
+   ✓ MCP independent safe errors and conflicting/bad startup credentials send no unauthorized HTTP or raw stderr  760ms
+   ✓ MCP independent SDK cancellation aborts an entered native HTTP poll without ACK and process remains usable  315ms
+   ✓ MCP independent explicit stdin EOF and repeated SIGTERM cancel active HTTP before real exit zero  566ms
+   ✓ MCP independent new stdio process replays the same unacknowledged batch without assuming permanent cursor bytes  564ms
+ ✓ tests/contracts/m4-artifact-cli.test.ts (4 tests) 3385ms
+   ✓ AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent  1640ms
+   ✓ AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output  1555ms
+stdout | tests/contracts/m6-review-tools-independent.test.ts > DT03 observable credential changes reject before Session POST; post-inflight change and cancellation never fake binding or retry
+{"checkpoint":"DT03-assignment","session_post_delta":0,"error_name":"RequestKeyError","error_code":"IDENTITY_CHANGED","returned_session":false}
+
+stdout | tests/contracts/m6-review-tools-independent.test.ts > DT03 observable credential changes reject before Session POST; post-inflight change and cancellation never fake binding or retry
+{"checkpoint":"DT03-session","session_post_delta":1,"error_name":"RequestKeyError","error_code":"IDENTITY_CHANGED","returned_session":false}
+
+stdout | tests/contracts/m6-review-tools-independent.test.ts > DT03 observable credential changes reject before Session POST; post-inflight change and cancellation never fake binding or retry
+{"checkpoint":"DT03-abort","session_post_delta":0,"error_name":"UserAbortError","returned_session":false}
+
+stdout | tests/contracts/m6-review-tools-independent.test.ts > DT04 current ACL precedes history and new sessions cannot fill slots; readonly/admin/nonreviewers cannot see others sealed
+{"checkpoint":"DT04-second-session-same-actor","error_name":"DetunedError","error_code":"VALIDATION_ERROR","status_code":400}
+
+ ✓ tests/contracts/m6-review-tools-independent.test.ts (6 tests) 2846ms
+   ✓ DT01 nine complete flat/wrapped schemas and canonical client/MCP/Pi rejection precede all diagnostic HTTP  617ms
+   ✓ DT02 actual stdio two-actor review pipeline keeps diagnostic binding separate, seals independently and replays immutable outcomes  928ms
+   ✓ DT05 actual CLI processes recover private upload keys and SHA download without overwriting owned files or leaking errors  1151ms
+ ✓ tests/integration/m4-write-consume-independent.test.ts (4 tests) 2896ms
+   ✓ WD C01 actual pending and acknowledged consumers terminate atomically; peer research persists, old cursors cannot revive and same key restarts at explicit highwater  311ms
+   ✓ WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt  2006ms
+ ✓ tests/contracts/m4-mcp-binding-independent.test.ts (6 tests) 2586ms
+   ✓ MCP binding independent discovery and full nested/allOf rejection precede every HTTP/session  331ms
+   ✓ MCP binding independent concurrent real posts share one preflight/session, spaces and actor processes stay isolated  577ms
+   ✓ MCP binding independent actual committed session response loss is one attempt and terminal until reconnect  551ms
+   ✓ MCP binding independent EOF and repeated signal during cap/session initialization settle native HTTP without late business or ACK  531ms
+ ✓ tests/contracts/m4-mcp-wrapped-independent.test.ts (5 tests) 2581ms
+   ✓ wrapped independent default/explicit flat advertises the nine complete schemas; wrapped nests every canonical keyword exactly with no HTTP  780ms
+   ✓ wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback  505ms
+   ✓ wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post  315ms
+   ✓ wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK  307ms
+   ✓ wrapped independent invalid startup modes exit safely without environment/token output or HTTP  673ms
+ ✓ tests/integration/m3-operations-independent.test.ts (5 tests) 2479ms
+   ✓ M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates  462ms
+   ✓ M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log  464ms
+   ✓ M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes  459ms
+   ✓ M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint  470ms
+   ✓ M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners  623ms
+ ✓ tests/contracts/m4-cli-errors.test.ts (4 tests) 2173ms
+   ✓ ECLI03 real parser outputs one safe error, preserves native help/version, and respects value/terminator JSON boundaries  1162ms
+   ✓ ECLI04 legacy write JSON and unknown operation errors are safe and retain exit2  1008ms
+ ✓ tests/integration/m3-event-core.test.ts (11 tests) 2052ms
+   ✓ M3.1 event core correctness > E04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes  1492ms
+ ✓ tests/integration/m3-event-recovery.test.ts (2 tests) 1935ms
+   ✓ T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected  1459ms
+   ✓ T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans  475ms
+stdout | tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+{"fifo_ready":true,"fifo_operation_done":true,"fifo_operation_ms":1.872082999999975,"fifo_watchdog_killed":false}
+
+ ✓ tests/integration/m3-logical-import.test.ts (12 tests) 1526ms
+   ✓ rejects a FIFO with no writer in a watchdog-bounded child without publishing  1247ms
+ ✓ tests/contracts/m6-review-cli.test.ts (3 tests) 1548ms
+   ✓ review CLI reads bare DTO and explicit finalize strips JSON key while preserving payload/key  711ms
+   ✓ review CLI local input/unsupported flags are safe zero HTTP without leaking raw contents  507ms
+   ✓ review artifact reuses same-FD bounded file safety before upload HTTP and does not add binary stdout  329ms
+ ✓ tests/integration/m2-artifacts-cli.test.ts (4 tests) 1490ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen  839ms
+ ✓ tests/contracts/m3-offline-upgrade-contract.test.ts (3 tests) 1321ms
+   ✓ UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator  820ms
+   ✓ UP B03: built local migrate maps offline/options failures without network or tokenfile reads  497ms
+stdout | tests/contracts/m5-web-auth-independent.test.ts > M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes
+Independent root auth carriers: {"post_query":400,"get_query":400,"delete_nonempty_body":400,"cookie_after_bad_delete":200}
+
+ ✓ tests/contracts/m5-web-auth-independent.test.ts (7 tests) 1336ms
+   ✓ M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen  938ms
+ ✓ tests/contracts/m3-logical-import-contract.test.ts (6 tests) 1260ms
+   ✓ M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink  1225ms
+ ✓ tests/integration/m3-milestone-gate.test.ts (2 tests) 972ms
+   ✓ T02 independent ten real HTTP requests reach one server barrier then replay one intent with unique post/event/idempotency and conflict409  466ms
+   ✓ T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs  506ms
+ ✓ tests/contracts/cli-tls.test.ts (3 tests) 1243ms
+   ✓ TLS CLI01: paired flags and unreadable PEM files fail safely before creating the data directory  512ms
+   ✓ TLS CLI03: API-only TLS advertises HTTPS, serves trusted health and closes on SIGTERM  507ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1072ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  610ms
+ ✓ tests/contracts/m3-resource-limits-contract.test.ts (4 tests) 933ms
+   ✓ RS B04: built CLI invalid resource flags precede mkdir and existing overquota rejects before listen  840ms
+ ✓ tests/contracts/m3-shutdown-contract.test.ts (4 tests) 930ms
+   ✓ SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly  833ms
+ ✓ tests/integration/m6-review-finalization-independent.test.ts (6 tests) 960ms
+   ✓ DF04 two real processes allow only atomic legal finalization versus revision or objection serialization  387ms
+stdout | tests/contracts/m6-review-http-independent.test.ts > H01 real HTTP/shared-client twelve entrances preserve independent sessions, sealed rows, reveal and immutable exact replay
+{"checkpoint":"H01-json-mime-same-key-replay","status":201,"exact_metadata":true,"db_unchanged":true,"staging_and_objects_unchanged":true}
+
+stdout | tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+{"checkpoint":"H02-cookie-origin-rejection","status":403,"code":"FORBIDDEN","cache_control":"private, no-store"}
+
+stdout | tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+{"checkpoint":"H02-cookie-csrf-rejection","status":403,"cache_control":"private, no-store"}
+
+ ✓ tests/contracts/m6-review-http-independent.test.ts (6 tests) 807ms
+ ✓ tests/integration/m6-review-submissions-independent.test.ts (10 tests) 1032ms
+   ✓ SD04 two genuine processes sharing a key commit one initial submission, and two distinct reviewers race one atomic reveal  371ms
+ ✓ tests/contracts/m3-events-contract.test.ts (7 tests) 847ms
+ ✓ tests/contracts/m2-search-contracts.test.ts (5 tests) 710ms
+   ✓ M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta  481ms
+ ✓ tests/contracts/m6-review-catalog-independent.test.ts (4 tests) 606ms
+   ✓ DC01 real multi-round seek and whole UTF8 envelope budget retain all history across byte trimming, tools and CLI  381ms
+ ✓ tests/integration/m3-offline-upgrade.test.ts (6 tests) 638ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 662ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  436ms
+ ✓ tests/contracts/m3-write-limits-contract.test.ts (5 tests) 650ms
+   ✓ WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input  508ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 600ms
+ ✓ tests/integration/m2-context-session-chain.test.ts (1 test) 584ms
+   ✓ C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision  584ms
+ ✓ tests/integration/m6-schema5-maintenance-independent.test.ts (2 tests) 410ms
+ ✓ tests/contracts/m3-space-export-contract.test.ts (6 tests) 534ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject  486ms
+ ✓ tests/integration/m2-artifacts-http.test.ts (8 tests) 518ms
+ ✓ tests/integration/m6-review-requests-independent.test.ts (7 tests) 458ms
+   ✓ DI04 actual two-process SQLite races share one key result and reserve distinct target rounds without duplicate side effects  307ms
+ ✓ tests/integration/historical-http-replay.test.ts (7 tests) 376ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 538ms
+ ✓ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests) 469ms
+   ✓ M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer  306ms
+ ✓ tests/integration/m6-schema5-maintenance.test.ts (3 tests) 338ms
+ ✓ tests/contracts/m2-post-revision-read-contracts.test.ts (7 tests) 519ms
+ ✓ tests/integration/m6-schema4-maintenance.test.ts (3 tests) 371ms
+ ✓ tests/integration/m6-review-finalization.test.ts (6 tests) 352ms
+ ✓ tests/contracts/m2-thread-posts-read-contracts.test.ts (8 tests) 350ms
+ ✓ tests/contracts/m2-context-contracts.test.ts (4 tests) 345ms
+ ✓ tests/integration/m6-schema4-maintenance-independent.test.ts (2 tests) 274ms
+ ✓ tests/integration/m3-resource-limits.test.ts (10 tests) 218ms
+ ✓ tests/integration/m6-review-submissions.test.ts (7 tests) 320ms
+ ✓ tests/integration/m6-review-requests.test.ts (7 tests) 303ms
+ ✓ tests/contracts/server-tls.test.ts (4 tests) 293ms
+ ✓ tests/integration/m6-review-private-artifacts.test.ts (6 tests) 280ms
+ ✓ tests/contracts/m6-review-http.test.ts (3 tests) 285ms
+ ✓ tests/contracts/m2-focused-context-contracts.test.ts (6 tests) 267ms
+ ✓ tests/integration/m6-review-snapshot.test.ts (5 tests) 265ms
+ ✓ tests/contracts/m5-web-auth-server.test.ts (6 tests) 259ms
+ ✓ tests/contracts/m2-space-read-contracts.test.ts (5 tests) 251ms
+ ✓ tests/contracts/m5-post-catalogs.test.ts (5 tests) 244ms
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ ✓ tests/integration/m4-consumer-lifecycle.test.ts (4 tests) 217ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 225ms
+ ✓ tests/integration/m6-schema3-maintenance.test.ts (5 tests) 190ms
+ ✓ tests/contracts/m5-web-auth-client.test.ts (4 tests) 207ms
+ ✓ tests/contracts/m5-thread-post-order.test.ts (4 tests) 211ms
+ ✓ tests/integration/m6-review-snapshot-independent.test.ts (6 tests) 163ms
+ ✓ tests/integration/m3-request-key-store.test.ts (8 tests) 159ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 198ms
+ ✓ tests/integration/m6-review-status.test.ts (3 tests) 179ms
+ ✓ tests/contracts/m3-operations-contract.test.ts (4 tests) 183ms
+ ✓ tests/contracts/m4-token-source.test.ts (7 tests) 179ms
+ ✓ tests/integration/m4-artifact-client.test.ts (8 tests) 173ms
+ ✓ tests/integration/m6-review-material-lifecycle.test.ts (3 tests) 167ms
+ ✓ tests/contracts/m5-web-static.test.ts (5 tests) 166ms
+ ✓ tests/integration/m3-space-export.test.ts (11 tests) 141ms
+ ✓ tests/integration/m2-thread-posts-read.test.ts (10 tests) 163ms
+ ✓ tests/integration/m2-artifacts-filesystem.test.ts (6 tests) 140ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 139ms
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 94ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 102ms
+ ✓ tests/contracts/m5-post-order-index.test.ts (4 tests) 106ms
+ ✓ tests/integration/m2-post-revision-read.test.ts (10 tests) 102ms
+ ✓ tests/integration/m2-context-focus.test.ts (9 tests) 96ms
+ ✓ tests/contracts/m4-node-credentials.test.ts (3 tests) 114ms
+ ✓ tests/integration/m4-admin-client.test.ts (5 tests) 105ms
+ ✓ tests/contracts/m6-review-catalog.test.ts (3 tests) 104ms
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-context.test.ts (7 tests) 86ms
+ ✓ tests/integration/m3-shutdown-resources.test.ts (6 tests) 52ms
+ ✓ tests/integration/m3-operations.test.ts (6 tests) 64ms
+ ✓ tests/contracts/m2-typed-write-contracts.test.ts (5 tests) 74ms
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 60ms
+ ✓ tests/contracts/m6-review-canonicalization.test.ts (7 tests) 64ms
+ ✓ tests/contracts/m5-post-catalogs-client.test.ts (4 tests) 54ms
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 32ms
+ ✓ tests/integration/m3-write-rate-limit.test.ts (9 tests) 30ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 30ms
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 30ms
+ ✓ tests/contracts/m6-review-tools.test.ts (4 tests) 21ms
+ ✓ tests/contracts/m4-mcp-input-mode.test.ts (4 tests) 19ms
+ ✓ tests/contracts/m4-mcp-runtime.test.ts (6 tests) 16ms
+ ✓ tests/contracts/m6-review-client.test.ts (4 tests) 15ms
+ ✓ tests/core/m5-web-session.test.ts (6 tests) 14ms
+ ✓ tests/contracts/m4-mcp-session.test.ts (5 tests) 14ms
+ ✓ tests/contracts/m4-mcp-schema.test.ts (4 tests) 11ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 9ms
+ ✓ tests/integration/m4-session-subscription-client.test.ts (2 tests) 7ms
+ ✓ tests/contracts/m4-pi-runtime.test.ts (5 tests) 7ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 5ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 4ms
+ ✓ tests/contracts/m4-runtime-response-validation.test.ts (3 tests) 3ms
+ ✓ tests/contracts/m6-review-web-input.test.ts (3 tests) 2ms
+
+ Test Files  131 passed (131)
+      Tests  826 passed (826)
+   Start at  19:44:06
+   Duration  266.18s (transform 1.24s, setup 0ms, collect 14.57s, tests 234.49s, environment 7ms, prepare 3.15s)
+

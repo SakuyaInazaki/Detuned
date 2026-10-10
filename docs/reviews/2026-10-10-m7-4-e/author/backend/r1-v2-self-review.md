@@ -1,0 +1,7 @@
+# R1 v2 narrow review repair
+
+Preserved rejected fb69 source/diff and original R1 freeze. Actual onOwnership callback promises now remain in observerTasks until those actual promises settle; interruption/deadline only ends wrapping await, never marks callback settled. Cleanup disables further worker message registration, sets terminal/finished, settles initializer/registration/watch producers, then actual callbacks. Removed initializer error-path early fs.rm because it bypassed the new actual-settlement root gate.
+
+Final discovery keeps its actual promise and independent settled/completed flags. All cleanup attempt failures (including timeout/unknown) permanently set coverage false. Root removal additionally requires initializer settled, no actual registration tasks, watcher settled, no actual observer callbacks, and final discovery both settled and successfully completed. A timed-out operation can continue, but retained root/ledger cannot be deleted or reported completely covered.
+
+Candidate absence now uses independent attempt per known PID, then aggregates positively absent vs failures; the first unknown does not skip later candidates. Even at exhausted absolute deadline, every candidate gets its bounded presence check before any optional wait, without new signal authority. Added only fixed aggregate counts and task-settlement booleans. Budgets/proof/factory/policy/native-worker control remain unchanged. No runtime by A.

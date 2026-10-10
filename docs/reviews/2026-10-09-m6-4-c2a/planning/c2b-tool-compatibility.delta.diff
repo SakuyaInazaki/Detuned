@@ -1,0 +1,10 @@
+--- docs/reviews/2026-10-09-m6-4-c2a/planning/c2b-before-tool-compatibility/m6-4-c2b-task.md
++++ docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md
+@@ -68,3 +68,7 @@
+ owner候选见`m6-4-c2b-owner-candidates.json`，实际路径已静态核对；new文件不存在且不创建占位。候选不是dispatch许可。主代理选择边界，作者仅确定owner路径实施；D唯一执行；交叉审查和source freeze之后才放运行窗口。
+ 
+ schema.sql/schema.ts、DDL/SQL迁移/profile历史fixtures、bootstrap/offline-upgrade/backup/restore/export/import、依赖/lock、旧封存review包、全部Web/reader/browser路径、M7、新host/模型/VM/全局配置均默认保护。本包无public export family扩展，无部署/发布/推送。C2A先封存，新fresh后再正式dispatch；不得抢D当前窗口。
++
++## 根确认的工具 schema 兼容决策
++
++C2B forum_search 沿现 forum_review 采用 Type.Union 并保留 TypeBox Kind/anyOf，再添加根 `type:'object'`，Static 类型来自原 Union；不以裸顶层 Union 替代已发布对象根。沿现 validateToolParams 的 schema Value.Check 与 canonical 约束双层校验。old posts schema、normalization、query hash 和 client.search 返回类型保持。MCP/Pi wrapper 无需源码改动。新增工具测试验证 flat 与 wrapped 的整体 canonical schema、source/filter 分支拒绝，以及 Pi 采用同一个 canonical schema；静态/受控契约结果不称真实宿主认证。此决策不扩大现 owner JSON。

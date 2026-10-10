@@ -1,0 +1,45 @@
+$ vitest run --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-schema4-maintenance-independent.test.ts > MD01 genuine original schema3 history upgrades only a new stage, backfills assignment IDs/count zero, and exactly replays original create/cancel bytes without count
+AssertionError: expected { kind: 'current_initialized', …(1) } to match object { kind: 'current_initialized', …(1) }
+
+- Expected
++ Received
+
+  {
+    "kind": "current_initialized",
+-   "maxVersion": 4,
++   "maxVersion": 5,
+  }
+
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:68:31
+     66|  expect(await digest(f.file)).toBe(sourceHash);
+     67|  const db=new Database(path.join(destination,'detuned.sqlite'));cleanu…
+     68|  expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized…
+       |                               ^
+     69|  const s=services(db,f.history),sid=f.history.recipe.space_id;
+     70|  for(const [key,original] of Object.entries(f.history.oracle)){
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m6-schema4-maintenance-independent.test.ts > MD02 schema4 physical backup and restore preserve sealed/revealed submissions, sessions, immutable versions and unused private blobs, with fresh identity isolation
+AssertionError: expected 5 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 5
+
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:103:126
+    101|  db.pragma('wal_checkpoint(TRUNCATE)');db.close();
+    102|  const backup=path.join(f.root,'backup4'),restored=path.join(f.root,'r…
+    103|  const receipt=await backupOffline({dataDir:directory,outputDir:backup…
+       |                                                                                                                              ^
+    104|  const backupHash=await digest(path.join(backup,'detuned.sqlite'));awa…
+    105|  const recovered=new Database(path.join(restored,'detuned.sqlite'));cl…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

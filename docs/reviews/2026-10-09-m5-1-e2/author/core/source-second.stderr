@@ -1,0 +1,18 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-thread-post-order.test.ts > M5 E2 recorded creation time directory > O04 canonical tool/OpenAPI advertise sort and client callTool forwards unchanged
+TypeError: Cannot read properties of undefined (reading '$id')
+ ❯ Visit node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:392:42
+ ❯ Module.Check node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:469:67
+ ❯ validator tests/contracts/m5-thread-post-order.test.ts:74:49
+     72|   it('O04 canonical tool/OpenAPI advertise sort and client callTool fo…
+     73|     const read = DETUNED_TOOLS.find(t => t.name === 'forum_read')!;
+     74|     const validator = (value: unknown) => Value.Check(read.inputSchema…
+       |                                                 ^
+     75|     expect(validator({ kind: 'thread_posts', space_id: sid, id: tid, s…
+     76|     expect(validator({ kind: 'post', space_id: sid, id: ids[0], sort: …
+ ❯ tests/contracts/m5-thread-post-order.test.ts:75:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

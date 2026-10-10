@@ -1,0 +1,136 @@
+{
+  "status": "failed",
+  "fixed_version": "0.144.6",
+  "binary_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff",
+  "tools": [],
+  "checks": {},
+  "cleanup": {
+    "flights_settled": true,
+    "children_closed": true,
+    "forbidden_closed": true,
+    "app_closed": true,
+    "db_closed": true,
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "mcp_candidate_coverage_verified": true,
+    "candidates_positively_absent": 2,
+    "candidate_absence_failures": 0,
+    "mcp_candidates_absent": true,
+    "confirmed_mcp_groups_absent": true,
+    "private_directory_removed": true
+  },
+  "diagnostics": {
+    "stages": [
+      "setup-begin",
+      "setup-done",
+      "guard-begin",
+      "guard-close",
+      "guard-pass",
+      "native-spawn-begin",
+      "native-actual-spawn",
+      "initialize-response",
+      "initialized-sent",
+      "thread-response",
+      "catch",
+      "cleanup-begin",
+      "children-cleanup-done",
+      "business-cleanup-drain-begin",
+      "business-cleanup-drain-done",
+      "socket-cleanup-close-done",
+      "app-cleanup-done",
+      "db-cleanup-done",
+      "cleanup-done"
+    ],
+    "methods": {
+      "initialize": 1,
+      "initialized": 1,
+      "thread/start": 1,
+      "mcpServerStatus/list": 1
+    },
+    "catalogue": {
+      "responses": 0,
+      "last": null
+    },
+    "startup": {
+      "count": 1,
+      "last": {
+        "status": "starting",
+        "failure_reason": "none"
+      },
+      "states": {
+        "starting": 1,
+        "ready": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "unknown": 0
+      }
+    },
+    "guard": {
+      "allowed_hits": 1,
+      "forbidden_hits": 0,
+      "actual_close": {
+        "code": 0,
+        "signal": null,
+        "expired": false,
+        "spawn_error": false
+      },
+      "allowed": "allowed",
+      "forbidden": "EPERM",
+      "sentinel": "EPERM"
+    },
+    "native": {
+      "actual_spawn": true,
+      "actual_close": {
+        "code": null,
+        "signal": "SIGTERM",
+        "spawn_error": false
+      }
+    },
+    "error": {
+      "name": "Error",
+      "code": "CANCELLED"
+    },
+    "active_count": 0,
+    "open_connections": 0,
+    "supervision": {
+      "work_budget_ms": 75000,
+      "total_budget_ms": 90000,
+      "initializer_settled": true,
+      "registration_tasks_settled": true,
+      "mcp_watch_settled": true,
+      "observer_tasks_settled": true,
+      "final_discovery_settled": true,
+      "final_discovery_completed": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": true,
+      "group_probe": "absent",
+      "worker_registered": true,
+      "native_registered": true,
+      "mcp_candidate_received": true,
+      "mcp_candidate_count": 2,
+      "mcp_candidate_observed_count": 2,
+      "mcp_proven_count": 2,
+      "mcp_confirmed_observer_count": 1,
+      "mcp_authorized_count": 1,
+      "mcp_acknowledged_count": 1,
+      "mcp_candidate_coverage_verified": true,
+      "mcp_coverage_reason": "complete",
+      "mcp_candidate_observed": true,
+      "mcp_registered": false,
+      "mcp_acknowledged": false,
+      "mcp_same_worker_group": false,
+      "mcp_parent_verified": true,
+      "mcp_placement": "independent",
+      "confirmed_mcp_group_count": 1,
+      "mcp_group_probe": "absent",
+      "mcp_phase": "confirmed-observe",
+      "mcp_candidate_probe": "absent"
+    },
+    "supervisor_failed": true,
+    "deadline_exceeded": false,
+    "supervisor_error_name": "Error"
+  },
+  "profile_sha256": "01a1bbbd48e29418dc11137cf5b8e728d3b2490c13abdb77e82ff0377b237a68",
+  "code": "NATIVE_PROBE_FAILED"
+}

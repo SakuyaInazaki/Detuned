@@ -1,0 +1,19 @@
+{
+  "status": "SD08/09 repaired; SD10 first red confirmed; awaiting scope/event filter repair freeze",
+  "files": [
+    {
+      "path": "tests/integration/m6-review-submissions-independent.test.ts",
+      "sha256": "778cee4d7b03e1f6f4c6f789da1dd538070c8373a8d7dc111f725da6a47e0393",
+      "cases": 10
+    },
+    {
+      "path": "tests/integration/m6-schema4-maintenance-independent.test.ts",
+      "sha256": "e4fd84ada309a40f4dd3dd59a73813b96e28748dd30ea3a5678e5d530659f53b",
+      "cases": 2
+    }
+  ],
+  "unique_cases": 12,
+  "first_counterexample_snapshot": "sd08-sd09-first-source.ts",
+  "current_additions_after_first_red": "Cancellation new-write gate isolated from eligibility; immutable historical upload replay/read after revision added as positive control.",
+  "scope": "D new formal cases plus current-review probes; historical malformed visibility/pending rows are explicit synthetic fixtures"
+}

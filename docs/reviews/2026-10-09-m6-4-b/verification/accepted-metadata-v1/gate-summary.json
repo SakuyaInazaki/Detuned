@@ -1,0 +1,111 @@
+{
+  "product_version": "A2+B1",
+  "build": {
+    "receipt": "build-v2.json",
+    "exit_code": 0,
+    "seconds": 10.374,
+    "prior_build": "build-first.json",
+    "prior_seconds": 10.243,
+    "repeat_reason": "real DT03 client identity race fix, not test-only correction"
+  },
+  "typecheck": {
+    "receipt": "typecheck-first.json",
+    "exit_code": 0,
+    "seconds": 7.993
+  },
+  "lint": {
+    "receipt": "lint-first.json",
+    "exit_code": 0,
+    "seconds": 7.787
+  },
+  "core": {
+    "state": "accepted_execution_composite",
+    "exit_code": 0,
+    "unique_cases": 816,
+    "unique_files": 128,
+    "first_complete_suite": {
+      "receipt": "core-first.json",
+      "exit_code": 1,
+      "passed": 811,
+      "failed": 5,
+      "seconds": 265.298
+    },
+    "root_authorized_correction": {
+      "receipt": "core-five-corrected.json",
+      "exit_code": 0,
+      "cases": 30,
+      "files": 5,
+      "closed_first_failures": 5,
+      "added_cases": 0,
+      "added_assertions": "artifact metadata positive schema/AJV checks within original R04 case"
+    },
+    "scope": "final product A2+B1 unchanged; five test-only contract adaptations; no second whole suite",
+    "claim_limit": "816 unique composite; not a once-green complete run of all final source bytes"
+  },
+  "new_cases": {
+    "A": 4,
+    "B": 3,
+    "D": 6,
+    "total": 13,
+    "files": 3,
+    "first_affected_run": {
+      "cases": 80,
+      "passed": 78,
+      "failed": 2,
+      "receipt": "new-affected-first.json"
+    },
+    "test_only_failure_closure": {
+      "cases": 2,
+      "passed": 2,
+      "receipt": "dt04-dt05-corrected.json"
+    },
+    "final_complete_core_new13_all_passed": true
+  },
+  "native": {
+    "Pi": {
+      "version": "0.87.1",
+      "cases": 6,
+      "included_in_core": true,
+      "receipt": "new-affected-first.json",
+      "internal_loader_test_only": true
+    },
+    "dsh": {
+      "plugin_version": "0.2.1-alpha.1",
+      "vitest": "4.1.8",
+      "cases": 3,
+      "receipt": "dsh-first.json",
+      "seconds": 3.713,
+      "included_in_core": false
+    }
+  },
+  "current25": {
+    "passed": 25,
+    "seconds": 17.921,
+    "selection": "current29-final-selection.json",
+    "composition": {
+      "originals": 6,
+      "prior_adapters": 19,
+      "new_adapters_this_package": 0
+    },
+    "all_selected_source_sha_match": true
+  },
+  "source_noEmit": {
+    "new_source": "new-source-noemit-first.json",
+    "D_expectation_correction": "dt04-dt05-source-noemit.json",
+    "five_old_contract_files": "core-five-source-noemit.json",
+    "all_exit_code": 0
+  },
+  "warnings": [
+    "pnpm11.7 node_modules pnpmfiles-state warning, no implicit install",
+    "Web minified JS bundle >500KiB warning retained",
+    "dsh installed Vite tsconfig-paths deprecation warning retained"
+  ],
+  "first_failure_evidence": [
+    "dt03-first.json",
+    "new-affected-first.json",
+    "core-first.json"
+  ],
+  "full_output_audit": "output-audit.json",
+  "protection": "integrity.json",
+  "cleanup": "cleanup.json"
+}

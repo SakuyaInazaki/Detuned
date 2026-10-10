@@ -1,0 +1,11 @@
+--- tests/integration/m6-review-finalization-independent.test.ts first
++++ tests/integration/m6-review-finalization-independent.test.ts repaired
+@@ -39,7 +39,7 @@
+  const posts=new PostService(storage,ids,clock,hasher,auth,idem),spaces=new SpaceService(storage,ids,clock,auth,idem),relations=new RelationService(storage,ids,clock,auth,idem),redact=new RedactionService(storage,ids,clock,auth,idem);
+  const note=(title:string,thread=tid)=>posts.createPost(context(),sid,thread,{kind:'note',title,summary:title,body:title},'note-'+title).post;
+  const target=posts.createPost(context(),sid,tid,{kind:'claim',title:'owned target',summary:'owned target',body:'public body',structured:{statement:'synthetic claim',assumptions:['owned data'],scope:'local regression',falsification_plan:'counterexample'}},'target').post;
+- const dependency=note('owned dependency'),evidence=note('published post evidence'),challengeSource=note('challenge source');
++ const dependency=note('owned dependency'),evidence=note('published post evidence'),challengeSource=posts.createPost(context(actors.writer),sid,tid,{kind:'note',title:'challenge source',summary:'challenge source',body:'public independent challenger note'},'challenge-source').post;
+  const blobs=await ArtifactFileStore.create(directory),artifacts=new ArtifactService(storage,blobs,auth,idem,ids,clock,DEFAULT_ARTIFACT_LIMITS);
+  const staged=await blobs.stage((async function*(){yield Buffer.from('synthetic snapshot artifact');})(),1000);
+  const snapshotArtifact=await artifacts.create(context(),sid,{staged,mime:'text/plain',metadata:{}},'snapshot-artifact');

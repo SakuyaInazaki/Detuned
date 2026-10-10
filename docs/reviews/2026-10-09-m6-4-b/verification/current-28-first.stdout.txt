@@ -1,0 +1,840 @@
+{
+  "reviewed_date": "2026-10-02",
+  "runtime": "v26.3.0",
+  "probes": [
+    {
+      "id": "AD01",
+      "name": "C01 unknown write query and no-body delete inputs reject before mutation",
+      "passes": true,
+      "cases": [
+        {
+          "name": "create_space_unknown_query",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "before": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "after": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "passes": true
+        },
+        {
+          "name": "delete_membership_unknown_body",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "before": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "after": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "passes": true
+        },
+        {
+          "name": "delete_consumer_unknown_body",
+          "status": 400,
+          "code": "VALIDATION_ERROR",
+          "state_unchanged": true,
+          "before": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "after": {
+            "spaces": 1,
+            "events": 1,
+            "idempotency": 1,
+            "membership": {
+              "space_id": "spc_bc4b017c-16da-4335-bfe8-8f23317ff6f4",
+              "actor_id": "act_c55b28d8-16e8-4e7c-af77-d977d92787ef",
+              "role": "contributor",
+              "active": 1,
+              "reviewer_eligible": 1,
+              "independence_group": null
+            },
+            "consumer": {
+              "id": "csr_84482731-3d88-4ec2-9408-62b07577f897",
+              "subscription_id": "sub_b13a2a1e-913a-48e1-8cc2-0f6faac50274",
+              "consumer_key": "r21",
+              "ack_seq": 1,
+              "version": 1,
+              "active_batch_id": null,
+              "acl_epoch": 3
+            }
+          },
+          "passes": true
+        }
+      ],
+      "valid_query_status": 200
+    },
+    {
+      "id": "AD02",
+      "name": "C01 OpenAPI body constraints agree with existing protocol and HTTP",
+      "passes": true,
+      "cases": [
+        {
+          "name": "missing_required_fields",
+          "openapi_accepts": false,
+          "protocol_accepts": false,
+          "http_status": 400,
+          "passes": true
+        },
+        {
+          "name": "wrong_field_type",
+          "openapi_accepts": false,
+          "protocol_accepts": false,
+          "http_status": 400,
+          "passes": true
+        },
+        {
+          "name": "unknown_body_field",
+          "openapi_accepts": false,
+          "protocol_accepts": false,
+          "http_status": 400,
+          "passes": true
+        },
+        {
+          "name": "valid_body",
+          "openapi_accepts": true,
+          "protocol_accepts": true,
+          "http_status": 201,
+          "passes": true
+        }
+      ],
+      "media_schemas": [
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-requests/{id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-snapshots/{id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-requests/{id}/assignment",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/submissions",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/submissions",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-submissions/{id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-requests/{id}/submissions",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/finalize",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/finalize",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/cancel",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{id}/cancel",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-requests/{id}/status",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/review-requests/{id}/decision",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/health/live",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/health/ready",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/admin/diagnostics",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "patch",
+          "path": "/spaces/{space_id}",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/sessions",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/revisions/{revision}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/context",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/export",
+          "media": "application/x-ndjson",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/threads/{id}/posts",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/threads",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "patch",
+          "path": "/spaces/{space_id}/threads/{id}",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/threads/{id}/posts",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/posts/{id}/revisions/catalog",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/posts/{id}/revisions/{revision}/artifacts",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/posts/{id}/revisions/{revision}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/posts/{id}/revisions",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/posts/{id}/withdraw",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/relations",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/relations/{id}/resolve",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/relations/{id}/reopen",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/subscriptions",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/consumers/{id}/poll",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/consumers/{id}/ack",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/search",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/views/{name}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/admin/actors",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/admin/actors",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/admin/credentials",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/admin/credentials",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/memberships",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/memberships",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "patch",
+          "path": "/spaces/{space_id}/memberships/{actor_id}",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "patch",
+          "path": "/spaces/{space_id}/memberships/{actor_id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "delete",
+          "path": "/spaces/{space_id}/memberships/{actor_id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/admin/credentials/{id}/revoke",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/redactions",
+          "media": "application/json",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/redactions",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/artifacts",
+          "media": "multipart/form-data",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/artifacts",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{requestId}/artifacts",
+          "media": "multipart/form-data",
+          "direction": "request"
+        },
+        {
+          "method": "post",
+          "path": "/spaces/{space_id}/review-requests/{requestId}/artifacts",
+          "media": "application/json",
+          "status": "201",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/artifacts/{id}",
+          "media": "application/json",
+          "status": "200",
+          "direction": "response"
+        },
+        {
+          "method": "get",
+          "path": "/spaces/{space_id}/artifacts/{id}/content",
+          "media": "application/octet-stream",
+          "status": "200",
+          "direction": "response"
+        }
+      ],
+      "operation_count": 56,
+      "body_operation_count": 25,
+      "placeholder_body_count": 0,
+      "openapi_space_body_schema": {
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "slug",
+          "objective",
+          "rules"
+        ],
+        "properties": {
+          "slug": {
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9_-]+$",
+            "type": "string"
+          },
+          "objective": {
+            "minLength": 1,
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "maxLength": 500,
+              "type": "string"
+            }
+          },
+          "review_policy": {
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "enabled",
+              "required_reviewers",
+              "exclude_contributors",
+              "distinct_actors",
+              "distinct_independence_groups",
+              "seal_until_all_submitted",
+              "invalidate_on_revision",
+              "required_checks",
+              "allow_open_objections"
+            ],
+            "properties": {
+              "enabled": {
+                "default": true,
+                "type": "boolean"
+              },
+              "required_reviewers": {
+                "minimum": 1,
+                "maximum": 5,
+                "default": 2,
+                "type": "integer"
+              },
+              "exclude_contributors": {
+                "default": true,
+                "type": "boolean"
+              },
+              "distinct_actors": {
+                "default": true,
+                "type": "boolean"
+              },
+              "distinct_independence_groups": {
+                "default": false,
+                "type": "boolean"
+              },
+              "seal_until_all_submitted": {
+                "default": true,
+                "type": "boolean"
+              },
+              "invalidate_on_revision": {
+                "default": true,
+                "type": "boolean"
+              },
+              "required_checks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "allow_open_objections": {
+                "default": false,
+                "type": "boolean"
+              }
+            }
+          },
+          "check_profiles": {
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "verifier_actor_ids",
+                  "config_sha256",
+                  "description"
+                ],
+                "properties": {
+                  "verifier_actor_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "config_sha256": {
+                    "minLength": 64,
+                    "maxLength": 64,
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "actual_business_route_count": 56
+    },
+    {
+      "id": "AD03",
+      "name": "C02 unsolicited AbortError is not user cancellation and transport source is distinguishable",
+      "passes": true,
+      "external_signal_aborted": false,
+      "unsolicited": {
+        "resolved": false,
+        "error": {
+          "name": "ClientTransportError",
+          "code": "ABORT_ERROR",
+          "status": null,
+          "message": "upstream stopped",
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": false,
+          "kind": "transport",
+          "isTransportError": true
+        }
+      },
+      "transport": {
+        "resolved": false,
+        "error": {
+          "name": "ClientTransportError",
+          "code": "ECONNRESET",
+          "status": null,
+          "message": "fetch failed",
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": false,
+          "kind": "transport",
+          "isTransportError": true
+        }
+      },
+      "server": {
+        "resolved": false,
+        "error": {
+          "name": "DetunedError",
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "status": 503,
+          "message": "busy",
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": true,
+          "kind": null,
+          "isTransportError": false
+        }
+      },
+      "stable_transport_classification_distinct": true,
+      "business_error_positive": {
+        "resolved": false,
+        "error": {
+          "name": "DetunedError",
+          "code": "REVISION_CONFLICT",
+          "status": 409,
+          "message": "transaction aborted because revision changed",
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": true,
+          "kind": null,
+          "isTransportError": false
+        }
+      }
+    },
+    {
+      "id": "AD04",
+      "name": "C02 request timer/listener finish before Retry-After backoff starts",
+      "passes": true,
+      "backoff_start": {
+        "time_ms": 0,
+        "pending_timer_delays_ms": [
+          60000
+        ],
+        "external_abort_listeners": 1
+      },
+      "at_30s": {
+        "settled": false,
+        "calls": 1,
+        "completed_attempt_signal_aborted": false
+      },
+      "result": {
+        "resolved": true,
+        "value": {
+          "data": {
+            "ok": true
+          }
+        }
+      },
+      "final": {
+        "remaining_timers": 0,
+        "external_abort_listeners": 0
+      },
+      "attempt_times_ms": [
+        0,
+        60000
+      ],
+      "request_keys": [
+        "stable-r21",
+        "stable-r21"
+      ]
+    },
+    {
+      "id": "AD05",
+      "name": "C02 oversized Retry-After must stop or wait safely, never overflow into an immediate retry",
+      "passes": true,
+      "calls": 1,
+      "elapsed_ms": 0.05579199999999673,
+      "server_minimum_delay_ms": 2147484000,
+      "scheduled": [],
+      "result": {
+        "resolved": false,
+        "error": {
+          "name": "DetunedError",
+          "code": "TEMPORARILY_UNAVAILABLE",
+          "status": 503,
+          "message": "busy",
+          "isUserAbort": false,
+          "isTimeout": false,
+          "isDetunedError": true,
+          "kind": null,
+          "isTransportError": false
+        }
+      },
+      "final_external_abort_listeners": 0
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0
+  }
+}

@@ -1,0 +1,13 @@
+# Fixed schema1 historical test runtime
+
+This internal regression fixture contains a readable, unminified ESM bundle of project business sources from `fa1b35c80de02c1d601288847706495062935925` (44 TypeScript sources across protocol/core/storage-sqlite/server). It is a genuine schema1 runtime, distinct from the schema2 b8 history fixture. No current workspace business alias, prebuilt dist, database, credential, or instance secret is archived here. `manifest.json` records source, bundle, entry, generator hashes and exact tool/external dependency versions. No source maps or third-party code are vendored.
+
+Ordinary regression directly imports `runtime.mjs`; it does not use Git, regenerate, fetch network dependencies, or depend on historical temporary paths. Locked normal dependencies are required: root better-sqlite3/typebox and server fastify/cors. The latter two imports use repository-relative server dependency paths, with no machine paths or pnpm store identifiers. Native SQLite retains the repository's normal platform/runtime compatibility requirements.
+
+Exports: `SqliteStorage`, `bootstrapDatabase`, `SCHEMA_SQL`, `buildLegacyApp`. The thin entry rejects missing/short `tokenSecret`; every caller must supply a fresh private test secret (at least 32 bytes) and create DB/credentials in its own private temporary directory. Never reuse user credentials or activate the legacy development default. Source semantics and default constant remain historical facts, not recommended configuration. Close server/database and remove private material after each use.
+
+The limited proof used genuine old HTTP actor/space/thread creation, thread PATCH to version2, post revision2, then closed and reopened the same old database and read again. Schema migrations remained `[1]`, and no `thread_versions` existed. The old runtime has no attachment upload API; any attachment inventory fixture must identify its direct SQL/file preparation separately.
+
+Explicit regeneration only: `node tests/fixtures/runtime-fa1b35c/generator.mjs` requires the fixed Git object and installed esbuild 0.28.2 (resolved through normal Vitest/Vite dependencies). It reads original sources, applies only package/module-resolution aliases and this explicit-secret thin entry, and writes bundle/manifest. Ordinary tests must never invoke it. Generator and proof are not counts of product formal scenarios.
+
+Project licensing is undecided: the repository proposes Apache-2.0 but has no adopted license text. This fixture is existing project source reused internally for historical regression; it does not claim an effective Apache license or authorize redistribution. External dependency licenses remain their own; nothing is published by this task.

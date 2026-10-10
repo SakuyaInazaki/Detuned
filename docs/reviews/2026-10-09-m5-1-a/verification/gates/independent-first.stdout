@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-web-auth-independent.test.ts (7 tests | 7 failed) 239ms
+   × M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation 85ms
+     → expected 400 to be less than 300
+   × M5 independent persisted credential revoke/expiry, actor disable and membership withdrawal affect an already issued cookie immediately 33ms
+     → expected 400 to be less than 300
+   × M5 independent failed replacement and full target credential preserve old login; TTL is absolute and restart forgets cookies without losing forum identity 26ms
+     → expected 400 to be less than 300
+   × M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes 25ms
+     → expected 400 to be less than 300
+   × M5 independent client root auth uses only one login/logout attempt across actual upstream commits and observes entered-request cancellation safely 23ms
+     → expected 400 to be less than 300
+   × M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen 25ms
+     → expected 400 to be less than 300
+   × M5 independent anonymous login budget charges trusted credential/body failures once, excludes hostile origins and refills with controlled time 22ms
+     → expected 400 to be less than 300
+
+ Test Files  1 failed (1)
+      Tests  7 failed (7)
+   Start at  03:48:27
+   Duration  856ms (transform 221ms, setup 0ms, collect 412ms, tests 239ms, environment 0ms, prepare 38ms)
+

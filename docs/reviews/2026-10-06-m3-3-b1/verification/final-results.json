@@ -1,0 +1,188 @@
+{
+  "review_date": "2026-10-07",
+  "timezone": "Asia/Shanghai",
+  "package_started": "2026-10-06",
+  "status": "accepted by parent: finite local engineering scope",
+  "fullsuite": {
+    "passed": 414,
+    "failed": 0,
+    "files": 48,
+    "new_tests_included": 21,
+    "new_tests_by_owner": {
+      "storage": 11,
+      "transport": 6,
+      "independent": 4
+    },
+    "runs": 1,
+    "runner_wall_seconds": 18.75,
+    "unhandled_errors": 0
+  },
+  "current29": {
+    "passed": 29,
+    "failed": 0,
+    "components": [
+      "workspace build",
+      "typecheck",
+      "lint",
+      "fullsuite",
+      "25retained probes"
+    ],
+    "original_evidence_overwritten": false
+  },
+  "builds": {
+    "workspace": 1,
+    "storage_incremental": 1,
+    "reason": "parent-approved relation_resolution PK keyset change after first build"
+  },
+  "typecheck_runs": 1,
+  "lint_runs": 1,
+  "actual_C_command_records": 34,
+  "C_first_failures_preserved": [
+    {
+      "file": "observed-new-targeted-2026-10-06.txt",
+      "passed": 18,
+      "failed": 2,
+      "unhandled_errors": 1,
+      "cause": "C fixture directRelation response/empty DELETE JSON header; cleanup pending rejection unobserved"
+    },
+    {
+      "file": "observed-independent-corrected-2026-10-06.txt",
+      "passed": 1,
+      "failed": 1,
+      "skipped": 2,
+      "cause": "C fixture resolve cites rather than challenges"
+    }
+  ],
+  "corrected_directed": [
+    {
+      "file": "observed-independent-material-corrected-2026-10-06.txt",
+      "passed": 1,
+      "skipped": 3
+    },
+    {
+      "file": "observed-storage-final-targeted-2026-10-06.txt",
+      "passed": 11
+    }
+  ],
+  "large_fixture": {
+    "rows": 640,
+    "row_body_bytes": 65536,
+    "body_bytes": 41943040,
+    "actual_complete_executions": 2,
+    "observations": [
+      {
+        "run": "initial new-targeted",
+        "wire_bytes": 42399852,
+        "receiver_heap_max_bytes": 22902432,
+        "receiver_samples": 25,
+        "server_heap_max_bytes": 36834696,
+        "server_samples": 1
+      },
+      {
+        "run": "final fullsuite",
+        "wire_bytes": 42399852,
+        "receiver_heap_max_bytes": 31008968,
+        "receiver_samples": 23,
+        "server_heap_max_bytes": 36653360,
+        "server_samples": 1
+      }
+    ],
+    "sampling_interval_ms": 20,
+    "hard_memory_bound_proven": false,
+    "server_sampling_insufficient": true,
+    "additional_independent_large_probes": 0
+  },
+  "protected": {
+    "old_review_files": 3623,
+    "source_baseline": 171,
+    "source_final": 181,
+    "docs_baseline": 39,
+    "docs_final": 40,
+    "mutable": 5,
+    "SQL_archive": 4,
+    "schema_profiles": 2,
+    "head_unchanged": true,
+    "old_fixture_assets_unchanged": true,
+    "all_protected_hashes_unchanged": true
+  },
+  "authorized_runtime_doc_delta": [
+    "examples/space-export.md"
+  ],
+  "source_final_gates_window_stable": true,
+  "author_freeze_hashes_match": true,
+  "integrity_file": "integrity.json",
+  "cleanup_file": "cleanup-check.json",
+  "credential_check_file": "credential-evidence-check.json",
+  "code_review": "independent-code-review.md",
+  "limitations": [
+    "file-backed WAL export only",
+    "SQLite synchronous CPU not hard timer interruptible",
+    "readonly snapshot may prevent WAL truncation",
+    "heap sampling does not prove hard RSS ceiling",
+    "SHA chain integrity not authenticity",
+    "unknown user research fields may include sensitive strings",
+    "formal review/check not enabled"
+  ],
+  "not_run": [
+    "600s load",
+    "four model harness evaluation",
+    "media disaster",
+    "import"
+  ],
+  "captured_at": "2026-10-06T16:04:07.659108+00:00",
+  "normal_build_artifacts": {
+    "tracked_count": 208,
+    "tracked_changed": 35,
+    "tracked_removed": 0,
+    "untracked_baseline": 68,
+    "untracked_final": 92,
+    "untracked_added": 24,
+    "untracked_changed": 4,
+    "untracked_removed": 0
+  },
+  "parent_acceptance_date": "2026-10-07",
+  "author_development_records": {
+    "initial_schema_defect": {
+      "classification": "real product schema defect during development",
+      "source_cases": 8,
+      "failed": 4,
+      "cause": "B schema check_profiles Array, actual model Record",
+      "fixed": "Record before unified build; final source/built gates pass",
+      "evidence": "implementation/storage/tests-first.log"
+    },
+    "old_dist_noemit": {
+      "classification": "development compilation environment dependency stale; not functional execution failure",
+      "resolved_by": "source alias noEmit before unified build"
+    },
+    "resolution_probe_first": {
+      "runner_exit": 0,
+      "fixture_valid": false,
+      "cause": "last action reopen while relation state incorrectly resolved",
+      "evidence": "implementation/storage/resolution-author-probe-first.log"
+    },
+    "resolution_probe_after": {
+      "runner_exit": 0,
+      "fixture_valid": true,
+      "corrected_fixture_state": "open",
+      "lines": 10009,
+      "elapsed_ms": 2508.758,
+      "max_next_ms": 3.666,
+      "evidence": "implementation/storage/resolution-author-probe.log"
+    }
+  },
+  "doc_only_closeout": {
+    "status": "passed after all authors stopped",
+    "date": "2026-10-07",
+    "finalization": "finalization.json",
+    "markdown_documents_checked": 24,
+    "local_targets_checked": 248,
+    "missing": 0,
+    "trailing_whitespace": 0,
+    "protected_after_final_gates_unchanged": true,
+    "source_count": 181,
+    "old_review_count": 3623,
+    "dist_tracked": 208,
+    "dist_untracked": 92,
+    "additional_product_runs": 0
+  }
+}

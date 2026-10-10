@@ -1,0 +1,68 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1292ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  315ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  972ms
+ ✓ tests/contracts/m2-search-contracts.test.ts (5 tests) 1502ms
+   ✓ M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags  320ms
+   ✓ M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta  822ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1559ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  430ms
+ ✓ tests/integration/m2-artifacts-http.test.ts (8 tests) 1584ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > accepts either field order, returns safe metadata/download headers and permits ready attachment references  319ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > validates every trailing part before committing and cleans staging on malformed forms  302ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 2716ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  1212ms
+ ✓ tests/integration/m2-artifacts-cli.test.ts (4 tests) 2894ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits  725ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > never cleans objects when another process owns DirectoryLock  336ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen  1538ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 737ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 1001ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  370ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1498ms
+ ✓ tests/integration/m2-artifacts-filesystem.test.ts (6 tests) 325ms
+ ✓ tests/contracts/m2-typed-write-contracts.test.ts (5 tests) 229ms
+ ✓ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests) 1720ms
+   ✓ M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas  457ms
+   ✓ M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer  1006ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 168ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 419ms
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 212ms
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 61ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 125ms
+ ✓ tests/integration/m2-context.test.ts (7 tests) 131ms
+ ✓ tests/contracts/m2-context-contracts.test.ts (4 tests) 883ms
+   ✓ M2.4-A actual context body and tool contracts > C01: mandatory UTF8 material beyond the actual compact HTTP body budget rejects explicitly  340ms
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 123ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 26ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 4ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 15ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (26 tests) 6610ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false)  348ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3154ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1067ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 8153ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  1336ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  2706ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  597ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  1009ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  624ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1864ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 8876ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  611ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B03 (Symmetric Reopen): Reopen database and replay legacy $ref for both resolve and reopen preserving historical results  362ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H01: Upgrading old relation.create references preserves initial state or refuses upgrade  442ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H09: Migration diagnostics never print raw body marker  468ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J02: Current instance material loss is refused consistently across bootstrap, init and serve without mutating secrets  355ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  635ms
+
+ Test Files  26 passed (26)
+      Tests  263 passed (263)
+   Start at  17:07:11
+   Duration  9.86s (transform 1.13s, setup 0ms, collect 10.17s, tests 42.86s, environment 2ms, prepare 1.80s)
+

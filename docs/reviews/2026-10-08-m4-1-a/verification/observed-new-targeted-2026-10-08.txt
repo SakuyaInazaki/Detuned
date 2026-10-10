@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m4-read-cli-contract.test.ts (4 tests | 3 failed) 23517ms
+   ✓ RD B01: page limit rejects nonintegers/out of range without echo and accepts bounded integers 1ms
+   × RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP 7681ms
+     → 服务器内部错误。
+   × RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request 7691ms
+     → 服务器内部错误。
+   × RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits 8143ms
+     → 服务器内部错误。
+ ❯ tests/integration/m4-read-cli-independent.test.ts (4 tests | 1 failed) 32653ms
+   ✓ M4 independent built CLI identities and isolated list/history pages retain existing fixed reads  2584ms
+   ✓ M4 independent search legacy array and signed page cursor retain server binding and local invalid limits send no HTTP  3300ms
+   ✓ M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths  26359ms
+   × M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior 409ms
+     → expected undefined to be 'findings' // Object.is equality
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 4 passed (8)
+   Start at  17:17:12
+   Duration  32.90s (transform 264ms, setup 0ms, collect 435ms, tests 56.17s, environment 0ms, prepare 99ms)
+

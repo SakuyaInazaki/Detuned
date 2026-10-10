@@ -11,11 +11,11 @@ export const metaRoutes: FastifyPluginAsync = async (app) => {
       data: {
         server_version: '0.1.0',
         api_version: '1',
-        modules_enabled: ['core', 'fts5', 'sqlite-wal'],
+        modules_enabled: ['core', 'fts5', 'sqlite-wal', 'review', ...((app as any).artifactBackendConfigured ? ['artifacts'] : [])],
         limits: {
           max_body_bytes: 65536,
           max_json_bytes: 262144,
-          max_artifact_bytes: 26214400,
+          max_artifact_bytes: (app as any).artifactBackendConfigured ? (app as any).artifactLimits.max_file_bytes : 26214400,
           max_poll_wait_ms: 25000,
           max_search_query_chars: 256,
         },
@@ -26,28 +26,6 @@ export const metaRoutes: FastifyPluginAsync = async (app) => {
   app.get('/me', async (req) => {
     validateAllowedQueryParams(req.query, []);
     const auth = (req as any).auth as AuthenticatedContext;
-    const storage = (app as any).storage;
-
-    const visibleSpaces = storage.listVisibleSpaces(
-      auth.actor.id,
-      100,
-      undefined,
-      auth.credential.allowed_space_ids
-    );
-
-    return {
-      api_version: '1',
-      request_id: req.id,
-      data: {
-        actor: auth.actor,
-        capabilities: auth.credential.capabilities,
-        allowed_space_ids: auth.credential.allowed_space_ids,
-        visible_spaces: visibleSpaces.spaces.map((s: any) => ({
-          id: s.id,
-          slug: s.slug,
-          role: storage.getMembership(s.id, auth.actor.id)?.role ?? 'none',
-        })),
-      },
-    };
+    return {api_version:'1',request_id:req.id,data:(app as any).authService.getMe(auth)};
   });
 };

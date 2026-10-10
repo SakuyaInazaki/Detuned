@@ -1,0 +1,14 @@
+# M7.3 A v2生命周期窄复核
+
+未运行任何检查/脚本。v1backend-review.md保留。实际freeze-v2 SHA `370eea24f111c10c1163c6daf3a12a49191449f7f00563648aabf14f53d1e135`、delta `635be5c0ef5a8ad75c2aa73444087223ccf2e9e9b386b88f901da507937e1515`均匹配；三actualhash/bytes全部匹配v2，唯main改变为 `557057f1b614fe5306991e5814927639c60a1f1eccd00295dfb6435bf6e5ada9` /20441bytes；worker和作者test保持v1。
+
+只追准许四项实际delta：
+
+- track时缓存actualclose promise；closed仅返回缓存，不再凭exitCode/signalCode早resolve。close才更新ledger/删除owned，command等真实stdio close再解析输出，stop等close后返回。
+- track同步注册error消费并保存安全错误；error不伪当close。requireCleanClose在真实close后核错误，spawn失败会由command正常reject进入finally，而非未捕获child error。
+- 正常C两次close均requireCleanClose，restart前server也同一helper核closecode0/signalnull；取消/cleanup stop不把强制终止当正常恢复。
+- mkdtemp拒绝catch清45sdeadline/removeexternalabortlistener并原错误重抛，未创建目录不操作；正常创建后保持既有finally。
+
+原200ms取消/1500ms正常grace、45s总预算、5000ms测试timeout、真实业务/observer/材料/权限、ledger/publication均未改变。D v2初稿使用实际closetrace顺序，另外root拟准环境故障回归；这些均未执行，不能称动态验证。
+
+结论：v1四个静态lifecycle发现在实际v2delta已闭合，没有新增可行动静态阻塞；可交D运行root批准门禁。B不运行、不改A/D产品。

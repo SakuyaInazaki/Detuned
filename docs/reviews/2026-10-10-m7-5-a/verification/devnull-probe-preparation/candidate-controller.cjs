@@ -1,0 +1,22 @@
+const fs=require('node:fs');const{spawn,spawnSync}=require('node:child_process');
+const[mode,runtimeRoot,sentinel]=process.argv.slice(1);const expectedPGID=process.pid;
+let privateWrite=false,sentinelDenied=false,sentinelError=null;
+fs.writeFileSync(runtimeRoot+'/private-'+mode+'.txt','probe',{flag:'wx',mode:0o600});privateWrite=true;
+try{fs.writeFileSync(sentinel,'probe',{flag:'wx',mode:0o600})}catch(e){sentinelError=['EPERM','EACCES'].includes(e.code)?e.code:'OTHER';sentinelDenied=sentinelError!=='OTHER'}
+let child,error=null,proof=null,proofError=null,queryDiagnostic=null,closed=false;
+const recordError=e=>{error=e.code==='EPERM'?'EPERM':'OTHER'};
+try{child=spawn(process.execPath,['-e','setTimeout(()=>process.exit(0),300)'],{env:process.env,stdio:'ignore',detached:false})}catch(e){recordError(e)}
+if(child)child.once('error',recordError);
+if(child?.pid){const q=spawnSync('/bin/ps',['-p',String(child.pid),'-o','pid=,uid=,ppid=,pgid='],{env:{PATH:'/usr/bin:/bin'},stdio:['pipe','pipe','pipe'],encoding:'utf8',timeout:1000,detached:false,maxBuffer:4096});
+const parts=q.stdout?.trim().split(/\s+/).map(Number);
+const queryError=q.error?(['EPERM','EACCES','ENOENT','ETIMEDOUT','ENOBUFS'].includes(q.error.code)?q.error.code:'OTHER'):null;
+const stderrText=q.stderr??'';const stderrEnum=stderrText.length===0?'EMPTY':/permission denied|operation not permitted/i.test(stderrText)?'PERMISSION':/no such process/i.test(stderrText)?'NO_PROCESS':'OTHER';
+queryDiagnostic={error:queryError,status:Number.isInteger(q.status)?q.status:null,signal:q.signal===null?null:['SIGTERM','SIGKILL','SIGABRT'].includes(q.signal)?q.signal:'OTHER',stdoutBytes:Buffer.byteLength(q.stdout??''),stdoutShape:parts?.length===4&&parts.every(Number.isSafeInteger)?'FOUR_INTEGERS':(q.stdout??'').trim()===''?'EMPTY':'OTHER',stdoutFields:parts?.length===4&&parts.every(Number.isSafeInteger)?parts:null,stderrEnum,stderrBytes:Buffer.byteLength(stderrText)};
+if(!q.error&&q.status===0&&parts?.length===4&&parts.every(Number.isSafeInteger)&&parts[0]===child.pid&&parts[1]===process.getuid()&&parts[2]===process.pid&&parts[3]===Number(expectedPGID)){proof={pid:parts[0],uid:parts[1],ppid:parts[2],pgid:parts[3]}}else{proofError='OWN_CHILD_PROOF_MISMATCH'}}
+const timer=setTimeout(()=>{if(!closed&&proof)child.kill('SIGTERM')},2000);
+const finish=(code,signal,actualClose)=>{closed=true;clearTimeout(timer);let absent=null;
+if(child?.pid){try{process.kill(child.pid,0);absent=false}catch(e){absent=e.code==='ESRCH'?true:null}}
+const row={mode,privateWrite,sentinelDenied,sentinelError,created:!!child?.pid,pid:child?.pid??null,error,proof,proofError,queryDiagnostic,actualClose,code,signal,pidAbsent:absent};
+process.stdout.write(JSON.stringify(row)+'\n');process.exitCode=mode==='red'?(error==='EPERM'&&!child?.pid&&privateWrite&&sentinelDenied?0:1):(proof&&code===0&&signal===null&&absent===true&&privateWrite&&sentinelDenied?0:1)};
+if(child)child.once('close',(code,signal)=>finish(code,signal,true));else finish(null,null,false);
+

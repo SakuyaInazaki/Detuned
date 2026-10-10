@@ -1,0 +1,34 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-thread-posts-read-contracts.test.ts > M2.4-B.2.2 bounded thread metadata transport > D08: string cursor business validation follows current access and thread ownership with fixed errors
+AssertionError: expected [ …(11) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "authorized cursor length 0: 400/查询参数 cursor 不能为空。",
++   "nonmember cursor length 0: expected 404, actual 400",
++   "crossspace cursor length 0: expected 404, actual 400",
++   "missing cursor length 0: expected 404, actual 400",
++   "authorized cursor length 3: 400/查询参数 cursor 不能为空。",
++   "nonmember cursor length 3: expected 404, actual 400",
++   "crossspace cursor length 3: expected 404, actual 400",
++   "missing cursor length 3: expected 404, actual 400",
++   "nonmember cursor length 4097: expected 404, actual 400",
++   "crossspace cursor length 4097: expected 404, actual 400",
++   "missing cursor length 4097: expected 404, actual 400",
++ ]
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts:153:22
+    151|       expect(response.statusCode).toBe(400);
+    152|     }
+    153|     expect(failures).toEqual([]);
+       |                      ^
+    154|   });
+    155| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,102 @@
+{
+  "outside_performance_window": true,
+  "foreign_actor_checkpoint_status": 422,
+  "foreign_consumer_status": 403,
+  "foreign_signed_cursor_status": 400,
+  "wrong_purpose_status": 400,
+  "tamper_status": 400,
+  "foreign_post_revision_status": 403,
+  "private_membership_transition": [
+    404,
+    200,
+    404
+  ],
+  "current_revocation_status": 401,
+  "explicit_setup": "temporary ordinary credential and private membership setup, removed afterward",
+  "records": [
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/context?max_bytes=4096",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "POST",
+      "url": "/api/v1/spaces/spc_c2_main/subscriptions",
+      "status": 422,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "POST",
+      "url": "/api/v1/spaces/spc_c2_main/consumers/csr_f447f4bb-a065-40bb-9ce0-d2ddd833ebe7/poll",
+      "status": 403,
+      "code": "FORBIDDEN"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MzY0MSwiZXhwIjoxNzkxMzc4MjM4fQ.bX4nfAqQ_eEZBMnavAr-86hmp264xoUIdH6PgV_jtZM",
+      "status": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJwdXJwb3NlIjoiY2hlY2twb2ludCIsInNwYWNlX2lkIjoic3BjX2MyX21haW4iLCJhY3Rvcl9pZCI6ImFjdF9jMl8wMCIsInNlcSI6MTAwNDc1NiwiZXhwIjoxNzkxMzc4MjM4fQ.N2RF_N1uOGkEg54aGpWj21Y9b_AaFYjkHJNzMOwKPgM",
+      "status": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MzY0MSwiZXhwIjoxNzkxMzc4MjM4fQ.bX4nfAqQ_eEZBMnavAr-86hmp264xoUIdH6PgV_jtZMx",
+      "status": 400,
+      "code": "VALIDATION_ERROR"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000008",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "POST",
+      "url": "/api/v1/spaces/spc_c2_main/threads/thd_c2_0000/posts",
+      "status": 201,
+      "code": null
+    },
+    {
+      "method": "POST",
+      "url": "/api/v1/spaces/spc_c2_main/posts/pst_a96aae6c-a30d-4669-8807-ad2a7c046800/revisions",
+      "status": 403,
+      "code": "FORBIDDEN"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_2a5ea507-4c2d-4c15-b91c-db6aeeacb23a/context",
+      "status": 404,
+      "code": "NOT_FOUND"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_2a5ea507-4c2d-4c15-b91c-db6aeeacb23a/context",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_2a5ea507-4c2d-4c15-b91c-db6aeeacb23a/context?focus_thread_id=unknown",
+      "status": 404,
+      "code": "NOT_FOUND"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/spaces/spc_c2_main/context",
+      "status": 401,
+      "code": "UNAUTHENTICATED"
+    }
+  ]
+}

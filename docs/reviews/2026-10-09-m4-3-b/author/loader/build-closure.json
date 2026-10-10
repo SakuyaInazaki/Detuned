@@ -1,0 +1,518 @@
+{
+  "targets": [
+    "vendor/loader",
+    "packages/boot/hmr",
+    "packages/core/tools",
+    "packages/core/system-prompt",
+    "packages/core/scope",
+    "packages/mcp/mcp-client",
+    "packages/boot/app-boot",
+    "packages/typert/generator"
+  ],
+  "count": 40,
+  "records": [
+    {
+      "config": "vendor/loader/tsconfig.json",
+      "name": "@deepseek-ai/cordis-plugin-loader",
+      "version": "1.0.6-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/loader/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/cosmokit/tsconfig.json",
+      "name": "@deepseek-ai/cosmokit",
+      "version": "1.8.6-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/cosmokit/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/cordis/tsconfig.json",
+      "name": "@deepseek-ai/cordis",
+      "version": "4.0.5-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/cordis/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/schemastery/tsconfig.json",
+      "name": "@deepseek-ai/schemastery",
+      "version": "3.18.5-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/schemastery/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/boot/hmr/tsconfig.json",
+      "name": "@deepseek-ai/dsh-hmr",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/boot/hmr/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json",
+        "vendor/loader/tsconfig.json",
+        "vendor/include/tsconfig.json",
+        "vendor/timer/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/boot/app-boot/tsconfig.json",
+        "packages/boot/cmdline/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/include/tsconfig.json",
+      "name": "@deepseek-ai/cordis-plugin-include",
+      "version": "1.0.10-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/include/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/loader/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/timer/tsconfig.json",
+      "name": "@deepseek-ai/cordis-plugin-timer",
+      "version": "1.1.7-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/timer/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/boot/app-boot/tsconfig.json",
+      "name": "@deepseek-ai/dsh-app-boot",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/boot/app-boot/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json",
+        "vendor/loader/tsconfig.json",
+        "vendor/include/tsconfig.json",
+        "vendor/group/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json",
+        "packages/util/launch-environment/tsconfig.json",
+        "packages/util/home-paths/tsconfig.json",
+        "packages/util/package-manifest/tsconfig.json",
+        "packages/util/atomic-write/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "vendor/group/tsconfig.json",
+      "name": "@deepseek-ai/cordis-plugin-group",
+      "version": "1.0.5-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/vendor/group/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json",
+        "vendor/loader/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/core/system-prompt/tsconfig.json",
+      "name": "@deepseek-ai/dsh-system-prompt",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/core/system-prompt/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/scope/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/llm/llm/tsconfig.json",
+      "name": "@deepseek-ai/dsh-llm",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/llm/llm/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/util/brand/tsconfig.json",
+        "packages/attachment/attachment/tsconfig.json",
+        "packages/util/timeout/tsconfig.json",
+        "packages/util/crypto/tsconfig.json",
+        "packages/util/values/tsconfig.json",
+        "packages/typert/protocol/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/brand/tsconfig.json",
+      "name": "@deepseek-ai/dsh-brand",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/brand/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/attachment/attachment/tsconfig.json",
+      "name": "@deepseek-ai/dsh-attachment",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/attachment/attachment/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/util/brand/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/timeout/tsconfig.json",
+      "name": "@deepseek-ai/dsh-timeout",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/timeout/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/crypto/tsconfig.json",
+      "name": "@deepseek-ai/dsh-util-crypto",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/crypto/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/values/tsconfig.json",
+      "name": "@deepseek-ai/dsh-util-values",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/values/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/typert/protocol/tsconfig.json",
+      "name": "@deepseek-ai/dsh-typert-protocol",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/typert/protocol/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/util/brand/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/core/scope/tsconfig.json",
+      "name": "@deepseek-ai/dsh-scope",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/core/scope/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/launch-environment/tsconfig.json",
+      "name": "@deepseek-ai/dsh-launch-environment",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/launch-environment/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/home-paths/tsconfig.json",
+      "name": "@deepseek-ai/dsh-home-paths",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/home-paths/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/package-manifest/tsconfig.json",
+      "name": "@deepseek-ai/dsh-package-manifest",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/package-manifest/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/atomic-write/tsconfig.json",
+      "name": "@deepseek-ai/dsh-atomic-write",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/atomic-write/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/boot/cmdline/tsconfig.json",
+      "name": "@deepseek-ai/dsh-cmdline",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/boot/cmdline/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json",
+        "vendor/include/tsconfig.json",
+        "vendor/loader/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/core/tools/tsconfig.json",
+      "name": "@deepseek-ai/dsh-tools",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/core/tools/lib/types",
+      "refs": [
+        "packages/core/session/tsconfig.json",
+        "packages/ptc-runtime/ptc-runtime/tsconfig.json",
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json",
+        "packages/core/agent/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/interaction/user-approval/tsconfig.json",
+        "packages/sandbox/sandbox/tsconfig.json",
+        "packages/sandbox/sandbox-policy/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/core/session/tsconfig.json",
+      "name": "@deepseek-ai/dsh-session",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/core/session/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/util/brand/tsconfig.json",
+        "packages/util/values/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/typert/protocol/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/ptc-runtime/ptc-runtime/tsconfig.json",
+      "name": "@deepseek-ai/dsh-ptc-runtime",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/ptc-runtime/ptc-runtime/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/sandbox/sandbox/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/sandbox/sandbox/tsconfig.json",
+      "name": "@deepseek-ai/dsh-sandbox",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/sandbox/sandbox/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/session/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/core/agent/tsconfig.json",
+      "name": "@deepseek-ai/dsh-agent",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/core/agent/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/session/tsconfig.json",
+        "packages/session/session-projection/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json",
+        "packages/typert/protocol/tsconfig.json",
+        "packages/workspace/workspace/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/session/session-projection/tsconfig.json",
+      "name": "@deepseek-ai/dsh-session-projection",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/session/session-projection/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/core/session/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/workspace/workspace/tsconfig.json",
+      "name": "@deepseek-ai/dsh-workspace",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/workspace/workspace/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/storage/storage/tsconfig.json",
+        "packages/storage/storage-domain/tsconfig.json",
+        "packages/core/session/tsconfig.json",
+        "packages/session/session-persistence/tsconfig.json",
+        "packages/typert/protocol/tsconfig.json",
+        "packages/util/brand/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/storage/storage/tsconfig.json",
+      "name": "@deepseek-ai/dsh-storage",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/storage/storage/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/storage/storage-domain/tsconfig.json",
+      "name": "@deepseek-ai/dsh-storage-domain",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/storage/storage-domain/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/storage/storage/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/session/session-persistence/tsconfig.json",
+      "name": "@deepseek-ai/dsh-session-persistence",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/session/session-persistence/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/util/brand/tsconfig.json",
+        "packages/core/session/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/interaction/user-approval/tsconfig.json",
+      "name": "@deepseek-ai/dsh-user-approval",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/interaction/user-approval/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/util/brand/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/core/session/tsconfig.json",
+        "packages/core/agent/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/sandbox/sandbox-policy/tsconfig.json",
+      "name": "@deepseek-ai/dsh-sandbox-policy",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/sandbox/sandbox-policy/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/core/agent/tsconfig.json",
+        "packages/sandbox/sandbox/tsconfig.json",
+        "packages/core/session/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json",
+        "packages/session/session-projection/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/mcp/mcp-client/tsconfig.json",
+      "name": "@deepseek-ai/dsh-mcp-client",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/mcp/mcp-client/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "vendor/schemastery/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/tools/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/subprocess/subprocess/tsconfig.json",
+        "packages/util/timeout/tsconfig.json",
+        "packages/util/http-proxy/tsconfig.json",
+        "packages/mcp/mcp-resources/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/subprocess/subprocess/tsconfig.json",
+      "name": "@deepseek-ai/dsh-subprocess",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/subprocess/subprocess/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json",
+        "packages/util/http-proxy/tsconfig.json",
+        "packages/util/launch-environment/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/util/http-proxy/tsconfig.json",
+      "name": "@deepseek-ai/dsh-http-proxy",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/util/http-proxy/lib/types",
+      "refs": [],
+      "scripts": {}
+    },
+    {
+      "config": "packages/mcp/mcp-resources/tsconfig.json",
+      "name": "@deepseek-ai/dsh-mcp-resources",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/mcp/mcp-resources/lib/types",
+      "refs": [
+        "vendor/cordis/tsconfig.json",
+        "packages/llm/llm/tsconfig.json",
+        "packages/core/scope/tsconfig.json",
+        "packages/core/tools/tsconfig.json",
+        "packages/core/system-prompt/tsconfig.json",
+        "packages/util/values/tsconfig.json"
+      ],
+      "scripts": {}
+    },
+    {
+      "config": "packages/typert/generator/tsconfig.json",
+      "name": "@deepseek-ai/dsh-typert-generator",
+      "version": "0.2.1-alpha.1",
+      "outDir": "/private/tmp/detuned-m43-runtime.MU1a4q/packages/typert/generator/lib/types",
+      "refs": [
+        "vendor/cosmokit/tsconfig.json",
+        "vendor/cordis/tsconfig.json"
+      ],
+      "scripts": {}
+    }
+  ],
+  "filter": "/^(?:@deepseek-ai/cordis-plugin-loader|@deepseek-ai/cosmokit|@deepseek-ai/cordis|@deepseek-ai/schemastery|@deepseek-ai/dsh-hmr|@deepseek-ai/cordis-plugin-include|@deepseek-ai/cordis-plugin-timer|@deepseek-ai/dsh-app-boot|@deepseek-ai/cordis-plugin-group|@deepseek-ai/dsh-system-prompt|@deepseek-ai/dsh-llm|@deepseek-ai/dsh-brand|@deepseek-ai/dsh-attachment|@deepseek-ai/dsh-timeout|@deepseek-ai/dsh-util-crypto|@deepseek-ai/dsh-util-values|@deepseek-ai/dsh-typert-protocol|@deepseek-ai/dsh-scope|@deepseek-ai/dsh-launch-environment|@deepseek-ai/dsh-home-paths|@deepseek-ai/dsh-package-manifest|@deepseek-ai/dsh-atomic-write|@deepseek-ai/dsh-cmdline|@deepseek-ai/dsh-tools|@deepseek-ai/dsh-session|@deepseek-ai/dsh-ptc-runtime|@deepseek-ai/dsh-sandbox|@deepseek-ai/dsh-agent|@deepseek-ai/dsh-session-projection|@deepseek-ai/dsh-workspace|@deepseek-ai/dsh-storage|@deepseek-ai/dsh-storage-domain|@deepseek-ai/dsh-session-persistence|@deepseek-ai/dsh-user-approval|@deepseek-ai/dsh-sandbox-policy|@deepseek-ai/dsh-mcp-client|@deepseek-ai/dsh-subprocess|@deepseek-ai/dsh-http-proxy|@deepseek-ai/dsh-mcp-resources|@deepseek-ai/dsh-typert-generator)$/"
+}

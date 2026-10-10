@@ -1,0 +1,33 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 4 tests using 1 worker
+
+  ✘  1 scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision (4.1s)
+  ✓  2 scripts/integrations/web/m6-review.spec.ts:29:1 › CW02 required checks remain pending and incomplete finalization cannot invent a receipt; cancellation retains safe history (3.2s)
+  ✓  3 scripts/integrations/web/m6-review.spec.ts:35:1 › CW03 lost real committed response recovers the same intent/key once and session candidates never silently replace bindings (9.8s)
+  ✓  4 scripts/integrations/web/m6-review.spec.ts:40:1 › CW04 late directory/snapshot/session results do not refill a new scope or logged-out page; keyboard narrow viewport retains ordinary posts (2.3s)
+
+
+  1) scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision 
+
+    Error: Private fixture seed rejected (403).
+
+       at fixtures.ts:196
+
+      194 |       if (upstream) {
+      195 |         const result = await fetch(baseURL + '/api/v1' + route, {method, headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`, ...(payload === undefined ? {} : {'content-type': 'application/json'})}, ...(payload === undefined ? {} : {body: JSON.stringify(payload)}), signal: AbortSignal.timeout(5000)});
+    > 196 |         if (result.status >= 300) throw new Error(`Private fixture seed rejected (${result.status}).`);
+          |                                         ^
+      197 |         return json(json(await result.json()).data);
+      198 |       }
+      199 |       const response = await app!.inject({method, url: '/api/v1' + route, headers: {host: new URL(baseURL).host, authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`}, ...(payload === undefined ? {} : {payload})});
+        at seed (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/fixtures.ts:196:41)
+        at Object.revisePost (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/fixtures.ts:331:24)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m6-review.spec.ts:26:2
+
+    Error Context: docs/reviews/2026-10-09-m6-4-c1/verification/browser-locator-corrected-first/playwright-output/m6-review-CW01-ordinary-re-58007-reserve-historical-decision/error-context.md
+
+  1 failed
+    scripts/integrations/web/m6-review.spec.ts:21:1 › CW01 ordinary requester and distinct reviewers explicitly select sessions, bind private evidence, seal/reveal and preserve historical decision 
+  3 passed (26.3s)
+[ELIFECYCLE] Command failed with exit code 1.

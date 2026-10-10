@@ -1,0 +1,33 @@
+--- second/scripts/integrations/web/fixtures.ts
++++ current/scripts/integrations/web/fixtures.ts
+@@ -43,6 +43,7 @@
+   patchSpace(input: {spaceId?: string; objective?: string; rules?: string[]; pinnedRefs?: Array<{post_id:string;revision:number}>}): Promise<number>;
+   seedHistoricalLargeRules(spaceId: string): Promise<number>;
+   seedHistoricalBody(title: string, body: string): Promise<Post>;
++  reviseReviewTarget(original: Post, input: {body:string;structured:Json}): Promise<Post>;
+   setHistoricalPostTimes(entries: Array<{id: string; createdAt: string}>): void;
+   seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post>;
+   seedPost(input: SeedPost): Promise<Post>;
+@@ -285,6 +286,11 @@
+       async revokeCredential(identity) {await seed('POST', `/admin/credentials/${identities[identity].credential}/revoke`);},
+       async withdrawMembership(identity) {await seed('DELETE', `/spaces/${space.id}/memberships/${identities[identity].actor}`);},
+       seedNote, seedPost, patchSpace,
++      async reviseReviewTarget(original,input) {
++        const identity=reviewIdentities.get('requester');if(!identity)throw new Error('Private review requester unavailable.');
++        const result=await ordinaryPost(identity,`/spaces/${space.id}/posts/${original.id}/revisions`,{expected_revision:original.revision,title:original.title,summary:'Private fixture claim revision',body:input.body,structured:input.structured});
++        return {id:original.id,title:original.title,revision:Number(json(result.revision).revision)};
++      },
+       async seedHistoricalBody(title,body) {
+         if(browserAccessed) throw new Error('Historical body must precede browser access.');
+         const value=await seedNote({title,body:'Legal small HTTP seed before owned historical replacement.'});
+--- second/scripts/integrations/web/m6-review.spec.ts
++++ current/scripts/integrations/web/m6-review.spec.ts
+@@ -23,7 +23,7 @@
+  panel=await reviewer(page,forum,setup,'one','First sealed independent coverage',true);await panel.getByRole('button',{name:'加载可见意见',exact:true}).click();await expect(panel.getByText('覆盖：First sealed independent coverage',{exact:true})).toBeVisible();expect(forum.reviewRows().submissions.every(s=>s.revealed_at===null)).toBe(true);await logout(page);
+  await login(page,forum,'two');panel=await enter(page,forum,setup.target);await open(panel);await panel.getByRole('button',{name:'加载可见意见',exact:true}).click();await expect(panel.getByText(/服务端当前没有返回可见意见/)).toBeVisible();await expect(panel.getByText('覆盖：First sealed independent coverage',{exact:true})).toHaveCount(0);await ownSession(panel);await submit(panel,'Second independent coverage');await panel.getByRole('button',{name:'加载可见意见',exact:true}).click();await expect(panel.getByText('覆盖：First sealed independent coverage',{exact:true})).toBeVisible();await expect(panel.getByText('覆盖：Second independent coverage',{exact:true})).toBeVisible();const submitted=forum.reviewRows().submissions;expect(submitted).toHaveLength(2);expect(new Set(submitted.map(s=>s.reviewer_actor_id)).size).toBe(2);expect(new Set(submitted.map(s=>s.reviewer_session_id)).size).toBe(2);expect(submitted.every(s=>s.revealed_at!==null)).toBe(true);await logout(page);
+  await login(page,forum,'requester');panel=await enter(page,forum,setup.target);await open(panel);await panel.getByRole('button',{name:'确认版本 3 并最终决定',exact:true}).click();await expect(panel.getByText(/最终决定已保存/)).toBeVisible();await panel.getByRole('button',{name:'刷新当前评审',exact:true}).click();await expect(panel.locator('.review-status')).toContainText('已接受');await panel.getByRole('button',{name:'读取历史最终决定',exact:true}).click();await expect(panel.getByText(/决定保留历史事实/)).toBeVisible();expect(forum.reviewRows().counts.review_decisions).toBe(1);await panel.locator('.review-status').scrollIntoViewIfNeeded();await page.screenshot({path:forum.evidencePath('screenshots/c1-review-desktop.png')});await page.setViewportSize({width:390,height:844});await panel.locator('.review-status').scrollIntoViewIfNeeded();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:forum.evidencePath('screenshots/c1-review-status-narrow.png')});await page.setViewportSize({width:1280,height:900});
+- await forum.revisePost(setup.target,{body:'A genuine later revision.',structured:{statement:'Changed local claim',assumptions:['Synthetic fixture'],scope:'Private local browser',falsification_plan:'Changed counterexample'}});await panel.getByRole('button',{name:'刷新当前评审',exact:true}).click();await expect(panel.locator('.review-status')).toContainText('材料已有更新');await panel.getByRole('button',{name:'读取历史最终决定',exact:true}).click();expect(forum.reviewRows().counts.review_decisions).toBe(1);await expect(panel.getByText(/已接受 · 决定/)).toBeVisible();await logout(page);
++ await forum.reviseReviewTarget(setup.target,{body:'A genuine later revision.',structured:{statement:'Changed local claim',assumptions:['Synthetic fixture'],scope:'Private local browser',falsification_plan:'Changed counterexample'}});await panel.getByRole('button',{name:'刷新当前评审',exact:true}).click();await expect(panel.locator('.review-status')).toContainText('材料已有更新');await panel.getByRole('button',{name:'读取历史最终决定',exact:true}).click();expect(forum.reviewRows().counts.review_decisions).toBe(1);await expect(panel.getByText(/已接受 · 决定/)).toBeVisible();await logout(page);
+ });
+ 
+ test('CW02 required checks remain pending and incomplete finalization cannot invent a receipt; cancellation retains safe history',async({page,forum})=>{

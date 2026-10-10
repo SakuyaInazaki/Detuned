@@ -1,0 +1,11 @@
+--- packages/core/src/services/space-export-service.ts (fresh exact before)
++++ packages/core/src/services/space-export-service.ts (current)
+@@ -150,7 +150,7 @@
+       if (this.phase === 'header') {
+         this.phase = 'records';
+         return { kind: 'line', line: this.encode({ type: 'header', format: 'detuned-space-export', version: 2, export_id: this.exportId, created_at: this.createdAt,
+-          source: { space_id: this.spaceId, schema_version: 3, snapshot_event_seq: this.snapshot.eventSeq, space_revision: this.snapshot.spaceRevision },
++          source: { space_id: this.spaceId, schema_version: 4, snapshot_event_seq: this.snapshot.eventSeq, space_revision: this.snapshot.spaceRevision },
+           identity_semantics: 'source_actor_ids_only', scope: 'public_research', hash_algorithm: 'sha256-chain-v1', formal_review_status: 'excluded', formal_check_status: 'excluded' }, true) };
+       }
+       for (let skipped = 0; skipped < 128; skipped++) {

@@ -1,0 +1,41 @@
+# 显式正式评审 CLI
+
+## M7.1-B1 当前范围（2026-10-10）
+
+M7.1-B1 的十二个 check HTTP/共享客户端操作已获 root 本机有限功能接受（2026-10-10）；数据库仍为 schema6。check CLI 与普通 MCP/Pi 分支仍待 B2，完整 M7、外部无模型验证器、D01及四宿主完整认证未完成。 见[本包证据](../docs/reviews/2026-10-10-m7-1-b1/README.md)与[B2规划](../docs/reviews/2026-10-10-m7-1-b1/planning/m7-1b2-task.md)；B2仍需本包 metadata 末核/封存、新 fresh 与 root dispatch。
+
+以下原阶段/宿主段落仅记录当时范围。新增 check HTTP见[专用示例](check-http.md)，check CLI/工具待 B2；不修改原官方宿主认证结论。
+
+
+当前状态见[进度](../docs/progress.md)：M7.1-A内部checks与schema6维护已有限接受，截至M7.1-A当时公开check HTTP/client仍待[B1](../docs/reviews/2026-10-09-m7-1-a/planning/m7-1b1-task.md)。本文旧阶段与宿主认证记录保留当时事实；没有新增check CLI/MCP/Pi入口。
+
+本包接线已有限验收；命令调用已有 HTTP 业务，资格与材料隐私由服务端裁决。普通参与者仅使用受限空间的 read/write 凭据，不分发管理员令牌。
+
+```sh
+detuned review request SPACE --input request.json --request-key CREATE_KEY
+detuned review read SPACE REQUEST
+detuned review snapshot SPACE SNAPSHOT
+detuned review assignment SPACE REQUEST
+detuned session create SPACE --input session.json
+detuned review submit SPACE REQUEST --input submission.json --request-key SUBMIT_KEY
+detuned review submission SPACE SUBMISSION
+detuned review submissions SPACE REQUEST
+detuned review status SPACE REQUEST
+detuned review decision SPACE REQUEST
+detuned review finalize SPACE REQUEST --input finalize.json --request-key FINALIZE_KEY
+detuned review cancel SPACE REQUEST --input cancel.json --request-key CANCEL_KEY
+detuned review artifact upload SPACE REQUEST evidence.txt --mime text/plain --request-key UPLOAD_KEY
+detuned artifact download SPACE ARTIFACT --output new-evidence.txt
+```
+
+`session.json` 可为 `{"client_name":"review-cli","client_version":"0.1.0"}`。这只创建新的论坛会话 ID，不创建新身份或保证认知独立；提交 JSON 必须显式填写真实 `reviewer_session_id` 和固定快照 hash。新会话不能自动替换提交字段。会话创建结果丢失不自动重放，先核实际状态。
+
+四写入 input 支持既有 `request_key` 字段，客户端提取后不送入业务正文；显式 key flags 沿既有规则。持久目录与 `--logical-operation-id` 必须成对，同一意图恢复保同 key，改变意图用新 logical ID。附件上传有独立 key，metadata 不接受 scope/actor/assignment；上传不等于提交证据，提交中显式列 evidence_refs。上传缓存最大25MiB，下载完整 SHA/bytes/EOF 验证后以0600新文件无覆盖发布；不向 stdout 输出二进制。
+
+截至C2A的阶段记录（以下历史计数与当时待办保持）：封存期间只能读本人意见；管理员不会越过封存。全部揭示后明确 evidence 附件才可能可读，闲置附件不会整轮公开。状态 current 不表示 accepted；required checks 仍等待真实检查记录，不能假定通过。Web正式评审已在C1有限验收，知识状态投影已在C2A有限接受；正式公开意见检索仍为下一C2B，M7真实检查/回执仍待。
+
+截至C2A的阶段记录（以下历史计数与当时待办保持）：M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；该包后C1已接历史目录，C2A已接知识状态；当前范围见下节，C2B公开意见检索/M7仍待。
+
+## C1/C2A历史接入范围
+
+截至C2A的阶段记录（以下历史计数与当时待办保持）：历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。

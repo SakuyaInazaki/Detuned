@@ -1,0 +1,108 @@
+$ vitest run tests/integration/m6-review-submissions-independent.test.ts --maxWorkers=1 --no-file-parallelism -t 'SD08|SD09'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-submissions-independent.test.ts > SD08 fixed own assignment remains readable with read-only credentials or later eligibility and phase changes, while new writes retain fresh gates
+AssertionError: expected [ { stage: 'readonly', …(2) }, …(3) ] to deeply equal [ { stage: 'readonly', …(2) }, …(3) ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "code": null,
+-     "readable": true,
++     "code": "FORBIDDEN",
++     "readable": false,
+      "stage": "readonly",
+    },
+    {
+-     "code": null,
+-     "readable": true,
++     "code": "VALIDATION_ERROR",
++     "readable": false,
+      "stage": "ineligible",
+    },
+    {
+-     "code": null,
+-     "readable": true,
++     "code": "VALIDATION_ERROR",
++     "readable": false,
+      "stage": "cancelled",
+    },
+    {
+-     "code": null,
+-     "readable": true,
++     "code": "FORBIDDEN",
++     "readable": false,
+      "stage": "revealed-readonly",
+    },
+  ]
+
+ ❯ tests/integration/m6-review-submissions-independent.test.ts:244:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m6-review-submissions-independent.test.ts > SD09 fresh private upload rechecks snapshot material before or during real streaming and publishing, with no new key event artifact or residual blob
+AssertionError: expected [ …(6) ] to deeply equal [ …(6) ]
+
+- Expected
++ Received
+
+@@ -1,34 +1,34 @@
+  [
+    {
+-     "clean": true,
+-     "code": "SNAPSHOT_STALE",
+-     "unchanged": true,
++     "clean": false,
++     "code": null,
++     "unchanged": false,
+      "variant": "pre-target",
+    },
+    {
+-     "clean": true,
+-     "code": "SNAPSHOT_STALE",
+-     "unchanged": true,
++     "clean": false,
++     "code": null,
++     "unchanged": false,
+      "variant": "stream-dependency",
+    },
+    {
+-     "clean": true,
+-     "code": "SNAPSHOT_STALE",
+-     "unchanged": true,
++     "clean": false,
++     "code": null,
++     "unchanged": false,
+      "variant": "publish-policy",
+    },
+    {
+-     "clean": true,
+-     "code": "SNAPSHOT_STALE",
+-     "unchanged": true,
++     "clean": false,
++     "code": null,
++     "unchanged": false,
+      "variant": "pre-withdrawn",
+    },
+    {
+-     "clean": true,
+-     "code": "SNAPSHOT_STALE",
+-     "unchanged": true,
++     "clean": false,
++     "code": null,
++     "unchanged": false,
+      "variant": "pre-missing-artifact",
+    },
+    {
+      "clean": true,
+      "code": "CONTENT_REDACTED",
+
+ ❯ tests/integration/m6-review-submissions-independent.test.ts:276:19
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

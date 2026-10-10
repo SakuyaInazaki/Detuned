@@ -1,0 +1,32 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-pi-runtime.test.ts > Pi generation snapshots credentials and uses one identity/session flight until explicit start
+ClientProtocolError: Service response failed protocol validation.
+ ❯ safePiError packages/adapter-pi/src/runtime.ts:7:52
+      5| export function safePiError(error: unknown): Error {
+      6|   if (error instanceof DetunedError) return error;
+      7|   if (error instanceof ClientProtocolError) return new ClientProtocolE…
+       |                                                    ^
+      8|   if (error instanceof ClientTransportError) return new ClientTranspor…
+      9|   if (error instanceof TimeoutError) return new TimeoutError('Request …
+ ❯ packages/adapter-pi/src/runtime.ts:68:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/contracts/m4-pi-runtime.test.ts > Pi shutdown waits true tool finally and prevents late successful result
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m4-pi-runtime.test.ts:20:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/contracts/m4-pi-runtime.test.ts > Pi deadline does not claim cleanup or reopen the old generation
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m4-pi-runtime.test.ts:24:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

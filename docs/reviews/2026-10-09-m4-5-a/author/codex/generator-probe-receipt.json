@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/detuned-codex-schema-cq4jmk5q/deny-user-state.sb",
+    "/opt/homebrew/bin/codex",
+    "app-server",
+    "generate-json-schema",
+    "--experimental",
+    "--out",
+    "/private/tmp/detuned-codex-schema-cq4jmk5q/schema"
+  ],
+  "owned": "/private/tmp/detuned-codex-schema-cq4jmk5q",
+  "pid": 69959,
+  "exit": 71,
+  "limit_killed": false,
+  "elapsed_seconds": 0.106,
+  "environment_keys": [
+    "PATH"
+  ],
+  "profile": "(version 1)\n(allow default)\n(deny network*)\n(deny file-read* file-write* (subpath \"/Users/sakimi/.codex\") (subpath \"/Users/sakimi/.claude\") (literal \"/Users/sakimi/.claude.json\") (subpath \"/Users/sakimi/.config\") (subpath \"/Users/sakimi/Library/Keychains\") (subpath \"/Library/Keychains\") (subpath \"/Users/sakimi/Library/Application Support/Codex\") (subpath \"/Users/sakimi/Library/Application Support/Claude\"))\n(deny file-write*)\n(allow file-write* (subpath \"/private/tmp/detuned-codex-schema-cq4jmk5q\"))\n",
+  "files": [
+    "stdout",
+    "stderr",
+    "deny-user-state.sb"
+  ]
+}

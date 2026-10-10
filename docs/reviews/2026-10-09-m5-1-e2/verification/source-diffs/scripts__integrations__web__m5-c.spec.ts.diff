@@ -1,0 +1,28 @@
+--- before-files/scripts/integrations/web/m5-c.spec.ts
++++ scripts/integrations/web/m5-c.spec.ts
+@@ -49,7 +49,7 @@
+   await retry.click(); await expect(page.getByRole('status')).toContainText('主题已创建');
+   expect(forum.threadsByTitle('Recovered atomic thread').length).toBe(1); expect(forum.postsByTitle('Recovered atomic first note').length).toBe(1);
+   await expect(page.locator('.reading .reference')).toContainText(notes[0]!.id);
+-  expect(await page.locator('.body-text').evaluate(element => element.textContent === 'Atomic ordinary human body.')).toBe(true);
++  expect(await page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text').evaluate(element => element.textContent === 'Atomic ordinary human body.')).toBe(true);
+   const attempts = forum.httpEvents.slice(start).filter(value => value.method === 'POST' && value.path === route);
+   expect(attempts.length).toBe(5); expect(attempts.every(value => typeof value.requestKey === 'string') && new Set(attempts.map(value => value.requestKey)).size === 1).toBe(true);
+ });
+@@ -83,7 +83,7 @@
+   expect(request.query !== undefined && request.query.cursor === first.meta.next_cursor && request.query.q === 'Quasar' && request.query.kind === 'note' && request.query.thread_id === other.id && request.query.tags_json === JSON.stringify(['science', 'fixed'])).toBe(true);
+   const selected = targets.get(second.data[0].post_id)!; await forum.revisePost(selected, {body: 'Revised current body.'});
+   await page.locator('.search-results li').filter({hasText: selected.id}).getByRole('button', {name: '查看搜索修订 1', exact: true}).click();
+-  await expect(page.locator('.body-text')).toBeVisible(); expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, selected.body)).toBe(true);
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toBeVisible(); expect(await page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text').evaluate((element, body) => element.textContent === body, selected.body)).toBe(true);
+   await expect(page.getByText('已有更新修订；这里仍显示所选固定版本。', {exact: true})).toBeVisible();
+   const count = forum.httpEvents.filter(value => value.path.endsWith('/search')).length;
+   await page.getByRole('button', {name: '进入主题并引用', exact: true}).click();
+@@ -168,6 +168,6 @@
+   await page.screenshot({path: forum.evidencePath('screenshots/c-search-desktop.png')});
+   await page.setViewportSize({width: 390, height: 844}); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+   await page.locator('.search-results').scrollIntoViewIfNeeded(); await page.screenshot({path: forum.evidencePath('screenshots/c-search-narrow.png')});
+-  const fixed = page.getByRole('button', {name: '查看搜索修订 1', exact: true}); await fixed.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.body-text')).toContainText('KeyboardProbe research');
++  const fixed = page.getByRole('button', {name: '查看搜索修订 1', exact: true}); await fixed.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toContainText('KeyboardProbe research');
+   const back = page.getByRole('button', {name: '返回搜索结果', exact: true}); await back.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.search-results li')).toHaveCount(1);
+ });

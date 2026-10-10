@@ -1,0 +1,82 @@
+{
+  "status": "R1 v4 final frozen; B/root review required",
+  "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+  "new_test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+  "capture_sha256": "09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129",
+  "binding_sha256": "8a5f5d94470f0d79add2efe9c12cbf833a514a6b57b6e999f61ab18f87759e20",
+  "case_count": 2,
+  "commands": [
+    {
+      "id": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+      ]
+    },
+    {
+      "id": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs"
+      ]
+    },
+    {
+      "id": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "id": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-codex-launcher.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "case_timeout_ms": 5000,
+      "own_watchdog_ms": 4000,
+      "permission_proposed": "require_escalated only root-approved exact own Node/ps"
+    }
+  ],
+  "native_future_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-native-r1-first-result.json"
+  ],
+  "budgets": "original40poll/75work90total95outer and perrequest unchanged",
+  "not_run": [
+    "R1 source/capture syntax",
+    "R1 noEmit",
+    "R1 focused2cases",
+    "reject-second-mcp",
+    "R1 normal",
+    "standaloneguard",
+    "full/build/type/lint/schema/current"
+  ],
+  "guard": "reuse actual sealed C guard with byte-identical policy/minenv; no standalone rerun",
+  "failure_policy": "new0600wx outputs; first failure preserved, stop without retry; normal separately released",
+  "test_contract": "production factory; exact own UID/directPPID/PGID; preACK zero stdout; postACK initialize/exact9; EOF close0/null; exactPID/groupabsence/rootremoved; 1MiB UTF8 fixture bound; safe failure diagnostics only",
+  "red_receipt": "r1-cl02-red-first.receipt.json",
+  "reject_second_future_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-bounded-capture-v2.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-e/verification/codex-reject-second-mcp-first-result.json",
+    "--mode",
+    "reject-second-mcp"
+  ],
+  "capture_authority": "each PID exact UID/nativePPID/PGID checked independently by driver and outer; each proof persisted before its matchedPID controlACK; maximum64 and full candidate/proof/absence coverage, unknown retainsroot",
+  "reject_second_oracle": "2spawned+2persistedproof; source observed2/proven2/confirmedobserver1/authorized1/ACK1, secondcallback actualreject; originalfailure+allregisteredcandidate/group/root/controlabsence",
+  "capture_settlement_gate": "source actual registration/watch/observer/final discovery settled+completed and positivecandidateabsence/failure0 required before root deletion; candidate alltry aggregate failure; coveragefalse retainsledger"
+}

@@ -1,0 +1,3334 @@
+--- before/packages/storage-sqlite/src/schema.sql
++++ after/packages/storage-sqlite/src/schema.sql
+@@ -242,3 +242,60 @@
+   tags,
+   tokenize="trigram"
+ );
++
++
++CREATE TABLE IF NOT EXISTS snapshots (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  manifest_json TEXT NOT NULL,
++  manifest_sha256 TEXT NOT NULL,
++  policy_revision INTEGER NOT NULL,
++  rules_revision INTEGER NOT NULL,
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  created_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS snapshot_items (
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  item_type TEXT NOT NULL,
++  item_id TEXT NOT NULL,
++  revision INTEGER NOT NULL,
++  sha256 TEXT,
++  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
++);
++
++CREATE TABLE IF NOT EXISTS review_requests (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  round INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  version INTEGER NOT NULL,
++  requested_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  UNIQUE (space_id, target_post_id, round)
++);
++
++CREATE TABLE IF NOT EXISTS review_request_versions (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  version INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  PRIMARY KEY (request_id, version)
++);
++
++CREATE TABLE IF NOT EXISTS review_assignments (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
++  group_at_assignment TEXT,
++  PRIMARY KEY (request_id, reviewer_actor_id)
++);
+--- before/packages/storage-sqlite/src/schema.ts
++++ after/packages/storage-sqlite/src/schema.ts
+@@ -242,6 +242,63 @@
+   tags,
+   tokenize="trigram"
+ );
++
++
++CREATE TABLE IF NOT EXISTS snapshots (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  manifest_json TEXT NOT NULL,
++  manifest_sha256 TEXT NOT NULL,
++  policy_revision INTEGER NOT NULL,
++  rules_revision INTEGER NOT NULL,
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  created_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS snapshot_items (
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  item_type TEXT NOT NULL,
++  item_id TEXT NOT NULL,
++  revision INTEGER NOT NULL,
++  sha256 TEXT,
++  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
++);
++
++CREATE TABLE IF NOT EXISTS review_requests (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  round INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  version INTEGER NOT NULL,
++  requested_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  UNIQUE (space_id, target_post_id, round)
++);
++
++CREATE TABLE IF NOT EXISTS review_request_versions (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  version INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  PRIMARY KEY (request_id, version)
++);
++
++CREATE TABLE IF NOT EXISTS review_assignments (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
++  group_at_assignment TEXT,
++  PRIMARY KEY (request_id, reviewer_actor_id)
++);
+ `;
+ // END SCHEMA_SQL
+ 
+@@ -263,6 +320,62 @@
+   state TEXT NOT NULL,
+   created_at TEXT NOT NULL,
+   PRIMARY KEY (thread_id, version)
++);`;
++
++export const REVIEW_TABLES_DDL = `CREATE TABLE IF NOT EXISTS snapshots (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  manifest_json TEXT NOT NULL,
++  manifest_sha256 TEXT NOT NULL,
++  policy_revision INTEGER NOT NULL,
++  rules_revision INTEGER NOT NULL,
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  created_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS snapshot_items (
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  item_type TEXT NOT NULL,
++  item_id TEXT NOT NULL,
++  revision INTEGER NOT NULL,
++  sha256 TEXT,
++  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
++);
++
++CREATE TABLE IF NOT EXISTS review_requests (
++  id TEXT PRIMARY KEY NOT NULL,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
++  round INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  version INTEGER NOT NULL,
++  requested_by TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  UNIQUE (space_id, target_post_id, round)
++);
++
++CREATE TABLE IF NOT EXISTS review_request_versions (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  version INTEGER NOT NULL,
++  phase TEXT NOT NULL,
++  changed_by TEXT NOT NULL REFERENCES actors(id),
++  changed_at TEXT NOT NULL,
++  reason TEXT,
++  PRIMARY KEY (request_id, version)
++);
++
++CREATE TABLE IF NOT EXISTS review_assignments (
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
++  group_at_assignment TEXT,
++  PRIMARY KEY (request_id, reviewer_actor_id)
+ );`;
+ // END MIGRATION_DDL
+ 
+@@ -316,7 +429,7 @@
+   fts?: FtsRequirement;
+ }
+ 
+-export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = {
++export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = {
+   "actors": {
+     "name": "actors",
+     "columns": [
+@@ -1421,6 +1534,250 @@
+       }
+     ]
+   },
++  "review_assignments": {
++    "name": "review_assignments",
++    "columns": [
++      {
++        "name": "request_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "reviewer_actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "group_at_assignment",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "reviewer_actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "request_id",
++        "table": "review_requests",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "review_request_versions": {
++    "name": "review_request_versions",
++    "columns": [
++      {
++        "name": "request_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "phase",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "changed_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "request_id",
++        "table": "review_requests",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "review_requests": {
++    "name": "review_requests",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "snapshot_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "round",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "phase",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "requested_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "changed_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "requested_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "snapshot_id",
++        "table": "snapshots",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "target_post_id",
++          "round"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "round",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
+   "revision_artifacts": {
+     "name": "revision_artifacts",
+     "columns": [
+@@ -1542,6 +1899,140 @@
+       {
+         "from": "actor_id",
+         "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "snapshot_items": {
++    "name": "snapshot_items",
++    "columns": [
++      {
++        "name": "snapshot_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "item_type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "item_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 4
++      },
++      {
++        "name": "sha256",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "snapshot_id",
++        "table": "snapshots",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "snapshots": {
++    "name": "snapshots",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "manifest_json",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "manifest_sha256",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "policy_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "rules_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "created_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
+         "to": "id",
+         "on_update": "NO ACTION",
+         "on_delete": "NO ACTION"
+@@ -1856,7 +2347,7 @@
+   }
+ };
+ 
+-export const V1_SCHEMA_TABLES: Record<string, TableRequirement> = {
++export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = {
+   "actors": {
+     "name": "actors",
+     "columns": [
+@@ -2362,6 +2853,25 @@
+       },
+       {
+         "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "instance_metadata": {
++    "name": "instance_metadata",
++    "columns": [
++      {
++        "name": "key",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "value",
+         "type": "TEXT",
+         "notnull": true,
+         "pk": 0
+@@ -3260,6 +3770,1527 @@
+     ],
+     "uniqueConstraints": []
+   },
++  "thread_versions": {
++    "name": "thread_versions",
++    "columns": [
++      {
++        "name": "thread_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "thread_id",
++        "table": "threads",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "threads": {
++    "name": "threads",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "creator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "updated_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "creator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  }
++};
++
++export const V1_SCHEMA_TABLES: Record<string, TableRequirement> = {
++  "actors": {
++    "name": "actors",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "kind",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "display_name",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "disabled_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "artifacts": {
++    "name": "artifacts",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "owner_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "visibility",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "review_assignment_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "check_run_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "sha256",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "bytes",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "mime",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "storage_key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "owner_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "consumers": {
++    "name": "consumers",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "subscription_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "consumer_key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "ack_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "active_batch_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "acl_epoch",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "subscription_id",
++        "table": "subscriptions",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "subscription_id",
++          "consumer_key"
++        ],
++        "keyTerms": [
++          {
++            "name": "subscription_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "consumer_key",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "credentials": {
++    "name": "credentials",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "token_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "allowed_space_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "capabilities",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "expires_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "revoked_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "token_hash"
++        ],
++        "keyTerms": [
++          {
++            "name": "token_hash",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "delivery_batches": {
++    "name": "delivery_batches",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "consumer_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "from_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "through_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "event_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "acked_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "consumer_id",
++        "table": "consumers",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "events": {
++    "name": "events",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "object_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "visibility",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "seq"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "seq",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ],
++    "indexes": [
++      {
++        "name": "idx_events_space_seq",
++        "unique": false,
++        "columns": [
++          "space_id",
++          "seq"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "seq",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ],
++        "partial": false
++      }
++    ]
++  },
++  "idempotency_records": {
++    "name": "idempotency_records",
++    "columns": [
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "operation",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 4
++      },
++      {
++        "name": "request_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "result_ref",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "http_status",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "memberships": {
++    "name": "memberships",
++    "columns": [
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "role",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "active",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reviewer_eligible",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "independence_group",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "post_fts": {
++    "name": "post_fts",
++    "virtual": true,
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "UNINDEXED",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "UNINDEXED",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "summary",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "body",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "tags",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": [],
++    "fts": {
++      "module": "fts5",
++      "columns": [
++        {
++          "name": "post_id",
++          "unindexed": true
++        },
++        {
++          "name": "space_id",
++          "unindexed": true
++        },
++        {
++          "name": "title",
++          "unindexed": false
++        },
++        {
++          "name": "summary",
++          "unindexed": false
++        },
++        {
++          "name": "body",
++          "unindexed": false
++        },
++        {
++          "name": "tags",
++          "unindexed": false
++        }
++      ],
++      "configs": {
++        "tokenize": "trigram"
++      }
++    }
++  },
++  "post_revisions": {
++    "name": "post_revisions",
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "summary",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "body",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "tags",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "structured",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "content_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "editor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "editor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "posts": {
++    "name": "posts",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "thread_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "author_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "kind",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "current_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "lifecycle",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "author_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "thread_id",
++        "table": "threads",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "redactions": {
++    "name": "redactions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "affected_revisions",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "operator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "operator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "relation_resolutions": {
++    "name": "relation_resolutions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "relation_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "resolver_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason_ref",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "action",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "resolver_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "relation_id",
++        "table": "relations",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "relations": {
++    "name": "relations",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "source_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "source_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "creator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "creator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "source_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "source_post_id",
++          "source_revision",
++          "target_post_id",
++          "target_revision",
++          "type"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "source_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "source_revision",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_revision",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "type",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "revision_artifacts": {
++    "name": "revision_artifacts",
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "artifact_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "purpose",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "artifact_id",
++        "table": "artifacts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "schema_migrations": {
++    "name": "schema_migrations",
++    "columns": [
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "applied_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "sessions": {
++    "name": "sessions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "client_name",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "client_version",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "harness_session_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "metadata",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "space_revisions": {
++    "name": "space_revisions",
++    "columns": [
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "objective",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "rules",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "review_policy",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "check_profiles",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "pinned_refs",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "editor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "editor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "spaces": {
++    "name": "spaces",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "slug",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "current_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "policy_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "acl_epoch",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "slug"
++        ],
++        "keyTerms": [
++          {
++            "name": "slug",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "subscriptions": {
++    "name": "subscriptions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "thread_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "event_types",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
+   "threads": {
+     "name": "threads",
+     "columns": [
+@@ -3640,9 +5671,9 @@
+ 
+ export function verifyDatabaseStructure(
+   db: any,
+-  version: 1 | 2
++  version: 1 | 2 | 3
+ ): { valid: boolean; reason?: string } {
+-  const tableMap = version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
++  const tableMap = version === 3 ? V3_SCHEMA_TABLES : version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
+   for (const [tbl, req] of Object.entries(tableMap)) {
+     const res = verifyTableStructure(db, tbl, req);
+     if (!res.valid) {
+--- before/packages/storage-sqlite/src/bootstrap.ts
++++ after/packages/storage-sqlite/src/bootstrap.ts
+@@ -17,13 +17,15 @@
+   SCHEMA_MIGRATIONS_DDL,
+   INSTANCE_METADATA_DDL,
+   THREAD_VERSIONS_DDL,
++  V3_SCHEMA_TABLES,
++  REVIEW_TABLES_DDL,
+   V2_SCHEMA_TABLES,
+   V1_SCHEMA_TABLES,
+   verifyTableStructure,
+   verifyDatabaseStructure,
+ } from './schema.js';
+ 
+-export const CURRENT_SCHEMA_VERSION = 2;
++export const CURRENT_SCHEMA_VERSION = 3;
+ 
+ export interface BootstrapResult {
+   isNewInstance: boolean;
+@@ -60,7 +62,7 @@
+ 
+   // 2. Check for unknown tables (G05)
+   const knownTables = new Set([
+-    ...Object.keys(V2_SCHEMA_TABLES),
++    ...Object.keys(V3_SCHEMA_TABLES),
+     'post_fts',
+     'post_fts_data',
+     'post_fts_idx',
+@@ -96,6 +98,7 @@
+       return { kind: 'future', maxVersion: maxVerRow.max_v };
+     }
+ 
++    if (appliedVersions.includes(3) && (!appliedVersions.includes(1) || !appliedVersions.includes(2))) return {kind:'corrupt',reason:'数据库迁移记录不连续。'};
+     // Contradictory migration markers (H04)
+     if (appliedVersions.includes(2) && !appliedVersions.includes(1)) {
+       return {
+@@ -107,6 +110,7 @@
+ 
+   // 4. Check unpopulated schema (appliedVersions.length === 0)
+   if (appliedVersions.length === 0) {
++    const hasAllV3 = Object.keys(V3_SCHEMA_TABLES).every((t) => tableSet.has(t));
+     const hasAllV2 = Object.keys(V2_SCHEMA_TABLES).every((t) => tableSet.has(t));
+     const hasAllV1 = Object.keys(V1_SCHEMA_TABLES).every((t) => tableSet.has(t));
+ 
+@@ -127,7 +131,7 @@
+       'actors', 'credentials', 'relations', 'relation_resolutions',
+       'decisions', 'evidence', 'idempotency_records', 'idempotency_markers',
+       'events', 'event_batches', 'consumers', 'redactions', 'memberships',
+-      'sessions', 'space_revisions'
++      'sessions', 'space_revisions', 'snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments'
+     ].filter((t) => tableSet.has(t));
+ 
+     if (userTables.length > 0) {
+@@ -138,6 +142,11 @@
+       }
+     }
+ 
++    if (hasAllV3) {
++      const struct = verifyDatabaseStructure(db, 3);
++      return struct.valid ? {kind:'blank'} : {kind:'corrupt',reason:struct.reason};
++    }
++    if (Object.keys(V3_SCHEMA_TABLES).some(t => !Object.hasOwn(V2_SCHEMA_TABLES,t) && tableSet.has(t))) return {kind:'corrupt',reason:'数据库包含不完整的版本 3 结构。'};
+     if (hasAllV2) {
+       const struct = verifyDatabaseStructure(db, 2);
+       if (struct.valid) {
+@@ -169,9 +178,10 @@
+     };
+   }
+ 
++  if (!appliedVersions.includes(3) && Object.keys(V3_SCHEMA_TABLES).some(t => !Object.hasOwn(V2_SCHEMA_TABLES,t) && tableSet.has(t))) return {kind:'corrupt',reason:'数据库结构与版本 3 迁移记录矛盾。'};
+   // 5. Target is v2 (appliedVersions includes 2)
+   if (appliedVersions.includes(2)) {
+-    const v2Struct = verifyDatabaseStructure(db, 2);
++    const v2Struct = verifyDatabaseStructure(db, appliedVersions.includes(3) ? 3 : 2);
+     if (!v2Struct.valid) {
+       return {
+         kind: 'corrupt',
+@@ -199,7 +209,7 @@
+       };
+     }
+ 
+-    return { kind: 'current_initialized' };
++    return appliedVersions.includes(3) ? {kind:'current_initialized',maxVersion:3} : {kind:'supported_legacy',maxVersion:2};
+   }
+ 
+   // 6. Target is v1
+@@ -550,6 +560,10 @@
+     // If already at version 2, still check and migrate any legacy records
+     migrateIdempotencyRecords(db);
+   }
++  if (!applied.has(3)) {
++    db.exec(REVIEW_TABLES_DDL);
++    db.prepare('INSERT INTO schema_migrations (version, applied_at) VALUES (3, ?)').run(new Date().toISOString());
++  }
+ }
+ 
+ export function bootstrapDatabase(
+@@ -688,6 +702,8 @@
+       403
+     );
+   }
++
++  if (classification.kind === 'supported_legacy') throw new DetunedError(ErrorCode.FORBIDDEN, '旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。', 403);
+ 
+   if (mode === 'serve') {
+     if (classification.kind === 'blank') {
+--- before/packages/storage-sqlite/src/sqlite-storage.ts
++++ after/packages/storage-sqlite/src/sqlite-storage.ts
+@@ -18,6 +18,7 @@
+   StorageOperationalStatus,
+   resolveResourceLimits,
+   ErrorCode,
++  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord,
+   Actor,
+   Credential,
+   Space,
+@@ -1536,6 +1537,74 @@
+     });
+   }
+ 
++  createReviewSnapshot(record: ReviewSnapshotRecord, items: ReviewSnapshotItemRecord[]): void {
++    this.transaction(() => {
++      this.db.prepare(`INSERT INTO snapshots (id,space_id,manifest_json,manifest_sha256,policy_revision,rules_revision,target_post_id,target_revision,created_by,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(record.id,record.space_id,record.manifest_json,record.manifest_sha256,record.policy_revision,record.rules_revision,record.target_ref.post_id,record.target_ref.revision,record.created_by,record.created_at);
++      const insert = this.db.prepare('INSERT INTO snapshot_items (snapshot_id,item_type,item_id,revision,sha256) VALUES (?,?,?,?,?)');
++      for (const item of items) {
++        if (item.snapshot_id !== record.id) throw new Error('Invalid review snapshot item.');
++        insert.run(item.snapshot_id,item.item_type,item.item_id,item.revision,item.sha256);
++      }
++    });
++  }
++
++  findReviewSnapshotById(id: string): ReviewSnapshotRecord | null {
++    const row = this.db.prepare('SELECT * FROM snapshots WHERE id=?').get(id) as (Omit<ReviewSnapshotRecord,'target_ref'> & {target_post_id:string;target_revision:number}) | undefined;
++    if (!row) return null;
++    const {target_post_id,target_revision,...rest} = row;
++    return {...rest,target_ref:{post_id:target_post_id,revision:target_revision}};
++  }
++
++  listReviewSnapshotItems(snapshotId: string): ReviewSnapshotItemRecord[] {
++    return this.db.prepare('SELECT snapshot_id,item_type,item_id,revision,sha256 FROM snapshot_items WHERE snapshot_id=? ORDER BY item_type,item_id,revision').all(snapshotId) as ReviewSnapshotItemRecord[];
++  }
++
++  getNextReviewRequestRound(spaceId: string, targetPostId: string): number {
++    const row = this.db.prepare('SELECT COALESCE(MAX(round),0)+1 AS next FROM review_requests WHERE space_id=? AND target_post_id=?').get(spaceId,targetPostId) as {next:number};
++    return row.next;
++  }
++
++  createReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord, assignments: ReviewAssignmentRecord[]): void {
++    this.transaction(() => {
++      if (version.request_id !== record.id || version.version !== record.version) throw new Error('Invalid review request version.');
++      this.db.prepare(`INSERT INTO review_requests (id,space_id,target_post_id,target_revision,snapshot_id,round,phase,version,requested_by,created_at,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(record.id,record.space_id,record.target_ref.post_id,record.target_ref.revision,record.snapshot_id,record.round,record.phase,record.version,record.requested_by,record.created_at,record.changed_by,record.changed_at,record.reason);
++      this.insertReviewRequestVersion(version);
++      const insert = this.db.prepare('INSERT INTO review_assignments (request_id,reviewer_actor_id,group_at_assignment) VALUES (?,?,?)');
++      for (const assignment of assignments) {
++        if (assignment.request_id !== record.id) throw new Error('Invalid review assignment.');
++        insert.run(assignment.request_id,assignment.reviewer_actor_id,assignment.group_at_assignment);
++      }
++    });
++  }
++
++  private insertReviewRequestVersion(version: ReviewRequestVersionRecord): void {
++    this.db.prepare('INSERT INTO review_request_versions (request_id,version,phase,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?)').run(version.request_id,version.version,version.phase,version.changed_by,version.changed_at,version.reason);
++  }
++
++  findReviewRequestById(id: string): ReviewRequestRecord | null {
++    const row = this.db.prepare('SELECT * FROM review_requests WHERE id=?').get(id) as (Omit<ReviewRequestRecord,'target_ref'> & {target_post_id:string;target_revision:number}) | undefined;
++    if (!row) return null;
++    const {target_post_id,target_revision,...rest} = row;
++    return {...rest,target_ref:{post_id:target_post_id,revision:target_revision}};
++  }
++
++  findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null {
++    return (this.db.prepare('SELECT request_id,version,phase,changed_by,changed_at,reason FROM review_request_versions WHERE request_id=? AND version=?').get(requestId,version) as ReviewRequestVersionRecord | undefined) ?? null;
++  }
++
++  listReviewAssignments(requestId: string): ReviewAssignmentRecord[] {
++    return this.db.prepare('SELECT request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? ORDER BY reviewer_actor_id').all(requestId) as ReviewAssignmentRecord[];
++  }
++
++  updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void {
++    this.transaction(() => {
++      if (version.request_id !== record.id || version.version !== record.version) throw new Error('Invalid review request version.');
++      const result = this.db.prepare('UPDATE review_requests SET phase=?,version=?,changed_by=?,changed_at=?,reason=? WHERE id=? AND version=?').run(record.phase,record.version,record.changed_by,record.changed_at,record.reason,record.id,record.version-1);
++      if (result.changes !== 1) throw new Error('Invalid review request update.');
++      this.insertReviewRequestVersion(version);
++    });
++  }
++
+   getInstanceSecret(): string {
+     const row = this.db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get() as any;
+     if (row?.value && typeof row.value === 'string' && row.value.trim() !== '') {
+--- before/packages/storage-sqlite/scripts/generate-schema.mjs
++++ after/packages/storage-sqlite/scripts/generate-schema.mjs
+@@ -5,6 +5,7 @@
+ 
+ const __dirname = path.dirname(fileURLToPath(import.meta.url));
+ const sqlPath = path.resolve(__dirname, '../src/schema.sql');
++const v2SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql');
+ const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
+ const tsPath = path.resolve(__dirname, '../src/schema.ts');
+ 
+@@ -35,6 +36,7 @@
+ }
+ 
+ const sqlContent = readFileSync(sqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
++const v2SqlContent = readFileSync(v2SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const v1SqlContent = readFileSync(v1SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const tsContent = readFileSync(tsPath, 'utf8');
+ 
+@@ -45,18 +47,23 @@
+   return m[0].trim();
+ }
+ 
+-// 1. Extract V2 Table Requirements
+-const dbV2 = new Database(':memory:');
+-dbV2.exec(sqlContent);
+-let v2Tables;
++// 1. Extract current V3 Table Requirements
++const dbV3 = new Database(':memory:');
++dbV3.exec(sqlContent);
++let v3Tables;
+ try {
+-  v2Tables = extractDatabaseRequirements(dbV2);
++  v3Tables = extractDatabaseRequirements(dbV3);
+ } catch (err) {
+   console.error(`Error extracting requirements from schema.sql: ${err.message}`);
+   process.exit(1);
+ } finally {
+-  dbV2.close();
++  dbV3.close();
+ }
++
++const dbV2 = new Database(':memory:');
++dbV2.exec(v2SqlContent);
++const v2Tables = extractDatabaseRequirements(dbV2);
++dbV2.close();
+ 
+ // 2. Extract V1 Table Requirements
+ const dbV1 = new Database(':memory:');
+@@ -111,11 +118,17 @@
+ export const INSTANCE_METADATA_DDL = \`${extractTableDdl(sqlContent, 'instance_metadata')}\`;
+ 
+ export const THREAD_VERSIONS_DDL = \`${extractTableDdl(sqlContent, 'thread_versions')}\`;
++
++export const REVIEW_TABLES_DDL = \`${['snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments'].map(name => extractTableDdl(sqlContent, name)).join('\n\n')}\`;
+ // END MIGRATION_DDL`;
+ 
+ updatedTs = updatedTs.replace(migRegex, newMigBlock);
+ 
+-// 5. Update V2_SCHEMA_TABLES
++// 5. Update V3 and historical V2 profiles
++const v3Block = `export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v3Tables, null, 2)};`;
++const v3Regex = /export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;
++updatedTs = v3Regex.test(updatedTs) ? updatedTs.replace(v3Regex, v3Block) : updatedTs.replace('export const V2_SCHEMA_TABLES:', `${v3Block}\n\nexport const V2_SCHEMA_TABLES:`);
++// Historical V2
+ const v2Regex = /export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;
+ const newV2Block = `export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v2Tables, null, 2)};`;
+ if (v2Regex.test(updatedTs)) {
+--- before/packages/storage-sqlite/scripts/check-schema-sync.mjs
++++ after/packages/storage-sqlite/scripts/check-schema-sync.mjs
+@@ -6,6 +6,7 @@
+ 
+ const __dirname = path.dirname(fileURLToPath(import.meta.url));
+ const sqlPath = path.resolve(__dirname, '../src/schema.sql');
++const v2SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql');
+ const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
+ const tsPath = path.resolve(__dirname, '../src/schema.ts');
+ 
+@@ -36,6 +37,7 @@
+ }
+ 
+ const sqlContent = readFileSync(sqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
++const v2SqlContent = readFileSync(v2SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const v1SqlContent = readFileSync(v1SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const tsContent = readFileSync(tsPath, 'utf8');
+ 
+@@ -80,7 +82,7 @@
+ 
+ // 3. Check V2 Profile
+ const dbV2 = new Database(':memory:');
+-dbV2.exec(sqlContent);
++dbV2.exec(v2SqlContent);
+ let expectedV2;
+ try {
+   expectedV2 = extractDatabaseRequirements(dbV2);
+@@ -107,6 +109,18 @@
+   console.error('Error: V2_SCHEMA_TABLES in schema.ts is out of sync with schema.sql DDL structure.');
+   process.exit(1);
+ }
++
++const dbV3 = new Database(':memory:');
++dbV3.exec(sqlContent);
++const expectedV3 = extractDatabaseRequirements(dbV3);
++dbV3.close();
++const v3Match = tsContent.match(/export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
++if (!v3Match || !isDeepStrictEqual(JSON.parse(v3Match[1]), expectedV3)) {
++  console.error('Error: V3 schema profile is out of sync.'); process.exit(1);
++}
++const reviewDdl = tsContent.match(/export const REVIEW_TABLES_DDL = `([\s\S]*?)`;/)?.[1];
++const expectedReviewDdl = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments'].map(name => extractTableDdl(sqlContent,name)).join('\n\n');
++if (reviewDdl !== expectedReviewDdl) {console.error('Error: Review migration DDL is out of sync.');process.exit(1);}
+ 
+ // 4. Check V1 Profile
+ const dbV1 = new Database(':memory:');
+--- before/packages/storage-sqlite/src/offline-upgrade.ts
++++ after/packages/storage-sqlite/src/offline-upgrade.ts
+@@ -11,9 +11,9 @@
+ export class UpgradeError extends Error{constructor(public readonly code:UpgradeErrorCode,message:string){super(message);this.name='UpgradeError';}}
+ export type UpgradeStage=MaintenanceStage|'after-source-lock'|'backup-step'|'after-copy'|'before-migrate'|'after-migrate'|'credential-reset';
+ export interface UpgradeOptions{dataDir:string;outputDir:string;offline:true;adminName:string;signal?:AbortSignal;timeoutMs?:number;hooks?:{atStage?:(stage:UpgradeStage)=>void}}
+-const bad=():never=>{throw new UpgradeError('INVALID_SOURCE','Source is not a valid initialized schema 1 instance or its registered attachments are invalid.');};
++const bad=():never=>{throw new UpgradeError('INVALID_SOURCE','Source is not a valid initialized schema 1 or 2 instance or its registered attachments are invalid.');};
+ async function regularDirectory(file:string):Promise<string>{const stat=await lstat(file);if(!stat.isDirectory()||stat.isSymbolicLink())bad();return realpath(file);}
+-function validateDB(db:Database.Database,legacy:boolean):void{const classification=classifyDatabase(db);if(legacy?(classification.kind!=='supported_legacy'||classification.maxVersion!==1):classification.kind!=='current_initialized')bad();if(legacy&&(!db.prepare('SELECT 1 FROM schema_migrations WHERE version=1').get()||db.prepare('SELECT 1 FROM schema_migrations WHERE version<>1 LIMIT 1').get()))bad();if(db.prepare('PRAGMA foreign_key_check').get())bad();const integrity=db.prepare('PRAGMA integrity_check').get() as {integrity_check:string};if(integrity.integrity_check!=='ok')bad();}
++function validateDB(db:Database.Database,legacy:boolean):void{const classification=classifyDatabase(db);if(legacy?(classification.kind!=='supported_legacy'||![1,2].includes(classification.maxVersion ?? 0)):classification.kind!=='current_initialized')bad();if(db.prepare('PRAGMA foreign_key_check').get())bad();const integrity=db.prepare('PRAGMA integrity_check').get() as {integrity_check:string};if(integrity.integrity_check!=='ok')bad();}
+ interface ArtifactRow{id:string;storage_key:string;state:string;sha256:string;bytes:number}
+ async function copyArtifacts(db:Database.Database,source:string,stage:string,check:()=>void,hook:(s:UpgradeStage)=>void):Promise<string[]>{
+  const total=(db.prepare('SELECT count(*) AS n FROM artifacts').get() as {n:number}).n;if(total>10000)bad();
+@@ -27,7 +27,7 @@
+  }
+  if(seen!==total)bad();return files;
+ }
+-export async function upgradeOffline(options:UpgradeOptions):Promise<{data_dir:string;source_data_dir:string;source_schema_version:1;schema_version:2;upgrade_id:string;admin_actor_id:string;admin_token:string}>{
++export async function upgradeOffline(options:UpgradeOptions):Promise<{data_dir:string;source_data_dir:string;source_schema_version:1|2;schema_version:3;upgrade_id:string;admin_actor_id:string;admin_token:string}>{
+  if(options.offline!==true)throw new UpgradeError('OFFLINE_REQUIRED','Offline upgrade requires explicit offline mode.');
+  const timeout=options.timeoutMs??120000,name=typeof options.adminName==='string'?options.adminName.trim():'';
+  if(!Number.isSafeInteger(timeout)||timeout<1||timeout>120000||!name||[...name].length>128||typeof options.dataDir!=='string'||!options.dataDir.trim()||typeof options.outputDir!=='string'||!options.outputDir.trim())throw new UpgradeError('INVALID_OPTIONS','Upgrade requires source, a new output directory, administrator name and timeout in 1–120000ms.');
+@@ -41,7 +41,7 @@
+   for(const [file,code] of [[target.directory,'DESTINATION_EXISTS'],[target.marker,'INCOMPLETE_DIRECTORY']] as const){try{await lstat(file);throw new UpgradeError(code,'Upgrade destination already exists or is incomplete; nothing was replaced.');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
+   lock=new DirectoryLock(source);lock.acquire();assertDataDirReady(source);hook('after-source-lock');
+   const dbFile=path.join(source,'detuned.sqlite'),stat=await lstat(dbFile);if(!stat.isFile()||stat.isSymbolicLink())bad();
+-  sourceDB=new Database(dbFile,{readonly:true,fileMustExist:true,timeout:0});validateDB(sourceDB,true);
++  sourceDB=new Database(dbFile,{readonly:true,fileMustExist:true,timeout:0});validateDB(sourceDB,true);const sourceVersion=classifyDatabase(sourceDB).maxVersion as 1|2;
+   stage=await prepareMaintenanceStage(target.parent);const stagedFile=path.join(stage,'detuned.sqlite');
+   await sourceDB.backup(stagedFile,{progress:()=>{hook('backup-step');return 100;}});check();await chmod(stagedFile,0o600);
+   stagedDB=new Database(stagedFile,{fileMustExist:true});validateDB(stagedDB,true);
+@@ -53,7 +53,7 @@
+   const checkpoint=stagedDB.pragma('wal_checkpoint(TRUNCATE)') as {busy:number;log:number;checkpointed:number}[];if(checkpoint[0]?.busy!==0||(checkpoint[0].log!==-1&&checkpoint[0].log!==checkpoint[0].checkpointed))throw new UpgradeError('UPGRADE_FAILED','Upgrade checkpoint did not complete.');stagedDB.close();stagedDB=undefined;
+   const fd=await open(stagedFile,constants.O_RDONLY|constants.O_NOFOLLOW);try{hook('file-sync');await fd.sync();}finally{await fd.close();}
+   await publishMaintenanceDirectory(stage,target,['detuned.sqlite',...files],{atStage:hook});
+-  return{data_dir:target.directory,source_data_dir:source,source_schema_version:1,schema_version:2,upgrade_id:'upg_'+randomBytes(16).toString('hex'),admin_actor_id:identity.adminActorId,admin_token:identity.adminToken};
++  return{data_dir:target.directory,source_data_dir:source,source_schema_version:sourceVersion,schema_version:3,upgrade_id:'upg_'+randomBytes(16).toString('hex'),admin_actor_id:identity.adminActorId,admin_token:identity.adminToken};
+  }catch(e){if(e instanceof UpgradeError)throw e;if(e instanceof MaintenanceError){const code=e.code==='DESTINATION_EXISTS'?'DESTINATION_EXISTS':e.code==='INCOMPLETE_DIRECTORY'?'INCOMPLETE_DIRECTORY':'UPGRADE_FAILED';throw new UpgradeError(code,e.message.replace('Retain the original backup and restore it','Retain the original old instance and upgrade it'));}throw new UpgradeError('UPGRADE_FAILED','Offline copy upgrade failed; keep the original instance and retry to another new directory.');}
+  finally{sourceDB?.close();stagedDB?.close();lock?.release();if(stage)await rm(stage,{recursive:true,force:true}).catch(()=>{});}
+ }
+--- before/packages/storage-sqlite/src/offline-backup.ts
++++ after/packages/storage-sqlite/src/offline-backup.ts
+@@ -3,7 +3,7 @@
+ import path from 'node:path';
+ import { createHash, randomBytes } from 'node:crypto';
+ import Database from 'better-sqlite3';
+-import { classifyDatabase } from './bootstrap.js';
++import { classifyDatabase, bootstrapDatabase } from './bootstrap.js';
+ import { DirectoryLock } from './lock.js';
+ import { SqliteStorage } from './sqlite-storage.js';
+ import { assertDataDirReady, maintenanceTarget, MaintenanceError, BACKUP_MANIFEST_FILE } from './directory-state.js';
+@@ -12,7 +12,7 @@
+ export interface MaintenanceHooks { atStage?: (stage: MaintenanceStage) => void }
+ export interface BackupFile { path: string; bytes: number; sha256: string }
+ export interface BackupArtifact extends BackupFile { id: string; storageKey: string; state: 'ready' | 'redacted' | 'missing'; present: boolean }
+-export interface BackupManifest { format: 'detuned-physical-backup'; version: 1; schemaVersion: 2; createdAt: string; database: BackupFile; artifacts: BackupArtifact[] }
++export interface BackupManifest { format: 'detuned-physical-backup'; version: 1; schemaVersion: 2 | 3; createdAt: string; database: BackupFile; artifacts: BackupArtifact[] }
+ export interface BackupOptions { dataDir: string; outputDir: string; offline: true; hooks?: MaintenanceHooks }
+ export interface RestoreOptions { backupDir: string; dataDir: string; hooks?: MaintenanceHooks }
+ const MAX_ARTIFACTS = 10000, MAX_MANIFEST = 8 * 1024 * 1024, MAX_ARTIFACT_BYTES = 25 * 1024 * 1024;
+@@ -45,9 +45,9 @@
+   if (!await absent(target.marker)) throw new MaintenanceError('INCOMPLETE_DIRECTORY', 'An incomplete destination reservation exists; inspect it before manual cleanup.');
+   return target;
+ }
+-function validateDatabase(db: Database.Database, code: 'INVALID_SOURCE' | 'INVALID_BACKUP'): void {
++function validateDatabase(db: Database.Database, code: 'INVALID_SOURCE' | 'INVALID_BACKUP', schemaVersion: 2 | 3 = 3): void {
+   const classification = classifyDatabase(db);
+-  if (classification.kind !== 'current_initialized' || (db.prepare('SELECT max(version) AS version FROM schema_migrations').get() as { version: number }).version !== 2) failure(code, 'Only an initialized, valid current schema 2 database is supported.');
++  if ((schemaVersion === 3 ? classification.kind !== 'current_initialized' : classification.kind !== 'supported_legacy' || classification.maxVersion !== 2) || (db.prepare('SELECT max(version) AS version FROM schema_migrations').get() as { version: number }).version !== schemaVersion) failure(code, 'Only an initialized database matching the supported schema profile is supported.');
+   const integrity = db.pragma('integrity_check') as { integrity_check: string }[];
+   if (integrity.length !== 1 || integrity[0]?.integrity_check !== 'ok' || (db.pragma('foreign_key_check') as unknown[]).length !== 0) failure(code, 'SQLite integrity or foreign key validation failed.');
+ }
+@@ -142,7 +142,7 @@
+ function parseManifest(text: string): BackupManifest {
+   let value: unknown;
+   try { value = JSON.parse(text); } catch { failure('INVALID_BACKUP', 'Backup manifest is not valid JSON.'); }
+-  if (!exact(value, ['format', 'version', 'schemaVersion', 'createdAt', 'database', 'artifacts']) || value.format !== 'detuned-physical-backup' || value.version !== 1 || value.schemaVersion !== 2 || typeof value.createdAt !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value.createdAt) || !Number.isFinite(Date.parse(value.createdAt)) || !Array.isArray(value.artifacts) || value.artifacts.length > MAX_ARTIFACTS) failure('INVALID_BACKUP', 'Unsupported or malformed backup manifest.');
++  if (!exact(value, ['format', 'version', 'schemaVersion', 'createdAt', 'database', 'artifacts']) || value.format !== 'detuned-physical-backup' || value.version !== 1 || (value.schemaVersion !== 2 && value.schemaVersion !== 3) || typeof value.createdAt !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value.createdAt) || !Number.isFinite(Date.parse(value.createdAt)) || !Array.isArray(value.artifacts) || value.artifacts.length > MAX_ARTIFACTS) failure('INVALID_BACKUP', 'Unsupported or malformed backup manifest.');
+   if (!exact(value.database, ['path', 'bytes', 'sha256']) || value.database.path !== 'detuned.sqlite' || !safeSize(value.database.bytes) || typeof value.database.sha256 !== 'string' || !HEX.test(value.database.sha256)) failure('INVALID_BACKUP', 'Invalid database manifest entry.');
+   const ids = new Set(), keys = new Set(), paths = new Set();
+   for (const entry of value.artifacts) {
+@@ -221,7 +221,7 @@
+       if (present) { const copied = await copyMaintenanceFile(file, path.join(stage, relative), options.hooks); if (copied.bytes !== row.bytes || copied.sha256 !== row.sha256) failure('INVALID_SOURCE', 'Registered artifact bytes or hash do not match.'); }
+       artifacts.push({ id: row.id, storageKey: row.storage_key, state: row.state as BackupArtifact['state'], present, path: relative, bytes: row.bytes, sha256: row.sha256 });
+     }
+-    const manifest: BackupManifest = { format: 'detuned-physical-backup', version: 1, schemaVersion: 2, createdAt: new Date().toISOString(), database, artifacts };
++    const manifest: BackupManifest = { format: 'detuned-physical-backup', version: 1, schemaVersion: 3, createdAt: new Date().toISOString(), database, artifacts };
+     await writeManifest(stage, manifest, options.hooks); await syncTree(stage, options.hooks);
+     await publishMaintenanceDirectory(stage, target, [BACKUP_MANIFEST_FILE, 'detuned.sqlite', ...artifacts.filter(row => row.present).map(row => row.path)], options.hooks);
+     return { backupDir: target.directory, manifest };
+@@ -244,9 +244,10 @@
+     const db = new Database(path.join(stage, 'detuned.sqlite'), { fileMustExist: true });
+     let adminActorId: string, adminToken: string;
+     try {
+-      validateDatabase(db, 'INVALID_BACKUP'); matchInventory(artifactRows(db, 'INVALID_BACKUP'), manifest);
++      validateDatabase(db, 'INVALID_BACKUP', manifest.schemaVersion); matchInventory(artifactRows(db, 'INVALID_BACKUP'), manifest);
+       // New target only: do not mutate or migrate the source backup.
+       db.pragma('journal_mode = DELETE'); db.pragma('synchronous = FULL'); db.pragma('foreign_keys = ON');
++      if (manifest.schemaVersion === 2) bootstrapDatabase(db);
+       ({ adminActorId, adminToken } = resetRestoredIdentity(db, 'Local recovery administrator', options.hooks));
+       const checkpoint = db.pragma('wal_checkpoint(TRUNCATE)') as { busy: number }[];
+       if (checkpoint[0]?.busy !== 0) throw new Error('Restored database checkpoint did not complete.');
+--- before/packages/storage-sqlite/src/logical-import.ts
++++ after/packages/storage-sqlite/src/logical-import.ts
+@@ -62,7 +62,7 @@
+   async function* chunks(){const buffer=Buffer.alloc(65536);for(;;){check();const result=await input!.read(buffer,0,buffer.length,null);if(!result.bytesRead)return;yield Uint8Array.from(buffer.subarray(0,result.bytesRead));}}
+   const complete=await decodeSpaceExport(chunks(),{signal:controller.signal,onLine});hook('validation');const sourceHeader=complete.header;
+   await validateImported(db,sourceHeader.source.space_id,check,metadata);
+-  const summary=JSON.stringify({version:1,import_id:importId,imported_at:now,source:sourceHeader.source,export_id:sourceHeader.export_id,chain_sha256:complete.end.chain_sha256,record_count:records,ready_to_missing:readyMissing,post_tombstones:postTombs,artifact_tombstones:artifactTombs,formal_review_status:'not_enabled',formal_check_status:'not_enabled',new_local_event:true});if(Buffer.byteLength(summary)>16384)bad();db.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('space_import.v1',summary);
++  const summary=JSON.stringify({version:1,import_id:importId,imported_at:now,source:sourceHeader.source,export_id:sourceHeader.export_id,chain_sha256:complete.end.chain_sha256,record_count:records,ready_to_missing:readyMissing,post_tombstones:postTombs,artifact_tombstones:artifactTombs,formal_review_status:sourceHeader.formal_review_status,formal_check_status:sourceHeader.formal_check_status,source_format_version:sourceHeader.version,new_local_event:true});if(Buffer.byteLength(summary)>16384)bad();db.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('space_import.v1',summary);
+   storage.appendEvent(sourceHeader.source.space_id,{id:'evt_'+randomBytes(16).toString('hex'),space_id:sourceHeader.source.space_id,type:'space.revised',object_id:sourceHeader.source.space_id,revision:sourceHeader.source.space_revision,visibility:'public',actor_id:boot.adminActorId,created_at:now});
+   hook('import-transaction');db.exec('COMMIT');const checkpoint=db.pragma('wal_checkpoint(TRUNCATE)') as {busy:number;log:number;checkpointed:number}[];if(checkpoint[0]?.busy!==0)throw new ImportError('IMPORT_FAILED','Import staging checkpoint did not complete.');db.close();db=undefined;
+   await publishMaintenanceDirectory(stage,target,['detuned.sqlite'],{atStage:hook});
+--- before/packages/protocol/src/export.ts
++++ after/packages/protocol/src/export.ts
+@@ -14,7 +14,9 @@
+ const object = <T extends TProperties>(properties: T) => Type.Object(properties, { additionalProperties: false });
+ const state = Type.Union([Type.Literal('open'), Type.Literal('archived')]);
+ const projected = Type.Optional(Type.Literal(true));
+-export const SpaceExportHeaderSchema = object({ type: Type.Literal('header'), format: Type.Literal('detuned-space-export'), version: Type.Literal(1), export_id: Type.String({ pattern: '^exp_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }), created_at: date, source: object({ space_id: id, schema_version: Type.Literal(2), snapshot_event_seq: Type.String({ pattern: '^(0|[1-9][0-9]*)$' }), space_revision: positive }), identity_semantics: Type.Literal('source_actor_ids_only'), scope: Type.Literal('public_research'), formal_review_status: Type.Literal('not_enabled'), formal_check_status: Type.Literal('not_enabled'), hash_algorithm: Type.Literal('sha256-chain-v1') });
++const legacyHeader = object({ type: Type.Literal('header'), format: Type.Literal('detuned-space-export'), version: Type.Literal(1), export_id: Type.String({ pattern: '^exp_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }), created_at: date, source: object({ space_id: id, schema_version: Type.Literal(2), snapshot_event_seq: Type.String({ pattern: '^(0|[1-9][0-9]*)$' }), space_revision: positive }), identity_semantics: Type.Literal('source_actor_ids_only'), scope: Type.Literal('public_research'), formal_review_status: Type.Literal('not_enabled'), formal_check_status: Type.Literal('not_enabled'), hash_algorithm: Type.Literal('sha256-chain-v1') });
++const currentHeader = object({ type: Type.Literal('header'), format: Type.Literal('detuned-space-export'), version: Type.Literal(2), export_id: Type.String({ pattern: '^exp_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' }), created_at: date, source: object({ space_id: id, schema_version: Type.Literal(3), snapshot_event_seq: Type.String({ pattern: '^(0|[1-9][0-9]*)$' }), space_revision: positive }), identity_semantics: Type.Literal('source_actor_ids_only'), scope: Type.Literal('public_research'), formal_review_status: Type.Literal('excluded'), formal_check_status: Type.Literal('excluded'), hash_algorithm: Type.Literal('sha256-chain-v1') });
++export const SpaceExportHeaderSchema = Type.Union([legacyHeader, currentHeader]);
+ const dataSchemas = {
+   space: object({ id, slug: Type.String(), current_revision: positive, policy_revision: positive, created_at: date }),
+   space_revision: object({ space_id: id, revision: positive, objective: Type.String(), rules: Type.Array(Type.String()), review_policy: Type.Record(Type.String(), Type.Unknown()), check_profiles: Type.Record(Type.String(), Type.Unknown()), pinned_refs: Type.Array(PostRefSchema), editor_id: id, created_at: date, projected }),
+--- before/packages/core/src/services/space-export-service.ts
++++ after/packages/core/src/services/space-export-service.ts
+@@ -149,9 +149,9 @@
+       this.guard();
+       if (this.phase === 'header') {
+         this.phase = 'records';
+-        return { kind: 'line', line: this.encode({ type: 'header', format: 'detuned-space-export', version: 1, export_id: this.exportId, created_at: this.createdAt,
+-          source: { space_id: this.spaceId, schema_version: 2, snapshot_event_seq: this.snapshot.eventSeq, space_revision: this.snapshot.spaceRevision },
+-          identity_semantics: 'source_actor_ids_only', scope: 'public_research', hash_algorithm: 'sha256-chain-v1', formal_review_status: 'not_enabled', formal_check_status: 'not_enabled' }, true) };
++        return { kind: 'line', line: this.encode({ type: 'header', format: 'detuned-space-export', version: 2, export_id: this.exportId, created_at: this.createdAt,
++          source: { space_id: this.spaceId, schema_version: 3, snapshot_event_seq: this.snapshot.eventSeq, space_revision: this.snapshot.spaceRevision },
++          identity_semantics: 'source_actor_ids_only', scope: 'public_research', hash_algorithm: 'sha256-chain-v1', formal_review_status: 'excluded', formal_check_status: 'excluded' }, true) };
+       }
+       for (let skipped = 0; skipped < 128; skipped++) {
+         const candidate = this.snapshot.nextCandidate(this.limits.max_raw_bytes);
+--- before/packages/cli/src/index.ts
++++ after/packages/cli/src/index.ts
+@@ -215,10 +215,10 @@
+     }
+   });
+ 
+-program.command('migrate').description('离线复制旧schema1实例并升级到新目录；保留原目录回退')
++program.command('migrate').description('离线复制旧schema1或schema2实例并升级到新schema3目录；保留原目录回退')
+   .option('--offline', '显式确认离线升级，活跃服务持锁时拒绝')
+-  .requiredOption('--data-dir <dir>', '旧schema1源目录')
+-  .requiredOption('--output <dir>', '不存在的新schema2目录')
++  .requiredOption('--data-dir <dir>', '旧schema1或schema2源目录')
++  .requiredOption('--output <dir>', '不存在的新schema3目录')
+   .requiredOption('--admin-name <name>', '新本地human管理员名称')
+   .option('--timeout-ms <n>', '完整离线升级超时1–120000ms', '120000')
+   .action(async (options) => {
+--- before/tests/fixtures/historical-v2-schema.sql
++++ after/tests/fixtures/historical-v2-schema.sql
+@@ -0,0 +1,244 @@
++-- Detuned SQLite Schema Baseline
++
++CREATE TABLE IF NOT EXISTS schema_migrations (
++  version INTEGER PRIMARY KEY,
++  applied_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS actors (
++  id TEXT PRIMARY KEY,
++  kind TEXT NOT NULL,
++  display_name TEXT NOT NULL,
++  created_at TEXT NOT NULL,
++  disabled_at TEXT
++);
++
++CREATE TABLE IF NOT EXISTS credentials (
++  id TEXT PRIMARY KEY,
++  actor_id TEXT NOT NULL REFERENCES actors(id),
++  token_hash TEXT NOT NULL UNIQUE,
++  allowed_space_ids TEXT NOT NULL,
++  capabilities TEXT NOT NULL,
++  expires_at TEXT,
++  revoked_at TEXT,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS spaces (
++  id TEXT PRIMARY KEY,
++  slug TEXT NOT NULL UNIQUE,
++  current_revision INTEGER NOT NULL DEFAULT 1,
++  policy_revision INTEGER NOT NULL DEFAULT 1,
++  acl_epoch INTEGER NOT NULL DEFAULT 1,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS space_revisions (
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  revision INTEGER NOT NULL,
++  objective TEXT NOT NULL,
++  rules TEXT NOT NULL,
++  review_policy TEXT NOT NULL,
++  check_profiles TEXT NOT NULL,
++  pinned_refs TEXT NOT NULL,
++  editor_id TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  PRIMARY KEY (space_id, revision)
++);
++
++CREATE TABLE IF NOT EXISTS memberships (
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  actor_id TEXT NOT NULL REFERENCES actors(id),
++  role TEXT NOT NULL,
++  active INTEGER NOT NULL DEFAULT 1,
++  reviewer_eligible INTEGER NOT NULL DEFAULT 1,
++  independence_group TEXT,
++  PRIMARY KEY (space_id, actor_id)
++);
++
++CREATE TABLE IF NOT EXISTS sessions (
++  id TEXT PRIMARY KEY,
++  actor_id TEXT NOT NULL REFERENCES actors(id),
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  client_name TEXT NOT NULL,
++  client_version TEXT NOT NULL,
++  harness_session_id TEXT,
++  metadata TEXT NOT NULL,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS threads (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  title TEXT NOT NULL,
++  version INTEGER NOT NULL DEFAULT 1,
++  state TEXT NOT NULL DEFAULT 'open',
++  creator_id TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  updated_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS thread_versions (
++  thread_id TEXT NOT NULL REFERENCES threads(id),
++  version INTEGER NOT NULL,
++  title TEXT NOT NULL,
++  state TEXT NOT NULL,
++  created_at TEXT NOT NULL,
++  PRIMARY KEY (thread_id, version)
++);
++
++CREATE TABLE IF NOT EXISTS posts (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  thread_id TEXT NOT NULL REFERENCES threads(id),
++  author_id TEXT NOT NULL REFERENCES actors(id),
++  kind TEXT NOT NULL,
++  current_revision INTEGER NOT NULL DEFAULT 1,
++  lifecycle TEXT NOT NULL DEFAULT 'active',
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS post_revisions (
++  post_id TEXT NOT NULL REFERENCES posts(id),
++  revision INTEGER NOT NULL,
++  title TEXT NOT NULL,
++  summary TEXT NOT NULL,
++  body TEXT NOT NULL,
++  tags TEXT NOT NULL,
++  structured TEXT NOT NULL,
++  content_hash TEXT NOT NULL,
++  editor_id TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  PRIMARY KEY (post_id, revision)
++);
++
++CREATE TABLE IF NOT EXISTS relations (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  source_post_id TEXT NOT NULL REFERENCES posts(id),
++  source_revision INTEGER NOT NULL,
++  target_post_id TEXT NOT NULL REFERENCES posts(id),
++  target_revision INTEGER NOT NULL,
++  type TEXT NOT NULL,
++  state TEXT NOT NULL DEFAULT 'open',
++  version INTEGER NOT NULL DEFAULT 1,
++  creator_id TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  UNIQUE (space_id, source_post_id, source_revision, target_post_id, target_revision, type)
++);
++
++CREATE TABLE IF NOT EXISTS relation_resolutions (
++  id TEXT PRIMARY KEY,
++  relation_id TEXT NOT NULL REFERENCES relations(id),
++  version INTEGER NOT NULL,
++  resolver_id TEXT NOT NULL REFERENCES actors(id),
++  reason_ref TEXT NOT NULL,
++  action TEXT NOT NULL,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS artifacts (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  owner_id TEXT NOT NULL REFERENCES actors(id),
++  visibility TEXT NOT NULL DEFAULT 'space',
++  review_assignment_id TEXT,
++  check_run_id TEXT,
++  sha256 TEXT NOT NULL,
++  bytes INTEGER NOT NULL,
++  mime TEXT NOT NULL,
++  storage_key TEXT NOT NULL,
++  state TEXT NOT NULL DEFAULT 'ready',
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS revision_artifacts (
++  post_id TEXT NOT NULL,
++  revision INTEGER NOT NULL,
++  artifact_id TEXT NOT NULL REFERENCES artifacts(id),
++  purpose TEXT NOT NULL DEFAULT 'evidence',
++  PRIMARY KEY (post_id, revision, artifact_id)
++);
++
++CREATE TABLE IF NOT EXISTS subscriptions (
++  id TEXT PRIMARY KEY,
++  actor_id TEXT NOT NULL REFERENCES actors(id),
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  thread_ids TEXT NOT NULL,
++  event_types TEXT NOT NULL,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS consumers (
++  id TEXT PRIMARY KEY,
++  subscription_id TEXT NOT NULL REFERENCES subscriptions(id),
++  consumer_key TEXT NOT NULL,
++  ack_seq INTEGER NOT NULL DEFAULT 0,
++  version INTEGER NOT NULL DEFAULT 1,
++  active_batch_id TEXT,
++  acl_epoch INTEGER NOT NULL DEFAULT 1,
++  UNIQUE (subscription_id, consumer_key)
++);
++
++CREATE TABLE IF NOT EXISTS delivery_batches (
++  id TEXT PRIMARY KEY,
++  consumer_id TEXT NOT NULL REFERENCES consumers(id),
++  from_seq INTEGER NOT NULL,
++  through_seq INTEGER NOT NULL,
++  event_ids TEXT NOT NULL,
++  acked_at TEXT,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS events (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  seq INTEGER NOT NULL,
++  type TEXT NOT NULL,
++  object_id TEXT NOT NULL,
++  revision INTEGER,
++  visibility TEXT NOT NULL DEFAULT 'public',
++  actor_id TEXT NOT NULL REFERENCES actors(id),
++  created_at TEXT NOT NULL,
++  UNIQUE (space_id, seq)
++);
++
++CREATE INDEX IF NOT EXISTS idx_events_space_seq ON events(space_id, seq);
++
++CREATE TABLE IF NOT EXISTS idempotency_records (
++  actor_id TEXT NOT NULL,
++  space_id TEXT NOT NULL,
++  operation TEXT NOT NULL,
++  key TEXT NOT NULL,
++  request_hash TEXT NOT NULL,
++  result_ref TEXT NOT NULL,
++  http_status INTEGER NOT NULL,
++  created_at TEXT NOT NULL,
++  PRIMARY KEY (actor_id, space_id, operation, key)
++);
++
++CREATE TABLE IF NOT EXISTS redactions (
++  id TEXT PRIMARY KEY,
++  space_id TEXT NOT NULL REFERENCES spaces(id),
++  target_type TEXT NOT NULL,
++  target_id TEXT NOT NULL,
++  affected_revisions TEXT NOT NULL,
++  operator_id TEXT NOT NULL REFERENCES actors(id),
++  reason TEXT NOT NULL,
++  created_at TEXT NOT NULL
++);
++
++CREATE TABLE IF NOT EXISTS instance_metadata (
++  key TEXT PRIMARY KEY,
++  value TEXT NOT NULL
++);
++
++CREATE VIRTUAL TABLE IF NOT EXISTS post_fts USING fts5(
++  post_id UNINDEXED,
++  space_id UNINDEXED,
++  title,
++  summary,
++  body,
++  tags,
++  tokenize="trigram"
++);
+--- before/tests/fixtures/historical-v2-schema.README.md
++++ after/tests/fixtures/historical-v2-schema.README.md
+@@ -0,0 +1,7 @@
++# Historical schema2 fixture
++
++This file preserves the exact pre-schema3 `packages/storage-sqlite/src/schema.sql` bytes captured for M6.1-B, before editing the current DDL. It is a structural historical profile, not a database containing credentials or research data.
++
++SHA-256: `7e3f01ada4d5285f62b61c5c9d427a288b1fc3dde7ee4146560ad7a0d22b85be`.
++
++Recipe: copy the schema2 source bytes without parsing, stripping comments, or reformatting; verify the SHA-256 against the M6.1-B fresh baseline. Migration markers and initialized metadata are supplied by private test fixtures, not embedded in this SQL.
+--- before/tests/integration/m6-schema3-maintenance.test.ts
++++ after/tests/integration/m6-schema3-maintenance.test.ts
+@@ -0,0 +1,66 @@
++import { describe, it, expect } from 'vitest';
++import Database from 'better-sqlite3';
++import { readFileSync } from 'node:fs';
++import { mkdtemp, mkdir, rm, readFile } from 'node:fs/promises';
++import path from 'node:path';
++import os from 'node:os';
++import { createHash } from 'node:crypto';
++import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage, upgradeOffline, backupOffline, restoreBackup } from '../../packages/storage-sqlite/src/index.js';
++import { validateSpaceExportLine } from '@detuned/protocol';
++const oldSql = readFileSync(new URL('../fixtures/historical-v2-schema.sql',import.meta.url),'utf8');
++const tables = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments'];
++function historical(db: Database.Database) {
++  db.exec(oldSql);
++  db.prepare('INSERT INTO schema_migrations VALUES (?,?)').run(1,'2026-10-09T00:00:00.000Z');
++  db.prepare('INSERT INTO schema_migrations VALUES (?,?)').run(2,'2026-10-09T00:00:00.000Z');
++  db.prepare('INSERT INTO instance_metadata VALUES (?,?)').run('initialized','true');
++  db.prepare('INSERT INTO instance_metadata VALUES (?,?)').run('token_secret','private-test-secret');
++  db.prepare('INSERT INTO actors(id,kind,display_name,created_at) VALUES (?,?,?,?)').run('a','human','Private fixture','2026-10-09T00:00:00.000Z');
++}
++describe('M6 schema3 maintenance',()=>{
++  it('classifies exact historical2 and refuses ordinary init/serve without mutating it, while explicit stage bootstrap upgrades',()=>{
++    const db=new Database(':memory:');try{historical(db);expect(classifyDatabase(db)).toMatchObject({kind:'supported_legacy',maxVersion:2});
++      for(const mode of ['init','serve'] as const)expect(()=>openAndCoordinateDatabase(db,mode)).toThrow(/migrate/);
++      expect(db.prepare('SELECT MAX(version) AS n FROM schema_migrations').get()).toEqual({n:2});
++      bootstrapDatabase(db);expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized',maxVersion:3});
++      for(const table of tables)expect(db.prepare(`SELECT count(*) AS n FROM ${table}`).get()).toEqual({n:0});
++    }finally{db.close();}
++  });
++  it('creates fresh schema3 and rejects incomplete formal structure and future markers',()=>{
++    const db=new Database(':memory:');try{bootstrapDatabase(db);expect(classifyDatabase(db).kind).toBe('current_initialized');db.exec('DROP TABLE review_assignments');expect(classifyDatabase(db).kind).toBe('corrupt');db.prepare('INSERT INTO schema_migrations VALUES(4,?)').run('2026-10-09T00:00:00.000Z');expect(classifyDatabase(db).kind).toBe('future');}finally{db.close();}
++  });
++  it('copies historical2 only to new schema3, preserving source bytes, and backs up/restores schema3',async()=>{
++    const root=await mkdtemp(path.join(os.tmpdir(),'detuned-m6-maint-'));try{
++      const source=path.join(root,'source');await mkdir(source,{mode:0o700});const sourceFile=path.join(source,'detuned.sqlite');const db=new Database(sourceFile);historical(db);db.close();
++      const before=createHash('sha256').update(await readFile(sourceFile)).digest('hex');
++      const output=path.join(root,'new');const result=await upgradeOffline({dataDir:source,outputDir:output,offline:true,adminName:'Private administrator'});expect(result).toMatchObject({source_schema_version:2,schema_version:3});expect(createHash('sha256').update(await readFile(sourceFile)).digest('hex')).toBe(before);
++      const backup=path.join(root,'backup');expect((await backupOffline({dataDir:output,outputDir:backup,offline:true})).manifest).toMatchObject({version:1,schemaVersion:3});
++      const target=path.join(root,'restore');await restoreBackup({backupDir:backup,dataDir:target});const restored=new Database(path.join(target,'detuned.sqlite'));try{expect(classifyDatabase(restored).kind).toBe('current_initialized');for(const table of tables)expect(restored.prepare(`SELECT count(*) AS n FROM ${table}`).get()).toEqual({n:0});}finally{restored.close();}
++    }finally{await rm(root,{recursive:true,force:true});}
++  });
++  it('keeps aggregate CRUD atomic and immutable versions/assignments intact through physical recovery',async()=>{
++    const root=await mkdtemp(path.join(os.tmpdir(),'detuned-m6-history-'));let db:Database.Database|undefined;
++    try {
++      const source=path.join(root,'source');await mkdir(source,{mode:0o700});db=new Database(path.join(source,'detuned.sqlite'));const actor=bootstrapDatabase(db).adminActorId!;const store=new SqliteStorage(db);const now='2026-10-09T00:00:00.000Z';
++      db.prepare('INSERT INTO spaces VALUES(?,?,1,1,1,?)').run('s','history',now);
++      db.prepare('INSERT INTO threads VALUES(?,?,?,1,?,?,?,?)').run('t','s','Private thread','open',actor,now,now);
++      db.prepare('INSERT INTO posts VALUES(?,?,?,?,?,1,?,?)').run('p','s','t',actor,'claim','active',now);
++      const snapshot={id:'snap',space_id:'s',manifest_json:'{"private_test_record":true}',manifest_sha256:'a'.repeat(64),policy_revision:1,rules_revision:1,target_ref:{post_id:'p',revision:1},created_by:actor,created_at:now};
++      const item={snapshot_id:'snap',item_type:'target_post' as const,item_id:'p',revision:1,sha256:'b'.repeat(64)};
++      expect(()=>store.createReviewSnapshot(snapshot,[item,item])).toThrow();expect(store.findReviewSnapshotById('snap')).toBeNull();
++      store.createReviewSnapshot(snapshot,[item,{snapshot_id:'snap',item_type:'space_rules',item_id:'s',revision:1,sha256:null}]);
++      const request={id:'r',space_id:'s',target_ref:{post_id:'p',revision:1},snapshot_id:'snap',round:1,phase:'collecting' as const,version:1,requested_by:actor,created_at:now,changed_by:actor,changed_at:now,reason:null};
++      const version={request_id:'r',version:1,phase:'collecting' as const,changed_by:actor,changed_at:now,reason:null};const assignment={request_id:'r',reviewer_actor_id:actor,group_at_assignment:'private-fixture'};
++      expect(()=>store.createReviewRequest(request,version,[assignment,assignment])).toThrow();expect(store.findReviewRequestById('r')).toBeNull();
++      store.createReviewRequest(request,version,[assignment]);
++      db.exec("CREATE TRIGGER deny_review_version BEFORE INSERT ON review_request_versions WHEN NEW.version=2 BEGIN SELECT RAISE(ABORT,'private fault'); END");
++      const changed={...request,phase:'cancelled' as const,version:2,reason:'Private cancellation'};const v2={...version,phase:'cancelled' as const,version:2,reason:changed.reason};
++      expect(()=>store.updateReviewRequest(changed,v2)).toThrow();expect(store.findReviewRequestById('r')).toEqual(request);db.exec('DROP TRIGGER deny_review_version');store.updateReviewRequest(changed,v2);expect(store.findReviewRequestVersion('r',1)).toEqual(version);expect(store.listReviewAssignments('r')).toEqual([assignment]);
++      db.close();db=undefined;const backup=path.join(root,'backup');await backupOffline({dataDir:source,outputDir:backup,offline:true});const output=path.join(root,'restored');await restoreBackup({backupDir:backup,dataDir:output});db=new Database(path.join(output,'detuned.sqlite'));const recovered=new SqliteStorage(db);expect(recovered.findReviewSnapshotById('snap')).toEqual(snapshot);expect(recovered.listReviewSnapshotItems('snap')).toHaveLength(2);expect(recovered.findReviewRequestById('r')).toEqual(changed);expect(recovered.findReviewRequestVersion('r',1)).toEqual(version);expect(recovered.findReviewRequestVersion('r',2)).toEqual(v2);expect(recovered.listReviewAssignments('r')).toEqual([assignment]);
++    }finally{db?.close();await rm(root,{recursive:true,force:true});}
++  });
++  it('keeps correlated old/new export headers and rejects mixed version/status combinations',()=>{
++    const header={type:'header',format:'detuned-space-export',version:1,export_id:'exp_00000000-0000-0000-0000-000000000001',created_at:'2026-10-09T00:00:00.000Z',source:{space_id:'s',schema_version:2,snapshot_event_seq:'0',space_revision:1},identity_semantics:'source_actor_ids_only',scope:'public_research',formal_review_status:'not_enabled',formal_check_status:'not_enabled',hash_algorithm:'sha256-chain-v1'};
++    expect(validateSpaceExportLine(header)).toBe(true);const current={...header,version:2,source:{...header.source,schema_version:3},formal_review_status:'excluded',formal_check_status:'excluded'};expect(validateSpaceExportLine(current)).toBe(true);expect(validateSpaceExportLine({...current,version:1})).toBe(false);expect(validateSpaceExportLine({...header,source:current.source})).toBe(false);
++  });
++});
+--- before/tests/integration/m0-m1-r4-b-regression.test.ts
++++ after/tests/integration/m0-m1-r4-b-regression.test.ts
+@@ -650,7 +650,7 @@
+ 
+     let faultDb = new Database(faultDbPath);
+     try {
+-      faultDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      faultDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       const beforeSnapshot = fullLogicalSnapshot(faultDb);
+ 
+       let faultHits = 0;
+@@ -771,7 +771,7 @@
+     writeFileSync(legacyDbPath, db.serialize());
+     const legacyDb = new Database(legacyDbPath);
+     try {
+-      legacyDb.exec('DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++      legacyDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       const upgraded = bootstrapDatabase(legacyDb);
+       expect(upgraded.isNewInstance).toBe(false);
+@@ -833,13 +833,12 @@
+     writeFileSync(legacyServeDbPath, db.serialize());
+     const legacyServeDb = new Database(legacyServeDbPath);
+     try {
+-      legacyServeDb.exec('DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++      legacyServeDb.exec('DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+-      const res = openAndCoordinateDatabase(legacyServeDb, 'serve');
+-      expect(res.adminToken).toBeNull();
++      expect(() => openAndCoordinateDatabase(legacyServeDb, 'serve')).toThrow(/migrate/);
+       const credsAfter = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       expect(credsAfter).toBe(credsBefore);
+-      expect(isDatabaseInitialized(legacyServeDb)).toBe(true);
++      expect(classifyDatabase(legacyServeDb).kind).toBe('supported_legacy');
+     } finally {
+       legacyServeDb.close();
+     }
+@@ -1160,11 +1159,11 @@
+       writeFileSync(h05Path1, db.serialize());
+       const db1 = new Database(h05Path1);
+       try {
+-        db1.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        db1.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         db1.prepare(
+           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'post.create', 'h05-key-1', 'hash', 201, ?, datetime('now'))"
+         ).run(JSON.stringify({ v: 99, $ref: 'post', post_id: 'pst_fake', revision: 1 }));
+-        expect(() => openAndCoordinateDatabase(db1, 'init')).toThrow();
++        expect(() => bootstrapDatabase(db1)).toThrow();
+       } finally {
+         db1.close();
+       }
+@@ -1174,11 +1173,11 @@
+       writeFileSync(h05Path2, db.serialize());
+       const db2 = new Database(h05Path2);
+       try {
+-        db2.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        db2.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         db2.prepare(
+           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'thread.create', 'h05-key-2', 'hash', 201, ?, datetime('now'))"
+         ).run(JSON.stringify({ post: { id: 'pst_fake' }, revision: { revision: 1 } }));
+-        expect(() => openAndCoordinateDatabase(db2, 'init')).toThrow();
++        expect(() => bootstrapDatabase(db2)).toThrow();
+       } finally {
+         db2.close();
+       }
+@@ -1417,9 +1416,9 @@
+       writeFileSync(j04Path, db.serialize());
+       const dbTime = new Database(j04Path);
+       try {
+-        dbTime.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        dbTime.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         dbTime.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'j04-p1'").run(JSON.stringify(patch1));
+-        openAndCoordinateDatabase(dbTime, 'init');
++        bootstrapDatabase(dbTime);
+       } finally {
+         dbTime.close();
+       }
+@@ -1721,12 +1720,12 @@
+       const l02Path = join(tempDir, 'r8_l02_marker.sqlite');
+       writeFileSync(l02Path, db.serialize());
+       const l02Db = new Database(l02Path);
+-      l02Db.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      l02Db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       l02Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+       );
+ 
+-      openAndCoordinateDatabase(l02Db, 'serve');
++      bootstrapDatabase(l02Db);
+       const markerRow = l02Db.prepare("SELECT result_ref FROM idempotency_records WHERE key = 'l02-patch2'").get() as any;
+       const marker = JSON.parse(markerRow.result_ref);
+       expect(marker.kind).toBe('unreplayable');
+@@ -1752,11 +1751,11 @@
+       const repPath = join(tempDir, 'r8_l02_replay.sqlite');
+       writeFileSync(repPath, db.serialize());
+       const repDb = new Database(repPath);
+-      repDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      repDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       repDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-rep-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+       );
+-      openAndCoordinateDatabase(repDb, 'serve');
++      bootstrapDatabase(repDb);
+       repDb.close();
+ 
+       const repDb2 = new Database(repPath);
+@@ -1862,12 +1861,12 @@
+         const testPath = join(tempDir, `invalid_marker_${item.label}.sqlite`);
+         writeFileSync(testPath, db.serialize());
+         const tDb = new Database(testPath);
+-        tDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++        tDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+         tDb.prepare("INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, result_ref, http_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+           .run(adminActorId, 'instance', item.op, `bad-${item.label}`, 'hash', JSON.stringify(item.ref), 200, new Date().toISOString());
+ 
+         const schemaBefore = fullLogicalSnapshot(tDb);
+-        expect(() => openAndCoordinateDatabase(tDb, 'serve')).toThrow();
++        expect(() => bootstrapDatabase(tDb)).toThrow();
+         tDb.close();
+ 
+         const tDb2 = new Database(testPath);
+@@ -1940,10 +1939,10 @@
+       const posPath = join(tempDir, 'r8_l08_positive.sqlite');
+       writeFileSync(posPath, db.serialize());
+       const posDb = new Database(posPath);
+-      posDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      posDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       posDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l08-thread'").run(JSON.stringify(original));
+ 
+-      openAndCoordinateDatabase(posDb, 'serve');
++      bootstrapDatabase(posDb);
+       posDb.close();
+ 
+       const posDb2 = new Database(posPath);
+@@ -2290,14 +2289,14 @@
+       const p04Path = join(tempDir, 'p04_time.sqlite');
+       writeFileSync(p04Path, db.serialize());
+       const p04Db = new Database(p04Path);
+-      p04Db.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++      p04Db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+       const missingTime = { ...patch2 };
+       delete missingTime.created_at;
+       delete missingTime.updated_at;
+       p04Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'p04-patch2'").run(JSON.stringify(missingTime));
+ 
+       const before = fullLogicalSnapshot(p04Db);
+-      expect(() => openAndCoordinateDatabase(p04Db, 'serve')).toThrow();
++      expect(() => bootstrapDatabase(p04Db)).toThrow();
+       p04Db.close();
+ 
+       const p04Db2 = new Database(p04Path);
+@@ -2401,14 +2400,14 @@
+       const fixturePath = join(tempDir, 'q03_missing_updated.sqlite');
+       writeFileSync(fixturePath, db.serialize());
+       const tDb = new Database(fixturePath);
+-      tDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++      tDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+       tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'q03-th-create'").run(JSON.stringify(original));
+       const missingUpdated = { ...patch2 };
+       delete missingUpdated.updated_at;
+       tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'q03-patch2'").run(JSON.stringify(missingUpdated));
+ 
+       const before = fullLogicalSnapshot(tDb);
+-      expect(() => openAndCoordinateDatabase(tDb, 'serve')).toThrow();
++      expect(() => bootstrapDatabase(tDb)).toThrow();
+       tDb.close();
+ 
+       const tDb2 = new Database(fixturePath);
+@@ -3381,8 +3380,8 @@
+         expect(out.error?.message).toMatch(/实例持久密钥缺失或损坏/);
+       });
+ 
+-      // B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1, and healthy v2 start according to contract
+-      it('B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1, and healthy v2 start according to contract', () => {
++      // B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1 refused, and healthy current schema start according to contract
++      it('B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1 refused, and healthy current schema start according to contract', () => {
+         // 1. Truly blank DB
+         const blankPath = join(tempDir, 'b2_blank.sqlite');
+         const dbBlank = new Database(blankPath);
+@@ -3394,7 +3393,7 @@
+           expect(classifyDatabase(dbBlank).kind).toBe('current_initialized');
+         } finally { dbBlank.close(); }
+ 
+-        // 2. Complete unpopulated schema (all 22 tables pre-created via DDL)
++        // 2. Complete unpopulated schema (all current tables pre-created via DDL)
+         const ddlPath = join(tempDir, 'b2_unpopulated.sqlite');
+         const dbDdl = new Database(ddlPath);
+         try {
+@@ -3412,15 +3411,13 @@
+         writeFileSync(legacyPath, db.serialize());
+         const dbLeg = new Database(legacyPath);
+         try {
+-          dbLeg.exec('DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++          dbLeg.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+           expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
+-          const boot = openAndCoordinateDatabase(dbLeg, 'serve');
+-          expect(boot.isNewInstance).toBe(false);
+-          expect(boot.adminToken).toBeNull();
+-          expect(classifyDatabase(dbLeg).kind).toBe('current_initialized');
++          expect(() => openAndCoordinateDatabase(dbLeg, 'serve')).toThrow(/migrate/);
++          expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
+         } finally { dbLeg.close(); }
+ 
+-        // 4. Healthy v2
++        // 4. Healthy current schema
+         const healthyPath = join(tempDir, 'b2_healthy.sqlite');
+         writeFileSync(healthyPath, db.serialize());
+         const dbHealth = new Database(healthyPath);
+@@ -3577,8 +3574,8 @@
+         expect(out.error?.message).toMatch(/数据库包含持久化初始化材料|实例持久密钥缺失或损坏/);
+       });
+ 
+-      // Y03: Complete v2 database with missing version=2 migration row rejects before repair
+-      it('Y03: Complete v2 database with missing version 2 migration row rejects as corrupt before repair', () => {
++      // Y03: Current schema3 database with missing version=2 migration row rejects before repair
++      it('Y03: Current schema3 database with missing version 2 migration row rejects as corrupt before repair', () => {
+         const y03Path = join(tempDir, 'y03_missing_v2_mig.sqlite');
+         writeFileSync(y03Path, db.serialize());
+         let dbY03 = new Database(y03Path);
+@@ -3587,7 +3584,7 @@
+           const before = fullLogicalSnapshot(dbY03);
+           const classification = classifyDatabase(dbY03);
+           expect(classification.kind).toBe('corrupt');
+-          expect(classification.reason).toMatch(/包含 v2.*thread_versions/);
++          expect(classification.reason).toMatch(/迁移记录不连续|包含 v2.*thread_versions/);
+ 
+           expect(() => bootstrapDatabase(dbY03)).toThrow();
+           expect(() => openAndCoordinateDatabase(dbY03, 'init')).toThrow();
+@@ -3603,17 +3600,17 @@
+         }
+       });
+ 
+-      // Y04: Healthy controls (empty file, raw v2 schema, raw v1 schema, historical v1 instance, healthy v2) initialize and serve cleanly
++      // Y04: Healthy controls (empty file, raw current schema, raw v1 schema, historical v1 instance refused, healthy current) initialize and serve cleanly
+       it('Y04: True blank, supported raw schemas, real historical fixture and current instance retain healthy startup', () => {
+-        const controls = ['empty_file', 'raw_v2_schema', 'raw_v1_schema', 'historical_v1_instance', 'healthy_v2'];
++        const controls = ['empty_file', 'raw_current_schema', 'raw_v1_schema', 'historical_v1_instance', 'healthy_current'];
+         for (const kind of controls) {
+           const file = join(tempDir, `y04_ctrl_${kind}.sqlite`);
+-          if (kind === 'healthy_v2') {
++          if (kind === 'healthy_current') {
+             writeFileSync(file, db.serialize());
+           }
+           let cDb = new Database(file);
+           try {
+-            if (kind === 'raw_v2_schema') {
++            if (kind === 'raw_current_schema') {
+               cDb.exec(SCHEMA_SQL);
+             }
+             if (kind === 'raw_v1_schema' || kind === 'historical_v1_instance') {
+@@ -3622,7 +3619,12 @@
+             if (kind === 'historical_v1_instance') {
+               cDb.exec("INSERT INTO schema_migrations VALUES(1,'2026-10-01T00:00:00.000Z'); INSERT INTO actors(id,kind,display_name,created_at) VALUES('y04_admin','human','Review admin','2026-10-01T00:00:00.000Z')");
+             }
+-            const isFresh = ['empty_file', 'raw_v1_schema', 'raw_v2_schema'].includes(kind);
++            if (kind === 'historical_v1_instance') {
++              expect(() => openAndCoordinateDatabase(cDb, 'serve')).toThrow(/migrate/);
++              expect(classifyDatabase(cDb).kind).toBe('supported_legacy');
++              continue;
++            }
++            const isFresh = ['empty_file', 'raw_v1_schema', 'raw_current_schema'].includes(kind);
+             const boot = isFresh ? openAndCoordinateDatabase(cDb, 'init') : openAndCoordinateDatabase(cDb, 'serve');
+             expect(Boolean(boot.adminToken)).toBe(isFresh);
+ 
+--- before/tests/integration/m3-backup-recovery.test.ts
++++ after/tests/integration/m3-backup-recovery.test.ts
+@@ -70,7 +70,7 @@
+   });
+   it('rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup', async () => {
+     const cases: ((value: BackupManifest) => void)[] = [
+-      value => { (value as any).extra = true; }, value => { value.version = 2 as 1; }, value => { value.schemaVersion = 3 as 2; },
++      value => { (value as any).extra = true; }, value => { value.version = 2 as 1; }, value => { value.schemaVersion = 4 as 3; },
+       value => { value.database.path = '../detuned.sqlite'; }, value => { value.artifacts.push(value.artifacts[0]!); },
+       value => { value.artifacts = value.artifacts.filter(row => row.id !== 'ready'); }, value => { value.artifacts.find(row => row.id === 'ready')!.present = false; },
+     ];
+@@ -135,8 +135,8 @@
+   it('rejects non-current, corrupt and foreign-key-invalid source databases without publishing', async () => {
+     for (const kind of ['future', 'legacy', 'corrupt', 'fk']) {
+       const f = await fixture(); const db = new Database(path.join(f.source, 'detuned.sqlite'));
+-      if (kind === 'future') db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(3,?)').run(new Date().toISOString());
+-      else if (kind === 'legacy') { db.exec('DROP TABLE thread_versions'); db.exec('DROP TABLE instance_metadata'); db.exec('DELETE FROM schema_migrations WHERE version=2'); }
++      if (kind === 'future') db.prepare('INSERT INTO schema_migrations(version,applied_at) VALUES(4,?)').run(new Date().toISOString());
++      else if (kind === 'legacy') { db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions'); db.exec('DROP TABLE instance_metadata'); db.exec('DELETE FROM schema_migrations WHERE version>1'); }
+       else if (kind === 'corrupt') db.exec('DROP TABLE credentials');
+       else { db.pragma('foreign_keys=OFF'); db.prepare("UPDATE artifacts SET owner_id='absent-owner' WHERE id='ready'").run(); }
+       db.close(); const before = await readFile(path.join(f.source, 'detuned.sqlite'));
+--- before/tests/integration/m3-upgrade-independent.test.ts
++++ after/tests/integration/m3-upgrade-independent.test.ts
+@@ -22,7 +22,7 @@
+ const upgradeCLI=(source:string,target:string)=>cli(['migrate','--offline','--data-dir',source,'--output',target,'--admin-name','Independent upgrade administrator']);
+ 
+ it('M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip',async()=>{
+- const f=await fixture();try{const target=join(f.root,'upgraded'),result=await upgradeCLI(f.source,target);expect(result.code).toBe(0);const upgraded=JSON.parse(result.stdout);expect(Object.keys(upgraded).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(upgraded.source_schema_version).toBe(1);expect(upgraded.schema_version).toBe(2);expect(upgraded.admin_token===f.token).toBe(false);expect(await inventory(f.source)).toEqual(f.before);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(2);expect(db.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);expect((db.prepare('SELECT count(*) n FROM credentials WHERE revoked_at IS NULL').get() as any).n).toBe(1);expect((db.prepare('SELECT active_batch_id FROM consumers WHERE id=?').get(f.consumer) as any).active_batch_id).toBe(f.pending.batch_id);db.close();const current=await f.spawn('server',target);const request=(method:string,path:string,body?:unknown,token=upgraded.admin_token)=>f.call(method,path,body,token,current.url!);expect((await request('GET','/me',undefined,f.ordinary)).status).toBe(401);expect((await request('GET',`/spaces/${f.space}/posts/${f.post.id}/revisions/1`)).status).toBe(200);const download=await run(f.client.child,{operation:'download',url:current.url,path:`/spaces/${f.space}/artifacts/legacy-ready/content`,token:upgraded.admin_token});expect(download.status).toBe(200);expect(download.result).toEqual({bytes:f.bytes.length,sha256:sha(f.bytes)});
++ const f=await fixture();try{const target=join(f.root,'upgraded'),result=await upgradeCLI(f.source,target);expect(result.code).toBe(0);const upgraded=JSON.parse(result.stdout);expect(Object.keys(upgraded).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(upgraded.source_schema_version).toBe(1);expect(upgraded.schema_version).toBe(3);expect(upgraded.admin_token===f.token).toBe(false);expect(await inventory(f.source)).toEqual(f.before);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(3);expect(db.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);expect((db.prepare('SELECT count(*) n FROM credentials WHERE revoked_at IS NULL').get() as any).n).toBe(1);expect((db.prepare('SELECT active_batch_id FROM consumers WHERE id=?').get(f.consumer) as any).active_batch_id).toBe(f.pending.batch_id);db.close();const current=await f.spawn('server',target);const request=(method:string,path:string,body?:unknown,token=upgraded.admin_token)=>f.call(method,path,body,token,current.url!);expect((await request('GET','/me',undefined,f.ordinary)).status).toBe(401);expect((await request('GET',`/spaces/${f.space}/posts/${f.post.id}/revisions/1`)).status).toBe(200);const download=await run(f.client.child,{operation:'download',url:current.url,path:`/spaces/${f.space}/artifacts/legacy-ready/content`,token:upgraded.admin_token});expect(download.status).toBe(200);expect(download.result).toEqual({bytes:f.bytes.length,sha256:sha(f.bytes)});
+  const renewed=await request('POST','/admin/credentials',{actor_id:f.actor,allowed_space_ids:[f.space],capabilities:['read','write']});expect(renewed.status).toBe(201);const freshToken=renewed.body.data.token;expect((await request('GET','/me',undefined,freshToken)).body.data.actor.id).toBe(f.actor);const oldAck=await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/ack`,{batch_id:f.pending.batch_id,next_cursor:f.pending.next_cursor},freshToken);expect(oldAck.status).toBe(409);expect(oldAck.body.error.code).toBe('ACK_INVALID');const pending=await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/poll`,{limit:100,wait_ms:0},freshToken);expect(pending.status).toBe(200);expect(pending.body.data.batch_id).toBe(f.pending.batch_id);expect(pending.body.data.next_cursor===f.pending.next_cursor).toBe(false);expect((await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/ack`,{batch_id:pending.body.data.batch_id,next_cursor:pending.body.data.next_cursor},freshToken)).status).toBe(200);expect((await request('POST',`/spaces/${f.space}/threads/${f.thread}/posts`,{kind:'note',title:'fresh upgraded write',summary:'new',body:'new-generation research'},freshToken)).status).toBe(201);
+  const exported=join(f.root,'upgraded.ndjson');expect((await run(f.client.child,{operation:'export',url:current.url,space:f.space,token:upgraded.admin_token,inputPath:exported})).result.end.complete).toBe(true);const importedTarget=join(f.root,'roundtrip'),imported=await cli(['import','--input',exported,'--data-dir',importedTarget,'--admin-name','Roundtrip administrator']);expect(imported.code).toBe(0);const importedDB=new Database(join(importedTarget,'detuned.sqlite'));const key='space_import.v1.provenance.'+sha(JSON.stringify(['thread',f.thread,null]));expect(JSON.parse((importedDB.prepare('SELECT value FROM instance_metadata WHERE key=?').get(key) as any).value).history_complete).toBe(true);expect(importedDB.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);importedDB.close();expect(await inventory(f.source)).toEqual(f.before);
+  // Explicit manual compatibility boundary: research is unchanged, exactly this thread's creation-operation cache is absent. Not an original HTTP flow or proven expiry.
+@@ -42,6 +42,6 @@
+ 
+ it('M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets',async()=>{
+  const f=await fixture();try{const worker=await f.spawn('upgrade-worker');const cancelled=await run(worker.child,{sourceDir:f.source,dataDir:join(f.root,'cancelled'),cancelStage:'after-copy'});expect(cancelled.code).toBe('UPGRADE_CANCELLED');expect(await inventory(f.source)).toEqual(f.before);for(const stage of ['before-migrate','credential-reset','destination-created','publication','file-sync','readiness']){const target=join(f.root,'fault-'+stage),result=await run(worker.child,{sourceDir:f.source,dataDir:target,faultStage:stage});expect(result.code).toBe('UPGRADE_FAILED');expect(result.counts![stage]).toBeGreaterThan(0);expect(await inventory(f.source)).toEqual(f.before);if(['destination-created','publication','readiness'].includes(stage)){for(const command of ['init','serve']){const rejected=await cli([command,'--data-dir',target]);expect(rejected.code).toBe(1);expect(JSON.parse(rejected.stdout).error.code).toBe('INCOMPLETE_DIRECTORY');}}else await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}
+- const parent=join(f.root,'double-parent');await mkdir(parent,{mode:0o700});const target=join(parent,'complete-uncertain'),double=await run(worker.child,{sourceDir:f.source,dataDir:target,doubleFault:true});expect(double.code).toBe('UPGRADE_FAILED');expect(double.message!.includes('may be startable')).toBe(true);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(2);db.close();expect(double.result).toBeUndefined();expect(await inventory(f.source)).toEqual(f.before);expect((await upgradeCLI(f.source,join(f.root,'retry-new'))).code).toBe(0);
++ const parent=join(f.root,'double-parent');await mkdir(parent,{mode:0o700});const target=join(parent,'complete-uncertain'),double=await run(worker.child,{sourceDir:f.source,dataDir:target,doubleFault:true});expect(double.code).toBe('UPGRADE_FAILED');expect(double.message!.includes('may be startable')).toBe(true);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(3);db.close();expect(double.result).toBeUndefined();expect(await inventory(f.source)).toEqual(f.before);expect((await upgradeCLI(f.source,join(f.root,'retry-new'))).code).toBe(0);
+  }finally{await f.cleanup();}
+ },120000);
+--- before/tests/integration/m3-space-export.test.ts
++++ after/tests/integration/m3-space-export.test.ts
+@@ -34,7 +34,7 @@
+   it('delivers strict white records and an exact hash-chain completion while excluding internals', async () => {
+     const f = await fixture(); const wire = await lines(f.service.open(f.auth, f.sid)); const output = parsed(wire);
+     expect(output.every(validateSpaceExportLine)).toBe(true);
+-    expect(output[0]).toMatchObject({ type: 'header', source: { space_id: f.sid, schema_version: 2 }, formal_review_status: 'not_enabled' });
++    expect(output[0]).toMatchObject({ type: 'header', source: { space_id: f.sid, schema_version: 3 }, formal_review_status: 'excluded' });
+     const end = output.at(-1); expect(end.type).toBe('end');
+     let chain = Buffer.alloc(32); let bytes = 0;
+     for (const line of wire.slice(0, -1)) { chain = createHash('sha256').update(chain).update(line).digest(); bytes += Buffer.byteLength(line); }
+--- before/tests/integration/m3-logical-import.test.ts
++++ after/tests/integration/m3-logical-import.test.ts
+@@ -9,7 +9,7 @@
+ import { bootstrapDatabase,SqliteStorage,importSpace,assertDataDirReady } from '../../packages/storage-sqlite/src/index.js';
+ import { AuthService,CryptoHasher,CryptoIdGenerator,SystemClock,IdempotencyService,SpaceService,ThreadService,PostService,SpaceExportService } from '../../packages/core/src/index.js';
+ async function fixture(){const root=await mkdtemp(path.join(os.tmpdir(),'detuned-import-'));const db=new Database(path.join(root,'source.sqlite'));const boot=bootstrapDatabase(db),storage=new SqliteStorage(db),clock=new SystemClock(),hasher=new CryptoHasher(),ids=new CryptoIdGenerator(),authService=new AuthService(storage,hasher,clock),auth=authService.authenticateToken(boot.adminToken!),idem=new IdempotencyService(storage,hasher,clock);const sid=new SpaceService(storage,ids,clock,authService,idem).createSpace(auth,{slug:'import',objective:'research',rules:[]},'space').space.id;const tid=new ThreadService(storage,ids,clock,hasher,authService,idem).createThread(auth,sid,{title:'thread'},'thread').thread.id;const pid=new PostService(storage,ids,clock,hasher,authService,idem).createPost(auth,sid,tid,{kind:'note',title:'t',summary:'s',body:'research body'},'post').post.id;const service=new SpaceExportService(storage,authService,clock),session=service.open(auth,sid);let wire='';for(;;){const next=session.nextLine();if(next.kind==='done')break;if(next.kind==='line')wire+=next.line;}const input=path.join(root,'input.ndjson');await writeFile(input,wire);return{root,input,wire,sid,pid,actorId:auth.actor.id,close:async()=>{service.closeAll();db.close();await rm(root,{recursive:true,force:true});}};}
+-it('imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance',async()=>{const f=await fixture();try{const target=path.join(f.root,'imported'),result=await importSpace({inputPath:f.input,dataDir:target,adminName:' Local admin '});expect(result.space_id).toBe(f.sid);assertDataDirReady(target);const db=new Database(path.join(target,'detuned.sqlite'));try{expect((db.prepare('SELECT disabled_at FROM actors WHERE id=?').get(f.actorId) as any).disabled_at).toBeTruthy();expect(db.prepare('SELECT 1 FROM credentials WHERE actor_id=?').get(f.actorId)).toBeUndefined();const storage=new SqliteStorage(db);expect(new AuthService(storage,new CryptoHasher(),new SystemClock()).authenticateToken(result.admin_token).actor.id).toBe(result.admin_actor_id);expect(storage.getPostRevision(f.pid,1)?.body).toBe('research body');expect((db.prepare('SELECT count(*) AS n FROM post_fts').get() as any).n).toBe(1);expect((db.prepare('SELECT type,actor_id FROM events').get() as any)).toEqual({type:'space.revised',actor_id:result.admin_actor_id});const summary=JSON.parse((db.prepare("SELECT value FROM instance_metadata WHERE key='space_import.v1'").get() as any).value);expect(summary.new_local_event).toBe(true);expect(summary.formal_review_status).toBe('not_enabled');expect(db.pragma('foreign_key_check')).toEqual([]);}finally{db.close();}expect(await readFile(f.input,'utf8')).toBe(f.wire);}finally{await f.close();}});
++it('imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance',async()=>{const f=await fixture();try{const target=path.join(f.root,'imported'),result=await importSpace({inputPath:f.input,dataDir:target,adminName:' Local admin '});expect(result.space_id).toBe(f.sid);assertDataDirReady(target);const db=new Database(path.join(target,'detuned.sqlite'));try{expect((db.prepare('SELECT disabled_at FROM actors WHERE id=?').get(f.actorId) as any).disabled_at).toBeTruthy();expect(db.prepare('SELECT 1 FROM credentials WHERE actor_id=?').get(f.actorId)).toBeUndefined();const storage=new SqliteStorage(db);expect(new AuthService(storage,new CryptoHasher(),new SystemClock()).authenticateToken(result.admin_token).actor.id).toBe(result.admin_actor_id);expect(storage.getPostRevision(f.pid,1)?.body).toBe('research body');expect((db.prepare('SELECT count(*) AS n FROM post_fts').get() as any).n).toBe(1);expect((db.prepare('SELECT type,actor_id FROM events').get() as any)).toEqual({type:'space.revised',actor_id:result.admin_actor_id});const summary=JSON.parse((db.prepare("SELECT value FROM instance_metadata WHERE key='space_import.v1'").get() as any).value);expect(summary.new_local_event).toBe(true);expect(summary.formal_review_status).toBe('excluded');expect(db.pragma('foreign_key_check')).toEqual([]);}finally{db.close();}expect(await readFile(f.input,'utf8')).toBe(f.wire);}finally{await f.close();}});
+ it('rejects truncated input and leaves no published directory',async()=>{const f=await fixture();try{await writeFile(f.input,f.wire.slice(0,f.wire.lastIndexOf('\n',f.wire.length-2)+1));const target=path.join(f.root,'bad');await expect(importSpace({inputPath:f.input,dataDir:target,adminName:'admin'})).rejects.toMatchObject({code:'INVALID_INPUT'});await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}finally{await f.close();}});
+ it('rejects existing target without touching source or target',async()=>{const f=await fixture();try{await expect(importSpace({inputPath:f.input,dataDir:f.root,adminName:'admin'})).rejects.toMatchObject({code:'DESTINATION_EXISTS'});expect(await readFile(f.input,'utf8')).toBe(f.wire);}finally{await f.close();}});
+ it('cancels after a staged record without publishing',async()=>{const f=await fixture();try{const controller=new AbortController(),target=path.join(f.root,'cancelled');await expect(importSpace({inputPath:f.input,dataDir:target,adminName:'admin',signal:controller.signal,hooks:{atStage:s=>{if(s==='record')controller.abort();}}})).rejects.toMatchObject({code:'IMPORT_CANCELLED'});await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}finally{await f.close();}});
+--- before/tests/integration/m3-import-independent.test.ts
++++ after/tests/integration/m3-import-independent.test.ts
+@@ -26,13 +26,13 @@
+ 
+ it('B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing',async()=>{
+  const f=await fixture();try{const destination=join(f.root,'imported'),result=await importCLI(f.input,destination);expect(result.code).toBe(0);const imported=JSON.parse(result.stdout);expect(Object.keys(imported).sort()).toEqual(['data_dir','space_id','admin_actor_id','admin_token','import_id','record_count'].sort());expect(imported.data_dir).toBe(join(await realpath(f.root),'imported'));expect(imported.space_id).toBe(f.space);expect(imported.admin_token.startsWith('detuned_adm_')).toBe(true);expect(imported.admin_token===f.token).toBe(false);expect(await fileHash(f.input)).toBe(f.inputHash);
+- const db=new Database(join(destination,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);const sourceActor=db.prepare('SELECT kind,disabled_at FROM actors WHERE id=?').get(f.actor) as any;expect(sourceActor.kind).toBe('agent');expect(Boolean(sourceActor.disabled_at)).toBe(true);for(const table of ['credentials','memberships','sessions'])expect((db.prepare(`SELECT count(*) AS n FROM ${table} WHERE actor_id=?`).get(f.actor) as any).n).toBe(0);for(const table of ['consumers','idempotency_records'])expect((db.prepare(`SELECT count(*) AS n FROM ${table}`).get() as any).n).toBe(0);expect((db.prepare('SELECT count(*) AS n FROM credentials').get() as any).n).toBe(1);expect(db.prepare('SELECT kind,disabled_at FROM actors WHERE id=?').get(imported.admin_actor_id)).toEqual({kind:'human',disabled_at:null});const revisions=db.prepare('SELECT revision,title,summary,body,structured,content_hash FROM post_revisions WHERE post_id=? ORDER BY revision').all(f.post.id) as any[];expect(revisions.map(x=>x.body)).toEqual(['historical Chinese 中文🙂','current import material']);for(const row of revisions)expect(row.content_hash).toBe(materialHash({...row,structured:JSON.parse(row.structured)}));expect(provenance(db,'post_revision',f.post.id,2).projected).toBe(true);expect(provenance(db,'post_revision',f.post.id,2).source_content_hash).toBeNull();expect(JSON.parse(revisions[1].structured).pinned_refs).toEqual([{post_id:'unknown-user-field',revision:1}]);expect(db.prepare('SELECT id,version,action FROM relation_resolutions ORDER BY id').all()).toEqual([{id:'res_a_version3',version:3,action:'reopen'},{id:'res_z_version2',version:2,action:'resolve'}]);expect(provenance(db,'relation',f.relation.id).history_complete).toBe(true);const summary=JSON.parse((db.prepare("SELECT value FROM instance_metadata WHERE key='space_import.v1'").get() as any).value);expect(summary.formal_review_status).toBe('not_enabled');expect(summary.ready_to_missing).toBe(1);expect(db.prepare('SELECT type,actor_id,revision FROM events').all()).toEqual([{type:'space.revised',actor_id:imported.admin_actor_id,revision:1}]);expect(db.prepare('SELECT state,sha256,bytes,mime FROM artifacts WHERE id=?').get(f.artifact.id)).toEqual({state:'missing',sha256:f.artifact.sha256,bytes:f.artifact.bytes,mime:f.artifact.mime});expect(db.prepare('SELECT body FROM post_revisions WHERE post_id=?').get(f.removed.id)).toEqual({body:''});expect((db.prepare('SELECT count(*) AS n FROM post_fts WHERE post_id=?').get(f.removed.id) as any).n).toBe(0);db.close();expect(await readdir(join(destination,'artifacts','objects'))).toEqual([]);
++ const db=new Database(join(destination,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);const sourceActor=db.prepare('SELECT kind,disabled_at FROM actors WHERE id=?').get(f.actor) as any;expect(sourceActor.kind).toBe('agent');expect(Boolean(sourceActor.disabled_at)).toBe(true);for(const table of ['credentials','memberships','sessions'])expect((db.prepare(`SELECT count(*) AS n FROM ${table} WHERE actor_id=?`).get(f.actor) as any).n).toBe(0);for(const table of ['consumers','idempotency_records'])expect((db.prepare(`SELECT count(*) AS n FROM ${table}`).get() as any).n).toBe(0);expect((db.prepare('SELECT count(*) AS n FROM credentials').get() as any).n).toBe(1);expect(db.prepare('SELECT kind,disabled_at FROM actors WHERE id=?').get(imported.admin_actor_id)).toEqual({kind:'human',disabled_at:null});const revisions=db.prepare('SELECT revision,title,summary,body,structured,content_hash FROM post_revisions WHERE post_id=? ORDER BY revision').all(f.post.id) as any[];expect(revisions.map(x=>x.body)).toEqual(['historical Chinese 中文🙂','current import material']);for(const row of revisions)expect(row.content_hash).toBe(materialHash({...row,structured:JSON.parse(row.structured)}));expect(provenance(db,'post_revision',f.post.id,2).projected).toBe(true);expect(provenance(db,'post_revision',f.post.id,2).source_content_hash).toBeNull();expect(JSON.parse(revisions[1].structured).pinned_refs).toEqual([{post_id:'unknown-user-field',revision:1}]);expect(db.prepare('SELECT id,version,action FROM relation_resolutions ORDER BY id').all()).toEqual([{id:'res_a_version3',version:3,action:'reopen'},{id:'res_z_version2',version:2,action:'resolve'}]);expect(provenance(db,'relation',f.relation.id).history_complete).toBe(true);const summary=JSON.parse((db.prepare("SELECT value FROM instance_metadata WHERE key='space_import.v1'").get() as any).value);expect(summary.formal_review_status).toBe('excluded');expect(summary.ready_to_missing).toBe(1);expect(db.prepare('SELECT type,actor_id,revision FROM events').all()).toEqual([{type:'space.revised',actor_id:imported.admin_actor_id,revision:1}]);expect(db.prepare('SELECT state,sha256,bytes,mime FROM artifacts WHERE id=?').get(f.artifact.id)).toEqual({state:'missing',sha256:f.artifact.sha256,bytes:f.artifact.bytes,mime:f.artifact.mime});expect(db.prepare('SELECT body FROM post_revisions WHERE post_id=?').get(f.removed.id)).toEqual({body:''});expect((db.prepare('SELECT count(*) AS n FROM post_fts WHERE post_id=?').get(f.removed.id) as any).n).toBe(0);db.close();expect(await readdir(join(destination,'artifacts','objects'))).toEqual([]);
+  const server=await f.spawn('server',destination);const request=(method:string,path:string,body?:unknown,token=imported.admin_token)=>f.call(method,path,body,token,server.url!);expect((await request('GET','/me')).body.data.actor.id).toBe(imported.admin_actor_id);expect((await request('GET','/me',undefined,f.ordinary)).status).toBe(401);const normal=await request('GET',`/spaces/${f.space}/posts/${f.post.id}/revisions/1`);expect(normal.status).toBe(200);expect(JSON.stringify(normal.body).includes('historical Chinese 中文🙂')).toBe(true);expect((await request('GET',`/spaces/${f.space}/artifacts/${f.artifact.id}/content`)).status).toBeGreaterThanOrEqual(400);const search=await request('GET',`/spaces/${f.space}/search?q=current`);expect(search.status).toBe(200);expect(JSON.stringify(search.body).includes(f.post.id)).toBe(true);const actor=(await request('POST','/admin/actors',{kind:'agent',display_name:'new local participant'})).body.data.id;expect((await request('POST',`/spaces/${f.space}/memberships`,{actor_id:actor,role:'contributor'})).status).toBe(201);const credential=await request('POST','/admin/credentials',{actor_id:actor,allowed_space_ids:[f.space],capabilities:['read','write']});expect(credential.status).toBe(201);expect((await request('POST',`/spaces/${f.space}/threads/${f.thread}/posts`,{kind:'note',title:'fresh local write',summary:'local',body:'new research'},credential.body.data.token)).status).toBe(201);
+  }finally{await f.cleanup();}
+ },90000);
+ 
+ it('B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target',async()=>{
+- const f=await fixture();try{for(const mutation of ['duplicate','missing-revision','orphan-version','cross-space','unknown-known-ref','terminal-state','duplicate-resolution-version','future-version','truncated']){let lines=structuredClone(f.lines);if(mutation==='duplicate')lines.splice(-1,0,structuredClone(lines.find(x=>x.kind==='post_revision'&&x.data.post_id===f.post.id)));if(mutation==='missing-revision')lines=lines.filter(x=>!(x.kind==='post_revision'&&x.data.post_id===f.post.id&&x.data.revision===2));if(mutation==='orphan-version')lines.find(x=>x.kind==='thread_version').data.thread_id='missing-parent-thread';if(mutation==='cross-space')lines.find(x=>x.kind==='post').data.space_id='another-space';if(mutation==='unknown-known-ref')lines.find(x=>x.kind==='post_revision'&&x.data.post_id===f.post.id).data.structured.source_refs=[{post_id:'absent-known-target',revision:1}];if(mutation==='terminal-state')lines.find(x=>x.kind==='relation').data.state='resolved';if(mutation==='duplicate-resolution-version'){const row=structuredClone(lines.find(x=>x.kind==='relation_resolution'));row.data.id='unique-duplicate-version';lines.splice(-1,0,row);}if(mutation==='future-version')lines[0].version=2;const input=join(f.root,mutation+'.ndjson'),target=join(f.root,'bad-'+mutation),bytes=wire(lines);await writeFile(input,mutation==='truncated'?bytes.subarray(0,-1):bytes,{mode:0o600});const before=await fileHash(input),result=await importCLI(input,target);expect(result.code).toBe(1);expect(JSON.parse(result.stdout).error.code).toBe('INVALID_INPUT');expect(await fileHash(input)).toBe(before);expect(await fileHash(f.input)).toBe(f.inputHash);await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}
++ const f=await fixture();try{for(const mutation of ['duplicate','missing-revision','orphan-version','cross-space','unknown-known-ref','terminal-state','duplicate-resolution-version','future-version','truncated']){let lines=structuredClone(f.lines);if(mutation==='duplicate')lines.splice(-1,0,structuredClone(lines.find(x=>x.kind==='post_revision'&&x.data.post_id===f.post.id)));if(mutation==='missing-revision')lines=lines.filter(x=>!(x.kind==='post_revision'&&x.data.post_id===f.post.id&&x.data.revision===2));if(mutation==='orphan-version')lines.find(x=>x.kind==='thread_version').data.thread_id='missing-parent-thread';if(mutation==='cross-space')lines.find(x=>x.kind==='post').data.space_id='another-space';if(mutation==='unknown-known-ref')lines.find(x=>x.kind==='post_revision'&&x.data.post_id===f.post.id).data.structured.source_refs=[{post_id:'absent-known-target',revision:1}];if(mutation==='terminal-state')lines.find(x=>x.kind==='relation').data.state='resolved';if(mutation==='duplicate-resolution-version'){const row=structuredClone(lines.find(x=>x.kind==='relation_resolution'));row.data.id='unique-duplicate-version';lines.splice(-1,0,row);}if(mutation==='future-version')lines[0].version=3;const input=join(f.root,mutation+'.ndjson'),target=join(f.root,'bad-'+mutation),bytes=wire(lines);await writeFile(input,mutation==='truncated'?bytes.subarray(0,-1):bytes,{mode:0o600});const before=await fileHash(input),result=await importCLI(input,target);expect(result.code).toBe(1);expect(JSON.parse(result.stdout).error.code).toBe('INVALID_INPUT');expect(await fileHash(input)).toBe(before);expect(await fileHash(f.input)).toBe(f.inputHash);await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}
+  }finally{await f.cleanup();}
+ },90000);
+ 
+--- before/tests/contracts/m3-backup-cli.test.ts
++++ after/tests/contracts/m3-backup-cli.test.ts
+@@ -43,7 +43,7 @@
+     const initial = await init(source);
+     const saved = await cli(['backup', '--offline', '--data-dir', source, '--output', backup]);
+     expect(saved.code, saved.stdout + saved.stderr).toBe(0); const summary = JSON.parse(saved.stdout);
+-    expect(summary).toMatchObject({ backup_dir: path.join(await realpath(root), 'backup'), version: 1, schema_version: 2, artifact_count: 0 }); expect(summary).not.toHaveProperty('admin_token');
++    expect(summary).toMatchObject({ backup_dir: path.join(await realpath(root), 'backup'), version: 1, schema_version: 3, artifact_count: 0 }); expect(summary).not.toHaveProperty('admin_token');
+     const manifestBytes = await readFile(path.join(backup, 'backup-manifest.json'));
+     const recovery = await cli(['restore', '--backup', backup, '--data-dir', restored]); expect(recovery.code, recovery.stdout + recovery.stderr).toBe(0);
+     const credentials = JSON.parse(recovery.stdout); expect(Object.keys(credentials).sort()).toEqual(['admin_actor_id', 'admin_token', 'data_dir']);
+--- before/tests/contracts/m3-offline-upgrade-contract.test.ts
++++ after/tests/contracts/m3-offline-upgrade-contract.test.ts
+@@ -11,7 +11,7 @@
+ it('UP B01: persistent genuine schema1 fixture has verified bundle and rejects implicit development secret',async()=>{const fixture=path.resolve('tests/fixtures/runtime-fa1b35c');const manifest=JSON.parse(await readFile(path.join(fixture,'manifest.json'),'utf8'));expect(createHash('sha256').update(await readFile(path.join(fixture,'runtime.mjs'))).digest('hex')).toBe(manifest.runtime_sha256);expect(manifest.source_commit).toBe('fa1b35c80de02c1d601288847706495062935925');const db=new Database(':memory:');try{bootstrapDatabase(db);expect(db.prepare('SELECT version FROM schema_migrations').all()).toEqual([{version:1}]);expect(db.prepare("SELECT name FROM sqlite_master WHERE name='thread_versions'").get()).toBeUndefined();expect(()=>buildLegacyApp({storage:new SqliteStorage(db)})).toThrow('explicit private test tokenSecret');}finally{db.close();}});
+ it('UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator',async()=>{const root=await mkdtemp(path.join(tmpdir(),'detuned-upgrade-cli-'));const source=path.join(root,'old');await mkdir(source,{mode:0o700});const db=new Database(path.join(source,'detuned.sqlite'));const boot=bootstrapDatabase(db);const app=buildLegacyApp({storage:new SqliteStorage(db),tokenSecret:randomBytes(32).toString('hex')});let closed=false;
+ try{const headers={authorization:`Bearer ${boot.adminToken}`,'idempotency-key':'space'};const space=await app.inject({method:'POST',url:'/api/v1/spaces',headers,payload:{slug:'legacy-upgrade',objective:'research',rules:[]}});expect(space.statusCode).toBe(201);const sid=space.json().data.space.id;const thread=await app.inject({method:'POST',url:`/api/v1/spaces/${sid}/threads`,headers:{...headers,'idempotency-key':'thread'},payload:{title:'legacy thread'}});const tid=thread.json().data.thread.id;const patched=await app.inject({method:'PATCH',url:`/api/v1/spaces/${sid}/threads/${tid}`,headers:{...headers,'idempotency-key':'thread-patch'},payload:{expected_version:1,title:'legacy version two'}});expect(patched.json().data.version).toBe(2);await app.close();db.close();closed=true;
+-const oldBytes=await readFile(path.join(source,'detuned.sqlite'));const output=path.join(root,'new');const args=['--offline','--data-dir',source,'--output',output,'--admin-name',' 本地管理员🙂 '];const first=await run(args);expect(first.code,first.out+first.err).toBe(0);const summary=JSON.parse(first.out);expect(Object.keys(summary).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(summary.source_schema_version).toBe(1);expect(summary.schema_version).toBe(2);expect(summary.data_dir).toBe(path.join(await realpath(root),'new'));expect(first.err).not.toContain(summary.admin_token);expect(summary.admin_token).not.toBe(boot.adminToken);expect(await readFile(path.join(source,'detuned.sqlite'))).toEqual(oldBytes);
++const oldBytes=await readFile(path.join(source,'detuned.sqlite'));const output=path.join(root,'new');const args=['--offline','--data-dir',source,'--output',output,'--admin-name',' 本地管理员🙂 '];const first=await run(args);expect(first.code,first.out+first.err).toBe(0);const summary=JSON.parse(first.out);expect(Object.keys(summary).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(summary.source_schema_version).toBe(1);expect(summary.schema_version).toBe(3);expect(summary.data_dir).toBe(path.join(await realpath(root),'new'));expect(first.err).not.toContain(summary.admin_token);expect(summary.admin_token).not.toBe(boot.adminToken);expect(await readFile(path.join(source,'detuned.sqlite'))).toEqual(oldBytes);
+ const upgraded=new Database(path.join(output,'detuned.sqlite'));try{expect(upgraded.prepare('SELECT version,title FROM threads WHERE id=?').get(tid)).toEqual({version:2,title:'legacy version two'});expect(upgraded.prepare('SELECT version FROM thread_versions WHERE thread_id=? ORDER BY version').all(tid)).toEqual([{version:1},{version:2}]);expect(upgraded.prepare('SELECT count(*) AS n FROM credentials WHERE revoked_at IS NULL').get()).toEqual({n:1});}finally{upgraded.close();}
+ expect((await run(args)).code).toBe(1);expect(await readFile(path.join(source,'detuned.sqlite'))).toEqual(oldBytes);
+ }finally{if(!closed){await app.close();db.close();}await rm(root,{recursive:true,force:true});}},45000);
+--- before/tests/contracts/m3-space-export-contract.test.ts
++++ after/tests/contracts/m3-space-export-contract.test.ts
+@@ -61,7 +61,7 @@
+     try {
+       const url = await app.listen({ host: '127.0.0.1', port: 0 }); const client = new DetunedClient({ baseUrl: url, token }); const sid = (await client.createSpace({ slug: 'export', objective: '中文🙂', rules: [] }, 'space')).data.space.id;
+       for (const query of ['format=', 'format=json', 'format=ndjson&format=ndjson', 'unknown=1']) expect((await app.inject({ method: 'GET', url: `/api/v1/spaces/${sid}/export?${query}`, headers: { authorization: `Bearer ${token}` } })).statusCode).toBe(400);
+-      const lines: Uint8Array[] = []; const result = await client.exportSpace(sid, { sink: line => { lines.push(line); } }); expect(result.header.formal_review_status).toBe('not_enabled'); expect(result.end.record_count).toBeGreaterThan(0);
++      const lines: Uint8Array[] = []; const result = await client.exportSpace(sid, { sink: line => { lines.push(line); } }); expect(result.header.formal_review_status).toBe('excluded'); expect(result.end.record_count).toBeGreaterThan(0);
+       const output = path.join(root, 'export.ndjson');
+       const run = () => new Promise<{ code: number | null; out: string }>((resolve, reject) => {
+         const child = spawn(process.execPath, ['packages/cli/dist/index.js', '--url', url, '--token', token, '--json', 'export', '--space', sid, '--output', output]); child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8'); let out = ''; const timer = setTimeout(() => { child.kill('SIGKILL'); reject(new Error('CLI deadline exceeded')); }, 15_000);

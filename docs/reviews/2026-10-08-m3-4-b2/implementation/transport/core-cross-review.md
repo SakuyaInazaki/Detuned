@@ -1,0 +1,11 @@
+# B → A 只读互审
+
+检查RuntimeResources、BlobReadHandle/corecontent、ArtifactFileStore open/dispose与DirectoryLock.releaseStrict。当前无具体可达阻塞，不修改A源码。
+
+RuntimeResources不同acquire包独立lease，closing前置拒；beginClosing同步遍历拷贝、单项cancelthrow继续并记录，finish幂等，idle后若cancel失败固定reject。无timer或业务取消判断；等待依赖owner真的finally/dispose后finish。BlobReadHandle强制dispose，不凭iterator.return假定尚未消费FD已关。
+
+FileStore open sameFD正规文件检查，ReadStream建立后error终态监听在首次消费前已接；dispose幂等destroy，等待真实close，terminalerror固定诊断拒不含原cause。已closed无残留等待。已读取失败但FDclose的保守reject也可使Blease保持，父已接受标准CLI预算exit1；库调用appclose不独立任意故障有界。
+
+releaseStrict关闭自有FD失败即fixedthrow，成功后清FD记unlinkpending；unlink失败固定throw可retry仅unlink不重关FD；ENOENT幂等成功，不改旧best-effortrelease/offline语义。无新schema/权限/业务取消。
+
+限制：只读，不代替A真实FS strictfault与C真实shutdown/process屏障证据；同步IO无硬抢占保证。

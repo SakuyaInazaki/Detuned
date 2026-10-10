@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "node",
+    "-e",
+    "const net=require('node:net');const s=net.createServer();let listen=false,code=null,closed=false,done=false;const finish=()=>{if(done)return;done=true;clearTimeout(timer);process.stdout.write(JSON.stringify({listen,code,closed})+'\\n');};s.on('close',()=>{closed=true;finish();});s.on('error',e=>{code=['EPERM','EACCES','EADDRINUSE','EADDRNOTAVAIL'].includes(e.code)?e.code:'OTHER';s.close(()=>{if(!closed)finish();});});s.on('listening',()=>{listen=true;s.close();});const timer=setTimeout(()=>{code??='WATCHDOG';s.close(()=>finish());},2000);s.listen(0,'127.0.0.1');"
+  ],
+  "sandbox_mode": "use_default",
+  "exit_code": 0,
+  "elapsed_seconds": 0.073
+}

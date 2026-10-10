@@ -1,0 +1,30 @@
+{
+  "core": {
+    "packages/core/src/services/write-rate-limiter.ts": true,
+    "packages/core/src/services/admin-service.ts": true,
+    "packages/core/src/services/auth-service.ts": true,
+    "packages/core/src/services/idempotency-service.ts": true,
+    "packages/core/src/services/space-service.ts": true,
+    "packages/core/src/services/event-service.ts": true,
+    "packages/core/src/services/post-service.ts": true,
+    "packages/core/src/services/relation-service.ts": true,
+    "packages/core/src/services/thread-service.ts": true,
+    "packages/core/src/index.ts": true,
+    "packages/server/src/routes/admin.ts": true,
+    "tests/integration/m3-write-rate-limit.test.ts": true,
+    "tests/integration/m2-thread-posts-read.test.ts": true,
+    "docs/07-security-operations.md": true,
+    "docs/12-decisions.md": true,
+    "docs/reviews/2026-10-08-m3-4-a1/planning/frozen-contract.md": true
+  },
+  "transport": {
+    "packages/protocol/src/write-limits.ts": true,
+    "packages/protocol/src/index.ts": true,
+    "packages/server/src/app.ts": true,
+    "packages/cli/src/index.ts": true,
+    "tests/contracts/m3-write-limits-contract.test.ts": true,
+    "scripts/scale/run-server.mjs": true,
+    "examples/write-limits.md": true,
+    "docs/04-protocol.md": true
+  }
+}

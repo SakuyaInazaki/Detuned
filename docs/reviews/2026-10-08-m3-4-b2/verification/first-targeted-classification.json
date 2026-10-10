@@ -1,0 +1,23 @@
+{
+  "actual": {
+    "files": 4,
+    "passed": 15,
+    "failed": 2,
+    "exit_code": 1
+  },
+  "shutdown_failure": {
+    "classification": "fixture_invalid_poll_wait",
+    "actual_wait_ms": 30000,
+    "protocol_max_wait_ms": 25000,
+    "evidence": "packages/protocol/src/events.ts:90",
+    "effect": "HTTP validation rejects before pollWithWait barrier"
+  },
+  "milestone_failure": {
+    "classification": "fixture_missing_context_material_precondition",
+    "actual_kind": "note",
+    "actual_pinned": false,
+    "core_rule": "context includes pinned active summary, failures and open challenges, not every note",
+    "limitation": "first loop assertion lacks per-path label; exact failing path not independently recorded yet"
+  },
+  "next": "Parent requested approval for C-only oracle inputs and diagnostic path label; no product edits or repeat yet"
+}

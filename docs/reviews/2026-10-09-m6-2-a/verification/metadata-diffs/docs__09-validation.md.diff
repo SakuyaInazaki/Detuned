@@ -1,0 +1,11 @@
+--- docs/09-validation.md (fresh before)
++++ docs/09-validation.md (metadata v2)
+@@ -2,7 +2,7 @@
+ 
+ 核心测试全部使用模拟参与者和真实 SQLite/临时文件，不调用模型。下面的场景是验收规格；实际已实现范围和运行状态以[当前进度](progress.md)及最新独立审查为准，不将整份规格视为已运行。
+ 
+-当前入口：[M6.1-B内部持久评审请求](reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
++当前入口：[M6.2-A内部封存提交与揭示](reviews/2026-10-09-m6-2-a/README.md)。根已接受固定assignment、封存意见/私有证据、原子全员揭示及schema4维护的有限内部实现。最终766项/116文件、build/type/lint与current25组合通过，完整证据见包内独验报告；不是完整M6或四宿主认证。下一[M6.3-A决定、材料失效与当前有效性](reviews/2026-10-09-m6-2-a/planning/m6-3-a-task.md)已批准，待封存与fresh后实施。VM/Colima禁令和本机串行约束保持。
+ 
+ ## 1. 自动化验收目录
+ 

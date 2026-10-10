@@ -1,0 +1,19 @@
+--- examples/upgrade-recovery.md (fresh before)
++++ examples/upgrade-recovery.md (metadata v2)
+@@ -1,6 +1,6 @@
+ # 离线复制旧实例后升级与回退
+ 
+-当前支持已核legacy schema1或完整historical schema2，复制升级到新schema3目录，保留原源实例供匹配旧runtime回退。普通init/serve现拒legacy1|2并指引migrate，这是旧auto1→2行为的明确变化；不原地覆盖。
++当前支持已核legacy schema1或完整historical schema2/3，复制升级到新schema4目录，保留原源实例供匹配旧runtime回退。普通init/serve现拒legacy1|2|3并指引migrate，这是旧auto1→2行为的明确变化；不原地覆盖。
+ 
+ ```sh
+ detuned --json migrate --offline --data-dir /path/to/old-instance --output /path/to/existing-parent/new-instance --admin-name 'Local upgrade administrator'
+@@ -8,7 +8,7 @@
+ 
+ 停止原服务后显式 `--offline`；合作锁拒活跃持锁服务，不能阻止绕锁 SQLite writer。目标父目录必须已存在，目标必须不存在（包括空目录/软链），路径边界与附件正规文件校验由本地维护层执行。管理员名称 trim 后 1–128 Unicode 码点；timeout 默认/最大 120000ms，允许正整数，SIGINT/SIGTERM取消。操作仅本地，不读客户端 tokenfile，不调用 HTTP、模型或抓取 URL。
+ 
+-源只读复制到私有 staging，再执行现有迁移到schema3并复核结构/FK/integrity。登记附件按原 artifacts/objects/storage_key 检查 hash/size：最多 10000 项、单项最多 25 MiB；ready 缺 bytes 拒绝，redacted/missing 现存 bytes 校验并保留，不自动脱敏。无登记的文件、日志、密钥文件、锁或 staging 不复制。旧 fa1b35c runtime 只有附件表，没有上传 HTTP API；历史附件演练的直接 SQL/file 来源会单列，不能伪称旧 HTTP 上传。
++源只读复制到私有 staging，再执行现有迁移到schema4并复核结构/FK/integrity。登记附件按原 artifacts/objects/storage_key 检查 hash/size：最多 10000 项、单项最多 25 MiB；ready 缺 bytes 拒绝，redacted/missing 现存 bytes 校验并保留，不自动脱敏。无登记的文件、日志、密钥文件、锁或 staging 不复制。旧 fa1b35c runtime 只有附件表，没有上传 HTTP API；历史附件演练的直接 SQL/file 来源会单列，不能伪称旧 HTTP 上传。
+ 
+ 升级撤销所有旧凭据、更换实例签名 secret、新建独立本地 human 管理员；研究 ID、修订、来源身份及其禁用状态、membership/session、幂等及未确认消费材料保留。成功 stdout 一次 JSON：data_dir、source_data_dir、source_schema_version:1|2、schema_version:3、upgrade_id、admin_actor_id、admin_token。明文 token 仅此输出，私有接收，不进入日志或清单。原外部签名 secret 不搬运；原目录回退须匹配旧 runtime、原凭据及原外部 secret，不能用逻辑 import 代替。
+ 

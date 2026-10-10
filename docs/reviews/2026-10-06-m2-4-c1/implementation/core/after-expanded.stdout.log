@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-context.test.ts (7 tests) 77ms
+ ❯ tests/integration/m2-context-focus.test.ts (9 tests | 1 failed) 95ms
+   ✓ M2.4-C.1 focused context current snapshot > F01: valid archived own-thread focus adds current metadata; no-focus retains original shape 15ms
+   ✓ M2.4-C.1 focused context current snapshot > F02: failures are filtered before id DESC five-candidate window; pin ordering and cross-thread source projection survive 12ms
+   ✓ M2.4-C.1 focused context current snapshot > F03: challenge SQL filters both endpoint spaces before deterministic LIMIT and deduplicates both-focus matches 20ms
+   ✓ M2.4-C.1 focused context current snapshot > F04: public activity filters thread/post/relation before latest-five LIMIT and space checkpoint includes later unrelated events 8ms
+   ✓ M2.4-C.1 focused context current snapshot > F05: candidate projection does not scan to fill inaccessible refs, and redacted challenge material stays null 11ms
+   ✓ M2.4-C.1 focused context current snapshot > F06: current authorization precedes unknown/foreign and malformed focus; accepted reads and errors never write 8ms
+   ✓ M2.4-C.1 focused context current snapshot > F07: mandatory focus metadata obeys actual whole-envelope budget, rules omission preserves optional material 6ms
+   ✓ M2.4-C.1 focused context current snapshot > F08: WAL metadata/material/high-water remain one snapshot while next read sees new state 5ms
+   × M2.4-C.1 focused context current snapshot > F09: budget drops activity first and actual escaped request_id mandatory boundary is exact 10ms
+     → expected function to throw an error, but it didn't
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 15 passed (16)
+   Start at  19:43:55
+   Duration  623ms (transform 202ms, setup 0ms, collect 601ms, tests 171ms, environment 0ms, prepare 83ms)
+

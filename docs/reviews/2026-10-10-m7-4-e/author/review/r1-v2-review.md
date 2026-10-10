@@ -1,0 +1,11 @@
+# E.R1 三项阻塞修后独立静审
+
+2026-10-10；零runtime。source42871B/b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e；testf421379b…48279；实际final capture09dbb602abeee4560bcbf10fd32a0850ccdec0a8acf016e1e15a0a0ffcc01129、plan4d2242b1…4e49d、binding8a5f5d94…59e20与ready-v4重算匹配。旧fb69/a194拒绝版本保持。v3准备count误读bool已在runtime前静态修正并保快照；本审中读v3时pin变化触发校验失败，未给v3接受结论，以下只针对final v4。
+
+1. Source actual callback promise retained observerTasks至真实settled；finally停新worker message producer，先settle initializer/registration/watch，再actual observers。watch settled与finalDiscovery真实promise settled/completed独立记录；cleanup attempt失败令coveragefalse。删除root要求所有producer/observer/discovery实际settled/completed、coverage及actualworker/group/candidateabsence。旧initializer.catch提前rm绕过分支已移除；late任务恢复也过terminal gate，未知/超时保root/账本，无新增权限/时间。
+2. Source每candidate独立attempt，聚合positiveabsence/failure counts；首unknown不跳后续，只有全部positiveabsence/failure0才true。每confirmed group原独立stopGroup保持，candidate仅signal0。超时执行中的finalDiscovery也因未completed/coveragefalse禁止root删除。
+3. Capture每candidate独立try，聚合absent/present/unknown/attemptcount，全loop后才throw原failure，所有positiveabsence才true；失败不删root/control、不跳其余。actual ownershipTasks retained和actualdriverclose/settled门禁保持；source registration/watch/observer/final-discovery-settled+completed五谓词true、source candidates_positively_absent count==独立candidate.length、candidate_absence_failures0及coverage/count/proof一致才可清退。v4 count类型比较正确，非bool伪通过。
+
+前述逐PIDregistration stage wx0600写/sync/close→link final无覆盖→unlink、逐PID ACK、source ledger先于proof/observer/finalgate、driver/outer exactproof与stage+mcpPID control ACK保持。64candidate/256entry/11B读取上界、oversized/missing/change/unknowncoveragefalse保root；watch持续到actualclosed，部分confirmed不投影为全部。helper1015B0202与C.1test/Claude整script/Dtest保护hash重算保持，policy/minenv/fixedbinary/40polls/方法/RPC及75/85/90/95原预算无增加。
+
+CL01两路径逐PID适配/CL02双actualfactory原契约不变，无断言/5秒/4秒/1MiB变更；red只旧source单次fail并清退，修后尚未跑。三个明确static blockers已关闭，未发现新可行动阻塞。建议root亲读final v4 pins后仅释放必要syntax/noEmit/单file2case最小gates；controlled rejectsecond与native仍须单独root决定，本报告不放行runtime或预判成功。

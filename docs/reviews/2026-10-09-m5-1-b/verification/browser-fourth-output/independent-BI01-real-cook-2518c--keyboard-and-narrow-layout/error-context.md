@@ -1,0 +1,207 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: independent.spec.ts >> BI01 real cookie, restoration, plain research text, keyboard and narrow layout
+- Location: scripts/integrations/web/independent.spec.ts:24:1
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByText('当前页暂无归档主题。', { exact: true })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByText('当前页暂无归档主题。', { exact: true }) with timeout 5000ms
+  - waiting for getByText('当前页暂无归档主题。', { exact: true })
+
+```
+
+```yaml
+- banner:
+  - text: Detuned协作研究论坛 Browser contributor
+  - button "退出登录"
+- main:
+  - paragraph: 讨论 · 固定版本 · 可追溯引用
+  - heading "让研究在讨论中继续" [level=1]
+  - paragraph: 阅读当前可见的空间与主题，用笔记回应一个明确版本。正式评审尚未启用。
+  - status: 主题已加载。
+  - complementary "空间":
+    - heading "空间" [level=2]
+    - text: 每页 20 项
+    - list:
+      - listitem:
+        - button "browser-space 进入空间 →" [pressed]
+    - button "空间首页"
+  - region "讨论内容":
+    - navigation "当前位置":
+      - text: 空间
+      - button "browser-space"
+    - region "主题":
+      - heading "主题" [level=2]
+      - text: 主题状态
+      - combobox "主题状态":
+        - option "开放" [selected]
+        - option "归档"
+      - list:
+        - listitem:
+          - button "Browser discussion 开放 · 查看帖子 →"
+      - button "主题首页"
+- contentinfo: 独立协作论坛 · 不自动确认事件 · 正式评审尚未启用
+```
+
+# Test source
+
+```ts
+  1   | import {test, expect, type ForumFixture} from './fixtures.js';
+  2   | import type {Page} from '@playwright/test';
+  3   | import {mkdir, writeFile} from 'node:fs/promises';
+  4   | import {fileURLToPath} from 'node:url';
+  5   | 
+  6   | async function discussion(page: Page, forum: ForumFixture) {
+  7   |   await page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true}).click();
+  8   |   await page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true}).click();
+  9   |   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+  10  | }
+  11  | async function open(page: Page, id: string, revision = 1) {
+  12  |   await page.locator('.post-directory li').filter({hasText: id}).getByRole('button', {name: `查看修订 ${revision}`, exact: true}).click();
+  13  |   await expect(page.getByRole('button', {name: '从首段重开', exact: true})).toBeEnabled();
+  14  | }
+  15  | async function draft(page: Page, title: string) {
+  16  |   await page.getByLabel('帖子标题', {exact: true}).fill(title);
+  17  |   await page.getByLabel('摘要', {exact: true}).fill('Independent browser note');
+  18  |   await page.getByLabel('正文', {exact: true}).fill('Actual browser HTTP publication.');
+  19  | }
+  20  | async function status(page: Page, route: string) {
+  21  |   return page.evaluate(async pathname => (await fetch(pathname, {credentials: 'same-origin'})).status, route);
+  22  | }
+  23  | 
+  24  | test('BI01 real cookie, restoration, plain research text, keyboard and narrow layout', async ({page, context, forum}) => {
+  25  |   const hostile = '<script>window.detunedResearchExecuted=true</script><img src="https://invalid.example/research" onerror="window.detunedResearchExecuted=true">';
+  26  |   const post = await forum.seedNote({title: 'Plain research', body: hostile, structured: {sample: hostile}});
+  27  |   let remoteRequest = false;
+  28  |   page.on('request', request => {if (new URL(request.url()).origin !== forum.baseURL) remoteRequest = true;});
+  29  |   const response = await page.goto(forum.baseURL);
+  30  |   expect(response?.headers()['content-security-policy']?.includes("script-src 'self'")).toBe(true);
+  31  |   await forum.login(page);
+  32  |   const cookies = await context.cookies(forum.baseURL);
+  33  |   // Never expose cookie values, private login input, CSRF or full storage snapshots in assertion diffs.
+  34  |   expect(cookies.length === 1 && cookies.every(cookie => cookie.httpOnly && cookie.sameSite === 'Strict' && cookie.path === '/' && !cookie.secure)).toBe(true);
+  35  |   expect(await page.evaluate(() => document.cookie === '' && localStorage.length === 0 && sessionStorage.length === 0)).toBe(true);
+  36  |   await page.reload();
+  37  |   await expect(page.getByRole('status')).toContainText('已恢复登录');
+  38  |   const space = page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true});
+  39  |   await space.focus(); await page.keyboard.press('Enter');
+  40  |   const filter = page.getByRole('combobox', {name: '主题状态', exact: true});
+  41  |   await filter.focus(); await page.keyboard.press('ArrowDown'); await page.keyboard.press('Tab');
+> 42  |   await expect(page.getByText('当前页暂无归档主题。', {exact: true})).toBeVisible();
+      |                                                             ^ Error: expect(locator).toBeVisible() failed
+  43  |   await filter.focus(); await page.keyboard.press('ArrowUp'); await page.keyboard.press('Tab');
+  44  |   const thread = page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true});
+  45  |   await thread.focus(); await page.keyboard.press('Enter');
+  46  |   await open(page, post.id);
+  47  |   expect(await page.locator('.body-text').evaluate((element, text) => element.textContent === text, hostile)).toBe(true);
+  48  |   expect(await page.locator('.reading script,.reading img').count()).toBe(0);
+  49  |   expect(await page.evaluate(() => !('detunedResearchExecuted' in window))).toBe(true);
+  50  |   expect(remoteRequest).toBe(false);
+  51  |   const screenshots = fileURLToPath(new URL('../../../docs/reviews/2026-10-09-m5-1-b/verification/screenshots/', import.meta.url));
+  52  |   await mkdir(screenshots, {recursive: true});
+  53  |   await page.screenshot({path: screenshots + 'independent-desktop.png', fullPage: true});
+  54  |   await page.setViewportSize({width: 390, height: 844});
+  55  |   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  56  |   await page.getByRole('button', {name: '引用回复', exact: true}).focus(); await page.keyboard.press('Enter');
+  57  |   await expect(page.getByLabel('帖子标题', {exact: true})).toBeFocused();
+  58  |   const geometry = await page.evaluate(() => {
+  59  |     const button = document.querySelector('.post-directory button') as HTMLButtonElement; const style = getComputedStyle(button);
+  60  |     return {headers: document.querySelectorAll('header.topbar').length, heroes: document.querySelectorAll('.intro h1').length, scrollHeight: document.documentElement.scrollHeight, scrollY, readingTop: document.querySelector('.reading')!.getBoundingClientRect().top + scrollY, composerTop: document.querySelector('.composer')!.getBoundingClientRect().top + scrollY, button: {color: style.color, background: style.backgroundColor, opacity: style.opacity, disabled: button.disabled}};
+  61  |   });
+  62  |   await writeFile(screenshots + 'narrow-dom-geometry.json', JSON.stringify(geometry, null, 2) + '\n');
+  63  |   await page.evaluate(() => scrollTo(0, 0)); await page.screenshot({path: screenshots + 'independent-narrow-top.png'});
+  64  |   await page.locator('.reading').scrollIntoViewIfNeeded(); await page.screenshot({path: screenshots + 'independent-narrow-reading.png'});
+  65  |   await page.locator('.composer').scrollIntoViewIfNeeded(); await page.screenshot({path: screenshots + 'independent-narrow-composer.png'});
+  66  | });
+  67  | 
+  68  | test('BI02 observer write denial, hidden space and immediate membership/credential withdrawal', async ({page, forum}) => {
+  69  |   await page.goto(forum.baseURL); await forum.login(page, 'observer');
+  70  |   await expect(page.getByRole('button', {name: new RegExp(forum.hidden.slug)})).toHaveCount(0);
+  71  |   expect(await status(page, `/api/v1/spaces/${forum.hidden.id}/context`)).toBe(404);
+  72  |   await discussion(page, forum);
+  73  |   const before = forum.businessCounts();
+  74  |   await draft(page, 'Observer must not publish');
+  75  |   await page.getByRole('button', {name: '发布笔记', exact: true}).click();
+  76  |   await expect(page.getByRole('alert')).toBeVisible();
+  77  |   expect(forum.postsByTitle('Observer must not publish').length).toBe(0);
+  78  |   expect(forum.businessCounts()).toEqual(before);
+  79  |   await page.getByRole('button', {name: '退出登录', exact: true}).click();
+  80  |   await expect(page.getByRole('status')).toContainText('已退出登录');
+  81  |   await forum.login(page);
+  82  |   await discussion(page, forum); await open(page, forum.post.id);
+  83  |   await forum.withdrawMembership('contributor');
+  84  |   await page.getByRole('button', {name: '从首段重开', exact: true}).click();
+  85  |   await expect(page.getByRole('alert')).toBeVisible();
+  86  |   expect(await status(page, `/api/v1/spaces/${forum.space.id}/context`)).toBe(404);
+  87  |   await forum.revokeCredential('contributor');
+  88  |   expect(await status(page, '/auth/session')).toBe(401);
+  89  |   await page.getByRole('button', {name: '空间首页', exact: true}).click();
+  90  |   await expect(page.getByRole('alert')).toBeVisible();
+  91  |   expect(forum.httpEvents.some(event => event.path === '/api/v1/spaces' && event.status === 401)).toBe(true);
+  92  | });
+  93  | 
+  94  | test('BI03 committed response loss exhausts bounded retries then same intent replays once', async ({page, forum}) => {
+  95  |   await page.goto(forum.baseURL); await forum.login(page); await discussion(page, forum);
+  96  |   const route = `/api/v1/spaces/${forum.space.id}/threads/${forum.thread.id}/posts`;
+  97  |   const faults = Array.from({length: 4}, () => forum.faultNext({method: 'POST', path: route}, 'lose-after-commit'));
+  98  |   const title = 'Response lost but committed';
+  99  |   await draft(page, title); await page.getByRole('button', {name: '发布笔记', exact: true}).click();
+  100 |   await Promise.all(faults.map(fault => fault.entered));
+  101 |   const retry = page.getByRole('button', {name: '用同一请求重试发布', exact: true});
+  102 |   await expect(retry).toBeEnabled(); await expect(page.getByRole('alert')).toBeVisible();
+  103 |   await expect(page.getByLabel('正文', {exact: true})).toBeDisabled();
+  104 |   let rows = forum.postsByTitle(title);
+  105 |   expect(rows.length === 1 && rows[0]?.author_id === forum.actorIds.contributor && rows[0]?.current_revision === 1).toBe(true);
+  106 |   const attempts = forum.httpEvents.filter(event => event.method === 'POST' && event.path === route);
+  107 |   expect(attempts.length).toBe(4); expect(new Set(attempts.map(event => event.requestKey)).size).toBe(1);
+  108 |   expect(attempts.every(event => typeof event.requestKey === 'string')).toBe(true);
+  109 |   await retry.click(); await expect(page.getByRole('status')).toContainText('帖子已发布');
+  110 |   rows = forum.postsByTitle(title); expect(rows.length).toBe(1);
+  111 |   const final = forum.httpEvents.filter(event => event.method === 'POST' && event.path === route);
+  112 |   expect(final.length).toBe(5); expect(new Set(final.map(event => event.requestKey)).size).toBe(1);
+  113 | });
+  114 | 
+  115 | test('BI04 logout failure stays unconfirmed and held old response cannot repopulate', async ({page, forum}) => {
+  116 |   await page.goto(forum.baseURL); await forum.login(page); await discussion(page, forum);
+  117 |   const held = forum.faultNext({method: 'GET', path: '/api/v1/spaces'}, 'hold-after');
+  118 |   await page.getByRole('button', {name: '空间首页', exact: true}).click(); await held.entered;
+  119 |   const failure = forum.faultNext({method: 'DELETE', path: '/auth/session'}, 'fail-before');
+  120 |   await page.getByRole('button', {name: '退出登录', exact: true}).click(); await failure.entered;
+  121 |   const retry = page.getByRole('button', {name: '重试退出', exact: true});
+  122 |   await expect(retry).toBeEnabled(); await expect(page.getByRole('status')).toContainText('退出尚未确认');
+  123 |   expect(await status(page, '/auth/session')).toBe(200);
+  124 |   held.release();
+  125 |   await expect(page.locator('.workspace')).toHaveCount(0);
+  126 |   await expect(page.getByRole('button', {name: '发布笔记', exact: true})).toHaveCount(0);
+  127 |   await retry.click(); await expect(page.getByRole('status')).toContainText('已退出登录');
+  128 |   expect(await status(page, '/auth/session')).toBe(401);
+  129 |   expect(await page.evaluate(() => document.cookie === '' && localStorage.length === 0 && sessionStorage.length === 0 && (document.querySelector('#token') as HTMLInputElement)?.value === '')).toBe(true);
+  130 |   await expect(page.locator('.workspace')).toHaveCount(0);
+  131 | });
+  132 | 
+  133 | test('BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation', async ({page, forum}) => {
+  134 |   const historical = await forum.seedSyntheticLargeNote('Historical UTF-8 material');
+  135 |   const oldBody = '研"\\'.repeat(12000); // 60,000 UTF-8 bytes, larger JSON representation spans pages.
+  136 |   const legal = await forum.seedNote({title: 'Legal multi-page note', body: oldBody});
+  137 |   let continuous = true, fixed = true, observedBytes = 0, pages = 0;
+  138 |   page.on('response', async response => {
+  139 |     if (!new URL(response.url()).pathname.endsWith(`/posts/${historical.id}/revisions/1`) || response.status() !== 200) return;
+  140 |     try {
+  141 |       const value = await response.json(); const chunk = value.data;
+  142 |       continuous &&= chunk.start_byte === observedBytes && new TextEncoder().encode(chunk.chunk).byteLength === chunk.end_byte - chunk.start_byte;
+```

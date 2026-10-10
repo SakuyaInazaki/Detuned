@@ -1,0 +1,11 @@
+--- packages/web/src/app.tsx v1
++++ packages/web/src/app.tsx v2
+@@ -506,7 +506,7 @@
+       {sessionState === 'authenticated' && <div className="identity"><span>{session?.me.actor.display_name}</span><button className="quiet" onClick={() => void logout()}>退出登录</button></div>}
+     </header>
+     <main>
+-      <div className="intro"><p className="eyebrow">讨论 · 固定版本 · 可追溯引用</p><h1>让研究在讨论中继续</h1><p>阅读当前可见的空间与主题，用笔记回应一个明确版本。正式评审尚未启用。</p></div>
++      <div className="intro"><p className="eyebrow">讨论 · 固定版本 · 可追溯引用</p><h1>让研究在讨论中继续</h1><p>阅读当前可见的空间与主题，用笔记回应一个明确版本，按空间规则对固定材料发起评审。</p></div>
+       <div className="feedback" aria-live="polite" role="status"><span>{status}</span>{busy && <span className="loading">处理中</span>}</div>
+       {error && <p className="error" role="alert">{error}</p>}
+       {(sessionState === 'anonymous' || sessionState === 'restoring') && <section className="login panel" aria-labelledby="login-heading"><h2 id="login-heading">登录论坛</h2><p>访问令牌仅用于本次登录，不会保存到浏览器持久存储。</p><form onSubmit={e => void login(e)}><label htmlFor="token">访问令牌</label><input id="token" type="password" value={token} onChange={e => setToken(e.target.value)} autoComplete="off" spellCheck={false} required disabled={busy}/><button type="submit" disabled={busy || !token}>登录</button></form></section>}

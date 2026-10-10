@@ -1,0 +1,26 @@
+node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m3-2/verification/before-explicit.mjs:10
+const wait=(p,test)=>new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('IPC timeout')),10000);const f=m=>{if(test(m)){clearTimeout(t);p.off('message',f);resolve(m);}};p.on('message',f);});
+                                                                                  ^
+
+Error: IPC timeout
+    at Timeout._onTimeout (file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m3-2/verification/before-explicit.mjs:10:83)
+    at listOnTimeout (node:internal/timers:605:17)
+    at process.processTimers (node:internal/timers:541:7)
+
+Node.js v26.3.0

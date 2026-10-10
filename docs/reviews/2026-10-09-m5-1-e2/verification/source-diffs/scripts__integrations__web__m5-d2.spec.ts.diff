@@ -1,0 +1,24 @@
+--- before-files/scripts/integrations/web/m5-d2.spec.ts
++++ scripts/integrations/web/m5-d2.spec.ts
+@@ -48,10 +48,10 @@
+   await page.screenshot({path: forum.evidencePath('screenshots/d2-comparison-narrow.png')});
+   await page.setViewportSize({width: 1280, height: 900});
+   await page.getByRole('button', {name: '打开修订 1', exact: true}).click();
+-  await expect(page.locator('.body-text')).toHaveText('研究🧪 first body');
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toHaveText('研究🧪 first body');
+   const next = await forum.revisePost(revision, {title: 'D2 title 25', body: 'Latest body is separate'});
+   await catalog.click(); await expect(page.getByText('目录查询时当前修订：25。正文仍保持已选版本。', {exact: true})).toBeVisible();
+-  await expect(page.locator('.body-text')).toHaveText('研究🧪 first body');
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toHaveText('研究🧪 first body');
+   expect(next.revision).toBe(25);
+   const requests = forum.httpEvents.filter(event => event.path.endsWith(`/${revision.id}/revisions/catalog`));
+   expect(requests.length >= 3 && requests[1]?.query?.cursor !== undefined).toBe(true);
+@@ -176,7 +176,7 @@
+   const comparison = forum.faultNext({method:'GET',path:`/api/v1/spaces/${forum.space.id}/posts/${forum.post.id}/revisions/1`},'hold-after');
+   await page.getByRole('button',{name:'比较所选版本',exact:true}).click(); await comparison.entered;
+   await open(page,other.id,1); comparison.release(); await expect(page.locator('.field-comparison')).toHaveCount(0);
+-  await expect(page.locator('.body-text')).toHaveText('A separate selected reference');
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toHaveText('A separate selected reference');
+   const upload = forum.faultNext({method:'POST',path:`/api/v1/spaces/${forum.space.id}/artifacts`},'hold-after');
+   await page.getByLabel('选择附件文件',{exact:true}).setInputFiles({name:'late.txt',mimeType:'text/plain',buffer:Buffer.from('Late committed upload')});
+   await page.getByRole('button',{name:'上传所选附件',exact:true}).click(); await upload.entered;

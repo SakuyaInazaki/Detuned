@@ -1,0 +1,25 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context-session-chain.test.ts > C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision
+AssertionError: expected { …(4) } to deeply equal { …(4) }
+
+- Expected
++ Received
+
+@@ -12,7 +12,7 @@
+        "type": "post.revised",
+        "visibility": "public",
+      },
+    ],
+    "has_more": true,
+-   "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoiZXZlbnRfYWNrIiwiYWN0b3JfaWQiOiJjaGFpbi1yZWFkZXIiLCJzcGFjZV9pZCI6InNwY19hZWQ2ZjQzNi1mMjJiLTQ1MGYtODI1YS00NmYyMzYwNzNhM2IiLCJjb25zdW1lcl9pZCI6ImNzcl9lZWU3NWFjOS01YTkwLTRmNjMtOTI1OC0wMWM1MjgwNTUzNWUiLCJiYXRjaF9pZCI6ImJhdF8xMmE1ZmMwYy01NDNiLTQ1YWQtODNhZS04ZTM5NDliM2M1YzkiLCJ0aHJvdWdoX3NlcSI6NywiZXhwIjoxNzkxNTQzMjEyfQ.xpeiX0XoeGmgLF17mfebs82xTzsicMG99qW2cXQ9PQ0",
++   "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoiZXZlbnRfYWNrIiwiYWN0b3JfaWQiOiJjaGFpbi1yZWFkZXIiLCJzcGFjZV9pZCI6InNwY19hZWQ2ZjQzNi1mMjJiLTQ1MGYtODI1YS00NmYyMzYwNzNhM2IiLCJjb25zdW1lcl9pZCI6ImNzcl9lZWU3NWFjOS01YTkwLTRmNjMtOTI1OC0wMWM1MjgwNTUzNWUiLCJiYXRjaF9pZCI6ImJhdF8xMmE1ZmMwYy01NDNiLTQ1YWQtODNhZS04ZTM5NDliM2M1YzkiLCJ0aHJvdWdoX3NlcSI6NywiZXhwIjoxNzkxNTQzMjEzfQ.Jkr1Y4-FH3Z73-gTIpwAvijhFaJbCdqB1ZMjew5ZviE",
+  }
+
+ ❯ tests/integration/m2-context-session-chain.test.ts:37:23
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

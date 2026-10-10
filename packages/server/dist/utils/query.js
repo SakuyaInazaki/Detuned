@@ -1,4 +1,4 @@
-import { DetunedError, ErrorCode } from '@detuned/protocol';
+import { DetunedError, ErrorCode, isNonblankString, SEARCH_LIMITS } from '@detuned/protocol';
 export function parseIntegerQuery(val, paramName, options = {}) {
     if (val === undefined) {
         if (options.required) {
@@ -45,7 +45,7 @@ export function parseStringQuery(val, paramName, options = {}) {
     if (typeof val !== 'string') {
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `查询参数 ${paramName} 必须为字符串。`, 400);
     }
-    if (!options.allowEmpty && val.trim() === '') {
+    if (!options.allowEmpty && !isNonblankString(val)) {
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `查询参数 ${paramName} 不能为空。`, 400);
     }
     if (options.allowedValues) {
@@ -86,5 +86,36 @@ export function validateAllowedQueryParams(query, allowedKeys) {
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, `不支持的查询参数: ${key}`, 400);
         }
     }
+}
+export function validateNoBody(body, operationName) {
+    if (body === undefined || body === null) {
+        return;
+    }
+    if (typeof body !== 'object' ||
+        Array.isArray(body) ||
+        Object.keys(body).length > 0) {
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, operationName
+            ? `${operationName} 操作不接受请求体参数。`
+            : '该操作不接受请求体参数。', 400);
+    }
+}
+// The decoded raw JSON carrier has its own byte budget; core separately checks
+// the logical array before deduplication for every entry point.
+export function parseSearchTagsJson(val) {
+    if (val === undefined)
+        return undefined;
+    const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'tags_json 必须为不超过8192字节的JSON字符串数组，且不能重复指定。', 400, false);
+    if (typeof val !== 'string' || new TextEncoder().encode(val).byteLength > SEARCH_LIMITS.tags_json_bytes)
+        throw invalid();
+    let parsed;
+    try {
+        parsed = JSON.parse(val);
+    }
+    catch {
+        throw invalid();
+    }
+    if (!Array.isArray(parsed) || parsed.some(tag => typeof tag !== 'string'))
+        throw invalid();
+    return parsed;
 }
 //# sourceMappingURL=query.js.map

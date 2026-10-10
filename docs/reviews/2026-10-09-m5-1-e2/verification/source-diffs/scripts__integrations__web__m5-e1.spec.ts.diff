@@ -1,0 +1,11 @@
+--- before-files/scripts/integrations/web/m5-e1.spec.ts
++++ scripts/integrations/web/m5-e1.spec.ts
+@@ -38,7 +38,7 @@
+   const pinnedResponse=page.waitForResponse(response=>new URL(response.url()).pathname===`/api/v1/spaces/${forum.space.id}/posts/${summary.id}/revisions/1`&&response.status()===200);
+   await page.keyboard.press('Enter');await pinnedResponse;
+ 
+-  await expect(page.locator('.reading .body-text')).toHaveText('Pinned fixed original body');
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toHaveText('Pinned fixed original body');
+   expect(await page.getByRole('button',{name:'进入主题并引用',exact:true}).count()).toBe(0);
+   const reply=page.getByRole('button',{name:'引用回复',exact:true});expect(await reply.count()===0||await reply.isDisabled()).toBe(true);
+   await page.getByRole('button',{name:'返回空间概览',exact:true}).click();

@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "mode": "smoke",
+  "started_utc": "2026-10-06T13:22:31.910Z",
+  "origin_performance_ms": 41.20525,
+  "elapsed_ms": 5481.565833,
+  "runner_result": {
+    "exit_code": null,
+    "signal": "SIGKILL"
+  },
+  "success": false,
+  "failure": "SIGTERM",
+  "events": [
+    {
+      "schema_version": 1,
+      "t_ms": 1.7921249999999986,
+      "utc": "2026-10-06T13:22:31.911Z",
+      "action": "spawn_fixed_script",
+      "script": "run.mjs",
+      "pid": 41927,
+      "args_without_secrets": [
+        "--manifest",
+        "/private/tmp/detuned-c2-seed-smoke-20261006-v3-a1/manifest.json",
+        "--runtime",
+        "/private/tmp/detuned-c2-load-fault-private-v3-a2/runtime.json",
+        "--out",
+        "/private/tmp/detuned-c2-load-fault-v3-a2",
+        "--mode",
+        "smoke",
+        "--gated",
+        "true"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 452.45333300000004,
+      "utc": "2026-10-06T13:22:32.362Z",
+      "action": "terminate_owned_process_group",
+      "pid": 41927
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 5454.141958,
+      "utc": "2026-10-06T13:22:37.364Z",
+      "action": "sigkill_owned_process_group_after_5s",
+      "pid": 41927
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 5459.6735,
+      "utc": "2026-10-06T13:22:37.369Z",
+      "action": "owned_group_probe_error",
+      "pid": 41927,
+      "observation": "unknown_permission",
+      "code": "EPERM"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 5459.828541,
+      "utc": "2026-10-06T13:22:37.369Z",
+      "action": "runner_exit",
+      "exit_code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "schema_version": 1,
+      "t_ms": 5481.420708,
+      "utc": "2026-10-06T13:22:37.391Z",
+      "action": "owned_group_gone",
+      "pid": 41927
+    }
+  ],
+  "private_artifacts": "/private/tmp/detuned-c2-load-fault-private-v3-a2/automatic-gates"
+}

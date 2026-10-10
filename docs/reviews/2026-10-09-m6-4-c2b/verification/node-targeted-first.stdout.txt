@@ -1,0 +1,43 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m6-review-submissions-independent.test.ts (10 tests) 955ms
+   ✓ SD04 two genuine processes sharing a key commit one initial submission, and two distinct reviewers race one atomic reveal  357ms
+ ❯ tests/integration/m6-public-review-search-independent.test.ts (7 tests | 1 failed) 5816ms
+   × PSI01 real sealed author remains unsearchable; failed last-submission reveal transaction publishes nothing and exact retry reveals once 5019ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ PSI02 referenced private evidence immediately hides only its public opinion; unused private upload redaction has no effect 138ms
+   ✓ PSI03 selected current-space intrinsic damage resyncs; ACL precedes it; online dependency/evidence privacy hides without claiming database health 185ms
+   ✓ PSI04 literal field boundaries, Unicode query and snippet preserve original text without metadata/attachment matching 92ms
+   ✓ PSI05 cursor anchors visible results, skips later-redacted opinions, preserves original expiry, and keeps cancelled/stale readable history 222ms
+   ✓ PSI06 real small candidate cap covers entire filtered domain even behind cursor; controlled default-cap observation is separately labelled 78ms
+   ✓ PSI07 actual second WAL connection redaction commits during selected-candidate read yet whole batch uses one privacy snapshot 82ms
+ ❯ tests/contracts/m2-search-contracts.test.ts (5 tests | 1 failed) 822ms
+   ✓ M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 110ms
+   ✓ M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 57ms
+   ✓ M2.3 actual search transport and tool pagination > S03: HTTP JSON tags preserve all exact strings, with strict carrier/CSV/query rejection 58ms
+   × M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta 539ms
+     → expected undefined to deeply equal { …(3) }
+   ✓ M2.3 shared logical query contracts > S05: Unicode boundaries agree across TypeBox and both installed AJV RegExp flags 58ms
+ ✓ tests/integration/m6-review-submissions.test.ts (7 tests) 337ms
+ ✓ tests/integration/m6-review-private-artifacts.test.ts (6 tests) 310ms
+ ✓ tests/integration/m6-public-review-search.test.ts (6 tests) 455ms
+ ❯ tests/contracts/m6-public-review-search-contracts.test.ts (4 tests | 1 failed) 313ms
+   ✓ PC01 real HTTP/shared client typed strict page has genuine review identity, and old posts search return type stays 137ms
+   ✓ PC02 canonical source prevalidation rejects unknown/incompatible query before new client transport 47ms
+   × PC03 whole-page wire guard rejects date/identity/filter/order/unknown/meta/snippet flaws without partial rows 60ms
+     → promise resolved "{ data: [ { …(12) }, { …(12) } ], …(1) }" instead of rejecting
+   ✓ PC04 shared ID ordering follows SQLite BINARY, not locale; distinct review/post cursors do not cross source 68ms
+ ✓ tests/contracts/m6-public-review-search-tools-cli.test.ts (5 tests) 2465ms
+   ✓ PSB04 built CLI controlled transport forwards review source/filters and preserves data/page/cursor output  1049ms
+   ✓ PSB05 built CLI rejects invalid source/filter combinations locally with safe error and zero HTTP  1403ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 33ms
+ ✓ tests/contracts/m6-review-tools.test.ts (4 tests) 21ms
+ ✓ tests/contracts/m6-review-client.test.ts (4 tests) 14ms
+
+ Test Files  3 failed | 8 passed (11)
+      Tests  3 failed | 64 passed (67)
+   Start at  22:53:58
+   Duration  15.43s (transform 461ms, setup 0ms, collect 2.29s, tests 11.54s, environment 1ms, prepare 300ms)
+

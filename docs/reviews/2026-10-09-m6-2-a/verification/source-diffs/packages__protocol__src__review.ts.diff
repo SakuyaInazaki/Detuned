@@ -1,0 +1,98 @@
+--- packages/protocol/src/review.ts (fresh exact before)
++++ packages/protocol/src/review.ts (current)
+@@ -1,7 +1,7 @@
+ import { Value } from '@sinclair/typebox/value';
+ import { Type, Static } from '@sinclair/typebox';
+ import { ReviewPolicySchema } from './spaces.js';
+-import { PostRefSchema, EvidenceRefSchema } from './common.js';
++import { PostRefSchema } from './common.js';
+ 
+ export const ReviewPhaseSchema = Type.Union([
+   Type.Literal('collecting'),
+@@ -54,19 +54,20 @@
+ }
+ 
+ export const CreateReviewSubmissionSchema = Type.Object({
+-  snapshot_sha256: Type.String({ minLength: 64, maxLength: 64 }),
++  snapshot_sha256: Type.String({ pattern: '^[0-9a-f]{64}$' }),
+   reviewer_session_id: Type.String({ minLength: 1 }),
+-  completion_status: ReviewCompletionStatusSchema,
+-  verdict: ReviewVerdictSchema,
+-  coverage: Type.String({ minLength: 1 }),
+-  checks_performed: Type.String({ minLength: 1 }),
+-  evidence_refs: Type.Array(EvidenceRefSchema),
+-  pending_requirements: Type.Array(Type.String()),
+-  limitations: Type.Array(Type.String()),
+-  independence_statement: Type.String({ minLength: 1 }),
++  completion_status: Type.Literal('complete'), verdict: ReviewVerdictSchema,
++  coverage: nonBlank(16000), checks_performed: nonBlank(16000),
++  evidence_refs: Type.Array(Type.Union([Type.Object({ kind: Type.Literal('post'), ...snapshotRef.properties }, { additionalProperties: false }), Type.Object({ kind: Type.Literal('artifact'), artifact_id: Type.String({ minLength: 1 }) }, { additionalProperties: false })]), { maxItems: 64, uniqueItems: true }),
++  pending_requirements: Type.Array(nonBlank(2000), { maxItems: 32 }),
++  limitations: Type.Array(nonBlank(2000), { maxItems: 32 }),
++  independence_statement: Type.Object({ participated_in_material: Type.Literal(false),
++    exposed_to_other_reviews: Type.Literal(false), statement: nonBlank(8000) }, { additionalProperties: false }),
+ }, { additionalProperties: false });
+-
+ export type CreateReviewSubmission = Static<typeof CreateReviewSubmissionSchema>;
++export function isCreateReviewSubmission(value: unknown): value is CreateReviewSubmission {
++  return Value.Check(CreateReviewSubmissionSchema, value) && (value.verdict !== 'accept' || value.pending_requirements.length === 0);
++}
+ 
+ export const CheckRunResultSchema = Type.Union([
+   Type.Literal('pass'),
+@@ -124,22 +125,24 @@
+ export type ReviewSnapshotItemRecord = Static<typeof ReviewSnapshotItemRecordSchema>;
+ export const ReviewRequestRecordSchema = Type.Object({
+   id: reviewId, space_id: reviewId, target_ref: snapshotRef, snapshot_id: reviewId,
+-  round: reviewPositive, phase: ReviewPhaseSchema, version: reviewPositive,
++  round: reviewPositive, phase: ReviewPhaseSchema, version: reviewPositive, submitted_count: Type.Integer({ minimum: 0, maximum: 5 }),
+   requested_by: reviewId, created_at: Type.String({ format: 'date-time' }),
+   changed_by: reviewId, changed_at: Type.String({ format: 'date-time' }), reason: Type.Union([Type.String(), Type.Null()]),
+ }, { additionalProperties: false });
+ export type ReviewRequestRecord = Static<typeof ReviewRequestRecordSchema>;
+ export const ReviewRequestVersionRecordSchema = Type.Object({
+-  request_id: reviewId, version: reviewPositive, phase: ReviewPhaseSchema,
++  request_id: reviewId, version: reviewPositive, phase: ReviewPhaseSchema, submitted_count: Type.Integer({ minimum: 0, maximum: 5 }),
+   changed_by: reviewId, changed_at: Type.String({ format: 'date-time' }), reason: Type.Union([Type.String(), Type.Null()]),
+ }, { additionalProperties: false });
+ export type ReviewRequestVersionRecord = Static<typeof ReviewRequestVersionRecordSchema>;
+ export const ReviewAssignmentRecordSchema = Type.Object({
+-  request_id: reviewId, reviewer_actor_id: reviewId, group_at_assignment: Type.Union([Type.String(), Type.Null()]),
++  id: reviewId, request_id: reviewId, reviewer_actor_id: reviewId, group_at_assignment: Type.Union([Type.String(), Type.Null()]),
+ }, { additionalProperties: false });
+ export type ReviewAssignmentRecord = Static<typeof ReviewAssignmentRecordSchema>;
++const { submitted_count: internalSubmittedCount, ...baseRequestProperties } = ReviewRequestRecordSchema.properties;
++void internalSubmittedCount;
+ export const ReviewRequestViewSchema = Type.Object({
+-  ...ReviewRequestRecordSchema.properties, snapshot_sha256: reviewHash,
++  ...baseRequestProperties, snapshot_sha256: reviewHash,
+   rules_revision: reviewPositive, policy_revision: reviewPositive,
+   reviewer_actor_ids: Type.Array(reviewId, { minItems: 1, maxItems: 5, uniqueItems: true }),
+ }, { additionalProperties: false });
+@@ -165,3 +168,26 @@
+ export function isReviewSnapshotManifest(value: unknown): value is ReviewSnapshotManifestData {
+   return Value.Check(ReviewSnapshotManifestSchema, value);
+ }
++
++export const ReviewRequestReadViewSchema = Type.Object({ ...ReviewRequestViewSchema.properties,
++  changed_by: Type.Union([reviewId, Type.Null()]), submitted_count: Type.Integer({ minimum: 0, maximum: 5 }),
++}, { additionalProperties: false });
++export type ReviewRequestReadView = Static<typeof ReviewRequestReadViewSchema>;
++export const ReviewSubmissionRecordSchema = Type.Object({
++  id: reviewId, request_id: reviewId, assignment_id: reviewId, reviewer_actor_id: reviewId,
++  reviewer_session_id: reviewId, snapshot_sha256: reviewHash, payload: CreateReviewSubmissionSchema,
++  request_version: reviewPositive, submitted_at: Type.String({ format: 'date-time' }),
++  revealed_at: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewSubmissionRecord = Static<typeof ReviewSubmissionRecordSchema>;
++export const ReviewSubmissionAcknowledgementSchema = Type.Object({
++  submission_id: reviewId, request_id: reviewId, assignment_id: reviewId, reviewer_actor_id: reviewId,
++  snapshot_sha256: reviewHash, submitted_at: Type.String({ format: 'date-time' }),
++}, { additionalProperties: false });
++export type ReviewSubmissionAcknowledgement = Static<typeof ReviewSubmissionAcknowledgementSchema>;
++export const ReviewSubmissionViewSchema = Type.Object({ ...CreateReviewSubmissionSchema.properties,
++  submission_id: reviewId, request_id: reviewId, assignment_id: reviewId, reviewer_actor_id: reviewId,
++  request_version: reviewPositive, submitted_at: Type.String({ format: 'date-time' }),
++  revealed_at: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
++}, { additionalProperties: false });
++export type ReviewSubmissionView = Static<typeof ReviewSubmissionViewSchema>;

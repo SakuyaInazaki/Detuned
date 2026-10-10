@@ -1,0 +1,20 @@
+--- before-files/packages/protocol/src/tools.ts
++++ packages/protocol/src/tools.ts
+@@ -40,7 +40,7 @@
+ export const ToolReadParamsSchema: TSchema = { ...ToolReadParamsUnion, type: 'object' };
+ export type ToolReadParams = Static<typeof ToolReadParamsUnion>;
+ export function validateToolReadParams(value: unknown): asserts value is ToolReadParams {
+-  if (!Value.Check(ToolReadParamsUnion, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，artifact/review尚未支持。', 400, false);
++  if (!Value.Check(ToolReadParamsUnion, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，artifact/review尚未支持。', 400, false);
+ }
+ 
+ export const ToolPublishThreadOpSchema = Type.Object({
+@@ -269,7 +269,7 @@
+   },
+   {
+     name: 'forum_read',
+-    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。artifact/review尚未支持。',
++    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。artifact/review尚未支持。',
+     schema: ToolReadParamsSchema,
+   },
+   {

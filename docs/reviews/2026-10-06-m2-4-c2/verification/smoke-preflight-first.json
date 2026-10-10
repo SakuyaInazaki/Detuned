@@ -1,0 +1,3407 @@
+{
+  "phase": "preflight",
+  "audit": {
+    "documents_checked": [
+      "task conditions/evidence/variants/retry and sources"
+    ],
+    "HTTP_records": 23,
+    "HTTP_bytes": 102027,
+    "oracle_opened_after_session": true
+  },
+  "checkpoint_sha256": "53e9bd1040ae138a18fc7d7c2eeaf5e2a3fb86fa96c3a10b468c008eaddbc038",
+  "readonly_fingerprints": {
+    "actors": "bb150f598bc20237143cb442dacf8378318146631f1292977fbefe4403ff97b1",
+    "artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "consumers": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "credentials": "c2a7e524784ce3be87bde9bd6bf8ea5d9910154eaf7698f2f510e4f5e17ab648",
+    "delivery_batches": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "events": "f7b4219e4208070e8d6ffe016281be65fdd2d2c0e0b5767941699de6e8dd3a73",
+    "idempotency_records": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "instance_metadata": "fa9111a91ab536886fe8c1ceca0fb9f34b25f1b23070c3024a2a703c6bc531af",
+    "memberships": "689b979cc65b31e5b5510012ada287ad7da020d30d529e713b1d5bca999cf734",
+    "post_fts": "92acab0bbb2412337c0e760027f32907282ac939db4e3442f2a77842fd070138",
+    "post_fts_config": "756c92c2cdbdddc20ef0fe8713974731a08470d68ddf1bd4041a187aace0dbe6",
+    "post_fts_content": "59d52929c80f7671e32ea712232f0c6d9c888834968243d8550482fc926d9e14",
+    "post_fts_data": "191d59bd1aff2aeeda11a51e227de64481066bfed6b47908a8d612ff4e0c97ac",
+    "post_fts_docsize": "661dc8311a4eff819289fd8b6de82d3c651156ef131a9c8049a6552aa6c65ab9",
+    "post_fts_idx": "e7dbcbe65eb233700230d521950783ae43d65a7c99cb1e46781ca3a160e35923",
+    "post_revisions": "e2115937cf7a793ec1fd7da7fdf7641b92a37287c9a991b9772ceea79edf929b",
+    "posts": "887f517da1894f17b9740e33880e3a0ff17d1735a137d8955f86ab36ec583c3a",
+    "redactions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "relation_resolutions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "relations": "b11c7725966f638eacc33adcefde4ed76078055a75814ce00078806fe805330b",
+    "revision_artifacts": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "schema_migrations": "43e713723f90e1393525bdae2823aeaacc1f16de953948d1d1bcc361227a79d0",
+    "sessions": "6aa9cc7b8e2ce4d14b99e7431736a5e54bd9e8f6a4101ea5983b5bd337e6746d",
+    "space_revisions": "96645381cc586b45c686122cd80464bf7e8ac921ee1b440f40c64044303c36a7",
+    "spaces": "e6b6dd438f60c424c9e8a44c180c76de47e7a86c711f929ed7038683aafc52b3",
+    "subscriptions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "thread_versions": "92fc533c911d5fafb877fae065eb9639bf8f11c4165639fb4358fd359e443fc5",
+    "threads": "e0131e5cc7c8945f8eacbd3f5119f460a62ae2b55c61d8bf1cfd3c49dad824f4"
+  },
+  "journey": {
+    "format_version": 1,
+    "session_inputs": {
+      "space_id": "spc_c2_main",
+      "query": "C2三点反例"
+    },
+    "records": [
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/context?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 3969,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-l",
+          "data": {
+            "space_id": "spc_c2_main",
+            "slug": "c2-scale",
+            "space_revision_ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "space_content_status": "omitted_for_budget",
+            "objective": null,
+            "rules": null,
+            "policy_revision": 1,
+            "pinned_summaries": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000008",
+                  "revision": 10
+                },
+                "title": "协作 summary 8",
+                "summary": "研究材料 summary 8",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000007",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000975",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000028",
+                  "revision": 10
+                },
+                "title": "协作 summary 28",
+                "summary": "研究材料 summary 28",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000058",
+                  "revision": 10
+                },
+                "title": "协作 summary 58",
+                "summary": "研究材料 summary 58",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000078",
+                  "revision": 10
+                },
+                "title": "协作 summary 78",
+                "summary": "研究材料 summary 78",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000108",
+                  "revision": 10
+                },
+                "title": "协作 summary 108",
+                "summary": "研究材料 summary 108",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000128",
+                  "revision": 10
+                },
+                "title": "协作 summary 128",
+                "summary": "研究材料 summary 128",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000158",
+                  "revision": 10
+                },
+                "title": "协作 summary 158",
+                "summary": "研究材料 summary 158",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000178",
+                  "revision": 10
+                },
+                "title": "协作 summary 178",
+                "summary": "研究材料 summary 178",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000208",
+                  "revision": 10
+                },
+                "title": "协作 summary 208",
+                "summary": "研究材料 summary 208",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000200",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              }
+            ],
+            "blocking_objections": [],
+            "recent_failures": [],
+            "recent_activity": [],
+            "checkpoint_token_sha256": "53e9bd1040ae138a18fc7d7c2eeaf5e2a3fb86fa96c3a10b468c008eaddbc038"
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/context?max_bytes=12288",
+        "status": 200,
+        "response_bytes": 11877,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-m",
+          "data": {
+            "space_id": "spc_c2_main",
+            "slug": "c2-scale",
+            "space_revision_ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "space_content_status": "omitted_for_budget",
+            "objective": null,
+            "rules": null,
+            "policy_revision": 1,
+            "pinned_summaries": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000008",
+                  "revision": 10
+                },
+                "title": "协作 summary 8",
+                "summary": "研究材料 summary 8",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000007",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000975",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000028",
+                  "revision": 10
+                },
+                "title": "协作 summary 28",
+                "summary": "研究材料 summary 28",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000058",
+                  "revision": 10
+                },
+                "title": "协作 summary 58",
+                "summary": "研究材料 summary 58",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000078",
+                  "revision": 10
+                },
+                "title": "协作 summary 78",
+                "summary": "研究材料 summary 78",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000108",
+                  "revision": 10
+                },
+                "title": "协作 summary 108",
+                "summary": "研究材料 summary 108",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000128",
+                  "revision": 10
+                },
+                "title": "协作 summary 128",
+                "summary": "研究材料 summary 128",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000158",
+                  "revision": 10
+                },
+                "title": "协作 summary 158",
+                "summary": "研究材料 summary 158",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000178",
+                  "revision": 10
+                },
+                "title": "协作 summary 178",
+                "summary": "研究材料 summary 178",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000208",
+                  "revision": 10
+                },
+                "title": "协作 summary 208",
+                "summary": "研究材料 summary 208",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000200",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000228",
+                  "revision": 10
+                },
+                "title": "协作 summary 228",
+                "summary": "研究材料 summary 228",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000225",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000200",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000258",
+                  "revision": 10
+                },
+                "title": "协作 summary 258",
+                "summary": "研究材料 summary 258",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000250",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000225",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000278",
+                  "revision": 10
+                },
+                "title": "协作 summary 278",
+                "summary": "研究材料 summary 278",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000275",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000250",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000308",
+                  "revision": 10
+                },
+                "title": "协作 summary 308",
+                "summary": "研究材料 summary 308",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000300",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000275",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000328",
+                  "revision": 10
+                },
+                "title": "协作 summary 328",
+                "summary": "研究材料 summary 328",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000325",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000300",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000358",
+                  "revision": 10
+                },
+                "title": "协作 summary 358",
+                "summary": "研究材料 summary 358",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000350",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000325",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000378",
+                  "revision": 10
+                },
+                "title": "协作 summary 378",
+                "summary": "研究材料 summary 378",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000375",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000350",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000408",
+                  "revision": 10
+                },
+                "title": "协作 summary 408",
+                "summary": "研究材料 summary 408",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000400",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000375",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000428",
+                  "revision": 10
+                },
+                "title": "协作 summary 428",
+                "summary": "研究材料 summary 428",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000425",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000400",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000458",
+                  "revision": 10
+                },
+                "title": "协作 summary 458",
+                "summary": "研究材料 summary 458",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000450",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000425",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000478",
+                  "revision": 10
+                },
+                "title": "协作 summary 478",
+                "summary": "研究材料 summary 478",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000475",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000450",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              }
+            ],
+            "blocking_objections": [
+              {
+                "relation_id": "rel_c2_0000",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000007",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000025",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_00",
+                "source_author_id": "act_c2_00",
+                "target_author_id": "act_c2_01",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0001",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000027",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000025",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_01",
+                "source_author_id": "act_c2_01",
+                "target_author_id": "act_c2_01",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0002",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000057",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000075",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_02",
+                "source_author_id": "act_c2_02",
+                "target_author_id": "act_c2_03",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0003",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000077",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000075",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_03",
+                "source_author_id": "act_c2_03",
+                "target_author_id": "act_c2_03",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0004",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000107",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000125",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_04",
+                "source_author_id": "act_c2_04",
+                "target_author_id": "act_c2_05",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0005",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000127",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000125",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_05",
+                "source_author_id": "act_c2_05",
+                "target_author_id": "act_c2_05",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0006",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000157",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000175",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_06",
+                "source_author_id": "act_c2_06",
+                "target_author_id": "act_c2_07",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0007",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000177",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000175",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_07",
+                "source_author_id": "act_c2_07",
+                "target_author_id": "act_c2_07",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              }
+            ],
+            "recent_failures": [],
+            "recent_activity": [],
+            "checkpoint_token_sha256": "53e9bd1040ae138a18fc7d7c2eeaf5e2a3fb86fa96c3a10b468c008eaddbc038"
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/context?max_bytes=65536",
+        "status": 200,
+        "response_bytes": 39432,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-n",
+          "data": {
+            "space_id": "spc_c2_main",
+            "slug": "c2-scale",
+            "space_revision_ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "space_content_status": "included",
+            "objective": "可重复规模实验：只通过论坛接续反例与来源",
+            "rules": [
+              "空间规则 0 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 1 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 2 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 3 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 4 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 5 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 6 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 7 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 8 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 9 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 10 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+              "空间规则 11 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x"
+            ],
+            "policy_revision": 1,
+            "pinned_summaries": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000008",
+                  "revision": 10
+                },
+                "title": "协作 summary 8",
+                "summary": "研究材料 summary 8",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000007",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000975",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000028",
+                  "revision": 10
+                },
+                "title": "协作 summary 28",
+                "summary": "研究材料 summary 28",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000058",
+                  "revision": 10
+                },
+                "title": "协作 summary 58",
+                "summary": "研究材料 summary 58",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000025",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000078",
+                  "revision": 10
+                },
+                "title": "协作 summary 78",
+                "summary": "研究材料 summary 78",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000050",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000108",
+                  "revision": 10
+                },
+                "title": "协作 summary 108",
+                "summary": "研究材料 summary 108",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000075",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000128",
+                  "revision": 10
+                },
+                "title": "协作 summary 128",
+                "summary": "研究材料 summary 128",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000100",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000158",
+                  "revision": 10
+                },
+                "title": "协作 summary 158",
+                "summary": "研究材料 summary 158",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000125",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000178",
+                  "revision": 10
+                },
+                "title": "协作 summary 178",
+                "summary": "研究材料 summary 178",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000150",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000208",
+                  "revision": 10
+                },
+                "title": "协作 summary 208",
+                "summary": "研究材料 summary 208",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000200",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000175",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000228",
+                  "revision": 10
+                },
+                "title": "协作 summary 228",
+                "summary": "研究材料 summary 228",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000225",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000200",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000258",
+                  "revision": 10
+                },
+                "title": "协作 summary 258",
+                "summary": "研究材料 summary 258",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000250",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000225",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000278",
+                  "revision": 10
+                },
+                "title": "协作 summary 278",
+                "summary": "研究材料 summary 278",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000275",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000250",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000308",
+                  "revision": 10
+                },
+                "title": "协作 summary 308",
+                "summary": "研究材料 summary 308",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000300",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000275",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000328",
+                  "revision": 10
+                },
+                "title": "协作 summary 328",
+                "summary": "研究材料 summary 328",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000325",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000300",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000358",
+                  "revision": 10
+                },
+                "title": "协作 summary 358",
+                "summary": "研究材料 summary 358",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000350",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000325",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000378",
+                  "revision": 10
+                },
+                "title": "协作 summary 378",
+                "summary": "研究材料 summary 378",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000375",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000350",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000408",
+                  "revision": 10
+                },
+                "title": "协作 summary 408",
+                "summary": "研究材料 summary 408",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000400",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000375",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000428",
+                  "revision": 10
+                },
+                "title": "协作 summary 428",
+                "summary": "研究材料 summary 428",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000425",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000400",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000458",
+                  "revision": 10
+                },
+                "title": "协作 summary 458",
+                "summary": "研究材料 summary 458",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000450",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000425",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000478",
+                  "revision": 10
+                },
+                "title": "协作 summary 478",
+                "summary": "研究材料 summary 478",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000475",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000450",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              }
+            ],
+            "blocking_objections": [
+              {
+                "relation_id": "rel_c2_0000",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000007",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000025",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_00",
+                "source_author_id": "act_c2_00",
+                "target_author_id": "act_c2_01",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0001",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000027",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000025",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_01",
+                "source_author_id": "act_c2_01",
+                "target_author_id": "act_c2_01",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0002",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000057",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000075",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_02",
+                "source_author_id": "act_c2_02",
+                "target_author_id": "act_c2_03",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0003",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000077",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000075",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_03",
+                "source_author_id": "act_c2_03",
+                "target_author_id": "act_c2_03",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0004",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000107",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000125",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_04",
+                "source_author_id": "act_c2_04",
+                "target_author_id": "act_c2_05",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0005",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000127",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000125",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_05",
+                "source_author_id": "act_c2_05",
+                "target_author_id": "act_c2_05",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0006",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000157",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000175",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_06",
+                "source_author_id": "act_c2_06",
+                "target_author_id": "act_c2_07",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0007",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000177",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000175",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_07",
+                "source_author_id": "act_c2_07",
+                "target_author_id": "act_c2_07",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0008",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000207",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000225",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_08",
+                "source_author_id": "act_c2_08",
+                "target_author_id": "act_c2_09",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              },
+              {
+                "relation_id": "rel_c2_0009",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000227",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000225",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_09",
+                "source_author_id": "act_c2_09",
+                "target_author_id": "act_c2_09",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              }
+            ],
+            "recent_failures": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000997",
+                  "revision": 9
+                },
+                "title": "协作 failure 997",
+                "category": "counterexample",
+                "attempt": "固定局部实验 997",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000987",
+                  "revision": 9
+                },
+                "title": "协作 failure 987",
+                "category": "counterexample",
+                "attempt": "固定局部实验 987",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000977",
+                  "revision": 9
+                },
+                "title": "协作 failure 977",
+                "category": "counterexample",
+                "attempt": "固定局部实验 977",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000967",
+                  "revision": 9
+                },
+                "title": "协作 failure 967",
+                "category": "counterexample",
+                "attempt": "固定局部实验 967",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000957",
+                  "revision": 9
+                },
+                "title": "协作 failure 957",
+                "category": "counterexample",
+                "attempt": "固定局部实验 957",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              }
+            ],
+            "recent_activity": [
+              {
+                "type": "thread.updated",
+                "object_id": "thd_c2_0036",
+                "occurred_at": "2026-01-01T00:00:09.996Z"
+              },
+              {
+                "type": "thread.updated",
+                "object_id": "thd_c2_0037",
+                "occurred_at": "2026-01-01T00:00:09.997Z"
+              },
+              {
+                "type": "thread.updated",
+                "object_id": "thd_c2_0038",
+                "occurred_at": "2026-01-01T00:00:09.998Z"
+              },
+              {
+                "type": "thread.updated",
+                "object_id": "thd_c2_0039",
+                "occurred_at": "2026-01-01T00:00:09.999Z"
+              },
+              {
+                "type": "space.revised",
+                "object_id": "spc_c2_main",
+                "occurred_at": "2026-01-01T00:00:10.000Z"
+              }
+            ],
+            "checkpoint_token_sha256": "53e9bd1040ae138a18fc7d7c2eeaf5e2a3fb86fa96c3a10b468c008eaddbc038"
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 4096,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-o",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "{\"objective\":\"可重复规模实验：只通过论坛接续反例与来源\",\"rules\":[\"空间规则 0 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 1 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先",
+            "start_byte": 0,
+            "end_byte": 3646,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MzY0NiwiZXhwIjoxNzkxMzc2MTI1fQ.2V6GAUozcWBPkG4taUcVpG76nP4SvZbumm59WC4iEB4"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MzY0NiwiZXhwIjoxNzkxMzc2MTI1fQ.2V6GAUozcWBPkG4taUcVpG76nP4SvZbumm59WC4iEB4",
+        "status": 200,
+        "response_bytes": 4095,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-p",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 2 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 3 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中",
+            "start_byte": 3646,
+            "end_byte": 7293,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6NzI5MywiZXhwIjoxNzkxMzc2MTI1fQ.q71Yio5A1ClOa7oHIfX39OvK_B8rikRnBI67gOP0pOU"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6NzI5MywiZXhwIjoxNzkxMzc2MTI1fQ.q71Yio5A1ClOa7oHIfX39OvK_B8rikRnBI67gOP0pOU",
+        "status": 200,
+        "response_bytes": 4095,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-q",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 4 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 5 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先",
+            "start_byte": 7293,
+            "end_byte": 10938,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTA5MzgsImV4cCI6MTc5MTM3NjEyNX0.fLnF1mzQF3UBAsZBpZGNRuCegXpRwqxkXvDBS6Hh5X8"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTA5MzgsImV4cCI6MTc5MTM3NjEyNX0.fLnF1mzQF3UBAsZBpZGNRuCegXpRwqxkXvDBS6Hh5X8",
+        "status": 200,
+        "response_bytes": 4095,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-r",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 6 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 7 先概要后详情 ",
+            "start_byte": 10938,
+            "end_byte": 14582,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTQ1ODIsImV4cCI6MTc5MTM3NjEyNX0.2YOdy-h02prHPNZ9BTxjl0ZekSzP4Rho7ivHlzUsWWg"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTQ1ODIsImV4cCI6MTc5MTM3NjEyNX0.2YOdy-h02prHPNZ9BTxjl0ZekSzP4Rho7ivHlzUsWWg",
+        "status": 200,
+        "response_bytes": 4095,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-s",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 8 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详",
+            "start_byte": 14582,
+            "end_byte": 18228,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTgyMjgsImV4cCI6MTc5MTM3NjEyNX0.NtdOYnWQyRMS1pt8zv7p1JrXMbqzCzDFVXIhaaWhdFc"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MTgyMjgsImV4cCI6MTc5MTM3NjEyNX0.NtdOYnWQyRMS1pt8zv7p1JrXMbqzCzDFVXIhaaWhdFc",
+        "status": 200,
+        "response_bytes": 4096,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-t",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 9 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 10 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件",
+            "start_byte": 18228,
+            "end_byte": 21873,
+            "complete": false
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MjE4NzMsImV4cCI6MTc5MTM3NjEyNX0.M2OlNM2gQcTrORPs6lTR0dHEFhtEPt4QoFwE6hX5sB4"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2?max_bytes=4096&cursor=eyJ2IjoxLCJwdXJwb3NlIjoic3BhY2VfcmV2aXNpb25fcmVhZCIsImFjdG9yX2lkIjoiYWN0X2MyXzAwIiwic3BhY2VfaWQiOiJzcGNfYzJfbWFpbiIsInJldmlzaW9uIjoyLCJieXRlX29mZnNldCI6MjE4NzMsImV4cCI6MTc5MTM3NjEyNX0.M2OlNM2gQcTrORPs6lTR0dHEFhtEPt4QoFwE6hX5sB4",
+        "status": 200,
+        "response_bytes": 3232,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-u",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "encoding": "json",
+            "chunk": "🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\",\"空间规则 11 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x\"]}",
+            "start_byte": 21873,
+            "end_byte": 24880,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/search?q=C2%E4%B8%89%E7%82%B9%E5%8F%8D%E4%BE%8B&limit=100",
+        "status": 200,
+        "response_bytes": 382,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-v",
+          "data": [
+            {
+              "post_id": "pst_c2_000007",
+              "revision": 10,
+              "thread_id": "thd_c2_0000",
+              "kind": "failure",
+              "title": "C2三点反例",
+              "summary": "首次发现固定距离的三点反例与适用条件",
+              "tags": [
+                "scale",
+                "failure",
+                "条件"
+              ],
+              "snippet": "<b>C2三点反例</b>",
+              "created_at": "2026-01-01T00:00:09.089Z"
+            }
+          ],
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/context?focus_thread_id=thd_c2_0000&max_bytes=4096",
+        "status": 200,
+        "response_bytes": 2801,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-w",
+          "data": {
+            "space_id": "spc_c2_main",
+            "focus_thread": {
+              "id": "thd_c2_0000",
+              "space_id": "spc_c2_main",
+              "title": "主题 0",
+              "version": 1,
+              "state": "open",
+              "creator_id": "act_c2_00",
+              "created_at": "2026-01-01T00:00:00.002Z",
+              "updated_at": "2026-01-01T00:00:00.002Z"
+            },
+            "slug": "c2-scale",
+            "space_revision_ref": {
+              "space_id": "spc_c2_main",
+              "revision": 2
+            },
+            "space_content_status": "omitted_for_budget",
+            "objective": null,
+            "rules": null,
+            "policy_revision": 1,
+            "pinned_summaries": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000008",
+                  "revision": 10
+                },
+                "title": "协作 summary 8",
+                "summary": "研究材料 summary 8",
+                "has_newer_revision": false,
+                "source_refs": [
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000000",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000007",
+                      "revision": 10
+                    },
+                    "status": "active",
+                    "has_newer_revision": false
+                  },
+                  {
+                    "ref": {
+                      "post_id": "pst_c2_000975",
+                      "revision": 1
+                    },
+                    "status": "active",
+                    "has_newer_revision": true
+                  }
+                ],
+                "missing_fields": []
+              }
+            ],
+            "blocking_objections": [
+              {
+                "relation_id": "rel_c2_0000",
+                "relation_type": "challenges",
+                "source_ref": {
+                  "post_id": "pst_c2_000007",
+                  "revision": 1
+                },
+                "target_ref": {
+                  "post_id": "pst_c2_000025",
+                  "revision": 1
+                },
+                "creator_id": "act_c2_00",
+                "source_author_id": "act_c2_00",
+                "target_author_id": "act_c2_01",
+                "state": "open",
+                "version": 1,
+                "source_status": "active",
+                "target_status": "active",
+                "source_has_newer_revision": true,
+                "target_has_newer_revision": true,
+                "type": "open_challenge",
+                "issue": null,
+                "impact": null,
+                "missing_fields": [
+                  "issue",
+                  "impact"
+                ]
+              }
+            ],
+            "recent_failures": [
+              {
+                "ref": {
+                  "post_id": "pst_c2_000017",
+                  "revision": 10
+                },
+                "title": "协作 failure 17",
+                "category": "counterexample",
+                "attempt": "固定局部实验 17",
+                "tested_scope": "当前有限样本",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              },
+              {
+                "ref": {
+                  "post_id": "pst_c2_000007",
+                  "revision": 10
+                },
+                "title": "C2三点反例",
+                "category": "counterexample",
+                "attempt": "首次发现节点后固定距离；s→a=10，s→b=1，b→a=1",
+                "tested_scope": "三点有向图；先发现a即固定为10会失效，正确距离为2",
+                "evidence_state": "unverified",
+                "report_kind": "author_report",
+                "missing_fields": []
+              }
+            ],
+            "recent_activity": [
+              {
+                "type": "post.revised",
+                "object_id": "pst_c2_000020",
+                "occurred_at": "2026-01-01T00:00:09.102Z"
+              },
+              {
+                "type": "post.revised",
+                "object_id": "pst_c2_000021",
+                "occurred_at": "2026-01-01T00:00:09.103Z"
+              },
+              {
+                "type": "post.revised",
+                "object_id": "pst_c2_000022",
+                "occurred_at": "2026-01-01T00:00:09.104Z"
+              },
+              {
+                "type": "post.revised",
+                "object_id": "pst_c2_000023",
+                "occurred_at": "2026-01-01T00:00:09.105Z"
+              },
+              {
+                "type": "post.revised",
+                "object_id": "pst_c2_000024",
+                "occurred_at": "2026-01-01T00:00:09.106Z"
+              }
+            ],
+            "checkpoint_token_sha256": "53e9bd1040ae138a18fc7d7c2eeaf5e2a3fb86fa96c3a10b468c008eaddbc038"
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/threads/thd_c2_0000/posts?max_bytes=4096&limit=100",
+        "status": 200,
+        "response_bytes": 3918,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-x",
+          "data": {
+            "thread": {
+              "id": "thd_c2_0000",
+              "space_id": "spc_c2_main",
+              "title": "主题 0",
+              "version": 1,
+              "state": "open",
+              "creator_id": "act_c2_00",
+              "created_at": "2026-01-01T00:00:00.002Z",
+              "updated_at": "2026-01-01T00:00:00.002Z"
+            },
+            "posts": [
+              {
+                "id": "pst_c2_000000",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.042Z"
+              },
+              {
+                "id": "pst_c2_000001",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.043Z"
+              },
+              {
+                "id": "pst_c2_000002",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.044Z"
+              },
+              {
+                "id": "pst_c2_000003",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.045Z"
+              },
+              {
+                "id": "pst_c2_000004",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.046Z"
+              },
+              {
+                "id": "pst_c2_000005",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "proposal",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.047Z"
+              },
+              {
+                "id": "pst_c2_000006",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "proposal",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.048Z"
+              },
+              {
+                "id": "pst_c2_000007",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "failure",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.049Z"
+              },
+              {
+                "id": "pst_c2_000008",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "summary",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.942Z"
+              },
+              {
+                "id": "pst_c2_000009",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "claim",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.050Z"
+              },
+              {
+                "id": "pst_c2_000010",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.051Z"
+              },
+              {
+                "id": "pst_c2_000011",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.052Z"
+              },
+              {
+                "id": "pst_c2_000012",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.053Z"
+              },
+              {
+                "id": "pst_c2_000013",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.054Z"
+              },
+              {
+                "id": "pst_c2_000014",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.055Z"
+              },
+              {
+                "id": "pst_c2_000015",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "proposal",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.056Z"
+              },
+              {
+                "id": "pst_c2_000016",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "proposal",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.057Z"
+              }
+            ]
+          },
+          "meta": {
+            "truncated": true,
+            "next_cursor": "eyJ2IjoxLCJwdXJwb3NlIjoidGhyZWFkX3Bvc3RzX3JlYWQiLCJhY3Rvcl9pZCI6ImFjdF9jMl8wMCIsInNwYWNlX2lkIjoic3BjX2MyX21haW4iLCJ0aHJlYWRfaWQiOiJ0aGRfYzJfMDAwMCIsInNvcnQiOiJpZF9hc2MiLCJhZnRlcl9pZCI6InBzdF9jMl8wMDAwMTYiLCJleHAiOjE3OTEzNzYxMjV9.Rpd2u4I0sM5kZalwHLy_FZYggMpkVrWtaru66T66Aog"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000007/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1531,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-y",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000007",
+              "revision": 10
+            },
+            "post_kind": "failure",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"C2三点反例\",\"summary\":\"首次发现固定距离的三点反例与适用条件\",\"body\":\"C2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 \",\"tags\":[\"scale\",\"failure\",\"条件\"],\"structured\":{\"attempt\":\"首次发现节点后固定距离；s→a=10，s→b=1，b→a=1\",\"category\":\"counterexample\",\"assumptions\":[\"非负权有向图\"],\"tested_scope\":\"三点有向图；先发现a即固定为10会失效，正确距离为2\",\"expected\":\"距离为2\",\"observed\":\"错误算法距离为10\",\"evidence_refs\":[],\"evidence_state\":\"unverified\",\"evidence_missing_reason\":\"模拟配方材料；未运行外部独立验证器\",\"ruled_out\":\"此三点图上的首次发现即固定规则\",\"not_ruled_out\":[\"已使用松弛的算法\",\"负权或不同前提\"],\"retry_when\":[\"允许重新松弛并复测三条边\"]}}",
+            "start_byte": 0,
+            "end_byte": 1144,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000008/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1068,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-z",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000008",
+              "revision": 10
+            },
+            "post_kind": "summary",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 summary 8\",\"summary\":\"研究材料 summary 8\",\"body\":\"中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 8 中🙂 \\\"\\\\\\n \",\"tags\":[\"scale\",\"summary\",\"条件\"],\"structured\":{\"source_refs\":[{\"post_id\":\"pst_c2_000000\",\"revision\":10},{\"post_id\":\"pst_c2_000007\",\"revision\":10},{\"post_id\":\"pst_c2_000975\",\"revision\":1}]}}",
+            "start_byte": 0,
+            "end_byte": 673,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000000/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 897,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-10",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000000",
+              "revision": 10
+            },
+            "post_kind": "note",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 note 0\",\"summary\":\"研究材料 note 0\",\"body\":\"中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n \",\"tags\":[\"scale\",\"note\",\"条件\"],\"structured\":{}}",
+            "start_byte": 0,
+            "end_byte": 524,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000007/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1532,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-11",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000007",
+              "revision": 10
+            },
+            "post_kind": "failure",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"C2三点反例\",\"summary\":\"首次发现固定距离的三点反例与适用条件\",\"body\":\"C2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\\nC2三点反例 \",\"tags\":[\"scale\",\"failure\",\"条件\"],\"structured\":{\"attempt\":\"首次发现节点后固定距离；s→a=10，s→b=1，b→a=1\",\"category\":\"counterexample\",\"assumptions\":[\"非负权有向图\"],\"tested_scope\":\"三点有向图；先发现a即固定为10会失效，正确距离为2\",\"expected\":\"距离为2\",\"observed\":\"错误算法距离为10\",\"evidence_refs\":[],\"evidence_state\":\"unverified\",\"evidence_missing_reason\":\"模拟配方材料；未运行外部独立验证器\",\"ruled_out\":\"此三点图上的首次发现即固定规则\",\"not_ruled_out\":[\"已使用松弛的算法\",\"负权或不同前提\"],\"retry_when\":[\"允许重新松弛并复测三条边\"]}}",
+            "start_byte": 0,
+            "end_byte": 1144,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000975/revisions/1?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 783,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-12",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000975",
+              "revision": 1
+            },
+            "post_kind": "proposal",
+            "lifecycle": "active",
+            "has_newer_revision": true,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 proposal 975\",\"summary\":\"研究材料 proposal 975\",\"body\":\"中文协作 研究条件 detuned 975 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 975 中🙂 \\\"\\\\\\n 中文协作 研究条件 de\",\"tags\":[\"scale\",\"proposal\",\"条件\"],\"structured\":{\"statement\":\"允许松弛更新最短距离 975\",\"assumptions\":[\"边权非负\"],\"scope\":\"有限有向图\",\"falsification_plan\":\"检查固定路径和反例\"}}",
+            "start_byte": 0,
+            "end_byte": 422,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/threads/thd_c2_0000/posts?max_bytes=4096&limit=100&cursor=eyJ2IjoxLCJwdXJwb3NlIjoidGhyZWFkX3Bvc3RzX3JlYWQiLCJhY3Rvcl9pZCI6ImFjdF9jMl8wMCIsInNwYWNlX2lkIjoic3BjX2MyX21haW4iLCJ0aHJlYWRfaWQiOiJ0aGRfYzJfMDAwMCIsInNvcnQiOiJpZF9hc2MiLCJhZnRlcl9pZCI6InBzdF9jMl8wMDAwMTYiLCJleHAiOjE3OTEzNzYxMjV9.Rpd2u4I0sM5kZalwHLy_FZYggMpkVrWtaru66T66Aog",
+        "status": 200,
+        "response_bytes": 1879,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-13",
+          "data": {
+            "thread": {
+              "id": "thd_c2_0000",
+              "space_id": "spc_c2_main",
+              "title": "主题 0",
+              "version": 1,
+              "state": "open",
+              "creator_id": "act_c2_00",
+              "created_at": "2026-01-01T00:00:00.002Z",
+              "updated_at": "2026-01-01T00:00:00.002Z"
+            },
+            "posts": [
+              {
+                "id": "pst_c2_000017",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "failure",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.058Z"
+              },
+              {
+                "id": "pst_c2_000018",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "summary",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.943Z"
+              },
+              {
+                "id": "pst_c2_000019",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "claim",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.059Z"
+              },
+              {
+                "id": "pst_c2_000020",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.060Z"
+              },
+              {
+                "id": "pst_c2_000021",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.061Z"
+              },
+              {
+                "id": "pst_c2_000022",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.062Z"
+              },
+              {
+                "id": "pst_c2_000023",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.063Z"
+              },
+              {
+                "id": "pst_c2_000024",
+                "space_id": "spc_c2_main",
+                "thread_id": "thd_c2_0000",
+                "author_id": "act_c2_00",
+                "kind": "note",
+                "current_revision": 10,
+                "lifecycle": "active",
+                "created_at": "2026-01-01T00:00:00.064Z"
+              }
+            ]
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000017/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1459,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-14",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000017",
+              "revision": 10
+            },
+            "post_kind": "failure",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 failure 17\",\"summary\":\"研究材料 failure 17\",\"body\":\"中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 17 中x\",\"tags\":[\"scale\",\"failure\",\"条件\"],\"structured\":{\"attempt\":\"固定局部实验 17\",\"category\":\"counterexample\",\"assumptions\":[\"非负权有向图\"],\"tested_scope\":\"当前有限样本\",\"expected\":\"距离为2\",\"observed\":\"错误算法距离为10\",\"evidence_refs\":[],\"evidence_state\":\"unverified\",\"evidence_missing_reason\":\"模拟配方材料；未运行外部独立验证器\",\"ruled_out\":\"此三点图上的首次发现即固定规则\",\"not_ruled_out\":[\"已使用松弛的算法\",\"负权或不同前提\"],\"retry_when\":[\"允许重新松弛并复测三条边\"]}}",
+            "start_byte": 0,
+            "end_byte": 1039,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000018/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 1015,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-15",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000018",
+              "revision": 10
+            },
+            "post_kind": "summary",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 summary 18\",\"summary\":\"研究材料 summary 18\",\"body\":\"中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 18 中x\",\"tags\":[\"scale\",\"summary\",\"条件\"],\"structured\":{\"source_refs\":[{\"post_id\":\"pst_c2_000000\",\"revision\":10},{\"post_id\":\"pst_c2_000975\",\"revision\":1}]}}",
+            "start_byte": 0,
+            "end_byte": 630,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000000/revisions/10?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 897,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-16",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000000",
+              "revision": 10
+            },
+            "post_kind": "note",
+            "lifecycle": "active",
+            "has_newer_revision": false,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 note 0\",\"summary\":\"研究材料 note 0\",\"body\":\"中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 0 中🙂 \\\"\\\\\\n \",\"tags\":[\"scale\",\"note\",\"条件\"],\"structured\":{}}",
+            "start_byte": 0,
+            "end_byte": 524,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000975/revisions/1?max_bytes=4096",
+        "status": 200,
+        "response_bytes": 783,
+        "response": {
+          "api_version": "1",
+          "request_id": "req-17",
+          "data": {
+            "ref": {
+              "space_id": "spc_c2_main",
+              "post_id": "pst_c2_000975",
+              "revision": 1
+            },
+            "post_kind": "proposal",
+            "lifecycle": "active",
+            "has_newer_revision": true,
+            "encoding": "json",
+            "chunk": "{\"title\":\"协作 proposal 975\",\"summary\":\"研究材料 proposal 975\",\"body\":\"中文协作 研究条件 detuned 975 中🙂 \\\"\\\\\\n 中文协作 研究条件 detuned 975 中🙂 \\\"\\\\\\n 中文协作 研究条件 de\",\"tags\":[\"scale\",\"proposal\",\"条件\"],\"structured\":{\"statement\":\"允许松弛更新最短距离 975\",\"assumptions\":[\"边权非负\"],\"scope\":\"有限有向图\",\"falsification_plan\":\"检查固定路径和反例\"}}",
+            "start_byte": 0,
+            "end_byte": 422,
+            "complete": true
+          },
+          "meta": {
+            "truncated": false,
+            "next_cursor": null
+          }
+        }
+      }
+    ],
+    "documents": [
+      {
+        "url": "/api/v1/spaces/spc_c2_main/revisions/2",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "revision": 2
+        },
+        "pages": 7,
+        "bytes": 24880,
+        "content": {
+          "objective": "可重复规模实验：只通过论坛接续反例与来源",
+          "rules": [
+            "空间规则 0 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 1 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 2 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 3 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 4 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 5 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 6 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 7 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 8 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 9 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 10 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x",
+            "空间规则 11 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概��后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件🙂 先概要后详情 中文条件x"
+          ]
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000007/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000007",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 1144,
+        "content": {
+          "title": "C2三点反例",
+          "summary": "首次发现固定距离的三点反例与适用条件",
+          "body": "C2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 ",
+          "tags": [
+            "scale",
+            "failure",
+            "条件"
+          ],
+          "structured": {
+            "attempt": "首次发现节点后固定距离；s→a=10，s→b=1，b→a=1",
+            "category": "counterexample",
+            "assumptions": [
+              "非负权有向图"
+            ],
+            "tested_scope": "三点有向图；先发现a即固定为10会失效，正确距离为2",
+            "expected": "距离为2",
+            "observed": "错误算法距离为10",
+            "evidence_refs": [],
+            "evidence_state": "unverified",
+            "evidence_missing_reason": "模拟配方材料；未运行外部独立验证器",
+            "ruled_out": "此三点图上的首次发现即固定规则",
+            "not_ruled_out": [
+              "已使用松弛的算法",
+              "负权或不同前提"
+            ],
+            "retry_when": [
+              "允许重新松弛并复测三条边"
+            ]
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000008/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000008",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 673,
+        "content": {
+          "title": "协作 summary 8",
+          "summary": "研究材料 summary 8",
+          "body": "中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n 中文协作 研究条件 detuned 8 中🙂 \"\\\n ",
+          "tags": [
+            "scale",
+            "summary",
+            "条件"
+          ],
+          "structured": {
+            "source_refs": [
+              {
+                "post_id": "pst_c2_000000",
+                "revision": 10
+              },
+              {
+                "post_id": "pst_c2_000007",
+                "revision": 10
+              },
+              {
+                "post_id": "pst_c2_000975",
+                "revision": 1
+              }
+            ]
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000000/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000000",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 524,
+        "content": {
+          "title": "协作 note 0",
+          "summary": "研究材料 note 0",
+          "body": "中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n ",
+          "tags": [
+            "scale",
+            "note",
+            "条件"
+          ],
+          "structured": {}
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000007/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000007",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 1144,
+        "content": {
+          "title": "C2三点反例",
+          "summary": "首次发现固定距离的三点反例与适用条件",
+          "body": "C2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 s→a=10 s→b=1 b→a=1 first discovery gives 10; relaxation gives 2. 图 失败 反例图 counterexample.\nC2三点反例 ",
+          "tags": [
+            "scale",
+            "failure",
+            "条件"
+          ],
+          "structured": {
+            "attempt": "首次发现节点后固定距离；s→a=10，s→b=1，b→a=1",
+            "category": "counterexample",
+            "assumptions": [
+              "非负权有向图"
+            ],
+            "tested_scope": "三点有向图；先发现a即固定为10会失效，正确距离为2",
+            "expected": "距离为2",
+            "observed": "错误算法距离为10",
+            "evidence_refs": [],
+            "evidence_state": "unverified",
+            "evidence_missing_reason": "模拟配方材料；未运行外部独立验证器",
+            "ruled_out": "此三点图上的首次发现即固定规则",
+            "not_ruled_out": [
+              "已使用松弛的算法",
+              "负权或不同前提"
+            ],
+            "retry_when": [
+              "允许重新松弛并复测三条边"
+            ]
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000975/revisions/1",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000975",
+          "revision": 1
+        },
+        "pages": 1,
+        "bytes": 422,
+        "content": {
+          "title": "协作 proposal 975",
+          "summary": "研究材料 proposal 975",
+          "body": "中文协作 研究条件 detuned 975 中🙂 \"\\\n 中文协作 研究条件 detuned 975 中🙂 \"\\\n 中文协作 研究条件 de",
+          "tags": [
+            "scale",
+            "proposal",
+            "条件"
+          ],
+          "structured": {
+            "statement": "允许松弛更新最短距离 975",
+            "assumptions": [
+              "边权非负"
+            ],
+            "scope": "有限有向图",
+            "falsification_plan": "检查固定路径和反例"
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000017/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000017",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 1039,
+        "content": {
+          "title": "协作 failure 17",
+          "summary": "研究材料 failure 17",
+          "body": "中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中🙂 \"\\\n 中文协作 研究条件 detuned 17 中x",
+          "tags": [
+            "scale",
+            "failure",
+            "条件"
+          ],
+          "structured": {
+            "attempt": "固定局部实验 17",
+            "category": "counterexample",
+            "assumptions": [
+              "非负权有向图"
+            ],
+            "tested_scope": "当前有限样本",
+            "expected": "距离为2",
+            "observed": "错误算法距离为10",
+            "evidence_refs": [],
+            "evidence_state": "unverified",
+            "evidence_missing_reason": "模拟配方材料；未运行外部独立验证器",
+            "ruled_out": "此三点图上的首次发现即固定规则",
+            "not_ruled_out": [
+              "已使用松弛的算法",
+              "负权或不同前提"
+            ],
+            "retry_when": [
+              "允许重新松弛并复测三条边"
+            ]
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000018/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000018",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 630,
+        "content": {
+          "title": "协作 summary 18",
+          "summary": "研究材料 summary 18",
+          "body": "中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中🙂 \"\\\n 中文协作 研究条件 detuned 18 中x",
+          "tags": [
+            "scale",
+            "summary",
+            "条件"
+          ],
+          "structured": {
+            "source_refs": [
+              {
+                "post_id": "pst_c2_000000",
+                "revision": 10
+              },
+              {
+                "post_id": "pst_c2_000975",
+                "revision": 1
+              }
+            ]
+          }
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000000/revisions/10",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000000",
+          "revision": 10
+        },
+        "pages": 1,
+        "bytes": 524,
+        "content": {
+          "title": "协作 note 0",
+          "summary": "研究材料 note 0",
+          "body": "中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n 中文协作 研究条件 detuned 0 中🙂 \"\\\n ",
+          "tags": [
+            "scale",
+            "note",
+            "条件"
+          ],
+          "structured": {}
+        }
+      },
+      {
+        "url": "/api/v1/spaces/spc_c2_main/posts/pst_c2_000975/revisions/1",
+        "ref": {
+          "space_id": "spc_c2_main",
+          "post_id": "pst_c2_000975",
+          "revision": 1
+        },
+        "pages": 1,
+        "bytes": 422,
+        "content": {
+          "title": "协作 proposal 975",
+          "summary": "研究材料 proposal 975",
+          "body": "中文协作 研究条件 detuned 975 中🙂 \"\\\n 中文协作 研究条件 detuned 975 中🙂 \"\\\n 中文协作 研究条件 de",
+          "tags": [
+            "scale",
+            "proposal",
+            "条件"
+          ],
+          "structured": {
+            "statement": "允许松弛更新最短距离 975",
+            "assumptions": [
+              "边权非负"
+            ],
+            "scope": "有限有向图",
+            "falsification_plan": "检查固定路径和反例"
+          }
+        }
+      }
+    ],
+    "discovered_failure_ids": [
+      "pst_c2_000007"
+    ]
+  }
+}

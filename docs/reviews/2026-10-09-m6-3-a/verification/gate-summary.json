@@ -1,0 +1,113 @@
+{
+  "state": "independent limited verification complete; pending root acceptance",
+  "gates": {
+    "build": {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 10.483,
+      "stdout": "build-final.stdout.txt",
+      "stderr": "build-final.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+    },
+    "typecheck": {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 8.207,
+      "stdout": "typecheck-final.stdout.txt",
+      "stderr": "typecheck-final.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+    },
+    "lint": {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 8.289,
+      "stdout": "lint-checker-v2.stdout.txt",
+      "stderr": "lint-checker-v2.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+    },
+    "core": {
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 0,
+      "seconds": 257.199,
+      "stdout": "core-final.stdout.txt",
+      "stderr": "core-final.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+    }
+  },
+  "core": {
+    "passed": 790,
+    "files": 122,
+    "first_passed": 788,
+    "first_failed": 2,
+    "first_receipt": "core-first.json",
+    "added_vs_766": {
+      "new_six_files": 23,
+      "V5_schema_generation_parameter": 1
+    }
+  },
+  "new_targeted": {
+    "unique": 23,
+    "first_passed": 20,
+    "first_failed": 3,
+    "fixture_repaired_passed": 3,
+    "product_stale_counterexample": "df03-stale-submit-first.json",
+    "product_stale_fix_passed": "df03-stale-submit-v2.json",
+    "not_counted_as_extra_case": true
+  },
+  "current29": {
+    "gates": 4,
+    "probes": 25,
+    "originals": 6,
+    "prior_adapters": 4,
+    "package_adapter_copies": 15,
+    "package_changed": 12,
+    "package_identical": 3,
+    "manifest": "current29-manifest.json"
+  },
+  "maintenance_probe": {
+    "command": [
+      "node",
+      "docs/reviews/2026-10-09-m6-3-a/verification/maintenance-original4-backup.mjs"
+    ],
+    "exit_code": 0,
+    "seconds": 0.401,
+    "stdout": "maintenance-original4-backup-first.stdout.txt",
+    "stderr": "maintenance-original4-backup-first.stderr.txt",
+    "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+  },
+  "warnings": [
+    "pnpmfiles dependency state warning, no install",
+    "Vite minified chunk 673.40 kB (>500 kB) advisory",
+    "current #28 Ajv emits ignored date-time format warnings; its success is not format validation proof"
+  ],
+  "failures_retained": [
+    "new-groups-first.json",
+    "df03-stale-submit-first.json",
+    "lint-final.json",
+    "core-first.json"
+  ],
+  "execution_boundary": "All windows serial local Node/pnpm. No VM/Colima/daemon/browser/install/model/global configuration action."
+}

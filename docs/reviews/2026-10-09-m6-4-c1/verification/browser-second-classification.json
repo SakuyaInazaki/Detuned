@@ -1,0 +1,14 @@
+{
+  "exit_code": 1,
+  "seconds": 26.895,
+  "passed": [
+    "CW02",
+    "CW03",
+    "CW04"
+  ],
+  "failed": "CW01 after complete accepted decision/historical read; old admin-backed revisePost received403 on ordinary requester-authored target",
+  "source_basis": "PostService only original author can revise; no captured error body/code asserted",
+  "repair": "new fixture reviseReviewTarget uses already-private requester token and real HTTP; old revisePost remains unchanged",
+  "first_source": "second-source/scripts/integrations/web/",
+  "product_changes": false
+}

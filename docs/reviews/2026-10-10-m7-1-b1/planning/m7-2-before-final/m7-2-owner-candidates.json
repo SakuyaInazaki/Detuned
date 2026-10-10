@@ -1,0 +1,59 @@
+{
+  "status": "planning_candidate_pending_root_review_B1_acceptance_seal_M7_2_fresh_dispatch",
+  "existing": {},
+  "new": {
+    "examples/d01-fixed/candidate-first-discovery.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/candidate-relaxation.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/reference.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/checker.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/cases.json": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/config.json": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "examples/d01-fixed/catalog.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "scripts/checks/d01-fixed-verifier.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-fixed-verifier.test.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-fixed-verifier-independent.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    }
+  },
+  "protected": [
+    "packages/**",
+    "modules/**",
+    "scripts/scale/d01.mjs",
+    "integrations/**",
+    "all sealed review packages"
+  ],
+  "notes": [
+    "No core/protocol/storage/schema/package/dependency changes.",
+    "Catalog literal pins must be populated from actual implementation bytes before author freeze; catalog is not self-hashed.",
+    "Full D01 orchestration is M7.3, not this fixed verifier.",
+    "D sole runtime; only short-lived local process, no model/VM/install/host."
+  ]
+}

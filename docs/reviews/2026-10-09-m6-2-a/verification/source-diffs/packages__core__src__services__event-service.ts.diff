@@ -1,0 +1,46 @@
+--- packages/core/src/services/event-service.ts (fresh exact before)
++++ packages/core/src/services/event-service.ts (current)
+@@ -55,6 +55,16 @@
+ 
+   private waitingPolls = 0;
+ 
++  private publicEvent(storage:StoragePort,spaceId:string,event:Event):boolean {
++    if(event.space_id!==spaceId||event.visibility!=='public')return false;
++    if(event.type==='artifact.created'||event.type==='artifact.redacted'){
++      const artifact=storage.findArtifactById(event.object_id);
++      return !!artifact&&artifact.space_id===spaceId&&artifact.visibility==='space';
++    }
++    return true;
++  }
++
++
+   subscribe(
+     auth: AuthenticatedContext,
+     spaceId: string,
+@@ -184,7 +194,7 @@
+         const events: Event[] = [];
+         for (const id of batch.event_ids) {
+           const ev = tx.findEventById(id);
+-          if (ev && ev.space_id === spaceId && ev.visibility === 'public') events.push(ev);
++          if (ev && this.publicEvent(tx,spaceId,ev)) events.push(ev);
+         }
+         return { batch_id: batch.id, events, next_cursor: this.cursor(current, spaceId, consumer.id, batch), has_more: true };
+       }
+@@ -194,7 +204,7 @@
+       let through = consumer.ack_seq;
+       for (const ev of raw) {
+         through = ev.seq;
+-        if (ev.visibility !== 'public') continue;
++        if (!this.publicEvent(tx,spaceId,ev)) continue;
+         if (sub.event_types.length && !sub.event_types.includes(ev.type)) continue;
+         if (sub.thread_ids.length) {
+           if (ev.type.startsWith('thread.')) {
+@@ -208,7 +218,7 @@
+             const source = tx.findPostById(rel.source_post_id), target = tx.findPostById(rel.target_post_id);
+             if (!(source?.space_id === spaceId && sub.thread_ids.includes(source.thread_id)) &&
+                 !(target?.space_id === spaceId && sub.thread_ids.includes(target.thread_id))) continue;
+-          } else if (ev.type === 'review.requested' || ev.type === 'review.cancelled') {
++          } else if (ev.type === 'review.requested' || ev.type === 'review.cancelled' || ev.type === 'review.revealed') {
+             const request = tx.findReviewRequestById(ev.object_id);
+             const target = request?.space_id === spaceId ? tx.findPostById(request.target_ref.post_id) : null;
+             if (!target || target.space_id !== spaceId || !sub.thread_ids.includes(target.thread_id)) continue;

@@ -1,0 +1,85 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m7-check-http-client-independent.test.ts > HI09 real TCP successful domain mutations tolerate a legitimate wall-clock rollback; public run and directory follow causal versions
+AssertionError: expected { receipt: 201, getPass: 409, …(4) } to deeply equal { receipt: 201, getPass: 200, …(4) }
+
+- Expected
++ Received
+
+  {
+-   "directoryInvalidated": 200,
+-   "directoryPass": 200,
+-   "getInvalidated": 200,
+-   "getPass": 200,
+-   "invalidate": 200,
++   "directoryInvalidated": 409,
++   "directoryPass": 409,
++   "getInvalidated": 409,
++   "getPass": 409,
++   "invalidate": 409,
+    "receipt": 201,
+  }
+
+ ❯ tests/contracts/m7-check-http-client-independent.test.ts:89:223
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/m7-check-http-client-independent.test.ts > HI10 true TCP scoped content401/404/410 responses carry private no-store before successful streaming
+AssertionError: expected [ null, null, null ] to deeply equal [ 'private, no-store', …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "private, no-store",
+-   "private, no-store",
+-   "private, no-store",
++   null,
++   null,
++   null,
+  ]
+
+ ❯ tests/contracts/m7-check-http-client-independent.test.ts:97:144
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/m7-check-http.test.ts > CH03 whole DTO guards reject swapped scope, internal audit, inconsistent directory and foreign URL
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/contracts/m7-check-http.test.ts:56:113
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/contracts/m7-check-http.test.ts > CH04 OpenAPI contains twelve scoped operations and credential issuance has no key header
+AssertionError: expected { minLength: 1, type: 'string', …(1) } to deeply equal { Object (pattern, type) }
+
+- Expected
++ Received
+
+  {
+-   "pattern": "^[1-9][0-9]*$",
++   "minLength": 1,
+    "type": "string",
+    Symbol(TypeBox.Kind): "String",
+  }
+
+ ❯ tests/contracts/m7-check-http.test.ts:79:41
+     77|  const revision=fixedParameters.find(parameter=>typeof parameter==='ob…
+     78|  if(typeof revision!=='object'||revision===null)throw new Error('Missi…
+     79|  expect(Reflect.get(revision,'schema')).toEqual(CheckPostParamsSchema.…
+       |                                         ^
+     80| 
+     81| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

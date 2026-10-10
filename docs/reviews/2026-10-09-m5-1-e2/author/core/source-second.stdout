@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-thread-post-order.test.ts (4 tests | 1 failed) 186ms
+   ✓ M5 E2 recorded creation time directory > O01 canonical instants/ties first, all unknown historical dates last, no metadata mutation 96ms
+   ✓ M5 E2 recorded creation time directory > O02 new cursors require explicit matching sort; old default cursor still works 33ms
+   ✓ M5 E2 recorded creation time directory > O03 byte trimming advances from actual delivered row and rejects revoked credential 30ms
+   × M5 E2 recorded creation time directory > O04 canonical tool/OpenAPI advertise sort and client callTool forwards unchanged 27ms
+     → Cannot read properties of undefined (reading '$id')
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  06:42:46
+   Duration  750ms (transform 220ms, setup 0ms, collect 368ms, tests 186ms, environment 0ms, prepare 26ms)
+

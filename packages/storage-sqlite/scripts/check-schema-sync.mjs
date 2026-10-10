@@ -6,6 +6,10 @@ import { extractDatabaseRequirements } from './extract-schema-requirements.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sqlPath = path.resolve(__dirname, '../src/schema.sql');
+const v5SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v5-schema.sql');
+const v4SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v4-schema.sql');
+const v3SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v3-schema.sql');
+const v2SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql');
 const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
 const tsPath = path.resolve(__dirname, '../src/schema.ts');
 
@@ -36,6 +40,10 @@ if (!Database) {
 }
 
 const sqlContent = readFileSync(sqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v5SqlContent = readFileSync(v5SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v4SqlContent = readFileSync(v4SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v3SqlContent = readFileSync(v3SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v2SqlContent = readFileSync(v2SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
 const v1SqlContent = readFileSync(v1SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
 const tsContent = readFileSync(tsPath, 'utf8');
 
@@ -80,7 +88,7 @@ for (const [constName, tableName] of [
 
 // 3. Check V2 Profile
 const dbV2 = new Database(':memory:');
-dbV2.exec(sqlContent);
+dbV2.exec(v2SqlContent);
 let expectedV2;
 try {
   expectedV2 = extractDatabaseRequirements(dbV2);
@@ -107,6 +115,39 @@ if (!isDeepStrictEqual(actualV2, expectedV2)) {
   console.error('Error: V2_SCHEMA_TABLES in schema.ts is out of sync with schema.sql DDL structure.');
   process.exit(1);
 }
+
+const dbV3 = new Database(':memory:');
+dbV3.exec(v3SqlContent);
+const expectedV3 = extractDatabaseRequirements(dbV3);
+dbV3.close();
+const v3Match = tsContent.match(/export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+if (!v3Match || !isDeepStrictEqual(JSON.parse(v3Match[1]), expectedV3)) {
+  console.error('Error: V3 schema profile is out of sync.'); process.exit(1);
+}
+const dbV4 = new Database(':memory:');
+dbV4.exec(v4SqlContent);
+const expectedV4 = extractDatabaseRequirements(dbV4);
+dbV4.close();
+const v4Match = tsContent.match(/export const V4_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+if (!v4Match || !isDeepStrictEqual(JSON.parse(v4Match[1]), expectedV4)) {
+  console.error('Error: V4 schema profile is out of sync.'); process.exit(1);
+}
+const reviewDdl = tsContent.match(/export const REVIEW_TABLES_DDL = `([\s\S]*?)`;/)?.[1];
+const expectedReviewDdl = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions','review_decisions'].map(name => extractTableDdl(sqlContent,name)).join('\n\n') + '\n\n' + sqlContent.match(/CREATE INDEX IF NOT EXISTS snapshot_items_material_idx[^;]*;/)[0] + '\n' + sqlContent.match(/CREATE INDEX IF NOT EXISTS review_requests_active_idx[^;]*;/)[0];
+if (reviewDdl !== expectedReviewDdl) {console.error('Error: Review migration DDL is out of sync.');process.exit(1);}
+
+const dbV5 = new Database(':memory:');dbV5.exec(v5SqlContent);
+const expectedV5 = extractDatabaseRequirements(dbV5);dbV5.close();
+const v5Match = tsContent.match(/export const V5_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+if (!v5Match || !isDeepStrictEqual(JSON.parse(v5Match[1]), expectedV5)) {console.error('Error: V5 schema profile is out of sync.');process.exit(1);}
+
+const dbV6 = new Database(':memory:');dbV6.exec(sqlContent);
+const expectedV6 = extractDatabaseRequirements(dbV6);dbV6.close();
+const v6Match = tsContent.match(/export const V6_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+if (!v6Match || !isDeepStrictEqual(JSON.parse(v6Match[1]), expectedV6)) {console.error('Error: V6 schema profile is out of sync.');process.exit(1);}
+const checksDdl = tsContent.match(/export const CHECK_TABLES_DDL = `([\s\S]*?)`;/)?.[1];
+const expectedChecksDdl = ['check_runs','check_run_versions','check_receipts','check_run_credentials'].map(name => extractTableDdl(sqlContent,name)).join('\n\n')+'\n\n'+sqlContent.match(/CREATE INDEX IF NOT EXISTS check_run_credentials_run_idx[^;]*;/)[0];
+if(checksDdl !== expectedChecksDdl) {console.error('Error: Check migration DDL is out of sync.');process.exit(1);}
 
 // 4. Check V1 Profile
 const dbV1 = new Database(':memory:');

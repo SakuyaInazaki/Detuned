@@ -1,0 +1,70 @@
+{
+  "status": "accepted_by_parent",
+  "accepted_date": "2026-10-09",
+  "external_runtime_cases": {
+    "author": 3,
+    "independent": 2,
+    "not_core_formal_count": true
+  },
+  "core_retained": {
+    "last_package": "M4.2-B",
+    "tests": 615,
+    "files": 88,
+    "current29": 29,
+    "this_package_rerun": false
+  },
+  "author_runs": [
+    {
+      "name": "discovery-first",
+      "exit": 1,
+      "reason": "sandbox loopback listen EPERM"
+    },
+    {
+      "name": "discovery-second",
+      "exit": 0,
+      "passed": 1,
+      "skipped": 2
+    },
+    {
+      "name": "remaining-first",
+      "exit": 0,
+      "passed": 2,
+      "skipped": 1
+    },
+    {
+      "name": "final-author",
+      "exit": 0,
+      "passed": 3,
+      "duration_seconds": 2.56,
+      "exited_pids": 8
+    }
+  ],
+  "independent_executor": "/root/dsh_independent",
+  "independent_receipt": "independent/receipt.json",
+  "independent_final": {
+    "run": "isolated",
+    "exit": 0,
+    "passed": 2,
+    "duration_seconds": 2.24,
+    "exited_pids": 6,
+    "environment": "env -i explicit4vars"
+  },
+  "installation_attempts": [
+    {
+      "attempt": 1,
+      "exit": -15,
+      "reason": "size_budget"
+    },
+    {
+      "attempt": 2,
+      "exit": 0,
+      "official_execution_success_not_implied": true
+    }
+  ],
+  "scope": "official plugin+registry no-model only; not full CLI/patch Loader/HMR/model",
+  "held_resources": [
+    "/private/tmp/detuned-m43-runtime.MU1a4q",
+    "/private/tmp/detuned-m43-deps.avgrrqf7"
+  ],
+  "C_role": "input/installation receipts, static review, closure; did not execute independent2cases"
+}

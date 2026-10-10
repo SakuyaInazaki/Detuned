@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-10-09T13:56:34.363889+08:00",
+  "scope": "only two explicitly authorized completed synthetic performance fixtures",
+  "before": [
+    {
+      "path": "/private/tmp/detuned-c2-load-full-private-v3-a1",
+      "allocated_KiB": 941196,
+      "uid": 501,
+      "root_realpath_matches": true,
+      "root_not_symlink": true
+    },
+    {
+      "path": "/private/tmp/detuned-c2-seed-full-20261006-v3-a1",
+      "allocated_KiB": 909584,
+      "uid": 501,
+      "root_realpath_matches": true,
+      "root_not_symlink": true
+    }
+  ],
+  "df_before": "Filesystem   1024-blocks      Used Available Capacity iused    ifree %iused  Mounted on\n/dev/disk3s5   239362496 206753024   2964000    99% 2835432 29640000    9%   /System/Volumes/Data\n",
+  "df_after": "Filesystem   1024-blocks      Used Available Capacity iused    ifree %iused  Mounted on\n/dev/disk3s5   239362496 204902608   4814420    98% 2835419 48144200    6%   /System/Volumes/Data\n",
+  "absent": [
+    "/private/tmp/detuned-c2-load-full-private-v3-a1",
+    "/private/tmp/detuned-c2-seed-full-20261006-v3-a1"
+  ],
+  "other_resources_untouched": true,
+  "tests_started": false
+}

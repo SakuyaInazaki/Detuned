@@ -1,3 +1,5 @@
+import { validateNewTypedWrite } from './typed-write-validation.js';
+import { linkRevisionArtifacts } from './artifact-references.js';
 import {
   Thread,
   Post,
@@ -32,70 +34,15 @@ export class ThreadService {
     private readonly idempotency: IdempotencyService
   ) {}
 
+  // The other kinds retain their existing behavior; four typed kinds are checked only in new actions.
   private validateStructuredContent(kind: string, structured: any): void {
-    const structuredRequiredKinds = ['proposal', 'claim', 'objection', 'failure', 'summary'];
-    if (structuredRequiredKinds.includes(kind)) {
+    if (['proposal', 'claim', 'failure', 'summary'].includes(kind)) return;
+    if (kind === 'objection') {
       if (!structured || typeof structured !== 'object') {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          `${kind} 类型的帖子必须提供 structured 结构化字段。`,
-          422
-        );
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, `${kind} 类型的帖子必须提供 structured 结构化字段。`, 422);
       }
-    }
-
-    if (!structured) return;
-
-    if (kind === 'proposal' || kind === 'claim') {
-      if (
-        !structured.statement ||
-        typeof structured.statement !== 'string' ||
-        structured.statement.trim() === '' ||
-        !Array.isArray(structured.assumptions) ||
-        !structured.scope ||
-        typeof structured.scope !== 'string' ||
-        structured.scope.trim() === '' ||
-        !structured.falsification_plan ||
-        typeof structured.falsification_plan !== 'string' ||
-        structured.falsification_plan.trim() === ''
-      ) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          'proposal/claim 必须包含 statement, assumptions (数组), scope, falsification_plan。',
-          422
-        );
-      }
-    } else if (kind === 'objection') {
       if (!structured.target_ref || !structured.issue || !structured.impact) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          'objection 必须包含 target_ref, issue, impact。',
-          422
-        );
-      }
-    } else if (kind === 'failure') {
-      if (
-        !structured.attempt ||
-        !structured.category ||
-        !Array.isArray(structured.assumptions) ||
-        !structured.tested_scope ||
-        !structured.expected ||
-        !structured.observed ||
-        !structured.ruled_out
-      ) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          'failure 必须包含 attempt, category, assumptions (数组), tested_scope, expected, observed, ruled_out。',
-          422
-        );
-      }
-    } else if (kind === 'summary') {
-      if (!Array.isArray(structured.source_refs) || structured.source_refs.length === 0) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          'summary 必须包含至少一个 source_refs。',
-          422
-        );
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'objection 必须包含 target_ref, issue, impact。', 422);
       }
     }
   }
@@ -117,13 +64,6 @@ export class ThreadService {
     }
 
     if (req.initial_post) {
-      if (req.initial_post.artifact_ids && req.initial_post.artifact_ids.length > 0) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          '附件存储在 M1 尚未开放 (scheduled for M2)。',
-          400
-        );
-      }
       if (req.initial_post.title && [...req.initial_post.title].length > 160) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
@@ -149,6 +89,8 @@ export class ThreadService {
       req,
       201,
       (tx) => {
+        const structured = req.initial_post ? validateNewTypedWrite(tx, this.authService, auth, spaceId, req.initial_post.kind, req.initial_post.structured, req.initial_post.artifact_ids) ?? req.initial_post.structured : undefined;
+
         const now = this.clock.nowIso();
         const threadId = this.idGen.generateId('thd');
 
@@ -193,7 +135,7 @@ export class ThreadService {
 
           const body = req.initial_post.body ?? '';
           const contentHash = this.hasher.sha256(
-            `${req.initial_post.title}\n${req.initial_post.summary}\n${body}\n${this.hasher.canonicalJson(req.initial_post.structured ?? {})}`
+            `${req.initial_post.title}\n${req.initial_post.summary}\n${body}\n${this.hasher.canonicalJson(structured ?? {})}`
           );
 
           const postRev: PostRevision = {
@@ -203,13 +145,14 @@ export class ThreadService {
             summary: req.initial_post.summary,
             body,
             tags: req.initial_post.tags ?? [],
-            structured: req.initial_post.structured ?? {},
+            structured: structured ?? {},
             content_hash: contentHash,
             editor_id: auth.actor.id,
             created_at: now,
           };
 
           tx.createPost(post, postRev);
+          linkRevisionArtifacts(tx, spaceId, postId, 1, req.initial_post.artifact_ids, structured);
 
           // Persist relations declared on initial_post
           if (req.initial_post.refs && req.initial_post.refs.length > 0) {
@@ -302,12 +245,6 @@ export class ThreadService {
           throw new DetunedError(ErrorCode.NOT_FOUND, '主题不存在。', 404);
         }
 
-        const isCreator = thread.creator_id === auth.actor.id;
-        const isMaintainerOrAbove = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
-        if (!isCreator && !isMaintainerOrAbove) {
-          throw new DetunedError(ErrorCode.FORBIDDEN, '无权修改该主题。', 403);
-        }
-
         if (thread.version !== req.expected_version) {
           throw new DetunedError(
             ErrorCode.REVISION_CONFLICT,
@@ -341,6 +278,16 @@ export class ThreadService {
         });
 
         return updated;
+      },
+      (tx) => {
+        const thread = tx.findThreadById(threadId);
+        if (!thread || thread.space_id !== spaceId) throw new DetunedError(ErrorCode.NOT_FOUND, '主题不存在。', 404);
+        const isCreator = thread.creator_id === auth.actor.id;
+        const isMaintainerOrAbove = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
+        if (!isCreator && !isMaintainerOrAbove) {
+          throw new DetunedError(ErrorCode.FORBIDDEN, '无权修改该主题。', 403);
+        }
+
       }
     ).data;
   }

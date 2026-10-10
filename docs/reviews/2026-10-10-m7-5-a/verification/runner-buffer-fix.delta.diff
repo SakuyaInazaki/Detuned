@@ -1,0 +1,22 @@
+--- firstfailed-b65-runner
++++ flush-before-version-and-attempt2-runner
+@@ -5,7 +5,7 @@
+ import hashlib, json, os, re, selectors, shutil, signal, stat, subprocess, sys
+ import tarfile, tempfile, time, urllib.request, urllib.parse
+ 
+-VERIFY = Path(__file__).resolve().parent
++VERIFY = Path(__file__).resolve().parent / 'attempt-2'
+ PLAN = json.loads((VERIFY / 'execution-plan.json').read_text())
+ REPO = Path(PLAN['repo'])
+ START = 0.0
+@@ -140,6 +140,10 @@
+         row['close_signal'] = signal.Signals(-code).name if code < 0 else None
+         if code:
+             raise RuntimeError('STAGE_NONZERO')
++        # The reader below must see all parent-buffered captured output after
++        # actual child close; closing the writers in finally is too late.
++        for f in files:
++            f.flush()
+         if expected is not None and paths[0].read_text().strip() != expected:
+             raise RuntimeError('VERSION_MISMATCH')
+     except Exception as error:

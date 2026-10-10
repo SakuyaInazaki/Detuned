@@ -1,0 +1,11 @@
+--- tests/contracts/m7-check-http-client-independent.test.ts
++++ tests/contracts/m7-check-http-client-independent.test.ts
+@@ -22,7 +22,7 @@
+  const request=await setup(`/spaces/${sid}/review-requests`,{target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:people.map(p=>p.id),expected_policy_revision:1,reproduction_instructions:'Local fixture'});
+  const nativeFetch=globalThis.fetch;let baseUrl='http://inject.invalid';if(tcp)baseUrl=await app.listen({host:'127.0.0.1',port:0});
+  // Inject-only transport is explicitly separate from the TCP case below; never claimed network proof.
+- const injectFetch=async(url:RequestInfo|URL,init?:RequestInit)=>{const u=new URL(String(url)),r=await app.inject({method:(init?.method??'GET') as 'GET',url:u.pathname+u.search,headers:Object.fromEntries(new Headers(init?.headers)),payload:init?.body as string});return new Response(r.rawPayload,{status:r.statusCode,headers:new Headers(r.headers as Record<string,string>)});};
++ const injectFetch=async(url:RequestInfo|URL,init?:RequestInit)=>{const u=new URL(String(url)),r=await app.inject({method:(init?.method??'GET') as 'GET',url:u.pathname+u.search,headers:Object.fromEntries(new Headers(init?.headers)),payload:init?.body as string});return new Response(new Uint8Array(r.rawPayload),{status:r.statusCode,headers:new Headers(r.headers as Record<string,string>)});};
+  if(!tcp)vi.stubGlobal('fetch',injectFetch);
+  const client=(owned=token,retries=0)=>new DetunedClient({baseUrl,token:owned,maxRetries:retries}),admin=client();
+  const input=(name='alpha')=>({request_id:request.id,snapshot_id:request.snapshot_id,check_name:name,verifier_id:people[0]!.id,expected_request_version:storage.findReviewRequestById(request.id)!.version});

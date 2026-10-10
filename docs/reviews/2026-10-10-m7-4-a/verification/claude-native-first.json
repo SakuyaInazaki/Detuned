@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/opt/homebrew/bin:/usr/bin:/bin",
+    "HOME=/Users/sakimi",
+    "CI=true",
+    "node",
+    "scripts/integrations/claude-check-probe.mjs",
+    "--binary",
+    "/Users/sakimi/.local/share/claude/versions/2.1.282",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-native-result.json"
+  ],
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "pid": 62851,
+  "exit_code": 1,
+  "elapsed_seconds": 3.206,
+  "stdout": "claude-native-first.stdout.txt",
+  "stderr": "claude-native-first.stderr.txt",
+  "scope": "single guarded controlonly native probe; no prompt or model request sent; internal vendor behavior not measured"
+}

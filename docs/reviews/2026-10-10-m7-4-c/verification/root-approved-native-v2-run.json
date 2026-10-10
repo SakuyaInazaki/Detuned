@@ -1,0 +1,73 @@
+{
+  "status": "final A v2 bound; B review/root release pending; zero repair runtime",
+  "guard": "codex-guard-only.mjs calls actual pure codexSandboxPolicy, policy rawsource/env literal bound; sandboxexec Node only, no Codex launch",
+  "guard_assertions": [
+    "own endpoint hit1",
+    "other own endpoint hit0 +EPERM/EACCES",
+    "own sentinel read andwrite denied",
+    "actualguard childclose0/null within3s; minimalnativeEnv PATH/CI/HOME/ownCODEX_HOME",
+    "actualowned sockets/serverclose/rootabsence, unknown retained/failed",
+    "same sandbox child ordinary own file wx0600 fixed bytes/readback/mode true; sentinel deny assertions unchanged; 3s child budget unchanged"
+  ],
+  "native_capture": "codex-bounded-capture.mjs publicsupervised export sameCLI implementation; root/directpositivechild/confirmedPGID exacttrusted callbacks; no candidate negativekill; source90includesfinally, outer95withextra5onlycleanup/record",
+  "phase_order": [
+    "finalA freeze/hash/policy/env+protectedhelpers/binaryfixed read-onlybind",
+    "B staticreview",
+    "rootrelease syntax+independentguard require_escalated needed loopback",
+    "rootrelease single reject-worker after B review; actual controlled_expected_failure_verified required before native decision",
+    "rootactualguardaccepted then single native release require_escalated; failure stop noauto retry"
+  ],
+  "not_run": [
+    "v2 source/capture syntax",
+    "v2 native repair"
+  ],
+  "permissions": "defaultsandboxEPERM fact recorded fromB; future requiredbounded localprocess/loopback auto_review only, actualchildOSpolicy not loosened",
+  "secret": "private0700 registry; canonical roots/PIDs only trustedprivatecontrol; safe source/driverlinecol/name/code/syscall; no rawnative/control/stderr/token/message/stack",
+  "source_sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99",
+  "author_freeze_sha256": "167ffb325b80cb3df7471d35b3ccdd65943a7011570c494f5a1cda93505d8110",
+  "guard_source_sha256": "6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256",
+  "capture_source_sha256": "6fc4094bb6eaaf161baed7f87db5146880400018951ae486c0300b9a1ef819f5",
+  "binding_sha256": "eadfc1079f5251b1749ce5b0aa107c82deb2fc908ee09b4b2795cd5716cffd93",
+  "guard_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only.mjs",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only-result.json"
+  ],
+  "capture_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-native-v2-result.json"
+  ],
+  "source_budget": {
+    "work_ms": 75000,
+    "worker_ms": 85000,
+    "whole_with_finally_ms": 90000,
+    "outer_total_ms": 95000
+  },
+  "future_permissions": "require_escalated auto_review only after specific root release, localownedloopback/process; noOSpolicy weakening",
+  "reject_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-reject-first-result.json",
+    "--mode",
+    "reject-worker"
+  ],
+  "controlled_reject": "Only worker_registered after canonical root/positive directchild/confirmedgroup trusted registration persisted, before bootstrap callback rejects; exact three stages, source failed/bootstrap false/native false/MCP false, driverclose1/null, group/direct/root/control absent. Not reached injection means failed, not expected pass.",
+  "mcp_candidate": "trusted mcp_spawned positive exact candidate independently probed for absence, no candidate kill/negative group; present/unknown/EPERM/UID query failure means fail and retain root/control/registry; worker confirmed group absence cannot substitute",
+  "native_expected_stages": [
+    "root_registered",
+    "worker_spawned",
+    "worker_registered",
+    "native_registered",
+    "mcp_spawned",
+    "mcp_registered"
+  ],
+  "candidate_coverage": "producer.mcp_candidate_received boolean must match trusted mcp_spawned registry presence; one candidate when received; missing/invalid producer or missing registration => unknown/failure/root+control retained. Independent positivePID ESRCH vs source cleanup fact separate.",
+  "evidence_reuse": {
+    "guard": "A v1 actual policy exported function source literal and minimal env literal both byte-identical in v2; pure guard source unchanged 6808; original runtime remains bound to v1, semantic guard evidence reusable, not newly run",
+    "reject": "root/worker fork registration and confirmed worker_registered callback before bootstrap unchanged; v2 MCP candidate branch only executes after native register, not reached in original reject; original producer/capture immutable, not new v2 run"
+  },
+  "root_release": "source/capture syntax then one normal v2, no guard/reject rerun; first outputs retained"
+}

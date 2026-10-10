@@ -1,0 +1,73 @@
+{
+  "status": "budget_aborted_not_install_success",
+  "actual_exit_code": -15,
+  "stop_reason": "size_budget",
+  "elapsed_seconds": 101.708,
+  "initial_allocated_bytes": 195047424,
+  "final_allocated_bytes_at_stop": 2714583040,
+  "added_allocated_bytes_at_stop": 2519535616,
+  "current_allocated_bytes": 2714583040,
+  "flags_verified": {
+    "frozen_lockfile": true,
+    "ignore_scripts": true,
+    "ignore_pnpmfile": true,
+    "public_registry": true
+  },
+  "environment_verified": {
+    "npm_user_global_disabled": true,
+    "git_user_global_disabled": true,
+    "no_token_fields": true,
+    "supervisor_explicit_env_not_inherited": true
+  },
+  "script_evidence": {
+    "observed_lifecycle_execution_lines": [],
+    "mechanism": "pnpm ignore-scripts/ignore-pnpmfile flags; no official runtime command in supervisor",
+    "not_arbitrary_all_process_audit": true
+  },
+  "source_counts": {
+    "tracked_records_including_symlink": 14208,
+    "symlink_paths": [
+      ".agents/notes/implemented/CLAUDE.md",
+      ".agents/skills/agent-experience/SKILL.md",
+      ".claude/skills",
+      "CLAUDE.md",
+      "apps/cli/tests/profiles/acp/cordis.yml",
+      "packages/CLAUDE.md",
+      "snapshots/acp/escalation-approved/system-prompt.expected.md",
+      "snapshots/acp/escalation-approved/tool-schemas.expected.json",
+      "snapshots/acp/image-compaction/system-prompt.expected.md",
+      "snapshots/sdk/account-provider-signout/system-prompt.expected.md",
+      "snapshots/sdk/account-provider-signout/tool-schemas.expected.json",
+      "snapshots/session/agent-instructions/workspace/AGENTS.md",
+      "snapshots/session/agent-instructions/workspace/nested/AGENTS.md",
+      "vendor/CLAUDE.md"
+    ],
+    "previous_is_file_records_following_file_symlinks": 14207,
+    "tracked_actual_regular_files": 14194,
+    "tracked_symlinks": 14,
+    "count_explanation": "Previous Path.is_file() follows 13 file symlinks and excludes one directory symlink .claude/skills; A 14208 includes all 14 readlink hashes. No new tracked source."
+  },
+  "source_changes": [],
+  "previous_regular_file_changes": [],
+  "lock_sha256": "2893d71a9ef07d2d72d47b2199e581b9e8d90638a15ee151908eebf69dfc637c",
+  "owned_process_group_remaining": [],
+  "owned_directories": {
+    "source": "/private/tmp/detuned-m43-runtime.MU1a4q",
+    "dependencies": "/private/tmp/detuned-m43-deps.avgrrqf7",
+    "state": "active held for parent next decision; not cleaned, not a leak claim"
+  },
+  "artifact_state": "partial node_modules/store; not usable complete install",
+  "third_party_execution_by_C": false,
+  "test_build_install_by_C": false,
+  "main_workspace_hash_delta": {
+    "product_source_config_test_hashes": [],
+    "current_document_hashes": [],
+    "mutable_status_document_hashes": [],
+    "protected_review_probe_log_evidence_hashes": [],
+    "frozen_sql_archive_hashes": [],
+    "schema_profile_hashes": [],
+    "tracked_build_artifact_hashes": [],
+    "untracked_build_artifact_hashes": []
+  },
+  "main_head_unchanged": true
+}

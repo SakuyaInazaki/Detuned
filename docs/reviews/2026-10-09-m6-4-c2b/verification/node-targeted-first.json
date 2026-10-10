@@ -1,0 +1,26 @@
+{
+  "command": [
+    "node_modules/.bin/vitest",
+    "run",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "tests/integration/m6-public-review-search.test.ts",
+    "tests/contracts/m6-public-review-search-contracts.test.ts",
+    "tests/contracts/m6-public-review-search-tools-cli.test.ts",
+    "tests/integration/m6-public-review-search-independent.test.ts",
+    "tests/integration/m2-search.test.ts",
+    "tests/contracts/m2-search-contracts.test.ts",
+    "tests/integration/m6-review-submissions.test.ts",
+    "tests/integration/m6-review-submissions-independent.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/contracts/m6-review-tools.test.ts",
+    "tests/contracts/m6-review-client.test.ts"
+  ],
+  "exit_code": 1,
+  "seconds": 15.944,
+  "runner_pid": 97293,
+  "stdout": "node-targeted-first.stdout.txt",
+  "stderr": "node-targeted-first.stderr.txt",
+  "source_freeze": "execution-source-freeze.json",
+  "concurrency": "sole window; workspace1/test1/files serial; original assertion/timeouts"
+}

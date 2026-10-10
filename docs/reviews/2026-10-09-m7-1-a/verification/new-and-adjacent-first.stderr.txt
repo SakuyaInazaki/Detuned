@@ -1,0 +1,27 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-finalization-independent.test.ts > DF05 the twelve metadata reasons are ordered and sealed or unused evidence health never leaks into public status
+AssertionError: expected [ 'artifact_redacted', …(11) ] to deeply equal [ 'artifact_redacted', …(14) ]
+
+- Expected
++ Received
+
+@@ -1,11 +1,8 @@
+  [
+    "artifact_redacted",
+    "artifact_unavailable",
+-   "check_invalidated",
+-   "check_log_redacted",
+-   "check_log_unavailable",
+    "dependency_redacted",
+    "dependency_superseded",
+    "dependency_withdrawn",
+    "open_challenges",
+    "policy_superseded",
+
+ ❯ tests/integration/m6-review-finalization-independent.test.ts:148:31
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,57 @@
+--- v1/packages/protocol/src/tools.ts
++++ v2/packages/protocol/src/tools.ts
+@@ -32,7 +32,11 @@
+   limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(SearchCursorStringSchema),
+ }, { additionalProperties: false });
+ export const ToolSearchParamsUnion = Type.Union([ToolPostsSearchParamsSchema, ToolReviewSearchParamsSchema]);
+-export const ToolSearchParamsSchema: TSchema = { ...ToolSearchParamsUnion, type: 'object' };
++// Common property projection preserves existing MCP schema introspection; anyOf remains authoritative.
++export const ToolSearchParamsSchema: TSchema = { ...ToolSearchParamsUnion, type: 'object', properties: {
++  space_id: ToolPostsSearchParamsSchema.properties.space_id, q: ToolPostsSearchParamsSchema.properties.q,
++  limit: ToolPostsSearchParamsSchema.properties.limit, cursor: ToolPostsSearchParamsSchema.properties.cursor,
++} };
+ export type ToolSearchParams = Static<typeof ToolSearchParamsUnion>;
+ 
+ export const ToolReadParamsUnion = Type.Union([
+--- v1/tests/contracts/m6-public-review-search-contracts.test.ts
++++ v2/tests/contracts/m6-public-review-search-contracts.test.ts
+@@ -4,7 +4,7 @@
+ import { buildApp } from '@detuned/server';
+ import { CryptoHasher } from '@detuned/core';
+ import { DetunedClient, ClientProtocolError } from '@detuned/client';
+-import { isPublicReviewSubmissionSearchPage, isReviewSubmissionSearchCursorPayload, validateSearchSourceQuery, normalizeReviewSubmissionSearchQuery, compareReviewSubmissionIds, generateOpenApiSpec, type PublicReviewSubmissionSearchPage, type ReviewRequestView } from '@detuned/protocol';
++import { isPublicReviewSubmissionSearchPage, isReviewSubmissionSearchCursorPayload, validateSearchSourceQuery, normalizeReviewSubmissionSearchQuery, compareReviewSubmissionIds, generateOpenApiSpec, ToolSearchParamsSchema, SearchQStringSchema, validateToolParams, type PublicReviewSubmissionSearchPage, type ReviewRequestView } from '@detuned/protocol';
+ let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>, client: DetunedClient, url: string, token: string, sid: string, pid: string, tick: number;
+ const clock = { now: () => new Date(tick), nowIso: () => new Date(tick).toISOString() };
+ const path = (suffix = '') => `/spaces/${sid}${suffix}`;
+@@ -37,6 +37,9 @@
+   const spec=generateOpenApiSpec() as any;expect(spec.paths['/spaces/{space_id}/search'].get['x-query-schema']).toBeDefined();expect(spec.paths['/spaces/{space_id}/search'].get['x-logical-query-schema']).toEqual(spec.components.schemas.SearchSourceQuery);expect(spec.paths['/spaces/{space_id}/search'].get.description).toContain('review_submissions');expect(spec.components.schemas.PublicReviewSubmissionSearchPage).toBeDefined();
+ });
+ it('PC02 canonical source prevalidation rejects unknown/incompatible query before new client transport', async () => {
++  expect(ToolSearchParamsSchema.properties?.q).toEqual(SearchQStringSchema);
++  for (const params of [{space_id:sid,q:'x'}, {space_id:sid,q:'x',source:'review_submissions',filters:{request_id:'r'}}]) expect(validateToolParams('forum_search',params)).toBe(true);
++  for (const params of [{space_id:sid,q:'x',unknown:true}, {space_id:sid,q:'x',source:'posts',filters:{request_id:'r'}}, {space_id:sid,q:'x',source:'review_submissions',filters:{kind:'claim'}}]) expect(validateToolParams('forum_search',params)).toBe(false);
+   const fetchSpy=vi.fn();vi.stubGlobal('fetch',fetchSpy);
+   for(const q of [{source:'review_submissions',q:'x',kind:'claim'},{source:'review_submissions',q:'x',private:'x'},{source:'posts',q:'x',request_id:'r'},{source:'private',q:'x'},{source:'review_submissions',q:' '.repeat(4)}]) {
+     expect(()=>validateSearchSourceQuery(q)).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));
+@@ -50,6 +53,8 @@
+ });
+ it('PC03 whole-page wire guard rejects date/identity/filter/order/unknown/meta/snippet flaws without partial rows', async () => {
+   const round=await reveal();const query={source:'review_submissions' as const,q:'Needle',request_id:round.id,target_post_id:pid};const page=await client.searchPublicReviewSubmissions(sid,query),row=page.data[0]!;
++  // Page-level strictness is separate from the existing API envelope projection.
++  expect(isPublicReviewSubmissionSearchPage({...page,unexpected:true},sid,query)).toBe(false);
+   const malformed:unknown[]=[
+     {...page,data:Array.from({length:21},(_,n)=>({...row,submission_id:'rsb_'+String(100-n).padStart(3,'0')})),meta:{truncated:false,next_cursor:null}},
+     {...page,data:[{...row,sealed_payload:'no'}]}, {...page,data:[row,{...page.data[1]!,revealed_at:null}]},
+@@ -57,9 +62,9 @@
+     {...page,data:[{...row,submitted_at:'yesterday'}]}, {...page,data:[{...row,revealed_at:'2020-01-01T00:00:00Z'}]},
+     {...page,data:[{...row,snippet:'😀'.repeat(321)}]}, {...page,data:[row,row]}, {...page,data:[...page.data].reverse()},
+     {...page,meta:{truncated:true,next_cursor:null}}, {...page,meta:{truncated:false,next_cursor:'opaque-under-limit'}}, {...page,data:[],meta:{truncated:false,next_cursor:'opaque'}},
+-    {...page,data:[{...row,submission_id:'bad\uD800'}]}, {...page,unexpected:true},
++    {...page,data:[{...row,submission_id:'bad\uD800'}]}, {...page,meta:{...page.meta,unexpected:true}},
+   ];
+-  for(const data of malformed){expect(isPublicReviewSubmissionSearchPage(data,sid,query)).toBe(false);vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({api_version:'1',request_id:'controlled',data:(data as any).data,meta:(data as any).meta,...((data as any).unexpected?{unexpected:true}:{})}),{status:200})));await expect(client.searchPublicReviewSubmissions(sid,query)).rejects.toBeInstanceOf(ClientProtocolError);}
++  for(const data of malformed){expect(isPublicReviewSubmissionSearchPage(data,sid,query)).toBe(false);vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({api_version:'1',request_id:'controlled',data:(data as any).data,meta:(data as any).meta}),{status:200})));await expect(client.searchPublicReviewSubmissions(sid,query)).rejects.toBeInstanceOf(ClientProtocolError);}
+ });
+ it('PC04 shared ID ordering follows SQLite BINARY, not locale; distinct review/post cursors do not cross source', async () => {
+   const ids=['rsb_Z','rsb_a','rsb_研','rsb_😀'];

@@ -1,0 +1,82 @@
+--- packages/storage-sqlite/src/sqlite-storage.ts (fresh exact before)
++++ packages/storage-sqlite/src/sqlite-storage.ts (current)
+@@ -18,7 +18,7 @@
+   StorageOperationalStatus,
+   resolveResourceLimits,
+   ErrorCode,
+-  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord,
++  ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord, ReviewSubmissionRecord,
+   Actor,
+   Credential,
+   Space,
+@@ -1567,18 +1567,18 @@
+   createReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord, assignments: ReviewAssignmentRecord[]): void {
+     this.transaction(() => {
+       if (version.request_id !== record.id || version.version !== record.version) throw new Error('Invalid review request version.');
+-      this.db.prepare(`INSERT INTO review_requests (id,space_id,target_post_id,target_revision,snapshot_id,round,phase,version,requested_by,created_at,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(record.id,record.space_id,record.target_ref.post_id,record.target_ref.revision,record.snapshot_id,record.round,record.phase,record.version,record.requested_by,record.created_at,record.changed_by,record.changed_at,record.reason);
++      this.db.prepare(`INSERT INTO review_requests (id,space_id,target_post_id,target_revision,snapshot_id,round,phase,version,submitted_count,requested_by,created_at,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(record.id,record.space_id,record.target_ref.post_id,record.target_ref.revision,record.snapshot_id,record.round,record.phase,record.version,record.submitted_count,record.requested_by,record.created_at,record.changed_by,record.changed_at,record.reason);
+       this.insertReviewRequestVersion(version);
+-      const insert = this.db.prepare('INSERT INTO review_assignments (request_id,reviewer_actor_id,group_at_assignment) VALUES (?,?,?)');
++      const insert = this.db.prepare('INSERT INTO review_assignments (id,request_id,reviewer_actor_id,group_at_assignment) VALUES (?,?,?,?)');
+       for (const assignment of assignments) {
+         if (assignment.request_id !== record.id) throw new Error('Invalid review assignment.');
+-        insert.run(assignment.request_id,assignment.reviewer_actor_id,assignment.group_at_assignment);
++        insert.run(assignment.id,assignment.request_id,assignment.reviewer_actor_id,assignment.group_at_assignment);
+       }
+     });
+   }
+ 
+   private insertReviewRequestVersion(version: ReviewRequestVersionRecord): void {
+-    this.db.prepare('INSERT INTO review_request_versions (request_id,version,phase,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?)').run(version.request_id,version.version,version.phase,version.changed_by,version.changed_at,version.reason);
++    this.db.prepare('INSERT INTO review_request_versions (request_id,version,phase,submitted_count,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)').run(version.request_id,version.version,version.phase,version.submitted_count,version.changed_by,version.changed_at,version.reason);
+   }
+ 
+   findReviewRequestById(id: string): ReviewRequestRecord | null {
+@@ -1589,20 +1589,44 @@
+   }
+ 
+   findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null {
+-    return (this.db.prepare('SELECT request_id,version,phase,changed_by,changed_at,reason FROM review_request_versions WHERE request_id=? AND version=?').get(requestId,version) as ReviewRequestVersionRecord | undefined) ?? null;
++    return (this.db.prepare('SELECT request_id,version,phase,submitted_count,changed_by,changed_at,reason FROM review_request_versions WHERE request_id=? AND version=?').get(requestId,version) as ReviewRequestVersionRecord | undefined) ?? null;
+   }
+ 
+   listReviewAssignments(requestId: string): ReviewAssignmentRecord[] {
+-    return this.db.prepare('SELECT request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? ORDER BY reviewer_actor_id').all(requestId) as ReviewAssignmentRecord[];
++    return this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? ORDER BY reviewer_actor_id').all(requestId) as ReviewAssignmentRecord[];
+   }
+ 
+   updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void {
+     this.transaction(() => {
+       if (version.request_id !== record.id || version.version !== record.version) throw new Error('Invalid review request version.');
+-      const result = this.db.prepare('UPDATE review_requests SET phase=?,version=?,changed_by=?,changed_at=?,reason=? WHERE id=? AND version=?').run(record.phase,record.version,record.changed_by,record.changed_at,record.reason,record.id,record.version-1);
++      const result = this.db.prepare('UPDATE review_requests SET phase=?,version=?,submitted_count=?,changed_by=?,changed_at=?,reason=? WHERE id=? AND version=?').run(record.phase,record.version,record.submitted_count,record.changed_by,record.changed_at,record.reason,record.id,record.version-1);
+       if (result.changes !== 1) throw new Error('Invalid review request update.');
+       this.insertReviewRequestVersion(version);
+     });
++  }
++
++  findReviewAssignmentById(id: string): ReviewAssignmentRecord | null {
++    return (this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE id=?').get(id) as ReviewAssignmentRecord | undefined) ?? null;
++  }
++  findReviewAssignment(requestId: string, actorId: string): ReviewAssignmentRecord | null {
++    return (this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? AND reviewer_actor_id=?').get(requestId,actorId) as ReviewAssignmentRecord | undefined) ?? null;
++  }
++  createReviewSubmission(record: ReviewSubmissionRecord): void {
++    this.db.prepare('INSERT INTO review_submissions (id,request_id,assignment_id,reviewer_actor_id,reviewer_session_id,snapshot_sha256,payload_json,request_version,submitted_at,revealed_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(record.id,record.request_id,record.assignment_id,record.reviewer_actor_id,record.reviewer_session_id,record.snapshot_sha256,JSON.stringify(record.payload),record.request_version,record.submitted_at,record.revealed_at);
++  }
++  private submissionRow(row: unknown): ReviewSubmissionRecord | null {
++    if (!row) return null;
++    const {payload_json,...rest} = row as Omit<ReviewSubmissionRecord,'payload'> & {payload_json:string};
++    return {...rest,payload:JSON.parse(payload_json)};
++  }
++  findReviewSubmissionById(id: string): ReviewSubmissionRecord | null { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE id=?').get(id)); }
++  findReviewSubmissionByAssignmentId(id: string): ReviewSubmissionRecord | null { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE assignment_id=?').get(id)); }
++  findReviewSubmissionBySessionId(id: string): ReviewSubmissionRecord | null { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE reviewer_session_id=?').get(id)); }
++  listReviewSubmissions(requestId: string): ReviewSubmissionRecord[] {
++    return this.db.prepare('SELECT * FROM review_submissions WHERE request_id=? ORDER BY id').all(requestId).map(row => this.submissionRow(row)!);
++  }
++  revealReviewSubmissions(requestId: string, revealedAt: string): void {
++    this.db.prepare('UPDATE review_submissions SET revealed_at=? WHERE request_id=? AND revealed_at IS NULL').run(revealedAt,requestId);
+   }
+ 
+   getInstanceSecret(): string {

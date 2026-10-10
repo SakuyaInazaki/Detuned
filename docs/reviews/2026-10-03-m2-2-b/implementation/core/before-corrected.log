@@ -1,0 +1,96 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-knowledge-views.test.ts (4 tests | 4 failed) 33ms
+   × M2.2-B knowledge reading projections > V01: findings contain only claims, reports and fixed relation provenance, never certification 24ms
+     → expected [ { …(9) }, { …(9) } ] to have a length of 1 but got 2
+   × M2.2-B knowledge reading projections > V02: historical invalid fields become null/missing without inventing failure facts 3ms
+     → expected undefined to match object { category: null, …(3) }
+   × M2.2-B knowledge reading projections > V03: pins require summary, keep fixed sources and distinguish summary vs source updates 3ms
+     → expected [ { ref: { …(2) }, …(3) }, …(1) ] to have a length of 1 but got 2
+   × M2.2-B knowledge reading projections > V04: relation redaction preserves only tombstone facts, withdrawal stays open, nonpublic events are excluded 2ms
+     → expected { type: 'open_challenge', …(3) } to match object { state: 'open', …(1) }
+(8 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V01: findings contain only claims, reports and fixed relation provenance, never certification
+AssertionError: expected [ { …(9) }, { …(9) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/integration/m2-knowledge-views.test.ts:18:72
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V02: historical invalid fields become null/missing without inventing failure facts
+AssertionError: expected undefined to match object { category: null, …(3) }
+
+- Expected: 
+{
+  "assumptions": null,
+  "attempt": null,
+  "category": null,
+  "evidence_state": null,
+}
+
++ Received: 
+undefined
+
+ ❯ tests/integration/m2-knowledge-views.test.ts:23:82
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V03: pins require summary, keep fixed sources and distinguish summary vs source updates
+AssertionError: expected [ { ref: { …(2) }, …(3) }, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/integration/m2-knowledge-views.test.ts:30:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V04: relation redaction preserves only tombstone facts, withdrawal stays open, nonpublic events are excluded
+AssertionError: expected { type: 'open_challenge', …(3) } to match object { state: 'open', …(1) }
+(8 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "source_status": "withdrawn",
+-   "state": "open",
++   "relation_id": "challenge",
++   "source_ref": {
++     "post_id": "pst_96b3bc75-359b-47e7-a7e7-997745ca0071",
++     "revision": 1,
++   },
++   "target_ref": {
++     "post_id": "pst_763da35f-a9db-4b92-8e05-e7f51630132d",
++     "revision": 1,
++   },
++   "type": "open_challenge",
+  }
+
+ ❯ tests/integration/m2-knowledge-views.test.ts:36:158
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  15:23:52
+   Duration  498ms (transform 152ms, setup 0ms, collect 255ms, tests 33ms, environment 0ms, prepare 42ms)
+

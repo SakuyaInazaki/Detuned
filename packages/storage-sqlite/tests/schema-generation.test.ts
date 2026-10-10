@@ -25,6 +25,11 @@ function copyProject(name: string, { driver = true, historical = true } = {}) {
   for (const sub of ['src', 'scripts']) {
     cpSync(join(root, 'packages/storage-sqlite', sub), join(dir, 'packages/storage-sqlite', sub), { recursive: true });
   }
+  // Frozen schema2 is required independently of the schema1 missing-input case.
+  copyFileSync(join(root, 'tests/fixtures/historical-v2-schema.sql'), join(dir, 'tests/fixtures/historical-v2-schema.sql'));
+  copyFileSync(join(root, 'tests/fixtures/historical-v3-schema.sql'), join(dir, 'tests/fixtures/historical-v3-schema.sql'));
+  copyFileSync(join(root, 'tests/fixtures/historical-v4-schema.sql'), join(dir, 'tests/fixtures/historical-v4-schema.sql'));
+  copyFileSync(join(root, 'tests/fixtures/historical-v5-schema.sql'), join(dir, 'tests/fixtures/historical-v5-schema.sql'));
   if (historical) {
     copyFileSync(join(root, 'tests/fixtures/historical-v1-schema.sql'), join(dir, 'tests/fixtures/historical-v1-schema.sql'));
   }
@@ -67,7 +72,7 @@ async function compileAndVerifyWithoutSrc(dir: string) {
   const db = new Database(':memory:');
   try {
     db.exec(mod.SCHEMA_SQL);
-    const v2Check = mod.verifyDatabaseStructure(db, 2);
+    const v2Check = mod.verifyDatabaseStructure(db, 6);
     expect(v2Check.valid).toBe(true);
   } finally {
     db.close();
@@ -81,7 +86,7 @@ describe('Schema Generation & Sync Pipeline Formal Regressions', () => {
     } catch {}
   });
 
-  it('generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged', async () => {
+  it('generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V6 updates and frozen V1/V2/V3/V4/V5 remain unchanged', async () => {
     const dir = copyProject('healthy-column-change');
     const needle = 'objective TEXT NOT NULL,';
     const replacement = 'objective TEXT,';
@@ -102,8 +107,8 @@ describe('Schema Generation & Sync Pipeline Formal Regressions', () => {
 
     const generatedTs = readFileSync(join(dir, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
 
-    // Parse V2 and V1 profile tables from generated code to assert schema reflection
-    const v2Match = generatedTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+    // Parse current V6 and frozen V1 profile tables from generated code to assert schema reflection
+    const v2Match = generatedTs.match(/export const V6_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
     expect(v2Match).not.toBeNull();
     const v2Tables = JSON.parse(v2Match![1]);
     const objColV2 = v2Tables.space_revisions.columns.find((c: any) => c.name === 'objective');
@@ -141,7 +146,7 @@ describe('Schema Generation & Sync Pipeline Formal Regressions', () => {
     expect(syncIndex.exitCode).toBe(0);
 
     const generatedIndexTs = readFileSync(join(dirIndex, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
-    const v2IndexMatch = generatedIndexTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+    const v2IndexMatch = generatedIndexTs.match(/export const V6_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
     const v2IndexTables = JSON.parse(v2IndexMatch![1]);
     const eventsIdx = v2IndexTables.events.indexes.find((i: any) => i.name === 'idx_events_space_seq');
     expect(eventsIdx).toBeDefined();
@@ -172,7 +177,7 @@ describe('Schema Generation & Sync Pipeline Formal Regressions', () => {
     expect(syncFts.exitCode).toBe(0);
 
     const generatedFtsTs = readFileSync(join(dirFts, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
-    const v2FtsMatch = generatedFtsTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+    const v2FtsMatch = generatedFtsTs.match(/export const V6_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
     const v2FtsTables = JSON.parse(v2FtsMatch![1]);
     const bodyCol = v2FtsTables.post_fts.fts.columns.find((c: any) => c.name === 'body');
     expect(bodyCol).toBeDefined();
@@ -233,6 +238,10 @@ describe('Schema Generation & Sync Pipeline Formal Regressions', () => {
   });
 
   it.each([
+    { version: 'V4', profileName: 'V4_SCHEMA_TABLES' },
+    { version: 'V5', profileName: 'V5_SCHEMA_TABLES' },
+    { version: 'V6', profileName: 'V6_SCHEMA_TABLES' },
+    { version: 'V3', profileName: 'V3_SCHEMA_TABLES' },
     { version: 'V2', profileName: 'V2_SCHEMA_TABLES' },
     { version: 'V1', profileName: 'V1_SCHEMA_TABLES' },
   ])('detects corrupt $version profile in sync check and successfully repairs it via generate-schema (AB03)', async ({ profileName }) => {

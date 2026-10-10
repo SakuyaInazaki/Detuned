@@ -1,0 +1,180 @@
+{
+  "phase": "d01",
+  "image_id": "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+  "container": "detuned-m53-d-linux-d01-14df79c3e0",
+  "actual_gate_uid": 1000,
+  "cold_install_or_build_repeated": false,
+  "commands": [
+    {
+      "argv": [
+        "create",
+        "--name",
+        "detuned-m53-d-linux-d01-14df79c3e0",
+        "--network",
+        "none",
+        "--entrypoint",
+        "node",
+        "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+        "-e",
+        "setInterval(()=>{},1000)"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 206,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "start",
+        "detuned-m53-d-linux-d01-14df79c3e0"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 86,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "detuned-m53-d-linux-d01-14df79c3e0",
+        "node",
+        "-e",
+        "require('node:fs').mkdirSync('/app/scripts/integrations/deployment',{recursive:true})"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 41,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/deployment/d01-recovery.mjs",
+        "detuned-m53-d-linux-d01-14df79c3e0:/app/scripts/integrations/deployment/d01-recovery.mjs"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 19,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/deployment/d01-worker.mjs",
+        "detuned-m53-d-linux-d01-14df79c3e0:/app/scripts/integrations/deployment/d01-worker.mjs"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 12,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-3-a/verification/d01-smoke-oracle.mjs",
+        "detuned-m53-d-linux-d01-14df79c3e0:/tmp/d01-smoke-oracle.mjs"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 13,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "0:0",
+        "detuned-m53-d-linux-d01-14df79c3e0",
+        "chown",
+        "-R",
+        "1000:1000",
+        "/app"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 9340,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "1000:1000",
+        "-e",
+        "HOME=/tmp",
+        "-e",
+        "CI=1",
+        "detuned-m53-d-linux-d01-14df79c3e0",
+        "node",
+        "--import",
+        "/tmp/d01-smoke-oracle.mjs",
+        "scripts/integrations/deployment/d01-recovery.mjs",
+        "--repo-root",
+        "/app",
+        "--receipt",
+        "/tmp/d01-safe-receipt.json",
+        "--smoke-20"
+      ],
+      "exit": 1,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 28028,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "detuned-m53-d-linux-d01-14df79c3e0",
+        "node",
+        "-e",
+        "process.stdout.write(require('node:fs').readFileSync('/tmp/d01-safe-receipt.json'))"
+      ],
+      "exit": 1,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 86,
+      "stderr_sha256": "799871e784cf48bbc5843f2901b6e2041b80d183dd175d7f81f76aefb0c09b5e"
+    },
+    {
+      "argv": [
+        "rm",
+        "-f",
+        "detuned-m53-d-linux-d01-14df79c3e0"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 406,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "scripts/integrations/deployment/d01-recovery.mjs",
+      "sha256": "ddbfcdd90d09dfab63e43da16777c52c6633f9275f21217209a0bba5c1caf11e"
+    },
+    {
+      "path": "scripts/integrations/deployment/d01-worker.mjs",
+      "sha256": "e80bdf8c9070009a466e12210efda813672d45ad2d8d14d9eb69fe9dbea68138"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m5-3-a/verification/d01-smoke-oracle.mjs",
+      "sha256": "669a05a295e4b1ef34cbb5b913d36bfc5eb07d5e9d87a676f2fb00a42c3661d0"
+    }
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "status": "failed",
+  "cleanup": {
+    "created": true,
+    "owned_container_removed": true,
+    "owned_VM_retained": true
+  }
+}

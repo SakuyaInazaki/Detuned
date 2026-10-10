@@ -1,0 +1,112 @@
+{
+  "raw_independent": true,
+  "original_complete": false,
+  "original_failure": "postflight_gate_timeout",
+  "requests": 34782,
+  "statuses": {
+    "201": 4758,
+    "200": 28814,
+    "409": 267,
+    "422": 943
+  },
+  "classifications": {
+    "success": 33572,
+    "expected_conflict": 267,
+    "search_limit": 943
+  },
+  "window_ms": 600001.5677080001,
+  "throughput_logical_per_s": 39.99989548640641,
+  "throughput_http_per_s": 57.96984853367449,
+  "success_latency_ms": {
+    "0.5": 1.3038749999832362,
+    "0.95": 41.57987499999581,
+    "0.99": 62.98054200000479
+  },
+  "short_chinese": {
+    "all": 2851,
+    "success": 1908,
+    "limit422": 943,
+    "success_ms": {
+      "0.5": 19.809332999997423,
+      "0.95": 36.946540999924764,
+      "0.99": 52.90070800000103
+    }
+  },
+  "retry_attempts": 0,
+  "busy_or_locked_codes": {},
+  "resource_measurement": {
+    "samples": 599,
+    "server_rss_peak": 239222784,
+    "runner_rss_peak": 189595648,
+    "combined_disk_peak": 1948945416,
+    "free_disk_min": 19017236480,
+    "wal_peak": 6830992
+  },
+  "endpoint_groups": {
+    "context": {
+      "all": 4800,
+      "success": 4800,
+      "success_ms": {
+        "0.5": 12.969042000011541,
+        "0.95": 63.66195800004061,
+        "0.99": 76.62400000001071
+      }
+    },
+    "search": {
+      "all": 4800,
+      "success": 3857,
+      "success_ms": {
+        "0.5": 1.2615000000223517,
+        "0.95": 34.0992499999993,
+        "0.99": 48.13462500006426
+      }
+    },
+    "posts": {
+      "all": 8146,
+      "success": 8146,
+      "success_ms": {
+        "0.5": 2.7941249999566935,
+        "0.95": 18.10733299999265,
+        "0.99": 42.59454099996947
+      }
+    },
+    "revisions": {
+      "all": 7455,
+      "success": 7188,
+      "success_ms": {
+        "0.5": 0.8147089999984019,
+        "0.95": 42.090832999994745,
+        "0.99": 58.993832999956794
+      }
+    },
+    "poll": {
+      "all": 4800,
+      "success": 4800,
+      "success_ms": {
+        "0.5": 0.8682920000283048,
+        "0.95": 22.877791000006255,
+        "0.99": 40.338667000003625
+      }
+    },
+    "ack": {
+      "all": 4781,
+      "success": 4781,
+      "success_ms": {
+        "0.5": 0.5046659999934491,
+        "0.95": 1.4867079999530688,
+        "0.99": 22.633417000004556
+      }
+    },
+    "other": {
+      "all": 0,
+      "success": 0,
+      "success_ms": {
+        "0.5": null,
+        "0.95": null,
+        "0.99": null
+      }
+    }
+  },
+  "internal_lock_wait": "not_observed",
+  "machine_limits": "actual Mac16,12 10CPU/16GiB; no 2CPU/4GiB resource certification"
+}

@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';import {fixture} from './focus-fixture.mjs';import {serializeContextEnvelope} from '../../../../packages/protocol/dist/index.js';
+const f=await fixture(),results=[];
+try{
+ const source=await f.post(f.other),pin=await f.post(f.tid,'summary',{source_refs:[f.ref(source)]});f.db.prepare('UPDATE post_revisions SET structured=? WHERE post_id=?').run(JSON.stringify({source_refs:Array.from({length:5},()=>f.ref(source))}),pin.id);f.db.prepare('UPDATE space_revisions SET pinned_refs=? WHERE space_id=?').run(JSON.stringify([f.ref(pin)]),f.sid);
+ const failure={attempt:'a'.repeat(100),category:'environment_error',assumptions:[],tested_scope:'scope',expected:'e',observed:'o',evidence_refs:[],evidence_state:'unverified',evidence_missing_reason:'unchecked',ruled_out:'one run',not_ruled_out:[],retry_when:[]};for(let i=0;i<5;i++)await f.post(f.tid,'failure',failure);for(let i=0;i<10;i++){const s=await f.post(f.tid,'note',{issue:'i'.repeat(150),impact:'j'.repeat(150)});await f.relation(s,source);}
+ const full=(await f.context(f.tid,65536)).json();assert.equal(full.meta.truncated,false);const names=['recent_activity','recent_failures','blocking_objections','pinned_summaries'];assert(names.every(n=>full.data[n].length>0));assert(Buffer.byteLength(serializeContextEnvelope(full.request_id,{data:full.data,meta:full.meta}))>4096);const checkpoint=f.fingerprint();
+ for(const budget of [4096,12288,65536]){
+  const expected={data:structuredClone(full.data),meta:{truncated:false,next_cursor:null}},bytes=()=>Buffer.byteLength(serializeContextEnvelope(full.request_id,expected));const mandatory={data:{...expected.data,...Object.fromEntries(names.map(n=>[n,[]]))},meta:expected.meta};
+  if(Buffer.byteLength(serializeContextEnvelope(full.request_id,mandatory))>budget){expected.data.space_content_status='omitted_for_budget';expected.data.objective=null;expected.data.rules=null;expected.meta.truncated=true;}
+  for(const name of names)while(bytes()>budget&&expected.data[name].length){expected.data[name].pop();expected.meta.truncated=true;}
+  assert(bytes()<=budget);const actual=await f.context(f.tid,budget);assert.equal(actual.body,serializeContextEnvelope(actual.json().request_id,expected));assert.equal(actual.json().data.focus_thread.id,f.tid);results.push({budget,actual_full_body_bytes:Buffer.byteLength(actual.body),remaining:Object.fromEntries(names.map(n=>[n,actual.json().data[n].length])),whole_item_tail_priority_confirmed:true});
+ }
+ const small=(await f.context(f.tid,4096)).json();assert.equal(small.data.recent_activity.length,0);assert.equal(small.data.recent_failures.length,0);assert.equal(small.data.pinned_summaries.length,1);assert.equal(f.fingerprint(),checkpoint);console.log(JSON.stringify({passes:true,results,no_read_writes:true},null,2));
+}catch(e){console.log(JSON.stringify({passes:false,results,error:{message:e.message,stack:e.stack}},null,2));process.exitCode=1;}finally{await f.close();}

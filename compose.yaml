@@ -1,0 +1,56 @@
+services:
+  detuned:
+    image: detuned-local:arm64
+    build:
+      context: .
+      target: runtime
+    platform: linux/arm64
+    user: "1000:1000"
+    init: true
+    ports:
+      - "127.0.0.1:${DETUNED_HTTPS_PORT:-8443}:3000"
+    volumes:
+      - detuned-data:/data
+      - type: bind
+        source: ${DETUNED_TLS_CERT_FILE:?provide TLS certificate path}
+        target: /run/tls/cert.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DETUNED_TLS_KEY_FILE:?provide TLS key path readable by UID1000}
+        target: /run/tls/key.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DETUNED_TLS_CA_FILE:?provide CA certificate path}
+        target: /run/tls/ca.pem
+        read_only: true
+        bind:
+          create_host_path: false
+    command:
+      - serve
+      - --host
+      - 0.0.0.0
+      - --port
+      - "3000"
+      - --data-dir
+      - /data/instance
+      - --tls-cert-file
+      - /run/tls/cert.pem
+      - --tls-key-file
+      - /run/tls/key.pem
+      - --web-assets-dir
+      - /app/packages/web/dist
+      - --web-origin
+      - ${DETUNED_WEB_ORIGIN:-https://localhost:8443}
+    healthcheck:
+      test: ["CMD", "node", "/app/scripts/integrations/deployment/container-health.mjs", "--url", "https://127.0.0.1:3000", "--web-origin", "${DETUNED_WEB_ORIGIN:-https://localhost:8443}", "--ca", "/run/tls/ca.pem"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    stop_grace_period: 15s
+volumes:
+  detuned-data:

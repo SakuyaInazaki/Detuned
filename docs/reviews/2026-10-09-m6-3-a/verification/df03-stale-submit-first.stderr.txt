@@ -1,0 +1,34 @@
+$ vitest run tests/integration/m6-review-finalization-independent.test.ts -t DF03 --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-finalization-independent.test.ts > DF03 actual mutation and stale history share one transaction; pinned and unrelated edits do not invalidate the frozen material
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "code": "SNAPSHOT_STALE",
++ DetunedError {
++   "message": "Formal review submission requirements are not satisfied.",
++   "isDetunedError": true,
++   "isTransportError": false,
++   "code": "VALIDATION_ERROR",
++   "statusCode": 400,
++   "retryable": false,
++   "details": undefined,
++   "name": "DetunedError",
+  }
+
+ ❯ refused tests/integration/m6-review-finalization-independent.test.ts:63:59
+     61| }
+     62| type Fixture=Awaited<ReturnType<typeof fixture>>;
+     63| function refused(run:()=>unknown,code:string){expect(run).toThrow(expe…
+       |                                                           ^
+     64| 
+     65| it('DF01 finalizer current rights and ordered errors remain mandatory …
+ ❯ tests/integration/m6-review-finalization-independent.test.ts:102:2
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,7 @@
+# Search/failure fixed-reference reply repair
+
+Parent's independent static review found a real v1 omission: search/failure fixed content could be read, but its quote button remained disabled and no result thread was carried into the discussion. The original v1 manifest/report is retained; no earlier success is claimed for this behavior.
+
+The approved v2 change is only app.tsx and knowledge.tsx. Own search/failure results now carry their server-returned thread_id alongside the selected post_id/revision and origin view. “进入主题并引用” calls the existing getThreadPosts for that thread; it narrows the actual returned thread and verifies its id/space binding before switching. A failed/aborted/late response cannot open the previously retained discussion thread. Successful entry retains the selected fixed content/ref, sets the cited reply to that exact revision and focuses the reply form. Original discussion quoting stays unchanged. Returning/reopening retains the origin's query/results/cursor; explicit navigation/logout still uses generation+abort. Arbitrary evidence refs without a thread_id are not assigned this report's thread association.
+
+Necessary v2 Web source checks both exit0 (`typecheck-v2*.stdout.txt`/stderr). No new test, browser, build or full suite was run by B. D covers the existing C02 journey with actual cross-thread old-ref reply/DB author/thread/cites checks. Original source manifest is preserved, and v2 hashes record only these two product-path deltas.

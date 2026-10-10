@@ -1,0 +1,71 @@
+{
+  "installed": [
+    {
+      "name": "@playwright/test",
+      "version": "1.64.0",
+      "license": "Apache-2.0",
+      "metadata_sha256": "fdf7f73664765c38b043241c72e3b0ce6db74fc80fe90f5b17c3768bc39fb1e3"
+    },
+    {
+      "name": "playwright",
+      "version": "1.64.0",
+      "license": "Apache-2.0",
+      "metadata_sha256": "76e7341a52a4dd154553c3514926a5f824da4374d000e88d9ac3c14ee6eadf84"
+    },
+    {
+      "name": "playwright-core",
+      "version": "1.64.0",
+      "license": "Apache-2.0",
+      "metadata_sha256": "1d6b6f80ffb0c52865af0f9fe01abf2140df019e49ae6ac134605e462d583f3a"
+    },
+    {
+      "name": "react",
+      "version": "19.3.0",
+      "license": "MIT",
+      "metadata_sha256": "6e003e4e9ed25afa7fdd55613f8aa877cefa9b359d9c13f81ee704030248e24e"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.0",
+      "license": "MIT",
+      "metadata_sha256": "136d4af63de473392ea79d6a21932b0ed9eb37fe518ce70f4621250f3d79e9bb"
+    },
+    {
+      "name": "@types/react",
+      "version": "19.3.0",
+      "license": "MIT",
+      "metadata_sha256": "505c0df4cd73d6a02c946bd9b81451584bd9c83ea72d75cff9b826efceaa19c2"
+    },
+    {
+      "name": "@types/react-dom",
+      "version": "19.3.0",
+      "license": "MIT",
+      "metadata_sha256": "4a2052bb362c34f1d39cfe0818b6fe01a9f988b609e8b7e4832aff7dbf2f7180"
+    },
+    {
+      "name": "vite",
+      "version": "7.3.7",
+      "license": "MIT",
+      "metadata_sha256": "aae1f593c0e6f320989b60af6e90f8ed4ea5137e5a0b9db663f9b0088333eb3c"
+    }
+  ],
+  "pnpm": "11.7.0",
+  "node": "26.3.0",
+  "lock_sha256": "49c72b4c1b0a127c9715e96d4eef06b99d645440e2aaf3de13b3fd86be4fa006",
+  "minimumReleaseAgeExclude": [
+    "@playwright/test@1.64.0",
+    "playwright-core@1.64.0",
+    "playwright@1.64.0"
+  ],
+  "lock_changes": [
+    "root @playwright/test exact importer",
+    "new web importer: workspace client/protocol, exact React/types/Vite",
+    "Vite override 7.3.7; no vite@7.3.6 key remains"
+  ],
+  "install_delta_report": "+11 -2",
+  "scripts": "ignored; browser download not requested",
+  "native_check": "better-sqlite3 :memory: actual open/close after install and state refresh, tool stdout observed",
+  "limitations": [
+    "No full pre-install lock byte snapshot by author; baseline has hash. Delta described from current importers/pins/install log, not a claimed full historic semantic diff."
+  ]
+}

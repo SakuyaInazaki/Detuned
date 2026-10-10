@@ -1,0 +1,104 @@
+--- v1/m7-1a-task.md
++++ v2/m7-1a-task.md
+@@ -1,6 +1,6 @@
+ # M7.1-A 内部检查回执闭环与 schema6 维护任务候选
+ 
+-status: root_decisions_transcribed_pending_c2b_seal_m7_fresh_dispatch
++status: root_approved_pending_c2b_seal_m7_fresh_capture_dispatch
+ 
+ 仅 planning；本候选不授予产品写入或运行权限。C2B metadata/seal、M7 fresh 与 root dispatch 后才准实施。A 领域/协议/鉴权/日志/评审事实，B SQLite/生成结构/维护/迁移，D 独立回归与唯一串行运行窗。Web/browser、既有封存与旧三组历史 fixtures 保护。无需模型、VM、宿主、任意帖子执行、安装、全局配置或推送。
+ 
+@@ -58,7 +58,7 @@
+ 
+ D四个new资产：tests/fixtures/m7-schema5-baseline/database.sqlite、manifest.json、README.md、generate-v5.mjs；先核missing，不创建占位。M7 fresh之后且任何产品/schema改写之前，D用当前接受built runtime短流程生成含正式review/decision与待确认consumer的真实V5库，不SQL伪造formal。种子不创建blob附件。归档必要metadata，去全部有效credentials/secret；D基于实际FK提出无损脱密具体方案经root核准后capture。manifest绑定runtime/schema/hash/命令；常规回归直接复制fixture，不依赖旧Git/tmp/generator。B两个SQL/profile资产保持独占，四DB资产仅D写；capture不在C2B产品执行。
+ 
+-## 旧current-schema机械候选（待根定稿，未加入owner）
++## 旧current-schema机械适配（根批准精确B所有权）
+ 
+ 以下静态定位必然受真正current6影响；只改current输出/未知版本反例，保历史source5/旧fixture语义与旧case：
+ 
+@@ -74,4 +74,4 @@
+ - tests/integration/m6-schema5-maintenance-independent.test.ts:74 当前backup5（历史fixture与source语义保持）。
+ - tests/integration/m3-backup-recovery.test.ts:73 manifest mutation schemaVersion6目前当非法，6变合法需替换unsupported版本，不能删负例。
+ 
+-本列表只报告，不修改/扩大owner。仍需root授予这些精确机械接点后才可实施，禁止全仓替换所有5。
++根已批准上述11个额外existing路径归B，schema-generation已在B不重复计。授权scope仅当前target/header5→6、current反射常量V6、原非法未来6→7；保历史input/source/合法header5与原case意图，禁止全仓替换所有5。整个包仍待C2B seal/M7 fresh、真实V5 capture与root dispatch；此规划定稿不授予立即产品写入。
+--- v1/m7-1a-owner-candidates.json
++++ v2/m7-1a-owner-candidates.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "root_fixed_planning_pending_mechanical_test_ownership_c2b_seal_m7_fresh_dispatch",
++  "status": "root_approved_pending_c2b_seal_m7_fresh_capture_dispatch",
+   "existing": {
+     "packages/protocol/src/actors.ts": {
+       "owner": "A",
+@@ -108,6 +108,61 @@
+     "packages/core/src/services/admin-service.ts": {
+       "owner": "A",
+       "state": "existing"
++    },
++    "packages/storage-sqlite/tests/storage.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m3-space-export.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/contracts/m3-backup-cli.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/contracts/m3-offline-upgrade-contract.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m3-upgrade-independent.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m6-schema3-maintenance.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m6-schema4-maintenance.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m6-schema4-maintenance-independent.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m6-schema5-maintenance.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m6-schema5-maintenance-independent.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    "tests/integration/m3-backup-recovery.test.ts": {
++      "owner": "B",
++      "state": "existing",
++      "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
+     }
+   },
+   "new": {
+@@ -184,6 +239,6 @@
+     "D schema5真实来源必须fresh后且改写前由接受runtime生成；SQL冻结来源B使用，不以schema6生成器伪称V5。",
+     "readReviewStatusFacts变更覆盖knowledge共享事实；无需搜索route/client/tool产品改动。",
+     "review-request-records终态约束保留，run创建仅推进active request版本。",
+-    "旧current-schema机械测试候选仅task报告，尚未授权/加入owner。"
++    "root批准11个精确机械测试路径，schema-generation既有B路径不重复；整个包仍需seal/fresh/capture/dispatch。"
+   ]
+ }

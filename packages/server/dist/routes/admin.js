@@ -1,25 +1,11 @@
-import { randomBytes, createHash } from 'node:crypto';
 import { DetunedError, ErrorCode, CreateActorRequestSchema, CreateCredentialRequestSchema, CreateMembershipRequestSchema, PatchMembershipRequestSchema, CreateRedactionRequestSchema, } from '@detuned/protocol';
+import { validateNoBody } from '../utils/query.js';
 export const adminRoutes = async (app) => {
-    const authService = app.authService;
-    const storage = app.storage;
-    const idGen = app.idGen;
-    const clock = app.clock;
+    const adminService = app.adminService;
     const redactionService = app.redactionService;
     app.post('/admin/actors', { schema: { body: CreateActorRequestSchema } }, async (req, reply) => {
         const auth = req.auth;
-        authService.requireInstanceAdmin(auth);
-        const body = req.body;
-        const actorId = idGen.generateId('act');
-        const now = clock.nowIso();
-        const actor = {
-            id: actorId,
-            kind: body.kind,
-            display_name: body.display_name,
-            created_at: now,
-            disabled_at: null,
-        };
-        storage.createActor(actor);
+        const actor = adminService.createActor(auth, req.body);
         reply.status(201);
         return {
             api_version: '1',
@@ -29,57 +15,18 @@ export const adminRoutes = async (app) => {
     });
     app.post('/admin/credentials', { schema: { body: CreateCredentialRequestSchema } }, async (req, reply) => {
         const auth = req.auth;
-        authService.requireInstanceAdmin(auth);
-        const body = req.body;
-        const actor = storage.findActorById(body.actor_id);
-        if (!actor) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, 'Actor 不存在。', 404);
-        }
-        const rawToken = `detuned_tok_${randomBytes(24).toString('hex')}`;
-        const tokenHash = createHash('sha256').update(rawToken).digest('hex');
-        const credId = idGen.generateId('crd');
-        const now = clock.nowIso();
-        const credential = {
-            id: credId,
-            actor_id: body.actor_id,
-            token_hash: tokenHash,
-            allowed_space_ids: body.allowed_space_ids ?? ['*'],
-            capabilities: body.capabilities ?? ['read', 'write'],
-            expires_at: body.expires_at ?? null,
-            revoked_at: null,
-            created_at: now,
-        };
-        storage.createCredential(credential);
+        const data = adminService.createCredential(auth, req.body);
         reply.status(201);
         return {
             api_version: '1',
             request_id: req.id,
-            data: {
-                credential_id: credId,
-                actor_id: body.actor_id,
-                token: rawToken, // Returned only once at creation!
-            },
+            data,
         };
     });
-    const validRoles = ['observer', 'contributor', 'maintainer', 'owner'];
     app.post('/spaces/:space_id/memberships', { schema: { body: CreateMembershipRequestSchema } }, async (req, reply) => {
         const auth = req.auth;
         const { space_id } = req.params;
-        authService.requireSpaceAccess(auth, space_id, 'owner');
-        const body = req.body;
-        const actor = storage.findActorById(body.actor_id);
-        if (!actor) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, 'Actor 不存在。', 404);
-        }
-        const membership = {
-            space_id,
-            actor_id: body.actor_id,
-            role: body.role,
-            active: true,
-            reviewer_eligible: body.reviewer_eligible ?? true,
-            independence_group: body.independence_group ?? null,
-        };
-        storage.upsertMembership(membership);
+        const membership = adminService.createMembership(auth, space_id, req.body);
         reply.status(201);
         return {
             api_version: '1',
@@ -90,21 +37,7 @@ export const adminRoutes = async (app) => {
     app.patch('/spaces/:space_id/memberships/:actor_id', { schema: { body: PatchMembershipRequestSchema } }, async (req) => {
         const auth = req.auth;
         const { space_id, actor_id } = req.params;
-        authService.requireSpaceAccess(auth, space_id, 'owner');
-        const existing = storage.getMembership(space_id, actor_id);
-        if (!existing) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
-        }
-        const body = req.body;
-        const updated = {
-            space_id,
-            actor_id,
-            role: body.role ?? existing.role,
-            active: body.active !== undefined ? body.active : existing.active,
-            reviewer_eligible: body.reviewer_eligible !== undefined ? body.reviewer_eligible : existing.reviewer_eligible,
-            independence_group: body.independence_group !== undefined ? body.independence_group : existing.independence_group,
-        };
-        storage.upsertMembership(updated);
+        const updated = adminService.patchMembership(auth, space_id, actor_id, req.body);
         return {
             api_version: '1',
             request_id: req.id,
@@ -112,43 +45,25 @@ export const adminRoutes = async (app) => {
         };
     });
     app.delete('/spaces/:space_id/memberships/:actor_id', async (req) => {
+        validateNoBody(req.body, 'Delete membership');
         const auth = req.auth;
         const { space_id, actor_id } = req.params;
-        authService.requireSpaceAccess(auth, space_id, 'owner');
-        const existing = storage.getMembership(space_id, actor_id);
-        if (!existing) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
-        }
-        storage.upsertMembership({
-            ...existing,
-            active: false,
-        });
+        const data = adminService.deactivateMembership(auth, space_id, actor_id);
         return {
             api_version: '1',
             request_id: req.id,
-            data: { deactivated: true },
+            data,
         };
     });
     app.post('/admin/credentials/:id/revoke', async (req) => {
+        validateNoBody(req.body, 'Revoke credential');
         const auth = req.auth;
-        authService.requireInstanceAdmin(auth);
-        if (req.body !== undefined && req.body !== null) {
-            if (typeof req.body !== 'object' ||
-                Array.isArray(req.body) ||
-                Object.keys(req.body).length > 0) {
-                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Revoke 操作不接受请求体参数。', 400);
-            }
-        }
         const { id } = req.params;
-        const cred = storage.findCredentialById(id);
-        if (!cred) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, '凭据不存在。', 404);
-        }
-        storage.revokeCredential(id, clock.nowIso());
+        const data = adminService.revokeCredential(auth, id);
         return {
             api_version: '1',
             request_id: req.id,
-            data: { revoked: true },
+            data,
         };
     });
     app.post('/spaces/:space_id/redactions', { schema: { body: CreateRedactionRequestSchema } }, async (req, reply) => {

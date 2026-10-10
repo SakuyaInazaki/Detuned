@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"statuses":[500,500],"codes":["TEMPORARILY_UNAVAILABLE","TEMPORARILY_UNAVAILABLE"]}
+
+ ❯ tests/integration/m4-consumer-lifecycle.test.ts (2 tests | 2 failed) 145ms
+   × M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions 104ms
+     → expected [ 500, 500 ] to deeply equal [ 200, 200 ]
+   × M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential 40ms
+     → expected 404 to be 403 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  19:12:23
+   Duration  791ms (transform 225ms, setup 0ms, collect 419ms, tests 145ms, environment 0ms, prepare 40ms)
+

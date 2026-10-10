@@ -1,3 +1,4 @@
+import { LIST_LIMIT } from './request-policies.js';
 import { Type } from '@sinclair/typebox';
 export const ApiMetaSchema = Type.Object({
     truncated: Type.Boolean(),
@@ -12,7 +13,7 @@ export function createApiEnvelopeSchema(dataSchema) {
     }, { additionalProperties: false });
 }
 export const PaginationQuerySchema = Type.Object({
-    limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100, default: 20 })),
+    limit: Type.Optional(Type.Integer({ ...LIST_LIMIT })),
     cursor: Type.Optional(Type.String()),
 }, { additionalProperties: false });
 export const PostRefSchema = Type.Object({

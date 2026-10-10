@@ -1,0 +1,20 @@
+# M7.4-D A static handoff
+
+Source freeze: `scripts/integrations/claude-check-probe.mjs`, 44769 bytes, SHA256 `446d9036a157b7c5f0d036d4e0a90277f958423925a21dcc3427b8d3275591ba`.
+
+The original file is preserved in `before/claude-check-probe.mjs`; the local non-Git unified diff is `source.delta.diff`; `freeze.json` records byte checks. The four protected export ranges, original sandbox policy template and fixed native spawn arguments/environment are byte-identical. No Codex, Pi, product, dependency, existing test or normal documentation edits were made by A.
+
+## Implemented safety behavior
+
+- Production supervisor calls exported `registerOwnedMcpCandidate({candidatePID,nativePID,workerPGID,observeCandidate,observeConfirmed,assertActive})`. Actual `/bin/ps` query and actual current UID remain internal; no query/UID injection. The routine awaits candidate observer, performs exact positive PID/UID/direct native PPID/original worker PGID proof, awaits confirmed observer, checks final cancellation, then returns a frozen proof. It never signals, ACKs, imports or starts a host.
+- Source retains every syntactically trusted positive candidate before observing it. Candidate receipt, candidate observation, parent/group proof, confirmed observation, source confirmation and ACK are distinct facts. MCP independent groups remain rejected. Native permission binds the owned worker's private IPC ChildProcess PID to exact current UID, direct owned worker PPID and the original group. Worker registration binds direct supervisor PPID and detached group identity.
+- Cleanup keeps actual initializer/observer/registration/watch settlement, actual ChildProcess close, original authorized group absence and every candidate's exact positive PID absence separate. Candidate probes only use signal 0, never signal authority; unknown/present retains root. Every failed absence probe remains false. Empty received-candidate sets cannot override unknown initialization/group facts. Pre-bootstrap rejected worker cleanup uses its actual owned ChildProcess and reports unconfirmed group honestly.
+- Single source start is passed through private bootstrap IPC: work 50s, worker closure 60s, full supervisor 65s. Launcher installs its <=3s pre-ACK timer before filesystem import/write, and ACK switches only to the original 50s deadline. Supervisor 65s hard timer exists only inside explicit run, is cleared after finally/report; expiration exits failed, leaves missing report/unknown cleanup for independent external capture. No import-time timer is added.
+- Cancellation and actual elapsed/control deadline use distinct safe codes. Child spawn/stdin failures enter the original failure/finally path. Work promises are retained; worker settles retained work, attempts HTTP business drain, actual socket closure, app close and DB close independently under remaining closure budget. Original failure is preserved before cleanup errors.
+- Public report exposes issued fixed control subtype counts, safe stages/predicates/enums/counts and actual closure; no raw PID/PGID/path/error/native output. `prompt_sent:false` / `model_request_sent:false` describe the probe's fixed control allowlist, not host-internal auditing. Tool names enter public output only after exact catalogue validation. Output stays 0600 atomic/no-clobber.
+
+## Static limitation and checks not run
+
+A ran no syntax, source-noEmit, tests, build, native, version, account or model command. Hash/range/template comparisons are static author evidence only; D owns independent runtime verification and B owns independent review. No new acceptance result is claimed.
+
+A additionally confirmed and reported a pre-existing launcher entry defect: `await import(packages/mcp/dist/index.js)` leaves `process.argv[1]` pointing to the launcher, while built/source MCP main guards require the entrypoint URL. Thus import alone does not start the bridge. Root explicitly requested reporting without expanding scope; this freeze leaves that entry defect unchanged. Native successful catalogue should not be expected until a separately released narrow entry fix. No slower-start/auth/environment inference is made.

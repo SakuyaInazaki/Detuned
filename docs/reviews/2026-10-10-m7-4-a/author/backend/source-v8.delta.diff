@@ -1,0 +1,13 @@
+--- a/scripts/integrations/claude-check-probe.mjs
++++ b/scripts/integrations/claude-check-probe.mjs
+@@ -69,7 +69,9 @@
+ export async function runClaudeCheckProbe({binary,output}){
+  assert.equal(await fs.realpath(binary),FIXED_BINARY);const stat=await fs.stat(binary);assert.equal(stat.isFile(),true);assert.equal(stat.size,222245312);assert.equal(await hashFixedBinary(binary),FIXED_SHA);
+  try{await fs.lstat(output);throw Error('Output exists');}catch(error){if(error.code!=='ENOENT')throw error;}
+- const owned=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-checks-'));let app,db,native,forbidden,originalFailure;const children=new Map();const requests=[];
++ const createdOwned=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-checks-'));
++ const owned=await(async()=>{try{const canonical=await fs.realpath(createdOwned),info=await fs.lstat(canonical);assert.ok(info.isDirectory()&&!info.isSymbolicLink());assert.equal(info.mode&0o777,0o700);assert.equal(info.uid,process.getuid());return canonical;}catch(error){await fs.rm(createdOwned,{recursive:true,force:true}).catch(()=>{});throw error;}})();
++ let app,db,native,forbidden,originalFailure;const children=new Map();const requests=[];
+  const report={status:'passed',version_path:'2.1.282',binary_sha256:FIXED_SHA,model_calls:0,input_mode:'wrapped',tools:[],guard:{},checks:{},cleanup:{}};
+  const track=child=>{const state={error:false,promise:null};state.promise=new Promise(resolve=>{child.on('error',()=>{state.error=true;});child.once('close',(code,signal)=>{state.closed=true;state.code=code;state.signal=signal;resolve(state);});});children.set(child,state);return child;};
+  const close=async(child,group=false)=>{const state=children.get(child);if(!state.closed){try{if(group)process.kill(-child.pid,'SIGTERM');else child.kill('SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}const timer=setTimeout(()=>{if(!state.closed){try{group?process.kill(-child.pid,'SIGKILL'):child.kill('SIGKILL');}catch{}}},1000);try{await state.promise;}finally{clearTimeout(timer);}}return state;};

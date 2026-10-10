@@ -1,0 +1,15 @@
+# M7.4-E actual-pin 独立静审
+
+2026-10-10，零runtime。实际source37714B `aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430`；newtest `6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014`；capture `00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143`；plan `7d1c9e2aa9c9e223cd2edfb0b480c02a0c37620fb5f2af89a8677781ca27c239` 重算匹配ready。
+
+protected C.1 helper1015B/0202f11…e2acf1与before逐字节相同；C.1test81fed、Claude整scriptfd773与Dtest e6341均未变。源码差分仅实际production固定launcher factory/使用点、白名单目录及startup诊断；policy/env/fixed binary/五方法RPC deadline、40polls、75/85/90source与95outer保持，未新增HTTP/control或signal/ACK权限。
+
+factory内部固定built绝对路径与登记/ACK children，无任意entry/code输入；最早referenced<=3s timer先于fs import/登记。ACK成功后同workEnd timer unref，仅改own argv[1]后dynamic import，满足built main guard，无额外spawn/其它argv/env修改。production写launcher确实用此factory，import/factory调用不启动宿主。
+
+已对照固定337 ServerNotification与McpServerStatusUpdatedNotification schema：method为mcpServer/startupStatus/updated，status四固定枚举，failureReason只reauthenticationRequired。只精确detuned/owned thread进入公开诊断；thread响应前最多40条pending只保白名单值与内存thread用于之后exact匹配，响应后clear，不公开threadID。startup总计上限40、last与固定state count；未知值归固定unknown不回传原串。目录每原poll仅responses/last，形状enum/count、detuned精确match count、固定九名presence/missing、unexpected count及cursor bool；未知工具名不公开，report.tools只exact断言后固定九名。原1MiB native输入界限保持。诊断不证明未匹配通知不存在或给候选授权。
+
+CL01调用实际Codex factory，名单只读import原Claude exported pure nativeCheckNames（也是production Codex同源依赖），不误读Codex未export名、不扩大export。真实own detached Node经exactUID/direct父/原组查询；ACK前initialize后100ms无stdout/response，ACK后actual built initialize与exact九tools；EOF要求actualclose0/null、空stderr、PID/group absence，失败自有finally保unknown根，默认5秒/own4秒保持。合法fake token及1MiB UTF8 cap继承修后D真实契约，无HTTP工具/模型/native宿主调用。单case尚未运行，不由静审外推native成功。
+
+独立重算证明capture相对sealed C.1仅E证据路径与source SHA两行变化，authority/driver+outer exactproof/持久注册/ACK/每组独立清退/candidate presence-only/coverage/actualclose/unknown留证与originalfailure优先全字节保持。guard固定policy/minenv字节绑定复用，非新standaloneguard。最小gate仅source/capture syntax、新test source-noEmit、一file一case worker1串行；normal须root单独放行一次，失败不自动retry。
+
+未发现可行动static blocker。建议root按条件释放最小local gates；本审查不运行或授权runtime，不称full/build/Linux/model/profile/四宿主认证。

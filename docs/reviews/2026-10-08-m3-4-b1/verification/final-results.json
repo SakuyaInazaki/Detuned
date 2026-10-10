@@ -1,0 +1,57 @@
+{
+  "status": "parentaccepted",
+  "date": "2026-10-08",
+  "scope": "M3.4-B.1 safe request logs, health hints and instance administrator diagnostics",
+  "formal": {
+    "tests_passed": 500,
+    "tests_total": 500,
+    "files_passed": 63,
+    "files_total": 63,
+    "new_tests_included": 15,
+    "new_composition": {
+      "A": 6,
+      "B": 4,
+      "C": 5
+    }
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4gate + 24 original retained probes + approved A.1 scenario11 adapter",
+    "original_scenario11": "not rerun, old failed default seed evidence unchanged"
+  },
+  "attempts": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "new_targeted_first": {
+      "passed": 14,
+      "total": 15,
+      "cause": "C oracle used thread_id instead of registered id route parameter label; product emitted exact route template"
+    },
+    "corrected_case": {
+      "passed": 1,
+      "skipped": 4
+    },
+    "built_cli_independent_probe": {
+      "passed": 2,
+      "total": 2,
+      "not_formal_or_current29": true
+    }
+  },
+  "old_review_files_protected": 4253,
+  "source_config_test_files": 221,
+  "tracked_dist_files": 208,
+  "untracked_dist_files": 152,
+  "inherited_40MiB_formal_runs": 1,
+  "cleanup": "owned workers/CLI/private dirs0; finite known token literal scan no hits",
+  "limitations": [
+    "Safe request logs are best-effort and drop under bounded pressure; custom synchronous sink must not block event loop",
+    "Health is a point hint, not integrity/FK/whole schema audit or readiness lease",
+    "WAL NOOP/frame/file samples are not atomic whole-instance snapshot, do not infer reader cause or promise WAL recovery",
+    "No B2 bounded shutdown/drain/strict lock release certification; CLI signals here only private cleanup",
+    "No 600s/model/multi-host or additional material experiment"
+  ],
+  "accepted_date": "2026-10-08"
+}

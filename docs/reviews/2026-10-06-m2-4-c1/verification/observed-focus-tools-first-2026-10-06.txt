@@ -1,0 +1,20 @@
+{
+  "passes": false,
+  "results": [
+    {
+      "id": "FC08-Pi-client",
+      "actual_installed_validator_execute": true,
+      "focused_and_omitted": true,
+      "full_Page_schema_strict_emitted_ISO_local_registry": true,
+      "eight_tools": true
+    },
+    {
+      "id": "FC08-MCP",
+      "actual_stdio_focus_and_omitted": true
+    }
+  ],
+  "error": {
+    "message": "Command failed: /opt/homebrew/Cellar/node/26.3.0/bin/node packages/cli/dist/index.js --json context spc_fc_00002 --focus-thread thd_fc_00008 --max-bytes 4096\nerror: required option '--space <space_id>' not specified\n",
+    "stack": "Error: Command failed: /opt/homebrew/Cellar/node/26.3.0/bin/node packages/cli/dist/index.js --json context spc_fc_00002 --focus-thread thd_fc_00008 --max-bytes 4096\nerror: required option '--space <space_id>' not specified\n\n    at genericNodeError (node:internal/errors:998:15)\n    at wrappedFn (node:internal/errors:543:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:509:20)\n    at maybeClose (node:internal/child_process:1108:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)"
+  }
+}

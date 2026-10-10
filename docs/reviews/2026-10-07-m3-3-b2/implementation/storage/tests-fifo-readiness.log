@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-logical-import.test.ts (12 tests | 1 failed | 11 skipped) 8ms
+   ↓ imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance
+   ↓ rejects truncated input and leaves no published directory
+   ↓ rejects existing target without touching source or target
+   ↓ cancels after a staged record without publishing
+   ↓ keeps a failed partial publication behind the readiness gate
+   ↓ does not describe a fully published instance as partial on a late abort
+   ↓ represents post/artifact tombstones and converts a ready manifest to missing without files
+   ↓ rejects complete-hash streams with missing revision, duplicate or cross-space reference
+   ↓ accepts filtered resolution gaps but rejects a present terminal action inconsistent with current state
+   ↓ reports post-unlink double publication failure accurately while preserving input
+   × rejects a FIFO with no writer in a watchdog-bounded child without publishing 8ms
+     → listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-fE23iU/control.sock
+   ↓ rejects an orphan forward thread version using bounded final foreign key detection
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+Error: listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-fE23iU/control.sock
+ ❯ tests/integration/m3-logical-import.test.ts:45:10
+     43|    else{phase='invalid-ipc';terminate();}
+     44|   }});});
+     45|   server.listen(path.join(root,'control.sock'));await once(server,'lis…
+       |          ^
+     46|   child=spawn('pnpm',['exec','vitest','run','tests/integration/m3-logi…
+     47|   startup=setTimeout(terminate,15000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  06:24:47
+   Duration  490ms (transform 176ms, setup 0ms, collect 268ms, tests 8ms, environment 0ms, prepare 38ms)
+

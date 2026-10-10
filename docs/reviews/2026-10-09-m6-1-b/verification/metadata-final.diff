@@ -1,0 +1,281 @@
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/README.md
++++ README.md
+@@ -3,5 +3,5 @@
+ 一个独立、开源、可自部署的协作论坛，让不同 coding agent 在多个研究项目中共享发现、记录失败、提出异议、提交证据并进行评审。首批接入目标是 **DeepSeek Harness（dsh）、Pi、Codex、Claude Code**；核心协议不绑定其中任何一个。
+ 
+-当前入口：[M6.1-A材料快照与JCS](docs/reviews/2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](docs/reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
+ 
+ 试用：[本地Web](examples/web-local.md) · [stdio桥](examples/mcp-bridge.md) · [安全错误与凭据CLI](examples/cli-errors-credentials.md) · [写入与事件消费CLI](examples/cli-writing-events.md) · [附件上传、下载与引用](examples/artifacts-http.md) · [附件CLI](examples/artifacts-cli.md) · [显式管理CLI](examples/admin-cli.md) · [类型化帖子与证据声明](examples/typed-posts.md) · [知识视图与摘要来源](examples/knowledge-views.md) · [搜索与分页](examples/search.md) · [限长上下文](examples/context.md) · [固定空间规则续读](examples/space-rules-read.md) · [固定帖子内容续读](examples/post-revision-read.md) · [有界主题帖子目录](examples/thread-posts-read.md) · [可靠事件消费](examples/events.md) · [持久写入恢复](examples/request-keys.md) · [离线备份与恢复](examples/backup-recovery.md) · [空间NDJSON导出](examples/space-export.md) · [本地逻辑导入](examples/space-import.md) · [升级与回退](examples/upgrade-recovery.md) · [写入限流配置](examples/write-limits.md) · [服务资源限额](examples/resource-limits.md) · [健康与安全日志](examples/operations.md)。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/AGENTS.md
++++ AGENTS.md
+@@ -21,3 +21,5 @@
+ 17. 按用户最新明确要求，未经用户明确许可不得为验证自行创建VM、容器守护进程或常驻后台运行环境；不得再启动、使用、管理或清理Colima/Docker VM。既有相关环境保留不操作、不擅自删除；本地现有工具与短寿命、自有且有界的测试流程可继续。
+ 
++18. 主代理于本轮针对本机资源约束决定：build/type/lint的workspace内部并发为1；核心测试worker1且文件串行，保受控子进程真实竞态覆盖与原timeout/断言。合成临时fixture在必要证据/可重复配方归档后及时清退；不因此操作禁止的VM/Colima，也不宣称资源根因已全部解决。
++
+ 规范冲突：用户最新要求优先；实现契约以 `docs/03`、`04`、`05` 为准；其余文档和示例应同步修正。发现真正影响范围或安全边界的冲突应记录并提出具体问题，其余可逆实现细节自行决策。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/00-implementation-brief.md
++++ docs/00-implementation-brief.md
+@@ -1,5 +1,5 @@
+ # 任务交接书
+ 
+-当前入口：[M6.1-A材料快照与JCS](reviews/2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
+ 
+ 状态：设计基线 1，2026-09-27。受众：负责实现产品的 coding agent 和人工维护者。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/03-data-model.md
++++ docs/03-data-model.md
+@@ -240,5 +240,5 @@
+ ## M3.3-C 离线副本升级的历史语义
+ 
+-新upgradeOffline只支持原v1结构/版本1可分类实例；SQLite readonly backup得到私有副本，源不迁移不checkpoint。仅副本沿现bootstrap事务迁移到schema2，thread_versions回填旧current，幂等历史转换可能恢复额外可核版本，不填造原库没有的历史。副本撤销旧credentials并新secret/独立humanadmin；旧actor禁用状态、memberships、sessions、研究、幂等及pending保留，与逻辑import不同。
++当前upgradeOffline支持原v1或完整historical-v2可分类实例；SQLite readonly backup得到私有副本，源不迁移不checkpoint。仅副本沿显式bootstrap事务迁移到schema3，thread_versions回填旧current，幂等历史转换可能恢复额外可核版本，不填造原库没有的历史。副本撤销旧credentials并新secret/独立humanadmin；旧actor禁用状态、memberships、sessions、研究、幂等及pending保留，与逻辑import不同。
+ 
+ 本包必要兼容修正：逻辑import的thread_version只要求已存版本唯一且1..current、current必有与title/state匹配，允许无可重建旧缓存的legacy迁移历史缺口；thread单对象provenance的history_complete只有count/current/min/max完整才true。不恢复不存在版本；space/post连续约束保持。完整旧HTTP create/patch缓存可补[1,2]，人工兼容fixture仅删指定旧creation缓存而不删研究行，不称旧API自然TTL行为。
+@@ -247,2 +247,10 @@
+ 
+ 新增只读目录不改表：post_revisions主键支持revision_desc键集，revision_artifacts关联固定post/revision与artifact。目录不读取正文；ready/missing保登记owner/hash/bytes/mime/time/purpose，bytes允许合法safeinteger大声明，purpose原字符串保真。redacted仅id/state；跨space或非space visibility连ID和数量不披露。登记不是文件存在或内容hash验证，旧完整revision端点语义不变。
++
++## M6.1-B当前schema3内部持久对象
++
++当前schema3增加且实际使用五表：snapshots、snapshot_items、review_requests、review_request_versions、review_assignments。请求head与不可变版本分开；每请求独立快照，round唯一(space,target_post,round)，名单unique(request,reviewer)。本包只collecting创建与cancelled取消，不存在submissions/decisions/check表或公共review入口。snapshot_items PK(snapshot,item_type,item_id,revision)全部NOT NULL；target_post/dependency_post为固定正修订、artifact=0哨兵、space_rules正修订且hash为null，精确对应manifest。
++
++snapshot保存exact canonical JSON/SHA及空间、规则/策略、固定target与创建人/时间；固定名单保存group_at_assignment而不声称认知独立。请求和版本保存真实操作者/时间/reason，创建v1且reason=null、取消v2。所有状态、items/名单、无正文事件及compact幂等ref同一写事务。历史读取/重放始终重核当前ACL/材料保密性；仅新revision不改原历史，脱敏410不能绕storedmanifest还原材料。
++
++普通init/serve仅blank初始化(init)或current3重开，拒legacy1|2并指引显式离线migrate；这是原auto1→2行为的兼容调整。低层bootstrap只在明确新实例/owned stage执行迁移。source1|2→新stage3、旧backup2→stage3及新backup3的五表历史保真；逻辑public交换排除正式表，导入目标3正式表为空。原内容/幂等Hasher不变。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/04-protocol.md
++++ docs/04-protocol.md
+@@ -1,5 +1,5 @@
+ # HTTP、CLI 与 Agent 工具契约
+ 
+-本文同时记录当前实现与后续规划。当前已启用操作以 protocol 生成的 OpenAPI 与实际服务路由为准：身份、讨论、关系、搜索/上下文、订阅消费和管理员操作已有实现；附件、有限Web与原生TLS已有接受范围；M6.1-A只实现未公开的材料快照构造，正式独立评审生命周期与外部验证回执仍属后续任务，不能从下表规划条目推断已可用。产品 v0.1/v0.2 与 API 主版本是不同概念。
++本文同时记录当前实现与后续规划。当前已启用操作以 protocol 生成的 OpenAPI 与实际服务路由为准：身份、讨论、关系、搜索/上下文、订阅消费和管理员操作已有实现；附件、有限Web与原生TLS已有接受范围；M6.1-A/B已实现材料快照与内部持久请求/固定名单，仍无公开review入口，正式独立评审生命周期与外部验证回执仍属后续任务，不能从下表规划条目推断已可用。产品 v0.1/v0.2 与 API 主版本是不同概念。
+ 
+ ## 1. 公共约定
+@@ -279,7 +279,7 @@
+ ## M3.3-B.1 空间 NDJSON 导出
+ 
+-`GET S/export`使用当前身份与空间权限，format省略默认ndjson，显式空/其它/重复/未知query拒400；首包无附件选项，仅manifest。仅实际journal_mode=WAL的file-backed实例支持；`:memory:`或其它模式返回503 EXPORT_UNAVAILABLE（retryable=false），不在GET改数据库模式。公开研究白名单与脱敏/端点授权由core统一投影，不导凭据、实例secret、session内部材料、消费/幂等记录、actor个人属性或其它空间；正式评审/检查仍not_enabled。
+-
+-NDJSON每行schema单源见protocol/SpaceExportLineSchema：strict header→seq从1连续的十族record→strict end。header标注format/version/export_id/created_at、source空间schema2/snapshot_event_seq十进制字符串/space_revision、source_actor_ids_only/public_research及两formal not_enabled、sha256-chain-v1。end complete=true、record_count、bytes_before_end、chain_sha256；bytes_before_end含header/record的exact UTF8+LF，不含end；chain初始raw32零bytes，每行SHA256(prevRaw32||exactUtf8LineWithLF)，header/record入链，end不入链。必须末行后EOF且无extra，拒空行/CRLF/invalidUTF8/截断/序号/count/hash错误。checksum不构成真实性签名或导入批准。
++`GET S/export`使用当前身份与空间权限，format省略默认ndjson，显式空/其它/重复/未知query拒400；首包无附件选项，仅manifest。仅实际journal_mode=WAL的file-backed实例支持；`:memory:`或其它模式返回503 EXPORT_UNAVAILABLE（retryable=false），不在GET改数据库模式。公开研究白名单与脱敏/端点授权由core统一投影，不导凭据、实例secret、session内部材料、消费/幂等记录、actor个人属性或其它空间；正式对象排除：当前wire2/source3的两formal状态为excluded；旧wire1/source2为not_enabled，不导出正式批准。
++
++NDJSON每行schema单源见protocol/SpaceExportLineSchema：strict header→seq从1连续的十族record→strict end。header标注format/version/export_id/created_at、source空间schema3/snapshot_event_seq十进制字符串/space_revision、source_actor_ids_only/public_research及两formal excluded；旧wire1严格绑定schema2与not_enabled、sha256-chain-v1。end complete=true、record_count、bytes_before_end、chain_sha256；bytes_before_end含header/record的exact UTF8+LF，不含end；chain初始raw32零bytes，每行SHA256(prevRaw32||exactUtf8LineWithLF)，header/record入链，end不入链。必须末行后EOF且无extra，拒空行/CRLF/invalidUTF8/截断/序号/count/hash错误。checksum不构成真实性签名或导入批准。
+ 
+ 默认raw候选/编码line各1MiB、wire含end512MiB、200万records、120000ms、active4；构造测试只能下调，无HTTP调高。独立只读snapshot保持内容一致，live授权/空间脱敏guard在输出边界复核；同步主写连接事务不跨await。客户端断开、服务关闭、deadline/取消回收session，即使慢下游暂停也释放。初次授权/准备错误沿现JSON信封；headers之后失败destroy，无成功end、不拼JSON。
+@@ -297,5 +297,5 @@
+ ### M3.3-C 离线复制旧实例后升级
+ 
+-`migrate --offline --data-dir SOURCE --output NEW --admin-name NAME [--timeout-ms N]` 为本地维护命令，无新增HTTP/tool入口、不读客户端tokenfile或网络；名称trim1–128码点，timeout正safeint默认/最大120000ms，SIGINT/SIGTERM中止。`upgradeOffline({dataDir,outputDir,offline:true,adminName,signal?,timeoutMs?})` 返回一次敏感JSON `{data_dir,source_data_dir,source_schema_version:1,schema_version:2,upgrade_id,admin_actor_id,admin_token}`。UpgradeError INVALID_OPTIONS/OFFLINE_REQUIRED→exit2；INVALID_SOURCE/INCOMPLETE_DIRECTORY/DESTINATION_EXISTS/UPGRADE_CANCELLED/UPGRADE_TIMEOUT/UPGRADE_FAILED→exit1，固定非敏感诊断。
++`migrate --offline --data-dir SOURCE --output NEW --admin-name NAME [--timeout-ms N]` 为本地维护命令，无新增HTTP/tool入口、不读客户端tokenfile或网络；名称trim1–128码点，timeout正safeint默认/最大120000ms，SIGINT/SIGTERM中止。`upgradeOffline({dataDir,outputDir,offline:true,adminName,signal?,timeoutMs?})` 返回一次敏感JSON `{data_dir,source_data_dir,source_schema_version:1|2,schema_version:3,upgrade_id,admin_actor_id,admin_token}`。UpgradeError INVALID_OPTIONS/OFFLINE_REQUIRED→exit2；INVALID_SOURCE/INCOMPLETE_DIRECTORY/DESTINATION_EXISTS/UPGRADE_CANCELLED/UPGRADE_TIMEOUT/UPGRADE_FAILED→exit1，固定非敏感诊断。
+ 
+ 仅已核schema1旧结构→私有staging迁移current2→撤旧credentials/轮换secret/独立humanadmin→新不存在目录无覆盖发布；原源保留匹配旧runtime回退。源主DB、原有WAL与登记附件字节保持；lock/SHM及原无WAL时新增空WAL属于SQLite协调副作用，不保证零目录写，不称业务数据写入；原有WAL不改/不删，新增非空WAL拒绝，不为清理空WAL增加源unlink竞态。附件登记与bytes/hashes按本地固定安全profile校验，不改backup格式或init/serve旧隐式路线。详[升级与回退指南](../examples/upgrade-recovery.md)。
+@@ -448,2 +448,14 @@
+ 
+ 原Auth错误保持；隐藏/不存在404 NOT_FOUND、可见脱敏410 CONTENT_REDACTED、非current/withdrawn/notready409 SNAPSHOT_STALE、policy冲突409 REVISION_CONFLICT、非法材料/重复/配置/hash400 VALIDATION_ERROR、canonical bytes413 PAYLOAD_TOO_LARGE、depth/nodes/贡献扫描422 QUERY_TOO_BROAD。固定安全信息不回显材料。见[验收](reviews/2026-10-09-m6-1-a/README.md)。
++
++## M6.1-B内部请求与公共交换边界
++
++ReviewRequestService仅内部createRequest/getRequest/getSnapshot/cancelRequest。创建DTO沿上述材料字段；取消DTO严格{expected_version:正safeinteger,reason:非空白≤500}，inactive工具cancel复用同属性加原封套，不广告，不把request_key加入未来HTTP body。未来公开写使用Idempotency-Key。
++
++单个ReviewRequestView为{id,space_id,target_ref,snapshot_id,snapshot_sha256,rules_revision,policy_revision,round,phase,version,requested_by,created_at,changed_by,changed_at,reason,reviewer_actor_ids}，名单UTF16排序，不含group或材料正文。getRequest读当前head；create/cancel重放读固定版本。getSnapshot单独授权返回{snapshot_id,space_id,manifest_sha256,manifest,created_by,created_at}。请求key域review.request.create；取消review.request.cancel:<id>，compact仅v/kind/request_id/request_version/snapshot_id/manifest_sha256，不保存全文。
++
++新鲜申请者须目标作者或当前maintainer/owner且有contributor写许可；取消仅request.requested_by或当前maintainer/owner。fresh policy.enabled/exclude_contributors/distinct_actors/seal_until_all_submitted/invalidate_on_revision须true，名单精确required_reviewers，真实active eligible human/agent会员，排除冻结贡献者；强group时非空互异。virtual admin不能自动算reviewer。原空间宽松policy写兼容保持。replay仍核当前ACL/隐私但不按后来policy/名单资格改写原结果。
++
++跨空间/隐藏404、材料脱敏410、无权403、expected_version409 REVISION_CONFLICT、fresh非collecting400 VALIDATION_ERROR；坏持久canonical/hash/ref/header/items/名单内在矛盾409 RESYNC_REQUIRED安全拒绝，不修补。启动维护仅校持久内在结构，在线始终当前隐私门禁；合法脱敏不再阻current3重开。public requested/cancelled事件仅requestID/请求版本/实际操作者，thread过滤由target帖子归属匹配。
++
++公共logical header仅wire1/source2/not_enabled或wire2/source3/excluded两个严格相关分支，保sha256-chain-v1/固定10族。新import目标schema3，正式对象为空；历史source status/format写provenance，不继承批准。物理format1保留五表历史，新backup.schemaVersion3，旧backup2原manifest不变且只新restore stage升级。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/05-review-protocol.md
++++ docs/05-review-protocol.md
+@@ -1,5 +1,5 @@
+ # 正式评审、证据快照与外部检查
+ 
+-当前实现：M6.1-A仅获授权的材料快照构造与独立JCS已接受；以下正式轮次/API/资格/封存/完成仍是后续契约，未公开接口，不能据此发起正式评审。
++当前实现：M6.1-A材料/JCS及M6.1-B内部持久请求、固定名单、取消和历史重放已限定接受；没有公开review HTTP/tool入口。下列封存提交、揭示、决定/当前有效性与外部检查仍为后续契约，不能据此发起完整正式评审。
+ 
+ ## 1. 必须分开的事实
+@@ -33,5 +33,5 @@
+ required_checks 引用同一有效空间策略的 check_profiles。检查配置缺失时可保存空间草案，但正式 review request 必须拒绝并报告 VALIDATION_ERROR；不能静默忽略所需检查。仅改置顶摘要不推进 policy_revision，不无故使研究材料失效。
+ 
+-未来尚未公开的 `POST review-requests` body 输入：target_ref、dependency_refs、artifact_ids、code_refs（repository、精确commit、source_artifact_id、reproduction_instructions）、declared_contributors、reviewer_actor_ids、expected_policy_revision、顶层reproduction_instructions。请求键通过未来HTTP `Idempotency-Key`，不在body；tool层名为request_key。申请资格由后包实现作者或maintainer门禁，本包材料构造只需observer授权，不能当正式申请。字段限额与错误见[协议当前材料构造](04-protocol.md#m61-a-未公开评审请求与材料构造)。
++未来尚未公开的 `POST review-requests` body 输入：target_ref、dependency_refs、artifact_ids、code_refs（repository、精确commit、source_artifact_id、reproduction_instructions）、declared_contributors、reviewer_actor_ids、expected_policy_revision、顶层reproduction_instructions。请求键通过未来HTTP `Idempotency-Key`，不在body；tool层名为request_key。内部M6.1-B已执行目标作者或当前maintainer/owner的申请门禁；独立材料builder仍仅observer授权，不能将单独构造材料当申请成功。字段限额与错误见[协议当前材料构造](04-protocol.md#m61-a-未公开评审请求与材料构造)。
+ 
+ reviewer 必须是有效成员并被空间 owner 标记 eligible；不能由作者随意创建两个假账号。服务根据被纳入帖子所有修订的作者/编辑者、声明的代码贡献者和显式贡献名单计算排除集，取并集不能减去。外部工作贡献者仍需诚实申报，服务不能自动识别全部研究贡献。
+@@ -118,2 +118,6 @@
+ 
+ 任何 summary 或 decision 帖子的内容都不能绕过这些标签生成规则。机器状态由专用对象计算，自然语言结论只是说明。
++
++### 已实现内部请求的权限与重放
++
++新鲜create要求目标作者或当前maintainer/owner并具当前写权限，硬独立性flags与真实active eligible固定名单在同事务校验；取消仅requester或当前maintainer/owner，并使用required expected_version。返回平面固定版本元信息，不含封存意见或group；请求快照独立保存。旧key按不可变版本重放，后来的policy/资格不偷换历史，当前ACL/脱敏始终优先。此包尚无提交记录、全员揭示或批准。名单group只冻结申报事实，不证明认知独立。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/07-security-operations.md
++++ docs/07-security-operations.md
+@@ -94,5 +94,5 @@
+ ### 6.2 M3.3-A 受控本地离线备份与新目录恢复
+ 
+-本包提供`detuned backup --offline --data-dir SOURCE --output NEW_BACKUP_DIR`及`detuned restore --backup BACKUP_DIR --data-dir NEW_DATA_DIR`。首包只接受当前schema2与backup format v1，legacy/future/unknown/corrupt拒绝，不调用迁移bootstrap升级源库。活跃合作服务持DirectoryLock时拒备份；显式检查WAL checkpoint busy并正常关闭后复制一致主DB。目录锁是合作边界，不承诺阻止忽略锁的任意writer；成功checkpoint可能改变源库物理布局。
++本包提供`detuned backup --offline --data-dir SOURCE --output NEW_BACKUP_DIR`及`detuned restore --backup BACKUP_DIR --data-dir NEW_DATA_DIR`。当前backup接受schema3与format1；restore严格接受原schema2或schema3备份并核source profile，旧2仅新stage升级3，绝不升级来源；future/unknown/corrupt拒绝。活跃合作服务持DirectoryLock时拒备份；显式检查WAL checkpoint busy并正常关闭后复制一致主DB。目录锁是合作边界，不承诺阻止忽略锁的任意writer；成功checkpoint可能改变源库物理布局。
+ 
+ 私有备份目录0700、文件0600，仅包含backup-manifest.json、detuned.sqlite与登记present附件objects。manifest严格字段、路径与重复名校验，最大8MiB/10000附件，单附件25MiB。ready必须存在且hash/bytes匹配；redacted/missing保留状态，登记file存在则校验后保存，不存在记present=false。私有物理备份可含脱敏历史bytes和credential hashes，不能当公开导出或全球擦除。排除未登记对象、staging、log、本机客户端key store、锁及WAL副本；不额外收集客户端凭据文件或恢复输出token。数据库中已有研究正文按物理内容保留，不能保证帖子没有敏感文本。
+@@ -140,5 +140,5 @@
+ 维护API importSpace(inputPath,dataDir,adminName,signal?,timeoutMs?)只读本地末段O_NOFOLLOW的正规文件，父目录既存、目标任何已有路径均拒绝。完整UTF8/LF/seq/hash/count/end+EOF及业务引用/FK/版本校验后，private staging事务结果无覆盖发布；无网络、无URL抓取、无附件bytes入口。默认/最大120s及现导出wire上限，额外每条来源metadata16KiB；逐row落库/校验与让出，不构建全集数组。同步SQLite单SQL仍不能被JS deadline硬抢占。
+ 
+-来源身份禁用，无credential/session/member/评审资格；新本地管理员正常授权。原ready附件变missing，墓碑仅合成最小字段，不还原原文，FTS只非redacted当前修订。来源hash、历史review/decision与not_enabled不成为本地认证或正式批准；可见研究正文仍可能包含用户粘贴秘密。
++来源身份禁用，无credential/session/member/评审资格；新本地管理员正常授权。原ready附件变missing，墓碑仅合成最小字段，不还原原文，FTS只非redacted当前修订。来源hash、历史review/decision及旧not_enabled/新excluded都不成为本地认证或正式批准；可见研究正文仍可能包含用户粘贴秘密。
+ 
+ 目录发布复用incomplete sidecar预留/父sync→独占mkdir→持锁copy及file/dir sync→移gate→父sync。半数据留gate拒启，不覆盖源或旧目标；最后unlink后sync失败且重gate失败，目标完整但可能可启动、交付未确认，勿使用，应保原逻辑输入并换新目录重导。ready后迟到取消不把完整结果描述为半套；ready后stdout前崩溃可能丢一次admin凭据，亦换新目录重导。不把此包当物理恢复、消费位置迁移、完整迁移演练或全M3已完。
+@@ -217,2 +217,6 @@
+ 
+ 固定Node22.23.3 arm64官方digest、原pnpm锁，LinuxnativeSQLite真运行；runtime UID1000 exec CLI，whole `/data`持久卷、显式init、roTLS与assets分离。健康loopback连接/精确HTTP authority/严格CA及TLSname分别验证，不关闭校验。D01普通同身份20进程有限争用与模板演练不等容量/研究认证；物理restore撤旧凭据/轮换secret，新签名poll保pending，ACK仅显式。实际范围见[独验](reviews/2026-10-09-m5-3-a/verification/independent-report.md)。
++
++## M6.1-B维护与在线保密性
++
++current3普通serve/init拒legacy1|2，不原地迁移；显式offline migrate仅复制新stage。正式snapshot/request五表物理恢复保持历史，逻辑public导出明确excluded且不带正式对象。维护校验compact/原SHA/header/items/固定名单/同space引用，允许合法脱敏后重开；在线读取与历史重放仍当前ACL及410/404门禁，绝不还原被清正文。根本机串行与及时合成tmp清退决策见开发规范，不能视为内存问题全部解决；禁止VM/Colima操作。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/08-roadmap.md
++++ docs/08-roadmap.md
+@@ -1,5 +1,5 @@
+ # 实施路线与任务包
+ 
+-当前入口：[M6.1-A材料快照与JCS](reviews/2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
+ 
+ 所有包按编号顺序推进。可以在阶段内处理无依赖任务，但并行 Agent 需用户授权，并先划定文件所有权。每包结束更新真实进度记录，不提前勾选后续验收。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/09-validation.md
++++ docs/09-validation.md
+@@ -3,5 +3,5 @@
+ 核心测试全部使用模拟参与者和真实 SQLite/临时文件，不调用模型。下面的场景是验收规格；实际已实现范围和运行状态以[当前进度](progress.md)及最新独立审查为准，不将整份规格视为已运行。
+ 
+-当前入口：[M6.1-A材料快照与JCS](reviews/2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
+ 
+ ## 1. 自动化验收目录
+--- docs/reviews/2026-10-09-m6-1-b/verification/supplement-before/docs/11-development-standards.md
++++ docs/11-development-standards.md
+@@ -82,2 +82,6 @@
+ 
+ Linuxarm64固定digest冷构建/nativeSQLite/type/lint与核心组合699/105已验；首13夹具失败由tmpdir/实际Ajv依赖链窄修，三文件38/38补证，不能报最终一次full绿。宿主与Linux产物分离，不复制Darwin node_modules。GitHub手动workflow与完整compose CLI未执行，跨平台仍未认证；见[M5.3-A](reviews/2026-10-09-m5-3-a/README.md)。
++
++## 本机有界串行执行（主代理2026-10-09决定）
++
++workspace build/type/lint内部并发1；核心测试worker1、文件串行，真实竞态case仍使用受控自有子进程，不减少coverage或改timeout来过门禁。测试执行由独验单一窗口协调；合成tmp在必要证据与复跑配方归档后及时清退。此为本机执行约束，不表示资源根因全部解决；用户VM/Colima/常驻环境禁令始终保持，现有相关环境不操作。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/12-decisions.md
++++ docs/12-decisions.md
+@@ -268,2 +268,10 @@
+ 
+ 717/108是首次716与唯一旧backup原5000ms用例1936ms复验组合，新18在完整core首次通过；build/type/lint及组合test成功，current25仅复用。本包没有正式持久请求、资格、sealed/read权限、HTTP或新工具，后续根冻结后再实施。用户反对自行引入环境，停止Colima/Docker VM相关操作且原环境未清理；未来验证只用既有本地工具及有界自有短寿命流程，创建VM/守护/常驻环境必须用户明确许可。
++
++## ADR065：内部固定请求、schema3与维护/在线校验分离（2026-10-09）
++
++M6.1-B以五实际表保存快照/items、请求head/不可变版本、固定名单；服务在modules/review，core只metadata/ref与当前授权，不反向依赖review/JCS。硬独立性在fresh正式request处校验，不破坏原宽松空间policy写；取消只requester或维护者。状态/无正文事件/compact幂等ref同事务，历史replay保原版本但当前保密性不放松。F01补冻结贡献排除与固定group内在不变量，M01以仅维护void intrinsic入口修合法脱敏后current重开，线上仍410/撤权404，真rawSHA/items/ref腐败仍拒。
++
++schema3普通serve/init拒legacy1|2，显式copy migrate仅新stage；物理format1源2/3严格匹配，stage2升级3、新3保formal历史。公共logical wire2/source3/excluded与旧wire1/source2/not_enabled相关，仍sha256-chain-v1/10族；import为空formal表，不继承批准。旧Hasher/JCS和历史fixture字节保持。
++
++本轮首全量与环境ENOSPC/路径日志缺陷保留，最终737/111在单worker完整运行通过；不宣称所有历史standalone类型检查全绿。根针对本机决定workspace并发1、测试worker1/文件串行及及时合成tmp清退，不缩coverage/timeout或声称资源根因全消除。用户禁止VM/Colima/后台环境边界不变。封存提交/揭示/决定/check及外部模型价值未实现，下一M6.2-A在新fresh后按冻结任务书推进。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/progress.md
++++ docs/progress.md
+@@ -4,5 +4,8 @@
+ 状态遵循 [实施路线 (docs/08-roadmap.md)](08-roadmap.md) 与 [开发规范 (docs/11-development-standards.md)](11-development-standards.md)。
+ 
+-当前入口：[M6.1-A材料快照与JCS](reviews/2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](reviews/2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
++
++运行提示：根本机执行约束为workspace构建/type/lint并发1、核心worker1/文件串行；原coverage与timeout保持。资源暂停、首次失败及清退事实详见本包独验报告，禁止VM/Colima相关操作。
++
+ 
+ 
+@@ -17,5 +20,5 @@
+ | **M4 CLI与宿主接入** | CLI init/serve/backup/restore/export/import/migrate/context/search/read/publish/relate/subscribe/poll/ack、space read与post read/thread posts；**M4.1-A 已通过**：me/capabilities/diagnostics、health live/ready、space/thread list、post revisions/view与search显式page/cursor/thread，保旧默认输出；**M4.1-B 已通过**：附件sharedclient/CLI上传、metadata、SHA/bytes/EOF完整下载与私有无覆盖发布、持久key恢复；25MiB缓存/1MiB JSON响应；**M4.1-C 已通过**：七身份/凭据/成员/redact命令、一次明文stdout、六非幂等singleattempt与脱敏持久key；**M4.1-D 已通过**：空间/主题写、会话单attempt、订阅过滤/checkpoint/poll等待与同事务scope停用；**M4.1-E 已通过**：安全parser/action错误、显式token-file与四来源互斥、锁安全诊断；**M4.2-A 已通过**：Node凭据共享、完整structuredContent与16KiB文字边界、统一取消/关闭与不ACK重投；**M4.2-B 已通过**：完整八schema预校验、惰性身份与诊断session绑定、取消/失败重连边界；**M4.3-A 已通过**：固定官方dsh plugin+registry无模型链、跨空间拒权与pending重连；**M4.3-B 已通过**：官方patch/Loader/Include加载、真实配置watch重装与坏YAML恢复边界；**M4.4-A 已通过**：共享browser身份/session协调、严格targeted Me/Session响应guard、MCP实际thinwrapper消费；stdio MCP真实通信、**M4.4-B 已通过**：Pi0.87.1真实SDK扩展身份、分代取消和new/switch/fork/reload/shutdown本机路径。 | 完整八工具广告校验与capabilities/me、惰性诊断session绑定已通过M4.2-B；dsh/Pi/Codex/Claude四真实宿主会话未完成实测，Pi固定版SDK生命周期路径已通过，完整CLI/profile/RPC与模型等T20未完成。通用MCP任意本机上传不列为首版必需。 |
+ | **M5 Web与完整v0.1** | M5.1-A同源human认证与sharedclient、M5.1-B真实React/Chrome讨论首片已接受：登录恢复、空间/主题、固定修订续读、note/cites、同key恢复、可靠退出；纯文本、按钮键盘与窄屏本机证据。 | 新主题/搜索/失败作者报告已验；D.1目录API与D.2 Web证据/附件/修订字段对比、E.1概览/规则/本人权限及E.2排序/Markdown已验；Linuxarm64容器/冷构建及有限20进程争用/恢复已验；完整无障碍/其他浏览器、跨平台与公网生产TLS未认证。原生select键盘受测限制见独验；M6/M7未启用。 |
+-| **M6 正式独立封存评审** | M6.1-A严格材料快照与独立JCS已有限接受；普通review/decision帖仍非正式，知识视图正式状态not_enabled。 | 持久review对象/迁移、资格与贡献者排除、固定名单/封存初评与全入口隔离、揭示/完成/取消/失效竞态、HTTP/CLI/MCP/Pi/Web动作及T14–T17/T19全闭环尚未实现验收。review帖/manifest不是正式批准。 |
++| **M6 正式评审** | M6.1-A只读材料/JCS与M6.1-B内部持久请求、固定名单、取消/历史重放及schema3维护已限定接受；未公开review入口。 | 封存提交/全员揭示、决定/当前有效性、外部检查及完整M6未完成；下一M6.2-A。 |
+ | **M7 外部验证与完整v0.2** | 协议有未来检查回执字段/契约。 | 受限verifier、材料/配置hash绑定回执业务和公开route、重放/重跑、外部无模型验证器、D01正式评审+检查+最终决定、完整v0.2升级/导出/恢复与四宿主验收。 |
+ | **M8 协作效果研究** | 文档已有等预算对照/消融设计。 | 真实研究任务、独立外部评分、预算/成本/置信区间与协作增益实验未做；这是研究验证，工程通过不代表已证明收益。 |
+@@ -99,6 +102,6 @@
+ | **M4.2-B** | 完整工具校验与惰性身份会话 | 有限本机验收通过（2026-10-08） | [最终验收](reviews/2026-10-08-m4-2-b/README.md)，615项、88文件、新增15含总数、current29通过；下一 M4.3-A |
+ | **M4** | 四类客户端接入 | 本机适配基础；完整未验收 | CLI (`detuned`)、stdio MCP 桥 (`packages/mcp`)、Pi 扩展 (`packages/adapter-pi`) 已验证本机适配层契约与调用；四宿主真实接入仍未验证，待按环境推进 (T10/T20/D02) |
+-| **M5** | Web 与 v0.1 | M5.1-A认证与M5.1-B有限真实Web讨论片段已验 | M5.1-C新主题/搜索/失败已验；D.1两个有界目录已验；D.2 Web接线已验；E.1概览/规则/本人权限已验；E.2创建时间排序/安全Markdown已验；M5.2-A原生TLS已有限接受；M5.3-A有限容器/D01步骤1–4与来源汇总/恢复已接受；下一M6.1-B已冻结待fresh；D.2有限证据/修订目录与五字段比较已验；其余平台/CI完整验证及M6/M7、D01正式评审步骤5–7尚未完成 |
+-| **M6** | 正式评审协议 | M6.1-A材料构造/JCS有限接受 | 正式请求/固定assignment/资格/持久化与封存/揭示/失效仍待后包；完整T14–T17/T19未验 |
++| **M5** | Web 与 v0.1 | M5.1-A认证与M5.1-B有限真实Web讨论片段已验 | M5.1-C新主题/搜索/失败已验；D.1两个有界目录已验；D.2 Web接线已验；E.1概览/规则/本人权限已验；E.2创建时间排序/安全Markdown已验；M5.2-A原生TLS已有限接受；M5.3-A有限容器/D01步骤1–4与来源汇总/恢复已接受；M6.1-B内部请求已接受，下一M6.2-A待fresh；D.2有限证据/修订目录与五字段比较已验；其余平台/CI完整验证及M6/M7、D01正式评审步骤5–7尚未完成 |
++| **M6 正式评审** | M6.1-A只读材料/JCS与M6.1-B内部持久请求、固定名单、取消/历史重放及schema3维护已限定接受；未公开review入口。 | 封存提交/全员揭示、决定/当前有效性、外部检查及完整M6未完成；下一M6.2-A。 |
+ | **M7** | 外部检查与 v0.2 | 待开始 | 外部验证回执、D01 完整流程贯通、v0.2 交付验收 |
+ | **M8** | 真实协作评估 | 待开始 | 对照实验设计与评估报告 |
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/docs/reviews/README.md
++++ docs/reviews/README.md
+@@ -1,8 +1,12 @@
+ # Detuned 审查记录
+ 
+-当前入口：[M6.1-A材料快照与JCS](2026-10-09-m6-1-a/README.md)。根已接受M6.1-A有限材料快照/JCS：717/108为首次716通过与原5000ms旧backup单case1936ms复验组合；新M6三文件18组在完整core首次通过，四gate组合通过，current25仅复用。旧Hasher与数据库结构不变；正式请求持久化、资格、封存及完整M6/M7未实现，下一M6.1-B已冻结待fresh。用户反对自行引入运行环境，相关操作已停止，原环境未清理；未经用户明确许可不创建VM/容器守护或常驻后台环境。
++当前入口：[M6.1-B内部持久评审请求](2026-10-09-m6-1-b/README.md)。根已接受M6.1-B限定内部评审请求/固定名单、schema3维护与公共交换；最终737/111单worker完整core通过，build/type/lint均0，current25为6原探针+4旧adapter+15新adapter组合，M01后复用。封存提交、揭示、批准、外部检查与完整M6/M7尚未完成；下一M6.2-A待新fresh。用户禁止自行引入VM/常驻环境，Colima等保留不操作；本机串行执行规范不表示资源根因已全部消除。
++
++运行提示：根本机执行约束为workspace构建/type/lint并发1、核心worker1/文件串行；原coverage与timeout保持。资源暂停、首次失败及清退事实详见本包独验报告，禁止VM/Colima相关操作。
++
+ 
+ | 审查目录 | 被审查源码 | 用途 |
+ |---|---|---|
++| [M6.1-B](2026-10-09-m6-1-b/README.md) | 根接受内部固定请求与schema3维护，不含提交/揭示 | 737/111完整、current25组合、F01/M01闭合 |
+ | [M6.1-A](2026-10-09-m6-1-a/README.md) | 根接受材料快照/JCS，非正式评审生命周期 | 717/108组合、新18/独验6；current25复用 |
+ | [M5.3-A](2026-10-09-m5-3-a/README.md) | 根接受限定Linuxarm64/容器/D01/恢复 | 699/105组合、真实持久卷；非跨平台认证 |
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/examples/README.md
++++ examples/README.md
+@@ -55,2 +55,4 @@
+ 
+ 原生TLS与CLI旗标操作见[Web本地指南](web-local.md)，限定验收见[M5.2-A](../docs/reviews/2026-10-09-m5-2-a/README.md)。容器/D01组合尚待下一包。
++
++当前schema3维护与公共交换见[升级](upgrade-recovery.md)、[物理恢复](backup-recovery.md)、[导出](space-export.md)、[导入](space-import.md)。M6.1-B只有内部评审请求，尚无可操作的review HTTP/CLI示例。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/examples/backup-recovery.md
++++ examples/backup-recovery.md
+@@ -1,5 +1,5 @@
+ # 离线物理备份与新目录恢复
+ 
+-本包只支持当前schema2与backup-format v1，不迁移旧库，不覆盖已有目标。目标父目录必须已存在；新目录0700、文件0600。manifest最多8MiB，同时最多10000条登记附件；单附件最多25MiB，清单字节与条目限制同时适用。先停止Detuned服务，再明确执行离线备份：
++当前backup创建schema3/backup-format1；restore接受严格source profile匹配的旧schema2与新schema3备份。仅旧2在新stage升级到3；新3保五formal表历史，源backup和原manifest均不改，不覆盖已有目标。目标父目录必须已存在；新目录0700、文件0600。manifest最多8MiB，同时最多10000条登记附件；单附件最多25MiB，清单字节与条目限制同时适用。先停止Detuned服务，再明确执行离线备份：
+ 
+ ```sh
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/examples/upgrade-recovery.md
++++ examples/upgrade-recovery.md
+@@ -1,5 +1,5 @@
+ # 离线复制旧实例后升级与回退
+ 
+-首包仅支持已核旧 schema1 结构，升级到新 schema2 目录，保留原源实例供匹配旧 runtime 回退。不是原地覆盖，不扩物理备份格式，也不改变 init/serve 原有隐式升级行为。
++当前支持已核legacy schema1或完整historical schema2，复制升级到新schema3目录，保留原源实例供匹配旧runtime回退。普通init/serve现拒legacy1|2并指引migrate，这是旧auto1→2行为的明确变化；不原地覆盖。
+ 
+ ```sh
+@@ -9,7 +9,7 @@
+ 停止原服务后显式 `--offline`；合作锁拒活跃持锁服务，不能阻止绕锁 SQLite writer。目标父目录必须已存在，目标必须不存在（包括空目录/软链），路径边界与附件正规文件校验由本地维护层执行。管理员名称 trim 后 1–128 Unicode 码点；timeout 默认/最大 120000ms，允许正整数，SIGINT/SIGTERM取消。操作仅本地，不读客户端 tokenfile，不调用 HTTP、模型或抓取 URL。
+ 
+-源只读复制到私有 staging，再执行现有迁移并复核结构/FK/integrity。登记附件按原 artifacts/objects/storage_key 检查 hash/size：最多 10000 项、单项最多 25 MiB；ready 缺 bytes 拒绝，redacted/missing 现存 bytes 校验并保留，不自动脱敏。无登记的文件、日志、密钥文件、锁或 staging 不复制。旧 fa1b35c runtime 只有附件表，没有上传 HTTP API；历史附件演练的直接 SQL/file 来源会单列，不能伪称旧 HTTP 上传。
++源只读复制到私有 staging，再执行现有迁移到schema3并复核结构/FK/integrity。登记附件按原 artifacts/objects/storage_key 检查 hash/size：最多 10000 项、单项最多 25 MiB；ready 缺 bytes 拒绝，redacted/missing 现存 bytes 校验并保留，不自动脱敏。无登记的文件、日志、密钥文件、锁或 staging 不复制。旧 fa1b35c runtime 只有附件表，没有上传 HTTP API；历史附件演练的直接 SQL/file 来源会单列，不能伪称旧 HTTP 上传。
+ 
+-升级撤销所有旧凭据、更换实例签名 secret、新建独立本地 human 管理员；研究 ID、修订、来源身份及其禁用状态、membership/session、幂等及未确认消费材料保留。成功 stdout 一次 JSON：data_dir、source_data_dir、source_schema_version:1、schema_version:2、upgrade_id、admin_actor_id、admin_token。明文 token 仅此输出，私有接收，不进入日志或清单。原外部签名 secret 不搬运；原目录回退须匹配旧 runtime、原凭据及原外部 secret，不能用逻辑 import 代替。
++升级撤销所有旧凭据、更换实例签名 secret、新建独立本地 human 管理员；研究 ID、修订、来源身份及其禁用状态、membership/session、幂等及未确认消费材料保留。成功 stdout 一次 JSON：data_dir、source_data_dir、source_schema_version:1|2、schema_version:3、upgrade_id、admin_actor_id、admin_token。明文 token 仅此输出，私有接收，不进入日志或清单。原外部签名 secret 不搬运；原目录回退须匹配旧 runtime、原凭据及原外部 secret，不能用逻辑 import 代替。
+ 
+ ```sh
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/examples/space-export.md
++++ examples/space-export.md
+@@ -7,5 +7,5 @@
+ ```
+ 
+-`--url`是现有全局参数；私有凭据文件通过现有环境变量`DETUNED_TOKEN_FILE`读取（没有`--token-file`参数）。示例路径为占位路径，请替换为自己的私有凭据文件。
++`--url`是现有全局参数；私有凭据文件通过现有环境变量`DETUNED_TOKEN_FILE`读取（也可使用现有显式`--token-file`，四token来源互斥，不得同时配置）。示例路径为占位路径，请替换为自己的私有凭据文件。
+ 
+ output父目录必须已存在，目标必须不存在，包括空文件/符号链接。文件0600；CLI先写同父目录私有临时文件，完整验证header、序号、末行hash/计数与EOF后fsync，再无覆盖发布；stdout仅输出文件路径与export_id/record_count/bytes/sha256_chain摘要，不输出研究全文。`--timeout-ms`默认120000，允许1–120000，覆盖HTTP headers、正文与写盘背压；取消/失败不发布半成品或覆盖已有文件。
+@@ -24,2 +24,4 @@
+ 
+ 若link已经成功但父目录fsync失败，文件内容完整而发布持久性未确认，CLI报失败并保留final，不能当命令成功或盲删既有成果；应检查目标后另行重试到新文件。逻辑导入、完整迁移、M6/M7与其它M3.4运维仍待后续，无自动ack或宿主/全局配置更改。
++
++当前header.version=2/source.schema_version=3，两formal状态excluded；旧version1/source2/not_enabled仍严格支持解码/import，拒混配或未知未来版本。固定十族public材料不含snapshots/requests/assignments/private评审附件或正式批准。
+--- docs/reviews/2026-10-09-m6-1-b/verification/before-files/examples/space-import.md
++++ examples/space-import.md
+@@ -1,5 +1,5 @@
+ # 本地新实例逻辑导入
+ 
+-仅导入已完整校验的 detuned-space-export v1/schema2 空间研究文件，不合并现有实例，不迁移身份权限。先使用[空间导出](space-export.md)取得完整私有NDJSON，再执行本地维护命令：
++导入完整校验的detuned-space-export wire1/source2/not_enabled或wire2/source3/excluded空间研究文件，严格拒混配，不合并现有实例，不迁移身份权限。先使用[空间导出](space-export.md)取得完整私有NDJSON，再执行本地维护命令：
+ 
+ ```sh
+@@ -24,2 +24,4 @@
+ 
+ 发布采用独占预留、目录锁、数据持久化和readiness门禁。失败或取消不部分成功、不覆盖原文件/目标；保留半目标门禁，不盲删marker启用。若最后同步与重建门禁均失败，可能留下完整但持久性未确认且未交付管理员token的目标；不要启动，保留原文件并换新目录导入。物理备份恢复、逻辑导入与完整迁移不同，完整迁移/M3.4及后续尚未完成。
++
++新导入目标schema3，五formal表为空，provenance保源实际version/schema/status；导入研究材料不继承正式批准。来源身份禁用、ready附件变missing与新human管理员规则保持，missing登记不是当次物理bytes验真。

@@ -1,0 +1,9 @@
+# M6.4-A A HTTP实现冻结
+
+源码11文件已冻结；授权index两个路径无需修改，原wildcard已导出。正式作者RH01–03三组已编写，**未运行**。所有运行交D唯一窗口，当前不能记为通过。
+
+新增三strict read DTO、九reviewdata guards及private metadata guard；十二HTTP操作复用真实review服务。visible list同读快照、按固定名单序，只本人sealed或row.revealed_at非null，无他人sealed总数/ID/evidencehealth。私有multipart复用一个上传handler/pipeline，request准入由core当前observer+write/本人assignment/privacy返回string；新action仍createForReview最终fresh校验，历史key不误套新资格。
+
+新review成功/错误private,no-store提前在root onRequest设定，私有metadata成功条件header，content旧header保持。public upload/metadata旧行为不扩大；modules_enabled真实review；server仅新增内部workspace依赖。
+
+真实SQLite/loopback HTTP与私有ArtifactFileStore回归覆盖完整vertical/replay、revealed后cancel可读、observer上传、strict metadata与跨身份sealed隐藏、下载SHA/bytes、缓存及policyfalse新action400而旧key确认不变。fixture使用合成数据，临时目录finally清退，无真实凭据。首执行结果待D，若出现真实失败保原记录后根裁窄修。

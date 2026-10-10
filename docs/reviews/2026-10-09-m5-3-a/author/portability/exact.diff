@@ -1,0 +1,53 @@
+--- tests/contracts/m5-web-auth-independent.test.ts (supplement before)
++++ tests/contracts/m5-web-auth-independent.test.ts
+@@ -3,6 +3,7 @@
+ import {spawn} from 'node:child_process';
+ import {mkdtemp, rm, stat} from 'node:fs/promises';
+ import path from 'node:path';
++import {tmpdir} from 'node:os';
+ import Database from 'better-sqlite3';
+ import {buildApp} from '@detuned/server';
+ import {bootstrapDatabase, SqliteStorage} from '@detuned/storage-sqlite';
+@@ -39,7 +40,7 @@
+ }
+ type Identity = {actor: string; credential: string; token: string};
+ async function fixture(webOrigin: string | null = origin, insecure = false) {
+-  const owned = await mkdtemp('/private/tmp/detuned-web-auth-independent-');
++  const owned = await mkdtemp(path.join(tmpdir(), 'detuned-web-auth-independent-'));
+   const db = new Database(path.join(owned, 'forum.sqlite')); const admin = bootstrapDatabase(db).adminToken;
+   if (!admin) throw new Error('Private fresh bootstrap unavailable.');
+   const clock = new Clock(), logs: unknown[] = [];
+--- tests/contracts/m4-mcp-wrapped-independent.test.ts (supplement before)
++++ tests/contracts/m4-mcp-wrapped-independent.test.ts
+@@ -2,6 +2,7 @@
+ import { spawn } from 'node:child_process';
+ import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+ import path from 'node:path';
++import {tmpdir} from 'node:os';
+ import Database from 'better-sqlite3';
+ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+@@ -31,7 +32,7 @@
+   }
+ }
+ async function fixture() {
+-  const owned = await mkdtemp('/private/tmp/detuned-wrapped-independent-');
++  const owned = await mkdtemp(path.join(tmpdir(), 'detuned-wrapped-independent-'));
+   const db = new Database(path.join(owned, 'forum.sqlite'));
+   const adminToken = bootstrapDatabase(db).adminToken;
+   if (!adminToken) throw new Error('Private fresh bootstrap credential unavailable.');
+--- tests/contracts/r4-c-contracts.test.ts (supplement before)
++++ tests/contracts/r4-c-contracts.test.ts
+@@ -459,8 +459,10 @@
+       // Verify Ajv compilation of /spaces schema matches CreateSpaceRequestSchema and HTTP inject
+       const schema = (spec.paths as any)['/spaces'].post.requestBody.content['application/json'].schema;
+       const { createRequire } = await import('node:module');
+-      const req = createRequire(import.meta.url);
+-      const Ajv = req('ajv');
++      const serverRequire = createRequire(new URL('../../packages/server/dist/app.js', import.meta.url));
++      const fastifyRequire = createRequire(serverRequire.resolve('fastify'));
++      const compilerRequire = createRequire(fastifyRequire.resolve('@fastify/ajv-compiler'));
++      const Ajv = compilerRequire('ajv');
+       const ajv = new Ajv({ coerceTypes: false, removeAdditional: false, useDefaults: true, strict: false });
+       const specValidator = ajv.compile({ ...schema, components: (spec as any).components ?? {} });
+       const protocolValidator = ajv.compile(CreateSpaceRequestSchema);

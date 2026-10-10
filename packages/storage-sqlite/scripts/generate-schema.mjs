@@ -5,6 +5,10 @@ import { extractDatabaseRequirements } from './extract-schema-requirements.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sqlPath = path.resolve(__dirname, '../src/schema.sql');
+const v5SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v5-schema.sql');
+const v4SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v4-schema.sql');
+const v3SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v3-schema.sql');
+const v2SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql');
 const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
 const tsPath = path.resolve(__dirname, '../src/schema.ts');
 
@@ -35,6 +39,10 @@ if (!Database) {
 }
 
 const sqlContent = readFileSync(sqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v5SqlContent = readFileSync(v5SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v4SqlContent = readFileSync(v4SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v3SqlContent = readFileSync(v3SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+const v2SqlContent = readFileSync(v2SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
 const v1SqlContent = readFileSync(v1SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
 const tsContent = readFileSync(tsPath, 'utf8');
 
@@ -45,18 +53,38 @@ function extractTableDdl(sql, tableName) {
   return m[0].trim();
 }
 
-// 1. Extract V2 Table Requirements
-const dbV2 = new Database(':memory:');
-dbV2.exec(sqlContent);
-let v2Tables;
+// 1. Extract current V4 Table Requirements
+const dbV6 = new Database(':memory:');
+dbV6.exec(sqlContent);
+let v6Tables;
 try {
-  v2Tables = extractDatabaseRequirements(dbV2);
+  v6Tables = extractDatabaseRequirements(dbV6);
 } catch (err) {
   console.error(`Error extracting requirements from schema.sql: ${err.message}`);
   process.exit(1);
 } finally {
-  dbV2.close();
+  dbV6.close();
 }
+
+const dbV5 = new Database(':memory:');
+dbV5.exec(v5SqlContent);
+const v5Tables = extractDatabaseRequirements(dbV5);
+dbV5.close();
+
+const dbV4 = new Database(':memory:');
+dbV4.exec(v4SqlContent);
+const v4Tables = extractDatabaseRequirements(dbV4);
+dbV4.close();
+
+const dbV3 = new Database(':memory:');
+dbV3.exec(v3SqlContent);
+const v3Tables = extractDatabaseRequirements(dbV3);
+dbV3.close();
+
+const dbV2 = new Database(':memory:');
+dbV2.exec(v2SqlContent);
+const v2Tables = extractDatabaseRequirements(dbV2);
+dbV2.close();
 
 // 2. Extract V1 Table Requirements
 const dbV1 = new Database(':memory:');
@@ -111,11 +139,24 @@ export const SCHEMA_MIGRATIONS_DDL = \`${extractTableDdl(sqlContent, 'schema_mig
 export const INSTANCE_METADATA_DDL = \`${extractTableDdl(sqlContent, 'instance_metadata')}\`;
 
 export const THREAD_VERSIONS_DDL = \`${extractTableDdl(sqlContent, 'thread_versions')}\`;
+
+export const REVIEW_TABLES_DDL = \`${['snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments', 'review_submissions', 'review_decisions'].map(name => extractTableDdl(sqlContent, name)).join('\n\n')}\n\n${sqlContent.match(/CREATE INDEX IF NOT EXISTS snapshot_items_material_idx[^;]*;/)[0]}\n${sqlContent.match(/CREATE INDEX IF NOT EXISTS review_requests_active_idx[^;]*;/)[0]}\`;
+export const CHECK_TABLES_DDL = \`${['check_runs','check_run_versions','check_receipts','check_run_credentials'].map(name => extractTableDdl(sqlContent,name)).join('\n\n')}\n\n${sqlContent.match(/CREATE INDEX IF NOT EXISTS check_run_credentials_run_idx[^;]*;/)[0]}\`;
 // END MIGRATION_DDL`;
 
 updatedTs = updatedTs.replace(migRegex, newMigBlock);
 
-// 5. Update V2_SCHEMA_TABLES
+// Current V5 and exact frozen V4 profiles.
+for (const [version,tables] of [[6,v6Tables],[5,v5Tables],[4,v4Tables]]) {
+  const block = `export const V${version}_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(tables, null, 2)};`;
+  const re = new RegExp(`export const V${version}_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\\s\\S]*?\\n\};`);
+  updatedTs = re.test(updatedTs) ? updatedTs.replace(re,block) : updatedTs.replace('export const V4_SCHEMA_TABLES:',`${block}\n\nexport const V4_SCHEMA_TABLES:`);
+}
+// 5. Update V3 and historical V2 profiles
+const v3Block = `export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v3Tables, null, 2)};`;
+const v3Regex = /export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;
+updatedTs = v3Regex.test(updatedTs) ? updatedTs.replace(v3Regex, v3Block) : updatedTs.replace('export const V2_SCHEMA_TABLES:', `${v3Block}\n\nexport const V2_SCHEMA_TABLES:`);
+// Historical V2
 const v2Regex = /export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;
 const newV2Block = `export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v2Tables, null, 2)};`;
 if (v2Regex.test(updatedTs)) {

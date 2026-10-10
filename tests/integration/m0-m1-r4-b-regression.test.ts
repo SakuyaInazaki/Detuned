@@ -103,6 +103,11 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
     };
   }
 
+  // Synthetic legacy fixtures must remove schema6 dependents before the existing v1 downgrade.
+  function dropCheckTablesForLegacyFixture(database: Database.Database) {
+    database.exec('DROP TABLE check_run_credentials; DROP TABLE check_receipts; DROP TABLE check_run_versions; DROP TABLE check_runs;');
+  }
+
   // B01: All implemented operation families have typed, versioned result schemas without fallback
   it('B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback', async () => {
     const dbPath = join(tempDir, 'b01_ops.sqlite');
@@ -650,7 +655,8 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
 
     let faultDb = new Database(faultDbPath);
     try {
-      faultDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(faultDb);
+      faultDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
       const beforeSnapshot = fullLogicalSnapshot(faultDb);
 
       let faultHits = 0;
@@ -771,7 +777,8 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
     writeFileSync(legacyDbPath, db.serialize());
     const legacyDb = new Database(legacyDbPath);
     try {
-      legacyDb.exec('DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(legacyDb);
+      legacyDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
       const credsBefore = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
       const upgraded = bootstrapDatabase(legacyDb);
       expect(upgraded.isNewInstance).toBe(false);
@@ -833,13 +840,13 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
     writeFileSync(legacyServeDbPath, db.serialize());
     const legacyServeDb = new Database(legacyServeDbPath);
     try {
-      legacyServeDb.exec('DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(legacyServeDb);
+      legacyServeDb.exec('DROP TABLE IF EXISTS review_decisions; DROP TABLE IF EXISTS review_submissions; DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
       const credsBefore = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
-      const res = openAndCoordinateDatabase(legacyServeDb, 'serve');
-      expect(res.adminToken).toBeNull();
+      expect(() => openAndCoordinateDatabase(legacyServeDb, 'serve')).toThrow(/migrate/);
       const credsAfter = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
       expect(credsAfter).toBe(credsBefore);
-      expect(isDatabaseInitialized(legacyServeDb)).toBe(true);
+      expect(classifyDatabase(legacyServeDb).kind).toBe('supported_legacy');
     } finally {
       legacyServeDb.close();
     }
@@ -909,6 +916,10 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
 
   // B12: Redaction audit and event atomic rollback verification
   it('B12: Redaction audit covers multi-page revisions and rolls back atomically on failure', async () => {
+    // This case covers 25 historical revisions, rather than write-rate admission.
+    await app.close();
+    app = buildApp({ storage, writeRateLimits: { per_minute: 60000, burst: 10000 } });
+    await app.ready();
     const space = getData(
       await send('POST', '/spaces', adminToken, {
         slug: 'b12-space',
@@ -1156,11 +1167,11 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       writeFileSync(h05Path1, db.serialize());
       const db1 = new Database(h05Path1);
       try {
-        db1.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+        db1.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
         db1.prepare(
           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'post.create', 'h05-key-1', 'hash', 201, ?, datetime('now'))"
         ).run(JSON.stringify({ v: 99, $ref: 'post', post_id: 'pst_fake', revision: 1 }));
-        expect(() => openAndCoordinateDatabase(db1, 'init')).toThrow();
+        expect(() => bootstrapDatabase(db1)).toThrow();
       } finally {
         db1.close();
       }
@@ -1170,11 +1181,11 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       writeFileSync(h05Path2, db.serialize());
       const db2 = new Database(h05Path2);
       try {
-        db2.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+        db2.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
         db2.prepare(
           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'thread.create', 'h05-key-2', 'hash', 201, ?, datetime('now'))"
         ).run(JSON.stringify({ post: { id: 'pst_fake' }, revision: { revision: 1 } }));
-        expect(() => openAndCoordinateDatabase(db2, 'init')).toThrow();
+        expect(() => bootstrapDatabase(db2)).toThrow();
       } finally {
         db2.close();
       }
@@ -1413,9 +1424,10 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       writeFileSync(j04Path, db.serialize());
       const dbTime = new Database(j04Path);
       try {
-        dbTime.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+        dropCheckTablesForLegacyFixture(dbTime);
+        dbTime.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
         dbTime.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'j04-p1'").run(JSON.stringify(patch1));
-        openAndCoordinateDatabase(dbTime, 'init');
+        bootstrapDatabase(dbTime);
       } finally {
         dbTime.close();
       }
@@ -1717,12 +1729,13 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       const l02Path = join(tempDir, 'r8_l02_marker.sqlite');
       writeFileSync(l02Path, db.serialize());
       const l02Db = new Database(l02Path);
-      l02Db.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(l02Db);
+      l02Db.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
       l02Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-patch2'").run(
         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
       );
 
-      openAndCoordinateDatabase(l02Db, 'serve');
+      bootstrapDatabase(l02Db);
       const markerRow = l02Db.prepare("SELECT result_ref FROM idempotency_records WHERE key = 'l02-patch2'").get() as any;
       const marker = JSON.parse(markerRow.result_ref);
       expect(marker.kind).toBe('unreplayable');
@@ -1748,11 +1761,12 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       const repPath = join(tempDir, 'r8_l02_replay.sqlite');
       writeFileSync(repPath, db.serialize());
       const repDb = new Database(repPath);
-      repDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(repDb);
+      repDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
       repDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-rep-patch2'").run(
         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
       );
-      openAndCoordinateDatabase(repDb, 'serve');
+      bootstrapDatabase(repDb);
       repDb.close();
 
       const repDb2 = new Database(repPath);
@@ -1858,12 +1872,12 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
         const testPath = join(tempDir, `invalid_marker_${item.label}.sqlite`);
         writeFileSync(testPath, db.serialize());
         const tDb = new Database(testPath);
-        tDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+        tDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
         tDb.prepare("INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, result_ref, http_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
           .run(adminActorId, 'instance', item.op, `bad-${item.label}`, 'hash', JSON.stringify(item.ref), 200, new Date().toISOString());
 
         const schemaBefore = fullLogicalSnapshot(tDb);
-        expect(() => openAndCoordinateDatabase(tDb, 'serve')).toThrow();
+        expect(() => bootstrapDatabase(tDb)).toThrow();
         tDb.close();
 
         const tDb2 = new Database(testPath);
@@ -1936,10 +1950,11 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       const posPath = join(tempDir, 'r8_l08_positive.sqlite');
       writeFileSync(posPath, db.serialize());
       const posDb = new Database(posPath);
-      posDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+      dropCheckTablesForLegacyFixture(posDb);
+      posDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
       posDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l08-thread'").run(JSON.stringify(original));
 
-      openAndCoordinateDatabase(posDb, 'serve');
+      bootstrapDatabase(posDb);
       posDb.close();
 
       const posDb2 = new Database(posPath);
@@ -2286,14 +2301,14 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       const p04Path = join(tempDir, 'p04_time.sqlite');
       writeFileSync(p04Path, db.serialize());
       const p04Db = new Database(p04Path);
-      p04Db.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+      p04Db.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
       const missingTime = { ...patch2 };
       delete missingTime.created_at;
       delete missingTime.updated_at;
       p04Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'p04-patch2'").run(JSON.stringify(missingTime));
 
       const before = fullLogicalSnapshot(p04Db);
-      expect(() => openAndCoordinateDatabase(p04Db, 'serve')).toThrow();
+      expect(() => bootstrapDatabase(p04Db)).toThrow();
       p04Db.close();
 
       const p04Db2 = new Database(p04Path);
@@ -2397,14 +2412,14 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
       const fixturePath = join(tempDir, 'q03_missing_updated.sqlite');
       writeFileSync(fixturePath, db.serialize());
       const tDb = new Database(fixturePath);
-      tDb.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+      tDb.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
       tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'q03-th-create'").run(JSON.stringify(original));
       const missingUpdated = { ...patch2 };
       delete missingUpdated.updated_at;
       tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'q03-patch2'").run(JSON.stringify(missingUpdated));
 
       const before = fullLogicalSnapshot(tDb);
-      expect(() => openAndCoordinateDatabase(tDb, 'serve')).toThrow();
+      expect(() => bootstrapDatabase(tDb)).toThrow();
       tDb.close();
 
       const tDb2 = new Database(fixturePath);
@@ -3377,8 +3392,8 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
         expect(out.error?.message).toMatch(/实例持久密钥缺失或损坏/);
       });
 
-      // B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1, and healthy v2 start according to contract
-      it('B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1, and healthy v2 start according to contract', () => {
+      // B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1 refused, and healthy current schema start according to contract
+      it('B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1 refused, and healthy current schema start according to contract', () => {
         // 1. Truly blank DB
         const blankPath = join(tempDir, 'b2_blank.sqlite');
         const dbBlank = new Database(blankPath);
@@ -3390,7 +3405,7 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
           expect(classifyDatabase(dbBlank).kind).toBe('current_initialized');
         } finally { dbBlank.close(); }
 
-        // 2. Complete unpopulated schema (all 22 tables pre-created via DDL)
+        // 2. Complete unpopulated schema (all current tables pre-created via DDL)
         const ddlPath = join(tempDir, 'b2_unpopulated.sqlite');
         const dbDdl = new Database(ddlPath);
         try {
@@ -3408,15 +3423,14 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
         writeFileSync(legacyPath, db.serialize());
         const dbLeg = new Database(legacyPath);
         try {
-          dbLeg.exec('DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+          dropCheckTablesForLegacyFixture(dbLeg);
+          dbLeg.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
           expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
-          const boot = openAndCoordinateDatabase(dbLeg, 'serve');
-          expect(boot.isNewInstance).toBe(false);
-          expect(boot.adminToken).toBeNull();
-          expect(classifyDatabase(dbLeg).kind).toBe('current_initialized');
+          expect(() => openAndCoordinateDatabase(dbLeg, 'serve')).toThrow(/migrate/);
+          expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
         } finally { dbLeg.close(); }
 
-        // 4. Healthy v2
+        // 4. Healthy current schema
         const healthyPath = join(tempDir, 'b2_healthy.sqlite');
         writeFileSync(healthyPath, db.serialize());
         const dbHealth = new Database(healthyPath);
@@ -3573,8 +3587,8 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
         expect(out.error?.message).toMatch(/数据库包含持久化初始化材料|实例持久密钥缺失或损坏/);
       });
 
-      // Y03: Complete v2 database with missing version=2 migration row rejects before repair
-      it('Y03: Complete v2 database with missing version 2 migration row rejects as corrupt before repair', () => {
+      // Y03: Current schema3 database with missing version=2 migration row rejects before repair
+      it('Y03: Current schema3 database with missing version 2 migration row rejects as corrupt before repair', () => {
         const y03Path = join(tempDir, 'y03_missing_v2_mig.sqlite');
         writeFileSync(y03Path, db.serialize());
         let dbY03 = new Database(y03Path);
@@ -3583,7 +3597,7 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
           const before = fullLogicalSnapshot(dbY03);
           const classification = classifyDatabase(dbY03);
           expect(classification.kind).toBe('corrupt');
-          expect(classification.reason).toMatch(/包含 v2.*thread_versions/);
+          expect(classification.reason).toMatch(/迁移记录不连续|包含 v2.*thread_versions/);
 
           expect(() => bootstrapDatabase(dbY03)).toThrow();
           expect(() => openAndCoordinateDatabase(dbY03, 'init')).toThrow();
@@ -3599,17 +3613,17 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
         }
       });
 
-      // Y04: Healthy controls (empty file, raw v2 schema, raw v1 schema, historical v1 instance, healthy v2) initialize and serve cleanly
+      // Y04: Healthy controls (empty file, raw current schema, raw v1 schema, historical v1 instance refused, healthy current) initialize and serve cleanly
       it('Y04: True blank, supported raw schemas, real historical fixture and current instance retain healthy startup', () => {
-        const controls = ['empty_file', 'raw_v2_schema', 'raw_v1_schema', 'historical_v1_instance', 'healthy_v2'];
+        const controls = ['empty_file', 'raw_current_schema', 'raw_v1_schema', 'historical_v1_instance', 'healthy_current'];
         for (const kind of controls) {
           const file = join(tempDir, `y04_ctrl_${kind}.sqlite`);
-          if (kind === 'healthy_v2') {
+          if (kind === 'healthy_current') {
             writeFileSync(file, db.serialize());
           }
           let cDb = new Database(file);
           try {
-            if (kind === 'raw_v2_schema') {
+            if (kind === 'raw_current_schema') {
               cDb.exec(SCHEMA_SQL);
             }
             if (kind === 'raw_v1_schema' || kind === 'historical_v1_instance') {
@@ -3618,7 +3632,12 @@ describe('M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)', () =
             if (kind === 'historical_v1_instance') {
               cDb.exec("INSERT INTO schema_migrations VALUES(1,'2026-10-01T00:00:00.000Z'); INSERT INTO actors(id,kind,display_name,created_at) VALUES('y04_admin','human','Review admin','2026-10-01T00:00:00.000Z')");
             }
-            const isFresh = ['empty_file', 'raw_v1_schema', 'raw_v2_schema'].includes(kind);
+            if (kind === 'historical_v1_instance') {
+              expect(() => openAndCoordinateDatabase(cDb, 'serve')).toThrow(/migrate/);
+              expect(classifyDatabase(cDb).kind).toBe('supported_legacy');
+              continue;
+            }
+            const isFresh = ['empty_file', 'raw_v1_schema', 'raw_current_schema'].includes(kind);
             const boot = isFresh ? openAndCoordinateDatabase(cDb, 'init') : openAndCoordinateDatabase(cDb, 'serve');
             expect(Boolean(boot.adminToken)).toBe(isFresh);
 

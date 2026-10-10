@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 415ms
+   ✓ Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions  340ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 704ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1114ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  324ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  781ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 230ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 25ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1445ms
+   ✓ M0-R / M1-R Behavioral Regressions (R01 - R11) > R11: Lock recovers after owning process is dead  406ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 73ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1890ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  822ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 6ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 2405ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  1305ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 6867ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  1256ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  2051ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  443ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  675ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  676ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1748ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 7195ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  563ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  579ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (27 tests) 7510ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3620ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1426ms
+
+ Test Files  13 passed (13)
+      Tests  180 passed (180)
+   Start at  13:33:36
+   Duration  8.40s (transform 995ms, setup 0ms, collect 5.34s, tests 29.88s, environment 6ms, prepare 1.18s)
+

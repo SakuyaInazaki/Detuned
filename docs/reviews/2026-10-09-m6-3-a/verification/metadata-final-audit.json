@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-10-09T08:58:13.472311+00:00",
+  "scope": "approved 17 metadata paths plus their current package links/JSON; source freezes and historical protection; no runtime gates",
+  "metadata_manifest": "docs/reviews/2026-10-09-m6-3-a/author/docs/freeze-manifest-v3.json",
+  "metadata_manifest_sha256": "6ad7886a76b7034a41c21ded6211ad32ee77b5ab79c95be79553370f7e47237a",
+  "metadata_files": 17,
+  "metadata_mismatches": [],
+  "planning_mismatches": [],
+  "local_links_checked": 325,
+  "broken_links": [],
+  "current_package_json_checked": 83,
+  "json_errors": [],
+  "source_freezes": [
+    {
+      "path": "author/finalization/freeze-manifest-v2.json",
+      "sha256": "066e9a96d45c046247188cb07721cf291690954c689da043b1a6576b0069df59",
+      "files": 17,
+      "mismatches": []
+    },
+    {
+      "path": "author/storage/freeze-manifest-v2.json",
+      "sha256": "cde22db1c12694df5d3b8fa8aeb88c8c6789294759087c57f2a7317cbb50dc00",
+      "files": 28,
+      "mismatches": []
+    }
+  ],
+  "D_final_source_mismatches": [],
+  "protected": {
+    "protected_review_probe_log_evidence_hashes": {
+      "checked": 9305,
+      "mismatches": []
+    },
+    "sql_archive_before_hashes": {
+      "checked": 5,
+      "mismatches": []
+    },
+    "current_document_hashes": {
+      "checked": 61,
+      "authorized_current_deltas": [
+        "docs/00-implementation-brief.md",
+        "docs/03-data-model.md",
+        "docs/04-protocol.md",
+        "docs/05-review-protocol.md",
+        "docs/07-security-operations.md",
+        "docs/08-roadmap.md",
+        "docs/09-validation.md",
+        "docs/12-decisions.md",
+        "examples/backup-recovery.md",
+        "examples/space-export.md",
+        "examples/space-import.md",
+        "examples/upgrade-recovery.md"
+      ],
+      "unexpected_mismatches": []
+    },
+    "mutable_status_document_hashes": {
+      "checked": 5,
+      "authorized_current_deltas": [
+        "README.md",
+        "docs/progress.md",
+        "docs/reviews/README.md"
+      ],
+      "unexpected_mismatches": []
+    }
+  },
+  "historical_profiles_1_to_4_exact": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true
+  },
+  "head_unchanged": true,
+  "lock_unchanged": true,
+  "diffcheck_exit": 0,
+  "diffcheck_stdout": "",
+  "diffcheck_stderr": "",
+  "status": "audited_pending_root_final_acceptance_not_sealed"
+}

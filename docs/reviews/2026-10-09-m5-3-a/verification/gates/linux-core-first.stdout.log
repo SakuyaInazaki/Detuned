@@ -1,0 +1,371 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/app[39m
+
+ [32m✓[39m tests/integration/m0-m1-r4-b-regression.test.ts [2m([22m[2m82 tests[22m[2m)[22m[33m 6794[2mms[22m[39m
+   [33m[2m✓[22m[39m M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12)[2m > [22mR14 review regression (X01-X03)[2m > [22mB.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression[2m > [22mZ04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock [33m 571[2mms[22m[39m
+ [31m❯[39m tests/contracts/r4-c-contracts.test.ts [2m([22m[2m26 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 5987[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-1: Route rejects undeclared body properties (additionalProperties: false)[32m 144[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-2: parseIntegerQuery rejects non-digits, negative numbers, and out-of-range values[32m 84[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-3: Core RelationService rejects invalid relation type without committing state[32m 67[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-4: Valid relation creation and resolve/reopen lifecycle maintains idempotency and symmetry[32m 47[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-5: Query, body, and reference validation rejects without side effects[32m 46[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01)[32m 47[2mms[22m[39m
+[31m   [31m×[31m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-7: API-v1 OpenAPI 3.1 body constraints agree with existing protocol and HTTP (AD02)[39m[32m 52[2mms[22m[39m
+[31m     → Cannot find module 'ajv'
+Require stack:
+- /app/tests/contracts/r4-c-contracts.test.ts[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC01: Route Schema Validation & Query Integer Parsing[2m > [22mC01-8: API-v1 OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)[32m 49[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-1: HTTP 200/201 with malformed JSON rejects with ClientProtocolError[32m 41[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-2: Missing envelope fields (api_version, request_id, data) reject with ClientProtocolError[32m 63[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-3: Strictly preserves valid falsy data values and allows forward-compatible envelope fields[32m 38[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-4: Distinguishes UserAbortError from TimeoutError[32m 91[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-5: Abort listener and timer are cleanly removed in all 5 cancellation phases and on settle[32m 58[2mms[22m[39m
+   [33m[2m✓[22m[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-6: Bounded retries maintain original requestKey and terminate at maxRetries [33m 3328[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-7: Preserves server REVISION_CONFLICT error independently of message wording[32m 73[2mms[22m[39m
+   [33m[2m✓[22m[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-8: Network and Retry-After retry policies [33m 1228[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03)[32m 78[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04)[32m 45[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05)[32m 55[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-12: Cancellation and timeout win over pending body fulfillment on 200 and 409 responses (AE01)[32m 33[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-13: Body stream transport classification, unsolicited abort, and retry allowlist (AE02)[32m 33[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC02: Client Response Envelope, Error Classification, and Lifecycle[2m > [22mC02-14: Finite Retry-After positive controls: HTTP-date, invalid fallback, and date over budget (AE05)[32m 35[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC03: Pi Adapter Headless Output & Compatibility[2m > [22mC03-1: Both Pi commands report exact content and isolated channels in all 8 UI/headless success/failure combinations[32m 32[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC03: Pi Adapter Headless Output & Compatibility[2m > [22mC03-3: Root package.json engines.node is >=22.19.0 to match Pi dependency requirements[32m 32[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC03: Pi Adapter Headless Output & Compatibility[2m > [22mC03-4: Registered Pi tools reject bad JSON and preserve complete 409 business error fields[32m 38[2mms[22m[39m
+   [32m✓[39m R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter[2m > [22mC03: Pi Adapter Headless Output & Compatibility[2m > [22mC03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)[32m 151[2mms[22m[39m
+ [31m❯[39m tests/contracts/m5-web-auth-independent.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 6[2mms[22m[39m
+[31m   [31m×[31m M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation[39m[32m 4[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-yg6b8Y'[39m
+[31m   [31m×[31m M5 independent persisted credential revoke/expiry, actor disable and membership withdrawal affect an already issued cookie immediately[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-fIYCCC'[39m
+[31m   [31m×[31m M5 independent failed replacement and full target credential preserve old login; TTL is absolute and restart forgets cookies without losing forum identity[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-hmFqWi'[39m
+[31m   [31m×[31m M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-ZcX2wx'[39m
+[31m   [31m×[31m M5 independent client root auth uses only one login/logout attempt across actual upstream commits and observes entered-request cancellation safely[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-jQKMSk'[39m
+[31m   [31m×[31m M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-9Si8s3'[39m
+[31m   [31m×[31m M5 independent anonymous login budget charges trusted credential/body failures once, excludes hostile origins and refills with controlled time[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-web-auth-independent-TH8CzZ'[39m
+ [32m✓[39m tests/integration/m0-m1-r3-regression.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 784[2mms[22m[39m
+ [32m✓[39m tests/integration/m0-m1-r2-regression.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 1253[2mms[22m[39m
+   [33m[2m✓[22m[39m M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI)[2m > [22mCLI: post, revision, withdraw commands succeed without schema errors [33m 580[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-backup-recovery-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5246[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch [33m 1857[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup [33m 734[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets [33m 1573[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes [33m 1080[2mms[22m[39m
+ [32m✓[39m packages/storage-sqlite/tests/schema-generation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 4331[2mms[22m[39m
+   [33m[2m✓[22m[39m Schema Generation & Sync Pipeline Formal Regressions[2m > [22mgenerates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged [33m 772[2mms[22m[39m
+   [33m[2m✓[22m[39m Schema Generation & Sync Pipeline Formal Regressions[2m > [22mtracks real named index and FTS source changes into runtime profile without dropping attributes [33m 1386[2mms[22m[39m
+   [33m[2m✓[22m[39m Schema Generation & Sync Pipeline Formal Regressions[2m > [22mdetects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03) [33m 719[2mms[22m[39m
+   [33m[2m✓[22m[39m Schema Generation & Sync Pipeline Formal Regressions[2m > [22mdetects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03) [33m 696[2mms[22m[39m
+   [33m[2m✓[22m[39m Schema Generation & Sync Pipeline Formal Regressions[2m > [22mfails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04) [33m 621[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-import-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5658[2mms[22m[39m
+   [33m[2m✓[22m[39m B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing [33m 917[2mms[22m[39m
+   [33m[2m✓[22m[39m B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target [33m 1859[2mms[22m[39m
+   [33m[2m✓[22m[39m B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes [33m 1009[2mms[22m[39m
+   [33m[2m✓[22m[39m B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target [33m 1872[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-upgrade-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 6693[2mms[22m[39m
+   [33m[2m✓[22m[39m M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip [33m 2105[2mms[22m[39m
+   [33m[2m✓[22m[39m M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime [33m 1343[2mms[22m[39m
+   [33m[2m✓[22m[39m M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes [33m 1541[2mms[22m[39m
+   [33m[2m✓[22m[39m M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets [33m 1703[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-post-revision-read.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 117[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-thread-posts-read.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 200[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-thread-posts-read-contracts.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 442[2mms[22m[39m
+ [32m✓[39m tests/integration/m0-m1-regression.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 597[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-binding-independent.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2727[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent discovery and full nested/allOf rejection precede every HTTP/session [33m 361[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent concurrent real posts share one preflight/session, spaces and actor processes stay isolated [33m 613[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent one cancelled waiter leaves a real shared HTTP flight for another successful caller [33m 306[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent all global waiters cancel native HTTP, then a new explicit call can reinitialize [33m 307[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent actual committed session response loss is one attempt and terminal until reconnect [33m 606[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP binding independent EOF and repeated signal during cap/session initialization settle native HTTP without late business or ACK [33m 534[2mms[22m[39m
+ [32m✓[39m tests/integration/m1-discussion.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 325[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-post-revision-read-contracts.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 519[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-write-consume-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2358[2mms[22m[39m
+   [33m[2m✓[22m[39m WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt [33m 1499[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-backup-recovery.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 4411[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A offline physical maintenance[2m > [22mbacks up exact registered material and restores with isolated recovery credentials [33m 320[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A offline physical maintenance[2m > [22mrejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup [33m 2457[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A offline physical maintenance[2m > [22mrejects non-current, corrupt and foreign-key-invalid source databases without publishing [33m 1080[2mms[22m[39m
+[90mstdout[2m | tests/integration/m3-export-independent.test.ts[2m > [22m[2mB1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+[22m[39mB1 bounded material samples {"rows":640,"bodyBytes":41943040,"wireBytes":42399852,"receiverMaxHeap":31890728,"receiverSamples":30,"serverMaxHeap":30424712,"serverSamples":1,"serverHeapBefore":28465232}
+
+ [32m✓[39m tests/integration/m3-export-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 5697[2mms[22m[39m
+   [33m[2m✓[22m[39m B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records [33m 894[2mms[22m[39m
+   [33m[2m✓[22m[39m B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end [33m 1373[2mms[22m[39m
+   [33m[2m✓[22m[39m B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial [33m 481[2mms[22m[39m
+   [33m[2m✓[22m[39m B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink [33m 2948[2mms[22m[39m
+[90mstdout[2m | tests/integration/m3-logical-import.test.ts[2m > [22m[2mrejects a FIFO with no writer in a watchdog-bounded child without publishing
+[22m[39m{"fifo_ready":true,"fifo_operation_done":true,"fifo_operation_ms":2.071457999999893,"fifo_watchdog_killed":false}
+
+ [32m✓[39m tests/integration/m3-logical-import.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 1225[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects a FIFO with no writer in a watchdog-bounded child without publishing [33m 1022[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-read-cli-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 32908[2mms[22m[39m
+   [33m[2m✓[22m[39m M4 independent built CLI identities and isolated list/history pages retain existing fixed reads [33m 2443[2mms[22m[39m
+   [33m[2m✓[22m[39m M4 independent search legacy array and signed page cursor retain server binding and local invalid limits send no HTTP [33m 3906[2mms[22m[39m
+   [33m[2m✓[22m[39m M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths [33m 25466[2mms[22m[39m
+   [33m[2m✓[22m[39m M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior [33m 1091[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-admin-cli-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 7936[2mms[22m[39m
+   [33m[2m✓[22m[39m AC C01 real new CLI stdin management lifecycle creates scoped nonadmin credentials and changes actual write authority [33m 1436[2mms[22m[39m
+   [33m[2m✓[22m[39m AC C02 ordinary seven management operations cannot mutate nonempty state; space owner can manage members and redact but cannot mint credentials [33m 2755[2mms[22m[39m
+   [33m[2m✓[22m[39m AC C03 real CLI persistent post/artifact redaction recovers records, conflicts on changed body and rechecks current owner permission [33m 1833[2mms[22m[39m
+   [33m[2m✓[22m[39m AC C04 real upstream commit followed by proxy response loss never retries actor/credential and full retryable errors remain single attempt [33m 1911[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-artifacts-http.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 561[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-space-export.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 148[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-event-recovery.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1689[2mms[22m[39m
+   [33m[2m✓[22m[39m T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected [33m 1270[2mms[22m[39m
+   [33m[2m✓[22m[39m T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans [33m 419[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-artifact-client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 188[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-lifecycle-independent.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3338[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent official stdio discovery is eight tools and zero HTTP/session, native processes isolate real identities [33m 861[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent small result/page and large text summary retain complete structured research data [33m 321[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent safe errors and conflicting/bad startup credentials send no unauthorized HTTP or raw stderr [33m 683[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent SDK cancellation aborts an entered native HTTP poll without ACK and process remains usable [33m 300[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent explicit stdin EOF and repeated SIGTERM cancel active HTTP before real exit zero [33m 587[2mms[22m[39m
+   [33m[2m✓[22m[39m MCP independent new stdio process replays the same unacknowledged batch without assuming permanent cursor bytes [33m 584[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-request-key-recovery.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 5336[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes [33m 749[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets [33m 1130[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material [33m 454[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay [33m 1135[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST [33m 1582[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-context-focus.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-artifact-client-cli-independent.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 7785[2mms[22m[39m
+   [33m[2m✓[22m[39m AB C01 ordinary identity binary and empty built CLI transfer agrees with independent HTTP/hash and private files [33m 1859[2mms[22m[39m
+   [33m[2m✓[22m[39m AB C02 fresh CLI processes recover persistent intent across token rotation while actor/space keys remain independent [33m 1982[2mms[22m[39m
+   [33m[2m✓[22m[39m AB C03 file targets and concurrent CLI publishers preserve winner; invalid inputs do not reach HTTP [33m 1600[2mms[22m[39m
+   [33m[2m✓[22m[39m AB C04 controlled content transport ignores content_url and never publishes hash-mismatch or truncated bytes [33m 941[2mms[22m[39m
+   [33m[2m✓[22m[39m AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes [33m 1401[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-write-limits-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3388[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps [33m 527[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent [33m 445[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records [33m 462[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget [33m 1953[2mms[22m[39m
+ [31m❯[39m tests/contracts/m4-mcp-wrapped-independent.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 4[2mms[22m[39m
+[31m   [31m×[31m wrapped independent default/explicit flat advertises the original eight schemas; wrapped nests every canonical keyword exactly with no HTTP[39m[32m 3[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-wrapped-independent-0y1ABY'[39m
+[31m   [31m×[31m wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-wrapped-independent-NjRFb9'[39m
+[31m   [31m×[31m wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-wrapped-independent-7pTu8l'[39m
+[31m   [31m×[31m wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-wrapped-independent-eaRzNq'[39m
+[31m   [31m×[31m wrapped independent invalid startup modes exit safely without environment/token output or HTTP[39m[32m 0[2mms[22m[39m
+[31m     → ENOENT: no such file or directory, mkdtemp '/private/tmp/detuned-wrapped-independent-lAA4Zr'[39m
+ [32m✓[39m tests/integration/m2-typed-writes.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 105[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-resource-limits.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 236[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-space-revision-read.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-shutdown-independent.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 6521[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release [33m 419[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles [33m 545[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown [33m 847[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan [33m 1855[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors [33m 2852[2mms[22m[39m
+[90mstdout[2m | tests/integration/m2-context.test.ts[2m > [22m[2mM2.4-A context snapshot and full response budget[2m > [22m[2mC01: a controlled second-connection commit cannot move checkpoint past unread rules
+[22m[39mC01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ [32m✓[39m tests/integration/m2-context.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-artifacts-core.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-post-catalogs-client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-post-catalogs.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 318[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-knowledge-view-contracts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 653[2mms[22m[39m
+   [33m[2m✓[22m[39m M2.2-B real HTTP payload/schema agreement[2m > [22mB04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer [33m 422[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-admin-client.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 131[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-session.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-write-rate-limit.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-search-contracts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 759[2mms[22m[39m
+   [33m[2m✓[22m[39m M2.3 actual search transport and tool pagination[2m > [22mS04: installed Pi validator + registered executor and MCP stdio retain search meta [33m 400[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-operations-independent.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2914[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates [33m 444[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log [33m 445[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes [33m 871[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint [33m 508[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners [33m 644[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-event-core.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 2025[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.1 event core correctness[2m > [22mE04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes [33m 1460[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-focused-context-contracts.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 356[2mms[22m[39m
+ [32m✓[39m packages/storage-sqlite/tests/storage.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-events-contract.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 13205[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.1 event HTTP and adapter cancellation contracts[2m > [22mE03: a completed request body is not cancellation, but client user abort cancels the live HTTP wait [33m 4113[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.1 event HTTP and adapter cancellation contracts[2m > [22mE04: client timeout cancels the same server wait and does not retry or acknowledge [33m 4173[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.1 event HTTP and adapter cancellation contracts[2m > [22mE06: lost HTTP delivery preserves the actual persisted batch for redelivery and explicit ack only [33m 4087[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.1 event HTTP and adapter cancellation contracts[2m > [22mE07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch [33m 458[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-milestone-gate.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 928[2mms[22m[39m
+   [33m[2m✓[22m[39m T02 independent ten real HTTP requests reach one server barrier then replay one intent with unique post/event/idempotency and conflict409 [33m 466[2mms[22m[39m
+   [33m[2m✓[22m[39m T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs [33m 461[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-knowledge-views.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-resource-limits-independent.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3667[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A2 independent natural bounded research fills real main database, rolls back failed post/event/idempotency and keeps reads usable [33m 419[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A2 independent real uploads race global bytes and object quotas, replay and restarted service preserve registered usage [33m 1355[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation [33m 853[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.4-A2 independent published artifact real allocation FULL cleans this call files and CLI invalid resource config is rejected before mkdir [33m 1039[2mms[22m[39m
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mlegal real Me/Session responses reach business HTTP and commit one diagnostic session
+[22m[39mNative legal control: HTTP cap=1 me=1 session=1 post=1 ack=0; SQLite sessions=1 posts=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Me nested shape before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Me nested shape: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Me nested extra field before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Me nested extra field: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Me created_at invalid calendar date: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Me disabled_at invalid date-time: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Session wrong field type before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Session wrong field type: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Session extra field before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Session extra field: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Session invalid calendar date before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Session invalid calendar date: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+[90mstdout[2m | tests/contracts/m4-runtime-binding-native.test.ts[2m > [22m[2mM4.4-A independent native runtime response boundary[2m > [22m[2mrejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence
+[22m[39mNative rejected Session metadata wrong shape: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+ [32m✓[39m tests/contracts/m4-runtime-binding-native.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 4823[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mlegal real Me/Session responses reach business HTTP and commit one diagnostic session [33m 460[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Me nested shape before business HTTP with actual upstream/DB evidence [33m 360[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Me nested extra field before business HTTP with actual upstream/DB evidence [33m 333[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence [33m 895[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence [33m 410[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Session wrong field type before business HTTP with actual upstream/DB evidence [33m 606[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Session extra field before business HTTP with actual upstream/DB evidence [33m 595[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Session invalid calendar date before business HTTP with actual upstream/DB evidence [33m 579[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-A independent native runtime response boundary[2m > [22mrejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence [33m 583[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-artifact-cli.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2853[2mms[22m[39m
+   [33m[2m✓[22m[39m AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent [33m 1422[2mms[22m[39m
+   [33m[2m✓[22m[39m AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output [33m 1288[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-offline-upgrade.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1156[2mms[22m[39m
+[90mstdout[2m | tests/integration/m4-consumer-lifecycle.test.ts[2m > [22m[2mM4.1-D consumer lifecycle regressions[2m > [22m[2matomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+[22m[39mconsumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+[90mstdout[2m | tests/integration/m4-consumer-lifecycle.test.ts[2m > [22m[2mM4.1-D consumer lifecycle regressions[2m > [22m[2mcannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+[22m[39mconsumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ [32m✓[39m tests/integration/m4-consumer-lifecycle.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 345[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-context-contracts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 512[2mms[22m[39m
+ [32m✓[39m tests/integration/historical-http-replay.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 507[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-cli-boundaries-independent.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 15371[2mms[22m[39m
+   [33m[2m✓[22m[39m E independent four single credential sources and anonymous/conflicting sources preserve real authorization [33m 2453[2mms[22m[39m
+   [33m[2m✓[22m[39m E independent selected files fail safely without fallback or any HTTP [33m 982[2mms[22m[39m
+   [33m[2m✓[22m[39m E independent diagnostic argv consumption and genuine help/version emit once without HTTP [33m 1228[2mms[22m[39m
+   [33m[2m✓[22m[39m E independent action parse/protocol/transport errors never disclose raw local markers [33m 9484[2mms[22m[39m
+   [33m[2m✓[22m[39m E independent real credential success preserves exactly one stdout token and ordinary data output [33m 1223[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-search.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-typed-write-contracts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 127[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-runtime.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/contracts/r4-c-route-contracts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 228[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-write-consume-cli.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3593[2mms[22m[39m
+   [33m[2m✓[22m[39m WD B02: space/thread writes preserve body/key/data and existing group reads [33m 1379[2mms[22m[39m
+   [33m[2m✓[22m[39m WD B03: sessions are distinct same-actor records and delivered consumer termination keeps forum data [33m 940[2mms[22m[39m
+   [33m[2m✓[22m[39m WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP [33m 1272[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-request-key-cli.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 7636[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 CLI persistent request keys[2m > [22mKCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes [33m 1070[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 CLI persistent request keys[2m > [22mKCLI02: all publish and relate branches use persistent keys with data-only compatible output [33m 2732[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 CLI persistent request keys[2m > [22mKCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests [33m 2919[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.2 CLI persistent request keys[2m > [22mKCLI04: old explicit keys preserve precedence and no optional store is created [33m 731[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-space-export-contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 524[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-B.1 strict NDJSON export transport[2m > [22mEXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject [33m 473[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-web-auth-server.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 773[2mms[22m[39m
+   [33m[2m✓[22m[39m WA01 human login/refresh/logout keeps standard envelopes, strict secure cookie and no-store, and never writes diagnostic session [33m 492[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-admin-cli.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2816[2mms[22m[39m
+   [33m[2m✓[22m[39m AC B02: actual CLI actor credential membership flow returns data once and identity/revoke/deactivate take effect [33m 1119[2mms[22m[39m
+   [33m[2m✓[22m[39m AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP [33m 698[2mms[22m[39m
+   [33m[2m✓[22m[39m AC B04: redact strips input key, preserves explicit priority and persistent intent conflicts without storing body [33m 997[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-logical-import-contract.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1085[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-B.2 shared decoder and local import contract[2m > [22mIMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink [33m 1045[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-web-auth-client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 283[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-thread-post-order.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 293[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-backup-cli.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2690[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A local backup and recovery CLI[2m > [22mBKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors [33m 629[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A local backup and recovery CLI[2m > [22mBKCLI02: offline backup and fresh restore output one human recovery credential without network config [33m 721[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A local backup and recovery CLI[2m > [22mBKCLI03: active real serve holds the source lock and backup refuses [33m 540[2mms[22m[39m
+   [33m[2m✓[22m[39m M3.3-A local backup and recovery CLI[2m > [22mBKCLI04: backup manifest marker refuses init/serve before opening or creating a database [33m 539[2mms[22m[39m
+ [32m✓[39m tests/contracts/server-tls.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 662[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-artifacts-filesystem.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+ [32m✓[39m tests/contracts/m2-space-read-contracts.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 353[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-request-key-store.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 92[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-read-cli-contract.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 12011[2mms[22m[39m
+   [33m[2m✓[22m[39m RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP [33m 1325[2mms[22m[39m
+   [33m[2m✓[22m[39m RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request [33m 1244[2mms[22m[39m
+   [33m[2m✓[22m[39m RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits [33m 9439[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-post-order-index.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 145[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-artifacts-cli.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1163[2mms[22m[39m
+   [33m[2m✓[22m[39m M2.1 CLI locked startup artifact lifecycle[2m > [22mrejects invalid configuration before initializing artifact directories or starting listen [33m 642[2mms[22m[39m
+ [32m✓[39m tests/integration/m2-context-session-chain.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1140[2mms[22m[39m
+   [33m[2m✓[22m[39m C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision [33m 1139[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-token-source.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 133[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-shutdown-contract.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1014[2mms[22m[39m
+   [33m[2m✓[22m[39m SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly [33m 864[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-operations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 69[2mms[22m[39m
+ [32m✓[39m tests/contracts/m0-m1-adapters-regression.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 761[2mms[22m[39m
+   [33m[2m✓[22m[39m M0-R Adapter Regressions (A01 - A05)[2m > [22mA06: MCP stdio server executes valid and invalid tool calls [33m 516[2mms[22m[39m
+ [32m✓[39m tests/contracts/m5-web-static.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 229[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-write-limits-contract.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 921[2mms[22m[39m
+   [33m[2m✓[22m[39m WR B03: one app shares actor budget across space/admin/thread, while idempotent replay and reads remain available [33m 370[2mms[22m[39m
+   [33m[2m✓[22m[39m WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input [33m 479[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-pi-runtime.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-offline-upgrade-contract.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1363[2mms[22m[39m
+   [33m[2m✓[22m[39m UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator [33m 969[2mms[22m[39m
+   [33m[2m✓[22m[39m UP B03: built local migrate maps offline/options failures without network or tokenfile reads [33m 380[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-operations-contract.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 236[2mms[22m[39m
+ [32m✓[39m tests/integration/m3-shutdown-resources.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m tests/contracts/m3-resource-limits-contract.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 795[2mms[22m[39m
+   [33m[2m✓[22m[39m RS B04: built CLI invalid resource flags precede mkdir and existing overquota rejects before listen [33m 673[2mms[22m[39m
+ [32m✓[39m tests/core/m5-web-session.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/contracts/cli-tls.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1079[2mms[22m[39m
+   [33m[2m✓[22m[39m TLS CLI01: paired flags and unreadable PEM files fail safely before creating the data directory [33m 390[2mms[22m[39m
+   [33m[2m✓[22m[39m TLS CLI03: API-only TLS advertises HTTPS, serves trusted health and closes on SIGTERM [33m 495[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-cli-errors.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1701[2mms[22m[39m
+   [33m[2m✓[22m[39m ECLI03 real parser outputs one safe error, preserves native help/version, and respects value/terminator JSON boundaries [33m 921[2mms[22m[39m
+   [33m[2m✓[22m[39m ECLI04 legacy write JSON and unknown operation errors are safe and retain exit2 [33m 777[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-schema.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/integration/m4-session-subscription-client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/probes/m0-probes.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-mcp-input-mode.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m packages/protocol/tests/schema.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-runtime-response-validation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/contracts/cross-interface-contract.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 172[2mms[22m[39m
+ [32m✓[39m tests/contracts/m0-m1-r2-adapters.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/contracts/m4-node-credentials.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative identity uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"identity","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"exit"},{"type":"session_start","reason":"new","generation":1,"phase":"enter"},{"type":"session_start","reason":"new","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"veto_preserves_runtime":true,"new_generation_b":true,"ordinary_actor_denied_space":"NOT_FOUND","passed":true}
+
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative new uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"new","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"new","generation":1,"phase":"exit"},{"type":"session_start","reason":"new","generation":1,"phase":"enter"},{"type":"session_start","reason":"new","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative switch uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"switch","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"resume","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"resume","generation":1,"phase":"exit"},{"type":"session_start","reason":"resume","generation":1,"phase":"enter"},{"type":"session_start","reason":"resume","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative fork uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"fork","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"fork","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"fork","generation":1,"phase":"exit"},{"type":"session_start","reason":"fork","generation":1,"phase":"enter"},{"type":"session_start","reason":"fork","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"replacement_uses_b":true,"passed":true}
+
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative reload uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"reload","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"reload","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"reload","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"closed_extension_no_http":true,"replacement_uses_b":true,"reload_reactivated_without_start":true,"passed":true}
+
+[90mstdout[2m | tests/contracts/m4-pi-native-lifecycle.test.ts[2m > [22m[2mM4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22m[2mnative shutdown uses isolated ordinary credentials and awaited lifecycle cleanup
+[22m[39m{"mode":"shutdown","metadata":{"version":"0.87.1","loader_sha256":"81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4","loader_public_export":false,"internal_loader_test_only":true},"model_calls":0,"events":[{"type":"session_start","reason":"startup","generation":1,"phase":"enter"},{"type":"session_start","reason":"startup","generation":1,"phase":"exit"},{"type":"session_shutdown","reason":"quit","generation":1,"phase":"enter"},{"type":"session_shutdown","reason":"quit","generation":1,"phase":"exit"}],"tools":["forum_ack","forum_context","forum_poll","forum_publish","forum_read","forum_relate","forum_search","forum_subscribe"],"activation_and_start_http":0,"concurrent_first_calls":{"capability":1,"me":1,"session":1,"posts":2,"author_a":true},"same_generation_retains_a":true,"cancelled_before_return":true,"tool_finally_before_return":true,"pending_batch_unchanged":true,"ack_request_delta":0,"closed_extension_no_http":true,"passed":true}
+
+ [32m✓[39m tests/contracts/m4-pi-native-lifecycle.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 3470[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative identity uses isolated ordinary credentials and awaited lifecycle cleanup [33m 629[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative new uses isolated ordinary credentials and awaited lifecycle cleanup [33m 559[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative switch uses isolated ordinary credentials and awaited lifecycle cleanup [33m 560[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative fork uses isolated ordinary credentials and awaited lifecycle cleanup [33m 548[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative reload uses isolated ordinary credentials and awaited lifecycle cleanup [33m 590[2mms[22m[39m
+   [33m[2m✓[22m[39m M4.4-B independent real Pi 0.87.1 SDK lifecycle[2m > [22mnative shutdown uses isolated ordinary credentials and awaited lifecycle cleanup [33m 582[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m102 passed[39m[22m[90m (105)[39m
+[2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m686 passed[39m[22m[90m (699)[39m
+[2m   Start at [22m 03:59:34
+[2m   Duration [22m 248.40s[2m (transform 1.87s, setup 0ms, collect 14.19s, tests 224.54s, environment 7ms, prepare 3.17s)[22m
+
+[ELIFECYCLE] Test failed. See above for more details.

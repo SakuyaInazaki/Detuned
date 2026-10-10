@@ -1,0 +1,20 @@
+--- packages/protocol/src/openapi.ts (fresh exact before)
++++ packages/protocol/src/openapi.ts (current)
+@@ -8,7 +8,7 @@
+ import { Type } from '@sinclair/typebox';
+ import { SearchQStringSchema, SearchCursorStringSchema, SearchResponseDataSchema, SearchResponseMetaSchema, SearchQuerySchema, SEARCH_LIMITS, ContextPageSchema, ContextResponseMetaSchema, ContextEnvelopeSchema, ContextResponseDataSchema, ViewResponseDataSchema, SourceStatusSchema, RelationProjectionSchema, FindingViewItemSchema, FailureViewItemSchema, QuestionViewItemSchema, OpenChallengeViewItemSchema } from './search.js';
+ import { createApiEnvelopeSchema } from './common.js';
+-import { ArtifactMetadataSchema } from './artifacts.js';
++import { ArtifactMetadataSchema, ReadableArtifactMetadataSchema } from './artifacts.js';
+ import { LIST_LIMIT, THREAD_POST_LIMIT, CONTEXT_BYTES, REVISION_QUERY, THREAD_STATES, VIEW_NAMES, NONBLANK_STRING_SCHEMA, QUERY_TRANSPORT_POLICY, NO_BODY_WRITE_POLICY } from './request-policies.js';
+ import {
+   CreateSpaceRequestSchema,
+@@ -190,7 +190,7 @@
+         get: {
+           summary: '附件元信息；不返回storage_key或原文件名',
+           parameters: [{ name: 'space_id', in: 'path', required: true, schema: { type: 'string' } }, { name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+-          responses: { '200': { description: '当前授权元信息；content_url仍须认证', content: { 'application/json': { schema: createApiEnvelopeSchema(ArtifactMetadataSchema) } } } },
++          responses: { '200': { description: '当前授权元信息；content_url仍须认证', content: { 'application/json': { schema: createApiEnvelopeSchema(ReadableArtifactMetadataSchema) } } } },
+         },
+       },
+       '/spaces/{space_id}/artifacts/{id}/content': {

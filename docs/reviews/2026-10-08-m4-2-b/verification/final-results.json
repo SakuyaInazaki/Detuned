@@ -1,0 +1,77 @@
+{
+  "status": "accepted_by_parent",
+  "date": "2026-10-08",
+  "formal": {
+    "total_passed": 615,
+    "total": 615,
+    "files_passed": 88,
+    "files": 88,
+    "new": 15,
+    "new_by_owner": {
+      "A": 5,
+      "B": 4,
+      "C": 6
+    }
+  },
+  "gates": {
+    "build": {
+      "runs": 1,
+      "exit_code": 0
+    },
+    "typecheck": {
+      "runs": 1,
+      "exit_code": 0
+    },
+    "lint": {
+      "runs": 1,
+      "exit_code": 0
+    },
+    "fullsuite": {
+      "runs": 1,
+      "exit_code": 0,
+      "duration_seconds": 46.66
+    }
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4 gates + 24 original retained probes + approved A1 scenario11 adapter; original scenario11 not executed",
+    "probe_runs": 25
+  },
+  "targeted": {
+    "new": {
+      "passed": 15,
+      "total": 15,
+      "runs": 1
+    },
+    "retained_mcp": {
+      "passed": 12,
+      "total": 12,
+      "runs": 1
+    }
+  },
+  "C_source_noemit": {
+    "runs": 1,
+    "exit_code": 0
+  },
+  "large_material": {
+    "inherited_40MiB_fullsuite_runs": 1,
+    "extra_runs": 0
+  },
+  "C_first_failure": null,
+  "author_first_failures_preserved": [
+    "A mock TS7006 static typing, fixed test annotation; five source formal passed first run",
+    "B MS01 max_bytes1024 fixture below4096; three passed first, corrected MS01 passed",
+    "B cross-library schema metadata and Map static types; approved trusted unchanged schema type adaptation passed final noEmit"
+  ],
+  "limits": [
+    "SDK1.30.1 supported native stdio and real private loopback HTTP only; no models/four hosts",
+    "global readonly failure restarts only on new explicit call after actual finally",
+    "session creation already started failure terminal until reconnect; already committed row not rolled back",
+    "original bounded close may fail for noncooperative backend; not universal hard interruption",
+    "full schema validation not business permissions or arbitrary custom validator certification"
+  ],
+  "commands_record": "commands.json",
+  "integrity_record": "integrity.json",
+  "accepted_at": "2026-10-08"
+}

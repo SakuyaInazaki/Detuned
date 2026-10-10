@@ -1,0 +1,20 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes
+AssertionError: expected { …(3) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+    "artifacts/objects/legacy-ready-key": "f5d1314eaadc1c6bbb1ea65c50d8869268eb557f1989abfb7eb431bb9d71749d",
+    "detuned.sqlite": "db6448381e6c229e890fd7070783f081ce1d2d1a5272ed0b85a656506fcf768f",
++   "detuned.sqlite-wal": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  }
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:37:1236
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

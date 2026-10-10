@@ -1,0 +1,137 @@
+{
+  "status": "core_pass_guard_second_pass_native_combined_first_failed",
+  "receipts": {
+    "build-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 10.478,
+      "receipt": "build-first.json"
+    },
+    "source-noemit-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.687,
+      "receipt": "source-noemit-first.json"
+    },
+    "syntax-pi-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.043,
+      "receipt": "syntax-pi-first.json"
+    },
+    "syntax-claude-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.043,
+      "receipt": "syntax-claude-first.json"
+    },
+    "focused-first": {
+      "exit_code": 1,
+      "elapsed_seconds": 86.86,
+      "receipt": "focused-first.json"
+    },
+    "source-noemit-repair": {
+      "exit_code": 2,
+      "elapsed_seconds": 0.843,
+      "receipt": "source-noemit-repair.json"
+    },
+    "source-noemit-repair2": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.749,
+      "receipt": "source-noemit-repair2.json"
+    },
+    "syntax-pi-repair": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.04,
+      "receipt": "syntax-pi-repair.json"
+    },
+    "syntax-claude-repair": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.04,
+      "receipt": "syntax-claude-repair.json"
+    },
+    "focused-checks-repair": {
+      "exit_code": 1,
+      "elapsed_seconds": 70.912,
+      "receipt": "focused-checks-repair.json"
+    },
+    "source-noemit-v7-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.758,
+      "receipt": "source-noemit-v7-first.json"
+    },
+    "syntax-pi-v7-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.046,
+      "receipt": "syntax-pi-v7-first.json"
+    },
+    "focused-checks-v7-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 2.138,
+      "receipt": "focused-checks-v7-first.json"
+    },
+    "type-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 8.307,
+      "receipt": "type-first.json"
+    },
+    "lint-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 8.344,
+      "receipt": "lint-first.json"
+    },
+    "schema-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.068,
+      "receipt": "schema-first.json"
+    },
+    "core-once-first": {
+      "exit_code": 0,
+      "elapsed_seconds": 320.4,
+      "receipt": "core-once-first.json"
+    },
+    "claude-guard-only-first": {
+      "exit_code": 1,
+      "elapsed_seconds": 0.259,
+      "receipt": "claude-guard-only-first.json"
+    },
+    "claude-guard-only-second": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.26,
+      "receipt": "claude-guard-only-second.json"
+    },
+    "claude-native-first": {
+      "exit_code": 1,
+      "elapsed_seconds": 3.206,
+      "receipt": "claude-native-first.json"
+    }
+  },
+  "full": {
+    "runs": 1,
+    "tests_passed": 967,
+    "tests_total": 967,
+    "files_passed": 155,
+    "files_total": 155,
+    "new_cases_included": 3,
+    "not_added_twice": true
+  },
+  "focused": {
+    "first_passed": 28,
+    "first_total": 29,
+    "v5_diagnostic_single_failed": 1,
+    "v7_related_single_passed": 1,
+    "old_six_related_skipped": 6,
+    "D_independent_first_passed": 2
+  },
+  "source_noemit": "first0; v3TS18047=2; v5repair2=0; v7=0",
+  "current_probes": "current28 B2 accepted v3 and29 reuse only, no M7.4-A run",
+  "Claude": {
+    "guard_only_runs": 2,
+    "guard_first": "sentinel allowed, exit1; retained",
+    "guard_second": "allowed1/forbidden0/sentinelEPERM/childclose0/null/owncleanup; exit0 .260s",
+    "native_combined_attempts": 1,
+    "native_first": "exit1 3.206s; generic failure stage not retained; no success claimed",
+    "native_spawn_reached": "unknown from current report",
+    "prompt_or_model_request_sent_by_probe": false,
+    "model_calls_field": "static authored field, not measured vendor internal behavior"
+  },
+  "first_failure": "A checks child70swatchdog, preserved; v5appcleanup failure; v7 bounded business/socket cleanup passes but oldkeepalive rootcause not proved",
+  "integrity": "core-final-integrity.json pass431source555dist",
+  "cleanup": "core-cleanup.json plus first-timeout exactcleanup receipt plus guard-only-result cleanup; no wholemachine census"
+}

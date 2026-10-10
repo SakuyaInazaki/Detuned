@@ -1,0 +1,60 @@
+{
+  "status": "root_approved_plan_implementation_waits_fresh_and_release",
+  "task": "M6.4-A",
+  "taskbook": "m6-4-a-task.md",
+  "owners": {
+    "A": {
+      "notes": [
+        "index/guard/artifact-transfer edits only where genuinely necessary",
+        "no changes to existing material-builder/JCS/old write response shapes"
+      ],
+      "files": [
+        "packages/protocol/src/review.ts",
+        "packages/protocol/src/response-guards.ts",
+        "packages/protocol/src/openapi.ts",
+        "packages/protocol/src/index.ts",
+        "modules/review/src/submission-service.ts",
+        "modules/review/src/index.ts",
+        "packages/server/src/app.ts",
+        "packages/server/src/routes/meta.ts",
+        "packages/server/src/routes/reviews.ts",
+        "packages/server/src/routes/artifacts.ts",
+        "packages/server/package.json",
+        "tests/contracts/m6-review-http.test.ts",
+        "packages/core/src/services/artifact-service.ts"
+      ]
+    },
+    "B": {
+      "notes": [
+        "lock delta only internal server workspace importer/link; no external pins",
+        "A owns server manifest; B owns lock, sequential coordination"
+      ],
+      "files": [
+        "packages/client/src/client.ts",
+        "packages/client/src/request-key.ts",
+        "packages/client/src/artifact-transfer.ts",
+        "pnpm-lock.yaml",
+        "tests/contracts/m6-review-client.test.ts"
+      ]
+    },
+    "D": {
+      "notes": [
+        "sole checks execution window"
+      ],
+      "files": [
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "docs/reviews/2026-10-09-m6-4-a/verification/**"
+      ]
+    }
+  },
+  "protected": [
+    "SQL/schema/DDL",
+    "external dependencies",
+    "old review packages",
+    "global configuration",
+    "VM/Colima/daemon environments",
+    "CLI/MCP/Pi及Web评审启用"
+  ],
+  "open_root_decisions": [],
+  "execution": "No implementation, tests, build, install or link performed by this preparation."
+}

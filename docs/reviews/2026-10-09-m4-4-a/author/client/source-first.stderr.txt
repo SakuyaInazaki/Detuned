@@ -1,0 +1,71 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-mcp-session.test.ts > M4.2-B lazy MCP diagnostic sessions > is lazy through SDK discovery and invalid calls; valid calls share initialization/session and isolate spaces
+TypeError: (0 , createRuntimeSessionBinding) is not a function
+ ❯ createSessionBinding packages/mcp/src/session-binding.ts:6:10
+      4| export interface McpSessionBinding extends RuntimeSessionBindingOption…
+      5| export function createSessionBinding(config: McpSessionBinding) {
+      6|   return createRuntimeSessionBinding(config);
+       |          ^
+      7| }
+      8| 
+ ❯ createMcpBridge packages/mcp/src/bridge.ts:32:44
+ ❯ tests/contracts/m4-mcp-session.test.ts:25:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/contracts/m4-mcp-session.test.ts > M4.2-B lazy MCP diagnostic sessions > one cancelled waiter leaves shared work alive; full global cancellation can retry after true cleanup
+TypeError: (0 , createRuntimeSessionBinding) is not a function
+ ❯ createSessionBinding packages/mcp/src/session-binding.ts:6:10
+      4| export interface McpSessionBinding extends RuntimeSessionBindingOption…
+      5| export function createSessionBinding(config: McpSessionBinding) {
+      6|   return createRuntimeSessionBinding(config);
+       |          ^
+      7| }
+      8| 
+ ❯ tests/contracts/m4-mcp-session.test.ts:44:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/contracts/m4-mcp-session.test.ts > M4.2-B lazy MCP diagnostic sessions > started session cancellation/response loss is terminal and late success cannot dispatch
+TypeError: (0 , createRuntimeSessionBinding) is not a function
+ ❯ createSessionBinding packages/mcp/src/session-binding.ts:6:10
+      4| export interface McpSessionBinding extends RuntimeSessionBindingOption…
+      5| export function createSessionBinding(config: McpSessionBinding) {
+      6|   return createRuntimeSessionBinding(config);
+       |          ^
+      7| }
+      8| 
+ ❯ tests/contracts/m4-mcp-session.test.ts:61:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/contracts/m4-mcp-session.test.ts > M4.2-B lazy MCP diagnostic sessions > rejects incompatible capabilities and forged session actor/space without business calls
+TypeError: (0 , createRuntimeSessionBinding) is not a function
+ ❯ createSessionBinding packages/mcp/src/session-binding.ts:6:10
+      4| export interface McpSessionBinding extends RuntimeSessionBindingOption…
+      5| export function createSessionBinding(config: McpSessionBinding) {
+      6|   return createRuntimeSessionBinding(config);
+       |          ^
+      7| }
+      8| 
+ ❯ createMcpBridge packages/mcp/src/bridge.ts:32:44
+ ❯ tests/contracts/m4-mcp-session.test.ts:72:105
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/contracts/m4-mcp-session.test.ts > M4.2-B lazy MCP diagnostic sessions > close waits global and session finally; uncooperative initialization hits the shared deadline
+TypeError: (0 , createRuntimeSessionBinding) is not a function
+ ❯ createSessionBinding packages/mcp/src/session-binding.ts:6:10
+      4| export interface McpSessionBinding extends RuntimeSessionBindingOption…
+      5| export function createSessionBinding(config: McpSessionBinding) {
+      6|   return createRuntimeSessionBinding(config);
+       |          ^
+      7| }
+      8| 
+ ❯ createMcpBridge packages/mcp/src/bridge.ts:32:44
+ ❯ tests/contracts/m4-mcp-session.test.ts:82:69
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

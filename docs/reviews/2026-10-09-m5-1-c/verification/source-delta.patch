@@ -1,0 +1,797 @@
+--- before/packages/web/src/app.tsx
++++ current/packages/web/src/app.tsx
+@@ -1,12 +1,16 @@
+ import { useEffect, useRef, useState, type FormEvent } from 'react';
+ import { DetunedClient, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
+-import { DetunedError, type WebSessionResponse, type CreatePostRequest } from '@detuned/protocol';
++import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, POST_KINDS } from '@detuned/protocol';
++import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
+ import { appendContent, CONTENT_BUDGET, initialContent, type FixedContent } from './content.js';
+ 
+ type SpaceItem = { id: string; slug: string };
+ type ThreadItem = { id: string; title: string; state: 'open' | 'archived' };
+ type PostItem = { id: string; kind: string; current_revision: number; lifecycle: string };
+ type SessionState = 'restoring' | 'anonymous' | 'authenticated' | 'logout-pending';
++type SpaceView = 'discussion' | 'search' | 'failures';
++type ResultReading = { origin: 'search' | 'failures'; threadId: string; postId: string; revision: number };
++type ThreadIntent = { body: CreateThreadRequest; key: string; spaceId: string };
+ type Intent = { body: CreatePostRequest; key: string; spaceId: string; threadId: string };
+ const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+ function spaces(data: unknown): SpaceItem[] {
+@@ -43,6 +47,8 @@
+     if (error.statusCode === 429) return '请求过于频繁，请稍后明确重试。';
+     if (error.statusCode === 404) return '内容不存在或当前身份不可见。';
+     if (error.statusCode === 410) return '该内容已脱敏，无法读取正文。';
++    if (error.statusCode === 400) return '输入或游标无效，请核对条件后重新请求首页。';
++    if (error.statusCode === 422) return '请求范围或内容超出限制，请缩小条件后重试。';
+     if (error.statusCode === 409) return '当前操作与已有版本或请求冲突，请核对后再操作。';
+     return `服务未完成请求（${error.code}），请核对输入或稍后重试。`;
+   }
+@@ -76,11 +82,30 @@
+   const [postPage, setPostPage] = useState<PostItem[]>([]);
+   const [postCursor, setPostCursor] = useState<string | null>(null);
+   const [content, setContent] = useState<FixedContent | null>(null);
++  const [resultReading, setResultReading] = useState<ResultReading | null>(null);
+   const [title, setTitle] = useState('');
+   const [summary, setSummary] = useState('');
+   const [body, setBody] = useState('');
+   const [reply, setReply] = useState<{ postId: string; revision: number } | null>(null);
+   const [intent, setIntent] = useState<Intent | null>(null);
++  const [view, setView] = useState<SpaceView>('discussion');
++  const [showThreadForm, setShowThreadForm] = useState(false);
++  const [newThreadTitle, setNewThreadTitle] = useState('');
++  const [withFirstPost, setWithFirstPost] = useState(false);
++  const [firstTitle, setFirstTitle] = useState('');
++  const [firstSummary, setFirstSummary] = useState('');
++  const [firstBody, setFirstBody] = useState('');
++  const [threadIntent, setThreadIntent] = useState<ThreadIntent | null>(null);
++  const [searchQ, setSearchQ] = useState('');
++  const [searchKind, setSearchKind] = useState('');
++  const [searchThread, setSearchThread] = useState('');
++  const [searchTags, setSearchTags] = useState('');
++  const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null);
++  const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
++  const [searchCursor, setSearchCursor] = useState<string | null>(null);
++  const [failureResults, setFailureResults] = useState<FailureItem[]>([]);
++  const [failuresLoaded, setFailuresLoaded] = useState(false);
++  const [failureKeyword, setFailureKeyword] = useState('');
+   const pending = useRef(false);
+ 
+   function newGeneration() {
+@@ -92,7 +117,14 @@
+     setError('');
+     return generation.current;
+   }
++  function clearSpaceViews() {
++    setView('discussion'); setResultReading(null); setShowThreadForm(false); setNewThreadTitle(''); setWithFirstPost(false);
++    setFirstTitle(''); setFirstSummary(''); setFirstBody(''); setThreadIntent(null);
++    setSearchQ(''); setSearchKind(''); setSearchThread(''); setSearchTags(''); setSearchQuery(null);
++    setSearchResults([]); setSearchCursor(null); setFailureResults([]); setFailuresLoaded(false); setFailureKeyword('');
++  }
+   function clearDiscussion() {
++    clearSpaceViews();
+     setSpacePage([]); setSpaceCursor(null); setSpace(null); setThreadPage([]); setThreadCursor(null);
+     setThread(null); setPostPage([]); setPostCursor(null); setContent(null); clearComposer();
+   }
+@@ -163,7 +195,7 @@
+     finally { if (id === generation.current) { pending.current = false; setBusy(false); } }
+   }
+   function selectSpace(value: SpaceItem) {
+-    newGeneration(); setSpace(value); setThread(null); setPostPage([]); setContent(null); clearComposer();
++    newGeneration(); clearSpaceViews(); setSpace(value); setThread(null); setPostPage([]); setContent(null); clearComposer();
+     setThreadPage([]); setThreadCursor(null); setThreadState('open');
+     void run(async signal => {
+       const id = generation.current; const result = await client.listThreads(value.id, 'open', 20, undefined, { signal });
+@@ -173,7 +205,7 @@
+   }
+   function loadThreads(state: 'open' | 'archived', cursor?: string) {
+     if (!space) return;
+-    newGeneration(); setThreadState(state); setThread(null); setPostPage([]); setContent(null); clearComposer();
++    newGeneration(); setView('discussion'); setThreadState(state); setThread(null); setPostPage([]); setContent(null); clearComposer();
+     void run(async signal => {
+       const id = generation.current; const result = await client.listThreads(space.id, state, 20, cursor, { signal });
+       const items = threads(result.data); const next = nextCursor(result.meta);
+@@ -182,20 +214,123 @@
+   }
+   function loadPosts(value: ThreadItem, cursor?: string) {
+     if (!space) return;
+-    newGeneration(); setThread(value); setContent(null); clearComposer(); setPostPage([]); setPostCursor(null);
++    newGeneration(); setView('discussion'); setThread(value); setContent(null); clearComposer(); setPostPage([]); setPostCursor(null);
+     void run(async signal => {
+       const id = generation.current; const result = await client.getThreadPosts(space.id, value.id, { limit: 20, max_bytes: CONTENT_BUDGET, ...(cursor ? { cursor } : {}) }, { signal });
+       const items = posts(result.data); const next = nextCursor(result.meta);
+       if (id === generation.current) { setPostPage(items); setPostCursor(next); }
+     }, '帖子目录已加载（按 ID 升序）。');
+   }
+-  function openPost(postId: string, revision: number) {
++  function openPost(postId: string, revision: number, resultThreadId?: string) {
+     if (!space) return;
+-    newGeneration(); const initial = initialContent(postId, revision); setContent(initial); setReply(null); setIntent(null);
++    newGeneration();
++    setResultReading(view !== 'discussion' && resultThreadId ? { origin: view, threadId: resultThreadId, postId, revision }
++      : resultReading && resultThreadId === resultReading.threadId && postId === resultReading.postId && revision === resultReading.revision ? resultReading : null);
++    const initial = initialContent(postId, revision); setContent(initial); setReply(null); setIntent(null);
+     void run(async signal => {
+       const id = generation.current; const page = await client.getPostRevisionContent(space.id, postId, revision, { max_bytes: CONTENT_BUDGET }, { signal });
+       const value = appendContent(initial, page); if (id === generation.current) setContent(value);
+     }, '固定修订已加载。');
++  }
++  function switchView(next: SpaceView) {
++    if (!space || next === view && !content) return;
++    newGeneration(); setView(next); setContent(null); setResultReading(null); setReply(null);
++    if (next === 'failures' && !failuresLoaded) loadFailures();
++    else setStatus(next === 'discussion' ? '讨论页面。' : next === 'search' ? '输入关键词搜索当前空间。' : '失败作者报告。');
++  }
++  function changeSearchDraft(update: () => void) {
++    newGeneration(); setResultReading(null); update(); setSearchQuery(null); setSearchResults([]); setSearchCursor(null); setContent(null);
++    setStatus('筛选已改变，请重新搜索；旧分页游标已清除。');
++  }
++  function submitSearch(event?: FormEvent, cursor?: string, queryOverride?: SearchQuery) {
++    event?.preventDefault(); if (!space) return;
++    const kind = POST_KINDS.find(item => item === searchKind);
++    const query: SearchQuery = queryOverride ?? (cursor && searchQuery ? searchQuery : {
++      q: searchQ, limit: 20, ...(kind ? { kind } : {}),
++      ...(searchThread !== '' ? { thread_id: searchThread } : {}),
++      ...(searchTags !== '' ? { tags: searchTags.split('\n').filter(tag => tag !== '') } : {}),
++    });
++    newGeneration(); setView('search'); setResultReading(null); setContent(null); setSearchResults([]); setSearchCursor(null); setSearchQuery(query);
++    void run(async signal => {
++      const id = generation.current;
++      const result = await client.search(space.id, { ...query, ...(cursor ? { cursor } : {}) }, { signal });
++      const items = parseSearchItems(result.data); const next = nextCursor(result.meta);
++      if (id === generation.current) { setSearchResults(items); setSearchCursor(next); }
++    }, '搜索结果已加载。');
++  }
++  function loadFailures() {
++    if (!space) return;
++    void run(async signal => {
++      const id = generation.current;
++      const result = await client.getView(space.id, 'failures', { signal });
++      const items = parseFailures(result.data);
++      if (id === generation.current) { setFailureResults(items); setFailuresLoaded(true); }
++    }, '失败作者报告已加载（最多 50 条的当前视图）。');
++  }
++  function searchFailureKeyword(event: FormEvent) {
++    event.preventDefault(); if (!failureKeyword.trim()) return;
++    setSearchQ(failureKeyword); setSearchKind('failure'); setSearchThread(''); setSearchTags('');
++    submitSearch(undefined, undefined, { q: failureKeyword, kind: 'failure', limit: 20 });
++  }
++  function returnToResults() {
++    const origin = resultReading?.origin ?? (view === 'search' ? 'search' : 'failures');
++    newGeneration(); setView(origin); setContent(null); setResultReading(null); setReply(null);
++    setStatus(origin === 'search' ? '已返回原搜索结果与筛选。' : '已返回失败报告。');
++  }
++  function enterReferencedThread() {
++    if (!space || !content || !resultReading || pending.current || sessionState !== 'authenticated') return;
++    const fixed = content; const selected = resultReading;
++    if (fixed.postId !== selected.postId || fixed.revision !== selected.revision) return;
++    newGeneration(); setThread(null); setPostPage([]); setPostCursor(null); clearComposer();
++    void run(async signal => {
++      const id = generation.current;
++      const result = await client.getThreadPosts(space.id, selected.threadId, { limit: 20, max_bytes: CONTENT_BUDGET }, { signal });
++      const [actualThread] = threads([result.data.thread]);
++      const items = posts(result.data); const next = nextCursor(result.meta);
++      if (!actualThread || actualThread.id !== selected.threadId || result.data.thread.space_id !== space.id) throw new ClientProtocolError('Invalid referenced thread response.');
++      if (id !== generation.current) return;
++      setThread(actualThread); setPostPage(items); setPostCursor(next); setView('discussion');
++      setContent(fixed); setResultReading(selected); setReply({ postId: fixed.postId, revision: fixed.revision });
++      // React applies the newly visible form before this frame; the generation check
++      // also prevents a queued focus from affecting a later logout or selection.
++      requestAnimationFrame(() => { if (id === generation.current) document.getElementById('post-title')?.focus(); });
++    }, '已进入引用所在主题；回应会保留所选修订的引用。');
++  }
++  async function createThread(event: FormEvent, retryIntent?: ThreadIntent) {
++    event.preventDefault(); if (!space || pending.current || sessionState !== 'authenticated') return;
++    const operation: ThreadIntent = retryIntent ?? { spaceId: space.id, key: `web_${crypto.randomUUID()}`,
++      body: { title: newThreadTitle, ...(withFirstPost ? { initial_post: { kind: 'note', title: firstTitle, summary: firstSummary, body: firstBody } } : {}) } };
++    setThreadIntent(operation);
++    await run(async signal => {
++      const id = generation.current;
++      const result: { data: unknown } = await client.createThread(operation.spaceId, operation.body, operation.key, { signal });
++      if (!isRecord(result.data)) throw new ClientProtocolError('Invalid created thread.');
++      const [created] = threads([result.data.thread]);
++      if (!created) throw new ClientProtocolError('Invalid created thread.');
++      let initial: FixedContent | null = null;
++      if (result.data.initial_post !== undefined) {
++        if (!isRecord(result.data.initial_post) || !isRecord(result.data.initial_post.revision)) throw new ClientProtocolError('Invalid initial post.');
++        const [post] = posts({ posts: [result.data.initial_post.post] });
++        if (!post || result.data.initial_post.revision.revision !== post.current_revision) throw new ClientProtocolError('Invalid initial post.');
++        initial = initialContent(post.id, post.current_revision);
++      } else if (operation.body.initial_post) throw new ClientProtocolError('Initial post missing from response.');
++      if (id !== generation.current) return;
++      setThreadIntent(null); setShowThreadForm(false); setNewThreadTitle(''); setWithFirstPost(false);
++      setFirstTitle(''); setFirstSummary(''); setFirstBody(''); setView('discussion'); setThread(created);
++      clearComposer(); setContent(initial); setPostPage([]); setPostCursor(null);
++      try {
++        const page = await client.getThreadPosts(operation.spaceId, created.id, { limit: 20, max_bytes: CONTENT_BUDGET }, { signal });
++        const items = posts(page.data); const next = nextCursor(page.meta);
++        if (id === generation.current) { setPostPage(items); setPostCursor(next); }
++        if (initial) {
++          const page = await client.getPostRevisionContent(operation.spaceId, initial.postId, initial.revision, { max_bytes: CONTENT_BUDGET }, { signal });
++          const value = appendContent(initial, page); if (id === generation.current) setContent(value);
++        }
++        const directory = await client.listThreads(operation.spaceId, 'open', 20, undefined, { signal });
++        const itemsInDirectory = threads(directory.data); const nextInDirectory = nextCursor(directory.meta);
++        if (id === generation.current) { setThreadState('open'); setThreadPage(itemsInDirectory); setThreadCursor(nextInDirectory); }
++      } catch (e) { if (id === generation.current) setError(`主题已创建，但读取刷新未完成。${errorText(e)}`); }
++    }, '主题已创建；主题与可选首帖来自同一次服务端请求。');
+   }
+   function continueContent() {
+     if (!space || !content || !content.cursor || content.complete) return;
+@@ -241,23 +376,35 @@
+           <div className="paging"><button className="quiet" disabled={busy} onClick={() => { newGeneration(); void run(signal => loadSpaces(signal), '空间首页已加载。'); }}>空间首页</button>{spaceCursor && <button disabled={busy} onClick={() => { const cursor = spaceCursor; newGeneration(); void run(signal => loadSpaces(signal, cursor), '下一页空间已加载。'); }}>下一页空间</button>}</div>
+         </aside>
+         <section className="discussion" aria-label="讨论内容">
+-          <nav className="breadcrumbs" aria-label="当前位置"><span>空间</span>{space && <><span aria-hidden="true">/</span><button onClick={() => selectSpace(space)}>{space.slug}</button></>}{thread && <><span aria-hidden="true">/</span><button onClick={() => loadPosts(thread)}>{thread.title}</button></>}</nav>
++          <nav className="breadcrumbs" aria-label="当前位置"><span>空间</span>{space && <><span aria-hidden="true">/</span><button onClick={() => selectSpace(space)}>{space.slug}</button></>}{thread && view === 'discussion' && <><span aria-hidden="true">/</span><button onClick={() => loadPosts(thread)}>{thread.title}</button></>}</nav>
+           {!space && <div className="panel welcome"><h2>选择一个空间</h2><p>这里仅显示当前身份可见的研究。论坛文本不会作为程序执行。</p></div>}
+-          {space && <section className="panel" aria-labelledby="threads-heading"><div className="section-heading"><h2 id="threads-heading">主题</h2><label className="inline-label">主题状态<select value={threadState} onChange={e => loadThreads(e.target.value === 'archived' ? 'archived' : 'open')}><option value="open">开放</option><option value="archived">归档</option></select></label></div>
++          {space && <nav className="space-nav" aria-label="空间页面"><button className="quiet" aria-current={view === 'discussion' ? 'page' : undefined} onClick={() => switchView('discussion')}>讨论</button><button className="quiet" aria-current={view === 'search' ? 'page' : undefined} onClick={() => switchView('search')}>搜索</button><button className="quiet" aria-current={view === 'failures' ? 'page' : undefined} onClick={() => switchView('failures')}>失败报告</button></nav>}
++          {space && view === 'discussion' && <section className="panel" aria-labelledby="new-thread-heading"><div className="section-heading"><h2 id="new-thread-heading">新主题</h2><button className="quiet" aria-expanded={showThreadForm} onClick={() => setShowThreadForm(!showThreadForm)}>新建主题</button></div>
++            {showThreadForm && <form onSubmit={e => void createThread(e)}><fieldset disabled={busy || threadIntent !== null}><label htmlFor="new-thread-title">主题标题</label><input id="new-thread-title" value={newThreadTitle} onChange={e => setNewThreadTitle(e.target.value)} maxLength={160} required/><label className="check-label"><input type="checkbox" checked={withFirstPost} onChange={e => setWithFirstPost(e.target.checked)}/>同时发布首帖</label>
++              {withFirstPost && <><label htmlFor="first-title">首帖标题</label><input id="first-title" value={firstTitle} onChange={e => setFirstTitle(e.target.value)} maxLength={160} required/><label htmlFor="first-summary">首帖摘要</label><textarea id="first-summary" value={firstSummary} onChange={e => setFirstSummary(e.target.value)} maxLength={280} rows={2} required/><label htmlFor="first-body">首帖正文</label><textarea id="first-body" value={firstBody} onChange={e => setFirstBody(e.target.value)} rows={5} required/></>}</fieldset>
++              <div className="paging"><button type="submit" disabled={busy || threadIntent !== null}>创建主题</button>{threadIntent && <button type="button" disabled={busy} onClick={e => void createThread(e, threadIntent)}>用同一请求重试创建</button>}{threadIntent && <button type="button" className="quiet" disabled={busy} onClick={() => { setThreadIntent(null); setStatus('原创建请求可能已提交，请核对主题后再编辑新意图。'); }}>编辑为新的创建意图</button>}</div></form>}
++          </section>}
++          {space && view === 'search' && !content && <section className="panel" aria-labelledby="search-heading"><h2 id="search-heading">空间内搜索</h2><form onSubmit={e => submitSearch(e)}><label htmlFor="search-q">搜索关键词</label><input id="search-q" value={searchQ} onChange={e => changeSearchDraft(() => setSearchQ(e.target.value))} required/><div className="search-filters"><label>帖子类型<select value={searchKind} onChange={e => changeSearchDraft(() => setSearchKind(e.target.value))}><option value="">全部类型</option>{POST_KINDS.map(kind => <option key={kind} value={kind}>{kind}</option>)}</select></label><div><label htmlFor="search-thread">限定主题 ID</label><input id="search-thread" value={searchThread} onChange={e => changeSearchDraft(() => setSearchThread(e.target.value))}/></div></div><label htmlFor="search-tags">标签（每行一个）</label><textarea id="search-tags" value={searchTags} onChange={e => changeSearchDraft(() => setSearchTags(e.target.value))} rows={2}/><button type="submit" disabled={busy || !searchQ.trim()}>搜索</button></form>
++            {searchQuery && !busy && !searchResults.length && <p className="empty">当前搜索页没有结果。可修改关键词或筛选后重新搜索。</p>}
++            <ul className="search-results">{searchResults.map(item => <li key={`${item.post_id}:${item.revision}`}><h3>{item.title}</h3><p>{item.summary}</p><pre className="snippet">{item.snippet}</pre><p className="reference">{item.kind} · 帖子 {item.post_id} · 修订 {item.revision} · 主题 {item.thread_id}</p><p className="reference">标签：{item.tags.join(' · ') || '无标签'}</p><button onClick={() => openPost(item.post_id, item.revision, item.thread_id)}>查看搜索修订 {item.revision}</button></li>)}</ul>
++            {searchQuery && <div className="paging"><button className="quiet" disabled={busy} onClick={() => submitSearch(undefined, undefined, searchQuery)}>搜索首页</button>{searchCursor && <button disabled={busy} onClick={() => submitSearch(undefined, searchCursor)}>下一页搜索结果</button>}</div>}
++          </section>}
++          {space && view === 'failures' && !content && <section className="panel" aria-labelledby="failures-heading"><div className="section-heading"><h2 id="failures-heading">失败作者报告</h2><span>最多 50 条的当前视图</span></div><p>这是作者对有限尝试的报告，不是完整失败索引、正式证明或批准。</p><button className="quiet" disabled={busy} onClick={loadFailures}>刷新失败报告</button><form className="failure-search" onSubmit={searchFailureKeyword}><label htmlFor="failure-keyword">失败搜索关键词</label><input id="failure-keyword" value={failureKeyword} onChange={e => setFailureKeyword(e.target.value)} required/><button type="submit" disabled={busy || !failureKeyword.trim()}>按关键词搜索失败</button></form>{failuresLoaded && !failureResults.length && !busy && <p className="empty">当前视图暂无可见失败报告。</p>}{failureResults.map(item => <FailureReport key={`${item.post_id}:${item.revision}`} item={item} open={openPost}/>)}</section>}
++          {space && view === 'discussion' && <section className="panel" aria-labelledby="threads-heading"><div className="section-heading"><h2 id="threads-heading">主题</h2><label className="inline-label">主题状态<select value={threadState} onChange={e => loadThreads(e.target.value === 'archived' ? 'archived' : 'open')}><option value="open">开放</option><option value="archived">归档</option></select></label></div>
+             {!threadPage.length && !busy && <p className="empty">当前页暂无{threadState === 'open' ? '开放' : '归档'}主题。</p>}
+             <ul className="directory threads">{threadPage.map(item => <li key={item.id}><button aria-pressed={thread?.id === item.id} onClick={() => loadPosts(item)}>{item.title}<span>{item.state === 'open' ? '开放' : '归档'} · 查看帖子 →</span></button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadThreads(threadState)}>主题首页</button>{threadCursor && <button disabled={busy} onClick={() => loadThreads(threadState, threadCursor)}>下一页主题</button>}</div>
+           </section>}
+-          {thread && <section className="panel" aria-labelledby="posts-heading"><div className="section-heading"><h2 id="posts-heading">{thread.title}</h2><span>帖子列表</span></div>
++          {thread && view === 'discussion' && <section className="panel" aria-labelledby="posts-heading"><div className="section-heading"><h2 id="posts-heading">{thread.title}</h2><span>帖子列表</span></div>
+             {!postPage.length && !busy && <p className="empty">当前页暂无帖子。</p>}
+             <ul className="post-directory">{postPage.map(item => <li key={item.id}><div><strong>{item.kind}</strong><small>{item.id}</small><span>{item.lifecycle}</span></div><button onClick={() => openPost(item.id, item.current_revision)}>查看修订 {item.current_revision}</button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadPosts(thread)}>帖子首页</button>{postCursor && <button disabled={busy} onClick={() => loadPosts(thread, postCursor)}>下一页帖子</button>}</div>
+           </section>}
+-          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
++          {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+             {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><pre className="body-text">{content.document.body}</pre><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+-            <div className="paging">{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision)}>从首段重开</button><button disabled={busy || !thread} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button></div>
+-          </section>}
+-          {thread && <section className="panel composer" aria-labelledby="compose-heading"><h2 id="compose-heading">发布笔记</h2><p>{reply ? `引用帖子 ${reply.postId} 的修订 ${reply.revision}。回应会保留这个版本的引用。` : '发布到当前主题，研究内容只按纯文本显示。'}</p>
++            <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button><button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button></div>
++          </section>}
++          {thread && view === 'discussion' && <section className="panel composer" aria-labelledby="compose-heading"><h2 id="compose-heading">发布笔记</h2><p>{reply ? `引用帖子 ${reply.postId} 的修订 ${reply.revision}。回应会保留这个版本的引用。` : '发布到当前主题，研究内容只按纯文本显示。'}</p>
+             <form onSubmit={e => void publish(e)}><fieldset disabled={busy || intent !== null}><label htmlFor="post-title">帖子标题</label><input id="post-title" value={title} onChange={e => setTitle(e.target.value)} maxLength={160} required/><label htmlFor="post-summary">摘要</label><textarea id="post-summary" value={summary} onChange={e => setSummary(e.target.value)} maxLength={280} required rows={2}/><label htmlFor="post-body">正文</label><textarea id="post-body" value={body} onChange={e => setBody(e.target.value)} rows={7} required/></fieldset><div className="paging"><button type="submit" disabled={busy || intent !== null}>发布笔记</button>{intent && <button type="button" disabled={busy} onClick={e => void publish(e, intent)}>用同一请求重试发布</button>}{intent && <button type="button" className="quiet" disabled={busy} onClick={() => { setIntent(null); setStatus('已转为可编辑的新意图；原请求可能已经提交，请先核对帖子目录。'); }}>编辑为新意图</button>}{reply && !intent && <button type="button" className="quiet" disabled={busy} onClick={() => setReply(null)}>取消引用</button>}</div></form>
+           </section>}
+         </section>
+--- before/packages/web/src/styles.css
++++ current/packages/web/src/styles.css
+@@ -65,3 +65,25 @@
+ .login form button { width: 100%; }
+ footer { text-align: center; font-size: 11px; color: #8b9b93; padding: 22px; border-top: 1px solid #e2e9e4; }
+ @media (max-width: 740px) { main { padding: 27px 16px 40px; } .topbar { padding: 16px; } .subtitle { display: none; } .identity { gap: 9px; font-size: 12px; } .workspace { grid-template-columns: 1fr; gap: 0; } .spaces { position: static; } .panel { padding: 18px; } .post-directory li { align-items: flex-start; } .post-directory button { font-size: 11px; padding: 6px 8px; } }
++.space-nav { display: flex; gap: 9px; margin-bottom: 18px; flex-wrap: wrap; }
++.space-nav button[aria-current="page"] { background: #eaf5f0; color: #126c60; border-color: #9ecbbb; }
++.check-label { display: flex !important; align-items: center; gap: 9px; margin: 5px 0 18px !important; }
++.check-label input { width: auto; margin: 0; accent-color: #127b70; }
++.search-filters { display: grid; grid-template-columns: 1fr 2fr; gap: 18px; }
++.search-filters select { width: 100%; margin-top: 6px; padding: 10px; }
++.search-results { padding: 0; list-style: none; }
++.search-results > li { padding: 20px 0; border-top: 1px solid #e4ece6; }
++.search-results h3 { font-size: 19px; overflow-wrap: anywhere; }
++.snippet { font-family: inherit; font-size: 14px; }
++.failure-search { margin-top: 22px; }
++.failure-report { margin-top: 28px; padding-top: 24px; border-top: 1px solid #dce5df; }
++.failure-report h3 { font-size: 20px; margin: 0; overflow-wrap: anywhere; }
++.report-badge { color: #407264 !important; background: #edf6f1; border-radius: 4px; padding: 4px 8px; }
++.failure-material { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
++.failure-material dt { font-size: 12px; color: #698174; }
++.failure-material dd { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
++.failure-material ul { margin: 0; padding-left: 18px; }
++.evidence-list { padding-left: 20px; overflow-wrap: anywhere; }
++.evidence-list li { margin-bottom: 10px; }
++.evidence-list button { display: block; margin-top: 6px; font-size: 12px; }
++@media (max-width: 740px) { .search-filters, .failure-material { grid-template-columns: 1fr; } .space-nav button { flex: 1; } }
+--- before/scripts/integrations/web/fixtures.ts
++++ current/scripts/integrations/web/fixtures.ts
+@@ -9,17 +9,21 @@
+ import {CryptoHasher} from '../../../packages/core/dist/index.js';
+ 
+ const repository = fileURLToPath(new URL('../../../', import.meta.url));
++const evidenceRoot = path.resolve(process.env.DETUNED_WEB_EVIDENCE_DIR ?? path.join(repository, 'test-results/web'));
+ type IdentityName = 'contributor' | 'observer';
+ type Identity = {actor: string; credential: string; token: string};
+ type Post = {id: string; title: string; revision: number};
++type SeedPost = {title: string; body: string; summary?: string; kind?: 'note' | 'failure' | 'question'; tags?: string[]; structured?: Json; threadId?: string};
+ type Json = Record<string, unknown>;
+-type HttpEvent = {method: string; path: string; status: number; requestKey?: string};
+-type Fault = 'lose-after-commit' | 'fail-before' | 'hold-after';
++type HttpEvent = {method: string; path: string; status: number; requestKey?: string; query?: Record<string, string>};
++type Fault = 'lose-after-commit' | 'fail-before' | 'hold-after' | 'hold-before';
+ export type FaultHandle = {entered: Promise<void>; release: () => void};
+ export interface ForumFixture {
+   baseURL: string;
++  evidencePath(relative: string): string;
+   space: {id: string; slug: string};
+   hidden: {id: string; slug: string};
++  alternate: {id: string; slug: string};
+   thread: {id: string; title: string};
+   post: Post;
+   actorIds: Record<IdentityName, string>;
+@@ -27,6 +31,10 @@
+   revokeCredential(identity: IdentityName): Promise<void>;
+   withdrawMembership(identity: IdentityName): Promise<void>;
+   seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post>;
++  seedPost(input: SeedPost): Promise<Post>;
++  seedThread(input: {title: string; initialPost?: SeedPost}): Promise<{id: string; title: string; initialPost?: Post}>;
++  seedHistoricalFailure(title: string): Promise<Post>;
++  threadsByTitle(title: string): Array<{id: string; creator_id: string; space_id: string}>;
+   seedSyntheticLargeNote(title: string): Promise<Post>;
+   revisePost(post: Post, input: {title?: string; body: string; structured?: Json}): Promise<Post>;
+   postsByTitle(title: string): Array<{id: string; author_id: string; current_revision: number; space_id: string; thread_id: string}>;
+@@ -71,6 +79,7 @@
+   // Fail before creating a DB when the explicitly built Web bundle is absent.
+   const webAssetsDir = path.join(repository, 'packages/web/dist');
+   if (!(await stat(path.join(webAssetsDir, 'index.html'))).isFile()) throw new Error('Build the private Web test bundle first.');
++  await mkdir(path.join(evidenceRoot, 'screenshots'), {recursive: true});
+   const owned = await mkdtemp('/private/tmp/detuned-web-browser-');
+   let initialized: {db: Database.Database; adminToken: string | null};
+   try {
+@@ -85,22 +94,26 @@
+   const pending: Array<{method: string; path: string; fault: Fault; entered: ReturnType<typeof deferred>; released: ReturnType<typeof deferred>}> = [];
+   const held = new Set<ReturnType<typeof deferred>>();
+   let upstream = '';
++  let browserAccessed = false;
+   let app: ReturnType<typeof buildApp> | undefined;
+   const proxy = createServer((request, response) => {
+     const pathname = new URL(request.url ?? '/', 'http://fixture.invalid').pathname;
+     const method = request.method ?? 'GET';
++    if (typeof request.headers.authorization !== 'string') browserAccessed = true;
+     const index = pending.findIndex(f => f.method === method && f.path === pathname);
+     const fault = index < 0 ? undefined : pending.splice(index, 1)[0];
+     const record: HttpEvent = {method, path: pathname, status: 0};
+-    if (pathname.endsWith('/posts') && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
++    if ((pathname.endsWith('/posts') || pathname.endsWith('/threads')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
++    if (pathname.endsWith('/search')) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
+     httpEvents.push(record);
+     if (!upstream || fault?.fault === 'fail-before') {
+       record.status = 503; request.resume(); unavailable(response); fault?.entered.resolve(); return;
+     }
+     // Browser-supplied Host/Origin/Cookie are forwarded unchanged. No credential injection.
++    const forward = () => {
+     const inner = httpRequest(new URL(request.url ?? '/', upstream), {method, headers: request.headers}, result => {
+       record.status = result.statusCode ?? 0;
+-      if (!fault) {response.writeHead(result.statusCode ?? 502, result.headers); result.pipe(response); return;}
++      if (!fault || fault.fault === 'hold-before') {response.writeHead(result.statusCode ?? 502, result.headers); result.pipe(response); return;}
+       const chunks: Buffer[] = [];
+       result.on('data', bytes => {chunks.push(Buffer.from(bytes));});
+       result.on('end', () => {
+@@ -118,6 +131,12 @@
+     inner.setTimeout(10000, () => {inner.destroy(); if (!response.destroyed) unavailable(response);});
+     request.on('aborted', () => {inner.destroy();});
+     request.pipe(inner);
++    };
++    if (fault?.fault === 'hold-before') {
++      if (method !== 'GET') {unavailable(response); fault.entered.resolve(); return;}
++      held.add(fault.released); fault.entered.resolve();
++      void fault.released.promise.then(() => {held.delete(fault.released); if (!response.destroyed) forward();});
++    } else forward();
+   });
+   let baseURL = '';
+   async function dispose() {
+@@ -133,7 +152,7 @@
+     db.close();
+     await rm(owned, {recursive: true, force: true});
+     try {await stat(owned); throw new Error('Private fixture cleanup incomplete.');} catch (error) {if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;}
+-    const evidence = path.join(repository, 'docs/reviews/2026-10-09-m5-1-b/verification');
++    const evidence = evidenceRoot;
+     await mkdir(evidence, {recursive: true});
+     await appendFile(path.join(evidence, 'browser-fixture-cleanup.jsonl'), JSON.stringify({owned_temp: owned, proxy_closed: true, app_closed: true, db_closed: true, temp_absent: true}) + '\n');
+   }
+@@ -154,17 +173,32 @@
+     }
+     const space = {id: string(json((await seed('POST', '/spaces', {slug: 'browser-space', objective: 'Private browser research', rules: []})).space).id), slug: 'browser-space'};
+     const hidden = {id: string(json((await seed('POST', '/spaces', {slug: 'private-hidden-space', objective: 'Private hidden research', rules: []})).space).id), slug: 'private-hidden-space'};
++    const alternate = {id: string(json((await seed('POST', '/spaces', {slug: 'alternate-space', objective: 'Second private browser space', rules: []})).space).id), slug: 'alternate-space'};
+     const thread = {id: string(json((await seed('POST', `/spaces/${space.id}/threads`, {title: 'Browser discussion'})).thread).id), title: 'Browser discussion'};
+     const identities = {} as Record<IdentityName, Identity>;
+     for (const role of ['contributor', 'observer'] as const) {
+       const actor = string((await seed('POST', '/admin/actors', {kind: 'human', display_name: 'Browser ' + role})).id);
+       await seed('POST', `/spaces/${space.id}/memberships`, {actor_id: actor, role});
+-      const credential = await seed('POST', '/admin/credentials', {actor_id: actor, allowed_space_ids: [space.id], capabilities: ['read', 'write']});
++      if (role === 'contributor') await seed('POST', `/spaces/${alternate.id}/memberships`, {actor_id: actor, role});
++      const credential = await seed('POST', '/admin/credentials', {actor_id: actor, allowed_space_ids: role === 'contributor' ? [space.id, alternate.id] : [space.id], capabilities: ['read', 'write']});
+       identities[role] = {actor, credential: string(credential.credential_id), token: string(credential.token)};
+     }
+-    async function seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post> {
+-      const response = await seed('POST', `/spaces/${space.id}/threads/${thread.id}/posts`, {kind: 'note', title: input.title, summary: 'Private browser fixture', body: input.body, ...(input.structured ? {structured: input.structured} : {})});
+-      return {id: string(json(response.post).id), title: input.title, revision: Number(json(response.revision).revision)};
++    function postPayload(input: SeedPost): Json {
++      return {kind: input.kind ?? 'note', title: input.title, summary: input.summary ?? 'Private browser fixture', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.structured ? {structured: input.structured} : {})};
++    }
++    function postResult(response: Json, title: string): Post {
++      return {id: string(json(response.post).id), title, revision: Number(json(response.revision).revision)};
++    }
++    async function seedPost(input: SeedPost): Promise<Post> {
++      return postResult(await seed('POST', `/spaces/${space.id}/threads/${input.threadId ?? thread.id}/posts`, postPayload(input)), input.title);
++    }
++    async function seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post> {return seedPost(input);}
++    function historicalStructured(value: Post, structured: Json) {
++      if (browserAccessed) throw new Error('Historical fixture must precede browser access.');
++      const row = json(db.prepare('SELECT title,summary,body FROM post_revisions WHERE post_id=? AND revision=1').get(value.id));
++      const hasher = new CryptoHasher();
++      const contentHash = hasher.sha256(`${string(row.title)}\n${string(row.summary)}\n${string(row.body)}\n${hasher.canonicalJson(structured)}`);
++      db.prepare('UPDATE post_revisions SET structured=?,content_hash=? WHERE post_id=? AND revision=1').run(JSON.stringify(structured), contentHash, value.id);
+     }
+     const post = await seedNote({title: 'Fixture source', body: 'Original fixed research body.'});
+     await app.listen({host: '127.0.0.1', port: 0});
+@@ -172,7 +206,8 @@
+     if (!address || typeof address === 'string') throw new Error('Private upstream listener unavailable.');
+     upstream = `http://127.0.0.1:${address.port}`;
+     const forum: ForumFixture = {
+-      baseURL, space, hidden, thread, post,
++      baseURL, space, hidden, alternate, thread, post,
++      evidencePath(relative) {if (path.isAbsolute(relative) || relative.split(/[\\/]/).includes('..')) throw new Error('Private evidence path invalid.'); return path.join(evidenceRoot, relative);},
+       actorIds: {contributor: identities.contributor.actor, observer: identities.observer.actor},
+       async login(page, identity = 'contributor') {
+         // Suppress action errors that would otherwise repeat the private token in call logs.
+@@ -182,18 +217,26 @@
+       },
+       async revokeCredential(identity) {await seed('POST', `/admin/credentials/${identities[identity].credential}/revoke`);},
+       async withdrawMembership(identity) {await seed('DELETE', `/spaces/${space.id}/memberships/${identities[identity].actor}`);},
+-      seedNote,
++      seedNote, seedPost,
++      async seedThread(input) {
++        const result = await seed('POST', `/spaces/${space.id}/threads`, {title: input.title, ...(input.initialPost ? {initial_post: postPayload(input.initialPost)} : {})});
++        return {id: string(json(result.thread).id), title: input.title, ...(result.initial_post && input.initialPost ? {initialPost: postResult(json(result.initial_post), input.initialPost.title)} : {})};
++      },
++      async seedHistoricalFailure(title) {
++        // First accepted through ordinary strict HTTP. Then one owned historical
++        // record is widened before browser access; this is not a legal new failure write.
++        const value = await seedPost({kind: 'failure', title, body: 'Historical partial research record.', structured: {attempt: 'Historical attempt', category: 'test_failure', assumptions: [], tested_scope: 'Private fixture', expected: 'Complete record', observed: 'Partial historical record', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'Historical evidence unavailable', ruled_out: 'No general exclusion', not_ruled_out: ['Other variants'], retry_when: ['Obtain evidence']}});
++        historicalStructured(value, {attempt: 'Historical attempt', category: null, tested_scope: null, evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'Historical evidence unavailable'});
++        return value;
++      },
++      threadsByTitle(title) {return db.prepare('SELECT id,creator_id,space_id FROM threads WHERE title=? ORDER BY id').all(title) as ReturnType<ForumFixture['threadsByTitle']>;},
+       async seedSyntheticLargeNote(title) {
+         if (httpEvents.length) throw new Error('Synthetic historical fixture must precede browser access.');
+         // The ordinary note is first accepted through actual HTTP. This one owned
+         // historical test record is then widened before any browser sees it.
+         // Do not claim that the oversized structured material was a legal HTTP new write.
+         const value = await seedNote({title, body: 'Synthetic historical structured material.'});
+-        const row = json(db.prepare('SELECT title,summary,body FROM post_revisions WHERE post_id=? AND revision=1').get(value.id));
+-        const structured = {historical_material: '研究🧪'.repeat(120000)};
+-        const hasher = new CryptoHasher();
+-        const contentHash = hasher.sha256(`${string(row.title)}\n${string(row.summary)}\n${string(row.body)}\n${hasher.canonicalJson(structured)}`);
+-        db.prepare('UPDATE post_revisions SET structured=?,content_hash=? WHERE post_id=? AND revision=1').run(JSON.stringify(structured), contentHash, value.id);
++        historicalStructured(value, {historical_material: '研究🧪'.repeat(120000)});
+         return value;
+       },
+       async revisePost(original, input) {
+@@ -202,7 +245,7 @@
+       },
+       postsByTitle(title) {return db.prepare('SELECT p.id,p.author_id,p.current_revision,p.space_id,p.thread_id FROM posts p JOIN post_revisions r ON r.post_id=p.id AND r.revision=p.current_revision WHERE r.title=? ORDER BY p.id').all(title) as ReturnType<ForumFixture['postsByTitle']>;},
+       relationsFrom(postId) {return db.prepare('SELECT source_post_id,source_revision,target_post_id,target_revision,type FROM relations WHERE source_post_id=?').all(postId) as ReturnType<ForumFixture['relationsFrom']>;},
+-      businessCounts() {return Object.fromEntries(['posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
++      businessCounts() {return Object.fromEntries(['threads', 'posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
+       httpEvents,
+       faultNext(match, fault) {const entered = deferred(), released = deferred(); pending.push({...match, fault, entered, released}); return {entered: entered.promise, release: released.resolve};},
+     };
+--- before/scripts/integrations/web/independent.spec.ts
++++ current/scripts/integrations/web/independent.spec.ts
+@@ -1,7 +1,6 @@
+ import {test, expect, type ForumFixture} from './fixtures.js';
+ import type {Page} from '@playwright/test';
+ import {mkdir, writeFile} from 'node:fs/promises';
+-import {fileURLToPath} from 'node:url';
+ 
+ async function discussion(page: Page, forum: ForumFixture) {
+   await page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true}).click();
+@@ -48,7 +47,7 @@
+   expect(await page.locator('.reading script,.reading img').count()).toBe(0);
+   expect(await page.evaluate(() => !('detunedResearchExecuted' in window))).toBe(true);
+   expect(remoteRequest).toBe(false);
+-  const screenshots = fileURLToPath(new URL('../../../docs/reviews/2026-10-09-m5-1-b/verification/screenshots/', import.meta.url));
++  const screenshots = forum.evidencePath('screenshots/') + '/';
+   await mkdir(screenshots, {recursive: true});
+   await page.screenshot({path: screenshots + 'independent-desktop.png', fullPage: true});
+   await page.setViewportSize({width: 390, height: 844});
+--- before/scripts/integrations/web/author.spec.ts
++++ current/scripts/integrations/web/author.spec.ts
+@@ -1,5 +1,4 @@
+ import { test, expect } from './fixtures.js';
+-import { fileURLToPath } from 'node:url';
+ 
+ test('human reads a fixed revision, publishes a note and cited response, then confirms logout', async ({ page, forum }) => {
+   await page.goto(forum.baseURL);
+@@ -12,10 +11,10 @@
+   await expect(page.getByText('固定修订 1', { exact: true })).toBeVisible();
+ 
+   // These explicit captures contain only private research fixtures, never the login field or session secrets.
+-  await page.screenshot({ path: fileURLToPath(new URL('../../../docs/reviews/2026-10-09-m5-1-b/author/web/screenshots/desktop.png', import.meta.url)), fullPage: true });
++  await page.screenshot({ path: forum.evidencePath('screenshots/author-desktop.png'), fullPage: true });
+   await page.setViewportSize({ width: 390, height: 844 });
+   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+-  await page.screenshot({ path: fileURLToPath(new URL('../../../docs/reviews/2026-10-09-m5-1-b/author/web/screenshots/narrow.png', import.meta.url)), fullPage: true });
++  await page.screenshot({ path: forum.evidencePath('screenshots/author-narrow.png'), fullPage: true });
+   await page.setViewportSize({ width: 1280, height: 900 });
+ 
+   const title = 'Human browser note';
+--- before/scripts/integrations/web/playwright.config.ts
++++ current/scripts/integrations/web/playwright.config.ts
+@@ -1,16 +1,19 @@
+ import {defineConfig} from '@playwright/test';
+ import {fileURLToPath} from 'node:url';
++import path from 'node:path';
++const repository = fileURLToPath(new URL('../../../', import.meta.url));
++const evidenceRoot = path.resolve(process.env.DETUNED_WEB_EVIDENCE_DIR ?? path.join(repository, 'test-results/web'));
+ 
+ export default defineConfig({
+   testDir: fileURLToPath(new URL('.', import.meta.url)),
+-  testMatch: ['author.spec.ts', 'independent.spec.ts'],
++  testMatch: ['author.spec.ts', 'independent.spec.ts', 'm5-c.spec.ts'],
+   fullyParallel: false,
+   workers: 1,
+   retries: 0,
+   timeout: 60000,
+   expect: {timeout: 5000},
+   reporter: [['list']],
+-  outputDir: fileURLToPath(new URL('../../../docs/reviews/2026-10-09-m5-1-b/verification/browser-output/', import.meta.url)),
++  outputDir: path.join(evidenceRoot, 'playwright-output'),
+   use: {
+     channel: 'chrome',
+     headless: true,
+--- /dev/null
++++ current/packages/web/src/knowledge.tsx
+@@ -0,0 +1,79 @@
++import { ClientProtocolError } from '@detuned/client';
++import { POST_KINDS, type PostKind, type EvidenceRef } from '@detuned/protocol';
++
++export type SearchItem = { post_id: string; revision: number; thread_id: string; kind: PostKind;
++  title: string; summary: string; snippet: string; tags: string[] };
++const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
++const strings = (v: unknown): v is string[] => Array.isArray(v) && v.every((item: unknown) => typeof item === 'string');
++const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0;
++function searchItem(v: unknown): SearchItem {
++  if (!record(v) || typeof v.post_id !== 'string' || !positive(v.revision) || typeof v.thread_id !== 'string'
++    || typeof v.kind !== 'string' || !POST_KINDS.some(kind => kind === v.kind)
++    || typeof v.title !== 'string' || typeof v.summary !== 'string' || typeof v.snippet !== 'string' || !strings(v.tags)) {
++    throw new ClientProtocolError('Invalid search result.');
++  }
++  const kind = POST_KINDS.find(kind => kind === v.kind);
++  if (!kind) throw new ClientProtocolError('Invalid search result.');
++  return { post_id: v.post_id, revision: v.revision, thread_id: v.thread_id, kind,
++    title: v.title, summary: v.summary, snippet: v.snippet, tags: v.tags };
++}
++export function parseSearchItems(value: unknown): SearchItem[] {
++  if (!Array.isArray(value)) throw new ClientProtocolError('Invalid search result page.');
++  return value.map(searchItem);
++}
++export const failureFields = [
++  ['attempt', '尝试'], ['category', '失败类别'], ['assumptions', '适用假设'], ['tested_scope', '实际测试范围'],
++  ['expected', '预期'], ['observed', '观察结果'], ['evidence_state', '证据状态'], ['evidence_missing_reason', '证据缺失原因'],
++  ['ruled_out', '已排除'], ['not_ruled_out', '尚未排除'], ['retry_when', '重试条件'],
++] as const;
++type FailureField = typeof failureFields[number][0];
++export type FailureItem = SearchItem & {
++  material: Record<FailureField, string | string[] | null>;
++  evidence: EvidenceRef[] | null; missing: string[];
++};
++function evidenceRef(v: unknown): EvidenceRef {
++  if (record(v) && v.kind === 'artifact' && typeof v.artifact_id === 'string') return { kind: 'artifact', artifact_id: v.artifact_id };
++  if (record(v) && v.kind === 'post' && typeof v.post_id === 'string' && positive(v.revision)) return { kind: 'post', post_id: v.post_id, revision: v.revision };
++  throw new ClientProtocolError('Invalid failure evidence reference.');
++}
++const nullableString = (v: unknown): string | null => {
++  if (v === null || v === undefined) return null;
++  if (typeof v !== 'string') throw new ClientProtocolError('Invalid failure material.');
++  return v;
++};
++const nullableStrings = (v: unknown): string[] | null => {
++  if (v === null || v === undefined) return null;
++  if (!strings(v)) throw new ClientProtocolError('Invalid failure material.');
++  return v;
++};
++export function parseFailures(value: unknown): FailureItem[] {
++  if (!Array.isArray(value) || value.length > 50) throw new ClientProtocolError('Invalid failure view.');
++  return value.map((v: unknown) => {
++    const item = searchItem(v);
++    if (!record(v) || v.kind !== 'failure' || v.type !== 'failure' || v.report_kind !== 'author_report'
++      || v.formal_review_status !== 'not_enabled' || v.formal_check_status !== 'not_enabled' || !record(v.material)) {
++      throw new ClientProtocolError('Invalid failure view.');
++    }
++    const m = v.material;
++    if (!strings(m.missing_fields)) throw new ClientProtocolError('Invalid failure material.');
++    const evidence = m.evidence_refs === null || m.evidence_refs === undefined ? null : Array.isArray(m.evidence_refs) ? m.evidence_refs.map(evidenceRef) : undefined;
++    if (evidence === undefined) throw new ClientProtocolError('Invalid failure evidence.');
++    return { ...item, material: {
++      attempt: nullableString(m.attempt), category: nullableString(m.category), assumptions: nullableStrings(m.assumptions),
++      tested_scope: nullableString(m.tested_scope), expected: nullableString(m.expected), observed: nullableString(m.observed),
++      evidence_state: nullableString(m.evidence_state), evidence_missing_reason: nullableString(m.evidence_missing_reason),
++      ruled_out: nullableString(m.ruled_out), not_ruled_out: nullableStrings(m.not_ruled_out), retry_when: nullableStrings(m.retry_when),
++    }, evidence, missing: m.missing_fields };
++  });
++}
++export function FailureReport({ item, open }: { item: FailureItem; open: (postId: string, revision: number, threadId?: string) => void }) {
++  const label = (key: string) => failureFields.find(field => field[0] === key)?.[1] ?? (key === 'evidence_refs' ? '证据引用' : key);
++  return <article className="failure-report">
++    <div className="section-heading"><h3>{item.title}</h3><span className="report-badge">作者报告</span></div>
++    <p className="summary">{item.summary}</p><p className="reference">帖子 {item.post_id} · 修订 {item.revision}</p>
++    <dl className="failure-material">{failureFields.map(([field, name]) => <div key={field}><dt>{name}</dt><dd>{item.material[field] === null ? '未提供' : Array.isArray(item.material[field]) ? (item.material[field].length ? <ul>{item.material[field].map((text, i) => <li key={i}>{text}</li>)}</ul> : '已提供空列表') : item.material[field]}</dd></div>)}</dl>
++    <h4>证据引用</h4>{item.evidence === null ? <p>未提供</p> : item.evidence.length ? <ul className="evidence-list">{item.evidence.map((ref, i) => <li key={i}>{ref.kind === 'post' ? <><span>帖子 {ref.post_id} · 修订 {ref.revision}</span><button className="quiet" onClick={() => open(ref.post_id, ref.revision, ref.post_id === item.post_id ? item.thread_id : undefined)}>查看证据修订 {ref.revision}</button></> : <span>附件 {ref.artifact_id}（此页仅列引用）</span>}</li>)}</ul> : <p>已提供空列表</p>}
++    <p className="notice">{item.missing.length ? `历史报告缺失字段：${item.missing.map(label).join('、')}。未提供不代表已验证。` : '报告已提供这些结构字段；这不代表证据已独立验证。'}</p>
++    <p className="reference">正式评审与正式检查尚未启用。</p><button onClick={() => open(item.post_id, item.revision, item.thread_id)}>查看报告修订 {item.revision}</button>
++  </article>;
++}
+--- /dev/null
++++ current/scripts/integrations/web/m5-c.spec.ts
+@@ -0,0 +1,172 @@
++import {test, expect, type ForumFixture} from './fixtures.js';
++import type {Page} from '@playwright/test';
++
++async function selectSpace(page: Page, forum: ForumFixture, alternate = false) {
++  const space = alternate ? forum.alternate : forum.space;
++  await page.getByRole('button', {name: `${space.slug} 进入空间 →`, exact: true}).click();
++  await expect(page.getByRole('status')).toContainText('主题已加载');
++}
++async function searchView(page: Page) {
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '搜索', exact: true}).click();
++  await expect(page.getByRole('heading', {name: '空间内搜索', exact: true})).toBeVisible();
++}
++async function submit(page: Page, forum: ForumFixture) {
++  const response = page.waitForResponse(value => new URL(value.url()).pathname === `/api/v1/spaces/${forum.space.id}/search` && value.request().method() === 'GET');
++  await page.getByRole('region', {name: '空间内搜索', exact: true}).getByRole('button', {name: '搜索', exact: true}).click();
++  const result = await response; expect(result.status()).toBe(200);
++  await expect(page.getByRole('status')).toContainText('搜索结果已加载');
++  return result.json();
++}
++const failureMaterial = (evidence?: {post_id: string; revision: number}) => ({attempt: 'Bounded attempt', category: 'test_failure', assumptions: ['Private conditions'], tested_scope: 'Only private fixture', expected: 'Expected result', observed: 'Observed result', evidence_refs: evidence ? [{kind: 'post', ...evidence}] : [], evidence_state: evidence ? 'provided' : 'unverified', ...(evidence ? {} : {evidence_missing_reason: 'No independent evidence'}), ruled_out: 'One exact condition', not_ruled_out: ['Other variants'], retry_when: ['New evidence']});
++
++test('C01 atomic thread with optional first note and lost committed response keeps one intent', async ({page, forum}) => {
++  await page.goto(forum.baseURL); await forum.login(page); await selectSpace(page, forum);
++  await page.getByRole('button', {name: '新建主题', exact: true}).click();
++  await page.getByLabel('主题标题', {exact: true}).fill('Empty ordinary thread');
++  const initial = forum.businessCounts();
++  await page.getByRole('button', {name: '创建主题', exact: true}).click();
++  await expect(page.getByRole('status')).toContainText('主题已创建');
++  expect(forum.threadsByTitle('Empty ordinary thread').length).toBe(1);
++  expect(forum.businessCounts().threads).toBe(initial.threads! + 1);
++  expect(forum.businessCounts().posts).toBe(initial.posts);
++  await page.getByRole('button', {name: '新建主题', exact: true}).click();
++  await page.getByLabel('主题标题', {exact: true}).fill('Recovered atomic thread');
++  await page.getByLabel('同时发布首帖', {exact: true}).check();
++  await page.getByLabel('首帖标题', {exact: true}).fill('Recovered atomic first note');
++  await page.getByLabel('首帖摘要', {exact: true}).fill('One transaction');
++  await page.getByLabel('首帖正文', {exact: true}).fill('Atomic ordinary human body.');
++  const route = `/api/v1/spaces/${forum.space.id}/threads`, start = forum.httpEvents.length;
++  const lost = Array.from({length: 4}, () => forum.faultNext({method: 'POST', path: route}, 'lose-after-commit'));
++  const before = forum.businessCounts();
++  await page.getByRole('button', {name: '创建主题', exact: true}).click();
++  await Promise.all(lost.map(value => value.entered));
++  const retry = page.getByRole('button', {name: '用同一请求重试创建', exact: true});
++  await expect(retry).toBeEnabled(); await expect(page.getByLabel('首帖正文', {exact: true})).toBeDisabled();
++  const threads = forum.threadsByTitle('Recovered atomic thread'), notes = forum.postsByTitle('Recovered atomic first note');
++  expect(threads.length === 1 && notes.length === 1 && threads[0]?.creator_id === forum.actorIds.contributor && threads[0]?.space_id === forum.space.id && notes[0]?.thread_id === threads[0]?.id && notes[0]?.author_id === forum.actorIds.contributor && notes[0]?.current_revision === 1).toBe(true);
++  expect(forum.businessCounts().threads).toBe(before.threads! + 1); expect(forum.businessCounts().posts).toBe(before.posts! + 1);
++  await retry.click(); await expect(page.getByRole('status')).toContainText('主题已创建');
++  expect(forum.threadsByTitle('Recovered atomic thread').length).toBe(1); expect(forum.postsByTitle('Recovered atomic first note').length).toBe(1);
++  await expect(page.locator('.reading .reference')).toContainText(notes[0]!.id);
++  expect(await page.locator('.body-text').evaluate(element => element.textContent === 'Atomic ordinary human body.')).toBe(true);
++  const attempts = forum.httpEvents.slice(start).filter(value => value.method === 'POST' && value.path === route);
++  expect(attempts.length).toBe(5); expect(attempts.every(value => typeof value.requestKey === 'string') && new Set(attempts.map(value => value.requestKey)).size === 1).toBe(true);
++});
++
++test('C02 real search filters/cursor, fixed old result and return preserve applied page', async ({page, forum}) => {
++  const other = await forum.seedThread({title: 'Other matching thread'});
++  const targets = new Map<string, {id: string; title: string; revision: number; body: string}>();
++  for (let index = 0; index < 22; index++) {
++    const body = `Quasar original ${index}`;
++    const post = await forum.seedPost({title: `Quasar target ${index}`, body, tags: ['science', 'fixed'], threadId: other.id}); targets.set(post.id, {...post, body});
++  }
++  await forum.seedPost({title: 'Quasar wrong thread', body: 'Quasar excluded', tags: ['science', 'fixed']});
++  await forum.seedPost({title: 'Quasar wrong tags', body: 'Quasar excluded', tags: ['other'], threadId: other.id});
++  await forum.seedPost({title: 'Quasar question', body: 'Quasar question body', tags: ['science', 'fixed'], kind: 'question', threadId: other.id});
++  await page.goto(forum.baseURL); await forum.login(page); await selectSpace(page, forum);
++  await page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true}).click();
++  await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
++  await searchView(page);
++  await page.getByLabel('搜索关键词', {exact: true}).fill('Quasar');
++  await page.getByRole('combobox', {name: '帖子类型', exact: true}).selectOption('note');
++  await page.getByLabel('限定主题 ID', {exact: true}).fill(other.id);
++  await page.getByLabel('标签（每行一个）', {exact: true}).fill('science\nfixed');
++  const first = await submit(page, forum);
++  expect(first.data.length).toBe(20); expect(typeof first.meta.next_cursor === 'string' && first.meta.next_cursor.length > 0).toBe(true);
++  expect(first.data.every((value: {post_id: string}) => targets.has(value.post_id))).toBe(true);
++  const pending = page.waitForResponse(value => new URL(value.url()).pathname === `/api/v1/spaces/${forum.space.id}/search`);
++  await page.getByRole('button', {name: '下一页搜索结果', exact: true}).click();
++  const second = await (await pending).json(); await expect(page.getByRole('status')).toContainText('搜索结果已加载');
++  expect(second.data.length).toBe(2); expect(second.meta.next_cursor).toBeNull();
++  const request = forum.httpEvents.filter(value => value.path.endsWith('/search')).at(-1)!;
++  expect(request.query !== undefined && request.query.cursor === first.meta.next_cursor && request.query.q === 'Quasar' && request.query.kind === 'note' && request.query.thread_id === other.id && request.query.tags_json === JSON.stringify(['science', 'fixed'])).toBe(true);
++  const selected = targets.get(second.data[0].post_id)!; await forum.revisePost(selected, {body: 'Revised current body.'});
++  await page.locator('.search-results li').filter({hasText: selected.id}).getByRole('button', {name: '查看搜索修订 1', exact: true}).click();
++  await expect(page.locator('.body-text')).toBeVisible(); expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, selected.body)).toBe(true);
++  await expect(page.getByText('已有更新修订；这里仍显示所选固定版本。', {exact: true})).toBeVisible();
++  const count = forum.httpEvents.filter(value => value.path.endsWith('/search')).length;
++  await page.getByRole('button', {name: '进入主题并引用', exact: true}).click();
++  await expect(page.getByLabel('帖子标题', {exact: true})).toBeFocused();
++  await page.getByLabel('帖子标题', {exact: true}).fill('Search fixed old ref citation');
++  await page.getByLabel('摘要', {exact: true}).fill('Correct result thread and fixed revision');
++  await page.getByLabel('正文', {exact: true}).fill('Cites the original selected research version.');
++  await page.getByRole('button', {name: '发布笔记', exact: true}).click();
++  await expect(page.getByRole('status')).toContainText('帖子已发布');
++  const cited = forum.postsByTitle('Search fixed old ref citation');
++  expect(cited.length === 1 && cited[0]?.thread_id === other.id && cited[0]?.thread_id !== forum.thread.id && cited[0]?.author_id === forum.actorIds.contributor).toBe(true);
++  expect(forum.relationsFrom(cited[0]!.id).some(value => value.type === 'cites' && value.target_post_id === selected.id && value.target_revision === 1)).toBe(true);
++  await page.getByRole('button', {name: '返回搜索结果', exact: true}).click();
++  await expect(page.locator('.search-results li')).toHaveCount(2); expect(forum.httpEvents.filter(value => value.path.endsWith('/search')).length).toBe(count);
++  await expect(page.getByLabel('标签（每行一个）', {exact: true})).toHaveValue('science\nfixed');
++  await page.getByLabel('标签（每行一个）', {exact: true}).fill('absent');
++  await expect(page.getByRole('button', {name: '下一页搜索结果', exact: true})).toHaveCount(0);
++  const empty = await submit(page, forum); expect(empty.data.length).toBe(0); expect(forum.httpEvents.filter(value => value.path.endsWith('/search')).at(-1)?.query?.cursor === undefined).toBe(true);
++  await page.getByLabel('标签（每行一个）', {exact: true}).fill('science\nfixed');
++  await page.getByRole('combobox', {name: '帖子类型', exact: true}).selectOption('question');
++  const question = await submit(page, forum); expect(question.data.length === 1 && question.data[0].kind === 'question').toBe(true);
++});
++
++test('C03 real author failure fields/historical missing values, fifty cap and inert material', async ({page, forum}) => {
++  const historical = await forum.seedHistoricalFailure('Historical missing FailureProbe');
++  const hostile = '<img src="https://invalid.example/failure" onerror="window.failureExecuted=true">';
++  const rich = await forum.seedPost({kind: 'failure', title: hostile, body: 'FailureProbe rich record', structured: {...failureMaterial({post_id: forum.post.id, revision: 1}), observed: hostile}});
++  for (let index = 0; index < 41; index++) await forum.seedPost({kind: 'failure', title: `FailureProbe bounded ${index}`, body: 'FailureProbe filler', structured: failureMaterial()});
++  let remote = false; page.on('request', value => {if (new URL(value.url()).origin !== forum.baseURL) remote = true;});
++  await page.goto(forum.baseURL); await forum.login(page); await selectSpace(page, forum);
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '失败报告', exact: true}).click();
++  await expect(page.locator('.failure-report')).toHaveCount(43);
++  await expect(page.getByText('最多 50 条的当前视图', {exact: true})).toBeVisible();
++  const partial = page.locator('.failure-report').filter({hasText: historical.id});
++  await expect(partial).toContainText('历史报告缺失字段');
++  await expect(partial.locator('div').filter({has: page.locator('dt').filter({hasText: '实际测试范围'})}).first()).toContainText('未提供');
++  const complete = page.locator('.failure-report').filter({hasText: rich.id});
++  await expect(complete).toContainText('Only private fixture'); await expect(complete).toContainText('Other variants'); await expect(complete).toContainText('New evidence'); await expect(complete).toContainText('作者报告');
++  await expect(complete).toContainText(forum.post.id); await expect(complete.getByRole('button', {name: '查看证据修订 1', exact: true})).toBeEnabled();
++  expect(await complete.getByRole('heading', {name: hostile, exact: true}).count()).toBe(1);
++  expect(await page.locator('.failure-report img,.failure-report script').count()).toBe(0); expect(await page.evaluate(() => !('failureExecuted' in window))).toBe(true); expect(remote).toBe(false);
++  await complete.scrollIntoViewIfNeeded(); await page.screenshot({path: forum.evidencePath('screenshots/c-failure-desktop.png')});
++  for (let index = 0; index < 10; index++) await forum.seedPost({kind: 'failure', title: `FailureProbe extra ${index}`, body: 'FailureProbe extra', structured: failureMaterial()});
++  const next = page.waitForResponse(value => new URL(value.url()).pathname === `/api/v1/spaces/${forum.space.id}/views/failures`);
++  await page.getByRole('button', {name: '刷新失败报告', exact: true}).click(); expect((await (await next).json()).data.length).toBe(50); await expect(page.locator('.failure-report')).toHaveCount(50);
++  await page.getByLabel('失败搜索关键词', {exact: true}).fill('FailureProbe');
++  const search = page.waitForResponse(value => new URL(value.url()).pathname.endsWith('/search'));
++  await page.getByRole('button', {name: '按关键词搜索失败', exact: true}).click(); const result = await (await search).json(); expect(result.data.length === 20 && result.data.every((value: {kind: string}) => value.kind === 'failure')).toBe(true);
++});
++
++test('C04 pending actual query cannot cross space/logout and withdrawal before authorization rejects', async ({page, forum}) => {
++  await forum.seedNote({title: 'ScopeProbe record', body: 'ScopeProbe old space material'});
++  await page.goto(forum.baseURL); await forum.login(page); await selectSpace(page, forum); await searchView(page);
++  await page.getByLabel('搜索关键词', {exact: true}).fill('ScopeProbe');
++  const route = `/api/v1/spaces/${forum.space.id}/search`;
++  const old = forum.faultNext({method: 'GET', path: route}, 'hold-after');
++  await page.getByRole('region', {name: '空间内搜索', exact: true}).getByRole('button', {name: '搜索', exact: true}).click(); await old.entered;
++  await selectSpace(page, forum, true); old.release(); await expect(page.locator('.search-results li')).toHaveCount(0);
++  await expect(page.getByRole('navigation', {name: '当前位置', exact: true})).toContainText(forum.alternate.slug);
++  await selectSpace(page, forum); await searchView(page); await page.getByLabel('搜索关键词', {exact: true}).fill('ScopeProbe');
++  const loggingOut = forum.faultNext({method: 'GET', path: route}, 'hold-after');
++  await page.getByRole('region', {name: '空间内搜索', exact: true}).getByRole('button', {name: '搜索', exact: true}).click(); await loggingOut.entered;
++  await page.getByRole('button', {name: '退出登录', exact: true}).click(); await expect(page.getByRole('status')).toContainText('已退出登录'); loggingOut.release(); await expect(page.locator('.workspace')).toHaveCount(0);
++  await forum.login(page); await selectSpace(page, forum); await searchView(page); await page.getByLabel('搜索关键词', {exact: true}).fill('ScopeProbe');
++  const withdrawn = forum.faultNext({method: 'GET', path: route}, 'hold-before');
++  await page.getByRole('region', {name: '空间内搜索', exact: true}).getByRole('button', {name: '搜索', exact: true}).click(); await withdrawn.entered;
++  await forum.withdrawMembership('contributor'); withdrawn.release(); await expect(page.getByRole('alert')).toBeVisible();
++  await expect(page.locator('.search-results li')).toHaveCount(0); expect(forum.httpEvents.filter(value => value.path === route).at(-1)?.status).toBe(404);
++});
++
++test('C05 keyboard/narrow search and finite connection failure recover without false results', async ({page, forum}) => {
++  await forum.seedNote({title: 'KeyboardProbe note', body: 'KeyboardProbe research'});
++  await page.goto(forum.baseURL); await forum.login(page); await selectSpace(page, forum);
++  const navigation = page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '搜索', exact: true}); await navigation.focus(); await page.keyboard.press('Enter');
++  await page.getByLabel('搜索关键词', {exact: true}).fill('KeyboardProbe');
++  const button = page.getByRole('region', {name: '空间内搜索', exact: true}).getByRole('button', {name: '搜索', exact: true});
++  const route = `/api/v1/spaces/${forum.space.id}/search`;
++  const failed = Array.from({length: 4}, () => forum.faultNext({method: 'GET', path: route}, 'fail-before'));
++  await button.focus(); await page.keyboard.press('Enter'); await Promise.all(failed.map(value => value.entered));
++  await expect(page.getByRole('alert')).toBeVisible(); await expect(button).toBeEnabled(); await expect(page.locator('.search-results li')).toHaveCount(0);
++  await submit(page, forum); await expect(page.locator('.search-results li')).toHaveCount(1);
++  await page.screenshot({path: forum.evidencePath('screenshots/c-search-desktop.png')});
++  await page.setViewportSize({width: 390, height: 844}); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
++  await page.locator('.search-results').scrollIntoViewIfNeeded(); await page.screenshot({path: forum.evidencePath('screenshots/c-search-narrow.png')});
++  const fixed = page.getByRole('button', {name: '查看搜索修订 1', exact: true}); await fixed.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.body-text')).toContainText('KeyboardProbe research');
++  const back = page.getByRole('button', {name: '返回搜索结果', exact: true}); await back.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.search-results li')).toHaveCount(1);
++});

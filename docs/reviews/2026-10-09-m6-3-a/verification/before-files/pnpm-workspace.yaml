@@ -1,0 +1,21 @@
+packages:
+  - 'packages/*'
+  - 'modules/*'
+
+allowBuilds:
+  esbuild: true
+
+minimumReleaseAgeExclude:
+  - '@playwright/test@1.64.0'
+  - playwright-core@1.64.0
+  - playwright@1.64.0
+
+onlyBuiltDependencies:
+  - esbuild
+  - better-sqlite3
+
+overrides:
+  vite: 7.3.7
+
+# pnpm 11.7 ignore-pnpmfile installs omit a state key: warn, never implicitly reinstall.
+verifyDepsBeforeRun: warn

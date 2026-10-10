@@ -1,0 +1,77 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests | 4 failed) 129ms
+   × M2.2-B typed knowledge projection contracts > B01: source and flat relation schemas make unavailable/redacted version knowledge null 2ms
+     → Cannot read properties of undefined (reading '$id')
+   × M2.2-B typed knowledge projection contracts > B02: material requires explicit nullable fields/missing lists without fake defaults 0ms
+     → Cannot read properties of undefined (reading '$id')
+   × M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas 0ms
+     → Cannot convert undefined or null to object
+   × M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer 126ms
+     → expected 400 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B typed knowledge projection contracts > B01: source and flat relation schemas make unavailable/redacted version knowledge null
+TypeError: Cannot read properties of undefined (reading '$id')
+ ❯ Visit node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:392:42
+ ❯ Module.Check node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:469:67
+ ❯ agrees tests/contracts/m2-knowledge-view-contracts.test.ts:20:16
+     18| function agrees(schema: any, value: unknown, expected: boolean) {
+     19|   const before = JSON.stringify(value);
+     20|   expect(Value.Check(schema, value)).toBe(expected);
+       |                ^
+     21|   expect(ajv.compile(schema)(value)).toBe(expected);
+     22|   expect(JSON.stringify(value)).toBe(before);
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:27:51
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B typed knowledge projection contracts > B02: material requires explicit nullable fields/missing lists without fake defaults
+TypeError: Cannot read properties of undefined (reading '$id')
+ ❯ Visit node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:392:42
+ ❯ Module.Check node_modules/.pnpm/@sinclair+typebox@0.34.52/node_modules/@sinclair/typebox/build/esm/value/check/check.mjs:469:67
+ ❯ agrees tests/contracts/m2-knowledge-view-contracts.test.ts:20:16
+     18| function agrees(schema: any, value: unknown, expected: boolean) {
+     19|   const before = JSON.stringify(value);
+     20|   expect(Value.Check(schema, value)).toBe(expected);
+       |                ^
+     21|   expect(ajv.compile(schema)(value)).toBe(expected);
+     22|   expect(JSON.stringify(value)).toBe(before);
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:45:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas
+TypeError: Cannot convert undefined or null to object
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:56:33
+     54| 
+     55|   it('B03: view mapping and OpenAPI preserve arrays and publish exact …
+     56|     for (const schema of Object.values(VIEW_RESPONSE_DATA_SCHEMAS)) ag…
+       |                                 ^
+     57|     agrees(ViewResponseDataSchema, {}, false);
+     58|     const spec = generateOpenApiSpec() as any;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer
+AssertionError: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:97:143
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  15:25:02
+   Duration  706ms (transform 167ms, setup 0ms, collect 351ms, tests 129ms, environment 0ms, prepare 47ms)
+

@@ -1,0 +1,175 @@
+{
+  "build": {
+    "receipt": "build-first.json",
+    "exit_code": 0,
+    "seconds": 11.177,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "build"
+    ],
+    "source_freeze": "execution-source-freeze.json"
+  },
+  "source_noEmit_A2_B1_D2": {
+    "receipt": "new-source-noemit-v3-first.json",
+    "exit_code": 0,
+    "seconds": 1.802,
+    "command": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+      "--noEmit",
+      "-p",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-4-c2a/verification/new-source-tsconfig.json"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "typecheck": {
+    "receipt": "typecheck-first.json",
+    "exit_code": 0,
+    "seconds": 9.613,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "typecheck"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "lint": {
+    "receipt": "lint-first.json",
+    "exit_code": 0,
+    "seconds": 9.177,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "lint"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "schema": {
+    "receipt": "schema-first.json",
+    "exit_code": 0,
+    "seconds": 0.076,
+    "command": [
+      "/opt/homebrew/bin/node",
+      "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "core": {
+    "receipt": "core-first.json",
+    "exit_code": 0,
+    "seconds": 271.87,
+    "command": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+      "run",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json",
+    "tests": 845,
+    "files": 135,
+    "new19_included_not_additive": true,
+    "runs": 1
+  },
+  "node_corrected": {
+    "receipt": "node-corrected-first.json",
+    "exit_code": 0,
+    "seconds": 2.932,
+    "command": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+      "run",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "tests/integration/m6-knowledge-status.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts",
+      "tests/integration/m6-knowledge-status-independent.test.ts"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "browser_first": {
+    "receipt": "browser-first.json",
+    "exit_code": 0,
+    "seconds": 47.268,
+    "command": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "scripts/integrations/web/playwright.config.ts",
+      "scripts/integrations/web/m6-knowledge.spec.ts",
+      "scripts/integrations/web/m5-c.spec.ts",
+      "scripts/integrations/web/m6-review.spec.ts",
+      "--workers=1"
+    ],
+    "source_freeze": "execution-source-freeze-v3.json"
+  },
+  "browser_card_capture": {
+    "receipt": "browser-card-narrow-first.json",
+    "exit_code": 0,
+    "seconds": 8.661,
+    "command": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "scripts/integrations/web/playwright.config.ts",
+      "scripts/integrations/web/m6-knowledge.spec.ts",
+      "--grep",
+      "KW03",
+      "--workers=1"
+    ],
+    "source_freeze": "execution-source-freeze-v4.json"
+  },
+  "node": {
+    "first_receipt": "node-targeted-first.json",
+    "first": {
+      "passed": 22,
+      "failed": 11,
+      "total": 33,
+      "files": 7
+    },
+    "classification": "8 sandbox listener EPERM;3 invalid author body payloads",
+    "final_new19": "B4 first passed + A7/contracts4/D4 corrected15; all19 included in core845",
+    "old14": "m2 integration7+contracts4+review status3 passed first; included in core845",
+    "no_assertion_timeout_relaxation": true
+  },
+  "browser": {
+    "new": 3,
+    "adjacent_old": 9,
+    "unique": 12,
+    "attempts": 13,
+    "first_same_run": "12/12 on A2/B1/D2 built product",
+    "supplement": "KW03 1/1 only root-approved 390px card capture on D3; no behavior/assertion/timeout change",
+    "visual_scope": "Functional rendering evidence only; frontend design quality not accepted.",
+    "screenshots": [
+      "browser-first/screenshots/c2a-knowledge-desktop.png",
+      "browser-card-narrow-first/screenshots/c2a-knowledge-card-narrow.png",
+      "browser-first/screenshots/c2a-knowledge-narrow.png (reader-only)"
+    ]
+  },
+  "current25": {
+    "selection": "current25-final-selection.json",
+    "passed": 25,
+    "runs_per_selection": 1,
+    "composition": {
+      "originals": 6,
+      "prior_adapters": 19,
+      "new_adapters_this_package": 0
+    },
+    "seconds": 18.889,
+    "not_additive_to_core": true
+  },
+  "first_failure_preserved": [
+    "node-targeted-first.json",
+    "node-targeted-first.stdout.txt",
+    "node-targeted-first.stderr.txt",
+    "node-first-classification.json"
+  ],
+  "final_integrity": "final-integrity.json",
+  "cleanup": "cleanup.json",
+  "product": "A2+B1; build unchanged since first success; D3 only browser screenshot evidence delta",
+  "no_further_gates": "This summary only reads saved evidence; no rerun."
+}

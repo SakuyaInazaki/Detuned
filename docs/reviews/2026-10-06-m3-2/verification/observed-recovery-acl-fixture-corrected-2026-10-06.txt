@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-request-key-recovery.test.ts (6 tests) 3913ms
+   ✓ M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes  780ms
+   ✓ M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets  625ms
+   ✓ M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material  396ms
+   ✓ M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay  560ms
+   ✓ M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST  1329ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  22:35:49
+   Duration  4.43s (transform 172ms, setup 0ms, collect 276ms, tests 3.91s, environment 0ms, prepare 38ms)
+

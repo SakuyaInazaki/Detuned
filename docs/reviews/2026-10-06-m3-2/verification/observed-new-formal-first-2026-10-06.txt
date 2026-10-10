@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-request-key-recovery.test.ts (6 tests | 1 failed) 4150ms
+   ✓ M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes  748ms
+   ✓ M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets  645ms
+   ✓ M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material  453ms
+   × M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay 614ms
+     → expected undefined to be 403 // Object.is equality
+   ✓ M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST  1456ms
+   ✓ M3.2 controlled preparation barriers stop token changes during getMe/store and promptly cancel pending store without POST 234ms
+ ✓ tests/contracts/m3-request-key-cli.test.ts (5 tests) 6858ms
+   ✓ M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes  1218ms
+   ✓ M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output  2740ms
+   ✓ M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests  2124ms
+   ✓ M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created  622ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 10 passed (11)
+   Start at  22:34:51
+   Duration  7.41s (transform 192ms, setup 0ms, collect 582ms, tests 11.01s, environment 0ms, prepare 82ms)
+

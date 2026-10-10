@@ -1,0 +1,21 @@
+{
+  "version": "9.4.0",
+  "lock_contains_actual_version": true,
+  "inputs": [
+    {
+      "path": "packages/server/node_modules/@fastify/multipart/index.js",
+      "sha256": "6367279730e0fb70f93e76f7d1efbe75ae82b56c1b41973a0b2c18db93a75c1c"
+    },
+    {
+      "path": "packages/server/node_modules/@fastify/multipart/package.json",
+      "sha256": "594d2570035d289f7e0ab326f7004d63477669ae24728b66679196b55e7a3076"
+    },
+    {
+      "path": "packages/server/src/routes/artifacts.ts",
+      "sha256": "85bc494e20f9e18d6868def97463a16304bc8eebf8fb076662137cb8371f05d1"
+    }
+  ],
+  "installed_parser_fact": "index.js onField302-339 secureJSON.parse for application/json without filename; part.value is parsed unknown and mimetype normalized",
+  "route_fact": "artifacts.ts75-86 accepts already parsed JSON MIME field; non-JSON string uses JSON.parse; private path strict empty object after full framing",
+  "runtime_evidence_gap": "Existing new formal tests use FormData string metadata. Normative no-filename JSON MIME field not yet run; no false runtime success."
+}

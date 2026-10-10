@@ -1,0 +1,7 @@
+# M7.5-A buffer修复增量独审
+
+通过，唯一attempt2可由root另行放行。本审查未运行retry或进程查询。
+
+实际runner `7e92456d26edd834ccdab2611ffa5ea0e19136e86d7d85207c168f6807e5e335`；原plan与attempt-2 plan均 `749626fc04c673e755c4ae2cca8ca4f25f386f5a22c31048733584a7ac6eecba`。独立从保留b65首失败字节生成delta，与保存diff完全相同，仅实际childclose后flush两个writer再读取expected，及VERIFY指向独立attempt-2。原版本断言、timeout、预算、安装策略、测试范围和清退门禁不变。digest/testJSON/copy/download读取原本已在writerclose或phase返回后，不存在所查同类未flush读取。
+
+亲读首fixture清退收据：仅ledger精确root、唯一已登记stagePID/PGID92140，actualstageclose/pidabsence/groupabsence/rootabsence成立，0.45978s，无globalcleanup、archive复用或其它stage开始。原9B真实正确版本输出、空stderr及首失败保留；不将首运行改为通过。下一次仍fixedURL重新下载/官方SHA核对，新fresh root/工程deps/cache，没有复用首archive或依赖。静审通过不表示retry已授权或安装/build/test成功。

@@ -1,0 +1,123 @@
+--- a/tests/fixtures/pi-runtime/native-lifecycle.mjs
++++ b/tests/fixtures/pi-runtime/native-lifecycle.mjs
+@@ -228,40 +228,50 @@
+ async function runPiChecks() {
+   const {prepareOrdinaryCheckFixture,exerciseOrdinaryCheckBranches,nativeCheckNames}=await import('../../../scripts/integrations/claude-check-probe.mjs');
+   const {ArtifactFileStore}=await import('../../../packages/server/dist/index.js');
+-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'detuned-pi-native-checks-'));let db,app,host,originalFailure;
++  const dir=process.argv[3];assert.equal(typeof dir,'string');assert.equal(process.argv.length,4);assert.equal(await fs.realpath(dir),dir);const rootStat=await fs.lstat(dir);assert.ok(rootStat.isDirectory()&&!rootStat.isSymbolicLink());assert.equal(rootStat.mode&0o777,0o700);assert.deepEqual(await fs.readdir(dir),[]);let db,app,host,originalFailure,body;
++  const stage=(label,error)=>{if(budgetAbort.signal.aborted&&!label.includes('cleanup')&&label!=='catch'){const failure=new Error('Checks cancelled');failure.code='CHECKS_DEADLINE';throw failure;}const value={stage:label};if(error){value.error_name=/^[A-Za-z0-9_]{1,64}$/.test(error.name??'')?error.name:'Error';if(/^[A-Z0-9_]{1,64}$/.test(error.code??''))value.error_code=error.code;}if(process.connected)process.send(value,()=>{});};
++  const bounded=async(promise,signal,ms)=>{let timer,listener;try{return await Promise.race([promise,new Promise((_,reject)=>{const fail=()=>{const error=new Error('Bounded checks wait');error.code='CHECKS_DEADLINE';reject(error);};if(signal?.aborted)fail();else if(signal){listener=fail;signal.addEventListener('abort',listener,{once:true});}if(ms!==undefined)timer=setTimeout(fail,ms);})]);}finally{clearTimeout(timer);if(listener)signal.removeEventListener('abort',listener);}};
+   const budgetAbort=new AbortController();const deadline=setTimeout(()=>budgetAbort.abort(),60000);
+   const evidence={mode:'checks',metadata,model_calls:0,tools:[],checks:{},cleanup:{host_disposed:false,app_closed:false,db_closed:false,private_directory_removed:false}};
++  stage('setup-begin');
+   try {
++    body=(async()=>{
+     db=new Database(path.join(dir,'private.sqlite'));const boot=bootstrapDatabase(db);const blobs=await ArtifactFileStore.create(dir);
+     app=buildApp({storage:new SqliteStorage(db,{dataDir:dir}),artifactBlobs:blobs,writeRateLimits:{per_minute:60000,burst:10000}});
+     const requests=[];let waitingEntered;app.addHook('onRequest',async req=>{requests.push({method:req.method,path:req.url.split('?')[0]});if(waitingEntered&&req.url.includes('/consumers/'+waitingEntered.id+'/poll'))waitingEntered.resolve();});
+     await app.listen({host:'127.0.0.1',port:0});const url='http://127.0.0.1:'+app.server.address().port;
+-    const admin=new DetunedClient({baseUrl:url,token:boot.adminToken,maxRetries:0});const fixture=await prepareOrdinaryCheckFixture(admin,url);
++    const admin=new DetunedClient({baseUrl:url,token:boot.adminToken,maxRetries:0,timeoutMs:2000});const fixture=await prepareOrdinaryCheckFixture(admin,url);
+     const tokenFile=path.join(dir,'forum-token');await fs.writeFile(tokenFile,fixture.token,{mode:0o600});
+     process.env.DETUNED_BASE_URL=url;process.env.DETUNED_TOKEN_FILE=tokenFile;
+     const authPath=path.join(dir,'auth.json');await fs.writeFile(authPath,'{}',{mode:0o600});
++    stage('setup-done');stage('SDK-begin');
+     const modelRuntime=await sdk.ModelRuntime.create({authPath,modelsPath:null,allowModelNetwork:false,refreshOnCreate:false}),settingsManager=sdk.SettingsManager.inMemory(),eventBus=sdk.createEventBus(),runtime=sdk.createExtensionRuntime();
+     const loaded=await loader.loadExtensionsCached([path.join(repo,'packages/adapter-pi/dist/index.js')],dir,eventBus,runtime);assert.equal(loaded.errors.length,0);
+     const resourceLoader={getExtensions:()=>loaded,getSkills:()=>({skills:[],diagnostics:[]}),getPrompts:()=>({prompts:[],diagnostics:[]}),getThemes:()=>({themes:[],diagnostics:[]}),getAgentsFiles:()=>({agentsFiles:[]}),getSystemPrompt:()=>'',getSystemPromptSource:()=>undefined,getAppendSystemPrompt:()=>[],getAppendSystemPromptSources:()=>[],extendResources:()=>{},reload:async()=>{}};
+     const factory=async options=>{const result=await sdk.createAgentSession({...options,modelRuntime,resourceLoader,tools:loaded.extensions.flatMap(extension=>[...extension.tools.keys()]),settingsManager});await result.session.bindExtensions({});return{...result,services:{cwd:dir,agentDir:dir,modelRuntime,settingsManager,resourceLoader,diagnostics:[]},diagnostics:[]};};
+     const beforeActivation=requests.length;host=await sdk.createAgentSessionRuntime(factory,{cwd:dir,agentDir:dir,sessionManager:sdk.SessionManager.create(dir,path.join(dir,'sessions'))});assert.equal(requests.length,beforeActivation);
++    stage('SDK-done');
+     evidence.tools=host.session.extensionRunner.getAllRegisteredTools().map(tool=>tool.definition.name).sort();assert.deepEqual(evidence.tools,nativeCheckNames);assert.equal(host.session.getAllTools().length,9);
+     let serial=0;const call=async(name,args,signal=budgetAbort.signal)=>{try{if(budgetAbort.signal.aborted)throw new UserAbortError();const value=await host.session.getToolDefinition(name).execute('native-check-'+(++serial),args,AbortSignal.any([signal,budgetAbort.signal]));return{ok:true,value:value.details};}catch(error){return{ok:false,code:error?.code,error};}};
+-    evidence.checks=await exerciseOrdinaryCheckBranches(call,fixture,()=>requests.length);
++    evidence.checks=await exerciseOrdinaryCheckBranches(call,fixture,()=>requests.length,label=>stage(label));
++    stage('matrix-done');stage('subscribe-begin');
+     const pending=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'checks-pending',start:'beginning'},'checks-pending')).data.consumer,batch=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.ok(batch.batch_id);
+     const waiting=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'checks-waiting',start:'now'},'checks-waiting')).data.consumer;
+-    const beforeAck=requests.filter(req=>req.path.endsWith('/ack')).length;let entered;const entry=new Promise(resolve=>{entered=resolve;});waitingEntered={id:waiting.id,resolve:entered};
+-    const controller=new AbortController(),flight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000},controller.signal);await Promise.race([entry,new Promise((_,reject)=>{const fail=()=>reject(new UserAbortError());if(budgetAbort.signal.aborted)fail();else budgetAbort.signal.addEventListener('abort',fail,{once:true});})]);controller.abort();const cancelled=await flight;assert.equal(cancelled.ok,false);assert.ok(cancelled.error instanceof UserAbortError);
+-    await host.dispose();host=null;evidence.cleanup.host_disposed=true;const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
++    stage('subscribe-done');
++    const beforeAck=requests.filter(req=>req.path.endsWith('/ack')).length;let entered;const entry=new Promise(resolve=>{entered=resolve;});waitingEntered={id:waiting.id,resolve:()=>{stage('wait-entry');entered();}};stage('wait-begin');
++    const controller=new AbortController(),flight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000},controller.signal);await Promise.race([entry,new Promise((_,reject)=>{const fail=()=>reject(new UserAbortError());if(budgetAbort.signal.aborted)fail();else budgetAbort.signal.addEventListener('abort',fail,{once:true});})]);stage('abort');controller.abort();const cancelled=await flight;stage('flight-settled');assert.equal(cancelled.ok,false);assert.ok(cancelled.error instanceof UserAbortError);
++    stage('host-cleanup-begin');await bounded(host.dispose(),budgetAbort.signal);host=null;stage('host-cleanup-done');evidence.cleanup.host_disposed=true;const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
+     evidence.checks={...evidence.checks,ack_delta:0,pending_unchanged:true,cancelled:true};
+-  } catch(error) {originalFailure=error;}
++    })();await bounded(body,budgetAbort.signal);
++  } catch(error) {originalFailure=error;stage('catch',error);budgetAbort.abort();if(body)await bounded(body,undefined,2000).catch(()=>{});}
+   finally {
+-    clearTimeout(deadline);let cleanupFailure;const attempt=async(action,done)=>{try{await action();done();}catch(error){cleanupFailure??=error;}};
+-    if(host)await attempt(()=>host.dispose(),()=>{evidence.cleanup.host_disposed=true;});
+-    if(app)await attempt(()=>app.close(),()=>{evidence.cleanup.app_closed=true;});
+-    if(db)await attempt(()=>{db.close();},()=>{evidence.cleanup.db_closed=true;});
+-    await attempt(()=>fs.rm(dir,{recursive:true,force:true}),()=>{evidence.cleanup.private_directory_removed=true;});
+-    if(originalFailure||cleanupFailure){console.error(JSON.stringify({mode:'checks',passed:false,error_name:(originalFailure??cleanupFailure)?.name,error_code:(originalFailure??cleanupFailure)?.code}));process.exitCode=1;}
++    let cleanupFailure;const attempt=async(label,action,done)=>{stage(label+'-begin');try{await bounded(Promise.resolve().then(action),undefined,2000);done();stage(label+'-done');}catch(error){cleanupFailure??=error;stage(label+'-fail',error);}};
++    if(host)await attempt('host-cleanup',()=>host.dispose(),()=>{evidence.cleanup.host_disposed=true;});
++    if(app)await attempt('app-cleanup',()=>app.close(),()=>{evidence.cleanup.app_closed=true;});
++    if(db)await attempt('db-cleanup',()=>{db.close();},()=>{evidence.cleanup.db_closed=true;});
++    await attempt('directory-cleanup',()=>fs.rm(dir,{recursive:true,force:true}),()=>{evidence.cleanup.private_directory_removed=true;});
++    clearTimeout(deadline);if(process.connected)process.disconnect();
++    if(originalFailure||cleanupFailure){console.error(JSON.stringify({mode:'checks',passed:false,code:'CHECKS_FAILED'}));process.exitCode=1;}
+   }
+   if(!originalFailure&&process.exitCode!==1)console.log(JSON.stringify({...evidence,passed:true}));
+ }
+--- a/tests/contracts/m4-pi-native-lifecycle.test.ts
++++ b/tests/contracts/m4-pi-native-lifecycle.test.ts
+@@ -28,11 +28,19 @@
+ // The historical six cases above are retained byte-for-byte.
+ describe('M7.4-A fixed Pi ordinary check branches',()=>{
+  it('native checks prepares no invalid input and performs real two-write/six-read calls',async()=>{
+-  const child=spawn('/usr/bin/env',['-i','PATH=/opt/homebrew/bin:/usr/bin:/bin','CI=true',process.execPath,helper,'checks'],{env:{},stdio:['ignore','pipe','pipe']});
+-  let stdout='',stderr='',killed=false;child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stdout.on('data',value=>{stdout+=value;});child.stderr.on('data',value=>{stderr+=value;});const timer=setTimeout(()=>{killed=true;child.kill('SIGKILL');},70000);
+-  const exit=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>resolve({code,signal}));}).finally(()=>clearTimeout(timer));
++  const {mkdtemp,chmod,realpath,rm,access}=await import('node:fs/promises');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
++  const privateRoot=await realpath(await mkdtemp(join(tmpdir(),'detuned-pi-checks-parent-')));await chmod(privateRoot,0o700);
++  let stdout='',stderr='',killed=false,lastStage='parent-created',exit:{code:number|null;signal:NodeJS.Signals|null}|undefined;
++  try {
++   const child=spawn(process.execPath,[helper,'checks',privateRoot],{env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true'},stdio:['ignore','pipe','pipe','ipc']});
++   child.on('message',value=>{if(typeof value==='object'&&value!==null&&'stage'in value&&typeof value.stage==='string'&&/^[A-Za-z-]{1,64}$/.test(value.stage))lastStage=value.stage;});
++   child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stdout.on('data',value=>{stdout+=value;});child.stderr.on('data',value=>{stderr+=value;});const timer=setTimeout(()=>{killed=true;child.kill('SIGKILL');},70000);
++   let spawnFailed=false;exit=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>{child.once('error',()=>{spawnFailed=true;});child.once('close',(code,signal)=>resolve({code,signal}));}).finally(()=>clearTimeout(timer));
++   expect(spawnFailed,lastStage).toBe(false);
++  } finally {await rm(privateRoot,{recursive:true,force:true});}
++  let removed=false;try{await access(privateRoot);}catch(error){removed=typeof error==='object'&&error!==null&&'code'in error&&error.code==='ENOENT';}expect(removed,lastStage).toBe(true);
+   // The child only emits white-listed evidence; no credentials/raw HTTP are captured.
+-  expect({exit,killed,stderr}).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
++  expect({exit,killed,stderr},lastStage).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
+   expect(evidence).toMatchObject({mode:'checks',passed:true,model_calls:0,metadata:{version:'0.87.1'},checks:{invalid_before_prepare_http:0,reason_500:true,scope_denied:true,artifact_metadata_only:true,ack_delta:0,pending_unchanged:true,cancelled:true},cleanup:{host_disposed:true,app_closed:true,private_directory_removed:true}});
+   expect(evidence.tools).toHaveLength(9);expect(evidence.checks.reads).toEqual(['check_run','check_snapshot','check_post_revision','check_receipt','check_artifact','required_checks']);
+  },80000);
+--- a/scripts/integrations/claude-check-probe.mjs
++++ b/scripts/integrations/claude-check-probe.mjs
+@@ -29,7 +29,8 @@
+  const request=await ordinary.createReviewRequest(space,{target_ref:{post_id:post.id,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[maintainer.id],reviewer_actor_ids:[reviewer.id],expected_policy_revision:1,reproduction_instructions:'Native transport fixture only'},'native-request');
+  return{admin,url,space,deniedSpace,ordinary,token:credential.token,actorId:maintainer.id,verifierId:verifier.id,postId:post.id,request,config};
+ }
+-export async function exerciseOrdinaryCheckBranches(call,f,requestCount){
++export async function exerciseOrdinaryCheckBranches(call,f,requestCount,observe=()=>{}){
++ observe('matrix-invalid');
+  const invalidBefore=requestCount();
+  for(const args of [
+   {op:'check_invalidate',space_id:f.space,run_id:'absent',expected_version:1,reason:'😀'.repeat(501),request_key:'bad-reason'},
+@@ -40,13 +41,18 @@
+   {op:'check_artifact_upload',space_id:f.space,run_id:'absent'},
+  ]){const result=await call('forum_review',args);assert.equal(result.ok,false);assert.equal(result.code,'VALIDATION_ERROR');}
+  assert.equal(requestCount(),invalidBefore,'Invalid calls must not prepare capabilities/me/session or HTTP');
++ observe('matrix-create');
+  const created=await call('forum_review',{op:'check_create',space_id:f.space,request_id:f.request.id,snapshot_id:f.request.snapshot_id,check_name:'native-fixed',verifier_id:f.verifierId,expected_request_version:f.request.version,request_key:'native-create'});assert.equal(created.ok,true);const run=created.value;assert.deepEqual(run,await f.ordinary.getCheckRun(f.space,run.id));
++ observe('matrix-log-receipt');
+  const issued=await f.admin.issueCheckRunCredential(f.space,run.id,{}),verify=new DetunedClient({baseUrl:f.url,token:issued.token,maxRetries:0,timeoutMs:2000});const artifact=await verify.uploadCheckArtifact(f.space,run.id,new Blob(['Finite native transport log\n'],{type:'text/plain'}),{},'native-log');
+  const instant=new Date().toISOString();const receipt=await verify.submitCheckReceipt(f.space,run.id,{receipt_id:'native.receipt',observed_snapshot_sha256:run.snapshot_sha256,observed_check_config_sha256:f.config,result:'pass',environment:'Finite native transport fixture; not an algorithm run',tool_versions:{fixture:'1'},execution_steps:'Verify native read/write branches against real domain facts.',started_at:instant,finished_at:instant,exit_code:0,logs_artifact_id:artifact.id},'native-receipt');
+  const cases=[['check_run',{id:run.id},()=>f.ordinary.getCheckRun(f.space,run.id)],['check_snapshot',{id:run.id},()=>f.ordinary.getCheckSnapshot(f.space,run.id)],['check_post_revision',{id:f.postId,run_id:run.id,revision:1},()=>f.ordinary.getCheckPostRevision(f.space,run.id,f.postId,1)],['check_receipt',{id:run.id},()=>f.ordinary.getCheckReceipt(f.space,run.id)],['check_artifact',{id:artifact.id,run_id:run.id},()=>f.ordinary.getCheckArtifact(f.space,run.id,artifact.id)],['required_checks',{id:f.request.id},()=>f.ordinary.getRequiredChecks(f.space,f.request.id)]];
++ observe('matrix-reads');
+  for(const[kind,args,oracle]of cases){const value=await call('forum_read',{kind,space_id:f.space,...args});assert.equal(value.ok,true);assert.deepEqual(value.value,await oracle());if(kind==='check_artifact'){assert.equal('chunk'in value.value,false);assert.equal('content'in value.value,false);}}
++ observe('matrix-scope');
+  const denied=await call('forum_read',{kind:'check_run',space_id:f.deniedSpace,id:run.id});assert.equal(denied.ok,false);assert.ok(['NOT_FOUND','FORBIDDEN'].includes(denied.code));
+  const noHttp=requestCount();for(const args of [{kind:'check_artifact',space_id:f.space,id:artifact.id,run_id:run.id,file_path:'/absent'},{kind:'check_artifact_content',space_id:f.space,id:artifact.id,run_id:run.id},{kind:'check_credentials',space_id:f.space,id:run.id}]){const value=await call('forum_read',args);assert.equal(value.ok,false);assert.equal(value.code,'VALIDATION_ERROR');}assert.equal(requestCount(),noHttp);
++ observe('matrix-invalidate');
+  const latest=await f.ordinary.getCheckRun(f.space,run.id),invalidated=await call('forum_review',{op:'check_invalidate',space_id:f.space,run_id:run.id,expected_version:latest.version,reason:'😀'.repeat(500),request_key:'native-invalidate'});assert.equal(invalidated.ok,true);assert.equal(invalidated.value.invalidation_reason,'😀'.repeat(500));assert.deepEqual(await f.ordinary.getCheckReceipt(f.space,run.id),receipt);
+  return{invalid_before_prepare_http:0,actor_id:f.actorId,space_id:f.space,request_id:f.request.id,snapshot_id:f.request.snapshot_id,created_run_id:run.id,reads:cases.map(([kind])=>kind),reason_500:true,scope_denied:true,artifact_metadata_only:true,receipt_id:receipt.receipt_id};
+ }

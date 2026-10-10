@@ -1,0 +1,143 @@
+{
+  "reviewed_date": "2026-09-28",
+  "reviewed_commit": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "runtime": "v26.3.0",
+  "mode": "owned temporary file SQLite + Fastify inject + native Response fixture; no model/host/network",
+  "legacy_fixture_note": "Logical fixtures with fa1b35c full JSON and c4f041f exact reference shapes checked against git show; not full old-binary upgrade runs",
+  "probes": [
+    {
+      "id": "U01",
+      "description": "A migration write failure aborts the upgrade and rolls back earlier conversions, including after reopen",
+      "expected": {
+        "rejected": true,
+        "records_and_metadata_unchanged": true
+      },
+      "observed": {
+        "rejected": true,
+        "records_and_metadata_unchanged": true,
+        "first_record_converted": false,
+        "second_record_still_contains_body": true,
+        "migration_versions": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "passes": true
+    },
+    {
+      "id": "U02",
+      "description": "Upgraded c4f041f resolve references preserve the original operation version after a later reopen",
+      "expected": {
+        "status": 200,
+        "relation_version": 2,
+        "relation_state": "resolved",
+        "resolution_version": 2,
+        "same_resolution_id": true
+      },
+      "observed": {
+        "status": 200,
+        "relation_version": 2,
+        "relation_state": "resolved",
+        "resolution_version": 2,
+        "same_resolution_id": true
+      },
+      "passes": true
+    },
+    {
+      "id": "U03",
+      "description": "Revoking all credentials preserves initialization and never implicitly creates an administrator credential",
+      "expected": {
+        "initialized_after_revocation": true,
+        "extra_credentials": 0,
+        "returned_new_admin_token": false
+      },
+      "observed": {
+        "initialized_after_revocation": true,
+        "extra_credentials": 0,
+        "returned_new_admin_token": false,
+        "reported_new_instance": false
+      },
+      "passes": true
+    },
+    {
+      "id": "U04",
+      "description": "An unknown idempotency reference kind/version is rejected instead of returned with HTTP 201",
+      "expected": "structured non-success error, no raw reference as data",
+      "observed": {
+        "status": 422,
+        "raw_unknown_reference_returned": false,
+        "error_code": "RESYNC_REQUIRED"
+      },
+      "passes": true
+    },
+    {
+      "id": "U05",
+      "description": "Invalid relation enums are rejected at the HTTP boundary without committing business state",
+      "expected": {
+        "status": "4xx",
+        "extra_relation_rows": 0,
+        "extra_event_rows": 0,
+        "idempotency_rows": 0
+      },
+      "observed": {
+        "status": 400,
+        "returned_type": null,
+        "extra_relation_rows": 0,
+        "extra_event_rows": 0,
+        "idempotency_rows": 0
+      },
+      "passes": true
+    },
+    {
+      "id": "U06",
+      "description": "A truncated HTTP 200 JSON body cannot be reported as successful undefined data",
+      "expected": {
+        "outcome": "rejected",
+        "calls": 1
+      },
+      "observed": {
+        "outcome": "rejected",
+        "data_is_undefined": true,
+        "calls": 1
+      },
+      "passes": true
+    },
+    {
+      "id": "U07",
+      "description": "Redaction audit and sanitization cover 25 revisions, beyond the default page size",
+      "expected": {
+        "affected_revisions": 25,
+        "complete": true,
+        "sanitized": true
+      },
+      "observed": {
+        "affected_revisions": 25,
+        "complete": true,
+        "sanitized": true
+      },
+      "passes": true
+    },
+    {
+      "id": "U08",
+      "description": "Failed redaction event/result insertion rolls back content, FTS, audit, event, and result",
+      "expected": "both injected failures reject with all inspected state unchanged",
+      "observed": [
+        {
+          "stage": "event",
+          "status": 500,
+          "all_state_unchanged": true
+        },
+        {
+          "stage": "idempotency",
+          "status": 500,
+          "all_state_unchanged": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "passed": 8,
+  "failed": 0
+}

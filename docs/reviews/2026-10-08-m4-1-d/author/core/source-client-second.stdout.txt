@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m4-session-subscription-client.test.ts (2 tests | 1 failed) 10ms
+   × M4.1-D session and event client contracts > session is single attempt on transport, body and retryable HTTP errors while retaining the envelope and encoded path 8ms
+     → expected { data: { id: 'session', …(7) }, …(1) } to deeply equal { api_version: '1', …(3) }
+   ✓ M4.1-D session and event client contracts > session timeout/abort does not retry and old poll still retries, with consumer delete preserving its typed envelope 2ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:26:27
+   Duration  418ms (transform 92ms, setup 0ms, collect 190ms, tests 10ms, environment 0ms, prepare 37ms)
+

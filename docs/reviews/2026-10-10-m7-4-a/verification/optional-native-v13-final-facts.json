@@ -1,0 +1,49 @@
+{
+  "status": "optional controlled injection not reached; safely stopped",
+  "source_sha256": "333fb39e7f61b67549ce70678e817cba12a701b76ae3c5cc178058e8b8ec6031",
+  "sandbox_mode": "use_default",
+  "receipt": "controlled-reject-v13-diagnostic3.receipt.json",
+  "producer_report": "reject-v13-diagnostic3.json",
+  "capture_report": "reject-v13-diagnostic3.json.capture.json",
+  "actual_stages": [
+    "root_registered",
+    "worker_spawned"
+  ],
+  "controlled_expected_failure_verified": false,
+  "source_supervision": {
+    "work_budget_ms": 50000,
+    "total_budget_ms": 60000,
+    "emergency_budget_ms": 65000,
+    "initializer_settled": true,
+    "fork_pid_present": true,
+    "fork_pid_valid": true,
+    "bootstrap_sent": false,
+    "group_probe": "not_confirmed",
+    "worker_registered": false,
+    "native_registered": false,
+    "mcp_registered": false
+  },
+  "source_original_error_code": "EPERM",
+  "source_cleanup": {
+    "worker_closed": true,
+    "worker_group_closed": false,
+    "private_directory_removed": true
+  },
+  "capture_cleanup": {
+    "driver_actual_close": true,
+    "registration_evidence_present": true,
+    "registered_direct_children_absent": true,
+    "registered_groups_absent": true,
+    "empty_registry_is_not_global_cleanup_proof": false,
+    "registered_roots_absent": true,
+    "control_directory_absent": true
+  },
+  "boundary": "direct registered child absent and actual close proved; no confirmed group exists in registry; source group_closed false retained, not global process cleanup proof",
+  "unrun": [
+    "hold-worker",
+    "signal-worker",
+    "normal native retry"
+  ],
+  "core": "967/155 previous one full retained; not rerun",
+  "decision": "optional result does not certify native host; no prompt/model request sent; ready for root B delivery facts"
+}

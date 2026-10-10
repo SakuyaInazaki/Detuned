@@ -1,0 +1,66 @@
+{
+  "scope": "Independent real SQLite/Bearer HTTP/CLI/MCP stdio/Pi product runtime; no model or Pi native host",
+  "checks": [
+    {
+      "name": "canonical UTC/ties/unknown history and full-wire byte-trim keyset",
+      "passed": true,
+      "details": {
+        "posts": 36,
+        "pages": 4,
+        "max_wire_bytes": 3986,
+        "unknown_originals_preserved": 6,
+        "tie_ids": [
+          "pst_089b808f-4414-49b3-bdae-0e7170fe63cc",
+          "pst_0e94f0bc-dfd5-49a3-8764-60eecf3ef002"
+        ],
+        "synthetic_historical_timestamp_seed": true
+      }
+    },
+    {
+      "name": "cursor binding, unchanged expiry and current ACL",
+      "passed": true,
+      "details": {
+        "actor_thread_space_sort_purpose_bound": true,
+        "omitted_sort_rejected_for_new_cursor": true,
+        "original_expiry_retained": true,
+        "controlled_clock_expired": true,
+        "withdrawn_membership_rejected": true
+      }
+    },
+    {
+      "name": "default id cursor and legacy GET remain compatible; reads do not mutate business state",
+      "passed": true,
+      "details": {
+        "old_id_payload_keys": [
+          "actor_id",
+          "after_id",
+          "exp",
+          "purpose",
+          "sort",
+          "space_id",
+          "thread_id",
+          "v"
+        ],
+        "legacy_get_default_unchanged": true,
+        "business_counts_unchanged": true
+      }
+    },
+    {
+      "name": "sharedclient, actual CLI and MCP/Pi product wrappers forward advertised sort",
+      "passed": true,
+      "details": {
+        "sharedclient": true,
+        "cli_exit": 0,
+        "mcp_actual_stdio_advertised_tools": 8,
+        "mcp_read": true,
+        "pi_product_runtime": true,
+        "pi_native_host_not_claimed": true
+      }
+    }
+  ],
+  "cleanup": {
+    "app_closed": true,
+    "db_closed": true,
+    "temp_absent": true
+  }
+}

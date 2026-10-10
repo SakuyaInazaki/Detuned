@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-artifacts-http.test.ts (8 tests | 1 failed | 7 skipped) 145ms
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > accepts either field order, returns safe metadata/download headers and permits ready attachment references
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > validates every trailing part before committing and cleans staging on malformed forms
+   × M2.1 HTTP artifact transport with real SQLite and FS > normalizes bounded metadata JSON errors to400 for text/plain and application/json with no rejected-upload residue 145ms
+     → expected 406 to be 400 // Object.is equality
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > rejects oversize and missing key without ready objects, then accepts a new valid upload
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > DB failure removes its published blob and same-key retry leaves one blob/charge/event
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > missing files stay ready in DB but return404; redacted returns410 after ACL and new requests reflect revoked membership
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > a missing backend is explicit500 without side effects and buildApp never performs GC
+   ↓ M2.1 HTTP artifact transport with real SQLite and FS > holds four upload leases through parsing, rejects the fifth, and releases all after real disconnects
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 skipped (8)
+   Start at  14:24:52
+   Duration  704ms (transform 180ms, setup 0ms, collect 323ms, tests 145ms, environment 0ms, prepare 41ms)
+

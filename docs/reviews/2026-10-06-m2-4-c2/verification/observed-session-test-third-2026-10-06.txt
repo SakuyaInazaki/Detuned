@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-context-session-chain.test.ts (1 test | 1 failed) 570ms
+   × C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision 569ms
+     → {"api_version":"1","request_id":"req-14","error":{"code":"VALIDATION_ERROR","message":"body must have required property 'summary'","retryable":false,"details":{"issues":[{"instancePath":"","schemaPath":"#/required","keyword":"required","params":{"missingProperty":"summary"},"message":"must have required property 'summary'"}]}}}: expected 400 to be less than 300
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  20:22:45
+   Duration  1.09s (transform 170ms, setup 0ms, collect 288ms, tests 570ms, environment 0ms, prepare 37ms)
+

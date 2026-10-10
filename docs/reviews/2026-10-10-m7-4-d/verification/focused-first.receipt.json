@@ -1,0 +1,19 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "tests/contracts/m7-claude-probe-ownership.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "sandbox_mode": "require_escalated",
+  "exit_code": 1,
+  "elapsed_seconds": 2.443794541002717,
+  "stdout": "focused-first.stdout",
+  "stderr": "focused-first.stderr",
+  "max_workers": 1,
+  "file_parallelism": false,
+  "default_case_timeout_ms": 5000
+}

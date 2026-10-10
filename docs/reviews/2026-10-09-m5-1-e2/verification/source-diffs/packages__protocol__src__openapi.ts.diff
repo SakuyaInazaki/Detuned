@@ -1,0 +1,18 @@
+--- before-files/packages/protocol/src/openapi.ts
++++ packages/protocol/src/openapi.ts
+@@ -303,13 +303,14 @@
+       '/spaces/{space_id}/threads/{id}/posts': {
+         get: {
+           summary: '有界主题帖子元数据目录',
+-          description: 'Dynamic id ASC directory, metadata only; each page checks current authorization and snapshots thread/post metadata together. Signed cursor binds actor/space/thread and retains initial 24h expiry; limit/budget may change. truncated means budget removed whole posts; limit-only continuation may be false with a cursor. Actual compact envelope includes request_id, not headers/errors/SDK wrapping. Concurrent smaller IDs may require event reconciliation.',
++          description: 'Dynamic directory (default id ASC; optional canonical creation time ASC with unknown historical dates last and ID ties), metadata only; each page checks current authorization and snapshots thread/post metadata together. Signed cursor binds actor/space/thread and retains initial 24h expiry; limit/budget may change. truncated means budget removed whole posts; limit-only continuation may be false with a cursor. Actual compact envelope includes request_id, not headers/errors/SDK wrapping. Concurrent smaller IDs may require event reconciliation.',
+           parameters: [
+             { name: 'space_id', in: 'path', required: true, schema: { type: 'string' } },
+             { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
+             { name: 'limit', in: 'query', schema: { type: 'integer', ...THREAD_POST_LIMIT } },
+             { name: 'max_bytes', in: 'query', schema: { type: 'integer', ...CONTEXT_BYTES } },
+             { name: 'cursor', in: 'query', schema: ThreadPostsReadQuerySchema.properties.cursor },
++            { name: 'sort', in: 'query', schema: ThreadPostsReadQuerySchema.properties.sort },
+           ],
+           responses: {
+             '200': { description: 'Metadata directory page', content: { 'application/json': { schema: ThreadPostsEnvelopeSchema } } },

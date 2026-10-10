@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-backup-recovery.test.ts (10 tests | 1 failed) 3670ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  329ms
+   ✓ M3.3-A offline physical maintenance > requires offline mode, rejects active cooperative writers and never overwrites destinations 6ms
+   ✓ M3.3-A offline physical maintenance > rejects ready missing or corrupt bytes without publishing a backup 34ms
+   ✓ M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup  1705ms
+   ✓ M3.3-A offline physical maintenance > rejects links, extra paths and checksum tampering 199ms
+   ✓ M3.3-A offline physical maintenance > preserves incomplete reservations and rejects runtime entry at publication faults  306ms
+   ✓ M3.3-A offline physical maintenance > fails before publication at copy, manifest, checkpoint and recovery transaction boundaries 130ms
+   ✓ M3.3-A offline physical maintenance > keeps legacy directory gate compatibility but refuses incomplete source and physical backup as source 66ms
+   × M3.3-A offline physical maintenance > accepts a current DELETE journal source and refuses an unfinished WAL checkpoint 69ms
+     → expected { …(2) } to match object { Object (backupDir) }
+(7 matching properties omitted from actual)
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  823ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > accepts a current DELETE journal source and refuses an unfinished WAL checkpoint
+AssertionError: expected { …(2) } to match object { Object (backupDir) }
+(7 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "backupDir": "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-Gk5E0r/backup",
++   "backupDir": "/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-Gk5E0r/backup",
+  }
+
+ ❯ tests/integration/m3-backup-recovery.test.ts:123:5
+    121|     const f = await fixture();
+    122|     const plain = new Database(path.join(f.source, 'detuned.sqlite'));…
+    123|     await expect(backupOffline({ dataDir: f.source, outputDir: f.backu…
+       |     ^
+    124|     const busy = await fixture();
+    125|     const writer = new Database(path.join(busy.source, 'detuned.sqlite…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:05:52
+   Duration  4.19s (transform 169ms, setup 0ms, collect 279ms, tests 3.67s, environment 0ms, prepare 43ms)
+

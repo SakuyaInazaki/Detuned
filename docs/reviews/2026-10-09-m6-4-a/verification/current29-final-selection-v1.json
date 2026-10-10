@@ -1,0 +1,266 @@
+{
+  "state": "root_approved_executed_composite",
+  "gate_commands": [
+    "pnpm -r --workspace-concurrency=1 run build",
+    "pnpm -r --workspace-concurrency=1 run typecheck",
+    "pnpm -r --workspace-concurrency=1 run lint",
+    "pnpm test --maxWorkers=1 --no-file-parallelism"
+  ],
+  "probes": [
+    {
+      "number": 5,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "source_sha256": "365819709f97b3228ec1114a77f122e51de8e8919df1253d5300db1e53100489",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-05-first.json"
+    },
+    {
+      "number": 6,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "source_sha256": "ff8ece69ec3f1b05cc38f13ca9899294a693932f4c2c5c5ee588c3c29002983e",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-06-first.json"
+    },
+    {
+      "number": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "source_sha256": "23ac1d17784fca9baaeb5707b8fcbcbb8baf40725ac53e507d1b488c5b3913db",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-07-first.json"
+    },
+    {
+      "number": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "source_sha256": "673b650201ebec6aff0414d3856a777137fd98e2bcd2cd7e6505878e24fda84e",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-08-first.json"
+    },
+    {
+      "number": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "source_sha256": "ee52d5120b16a6a6f1e275cb3b53a68db92fb6da66bb139719c41c5657e9336f",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-09-first.json"
+    },
+    {
+      "number": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "source_sha256": "6cd0d9b9f7b933e9d4740c0346421d1e68991972e9ada852d6c7d4fd3a275d9b",
+      "kind": "original",
+      "state": "passed",
+      "receipt": "current-10-first.json"
+    },
+    {
+      "number": 11,
+      "command": "node docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs",
+      "source_path": "docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs",
+      "source_sha256": "e342eb4a3efbfb8a3f00f291059c91f93b9b135a6a6d9462ef2d64b7677fb6ea",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-11-first.json"
+    },
+    {
+      "number": 12,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs",
+      "source_sha256": "9d4c68618da8c9c4e27efba2d0e01e69c0582b8f31d193e8941d68d90658b4e7",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-12-first.json"
+    },
+    {
+      "number": 13,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-upgrade-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-upgrade-boundaries.mjs",
+      "source_sha256": "35a077178becf6574b53257db1b00ce4c594fb6f780bcf4af84a033bdcb1bb47",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-13-first.json"
+    },
+    {
+      "number": 14,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b2-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b2-completeness.mjs",
+      "source_sha256": "edb67ce46937c06996045fc8e350e447a34125a68ca0b66e8658687b036483c1",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-14-first.json"
+    },
+    {
+      "number": 15,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-fixture.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-fixture.mjs",
+      "source_sha256": "bfad9bd7c9047ce1b8e74fbee499a6df9e815a2fd366a92655cc0feebf3ad68e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-15-first.json"
+    },
+    {
+      "number": 16,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b3-gates.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b3-gates.mjs",
+      "source_sha256": "45332b7f2819644d5b8b8bdc86fc51e1882132a1021fcdc1349ccf6da25eca3e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-16-first.json"
+    },
+    {
+      "number": 17,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-1-acceptance.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-1-acceptance.mjs",
+      "source_sha256": "0cebfca1113643f369bd2098e04f3b63ed06091e616fcf697d2a483c564a1b5d",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-17-first.json"
+    },
+    {
+      "number": 18,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-2-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-2-boundaries.mjs",
+      "source_sha256": "04e46853f62297ea6a657eafa03fed6a40e46aef40c5f91525806079c0add591",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-18-first.json"
+    },
+    {
+      "number": 19,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-validation-pipeline.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-validation-pipeline.mjs",
+      "source_sha256": "bac726294ab6aa7408474ebcb4a54f62186b7665703f731b56cdacfda1c4e54e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-19-first.json"
+    },
+    {
+      "number": 20,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-precheck-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-precheck-completeness.mjs",
+      "source_sha256": "0a62da9d2b1310bbffb1037188473544ed6b69fbaecb3dc118dc4b33b1d9c6f5",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-20-first.json"
+    },
+    {
+      "number": 21,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs",
+      "source_sha256": "60aa18c05e14664758146d8807cee4596a0d0148de1a462a14f61d77d889fb6c",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-21-first.json"
+    },
+    {
+      "number": 22,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-helper-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-helper-boundaries.mjs",
+      "source_sha256": "d1351f52d5707d3adef8b18ad70f2de3185a7c34bca1c4308f1fc63b069dd4ac",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-22-first.json"
+    },
+    {
+      "number": 23,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs",
+      "source_sha256": "dbeea1fa86b5f020774c654dd83a1e155662013f82756944ed5b23f1e92b258d",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-23-first.json"
+    },
+    {
+      "number": 24,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs",
+      "source_sha256": "3b1746c3474edb2d35bd2350d7391a0b8a3d6a4a643a6798d8ca0b3ae8eb1b13",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-24-first.json"
+    },
+    {
+      "number": 25,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs",
+      "source_sha256": "d536d9c271c64b48e4e445ab583a42345e425aa7ee31700926a2a22b45ce75d4",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-25-first.json"
+    },
+    {
+      "number": 26,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs",
+      "source_sha256": "a802a7e98d9d7cbb1709820bba8158817c205f6083aa06ce4780f3306f144c61",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-26-first.json"
+    },
+    {
+      "number": 27,
+      "command": "node docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs",
+      "source_sha256": "c9f1a5eecdc9b24125696260d91676b802e438b37f2e1b4aa2863b3866840f63",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-27-first.json"
+    },
+    {
+      "number": 28,
+      "command": "node docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "source_sha256": "9996e5d4fc3ce1e8e2d35d80bac592827e2ba1ebeb503620ce2bc95a5bd90c5e",
+      "kind": "current_root_approved_exact_private_multipart_adapter",
+      "state": "passed",
+      "first_selected_source_path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs",
+      "first_selected_source_sha256": "2cbec454e18e98b7874f314782d03295fa345d4dcefbe1c46a71064febbbb01a",
+      "first_receipt": "current-28-first.json",
+      "receipt": "current-28-adapter.json"
+    },
+    {
+      "number": 29,
+      "command": "node docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "source_sha256": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "receipt": "current-29-first.json"
+    }
+  ],
+  "composition": {
+    "gates": 4,
+    "probes": 25,
+    "originals": 6,
+    "prior_approved_adapters": 18,
+    "new_adapters": 1
+  },
+  "reused_approved_manifest": "docs/reviews/2026-10-09-m6-3-a/verification/current29-manifest.json",
+  "reused_manifest_sha256": "8f295cd8e38b0d04c5e7668fa3c2f94ad1a0c6ed9a9a814676311b70ddf64d1a",
+  "note": "Final build/type/lint and original full802+fixed G01/H02/H01 approved combination, plus25 probes:6original+18prior adapters+1current exact private multipart adapter. Old28first failure retained. No sum of probe count into core tests.",
+  "gate_receipts": [
+    "build-v4.json",
+    "typecheck-v4.json",
+    "lint-v4.json"
+  ],
+  "core_composite": {
+    "whole_receipt": "core-first.json",
+    "whole_exit_code": 1,
+    "whole_pass": 802,
+    "whole_fail": 1,
+    "total_unique": 803,
+    "files": 125,
+    "root_approved_closure_receipt": "g01-h02-v4.json",
+    "closure_tests": 5,
+    "final_H01_expansion": "h01-json-mime-first.json",
+    "not_a_final_whole_suite_exit0": true
+  }
+}

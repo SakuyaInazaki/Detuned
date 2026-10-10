@@ -1,0 +1,59 @@
+--- packages/core/src/services/redaction-service.ts
++++ packages/core/src/services/redaction-service.ts
+@@ -75,6 +75,7 @@
+       payload,
+       201,
+       (tx) => {
++        let visibility: 'public' | 'review_assignment' = 'public';
+         // Re-verify in transaction
+         if (input.target_type === 'post') {
+           const post = tx.findPostById(input.target_id);
+@@ -87,6 +88,8 @@
+             throw new DetunedError(ErrorCode.NOT_FOUND, '目标附件不存在或不属于该空间。', 404);
+           }
+         }
++
++        if (input.target_type === 'artifact' && tx.findArtifactById(input.target_id)?.visibility === 'review_assignment') visibility = 'review_assignment';
+ 
+         const redactionId = this.idGen.generateId('red');
+         const now = this.clock.nowIso();
+@@ -108,7 +111,7 @@
+           type: input.target_type === 'post' ? 'post.redacted' : 'artifact.redacted',
+           object_id: input.target_id,
+           revision: 1,
+-          visibility: 'public',
++          visibility,
+           actor_id: auth.actor.id,
+           created_at: now,
+         });
+--- tests/integration/m6-review-private-artifacts.test.ts
++++ tests/integration/m6-review-private-artifacts.test.ts
+@@ -2,7 +2,7 @@
+ import Database from 'better-sqlite3';
+ import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
+ import {buildApp} from '@detuned/server';
+-import {AuthService,CryptoHasher,CryptoIdGenerator,IdempotencyService,ArtifactService,type BlobStorePort,type StagedBlob} from '@detuned/core';
++import {AuthService,CryptoHasher,CryptoIdGenerator,IdempotencyService,ArtifactService,RedactionService,type BlobStorePort,type StagedBlob} from '@detuned/core';
+ import {ReviewModule,ReviewRequestService,ReviewSubmissionService} from '@detuned/module-review';
+ import {type CreateReviewRequest,type CreateReviewSubmission} from '@detuned/protocol';
+ let db:Database.Database,storage:SqliteStorage,app:ReturnType<typeof buildApp>,service:ReviewRequestService;
+@@ -80,3 +80,19 @@
+  try{await expect(upload(as,one.ctx,assignment.id,'stale-after-publish')).rejects.toMatchObject({code:'SNAPSHOT_STALE'});}finally{blobs.beforePublish=undefined;}
+  expect(counts()).toEqual(before);expect(storage.getArtifactUsage(100).objects).toBe(0);expect(blobs.objects.size).toBe(0);expect(blobs.stages.size).toBe(0);
+ });
++
++it('RA06 private redaction keeps assignment event scope while public artifact redaction stays public',async()=>{
++ const request=create(),one=reviewer('r1'),as=artifactService(),assignment=one.submission.getOwnAssignment(one.ctx,sid,request.id);
++ const privateArtifact=await upload(as,one.ctx,assignment.id,'private-to-redact');
++ const staged=await blobs.stage((async function*(){yield Buffer.from('public evidence');})(),100);
++ const publicArtifact=await as.create(auth,sid,{staged,mime:'text/plain',metadata:{}},'public-to-redact');
++ const hasher=new CryptoHasher(),redactions=new RedactionService(storage,new CryptoIdGenerator(),clock,new AuthService(storage,hasher,clock),new IdempotencyService(storage,hasher,clock));
++ redactions.createRedaction(auth,sid,{target_type:'artifact',target_id:privateArtifact.id,reason:'owned test private'},'private-redaction');
++ redactions.createRedaction(auth,sid,{target_type:'artifact',target_id:publicArtifact.id,reason:'owned test public'},'public-redaction');
++ const events=db.prepare("SELECT object_id,visibility FROM events WHERE type='artifact.redacted' ORDER BY object_id").all() as {object_id:string;visibility:string}[];
++ expect(events.find(e=>e.object_id===privateArtifact.id)?.visibility).toBe('review_assignment');
++ expect(events.find(e=>e.object_id===publicArtifact.id)?.visibility).toBe('public');
++ expect(events.filter(e=>e.visibility==='public').map(e=>e.object_id)).toEqual([publicArtifact.id]);
++ expect(storage.findArtifactById(privateArtifact.id)?.state).toBe('redacted');expect(storage.findArtifactById(publicArtifact.id)?.state).toBe('redacted');
++ expect((db.prepare('SELECT count(*) n FROM redactions').get() as {n:number}).n).toBe(2);
++});

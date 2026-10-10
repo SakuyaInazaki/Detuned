@@ -1,0 +1,146 @@
+{
+  "state": "functional_gates_passed_pending_root_acceptance_and_metadata",
+  "build": {
+    "receipt": "build-b3-first.json",
+    "exit_code": 0,
+    "seconds": 10.506,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "build"
+    ]
+  },
+  "typecheck": {
+    "receipt": "typecheck-first.json",
+    "exit_code": 0,
+    "seconds": 8.023,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "typecheck"
+    ]
+  },
+  "lint": {
+    "receipt": "lint-first.json",
+    "exit_code": 0,
+    "seconds": 7.691,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "-r",
+      "--workspace-concurrency=1",
+      "run",
+      "lint"
+    ]
+  },
+  "core": {
+    "receipt": "core-first.json",
+    "exit_code": 0,
+    "seconds": 266.866,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "tests": 826,
+    "files": 131,
+    "first_complete_suite_passed": true,
+    "version": "A1/B3/D5 frozen source; original timeouts; worker1/file serial"
+  },
+  "new_contracts": {
+    "receipt": "new-contracts-first.json",
+    "exit_code": 0,
+    "seconds": 2.745,
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test",
+      "tests/contracts/m6-review-catalog.test.ts",
+      "tests/contracts/m6-review-web-input.test.ts",
+      "tests/contracts/m6-review-catalog-independent.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "tests": 10,
+    "files": 3,
+    "composition": "A RC3+B WI3+D DC4; included again inside core826, not additive"
+  },
+  "browser": {
+    "new": {
+      "receipt": "browser-b3-first.json",
+      "exit_code": 0,
+      "seconds": 25.293,
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/m6-review.spec.ts",
+        "--workers=1"
+      ],
+      "tests": 4,
+      "version": "B3 actual rebuilt UI, D5"
+    },
+    "old": {
+      "receipt": "old-browser-first.json",
+      "exit_code": 0,
+      "seconds": 71.071,
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "scripts/integrations/web/author.spec.ts",
+        "scripts/integrations/web/independent.spec.ts",
+        "scripts/integrations/web/m5-c.spec.ts",
+        "scripts/integrations/web/m5-d2.spec.ts",
+        "scripts/integrations/web/m5-e1.spec.ts",
+        "scripts/integrations/web/m5-e2.spec.ts",
+        "scripts/integrations/web/m5-tls.spec.ts",
+        "--workers=1"
+      ],
+      "tests": 24,
+      "files": 7,
+      "readonly_specs_unchanged": true
+    },
+    "unique_tests": 28,
+    "case_attempts_across_all_recorded_runs": 37,
+    "zero_case_selection_error": "browser-author-corrected-first.json",
+    "historical_b2_composite": "browser-b2-composite-results.json",
+    "note": "New browser4 ultimately all passed on B3 one run. Initial locator4fail, B2 corrected3pass/1author403fail, B2 CW01 targeted1pass remain. This does not claim first browser run all green."
+  },
+  "current25": {
+    "selection": "current29-final-selection.json",
+    "tests_are_probe_groups_not_core_cases": true,
+    "all_passed": true,
+    "composition": {
+      "original": 6,
+      "prior_adapter": 19,
+      "new_adapter": 0
+    },
+    "seconds": 17.858
+  },
+  "current29": "Four final build/type/lint/core gates +25 exact prior selected probes; no adapter source changes.",
+  "source_typecheck": {
+    "receipt": "new-source-noemit-b3-first.json",
+    "exit_code": 0,
+    "seconds": 1.542,
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "-p",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-4-c1/verification/new-source-tsconfig.json"
+    ]
+  },
+  "warnings_reference": "output-audit.json",
+  "cleanup_reference": "cleanup.json",
+  "integrity_reference": "integrity.json",
+  "first_failures_preserved": [
+    "new-source-noemit-first.json",
+    "new-source-noemit-corrected-first.json (transient proof-path experiment, not current type evidence)",
+    "browser-first.json",
+    "browser-locator-corrected-first.json",
+    "browser-author-corrected-first.json (selection zero tests)"
+  ],
+  "product_deltas": "B2 one intro copy; B3 existing refresh updates only same directory row state and removes internal milestone copy. A1 backend unchanged throughout."
+}

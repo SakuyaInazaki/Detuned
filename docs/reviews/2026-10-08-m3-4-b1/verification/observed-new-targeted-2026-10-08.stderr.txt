@@ -1,0 +1,24 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates
+AssertionError: expected { event: 'request_completed', …(7) } to match object { event: 'request_completed', …(4) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "event": "request_completed",
+    "method": "POST",
+    "outcome": "completed",
+-   "route": "/api/v1/spaces/:space_id/threads/:thread_id/posts",
++   "route": "/api/v1/spaces/:space_id/threads/:id/posts",
+    "status_code": 201,
+  }
+
+ ❯ tests/integration/m3-operations-independent.test.ts:21:817
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

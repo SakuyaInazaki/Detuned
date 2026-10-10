@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/contracts/m6-review-tools-independent.test.ts",
+    "-t",
+    "DT03",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 1,
+  "seconds": 1.778,
+  "stdout": "dt03-first.stdout.txt",
+  "stderr": "dt03-first.stderr.txt",
+  "workers": 1,
+  "file_parallelism": false,
+  "case_timeout_ms": 30000,
+  "scope": "single bounded owned SQLite/loopback test; no VM/daemon/install/model"
+}

@@ -1,0 +1,36 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records
+TypeError: Cannot read properties of undefined (reading 'id')
+ ❯ tests/integration/m3-export-independent.test.ts:19:766
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end
+AssertionError: expected 400 to be less than 300
+ ❯ tests/integration/m3-export-independent.test.ts:29:573
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: fixture exited before IPC
+ ❯ ChildProcess.exit tests/integration/m3-export-independent.test.ts:10:305
+
+ ❯ Object.onceWrapper node:events:631:12
+ ❯ ChildProcess.emit node:events:521:24
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:294:12
+
+This error originated in "tests/integration/m3-export-independent.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

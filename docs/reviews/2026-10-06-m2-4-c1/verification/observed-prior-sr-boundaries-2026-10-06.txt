@@ -1,0 +1,58 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "SR03-Unicode",
+      "budget": 4096,
+      "pages": 23,
+      "bytes": 58577,
+      "stored_objective_replacement": true,
+      "stored_rule_surrogate_preserved": true
+    },
+    {
+      "id": "SR03-Unicode",
+      "budget": 65536,
+      "pages": 2,
+      "bytes": 58577,
+      "stored_objective_replacement": true,
+      "stored_rule_surrogate_preserved": true
+    },
+    {
+      "id": "SR03-Unicode",
+      "budget": 12288,
+      "pages": 7,
+      "bytes": 58577,
+      "stored_objective_replacement": true,
+      "stored_rule_surrogate_preserved": true
+    },
+    {
+      "id": "SR05-extra",
+      "version_space_end_nonboundary_negative_overlength": true
+    },
+    {
+      "id": "SR04-real-request-id",
+      "endpoint": "space",
+      "accepted_quotes": 1790,
+      "rejected_quotes": 1791,
+      "accepted_actual_bytes": 4095
+    },
+    {
+      "id": "SR04-real-request-id",
+      "endpoint": "context",
+      "accepted_quotes": 1704,
+      "rejected_quotes": 1705,
+      "accepted_actual_bytes": 4096
+    },
+    {
+      "id": "SR06-current-ACL",
+      "member_removed_before_bad_cursor": 404,
+      "credential_revoked_before_bad_cursor": 401,
+      "no_read_writes": true
+    }
+  ],
+  "limits": [
+    "synthetic stored historical shape",
+    "objective isolated surrogate was already replaced by SQLite TEXT before reading",
+    "HTTP body only, no SDK/header/error cap"
+  ]
+}

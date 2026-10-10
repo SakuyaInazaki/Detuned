@@ -1,0 +1,600 @@
+--- packages/core/src/ports/storage.ts (C2B before)
++++ packages/core/src/ports/storage.ts
+@@ -206,6 +206,8 @@
+   ackDeliveryBatch(id: string, ackedAt: string): void;
+ 
+   // Search & Views
++  /** Metadata only; whole filtered revealed domain, ID DESC, at most maxCandidates+1. No cursor budget evasion. */
++  listPublicReviewSubmissionCandidateIds(spaceId: string, filters: { request_id?: string; target_post_id?: string }, maxCandidates: number): string[];
+   searchPosts(
+     spaceId: string,
+     q: string,
+--- packages/core/src/services/search-service.ts (C2B before)
++++ packages/core/src/services/search-service.ts
+@@ -1,8 +1,12 @@
++import { readPublicReviewSubmission } from './public-review-submission.js';
++import { readPublicReviewSearchCursor, createPublicReviewSearchCursor } from './review-submission-search-cursor.js';
+ import { readReviewStatusFacts } from './review-status-facts.js';
+ import { SearchCursorDependencies, readSearchCursor, createSearchCursor } from './search-cursor.js';
+ import { projectClaimMaterial, projectFailureMaterial, projectRelation, projectTargetRelations, REPORT_FLAGS } from './knowledge-projection.js';
+ import {
+   SearchQuery,
++  normalizeReviewSubmissionSearchQuery, foldReviewSearchText, compareReviewSubmissionIds, isUnicodeReviewId,
++  type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchItem,
+   SearchResultItem,
+   ViewName,
+   ViewResponseData,
+@@ -47,6 +51,44 @@
+       items: result.items,
+       next_cursor: result.next_cursor ? createSearchCursor(dependencies, auth.actor.id, spaceId, normalized, result.next_cursor) : null,
+     };
++  }
++
++  searchPublicReviewSubmissions(auth: AuthenticatedContext, spaceId: string, query: ReviewSubmissionSearchQuery): { items: PublicReviewSubmissionSearchItem[]; next_cursor: string | null } {
++    return this.storage.readSnapshot(() => {
++      const current = this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer', 'read');
++      const normalized = normalizeReviewSubmissionSearchQuery(query), deps = this.cursorDependencies;
++      if (!deps) throw new DetunedError(ErrorCode.TEMPORARILY_UNAVAILABLE, 'Search cursor backend is unavailable.', 500);
++      const cursor = readPublicReviewSearchCursor(deps, current.actor.id, spaceId, normalized);
++      const candidates = this.storage.listPublicReviewSubmissionCandidateIds(spaceId, { request_id: normalized.request_id, target_post_id: normalized.target_post_id }, this.limits.max_candidates);
++      if (candidates.length > this.limits.max_candidates) throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Public review candidate limit exceeded; narrow request or target.', 422);
++      const items: PublicReviewSubmissionSearchItem[] = [];
++      let more = false;
++      for (const id of candidates) {
++        if (!isUnicodeReviewId(id)) throw new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Stored review metadata cannot be safely read.', 409);
++        if (cursor.before !== undefined && compareReviewSubmissionIds(id, cursor.before) >= 0) continue;
++        const visible = readPublicReviewSubmission(this.storage, spaceId, id);
++        if (!visible) continue;
++        const { submission, request } = visible, body = submission.payload;
++        const fields = [body.verdict, body.coverage, body.checks_performed, ...body.pending_requirements, ...body.limitations, body.independence_statement.statement];
++        let snippet: string | undefined;
++        for (const field of fields) {
++          const index = foldReviewSearchText(field).indexOf(normalized.q);
++          if (index < 0) continue;
++          const points = Array.from(field), matchStart = Array.from(field.slice(0, index)).length, matchLength = Array.from(normalized.q).length;
++          const start = Math.max(0, matchStart - 32), prefix = start > 0 ? '…' : '';
++          let end = Math.min(points.length, start + 320 - prefix.length);
++          if (end < points.length) end--; // reserve suffix ellipsis inside the 320-point cap
++          if (end < matchStart + matchLength) throw new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Search snippet cannot safely fit.', 409);
++          snippet = prefix + points.slice(start, end).join('') + (end < points.length ? '…' : '');
++          break;
++        }
++        if (snippet === undefined) continue;
++        if (items.length === normalized.limit) { more = true; break; }
++        items.push({ type: 'review_submission', submission_id: submission.id, space_id: spaceId, request_id: request.id, snapshot_id: request.snapshot_id, target_ref: { ...request.target_ref }, round: request.round, reviewer_actor_id: submission.reviewer_actor_id, verdict: body.verdict, submitted_at: submission.submitted_at, revealed_at: submission.revealed_at!, snippet });
++      }
++      if (Buffer.byteLength(JSON.stringify(items), 'utf8') > this.limits.max_response_bytes) throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Public review results exceed the response byte limit; reduce limit.', 422);
++      return { items, next_cursor: more ? createPublicReviewSearchCursor(deps, current.actor.id, spaceId, normalized, items.at(-1)!.submission_id, cursor.exp) : null };
++    });
+   }
+ 
+   getView(
+--- packages/core/src/index.ts (C2B before)
++++ packages/core/src/index.ts
+@@ -44,3 +44,5 @@
+ export * from './services/review-lifecycle.js';
+ 
+ export * from './services/review-status-facts.js';
++
++export * from './services/public-review-submission.js';
+--- modules/review/src/submission-service.ts (C2B before)
++++ modules/review/src/submission-service.ts
+@@ -3,7 +3,7 @@
+ import { type StoragePort, type ClockPort, type IdGeneratorPort, type AuthenticatedContext, AuthService,
+   IdempotencyService, readReviewSnapshotRecords, reconstructReviewRequestView, validateReviewSubmissionRecords,
+   reviewSubmissionAcknowledgement, assertReviewSnapshotCurrent, assertReviewSubmissionPostEvidencePrivacy, assertStoredSubmissionEvidencePrivacy, assertStoredSubmissionEvidenceReady,
+-  assertReviewEvidenceArtifact, reviewResync } from '@detuned/core';
++  assertReviewEvidenceArtifact, assertReviewSubmissionReadPrivacy, reviewResync } from '@detuned/core';
+ const missing=()=>new DetunedError(ErrorCode.NOT_FOUND,'Review material does not exist or is not accessible.',404);
+ const invalid=()=>new DetunedError(ErrorCode.VALIDATION_ERROR,'Formal review submission requirements are not satisfied.',400);
+ const stale=()=>new DetunedError(ErrorCode.SNAPSHOT_STALE,'Review material is no longer current and available.',409);
+@@ -104,8 +104,8 @@
+     return this.storage.readSnapshot(()=>{
+       const current=this.auth(auth,spaceId),stored=this.storage.findReviewSubmissionById(submissionId);
+       if(!stored||this.storage.findReviewRequestById(stored.request_id)?.space_id!==spaceId||(stored.reviewer_actor_id!==current.actor.id&&stored.revealed_at===null))throw missing();
+-      const s=validateReviewSubmissionRecords(this.storage,spaceId,submissionId),head=this.storage.findReviewRequestById(s.request_id)!;
+-      readReviewSnapshotRecords(this.storage,spaceId,head.snapshot_id);assertReviewSubmissionPostEvidencePrivacy(this.storage,spaceId,s);assertStoredSubmissionEvidencePrivacy(this.storage,spaceId,s);
++      const s=validateReviewSubmissionRecords(this.storage,spaceId,submissionId);
++      assertReviewSubmissionReadPrivacy(this.storage,spaceId,s);
+       return {...structuredClone(s.payload),submission_id:s.id,request_id:s.request_id,assignment_id:s.assignment_id,reviewer_actor_id:s.reviewer_actor_id,
+         request_version:s.request_version,submitted_at:s.submitted_at,revealed_at:s.revealed_at};
+     });
+--- packages/storage-sqlite/src/sqlite-storage.ts (C2B before)
++++ packages/storage-sqlite/src/sqlite-storage.ts
+@@ -1379,6 +1379,14 @@
+   }
+ 
+   // Search & Views
++  listPublicReviewSubmissionCandidateIds(spaceId: string, filters: { request_id?: string; target_post_id?: string }, maxCandidates: number): string[] {
++    if (!Number.isSafeInteger(maxCandidates) || maxCandidates < 1 || maxCandidates > 5000) throw new Error('Invalid public review candidate budget');
++    const where = ['r.space_id=?', 's.revealed_at IS NOT NULL'];
++    const args: (string | number)[] = [spaceId];
++    if (filters.request_id !== undefined) { where.push('s.request_id=?'); args.push(filters.request_id); }
++    if (filters.target_post_id !== undefined) { where.push('r.target_post_id=?'); args.push(filters.target_post_id); }
++    return (this.db.prepare(`SELECT s.id FROM review_submissions s JOIN review_requests r ON r.id=s.request_id WHERE ${where.join(' AND ')} ORDER BY s.id DESC LIMIT ?`).all(...args, maxCandidates + 1) as { id: string }[]).map(row => row.id);
++  }
+   searchPosts(
+     spaceId: string, q: string,
+     filters?: { kind?: string; tags?: string[]; thread_id?: string },
+--- packages/protocol/src/search.ts (C2B before)
++++ packages/protocol/src/search.ts
+@@ -261,3 +261,62 @@
+ export function isPostRefArray(value: unknown): value is PostRef[] {
+   return Value.Check(HistoricalPostRefArraySchema, value);
+ }
++
++// Explicit public review source; the existing post query/normalization stays intact.
++export const ReviewSubmissionSearchFilterSchema = Type.Object({
++  request_id: Type.Optional(Type.String({ minLength: 1, pattern: '\\S' })),
++  target_post_id: Type.Optional(Type.String({ minLength: 1, pattern: '\\S' })),
++}, { additionalProperties: false });
++export const ReviewSubmissionSearchQuerySchema = Type.Object({
++  source: Type.Literal('review_submissions'), q: SearchQStringSchema,
++  ...ReviewSubmissionSearchFilterSchema.properties,
++  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
++  cursor: Type.Optional(SearchCursorStringSchema),
++}, { additionalProperties: false });
++export type ReviewSubmissionSearchQuery = Static<typeof ReviewSubmissionSearchQuerySchema>;
++export interface NormalizedReviewSubmissionSearchQuery extends Omit<ReviewSubmissionSearchQuery, 'limit'> { limit: number }
++export const PostsSearchSourceQuerySchema = Type.Object({ ...SearchQuerySchema.properties, source: Type.Optional(Type.Literal('posts')) }, { additionalProperties: false });
++export const SearchSourceQuerySchema = Type.Union([PostsSearchSourceQuerySchema, ReviewSubmissionSearchQuerySchema]);
++export type SearchSourceQuery = Static<typeof SearchSourceQuerySchema>;
++export function validateSearchSourceQuery(value: unknown): asserts value is SearchSourceQuery {
++  if (!Value.Check(SearchSourceQuerySchema, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid search source or filter combination.', 400, false);
++  if (value.source === 'review_submissions') normalizeReviewSubmissionSearchQuery(value);
++  else { const {source: _source, ...query} = value; normalizeSearchQuery(query); }
++}
++export function foldReviewSearchText(value: string): string { return value.replace(/[A-Z]/g, letter => letter.toLowerCase()); }
++export function normalizeReviewSubmissionSearchQuery(query: ReviewSubmissionSearchQuery): NormalizedReviewSubmissionSearchQuery {
++  if (!Value.Check(ReviewSubmissionSearchQuerySchema, query)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid public review search query.', 400, false);
++  const q = foldReviewSearchText(query.q.trim());
++  if (!q || Array.from(q).length > SEARCH_LIMITS.q_codepoints) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid public review search query.', 400, false);
++  return { ...query, q, limit: query.limit ?? 20 };
++}
++export const PublicReviewSubmissionSearchItemSchema = Type.Object({
++  type: Type.Literal('review_submission'), submission_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }),
++  request_id: Type.String({ minLength: 1 }), snapshot_id: Type.String({ minLength: 1 }), target_ref: Type.Object({ ...PostRefSchema.properties, revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }) }, { additionalProperties: false }),
++  round: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), reviewer_actor_id: Type.String({ minLength: 1 }),
++  verdict: Type.Union([Type.Literal('accept'), Type.Literal('changes_requested'), Type.Literal('reject')]),
++  submitted_at: Type.String({ format: 'date-time' }), revealed_at: Type.String({ format: 'date-time' }),
++  snippet: Type.String({ 'x-max-codepoints': 320 }),
++}, { additionalProperties: false });
++export type PublicReviewSubmissionSearchItem = Static<typeof PublicReviewSubmissionSearchItemSchema>;
++export const PublicReviewSubmissionSearchPageSchema = Type.Object({
++  data: Type.Array(PublicReviewSubmissionSearchItemSchema, { maxItems: 100 }), meta: SearchResponseMetaSchema,
++}, { additionalProperties: false });
++export type PublicReviewSubmissionSearchPage = Static<typeof PublicReviewSubmissionSearchPageSchema>;
++export const ReviewSubmissionSearchCursorPayloadSchema = Type.Object({
++  v: Type.Literal(1), purpose: Type.Literal('review_submission_search'), source: Type.Literal('review_submissions'),
++  actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }), query_hash: Type.String({ pattern: '^[a-f0-9]{64}$' }),
++  sort: Type.Literal('submission_id_desc'), before_submission_id: Type.String({ minLength: 1 }),
++  exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
++}, { additionalProperties: false });
++export type ReviewSubmissionSearchCursorPayload = Static<typeof ReviewSubmissionSearchCursorPayloadSchema>;
++export function isReviewSubmissionSearchCursorPayload(value: unknown): value is ReviewSubmissionSearchCursorPayload { return Value.Check(ReviewSubmissionSearchCursorPayloadSchema, value) && [value.actor_id, value.space_id, value.before_submission_id].every(isUnicodeReviewId); }
++/** SQLite UTF-8 TEXT/BINARY order, shared by service and wire guards; no locale collation. */
++export function compareReviewSubmissionIds(a: string, b: string): number {
++  const left = new TextEncoder().encode(a), right = new TextEncoder().encode(b);
++  for (let i = 0; i < Math.min(left.length, right.length); i++) if (left[i] !== right[i]) return left[i]! < right[i]! ? -1 : 1;
++  return left.length < right.length ? -1 : left.length > right.length ? 1 : 0;
++}
++export function isUnicodeReviewId(value: string): boolean {
++  return value.length > 0 && !/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(value);
++}
+--- packages/protocol/src/response-guards.ts (C2B before)
++++ packages/protocol/src/response-guards.ts
+@@ -1,3 +1,4 @@
++import { PublicReviewSubmissionSearchItemSchema, SearchResponseMetaSchema, SEARCH_LIMITS, isUnicodeReviewId, compareReviewSubmissionIds, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage } from './search.js';
+ import { FindingViewItemSchema, FailureViewItemSchema, type FindingViewItem, type FailureViewItem } from './search.js';
+ import {ReviewRoundSummarySchema,type PostReviewRequestsPage} from './review.js';
+ import { isReadableArtifactMetadata, type ReviewArtifactMetadata } from './artifacts.js';
+@@ -154,3 +155,20 @@
+ export function isFailuresView(value: unknown, spaceId?: string): value is FailureViewItem[] {
+   return Value.Check(failureViewCheck,value) && value.every(item => consistentKnowledgeItem(item,spaceId));
+ }
++
++const publicReviewSearchItemCheck = Type.Object({ ...PublicReviewSubmissionSearchItemSchema.properties, submitted_at: Type.String(), revealed_at: Type.String() }, { additionalProperties: false });
++const publicReviewSearchPageCheck = Type.Object({ data: Type.Array(publicReviewSearchItemCheck, { maxItems: 100 }), meta: SearchResponseMetaSchema }, { additionalProperties: false });
++export function isPublicReviewSubmissionSearchPage(value: unknown, spaceId?: string, query?: ReviewSubmissionSearchQuery): value is PublicReviewSubmissionSearchPage {
++  if (!Value.Check(publicReviewSearchPageCheck, value) || value.data.length > (query === undefined ? 100 : query.limit ?? 20)) return false;
++  if (value.data.length === 0 && value.meta.next_cursor !== null) return false;
++  if (query !== undefined && value.meta.next_cursor !== null && value.data.length !== (query.limit ?? 20)) return false;
++  if (new TextEncoder().encode(JSON.stringify(value.data)).byteLength > SEARCH_LIMITS.response_bytes) return false;
++  return value.data.every((item, index) =>
++    [item.submission_id, item.space_id, item.request_id, item.snapshot_id, item.target_ref.post_id, item.reviewer_actor_id].every(isUnicodeReviewId)
++    && validDate(item.submitted_at) && validDate(item.revealed_at) && Date.parse(item.revealed_at) >= Date.parse(item.submitted_at)
++    && Array.from(item.snippet).length <= 320
++    && (spaceId === undefined || item.space_id === spaceId)
++    && (query?.request_id === undefined || item.request_id === query.request_id)
++    && (query?.target_post_id === undefined || item.target_ref.post_id === query.target_post_id)
++    && (index === 0 || compareReviewSubmissionIds(value.data[index - 1]!.submission_id, item.submission_id) > 0));
++}
+--- packages/protocol/src/openapi.ts (C2B before)
++++ packages/protocol/src/openapi.ts
+@@ -1,3 +1,4 @@
++import { ReviewSubmissionSearchQuerySchema, PublicReviewSubmissionSearchItemSchema, PublicReviewSubmissionSearchPageSchema, SearchSourceQuerySchema } from './search.js';
+ import { PostReviewRequestsQuerySchema,PostReviewRequestsEnvelopeSchema,CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
+ import { ReviewArtifactMetadataSchema } from './artifacts.js';
+ import type { TSchema } from '@sinclair/typebox';
+@@ -75,7 +76,7 @@
+       },
+     ],
+     components: {
+-      schemas: { SpaceExportLine: SpaceExportLineSchema, SourceStatus: SourceStatusSchema, RelationProjection: RelationProjectionSchema, FindingViewItem: FindingViewItemSchema, FailureViewItem: FailureViewItemSchema, QuestionViewItem: QuestionViewItemSchema, OpenChallengeViewItem: OpenChallengeViewItemSchema, ContextPage: ContextPageSchema, ContextResponseMeta: ContextResponseMetaSchema, ContextEnvelope: ContextEnvelopeSchema, ContextResponseData: ContextResponseDataSchema, ViewResponseData: ViewResponseDataSchema, ...Object.fromEntries(Object.entries(NEW_TYPED_STRUCTURED_SCHEMAS).map(([kind, schema]) => [
++      schemas: { ReviewSubmissionSearchQuery: ReviewSubmissionSearchQuerySchema, PublicReviewSubmissionSearchItem: PublicReviewSubmissionSearchItemSchema, PublicReviewSubmissionSearchPage: PublicReviewSubmissionSearchPageSchema, SearchSourceQuery: SearchSourceQuerySchema, SpaceExportLine: SpaceExportLineSchema, SourceStatus: SourceStatusSchema, RelationProjection: RelationProjectionSchema, FindingViewItem: FindingViewItemSchema, FailureViewItem: FailureViewItemSchema, QuestionViewItem: QuestionViewItemSchema, OpenChallengeViewItem: OpenChallengeViewItemSchema, ContextPage: ContextPageSchema, ContextResponseMeta: ContextResponseMetaSchema, ContextEnvelope: ContextEnvelopeSchema, ContextResponseData: ContextResponseDataSchema, ViewResponseData: ViewResponseDataSchema, ...Object.fromEntries(Object.entries(NEW_TYPED_STRUCTURED_SCHEMAS).map(([kind, schema]) => [
+         `NewWrite${kind.charAt(0).toUpperCase()}${kind.slice(1)}Structured`, schema,
+       ])) },
+       securitySchemes: {
+@@ -573,10 +574,15 @@
+       },
+       '/spaces/{space_id}/search': {
+         get: {
+-          summary: '全文与属性搜索',
++          summary: '帖子搜索或有界公开评审意见字面搜索',
++          description: 'Omitted source/posts preserves existing post FTS/LIKE semantics. review_submissions is literal ASCII-case-folded text search in a current read snapshot; only revealed, currently readable opinions. No cross-page frozen collection. Review source permits request_id/target_post_id and rejects post filters; posts rejects review filters. Whole filtered revealed candidate domain capped at5000, QUERY_TOO_BROAD above it. schema5 unchanged.',
++          'x-query-schema': SearchSourceQuerySchema,
+           parameters: [
+             { name: 'space_id', in: 'path', required: true, schema: { type: 'string' } },
+             { name: 'q', in: 'query', required: true, schema: { type: 'string' } },
++            { name: 'source', in: 'query', schema: { type: 'string', enum: ['posts', 'review_submissions'], default: 'posts' } },
++            { name: 'request_id', in: 'query', schema: ReviewSubmissionSearchQuerySchema.properties.request_id },
++            { name: 'target_post_id', in: 'query', schema: ReviewSubmissionSearchQuerySchema.properties.target_post_id },
+             { name: 'kind', in: 'query', schema: { type: 'string', enum: [...POST_KINDS] } },
+             { name: 'tags', in: 'query', schema: { type: 'string' } },
+             { name: 'tags_json', in: 'query', schema: { type: 'string' }, description: 'JSON string array, exact untrimmed tags. Mutually exclusive with tags. Decoded raw UTF-8 <=8192 bytes; logical JSON <=8192 bytes and <=100 unique values.', 'x-max-utf8-bytes': SEARCH_LIMITS.tags_json_bytes },
+@@ -585,7 +591,7 @@
+             { name: 'cursor', in: 'query', schema: { type: 'string' } },
+           ],
+           responses: {
+-            '200': { description: '搜索结果与签名续页游标', content: { 'application/json': { schema: Type.Object({ api_version: Type.Literal('1'), request_id: Type.String(), data: SearchResponseDataSchema, meta: SearchResponseMetaSchema }, { additionalProperties: false }) } } },
++            '200': { description: '搜索结果与签名续页游标', content: { 'application/json': { schema: Type.Object({ api_version: Type.Literal('1'), request_id: Type.String(), data: Type.Union([SearchResponseDataSchema, PublicReviewSubmissionSearchPageSchema.properties.data]), meta: SearchResponseMetaSchema }, { additionalProperties: false }) } } },
+           },
+         },
+       },
+@@ -716,8 +722,9 @@
+     });
+   }
+   Object.assign(spec.paths['/spaces/{space_id}/search'].get, {
+-    description: 'Exact case-sensitive ALL tag filters. tags CSV preserves trim/drop-empty; tags_json is lossless, mutually exclusive by presence. Signed cursor binds actor/space/normalized query, not limit; ID DESC is not a snapshot. Invalid or legacy cursor: 400 VALIDATION_ERROR, remove cursor and fetch first page. Candidate/data JSON budgets: 422 QUERY_TOO_BROAD; not CPU/VM or envelope limits.',
+-    'x-logical-query-schema': SearchQuerySchema,
++    description: 'Exact case-sensitive ALL tag filters. tags CSV preserves trim/drop-empty; tags_json is lossless, mutually exclusive by presence. Signed cursor binds actor/space/normalized query, not limit; ID DESC is not a snapshot. Invalid or legacy cursor: 400 VALIDATION_ERROR, remove cursor and fetch first page. Candidate/data JSON budgets: 422 QUERY_TOO_BROAD; not CPU/VM or envelope limits. These post semantics remain for omitted source or posts. Explicit review_submissions uses literal text matching with trim/ASCII-only fold and independent cursor/expiry; only revealed current-readable fixed opinions, request_id/target_post_id filters, no post kind/tags/thread filters. Whole revealed filtered domain max5000 even on continuation; same-page read snapshot, not frozen cross-page collection; schema5/no persistent opinion FTS.',
++    'x-logical-query-schema': SearchSourceQuerySchema,
++    'x-posts-query-schema': SearchQuerySchema,
+     'x-search-limits': SEARCH_LIMITS,
+   });
+   const reviewParameter=(name:string)=>({name,in:'path',required:true,schema:Type.String({minLength:1})});
+--- packages/protocol/src/tools.ts (C2B before)
++++ packages/protocol/src/tools.ts
+@@ -1,3 +1,4 @@
++import { ReviewSubmissionSearchFilterSchema, validateSearchSourceQuery } from './search.js';
+ import { ThreadPostsReadQuerySchema } from './threads.js';
+ import { Value } from '@sinclair/typebox/value';
+ import { DetunedError, ErrorCode } from './errors.js';
+@@ -20,14 +21,19 @@
+   if (!Value.Check(ToolContextParamsSchema, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum_context parameters.', 400, false);
+ }
+ 
+-export const ToolSearchParamsSchema = Type.Object({
++const ToolPostsSearchParamsSchema = Type.Object({
+   space_id: Type.String({ minLength: 1 }), q: SearchQStringSchema,
+-  filters: Type.Optional(SearchFilterSchema),
+-  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
+-  cursor: Type.Optional(SearchCursorStringSchema),
+-}, { additionalProperties: false });
+-
+-export type ToolSearchParams = Static<typeof ToolSearchParamsSchema>;
++  source: Type.Optional(Type.Literal('posts')), filters: Type.Optional(SearchFilterSchema),
++  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(SearchCursorStringSchema),
++}, { additionalProperties: false });
++const ToolReviewSearchParamsSchema = Type.Object({
++  space_id: Type.String({ minLength: 1 }), q: SearchQStringSchema,
++  source: Type.Literal('review_submissions'), filters: Type.Optional(ReviewSubmissionSearchFilterSchema),
++  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(SearchCursorStringSchema),
++}, { additionalProperties: false });
++export const ToolSearchParamsUnion = Type.Union([ToolPostsSearchParamsSchema, ToolReviewSearchParamsSchema]);
++export const ToolSearchParamsSchema: TSchema = { ...ToolSearchParamsUnion, type: 'object' };
++export type ToolSearchParams = Static<typeof ToolSearchParamsUnion>;
+ 
+ export const ToolReadParamsUnion = Type.Union([
+   Type.Object({kind:Type.Literal('review_requests'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),...PostReviewRequestsQuerySchema.properties},{additionalProperties:false}),
+@@ -304,6 +310,7 @@
+     const tool = DETUNED_TOOLS.find(item => item.name === toolName);
+     if (!tool || !Value.Check(tool.schema, params)) return false;
+     if (toolName === 'forum_subscribe' && !isSubscriptionStartValid(params)) return false;
++    if (toolName === 'forum_search') { const p = params as ToolSearchParams; validateSearchSourceQuery({ q: p.q, source: p.source, ...p.filters, limit: p.limit, cursor: p.cursor }); }
+     if (toolName === 'forum_context') validateToolContextParams(params);
+     if (toolName === 'forum_read') validateToolReadParams(params);
+     return true;
+--- packages/client/src/client.ts (C2B before)
++++ packages/client/src/client.ts
+@@ -1,3 +1,4 @@
++import { validateSearchSourceQuery, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
+ import { isFindingsView, isFailuresView } from '@detuned/protocol';
+ import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
+ import { validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
+@@ -987,6 +988,14 @@
+     return result as SearchPage;
+   }
+ 
++  async searchPublicReviewSubmissions(spaceId: string, query: ReviewSubmissionSearchQuery, opts?: { signal?: AbortSignal }): Promise<PublicReviewSubmissionSearchPage> {
++    validateSearchSourceQuery(query);
++    if (query.source !== 'review_submissions') throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid public review search source.', 400);
++    const result = await this.requestWithBody<unknown>({ method: 'GET', path: `/spaces/${encodeURIComponent(spaceId)}/search`, query: { ...query, q: query.q.trim() }, signal: opts?.signal }, undefined, true);
++    if (!isPublicReviewSubmissionSearchPage(result, spaceId, query) || result.data.length > (query.limit ?? 20)) throw new ClientProtocolError('Invalid public review search response.');
++    return result;
++  }
++
+   async getView<N extends ViewName>(spaceId: string, name: N, opts?: { signal?: AbortSignal }) {
+     const result = await this.request<ViewResponseData<N>>({
+       method: 'GET',
+@@ -1057,6 +1066,7 @@
+         }, opts);
+ 
+       case 'forum_search':
++        if (params.source === 'review_submissions') return await this.searchPublicReviewSubmissions(spaceId, { source: 'review_submissions', q: params.q, request_id: params.filters?.request_id, target_post_id: params.filters?.target_post_id, limit: params.limit, cursor: params.cursor }, opts);
+         return await this.search(spaceId, {
+           q: params.q,
+           kind: params.filters?.kind,
+--- packages/server/src/routes/search.ts (C2B before)
++++ packages/server/src/routes/search.ts
+@@ -1,3 +1,4 @@
++import { validateSearchSourceQuery } from '@detuned/protocol';
+ import { LIST_LIMIT, integerQueryOptions } from '@detuned/protocol';
+ import { FastifyPluginAsync } from 'fastify';
+ import { ViewName, DetunedError, ErrorCode, PostKind, POST_KINDS } from '@detuned/protocol';
+@@ -13,6 +14,7 @@
+     const auth = (req as any).auth as AuthenticatedContext;
+     const { space_id } = req.params as { space_id: string };
+     const query = req.query as {
++      source?: unknown; request_id?: unknown; target_post_id?: unknown;
+       q?: unknown;
+       kind?: unknown;
+       tags?: unknown;
+@@ -21,9 +23,18 @@
+       limit?: unknown;
+       cursor?: unknown;
+     };
+-    validateAllowedQueryParams(query, ['q', 'kind', 'tags', 'tags_json', 'thread_id', 'limit', 'cursor']);
++    validateAllowedQueryParams(query, ['q', 'source', 'request_id', 'target_post_id', 'kind', 'tags', 'tags_json', 'thread_id', 'limit', 'cursor']);
+ 
+     const q = parseStringQuery(query?.q, 'q', { required: true, allowEmpty: false })!;
++    const source = parseStringQuery(query.source, 'source', { allowedValues: new Set(['posts', 'review_submissions']) });
++    if (source === 'review_submissions') {
++      if (['kind', 'tags', 'tags_json', 'thread_id'].some(key => Object.prototype.hasOwnProperty.call(query, key))) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid search source or filter combination.', 400, false);
++      const logical = { source: 'review_submissions' as const, q, request_id: parseStringQuery(query.request_id, 'request_id'), target_post_id: parseStringQuery(query.target_post_id, 'target_post_id'), limit: parseIntegerQuery(query.limit, 'limit', integerQueryOptions(LIST_LIMIT)) ?? 20, cursor: parseStringQuery(query.cursor, 'cursor', { allowEmpty: true }) };
++      validateSearchSourceQuery(logical);
++      const result = searchService.searchPublicReviewSubmissions(auth, space_id, logical);
++      return { api_version: '1', request_id: req.id, data: result.items, meta: { truncated: false, next_cursor: result.next_cursor } };
++    }
++    if (['request_id', 'target_post_id'].some(key => Object.prototype.hasOwnProperty.call(query, key))) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid search source or filter combination.', 400, false);
+     const kind = parseStringQuery(query?.kind, 'kind', { allowedValues: VALID_POST_KINDS });
+     const limit = parseIntegerQuery(query?.limit, 'limit', integerQueryOptions(LIST_LIMIT)) ?? 20;
+     if (query.tags !== undefined && query.tags_json !== undefined) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'tags 与 tags_json 不能同时指定。', 400, false);
+@@ -31,14 +42,16 @@
+     const threadId = parseStringQuery(query?.thread_id, 'thread_id');
+     const cursor = parseStringQuery(query?.cursor, 'cursor', { allowEmpty: true });
+ 
+-    const result = searchService.search(auth, space_id, {
++    const logical = {
+       q: q.trim(),
+       kind: kind as PostKind | undefined,
+       tags,
+       thread_id: threadId,
+       limit,
+       cursor,
+-    });
++    };
++    validateSearchSourceQuery(logical);
++    const result = searchService.search(auth, space_id, logical);
+ 
+     return {
+       api_version: '1',
+--- /dev/null
++++ packages/core/src/services/public-review-submission.ts
+@@ -0,0 +1,32 @@
++import { DetunedError, ErrorCode, type ReviewSubmissionRecord, type ReviewRequestRecord } from '@detuned/protocol';
++import type { StoragePort } from '../ports/storage.js';
++import { readIntrinsicReviewRequestRecords, readReviewSnapshotRecords, reviewResync } from './review-request-records.js';
++import { validateReviewSubmissionRecords, assertReviewSubmissionPostEvidencePrivacy } from './review-submission-records.js';
++import { assertStoredSubmissionEvidencePrivacy } from './review-artifact-access.js';
++
++/** Existing online read chain. Caller already refreshed ACL and holds the read snapshot. */
++export function assertReviewSubmissionReadPrivacy(storage: StoragePort, spaceId: string, submission: ReviewSubmissionRecord): void {
++  const head = storage.findReviewRequestById(submission.request_id);
++  if (!head) throw new DetunedError(ErrorCode.NOT_FOUND, 'Review material does not exist or is not accessible.', 404);
++  readReviewSnapshotRecords(storage, spaceId, head.snapshot_id);
++  assertReviewSubmissionPostEvidencePrivacy(storage, spaceId, submission);
++  assertStoredSubmissionEvidencePrivacy(storage, spaceId, submission);
++}
++/** Revealed-only search: intrinsic errors never enter the narrowly scoped privacy catch. */
++export function readPublicReviewSubmission(storage: StoragePort, spaceId: string, submissionId: string): { submission: ReviewSubmissionRecord; request: ReviewRequestRecord } | null {
++  let submission: ReviewSubmissionRecord, request: ReviewRequestRecord;
++  try {
++    submission = validateReviewSubmissionRecords(storage, spaceId, submissionId);
++    request = readIntrinsicReviewRequestRecords(storage, spaceId, submission.request_id).head;
++    if (submission.revealed_at === null) return null;
++  } catch (error) {
++    if (error instanceof SyntaxError) throw reviewResync();
++    throw error;
++  }
++  try { assertReviewSubmissionReadPrivacy(storage, spaceId, submission); }
++  catch (error) {
++    if (error instanceof DetunedError && (error.code === ErrorCode.NOT_FOUND || error.code === ErrorCode.CONTENT_REDACTED)) return null;
++    throw error;
++  }
++  return { submission, request };
++}
+--- /dev/null
++++ packages/core/src/services/review-submission-search-cursor.ts
+@@ -0,0 +1,15 @@
++import { isReviewSubmissionSearchCursorPayload, isUnicodeReviewId, SEARCH_LIMITS, type NormalizedReviewSubmissionSearchQuery } from '@detuned/protocol';
++import { invalidSearchCursor, type SearchCursorDependencies } from './search-cursor.js';
++function queryHash(deps: SearchCursorDependencies, query: NormalizedReviewSubmissionSearchQuery): string {
++  return deps.hasher.sha256(deps.hasher.canonicalJson({ source: 'review_submissions', q: query.q, filters: { request_id: query.request_id ?? null, target_post_id: query.target_post_id ?? null }, sort: 'submission_id_desc' }));
++}
++export function readPublicReviewSearchCursor(deps: SearchCursorDependencies, actorId: string, spaceId: string, query: NormalizedReviewSubmissionSearchQuery): { before?: string; exp: number } {
++  const now = deps.clock.now().getTime() / 1000;
++  if (query.cursor === undefined) return { exp: Math.floor(now) + SEARCH_LIMITS.cursor_ttl_seconds };
++  const payload = deps.signer.verify(query.cursor, deps.secret, now);
++  if (!isReviewSubmissionSearchCursorPayload(payload) || !isUnicodeReviewId(payload.before_submission_id) || payload.actor_id !== actorId || payload.space_id !== spaceId || payload.query_hash !== queryHash(deps, query) || payload.exp <= now || payload.exp > Math.floor(now) + SEARCH_LIMITS.cursor_ttl_seconds) throw invalidSearchCursor();
++  return { before: payload.before_submission_id, exp: payload.exp };
++}
++export function createPublicReviewSearchCursor(deps: SearchCursorDependencies, actorId: string, spaceId: string, query: NormalizedReviewSubmissionSearchQuery, before: string, exp: number): string {
++  return deps.signer.sign({ v: 1, purpose: 'review_submission_search', source: 'review_submissions', actor_id: actorId, space_id: spaceId, query_hash: queryHash(deps, query), sort: 'submission_id_desc', before_submission_id: before, exp }, deps.secret);
++}
+--- /dev/null
++++ tests/integration/m6-public-review-search.test.ts
+@@ -0,0 +1,80 @@
++import { beforeEach, afterEach, expect, it } from 'vitest';
++import Database from 'better-sqlite3';
++import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
++import { buildApp } from '@detuned/server';
++import { AuthService, CryptoHasher, SearchService, HmacTokenSigner } from '@detuned/core';
++import { type ReviewRequestView, type CreateReviewSubmission } from '@detuned/protocol';
++let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>, token: string, sid: string, pid: string, auth: AuthService, service: SearchService, tick: number;
++const clock = { now: () => new Date(tick), nowIso: () => new Date(tick).toISOString() };
++async function call(method: 'GET'|'POST'|'PATCH', suffix: string, payload?: object, key?: string, bearer = token, status = method === 'POST' ? 201 : 200) {
++  tick += 1000;
++  const r = await app.inject({ method, url: '/api/v1' + suffix, headers: { authorization: `Bearer ${bearer}`, ...(key ? { 'idempotency-key': key } : {}) }, ...(payload ? { payload } : {}) });
++  expect(r.statusCode, r.body).toBe(status); return r.json().data;
++}
++const path = (suffix = '') => `/spaces/${sid}${suffix}`;
++async function request(key: string): Promise<ReviewRequestView> { return call('POST', path('/review-requests'), { target_ref: { post_id: pid, revision: 1 }, dependency_refs: [], artifact_ids: [], code_refs: [], declared_contributors: [], reviewer_actor_ids: ['r1','r2'], expected_policy_revision: storage.findSpaceById(sid)!.policy_revision, reproduction_instructions: 'run' }, key); }
++async function submit(round: ReviewRequestView, id: string, change: Partial<CreateReviewSubmission> = {}) {
++  const session = await call('POST', path('/sessions'), { client_name: 'public-search-test', client_version: '1' }, undefined, `owned-${id}`);
++  return call('POST', path(`/review-requests/${round.id}/submissions`), { snapshot_sha256: round.snapshot_sha256, reviewer_session_id: session.id, completion_status: 'complete', verdict: 'accept', coverage: 'Needle 研究 %_*', checks_performed: 'performed literal checks', evidence_refs: [], pending_requirements: [], limitations: ['limited scope'], independence_statement: { participated_in_material: false, exposed_to_other_reviews: false, statement: 'independent textual finding' }, ...change }, `submit-${round.id}-${id}`, `owned-${id}`);
++}
++function search(q: string, extra: { request_id?: string; target_post_id?: string; limit?: number; cursor?: string } = {}, bearer = token, reader = service) { return reader.searchPublicReviewSubmissions(auth.authenticateToken(bearer), sid, { source: 'review_submissions', q, ...extra }); }
++function bounded(candidates: number, bytes = 262144) { return new SearchService(storage, auth, { signer: new HmacTokenSigner(), secret: storage.getInstanceSecret(), clock, hasher: new CryptoHasher() }, { max_candidates: candidates, max_response_bytes: bytes }); }
++beforeEach(async () => {
++  tick = Date.parse('2026-10-09T00:00:00Z'); db = new Database(':memory:'); token = bootstrapDatabase(db).adminToken!; storage = new SqliteStorage(db); app = buildApp({ storage, clock }); await app.ready();
++  sid = (await call('POST','/spaces',{ slug:'public-review-search', objective:'o', rules:[] },'space')).space.id;
++  const tid = (await call('POST',path('/threads'),{title:'t'},'thread')).thread.id;
++  pid = (await call('POST',path(`/threads/${tid}/posts`),{kind:'claim',title:'Needle post',summary:'s',body:'ordinary post search',structured:{statement:'claim',assumptions:[],scope:'scope',falsification_plan:'test'}},'claim')).post.id;
++  const space = storage.findSpaceById(sid)!; const rev = storage.getSpaceRevision(sid,space.policy_revision)!;
++  await call('PATCH',path(),{expected_revision:space.current_revision,review_policy:{...rev.review_policy,required_checks:[]}},'no-checks');
++  const hasher = new CryptoHasher(); auth = new AuthService(storage,hasher,clock); service = bounded(5000);
++  for (const id of ['r1','r2','reader']) { storage.createActor({id,kind:'human',display_name:id,disabled_at:null,created_at:clock.nowIso()}); storage.upsertMembership({space_id:sid,actor_id:id,role:'observer',active:true,reviewer_eligible:id!=='reader',independence_group:id}); storage.createCredential({id:`cred-${id}`,actor_id:id,token_hash:hasher.sha256(`owned-${id}`),allowed_space_ids:[sid],capabilities:id==='reader'?['read']:['read','write'],expires_at:null,revoked_at:null,created_at:clock.nowIso()}); }
++});
++afterEach(async () => { await app.close(); db.close(); });
++it('PS01 own sealed opinions never enter search; all-row final reveal creates real public fixed identities', async () => {
++  const round = await request('one'); const first = await submit(round,'r1');
++  expect(search('Needle',{},'owned-r1').items).toEqual([]);
++  expect(await call('GET',path(`/review-submissions/${first.submission_id}`),undefined,undefined,'owned-r1')).toHaveProperty('coverage');
++  await submit(round,'r2'); const result = search(' nEEdLe ');
++  expect(result.items).toHaveLength(2); expect(result.items[0]).toMatchObject({type:'review_submission',space_id:sid,request_id:round.id,snapshot_id:round.snapshot_id,target_ref:{post_id:pid,revision:1},round:1,verdict:'accept'});
++  expect(result.items[0]).not.toHaveProperty('post_id'); expect(result.items[0]).not.toHaveProperty('coverage');
++});
++it('PS02 literal whitelist, independent fields, ASCII fold, Unicode and bounded original-text snippet', async () => {
++  const round = await request('literal'); const q = '😀'.repeat(256), text = '前'.repeat(60) + q + '后'.repeat(80);
++  await submit(round,'r1',{coverage:text,checks_performed:'splitLeft',limitations:['splitRight']}); await submit(round,'r2');
++  for (const term of ['研','研究','Needle','%_*','independent textual','limited scope','accept']) expect(search(term).items.length).toBeGreaterThan(0);
++  const item = search(q).items[0]!; expect(Array.from(item.snippet).length).toBeLessThanOrEqual(320); expect(item.snippet).toContain(q); expect(item.snippet.startsWith('…')).toBe(true);
++  expect(search('splitLeftsplitRight').items).toEqual([]); expect(search(round.snapshot_sha256).items).toEqual([]);
++  expect(search('NEEDLE').items[0]!.snippet).toContain('Needle'); expect(search('研究x').items).toEqual([]);
++});
++it('PS03 public pagination has one extra real match and actor/query isolation', async () => {
++  const round = await request('pages'); await submit(round,'r1'); await submit(round,'r2');
++  const first = search('Needle',{limit:1}); expect(first.next_cursor).not.toBeNull();
++  const second = search('needle',{limit:1,cursor:first.next_cursor!}); expect(second.items).toHaveLength(1); expect(second.next_cursor).toBeNull(); expect(second.items[0]!.submission_id).not.toBe(first.items[0]!.submission_id);
++  expect(() => search('different',{cursor:first.next_cursor!})).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));
++  expect(() => search('needle',{cursor:first.next_cursor!},'owned-reader')).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));
++});
++it('PS04 bounded metadata preflight applies to whole filter domain including cursor, not sealed rows; response bytes fail explicitly', async () => {
++  const first = await request('first'); await submit(first,'r1'); await submit(first,'r2');
++  const page = search('needle',{limit:1},token,bounded(2)); const second = await request('second'); await submit(second,'r1');
++  expect(search('needle',{},token,bounded(2)).items).toHaveLength(2);
++  await submit(second,'r2');
++  expect(() => search('needle',{cursor:page.next_cursor!},token,bounded(2))).toThrow(expect.objectContaining({code:'QUERY_TOO_BROAD'}));
++  expect(search('needle',{request_id:first.id},token,bounded(2)).items).toHaveLength(2);
++  expect(search('needle',{request_id:'unknown'},token,bounded(2)).items).toEqual([]);
++  expect(() => search('needle',{request_id:first.id},token,bounded(2,20))).toThrow(expect.objectContaining({code:'QUERY_TOO_BROAD'}));
++  expect(storage.listPublicReviewSubmissionCandidateIds(sid,{},2)).toHaveLength(3); // max+1 metadata sentinel, not 5000-scale certification
++});
++it('PS05 current ACL and real redaction hide history; cancelled history is otherwise still searchable', async () => {
++  const round = await request('history'); await submit(round,'r1'); await submit(round,'r2');
++  await call('POST',path(`/review-requests/${round.id}/cancel`),{expected_version:3,reason:'stop'},'cancel',token,200);
++  expect(search('needle').items).toHaveLength(2);
++  const cached = auth.authenticateToken('owned-reader'); storage.upsertMembership({...storage.getMembership(sid,'reader')!,active:false});
++  expect(() => service.searchPublicReviewSubmissions(cached,sid,{source:'review_submissions',q:'needle'})).toThrow(expect.objectContaining({code:'NOT_FOUND'}));
++  await call('POST',path('/redactions'),{target_type:'post',target_id:pid,reason:'remove'},'redact'); expect(search('needle').items).toEqual([]);
++});
++it('PS06 real HTTP source/filter rejection and omitted/explicit posts preserve old row and signed cursor behavior', async () => {
++  const legacy = await app.inject({method:'GET',url:`/api/v1${path('/search')}?q=Needle`,headers:{authorization:`Bearer ${token}`}});
++  const explicit = await app.inject({method:'GET',url:`/api/v1${path('/search')}?q=Needle&source=posts`,headers:{authorization:`Bearer ${token}`}});
++  expect(legacy.statusCode,legacy.body).toBe(200); expect(explicit.json().data).toEqual(legacy.json().data); expect(legacy.json().data[0]).toHaveProperty('post_id',pid); expect(legacy.json().data[0]).not.toHaveProperty('type');
++  for (const query of ['source=review_submissions&kind=claim','source=review_submissions&tags_json=%5B%5D','source=posts&request_id=x','source=private','source=review_submissions&unknown=x']) { const bad=await app.inject({method:'GET',url:`/api/v1${path('/search')}?q=x&${query}`,headers:{authorization:`Bearer ${token}`}}); expect(bad.statusCode,bad.body).toBe(400); }
++});
+--- /dev/null
++++ tests/contracts/m6-public-review-search-contracts.test.ts
+@@ -0,0 +1,70 @@
++import { beforeEach, afterEach, expect, expectTypeOf, it, vi } from 'vitest';
++import Database from 'better-sqlite3';
++import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
++import { buildApp } from '@detuned/server';
++import { CryptoHasher } from '@detuned/core';
++import { DetunedClient, ClientProtocolError } from '@detuned/client';
++import { isPublicReviewSubmissionSearchPage, isReviewSubmissionSearchCursorPayload, validateSearchSourceQuery, normalizeReviewSubmissionSearchQuery, compareReviewSubmissionIds, generateOpenApiSpec, type PublicReviewSubmissionSearchPage, type ReviewRequestView } from '@detuned/protocol';
++let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>, client: DetunedClient, url: string, token: string, sid: string, pid: string, tick: number;
++const clock = { now: () => new Date(tick), nowIso: () => new Date(tick).toISOString() };
++const path = (suffix = '') => `/spaces/${sid}${suffix}`;
++async function write(method: 'POST'|'PATCH', suffix: string, payload: object, key?: string, bearer = token) {
++  tick += 1000;
++  const response = await fetch(`${url}/api/v1${suffix}`, { method, headers: { authorization:`Bearer ${bearer}`, 'content-type':'application/json', ...(key?{'idempotency-key':key}:{}) }, body: JSON.stringify(payload) });
++  expect(response.status,await response.clone().text()).toBe(method==='POST'?201:200); return (await response.json()).data;
++}
++beforeEach(async () => {
++  tick = Date.parse('2026-10-09T00:00:00Z'); db = new Database(':memory:'); token = bootstrapDatabase(db).adminToken!; storage = new SqliteStorage(db); app = buildApp({storage,clock}); await app.listen({host:'127.0.0.1',port:0});
++  const addr = app.server.address(); if (!addr || typeof addr === 'string') throw new Error('owned listener missing'); url=`http://127.0.0.1:${addr.port}`; client=new DetunedClient({baseUrl:url,token,maxRetries:0});
++  sid=(await write('POST','/spaces',{slug:'public-review-contracts',objective:'o',rules:[]},'space')).space.id;
++  const tid=(await write('POST',path('/threads'),{title:'t'},'thread')).thread.id;
++  pid=(await write('POST',path(`/threads/${tid}/posts`),{kind:'claim',title:'Needle ordinary post',summary:'s',body:'original',structured:{statement:'claim',assumptions:[],scope:'s',falsification_plan:'f'}},'claim')).post.id;
++  const rev=storage.getSpaceRevision(sid,1)!; await write('PATCH',path(),{expected_revision:1,review_policy:{...rev.review_policy,required_checks:[]}},'policy');
++  const hash=new CryptoHasher(); for(const id of ['r1','r2']) {storage.createActor({id,kind:'human',display_name:id,created_at:clock.nowIso(),disabled_at:null});storage.upsertMembership({space_id:sid,actor_id:id,role:'observer',active:true,reviewer_eligible:true,independence_group:id});storage.createCredential({id:`cred-${id}`,actor_id:id,token_hash:hash.sha256(`owned-${id}`),allowed_space_ids:[sid],capabilities:['read','write'],expires_at:null,revoked_at:null,created_at:clock.nowIso()});}
++});
++afterEach(async () => {vi.unstubAllGlobals();await app.close();db.close();});
++async function reveal():Promise<ReviewRequestView> {
++  const round:ReviewRequestView=await write('POST',path('/review-requests'),{target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['r1','r2'],expected_policy_revision:storage.findSpaceById(sid)!.policy_revision,reproduction_instructions:'run'},'request');
++  for(const id of ['r1','r2']){const session=await write('POST',path('/sessions'),{client_name:'public-contract',client_version:'1'},undefined,`owned-${id}`);await write('POST',path(`/review-requests/${round.id}/submissions`),{snapshot_sha256:round.snapshot_sha256,reviewer_session_id:session.id,completion_status:'complete',verdict:'accept',coverage:'Needle 研究 actual opinion',checks_performed:'checked',evidence_refs:[],pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'independent'}},`submit-${id}`,`owned-${id}`);}
++  return round;
++}
++it('PC01 real HTTP/shared client typed strict page has genuine review identity, and old posts search return type stays', async () => {
++  const round=await reveal();const query={source:'review_submissions' as const,q:'NEEDLE',request_id:round.id,target_post_id:pid,limit:1};
++  const page=await client.searchPublicReviewSubmissions(sid,query); expectTypeOf(page).toEqualTypeOf<PublicReviewSubmissionSearchPage>(); expect(isPublicReviewSubmissionSearchPage(page,sid,query)).toBe(true);
++  expect(page.meta.truncated).toBe(false);expect(page.meta.next_cursor).not.toBeNull();expect(page.data[0]).toMatchObject({type:'review_submission',request_id:round.id,target_ref:{post_id:pid,revision:1},space_id:sid,snapshot_id:round.snapshot_id,round:1,snippet:'Needle 研究 actual opinion'});
++  const next=await client.searchPublicReviewSubmissions(sid,{...query,cursor:page.meta.next_cursor!});expect(next.data).toHaveLength(1);expect(next.meta.next_cursor).toBeNull();
++  expect((await client.search(sid,{q:'Needle'})).data[0]).toHaveProperty('post_id',pid);
++  const spec=generateOpenApiSpec() as any;expect(spec.paths['/spaces/{space_id}/search'].get['x-query-schema']).toBeDefined();expect(spec.paths['/spaces/{space_id}/search'].get['x-logical-query-schema']).toEqual(spec.components.schemas.SearchSourceQuery);expect(spec.paths['/spaces/{space_id}/search'].get.description).toContain('review_submissions');expect(spec.components.schemas.PublicReviewSubmissionSearchPage).toBeDefined();
++});
++it('PC02 canonical source prevalidation rejects unknown/incompatible query before new client transport', async () => {
++  const fetchSpy=vi.fn();vi.stubGlobal('fetch',fetchSpy);
++  for(const q of [{source:'review_submissions',q:'x',kind:'claim'},{source:'review_submissions',q:'x',private:'x'},{source:'posts',q:'x',request_id:'r'},{source:'private',q:'x'},{source:'review_submissions',q:' '.repeat(4)}]) {
++    expect(()=>validateSearchSourceQuery(q)).toThrow(expect.objectContaining({code:'VALIDATION_ERROR'}));
++    await expect(client.searchPublicReviewSubmissions(sid,q as any)).rejects.toMatchObject({code:'VALIDATION_ERROR'});
++  }
++  expect(fetchSpy).not.toHaveBeenCalled();
++  const cursor = {v:1,purpose:'review_submission_search',source:'review_submissions',actor_id:'actor',space_id:'space',query_hash:'a'.repeat(64),sort:'submission_id_desc',before_submission_id:'id',exp:1};
++  expect(isReviewSubmissionSearchCursorPayload(cursor)).toBe(true);
++  for (const field of ['actor_id','space_id','before_submission_id']) expect(isReviewSubmissionSearchCursorPayload({...cursor,[field]:'bad\uD800'})).toBe(false);
++  expect(normalizeReviewSubmissionSearchQuery({source:'review_submissions',q:'  ABC研究  '})).toMatchObject({q:'abc研究',limit:20});
++});
++it('PC03 whole-page wire guard rejects date/identity/filter/order/unknown/meta/snippet flaws without partial rows', async () => {
++  const round=await reveal();const query={source:'review_submissions' as const,q:'Needle',request_id:round.id,target_post_id:pid};const page=await client.searchPublicReviewSubmissions(sid,query),row=page.data[0]!;
++  const malformed:unknown[]=[
++    {...page,data:Array.from({length:21},(_,n)=>({...row,submission_id:'rsb_'+String(100-n).padStart(3,'0')})),meta:{truncated:false,next_cursor:null}},
++    {...page,data:[{...row,sealed_payload:'no'}]}, {...page,data:[row,{...page.data[1]!,revealed_at:null}]},
++    {...page,data:[{...row,space_id:'other'}]}, {...page,data:[{...row,request_id:'other'}]}, {...page,data:[{...row,target_ref:{post_id:'other',revision:1}}]},
++    {...page,data:[{...row,submitted_at:'yesterday'}]}, {...page,data:[{...row,revealed_at:'2020-01-01T00:00:00Z'}]},
++    {...page,data:[{...row,snippet:'😀'.repeat(321)}]}, {...page,data:[row,row]}, {...page,data:[...page.data].reverse()},
++    {...page,meta:{truncated:true,next_cursor:null}}, {...page,meta:{truncated:false,next_cursor:'opaque-under-limit'}}, {...page,data:[],meta:{truncated:false,next_cursor:'opaque'}},
++    {...page,data:[{...row,submission_id:'bad\uD800'}]}, {...page,unexpected:true},
++  ];
++  for(const data of malformed){expect(isPublicReviewSubmissionSearchPage(data,sid,query)).toBe(false);vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({api_version:'1',request_id:'controlled',data:(data as any).data,meta:(data as any).meta,...((data as any).unexpected?{unexpected:true}:{})}),{status:200})));await expect(client.searchPublicReviewSubmissions(sid,query)).rejects.toBeInstanceOf(ClientProtocolError);}
++});
++it('PC04 shared ID ordering follows SQLite BINARY, not locale; distinct review/post cursors do not cross source', async () => {
++  const ids=['rsb_Z','rsb_a','rsb_研','rsb_😀'];
++  const sql=db.prepare('SELECT value FROM json_each(?) ORDER BY value DESC').all(JSON.stringify(ids)) as {value:string}[];
++  expect([...ids].sort((a,b)=>compareReviewSubmissionIds(b,a))).toEqual(sql.map(x=>x.value));
++  await reveal();const reviews=await client.searchPublicReviewSubmissions(sid,{source:'review_submissions',q:'Needle',limit:1});
++  await expect(client.search(sid,{q:'Needle',cursor:reviews.meta.next_cursor!})).rejects.toMatchObject({code:'VALIDATION_ERROR'});
++});

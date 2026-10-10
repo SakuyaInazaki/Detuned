@@ -1,0 +1,217 @@
+{
+  "node": "v26.3.0",
+  "pattern": "^\\s*(?=\\S)(?:[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])|[^\\uD800-\\uDBFF]){1,256}\\s*$",
+  "scope": "finite mechanism checks, not unbounded performance guarantee",
+  "rows": [
+    {
+      "name": "ascii256",
+      "expected": true,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": true,
+          "elapsed_ms": 0.10516599999999698
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": true,
+          "elapsed_ms": 0.03033399999999631
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": true,
+          "elapsed_ms": 0.019249999999999545
+        }
+      ]
+    },
+    {
+      "name": "ascii257",
+      "expected": false,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": false,
+          "elapsed_ms": 0.004584000000008359
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": false,
+          "elapsed_ms": 0.013666999999998097
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": false,
+          "elapsed_ms": 0.002207999999995991
+        }
+      ]
+    },
+    {
+      "name": "emoji256",
+      "expected": true,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": true,
+          "elapsed_ms": 0.05479200000000617
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": true,
+          "elapsed_ms": 0.07866599999999835
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": true,
+          "elapsed_ms": 0.001125000000001819
+        }
+      ]
+    },
+    {
+      "name": "emoji257",
+      "expected": false,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": false,
+          "elapsed_ms": 0.004666999999997756
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": false,
+          "elapsed_ms": 0.0037499999999965894
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": false,
+          "elapsed_ms": 0.0019170000000059417
+        }
+      ]
+    },
+    {
+      "name": "outer-whitespace",
+      "expected": true,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": true,
+          "elapsed_ms": 0.0019170000000059417
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": true,
+          "elapsed_ms": 0.0015839999999940346
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": true,
+          "elapsed_ms": 0.0008339999999975589
+        }
+      ]
+    },
+    {
+      "name": "newline",
+      "expected": true,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": true,
+          "elapsed_ms": 0.0007499999999964757
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": true,
+          "elapsed_ms": 0.0013749999999959073
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": true,
+          "elapsed_ms": 0.0003749999999911324
+        }
+      ]
+    },
+    {
+      "name": "combining256",
+      "expected": true,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": true,
+          "elapsed_ms": 0.0016250000000042064
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": true,
+          "elapsed_ms": 0.0006669999999928677
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": true,
+          "elapsed_ms": 0.0005409999999983484
+        }
+      ]
+    },
+    {
+      "name": "combining258",
+      "expected": false,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": false,
+          "elapsed_ms": 0.002082999999998947
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": false,
+          "elapsed_ms": 0.0035419999999959373
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": false,
+          "elapsed_ms": 0.0017919999999946867
+        }
+      ]
+    },
+    {
+      "name": "finite-whitespace8192",
+      "expected": false,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": false,
+          "elapsed_ms": 0.02574999999998795
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": false,
+          "elapsed_ms": 0.015750000000011255
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": false,
+          "elapsed_ms": 0.015208999999998696
+        }
+      ]
+    },
+    {
+      "name": "finite-prefix8192-invalid257",
+      "expected": false,
+      "results": [
+        {
+          "validator": "TypeBox",
+          "accepted": false,
+          "elapsed_ms": 0.02070799999999906
+        },
+        {
+          "validator": "AJV-u-true",
+          "accepted": false,
+          "elapsed_ms": 0.014667000000002872
+        },
+        {
+          "validator": "AJV-u-false",
+          "accepted": false,
+          "elapsed_ms": 0.049458000000001334
+        }
+      ]
+    }
+  ]
+}

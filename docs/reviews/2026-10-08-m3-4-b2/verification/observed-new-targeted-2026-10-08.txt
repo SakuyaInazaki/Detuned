@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-shutdown-resources.test.ts (6 tests) 40ms
+ ❯ tests/integration/m3-milestone-gate.test.ts (2 tests | 1 failed) 995ms
+   ✓ T02 independent ten real HTTP requests reach one server barrier then replay one intent with unique post/event/idempotency and conflict409  565ms
+   × T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs 430ms
+     → expected false to be true // Object.is equality
+ ✓ tests/contracts/m3-shutdown-contract.test.ts (4 tests) 887ms
+   ✓ SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly  766ms
+ ❯ tests/integration/m3-shutdown-independent.test.ts (5 tests | 1 failed) 26080ms
+   × M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release 20586ms
+     → Bounded private operations IPC deadline
+   ✓ M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles  516ms
+   ✓ M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown  744ms
+   ✓ M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan  1729ms
+   ✓ M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors  2504ms
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 15 passed (17)
+   Start at  16:46:28
+   Duration  26.33s (transform 296ms, setup 0ms, collect 819ms, tests 28.00s, environment 0ms, prepare 187ms)
+

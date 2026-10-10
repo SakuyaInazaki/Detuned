@@ -1,0 +1,11 @@
+{"source_commit":"fa1b35c80de02c1d601288847706495062935925","source_files":44,"runtime_bytes":170843,"runtime_sha256":"210d4fa39a15a320b99e6bfa85bfcf621c5c928418a0f029354963ae3d6eab8c","credentials_archived":false}
+file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-3-c/implementation/transport/runtime-proof.mjs:28
+ console.log(JSON.stringify({schema_versions:versions,thread_version:2,thread_versions_table:false,http_identity_created:!!identity.data.actor.id,http_space_thread_post_revision:true,reopened_revision:reopened.data.revision.revision,body_sha256:createHash('sha256').update(reopened.data.revision.body).digest('hex'),elapsed_ms:performance.now()-started,secret_injected:true,credentials_archived:false}));
+                                                                                                                                               ^
+
+TypeError: Cannot read properties of undefined (reading 'id')
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-08-m3-3-c/implementation/transport/runtime-proof.mjs:28:144
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v26.3.0
+{"child_reaped":true,"watchdog_killed":false,"code":1,"signal":null}

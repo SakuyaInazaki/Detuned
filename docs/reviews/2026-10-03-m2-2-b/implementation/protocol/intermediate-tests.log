@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests | 1 failed) 283ms
+   ✓ M2.2-B typed knowledge projection contracts > B01: source and flat relation schemas make unavailable/redacted version knowledge null 47ms
+   ✓ M2.2-B typed knowledge projection contracts > B02: material requires explicit nullable fields/missing lists without fake defaults 6ms
+   ✓ M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas 111ms
+   × M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer 119ms
+     → expected 400 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer
+AssertionError: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:102:143
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  15:27:46
+   Duration  835ms (transform 163ms, setup 0ms, collect 342ms, tests 283ms, environment 0ms, prepare 38ms)
+

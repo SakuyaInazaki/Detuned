@@ -1,3 +1,4 @@
+import { markReviewRequestsStale } from './review-lifecycle.js';
 import { DetunedError, ErrorCode, } from '@detuned/protocol';
 const DEFAULT_REVIEW_POLICY = {
     enabled: true,
@@ -16,12 +17,14 @@ export class SpaceService {
     clock;
     authService;
     idempotency;
-    constructor(storage, idGen, clock, authService, idempotency) {
+    writeRateLimiter;
+    constructor(storage, idGen, clock, authService, idempotency, writeRateLimiter = authService.writeRateLimiter) {
         this.storage = storage;
         this.idGen = idGen;
         this.clock = clock;
         this.authService = authService;
         this.idempotency = idempotency;
+        this.writeRateLimiter = writeRateLimiter;
     }
     createSpace(auth, req, requestKey) {
         this.authService.requireInstanceAdmin(auth);
@@ -115,6 +118,8 @@ export class SpaceService {
                 created_at: now,
             };
             tx.updateSpace(updatedSpace, newRevision);
+            if (policyChanged)
+                markReviewRequestsStale(tx, spaceId, { kind: 'policy', objectId: spaceId, actorId: auth.actor.id, changedAt: now });
             tx.appendEvent(spaceId, {
                 id: this.idGen.generateId('evt'),
                 space_id: spaceId,
@@ -130,6 +135,7 @@ export class SpaceService {
     }
     createSession(auth, spaceId, req) {
         this.authService.requireSpaceAccess(auth, spaceId, 'observer');
+        this.writeRateLimiter.admit(auth.actor.id);
         const session = {
             id: this.idGen.generateId('ses'),
             actor_id: auth.actor.id,

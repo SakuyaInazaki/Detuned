@@ -1,0 +1,115 @@
+{
+  "product_and_test_file_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "historical_review_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "frozen_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "build_artifact_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "head_unchanged": true,
+  "r22_product_comparison": {
+    "changed": [
+      "packages/protocol/src/posts.ts",
+      "tests/contracts/r4-c-contracts.test.ts",
+      "packages/adapter-pi/src/index.ts",
+      "packages/server/src/routes/search.ts",
+      "packages/client/src/client.ts",
+      "packages/protocol/src/openapi.ts"
+    ],
+    "added": [
+      "packages/storage-sqlite/tests/fixtures.db"
+    ],
+    "removed": []
+  },
+  "test_counts": [
+    {
+      "file": "tests/contracts/cross-interface-contract.test.ts",
+      "tests": 2
+    },
+    {
+      "file": "tests/integration/m1-discussion.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "tests/contracts/m0-m1-adapters-regression.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "packages/storage-sqlite/tests/storage.test.ts",
+      "tests": 7
+    },
+    {
+      "file": "tests/probes/m0-probes.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "tests/integration/m0-m1-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "packages/protocol/tests/schema.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "tests/integration/m0-m1-r3-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "tests/contracts/m0-m1-r2-adapters.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "tests/integration/m0-m1-r2-regression.test.ts",
+      "tests": 12
+    },
+    {
+      "file": "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-r4-b-regression.test.ts",
+      "tests": 82
+    },
+    {
+      "file": "tests/contracts/r4-c-contracts.test.ts",
+      "tests": 27
+    }
+  ],
+  "probe_summary": {
+    "observed-c-boundaries.json": {
+      "passed": 6,
+      "total": 6
+    },
+    "observed-c-completion.json": {
+      "passed": 5,
+      "total": 5
+    },
+    "observed-c2-boundaries.json": {
+      "passed": 5,
+      "total": 5
+    },
+    "observed-r4.json": {
+      "passed": 8,
+      "total": 8
+    }
+  },
+  "command_summary": {
+    "total": 29,
+    "passed": 29,
+    "timeouts": 0
+  },
+  "test_total": 180
+}

@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 37ms
+ ❯ tests/contracts/m2-space-read-contracts.test.ts (5 tests | 1 failed) 211ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R01: large context is budget-omitted with a usable fixed space revision reference 79ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R02: explicit fixed-revision rules route exists and retains the requested revision 26ms
+   × M2.4-B.1 actual fixed space rules transport > R03: real client/tool pages stay fixed through updates and reassemble exact UTF8 document 45ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M2.4-B.1 actual fixed space rules transport > R04: strict route inputs and direct tool calls reject unapplied legacy parameters 35ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R05: page/envelope schemas enforce completion/meta correspondence 26ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 12 passed (13)
+   Start at  15:13:59
+   Duration  770ms (transform 242ms, setup 0ms, collect 554ms, tests 248ms, environment 0ms, prepare 86ms)
+

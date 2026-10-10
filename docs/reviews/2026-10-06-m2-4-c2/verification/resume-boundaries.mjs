@@ -1,0 +1,13 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import {boundaries} from './postflight-boundaries-v2.mjs';
+const require=createRequire(new URL('../../../../packages/storage-sqlite/package.json',import.meta.url)),Database=require('better-sqlite3');
+const live=JSON.parse(await readFile('/private/tmp/detuned-c2-load-full-private-v3-a1/restarted-live.json','utf8'));
+const oracle=JSON.parse(await readFile('/private/tmp/detuned-c2-seed-full-20261006-v3-a1/oracle.json','utf8'));
+const db=new Database(live.db_path,{readonly:true});
+const consumer=db.prepare("SELECT id FROM consumers WHERE consumer_key LIKE 'verify-%' ORDER BY rowid DESC LIMIT 1").get().id;
+const privateId=db.prepare("SELECT id FROM spaces WHERE slug LIKE 'verify-%' ORDER BY rowid DESC LIMIT 1").get().id;
+db.close();
+const control={consumption:{consumer},summary_fixed_ref:oracle.task.summary_ref,records:[{url:`/api/v1/spaces/${privateId}/context`}]};
+const result=await boundaries(live,{session_inputs:{space_id:'spc_c2_main'}},control);
+await writeFile('docs/reviews/2026-10-06-m2-4-c2/verification/postflight-boundaries-v2.json',JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));

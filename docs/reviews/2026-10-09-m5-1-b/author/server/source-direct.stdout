@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-web-static.test.ts (5 tests | 1 failed) 149ms
+   ✓ WS01 only root and build js/css GET/HEAD are anonymous; stale and malformed cookies cannot block the login page 85ms
+   ✓ WS02 static entry still enforces trusted Host/Origin before any bytes and never adds a SPA fallback 32ms
+   × WS03 absent, dot, map, arbitrary extensions, directories and symlink files/parents are not published 29ms
+     → expected 401 to be 404 // Object.is equality
+   ✓ WS04 explicit directory/Origin/index checks reject invalid configurations without creating the data directory 1ms
+   ✓ WS05 Web/static are opt-in and an invalid library configuration fails before storage runtime configuration 1ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  04:30:39
+   Duration  793ms (transform 221ms, setup 0ms, collect 436ms, tests 149ms, environment 0ms, prepare 36ms)
+

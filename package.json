@@ -16,7 +16,8 @@
     "test:integration": "vitest run tests/integration",
     "test:contracts": "vitest run tests/contracts",
     "test:all": "vitest run",
-    "clean": "pnpm -r run clean"
+    "clean": "pnpm -r run clean",
+    "test:e2e": "playwright test --config scripts/integrations/web/playwright.config.ts"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.30.1",
@@ -25,6 +26,7 @@
     "better-sqlite3": "^13.0.3",
     "@sinclair/typebox": "^0.34.28",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.7"
+    "vitest": "^3.0.7",
+    "@playwright/test": "1.64.0"
   }
 }

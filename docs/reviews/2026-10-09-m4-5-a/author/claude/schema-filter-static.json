@@ -1,0 +1,26 @@
+{
+  "status-map": {
+    "offset": 197134332,
+    "excerpt": "Fe=(e,o)=>({mcpServers:o.redactsPersistedLane()?H_r(hBt(o.mcpConnections())):hBt(o.mcpConnections())}),Ue=()=>({version:`${{ISSUES_EXPLAINER:\"report the issue at https://github.com/anthropics/claude-code/issues\",PACKAGE_URL:\"@anthropic-ai/claude-code\",README_URL:\"https://code.claude.com/docs/en/over"
+  },
+  "raw-tool-names": {
+    "offset": 197136500,
+    "excerpt": "=\"claudeai-proxy\")d={type:\"claudeai-proxy\",url:r.config.url,id:r.config.id};else if(r.config.type===\"stdio\"||r.config.type===void 0)d={type:\"stdio\",command:r.config.command,args:r.config.args};let f=ks(r)?y6(n,r.name).map((g)=>({name:g.mcpInfo?.toolName??g.name,annotations:{readOnly:g.isReadOnly({})||void 0,destructive:g.isDestructive?.({})||void 0,openWorld:g.isOpenWorld?.({})||void 0},...g.mcpInfo?.uiMeta&&{_meta:g.mcpInfo.uiMeta}})):void 0,h;if(ks(r)&&r.capabilities.experimental){let g={...r.capabilities.experimental};if(\"claude/channel\"in g&&(!Q8e(r.capabilities,\"claude/channel\")||!g7()||!_gt(r.config.pluginSource)||r.type===\"connected\"&&r.protocolEra===\"modern\"))delete g[\"claude/channel"
+  },
+  "normalize-drop": {
+    "offset": 206840427,
+    "excerpt": "function nwt(e,r){let n=Sfo(e);if(n.outcome===\"drop\")return{verdict:\"drop\",cause:\"schema_unsupported\",reason:n.reason};if(n.outcome===\"normalized\"&&!r.normalizeEnabled)return{verdict:\"drop\",cause:\"normalize_gated\",reason:`its input schema uses top-level ${n.combinators.join(\"/\")}, which the Anthropic API does not accept`};let l=n.outcome===\"normalized\"?{schema:n.schema,note:n.note,combinators:n.combinators}:void 0,a=m(l?.schema??e);if(a.valid)return{verdict:\"send\",normalized:l,apiWouldReject:void 0};if(!r.apiValidateEnabled)return{verdict:\"send\",normalized:l,apiWouldReject:a};return{verdict:\"drop\",cause:\"api_invalid\",normalized:l,rejection:a}}\nexport{nwt};\n\u0000// @bun @bytecode\n// Claude Code is a Beta product per Anthropic's Commercial Terms of Service.\n// By using Claude Code, you agree that all code acceptance or rejection decisions you make,\n// and the associated conversations in context, constitute Feedback under Anthropic's Commercial Terms,\n// and may be used to improve Anthropic's"
+  },
+  "fetch-normalize": {
+    "offset": 207023000,
+    "excerpt": "dCalls:G.innerCall?void 0:wbe.of(G.session)})}}return Pt(G.abortController.signal)}});if(XR(e.name)&&(j.name===\"file_upload\"||j.name===\"browser_batch\")){let ve=!dz(e.config)&&!a.CLAUDE_CODE_REMOTE&&a.CLAUDE_CODE_IS_COWORK,G=Ie.call;Ie.call=async(Ke,W,De,Me,He)=>{let{passThroughChromeFileUploadInput:ue,prepareChromeFileUploadInput:We}=await import(\"/$bunfs/root/chunk-s70jn8vr.js\"),Je=ve?await ue(j.name,Ke??{},fe(W)):await We(j.name,Ke??{},fe(W));if(Je.error)throw new P(Je.error,\"Claude in Chrome file_upload path rejected\");return G(Je.input??Ke,W,De,Me,He)}}if(XR(e.name)&&e.config.type!==\"sdk\"){let ve=Ie.call;Ie.call=async(G,Ke,W,De,Me)=>{let He=Ige(\"allow_claude_browser_extension\",\"Claude in Chrome\",\"is\");if(He!==null)throw new P(He,\"Claude in Chrome call refused by org policy\");return ve(G,Ke,W,De,Me)}}let ot=Ie.call;return Ie.call=async(ve,G,Ke,W,De)=>{if(G.options.activeMcpServer=e.name,G.options.activeMcpTool=j.name,e.config.pluginSource)UE(e.config.pluginSource),Yx(e.config.pluginSource,\"mcp\",{kind:\"mcp-server\",name:e.name});let Me=A();if(Me)iQt(e.name);return ot(p8t(ve,j.name,e.name,Me,x(\"tengu_mcp_strip_trailing_xml_tags\",!1),g),G,Ke,W,De)},Ie}).filter(yi),z=X.map((j)=>($e?.tools?.[j.name]??j.description??\"\").length),_e=z.reduce((j,Ce)=>j+Ce,0),Pe=A3();if(i(\"tengu_mcp_tools_listed\",{transportType:c(e.config.type??\"stdio\"),listDurationMs:Date.now()-r,toolCount:Ue.length,alwaysLoadCount:U(Ue,(j)=>j.alwaysLoad===!0),descriptionTotalLength:_e,descriptionMaxLength:z.reduce("
+  },
+  "fully-qualified-call": {
+    "offset": 197635979,
+    "excerpt": "subtype===\"mcp_call\"){let{tool:L,arguments:ie}=C.request;if(ss.get(C.request_id)?.abort(),ss.delete(C.request_id),typeof L!==\"string\"){je(C,\"mcp_call: tool must be a string\");continue}let oe=$s(L);if(!oe||!oe.toolName)je(C,`Not a fully-qualified MCP tool name: ${Jt(L)}`);else{let Re=C.request.input_files!==void 0||C.request.output_files!==void 0||C.request.expires_at!==void 0||C.request.timeout_ms!==void 0,Te=typeof C.request.expires_at===\"string\"?C.request.expires_at:void 0,Ze=oe.toolName;hd(async()=>{if(Nt.signal.aborted)return;let ft=_a(),Je=Zy(Nt);ss.set(C.request_id,Je);let Vt=()=>ss.get(C.request_id)===Je,$e=()=>Nt.signal.aborted||!Vt()"
+  },
+  "name-parser": {
+    "offset": 174005527,
+    "excerpt": "function $s(e){let n=e.split(\"__\"),[t,r,...o]=n;if(t!==\"mcp\"||!r)return null;let s=o.length>0?o.join(\"__\"):void 0;return{serverName:r,toolName:s}}function _i(e){return`mcp__${En(e)}__`}function Qc(e,n,t){if(e.mcpInfo?.serverName!==void 0)return e.mcpInfo.serverName===n;return e.name.startsWith(t??_i(n))}function Ca(e,n){return`${_i(e)}${En(n)}`}function xNt(e){let n={"
+  }
+}

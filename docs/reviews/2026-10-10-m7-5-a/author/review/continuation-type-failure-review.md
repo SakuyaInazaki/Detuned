@@ -1,0 +1,9 @@
+# M7.5-A continuation 首次类型失败独核
+
+实际continuation仍failed，不能升级esbuild/SQLite/build/test认证。亲读esbuild/final收据与safe stdout：exit1/0.437956875s，stdout1063B、错误network concurrency值1为string；stage实际close/groupabsence，final2.665752667s、fixture保留/原437source555dist核对true。
+
+固定工具实际链：pnpm dist157613 PQueue只接受typeof number且>=1；158112 createPackageRequester直接将opts.networkConcurrency交队列；162797 rebuild handler先创建store，尚未调用buildProjects/脚本。285309 configDotArgs以nopt空types解析，285364 normalizeOptions仅去config前缀，145969/145981直接CLI配置覆盖；因此“参数合法”不等于最终值正确类型。
+
+此前独审把config-dot描述为typed有效配置不充分，本报告明确修正，旧静审及真实失败均保留。数值/布尔配置应来自固定工具真实typed载入路径并由同源effective gate检查值和typeof；不可仅parser成功或私有YAML文字替代实际配置证据。布尔false同类需核实际boolean而非字符串truthiness。exactroot现modules.yaml仅静读证明storeDir私有store/v11、virtualStoreDir.pnpm，不能反推旧globalvirtualstore/sidecache布尔确实关闭；已有install成功与“所有配置键类型已验证”必须分开。
+
+等待root已定D最小修及<=10s同源配置门禁freeze，未运行探针/重装/下载/阶段/进程查询，不扩范围。许可证最新用户选择为暂不指定；后续metadata应据此更新，不加LICENSE或license字段。

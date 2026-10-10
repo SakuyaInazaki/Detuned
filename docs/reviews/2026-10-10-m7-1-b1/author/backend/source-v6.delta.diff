@@ -1,0 +1,11 @@
+--- a/tests/contracts/m7-check-http.test.ts
++++ b/tests/contracts/m7-check-http.test.ts
+@@ -52,6 +52,8 @@
+ });
+ it('CH03 whole DTO guards reject swapped scope, internal audit, inconsistent directory and foreign URL',async()=>{
+  expect(isCheckRunView({...run,created_request_version:1},sid,run.id)).toBe(false);expect(isCheckRunView(run,'other',run.id)).toBe(false);expect(isCheckRunView({...run,version:2},sid,run.id)).toBe(false);
++ expect(isCheckRunView({...run,state:'invalidated',version:2,invalidation_reason:'😀'.repeat(500)},sid,run.id)).toBe(true);
++ expect(isCheckRunView({...run,state:'invalidated',version:2,invalidation_reason:'😀'.repeat(501)},sid,run.id)).toBe(false);
+  // Clock regression is legal; request/run versions, not wall-clock order, carry causality.
+  expect(isCheckRunView({...run,state:'invalidated',version:2,changed_at:'2026-10-09T23:59:59.000Z',invalidation_reason:'clock regression'},sid,run.id)).toBe(true);expect(isCheckRunView({...run,created_at:'2026-10-10'},sid,run.id)).toBe(false);
+  const page=(await http('GET',`/spaces/${sid}/review-requests/${request.id}/check-runs`)).body.data;

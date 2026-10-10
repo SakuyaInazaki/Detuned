@@ -1,0 +1,46 @@
+{
+  "status": "fresh only, implementation/runtime require root dispatch",
+  "task_path": "docs/reviews/2026-10-10-m7-4-c1/planning/m7-4-d-task.md",
+  "task_sha256": "6702dcfc212c8b7962197dce2d1813dfba3d8e94c03449cfb7c5cecf3b0a41dc",
+  "ownership_path": "docs/reviews/2026-10-10-m7-4-c1/planning/m7-4-d-ownership.md",
+  "ownership_sha256": "83059cfef99e46c4ff10a99d7b9e40538dd24976b0f4f61b3a059b5e00eb54ef",
+  "candidates": [
+    {
+      "owner": "A",
+      "path": "scripts/integrations/claude-check-probe.mjs",
+      "state": "existing",
+      "bytes": 36825,
+      "sha256": "333fb39e7f61b67549ce70678e817cba12a701b76ae3c5cc178058e8b8ec6031"
+    },
+    {
+      "owner": "D",
+      "path": "tests/contracts/m7-claude-probe-ownership.test.ts",
+      "state": "missing",
+      "placeholder_created": false
+    }
+  ],
+  "B": "static review only; metadata separate root release",
+  "scope": "Claude private lifecycle and one new actual own-process test only; preserve four pure exports; no shared helper/cycle",
+  "budgets": "source absolute50work/60worker/65supervisor; capture70normal/75absolute, cleanup not business extension",
+  "helper": "actual UID and internal exact ps, no arbitrary query/currentUID injection; trusted observers/assertActive allowed",
+  "prohibitions": [
+    "frontend",
+    "deepseek-brainstorm",
+    "VM/Colima/Docker operations",
+    "global configuration/accounts/keys",
+    "model/prompt requests",
+    "dependency installation/lock changes",
+    "push/publish",
+    "foreign process/tmp scanning"
+  ],
+  "source_count": 435,
+  "dist_count": 555,
+  "sealed_C1": {
+    "manifest": "docs/reviews/2026-10-10-m7-4-c1/SHA256SUMS",
+    "manifest_sha256": "90098c3c13764ef853f2369fc66730a638bf91c6fa75db796057671191922695",
+    "finalization_sha256": "a9511ab88a746c97c38345dd2b7cf590397175e7ae7af03b89f204369072e432",
+    "listed_excluding_self": 75,
+    "total": 76,
+    "total_chain_files": 12359
+  }
+}

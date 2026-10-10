@@ -1,0 +1,57 @@
+{
+  "task": "M7.4-E A fixed Codex launcher entry and bounded whitelist diagnostics",
+  "source": "scripts/integrations/codex-check-probe.mjs",
+  "source_bytes": 37714,
+  "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+  "before_bytes": 34643,
+  "before_sha256": "2edd11e6150b92f3e05cec1b87f010b5b5a94aa99a411f07c7b07f93573918e0",
+  "protected_helper": {
+    "bytes": 1015,
+    "sha256": "0202f11b6071607d6180aa833eeb39c42f82a1a2ba019c3df47ea650b9e2acf1",
+    "byte_identical": true
+  },
+  "bindings": {
+    "policy_template": {
+      "byte_identical": true,
+      "bytes": 947,
+      "sha256": "eec024d5ec5f25361726302f5a3a6962c932988df064f743d35156206e8d271e"
+    },
+    "native_args_environment": {
+      "byte_identical": true,
+      "bytes": 360,
+      "sha256": "8713a136922b51047f25da4407c0a43867a4b7506dca7056fb34f360843e101e"
+    },
+    "worker_fork_environment": {
+      "byte_identical": true,
+      "bytes": 215,
+      "sha256": "c72358250a221eabc8017a727c133d8cce88285edea4ee76bd81cfbacb84e691"
+    },
+    "fixed_binary": {
+      "byte_identical": true,
+      "bytes": 229,
+      "sha256": "2881c73ccdf3eafb34cc4739e0b9ecfaa0ebb1154529145b2eb0ba9baf10f201"
+    },
+    "five_methods_and_rpc_deadline": {
+      "byte_identical": true,
+      "bytes": 936,
+      "sha256": "6067bdfd8902c21c25eb24ba735f93dfc665ca9722b3d354eedca1ccbb1f7c4b"
+    },
+    "source_supervisor_budgets": {
+      "byte_identical": true,
+      "bytes": 617,
+      "sha256": "5dbe144de711442f9b37efae8e2a8be0070cc16e3c7148c27c64202dd68e871a"
+    },
+    "worker_budgets": {
+      "byte_identical": true,
+      "bytes": 60,
+      "sha256": "fb439488e2548eb4da6ae5decb4b9856f6ee052245e8ace832c7e07411b5ec1b"
+    }
+  },
+  "factory": "createTrustedCodexMcpLauncher({privateRoot,workEnd})",
+  "diagnostic_schema_files": [
+    "docs/reviews/2026-10-09-m4-5-a/author/codex/generated-protocol/ServerNotification.json",
+    "docs/reviews/2026-10-09-m4-5-a/author/codex/generated-protocol/v2/McpServerStatusUpdatedNotification.json",
+    "docs/reviews/2026-10-09-m4-5-a/author/codex/generated-protocol/v2/ListMcpServerStatusResponse.json"
+  ],
+  "runtime_checks": "not_run_by_A; D sole runtime window"
+}

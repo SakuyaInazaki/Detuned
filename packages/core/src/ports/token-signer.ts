@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export interface TokenSignerPort {
   sign(payload: Record<string, unknown>, secret: string): string;
-  verify(token: string, secret: string): Record<string, unknown> | null;
+  verify(token: string, secret: string, nowSeconds?: number): Record<string, unknown> | null;
 }
 
 export class HmacTokenSigner implements TokenSignerPort {
@@ -13,7 +13,7 @@ export class HmacTokenSigner implements TokenSignerPort {
     return `${dataB64}.${hmac}`;
   }
 
-  verify(token: string, secret: string): Record<string, unknown> | null {
+  verify(token: string, secret: string, nowSeconds?: number): Record<string, unknown> | null {
     try {
       const parts = token.split('.');
       if (parts.length !== 2) return null;
@@ -31,7 +31,7 @@ export class HmacTokenSigner implements TokenSignerPort {
       const payload = JSON.parse(jsonStr) as Record<string, unknown>;
 
       // Check expiry if exp is set
-      if (typeof payload['exp'] === 'number' && Date.now() / 1000 > payload['exp']) {
+      if (typeof payload['exp'] === 'number' && (nowSeconds ?? Date.now() / 1000) > payload['exp']) {
         return null;
       }
 

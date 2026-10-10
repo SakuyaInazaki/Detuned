@@ -1,0 +1,68 @@
+{
+  "status": "source ready; static review/root runtime release required",
+  "source_sha256": "2edd11e6150b92f3e05cec1b87f010b5b5a94aa99a411f07c7b07f93573918e0",
+  "author_freeze_sha256": "7cb8b556aa70e8e3a4d2f02b5abe5952fde4f8fb8335ec46f2462f6881cad7c1",
+  "new_test_sha256": "81fed70fcbb5d5fa7ecf59138c7e05a819a1985eb7d5d68022024b25a6d96a6f",
+  "capture_sha256": "8228306f2e7fadfc6f8aabc5b3ad850ff57cdf4161c84cb3b212f9bf37e7d907",
+  "binding_sha256": "2b0f12a0850221b95d7a027059c6281cc4283c5ad768818f55026bf318c517a7",
+  "commands": [
+    {
+      "id": "source-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+      ]
+    },
+    {
+      "id": "capture-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c1/verification/codex-bounded-capture.mjs"
+      ]
+    },
+    {
+      "id": "new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c1/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "id": "new-single-file-focused",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-codex-owned-group.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "permission_proposed": "require_escalated auto_review only if root approves necessary bounded own detached Node/targetedps; no host or loopback/model",
+      "case_timeout_ms": 5000,
+      "own_watchdog_ms": 4000
+    }
+  ],
+  "case_count": "4 source cases: direct independent+direct inherited, wrong ownparent leader, invalid selector/exited exactchild query. Actual count pending runtime.",
+  "coverage": "helper trueexactps UID/PPID/PGID vs independent query; harmlessmarker before/after explicitACK+persist; wrongparent ERR_ASSERTION query-parent+process.killspy0+candidatealive/noimport; exitedquery refuses. Helper is pure noobserver/ACK/signal; prior source-supervisor reject evidence historical only.",
+  "capture_authority": "generated trusted driver independently ps exact candidate and registry-native/worker; persists proof first. Outer capture independently repeats exactquery and compares then persists own signal-authorities before ownershipACK/memoryauthority. Never source proof booleans copied as authority. Unacknowledged fallback registry strips proof. Confirmedgroups cleanup each independently, candidate positive presence only; unknown preservesrecords/root/control.",
+  "runtime_budget": "source90includesfinally/capture95absolute extra5cleanup; original timings unchanged",
+  "reused": "555dist unchanged; sealed C guard policy/minenv byteidentical, no mandatory rerun. No package source changed, propose no build/full/type/lint/schema/current repeat. Native separately root release only after static+localprocessregression.",
+  "native_future_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c1/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c1/verification/codex-native-first-result.json"
+  ],
+  "not_run": [
+    "all commands",
+    "guard",
+    "native",
+    "build/full/type/lint/schema/current"
+  ]
+}

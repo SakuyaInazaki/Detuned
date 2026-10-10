@@ -1,0 +1,44 @@
+{
+  "source": "independent current dist HTTP inject over persistent new real b8dacd5 archive",
+  "original_lost_fixture_recovered": false,
+  "observations": [
+    {
+      "entry": "initial",
+      "replay": 201,
+      "fresh": 400,
+      "changed": 409,
+      "all_tables_unchanged": true,
+      "raw_hash_and_canonical_request_verified": true
+    },
+    {
+      "entry": "newpost",
+      "replay": 201,
+      "fresh": 400,
+      "changed": 409,
+      "all_tables_unchanged": true,
+      "raw_hash_and_canonical_request_verified": true
+    },
+    {
+      "entry": "revision",
+      "replay": 201,
+      "fresh": 409,
+      "changed": 409,
+      "all_tables_unchanged": true,
+      "raw_hash_and_canonical_request_verified": true
+    },
+    {
+      "restart_replay": true,
+      "fresh_child_process": true,
+      "all_tables_unchanged": true
+    },
+    {
+      "tombstone_replay": true,
+      "raw_hash_preserved": true,
+      "all_tables_unchanged": true
+    },
+    {
+      "revocation_before_all_replays": true,
+      "all_tables_unchanged": true
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "gate": "node-targeted-first",
+  "exit_code": 1,
+  "actual": {
+    "files": 7,
+    "tests": 33,
+    "passed": 22,
+    "failed": 11
+  },
+  "groups": [
+    {
+      "cases": [
+        "KC01",
+        "KC02",
+        "KC03",
+        "KC04",
+        "KN01",
+        "KN02",
+        "KN03",
+        "KN04"
+      ],
+      "classification": "environment_listener_permission",
+      "evidence": "listen EPERM 127.0.0.1 in workspace sandbox before case behavior",
+      "minimal_next": "Root decides bounded localhost execution with require_escalated; no fixture/product assertions change."
+    },
+    {
+      "cases": [
+        "KS01",
+        "KS03",
+        "KS04"
+      ],
+      "classification": "new_author_fixture_invalid_http_payload",
+      "evidence": "400 VALIDATION_ERROR body required, at A test lines62/82/90",
+      "minimal_next": "A supplies required body only and refreezes; root authorizes retest."
+    }
+  ],
+  "later_gates": "browser/typecheck/lint/schema/fullcore/current25 not run; stopped following true failure",
+  "logs": [
+    "node-targeted-first.stdout.txt",
+    "node-targeted-first.stderr.txt"
+  ]
+}

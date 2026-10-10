@@ -1,0 +1,1194 @@
+{
+  "full_streams_read": true,
+  "entries": [
+    {
+      "label": "build-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 10.921,
+      "stdout": "build-first.stdout.txt",
+      "stderr": "build-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 576,
+          "sha256": "9b4f51e8ee3941ec8a3dc9a4f871eca0264b7471d29e6d7ea45bf2eeb19f147d",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 486,
+          "sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+          "test_summary": [],
+          "warnings": [
+            "(!) Some chunks are larger than 500 kB after minification. Consider:"
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "build-v4",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 10.389,
+      "stdout": "build-v4.stdout.txt",
+      "stderr": "build-v4.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 576,
+          "sha256": "b21e0b3cb935466b75150acdf9833f9341361cec0c7a59e70140fdbf14ad1d05",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 486,
+          "sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+          "test_summary": [],
+          "warnings": [
+            "(!) Some chunks are larger than 500 kB after minification. Consider:"
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "typecheck-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 8.124,
+      "stdout": "typecheck-first.stdout.txt",
+      "stderr": "typecheck-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 127,
+          "sha256": "da24a2802618672ca9b7e4dba1579435e8e559fbcc3e4abd98b0ceb8aa202443",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 150,
+          "sha256": "6bba7a8786709a43d0aad26d70dfe24f53c35644d743380882e60a19eebef24e",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "typecheck-v4",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 8.145,
+      "stdout": "typecheck-v4.stdout.txt",
+      "stderr": "typecheck-v4.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 127,
+          "sha256": "da24a2802618672ca9b7e4dba1579435e8e559fbcc3e4abd98b0ceb8aa202443",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 150,
+          "sha256": "6bba7a8786709a43d0aad26d70dfe24f53c35644d743380882e60a19eebef24e",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "lint-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 8.647,
+      "stdout": "lint-first.stdout.txt",
+      "stderr": "lint-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 182,
+          "sha256": "5173766b613f2357823ac030f341d90273574dd507a2049fa02667d5f64be9a8",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 188,
+          "sha256": "5a4c5d8668bb4e4edb9ea871139c3de41cea3894558ffb1e32d9ffd79ce8fed3",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "lint-v4",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 8.047,
+      "stdout": "lint-v4.stdout.txt",
+      "stderr": "lint-v4.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 182,
+          "sha256": "5173766b613f2357823ac030f341d90273574dd507a2049fa02667d5f64be9a8",
+          "test_summary": [],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 188,
+          "sha256": "5a4c5d8668bb4e4edb9ea871139c3de41cea3894558ffb1e32d9ffd79ce8fed3",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "core-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 1,
+      "seconds": 264.086,
+      "stdout": "core-first.stdout.txt",
+      "stderr": "core-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 43689,
+          "sha256": "816ee088f0809cab4e29d116c0dd34a932c37793edc1ce6c683d89990c2b089c",
+          "test_summary": [
+            "Test Files  1 failed | 124 passed (125)",
+            "Tests  1 failed | 802 passed (803)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 1358,
+          "sha256": "0f95609d8e4fa4fb45d926ede2a10046dc5eb1c6b508375ad32d4a7aea6693a6",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "new-groups-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http.test.ts",
+        "tests/contracts/m6-review-client.test.ts",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "exit_code": 1,
+      "seconds": 2.79,
+      "stdout": "new-groups-first.stdout.txt",
+      "stderr": "new-groups-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 2546,
+          "sha256": "af85cb1990c112b1c08a4e730d1e8cdd5acc3f059a8552d849d0a28c17708996",
+          "test_summary": [
+            "Test Files  2 failed | 1 passed (3)",
+            "Tests  8 failed | 5 passed (13)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 5049,
+          "sha256": "94764dfc83116c1ada2feed280f5662dc8f7abfb6a684f1e18e3e08d7951b4c3",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "new-eight-second",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http.test.ts",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "RH0[123]|H0[12345] "
+      ],
+      "exit_code": 0,
+      "seconds": 2.957,
+      "stdout": "new-eight-second.stdout.txt",
+      "stderr": "new-eight-second.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 751,
+          "sha256": "fc6aef95a45035646084a6f77719da88c36387cb663d171607f46d1f44fbb242",
+          "test_summary": [
+            "Test Files  2 passed (2)",
+            "Tests  8 passed | 1 skipped (9)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 165,
+          "sha256": "6763d022874406be8f4c4615f7f29a7d19e86642c393540cdcb0a6aa98f17b0c",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "h02-origin-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "H02 "
+      ],
+      "exit_code": 1,
+      "seconds": 1.79,
+      "stdout": "h02-origin-first.stdout.txt",
+      "stderr": "h02-origin-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 1622,
+          "sha256": "882fdd489d50bd3999c83ec29835c28bb9ccd8f5ef6da22fa980d60be23381d3",
+          "test_summary": [
+            "Test Files  1 failed (1)",
+            "Tests  1 failed | 5 skipped (6)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 636,
+          "sha256": "f0f0f84acc4bff5cce0e41d2054ab64f51aedc06abef8fb6f2f22ee230ab91fc",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "g01-h02-v4",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/r4-c-route-contracts.test.ts",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "G0[1-4]:|H02 "
+      ],
+      "exit_code": 0,
+      "seconds": 2.16,
+      "stdout": "g01-h02-v4.stdout.txt",
+      "stderr": "g01-h02-v4.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 1054,
+          "sha256": "e6647bad9374dcd4403c129fb559b12567921ca20dd378832161f1b39b54e21b",
+          "test_summary": [
+            "Test Files  2 passed (2)",
+            "Tests  5 passed | 5 skipped (10)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 165,
+          "sha256": "573d1689df8f971440535cde4d7d8b2ad2f0b2030e6948af86041cc8866e3149",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "h01-json-mime-noemit",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--project",
+        "docs/reviews/2026-10-09-m6-4-a/verification/new-source-tsconfig.json",
+        "--noEmit"
+      ],
+      "exit_code": 0,
+      "seconds": 1.803,
+      "stdout": "h01-json-mime-noemit.stdout.txt",
+      "stderr": "h01-json-mime-noemit.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "h01-json-mime-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test",
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "H01 "
+      ],
+      "exit_code": 0,
+      "seconds": 1.778,
+      "stdout": "h01-json-mime-first.stdout.txt",
+      "stderr": "h01-json-mime-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 741,
+          "sha256": "b5016753c39a8083262ac1d0059b6edb5e075d516eaecf3d20f3157c1c34e785",
+          "test_summary": [
+            "Test Files  1 passed (1)",
+            "Tests  1 passed | 5 skipped (6)"
+          ],
+          "warnings": [
+            "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+          ],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 111,
+          "sha256": "e9579256024592f380044e1be1f53ac12eb47f7ac432a4d507170646911e41c8",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-05-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1/check-behavior.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.505,
+      "stdout": "current-05-first.stdout.txt",
+      "stderr": "current-05-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 3656,
+          "sha256": "15e17eeeac3a44bad6cc2dfb92beee790b316d2b4987ec581a7a32ed7feb3c30",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-06-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.451,
+      "stdout": "current-06-first.stdout.txt",
+      "stderr": "current-06-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 1153,
+          "sha256": "bea6573f9228c55e719ed6dc1ccafa86667cb7cafe9088f09c282a55a90372ac",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-07-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.349,
+      "stdout": "current-07-first.stdout.txt",
+      "stderr": "current-07-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 3564,
+          "sha256": "cb71aead42fa842608b447857b9d9f8f34ee25e3246ebfe904c408e6cc870bab",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-08-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.837,
+      "stdout": "current-08-first.stdout.txt",
+      "stderr": "current-08-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 714,
+          "sha256": "4953e2dd9819795510242d2aa633d7654c9a61cb3d056efc319fddd381b9200e",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-09-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.349,
+      "stdout": "current-09-first.stdout.txt",
+      "stderr": "current-09-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 3856,
+          "sha256": "f35108593c87350c4ab151cfdf9347c9059a10b50b96f4f9f63f3091eca84dc9",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-10-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.342,
+      "stdout": "current-10-first.stdout.txt",
+      "stderr": "current-10-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 450,
+          "sha256": "4fb09cf29f73fdda755e26a64a4776207b0d4995d469c4f8a6b041c6b6da8e75",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-11-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.395,
+      "stdout": "current-11-first.stdout.txt",
+      "stderr": "current-11-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 4230,
+          "sha256": "be356150855505032d57fc6cc580e51e0e169144b3689332475f341003aec283",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-12-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.734,
+      "stdout": "current-12-first.stdout.txt",
+      "stderr": "current-12-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 5412,
+          "sha256": "4941e3df81bc1a5fb15aae1f5a18138b897853b54da2b52884ab2da6fd86f84a",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-13-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-upgrade-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.774,
+      "stdout": "current-13-first.stdout.txt",
+      "stderr": "current-13-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 6440,
+          "sha256": "a4c4baf6bbd56f02b14ebd30522b6efda4fbf32c40f07da1a327e423a029c0dd",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-14-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b2-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.621,
+      "stdout": "current-14-first.stdout.txt",
+      "stderr": "current-14-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 5040,
+          "sha256": "ede6b8e71e78af2e0638835fd71a3d327efb84a3e35bb2d5d102e2d83853586c",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-15-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-fixture.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.352,
+      "stdout": "current-15-first.stdout.txt",
+      "stderr": "current-15-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 1033,
+          "sha256": "8688a895ce2aa542cd84695ed7dc37289368c85842b02143577777f576ab0ad8",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-16-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b3-gates.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.511,
+      "stdout": "current-16-first.stdout.txt",
+      "stderr": "current-16-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 4296,
+          "sha256": "9f185168428a33670aed53d18cab9c7fcf409f281ff50239c895be3b75b42e3e",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-17-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-1-acceptance.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.565,
+      "stdout": "current-17-first.stdout.txt",
+      "stderr": "current-17-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 3184,
+          "sha256": "1f86be6b9164a244897547c531131b41106e2ecc0163b02e7530349d214b4e43",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-18-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-2-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.57,
+      "stdout": "current-18-first.stdout.txt",
+      "stderr": "current-18-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 4531,
+          "sha256": "fa2967de4ea70507fbb0ffc782483ab17055de9970944e8b6c875f85d2a53b2f",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-19-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-validation-pipeline.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.517,
+      "stdout": "current-19-first.stdout.txt",
+      "stderr": "current-19-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 4483,
+          "sha256": "ad1bf785b99e3304fb79cda66ad2bc651d96dc86e8a2f31668ca91240bc695c3",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-20-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-precheck-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.506,
+      "stdout": "current-20-first.stdout.txt",
+      "stderr": "current-20-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 3340,
+          "sha256": "472ead752eab65a5455d5e4b2518fb54a30a0f12522bb9f07539d686553ab71a",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-21-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.715,
+      "stdout": "current-21-first.stdout.txt",
+      "stderr": "current-21-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 4669,
+          "sha256": "8fb7fa098fca22e2722fd6b0c6c1eda98e7a22add56670b90e888c6ef38aa236",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-22-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-helper-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.993,
+      "stdout": "current-22-first.stdout.txt",
+      "stderr": "current-22-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 6844,
+          "sha256": "02239d7b920673416e4f176c7785ce34e56e7364a95a57b1d5ca1e0e17078714",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-23-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.455,
+      "stdout": "current-23-first.stdout.txt",
+      "stderr": "current-23-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 14251,
+          "sha256": "6c4ce9bcff7d450304d5e737c12790b8f3b16df679b3074fc5e7be414e40ef67",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-24-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 1.274,
+      "stdout": "current-24-first.stdout.txt",
+      "stderr": "current-24-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 12365,
+          "sha256": "f394c9982924cc16bb5deadd20eb5f392b0e8593c8c6b314e840761f2853ca18",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-25-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.789,
+      "stdout": "current-25-first.stdout.txt",
+      "stderr": "current-25-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 7234,
+          "sha256": "fe1040246804769224df1d176f4cddfc0699e9a7de1bdd6bebbd6c9918e34d25",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-26-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 2.492,
+      "stdout": "current-26-first.stdout.txt",
+      "stderr": "current-26-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 13391,
+          "sha256": "74f4455d74cc2be712d7f890e5ede27f18daa8f9652a0ccb1a3fe5c6e708e9d8",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-27-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.343,
+      "stdout": "current-27-first.stdout.txt",
+      "stderr": "current-27-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 10714,
+          "sha256": "c21731f91a7a1332cd70ed866c57504e736b486de024cd2b8a5a04d7ba46321a",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-28-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs"
+      ],
+      "exit_code": 1,
+      "seconds": 0.515,
+      "stdout": "current-28-first.stdout.txt",
+      "stderr": "current-28-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 9369,
+          "sha256": "b9dcbbf4b99ec13c57fc07872cb71e57ebfcb40b7961c48b1455a9c80fa7bbdf",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 10666,
+          "sha256": "62070873cec166d40da75d30bfb379feb54d92cbcb2f35c8d59448a02b6f6da2",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 92
+        }
+      }
+    },
+    {
+      "label": "current-29-first",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.716,
+      "stdout": "current-29-first.stdout.txt",
+      "stderr": "current-29-first.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 31166,
+          "sha256": "7565c4bca4db2e04eb71af67c0f05eb091de13c63d9a2c11f869ae51fd181bb0",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        }
+      }
+    },
+    {
+      "label": "current-28-adapter",
+      "command": [
+        "node",
+        "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.573,
+      "stdout": "current-28-adapter.stdout.txt",
+      "stderr": "current-28-adapter.stderr.txt",
+      "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable",
+      "streams": {
+        "stdout": {
+          "bytes": 24810,
+          "sha256": "e26a21747f5738e1c6806eaf0fa945dbeb5a88aa31ea336fc556076e0162ad33",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 0
+        },
+        "stderr": {
+          "bytes": 11268,
+          "sha256": "45df40ecf2f6dd3fac9563272ac712f1511732d0fe92a073244649876e3ea8c9",
+          "test_summary": [],
+          "warnings": [],
+          "Ajv_ignored_date_format_warning_count": 98
+        }
+      }
+    }
+  ],
+  "note": "All stdout/stderr read completely, not tail-only. Warnings retained; native/schema/typed failures classified in independent report."
+}

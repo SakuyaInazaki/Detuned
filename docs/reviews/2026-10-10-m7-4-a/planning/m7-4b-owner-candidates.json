@@ -1,0 +1,49 @@
+{
+  "status": "root_approved_planning_only_pending_seal_fresh_dispatch",
+  "existing": {
+    "Dockerfile": {
+      "owner": "A",
+      "state": "existing",
+      "sha256": "6620fd76b431c22a755bc6cc9903d9b7bdd8678788c1ab791a981a172995f7ad",
+      "bytes": 3208,
+      "scope": "three review-module runtime COPY lines only"
+    },
+    ".github/workflows/ci.yml": {
+      "owner": "A",
+      "state": "existing",
+      "sha256": "9ddaf1126240eaf25f5616c1583f115cf31df74ee9ff646285068d2d1dc2a5ee",
+      "bytes": 913,
+      "scope": "remove last archive R3 probe step only; keep prior CI steps"
+    }
+  },
+  "new": {
+    "tests/contracts/m7-delivery-layout.test.ts": {
+      "owner": "A",
+      "state": "missing",
+      "scope": "static recursive production workspace/COPY/export resolution closure"
+    },
+    "tests/integration/m7-local-startup.test.ts": {
+      "owner": "D",
+      "state": "missing",
+      "scope": "real built CLI one multi-child private local startup case;15s case/12s own watchdog"
+    }
+  },
+  "counts": {
+    "existing": 2,
+    "missing": 2,
+    "A_existing": 2,
+    "A_missing": 1,
+    "D_missing": 1
+  },
+  "B": "static peer review only",
+  "runtime": "D sole serial window",
+  "protected": [
+    "packages/source/client/core/adapters",
+    "dependencies/lock/schema/assets",
+    "existing tests/timeouts/Web",
+    "sealed/old evidence/archive probes",
+    "normal docs until root metadata ownership"
+  ],
+  "implementation_authorized": false,
+  "runtime_authorized": false
+}

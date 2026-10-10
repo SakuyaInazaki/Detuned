@@ -1,0 +1,1427 @@
+{
+  "captured_utc": "2026-10-06T14:06:46.944674+00:00",
+  "scope": "final readonly hash/links/document/numbers/cleanup; no tests/build",
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "head_unchanged": true,
+  "git_status": " M .gitignore\n M AGENTS.md\n M README.md\n M docs/03-data-model.md\n M docs/04-protocol.md\n M docs/07-security-operations.md\n M docs/09-validation.md\n M docs/11-development-standards.md\n M docs/12-decisions.md\n M docs/progress.md\n M docs/reviews/.DS_Store\n M docs/reviews/README.md\n M examples/README.md\n M integrations/compatibility.json\n M node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json\n M packages/adapter-pi/dist/index.d.ts\n M packages/adapter-pi/dist/index.d.ts.map\n M packages/adapter-pi/dist/index.js\n M packages/adapter-pi/dist/index.js.map\n M packages/adapter-pi/src/index.ts\n M packages/cli/dist/index.js\n M packages/cli/dist/index.js.map\n M packages/cli/src/index.ts\n M packages/client/dist/client.d.ts\n M packages/client/dist/client.d.ts.map\n M packages/client/dist/client.js\n M packages/client/dist/client.js.map\n M packages/client/src/client.ts\n M packages/core/dist/index.d.ts\n M packages/core/dist/index.d.ts.map\n M packages/core/dist/index.js\n M packages/core/dist/index.js.map\n M packages/core/dist/ports/storage.d.ts\n M packages/core/dist/ports/storage.d.ts.map\n M packages/core/dist/ports/token-signer.d.ts\n M packages/core/dist/ports/token-signer.d.ts.map\n M packages/core/dist/ports/token-signer.js\n M packages/core/dist/ports/token-signer.js.map\n M packages/core/dist/services/auth-service.d.ts\n M packages/core/dist/services/auth-service.d.ts.map\n M packages/core/dist/services/auth-service.js\n M packages/core/dist/services/auth-service.js.map\n M packages/core/dist/services/context-service.d.ts\n M packages/core/dist/services/context-service.d.ts.map\n M packages/core/dist/services/context-service.js\n M packages/core/dist/services/context-service.js.map\n M packages/core/dist/services/event-service.d.ts\n M packages/core/dist/services/event-service.d.ts.map\n M packages/core/dist/services/event-service.js\n M packages/core/dist/services/event-service.js.map\n M packages/core/dist/services/idempotency-service.d.ts\n M packages/core/dist/services/idempotency-service.d.ts.map\n M packages/core/dist/services/idempotency-service.js\n M packages/core/dist/services/idempotency-service.js.map\n M packages/core/dist/services/post-service.d.ts.map\n M packages/core/dist/services/post-service.js\n M packages/core/dist/services/post-service.js.map\n M packages/core/dist/services/search-service.d.ts\n M packages/core/dist/services/search-service.d.ts.map\n M packages/core/dist/services/search-service.js\n M packages/core/dist/services/search-service.js.map\n M packages/core/dist/services/thread-service.d.ts.map\n M packages/core/dist/services/thread-service.js\n M packages/core/dist/services/thread-service.js.map\n M packages/core/src/index.ts\n M packages/core/src/ports/storage.ts\n M packages/core/src/ports/token-signer.ts\n M packages/core/src/services/auth-service.ts\n M packages/core/src/services/context-service.ts\n M packages/core/src/services/event-service.ts\n M packages/core/src/services/idempotency-service.ts\n M packages/core/src/services/post-service.ts\n M packages/core/src/services/search-service.ts\n M packages/core/src/services/thread-service.ts\n M packages/mcp/dist/index.js\n M packages/mcp/dist/index.js.map\n M packages/mcp/src/index.ts\n M packages/protocol/dist/artifacts.d.ts\n M packages/protocol/dist/artifacts.d.ts.map\n M packages/protocol/dist/artifacts.js\n M packages/protocol/dist/artifacts.js.map\n M packages/protocol/dist/common.d.ts.map\n M packages/protocol/dist/common.js\n M packages/protocol/dist/common.js.map\n M packages/protocol/dist/errors.d.ts\n M packages/protocol/dist/errors.d.ts.map\n M packages/protocol/dist/errors.js\n M packages/protocol/dist/errors.js.map\n M packages/protocol/dist/events.d.ts\n M packages/protocol/dist/events.d.ts.map\n M packages/protocol/dist/events.js\n M packages/protocol/dist/events.js.map\n M packages/protocol/dist/index.d.ts\n M packages/protocol/dist/index.d.ts.map\n M packages/protocol/dist/index.js\n M packages/protocol/dist/index.js.map\n M packages/protocol/dist/openapi.d.ts.map\n M packages/protocol/dist/openapi.js\n M packages/protocol/dist/openapi.js.map\n M packages/protocol/dist/posts.d.ts\n M packages/protocol/dist/posts.d.ts.map\n M packages/protocol/dist/posts.js\n M packages/protocol/dist/posts.js.map\n M packages/protocol/dist/search.d.ts\n M packages/protocol/dist/search.d.ts.map\n M packages/protocol/dist/search.js\n M packages/protocol/dist/search.js.map\n M packages/protocol/dist/spaces.d.ts\n M packages/protocol/dist/spaces.d.ts.map\n M packages/protocol/dist/spaces.js\n M packages/protocol/dist/spaces.js.map\n M packages/protocol/dist/threads.d.ts\n M packages/protocol/dist/threads.d.ts.map\n M packages/protocol/dist/threads.js\n M packages/protocol/dist/threads.js.map\n M packages/protocol/dist/tools.d.ts\n M packages/protocol/dist/tools.d.ts.map\n M packages/protocol/dist/tools.js\n M packages/protocol/dist/tools.js.map\n M packages/protocol/src/artifacts.ts\n M packages/protocol/src/common.ts\n M packages/protocol/src/errors.ts\n M packages/protocol/src/events.ts\n M packages/protocol/src/index.ts\n M packages/protocol/src/openapi.ts\n M packages/protocol/src/posts.ts\n M packages/protocol/src/search.ts\n M packages/protocol/src/spaces.ts\n M packages/protocol/src/threads.ts\n M packages/protocol/src/tools.ts\n M packages/server/dist/app.d.ts\n M packages/server/dist/app.d.ts.map\n M packages/server/dist/app.js\n M packages/server/dist/app.js.map\n M packages/server/dist/index.d.ts\n M packages/server/dist/index.d.ts.map\n M packages/server/dist/index.js\n M packages/server/dist/index.js.map\n M packages/server/dist/routes/admin.d.ts.map\n M packages/server/dist/routes/admin.js\n M packages/server/dist/routes/admin.js.map\n M packages/server/dist/routes/events.d.ts.map\n M packages/server/dist/routes/events.js\n M packages/server/dist/routes/events.js.map\n M packages/server/dist/routes/meta.js\n M packages/server/dist/routes/meta.js.map\n M packages/server/dist/routes/posts.d.ts.map\n M packages/server/dist/routes/posts.js\n M packages/server/dist/routes/posts.js.map\n M packages/server/dist/routes/search.d.ts.map\n M packages/server/dist/routes/search.js\n M packages/server/dist/routes/search.js.map\n M packages/server/dist/routes/spaces.d.ts.map\n M packages/server/dist/routes/spaces.js\n M packages/server/dist/routes/spaces.js.map\n M packages/server/dist/routes/threads.d.ts.map\n M packages/server/dist/routes/threads.js\n M packages/server/dist/routes/threads.js.map\n M packages/server/dist/utils/query.d.ts\n M packages/server/dist/utils/query.d.ts.map\n M packages/server/dist/utils/query.js\n M packages/server/dist/utils/query.js.map\n M packages/server/src/app.ts\n M packages/server/src/index.ts\n M packages/server/src/routes/admin.ts\n M packages/server/src/routes/events.ts\n M packages/server/src/routes/meta.ts\n M packages/server/src/routes/posts.ts\n M packages/server/src/routes/search.ts\n M packages/server/src/routes/spaces.ts\n M packages/server/src/routes/threads.ts\n M packages/server/src/utils/query.ts\n M packages/storage-sqlite/dist/sqlite-storage.d.ts\n M packages/storage-sqlite/dist/sqlite-storage.d.ts.map\n M packages/storage-sqlite/dist/sqlite-storage.js\n M packages/storage-sqlite/dist/sqlite-storage.js.map\n M packages/storage-sqlite/src/sqlite-storage.ts\n M tests/contracts/cross-interface-contract.test.ts\n M tests/contracts/r4-c-contracts.test.ts\n?? docs/reviews/2026-10-02-m0-m1-r21/implementation-r4-c2/\n?? docs/reviews/2026-10-02-m0-m1-r22/\n?? docs/reviews/2026-10-03-m0-m1-r23/\n?? docs/reviews/2026-10-03-m2-1/\n?? docs/reviews/2026-10-03-m2-2-a/\n?? docs/reviews/2026-10-03-m2-2-b/\n?? docs/reviews/2026-10-03-m2-3/\n?? docs/reviews/2026-10-03-m2-4-a/\n?? docs/reviews/2026-10-03-m2-4-b1/\n?? docs/reviews/2026-10-06-m2-4-b2-1/\n?? docs/reviews/2026-10-06-m2-4-b2-2/\n?? docs/reviews/2026-10-06-m2-4-c1/\n?? docs/reviews/2026-10-06-m2-4-c2/\n?? docs/reviews/2026-10-06-m3-1/\n?? examples/artifacts-http.md\n?? examples/context.md\n?? examples/events.md\n?? examples/knowledge-views.md\n?? examples/post-revision-read.md\n?? examples/search.md\n?? examples/space-rules-read.md\n?? examples/thread-posts-read.md\n?? examples/typed-posts.md\n?? packages/core/src/ports/blob-store.ts\n?? packages/core/src/services/artifact-references.ts\n?? packages/core/src/services/artifact-service.ts\n?? packages/core/src/services/knowledge-projection.ts\n?? packages/core/src/services/post-revision-read-service.ts\n?? packages/core/src/services/search-cursor.ts\n?? packages/core/src/services/space-revision-read-service.ts\n?? packages/core/src/services/thread-posts-read-service.ts\n?? packages/core/src/services/typed-write-validation.ts\n?? packages/protocol/src/request-policies.ts\n?? packages/server/src/artifact-files.ts\n?? packages/server/src/routes/artifacts.ts\n?? scripts/\n?? tests/contracts/m2-context-contracts.test.ts\n?? tests/contracts/m2-focused-context-contracts.test.ts\n?? tests/contracts/m2-knowledge-view-contracts.test.ts\n?? tests/contracts/m2-post-revision-read-contracts.test.ts\n?? tests/contracts/m2-search-contracts.test.ts\n?? tests/contracts/m2-space-read-contracts.test.ts\n?? tests/contracts/m2-thread-posts-read-contracts.test.ts\n?? tests/contracts/m2-typed-write-contracts.test.ts\n?? tests/contracts/m3-events-contract.test.ts\n?? tests/contracts/r4-c-route-contracts.test.ts\n?? tests/fixtures/history-b8dacd5/\n?? tests/fixtures/scale/\n?? tests/helpers/\n?? tests/integration/historical-http-replay.test.ts\n?? tests/integration/m2-artifacts-cli.test.ts\n?? tests/integration/m2-artifacts-core.test.ts\n?? tests/integration/m2-artifacts-filesystem.test.ts\n?? tests/integration/m2-artifacts-http.test.ts\n?? tests/integration/m2-context-focus.test.ts\n?? tests/integration/m2-context-session-chain.test.ts\n?? tests/integration/m2-context.test.ts\n?? tests/integration/m2-knowledge-views.test.ts\n?? tests/integration/m2-post-revision-read.test.ts\n?? tests/integration/m2-search.test.ts\n?? tests/integration/m2-space-revision-read.test.ts\n?? tests/integration/m2-thread-posts-read.test.ts\n?? tests/integration/m2-typed-writes.test.ts\n?? tests/integration/m3-event-core.test.ts\n?? tests/integration/m3-event-recovery.test.ts\n",
+  "final_source_count": 158,
+  "source_frozen_158_unchanged": true,
+  "current_source_hashes": {
+    "packages/core/package.json": "b25dddfb59c4198d2bd6bc38313ad6e9999b97d5a43fcf24e6530870eddd8315",
+    "packages/core/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/core/src/index.ts": "cf5778bc6f0e9825c75920076a8137293ad474f2753b2439ac7ad35315bf4d24",
+    "packages/core/src/ports/hasher.ts": "f81d4ff99d48206b186a89f72fcfe5bac4b86607593a6285f113c96afb1fb529",
+    "packages/core/src/ports/id-generator.ts": "f337bee4b3a4849a0fdeec81aaa8217d2a27013b93acc40a7c5ddeaa3ab0e808",
+    "packages/core/src/ports/blob-store.ts": "a9145ac2f5df9b7b5510d71e57dfce06b6abcbe035a723903a8a3430a2e628f0",
+    "packages/core/src/ports/storage.ts": "5033fa5b83744815e3db3d92ca2ff0ad37b8b5eca30898d78c244d6749649c53",
+    "packages/core/src/ports/token-signer.ts": "04c5b0e29a6e8507a94a746f0fbbf88c55030bf007361347e3a760c8bc3deb90",
+    "packages/core/src/ports/clock.ts": "cfe673150ab5512591f78814bfa8ddfb33612b860ee927f1325ded3367d4c953",
+    "packages/core/src/services/thread-service.ts": "baf2354ffe8cedb59c05f2ce306082f49effa698670a458b4fd56590e7530078",
+    "packages/core/src/services/context-service.ts": "4a8322dbed6440f2d606fc2e6983cbc9632188bf54fcc8a3743ab93fb1e24071",
+    "packages/core/src/services/search-service.ts": "25241f67b7c8615442285e043c2de95c1d1cc55301b04b9116f44fe8ec48823d",
+    "packages/core/src/services/typed-write-validation.ts": "1b1a7bd74f4b2f60f5405148e2c2d09bd49e92e59fc0b659abd7f0f79292e0e9",
+    "packages/core/src/services/idempotency-service.ts": "cf85726f03a42609267edcb25a61ddbe6b7a0d13af3fc973ddd3bf060b232e52",
+    "packages/core/src/services/relation-service.ts": "edb02753e744fb8977b7b6c450f2f3377c1023a2dcaa79004555d0416438c85f",
+    "packages/core/src/services/post-revision-read-service.ts": "70214d7d80ea97474e07774bd9b906f87e4b93bfb88229e46e2a45ef894d915e",
+    "packages/core/src/services/space-revision-read-service.ts": "0291dd577b1bee5c01a423fbdff83583dd50e8a0f6128e6b9bc833115d39b112",
+    "packages/core/src/services/redaction-service.ts": "d1fbbba58dec828d10f28c2001870ac0de8ebe97735fe026e72c84abf354326a",
+    "packages/core/src/services/post-service.ts": "fd14e0aef69d675f65c48768cefb817e8c9c3f3ef60e4873fdc2c0cf8c4fd536",
+    "packages/core/src/services/artifact-service.ts": "4800ed4efcf7a3752ac6707215082346abeb408ac69916b9131216449c1a634e",
+    "packages/core/src/services/thread-posts-read-service.ts": "02123386f1eeaa914a887768c4d7e8ac16d0ca26f7742bc221f99ccd591bafd8",
+    "packages/core/src/services/space-service.ts": "bfb50224ccc67667fe44f5f56c9177e0e63601f9b59dee2efd06463a18ac03f4",
+    "packages/core/src/services/knowledge-projection.ts": "0eabbbae903d1fde5573b61ebaf727b97f0da8e0eda4060b3ef3c7a06b3419be",
+    "packages/core/src/services/auth-service.ts": "55c7b7e89a3a38e947e44e75e9076edc345ad28fd45c768de4096a247ff83bd2",
+    "packages/core/src/services/artifact-references.ts": "2c18b1433a09592988b0118e35cd5e12a47e29e1e8da42cf2f5b27a2ff123046",
+    "packages/core/src/services/event-service.ts": "e632dad11d2f5dd5e03fff54dea9c0c5208a78911a91428a6305b2fc39d1f5c4",
+    "packages/core/src/services/search-cursor.ts": "c4d6c84c5467b4026ae9ca838ac34127ec3066b8b376b2798ac6617551290dd6",
+    "packages/server/package.json": "3bd4b5f49f27ba75bb1e8beec54755bb633bc6f61964bd975c806629f5c2b719",
+    "packages/server/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/server/src/app.ts": "8a89364686f89b9789266f2ba156ef45d3fbc9482ca2317684db9a6d7a5ddfe1",
+    "packages/server/src/artifact-files.ts": "98da56de282153c88cb1013c2339c98108a31c4c3b887977a7fe68fe9a6a75bd",
+    "packages/server/src/index.ts": "7d607ea7c66ef1be1ab719cd9c28cf3c40f9531fdea7de35375d7f6a70ed3567",
+    "packages/server/src/utils/query.ts": "7888bb8895b94815e60b467833f02f777991ebc5dfcf2b0014f16f9a072b7816",
+    "packages/server/src/routes/meta.ts": "f0eb7f0a74379d955cd75678fa32bdeef74547c18fa8700f0dcf93e6b2170ff7",
+    "packages/server/src/routes/artifacts.ts": "8e0e9c80bf3ab68e67cb401695888f22f7dfdae81a33f625860d58ee18138388",
+    "packages/server/src/routes/search.ts": "97ee07315ff47e4a8aa5f6f4b2f5c1b8ea927b84d97a5d2c68d95a0dbdce549b",
+    "packages/server/src/routes/admin.ts": "69229f1d800c85ef17204aed7b34fe0649b96450a6d12ef555c143a36c670148",
+    "packages/server/src/routes/threads.ts": "e4174be8ac3051561f7682c3002003926c59792d754da3b4df6cdc5cfddf30db",
+    "packages/server/src/routes/spaces.ts": "fa08b334249a4bd38ceab81c8a5afa561e19d18913098dec4d4c2f5fe03da517",
+    "packages/server/src/routes/posts.ts": "318a50fdcd9582ecc1606134c774119e29fc2669f6e635231ab93f20d7152817",
+    "packages/server/src/routes/relations.ts": "54f1ae0251b5a4ac51814e034f82e923106e913aaa16a9f11a23916108a933f7",
+    "packages/server/src/routes/events.ts": "d62b053fcf5823f10369b03ae9635da27c055b87ae2d61519e153463ccec7cea",
+    "packages/mcp/package.json": "35c6693c2add296cc3a06d5f158098e31901ed3a000513f470295a0175ec3372",
+    "packages/mcp/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/mcp/src/index.ts": "07dafe3c63b369053b37696eb62e62a32a5e56ab74ca52b668aa861073565185",
+    "packages/protocol/package.json": "c5c9a0ed6de55a8af9f1ed4c540b1b7aefec0c9d12e780757089df70d8289bc6",
+    "packages/protocol/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/protocol/tests/schema.test.ts": "adaf9040584166270170929ab0d82243fc5e5943774db8803ffdd0e622a659e5",
+    "packages/protocol/src/actors.ts": "3a61e25582c089d274749d40f52989949834fec6be5b3e4246c9a0375bfdd7eb",
+    "packages/protocol/src/artifacts.ts": "79eb3619476fc5537d338194809f7e44d8585586b738ebf00a734a7f084c769e",
+    "packages/protocol/src/errors.ts": "1329b6f717dcd260196a6ae26e9c14fd43733bc4b769a5a196edc883d769ae05",
+    "packages/protocol/src/search.ts": "368f3f4e464ba2e5404887b616735b4e2ed1e341f18cc899ba756cd196f96c25",
+    "packages/protocol/src/common.ts": "feb104d5b3354762e1edef911d7b8eb05f8a1ca8eee35f76f98001cc5703eb03",
+    "packages/protocol/src/admin.ts": "c4358b76eff42aef0c46141b4d6c70ecff9c6aaf58c60034e47757e6f78317ed",
+    "packages/protocol/src/threads.ts": "67bf099f12659aa48e402e8977e12f9e72fba468e3ce3568a007fa65f7ab74da",
+    "packages/protocol/src/review.ts": "abebb63933f1726edc167249f5c8167f8bb6581562a7dd6ca652c9e7917699a9",
+    "packages/protocol/src/spaces.ts": "c6ff04f6a5c2d6efdfe9296d1419365f55995cd5ef2deba9f0e9e060f0c6611e",
+    "packages/protocol/src/posts.ts": "d95ee6aa6b31d057b200ef1bf0beb335414e9a3e64f6caea286adadc91492c47",
+    "packages/protocol/src/relations.ts": "44b76b86e30cbd9834e19f17287103f403b1684dab8d2cd65c18965aa0adc0ce",
+    "packages/protocol/src/tools.ts": "a17735e5414df1681aa9dd07ee859c4d1c25d59c632b8d46ee3438e32112958c",
+    "packages/protocol/src/events.ts": "e5ebb2c72b7f59bbb84163f17650a58b7fe4ab459df636ff53790c8ad591c4b1",
+    "packages/protocol/src/openapi.ts": "7e39080a6bc79b9a01ec9ab1accd40da26cf3474076a7bf8f23da17774f18524",
+    "packages/protocol/src/request-policies.ts": "028582af42236e32884fd2e92e092b050f41044f3a0c8dfe941fa9031fef11de",
+    "packages/protocol/src/index.ts": "2765cf158a28a006a97d933691282e20858777770429b94207d948e4fc448da2",
+    "packages/cli/package.json": "c5e8ca7ae3845603fb5d172716c69d83f93a30cfc8190fbca0420fa36d20df6b",
+    "packages/cli/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/cli/src/index.ts": "67e68d7fdd4732ab0d81afcee37158dacf55cc8dd04342179ec5cc16f37d8c69",
+    "packages/adapter-pi/package.json": "0db21b8332077ff2234eff77ed0825e34b5ddda1cea52a63ee81a650934ff261",
+    "packages/adapter-pi/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/adapter-pi/src/index.ts": "402f1cffdc66391220cabb3a9536bfe44d4b85066deaab18d90cbac4d68acfef",
+    "packages/storage-sqlite/package.json": "42d7ce49f7d8136083a30909c76dc6c5ffc0c9f1874c3184493326908bf242f8",
+    "packages/storage-sqlite/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/storage-sqlite/tests/fixtures.db": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "packages/storage-sqlite/tests/schema-generation.test.ts": "9f08d1c2a1ac1fe1aa677fc0d034168010d53396460a84f6e9f1521a1690ed5d",
+    "packages/storage-sqlite/tests/storage.test.ts": "2baabb5f87994d8912c9e086fded8c005133158e721600496e3e3399a8327f5f",
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs": "9ce754f3ed8e4d91551d7b730d0dfc37dcb02b548244a3716ca498c8603891ce",
+    "packages/storage-sqlite/scripts/extract-schema-requirements.mjs": "4f4c5ad613efb8cd7726767ad47ccc233f67d71bc5d03cbda2c47a016b19b165",
+    "packages/storage-sqlite/scripts/generate-schema.mjs": "aefe282eb352a97ed7e6d116f6d7c64693a44f08e5b169582f1e06e498456870",
+    "packages/storage-sqlite/src/schema.ts": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+    "packages/storage-sqlite/src/sqlite-storage.ts": "f4c595edc74670f5f06ec98e162c1510379c301e3393d176b532d7e59dadd3a3",
+    "packages/storage-sqlite/src/schema.sql": "7e3f01ada4d5285f62b61c5c9d427a288b1fc3dde7ee4146560ad7a0d22b85be",
+    "packages/storage-sqlite/src/lock.ts": "8f11c1925a5767509d50a09695f353119af8ba5e28e3c2fc72b72cfd5efa23ef",
+    "packages/storage-sqlite/src/index.ts": "cf67aec64efa91037ce559b38d79fc168c3073e4dc3a8b5046dd9df14c9fd64c",
+    "packages/storage-sqlite/src/bootstrap.ts": "f9e1d6b57a062ae840ce59964fbb9038e5a2dad51d40f3f0778058ff4b4ab389",
+    "packages/client/package.json": "cbb3541132b0789e9eb5c2fff785dd297c7d093edc61a825393b2684f7129143",
+    "packages/client/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "packages/client/src/client.ts": "36a291b62f586737f0fd0a02c6778d3aad66daff09008b1fc209b3143d66847b",
+    "packages/client/src/index.ts": "e8f76c98d4ad1e080155c93ff29eb75d80515bcf991a27153f283ddd4c288476",
+    "modules/review/package.json": "7fad30af4ccb633d9b296e9643ee1e0cbd2ecefe4413c709d9b4aa8dc6577c57",
+    "modules/review/tsconfig.json": "99f305fcb968f454e24d4fb0e2f6745ce660df0f15f744febe849fccb86bde22",
+    "modules/review/src/index.ts": "33332e24606c3076dae745981dc2e8fbcbcae47f82837830c9bcb69d7f6f25f1",
+    "tests/probes/m0-probes.test.ts": "6f2705018e045ec1496aed330b2716f9fcb5c561f57a4f6ff22ad01d57182e0b",
+    "tests/integration/m3-event-core.test.ts": "21a672700d46dd66849ae47dca48f3eeb6a10ca5c88262486f0c2919e2e4d7cd",
+    "tests/integration/m2-artifacts-cli.test.ts": "b0caf3d4a17903c6957a541117786ca721c45a39cd5ff906cab875f782eb31be",
+    "tests/integration/m0-m1-regression.test.ts": "f26d6584892e858c226394cac61047ccb5e1b2a24718394c160e8ef52d5aff15",
+    "tests/integration/m2-space-revision-read.test.ts": "d129d9b034d6a571578241562b5542b9f46ae0361c2c5abf84c4597c189990d4",
+    "tests/integration/m2-artifacts-filesystem.test.ts": "1d4f2df61f01a0ca7eea9606c90543175b7a03b81bb27a06cca8347482a44863",
+    "tests/integration/m2-search.test.ts": "9bf3e8e9379dcbd124357aa1201f8c30b51c00822e89ffa56ae625678a9d2b52",
+    "tests/integration/m2-artifacts-http.test.ts": "c062cadc9dabd2029f98e3ff664cd6d879af6c50bbd830efe7a9d238756df69f",
+    "tests/integration/m2-artifacts-core.test.ts": "1a4c9315c7e489ab4360d7129db6de69487aa72c8bddd735633172fed017a3b6",
+    "tests/integration/m0-m1-r4-b-regression.test.ts": "321c95704eb48f4fb4d5fd0f0c2d9c0beac7f4170ba37982ae95f6984acdd18e",
+    "tests/integration/m0-m1-r2-regression.test.ts": "3b246e16cb1124193d255558b2c05ebeb7f4f8bdbf33db56ac78fc0f4d5010e3",
+    "tests/integration/m2-knowledge-views.test.ts": "656d18f467e5fccde5c1e1935145de75c47dc3cd64fa976da89b78ee95d7fb44",
+    "tests/integration/m0-m1-r3-regression.test.ts": "7d17b6b88246f1522ec2e41572556fb6a4610ac8350cda5b838a0af59d804427",
+    "tests/integration/m2-context.test.ts": "8305a02d052cc196b7fce48c047026f9bb2e7992370d40ac83159a71a04f0964",
+    "tests/integration/m2-post-revision-read.test.ts": "358ea663887b45c1e5eb1c7d63fc01ab34752ffd54ad8109980672ce22a7c85b",
+    "tests/integration/m2-context-session-chain.test.ts": "a59fbe635df3020965fde9617fe02f90d55351f8165aa94c7c7e0f51b69b51e4",
+    "tests/integration/m3-event-recovery.test.ts": "db86ffbfda18e236a27445ff6374b46b31a6c76052807846ed74148cb97b0a9a",
+    "tests/integration/m2-context-focus.test.ts": "3a8bab54b88c7d74ac51ab3cc0e013d0759a425db4cfd4e360bda0c11d8120d0",
+    "tests/integration/m2-thread-posts-read.test.ts": "d83f0edb745832f8ef23be7c48c9dd3afe56734a8bf5c5a8c4915de9be8d8f73",
+    "tests/integration/historical-http-replay.test.ts": "5f58a92626e81b4ddc8da2e81d181af8e8826fa8abd2f05671ba6912a6277c3d",
+    "tests/integration/m2-typed-writes.test.ts": "e530fc261aa2a2dc715f08bf9be6b97617aef2754d422a7dc1d2398cf9af04c0",
+    "tests/integration/m1-discussion.test.ts": "4f8252ba59e934728ae8809f67fe7757d07400784fb71a5df8ed2588346236d1",
+    "tests/contracts/m2-post-revision-read-contracts.test.ts": "1f0c0fa51aff15ff32f4a0dbf588cdfa8280e77232fe331accb29ce866b87649",
+    "tests/contracts/m2-knowledge-view-contracts.test.ts": "5563e1c3fd1903209a84d12016eb66924027ff9534464aafa4c4d2bd99118c92",
+    "tests/contracts/m0-m1-r2-adapters.test.ts": "9f563781f95f3f45761a3170c51481f3e5b1dd0b037e9f73e7394303f4d8d3c5",
+    "tests/contracts/m3-events-contract.test.ts": "911cb37f39e4757e9e342084d77e498fa83072004821bb88eae1878facc0a630",
+    "tests/contracts/m2-space-read-contracts.test.ts": "b33a9b15b23b11697abb681aba222dec7f632ef94531c0af3bf85a0baa778e96",
+    "tests/contracts/r4-c-route-contracts.test.ts": "e228bd8056a1811366243a42dff89da583f481740fe27e4ea71910e539fe9279",
+    "tests/contracts/m2-search-contracts.test.ts": "763c1b383b2e0a7851ee4c65b754235b6bbaab90ef631121c42fb1403abefab7",
+    "tests/contracts/r4-c-contracts.test.ts": "b34ccb00456ba3575cd3d59404d4ab7d341118a41f0af7051b53023360c04b40",
+    "tests/contracts/m2-thread-posts-read-contracts.test.ts": "4e755aa600239abc028baecde125f5089bc5cc4bc00ee03f6edf570720fdec7f",
+    "tests/contracts/m0-m1-adapters-regression.test.ts": "0017934160a87e8865401eb196064148533b97caa6b326d6730e8e7201699d8e",
+    "tests/contracts/cross-interface-contract.test.ts": "dd71fa806ef48e20470b08feb1b51a13912c2f2069cef02fd5a5a2548c111a12",
+    "tests/contracts/m2-typed-write-contracts.test.ts": "75bfddeadf212dd9137f4253ba3bec2541b6b3e069973c312e6a95867849af78",
+    "tests/contracts/m2-focused-context-contracts.test.ts": "3eec05a2b6f14e0a23481c6b5f0dd8f089e5645642021a5bd8172b0f20dc7367",
+    "tests/contracts/m2-context-contracts.test.ts": "bbd814bc0a5bcdb708a3762075457ba35ce8b41331c5411ed67205bebd78ef32",
+    "tests/fixtures/historical-v1-schema.ts": "66fabc33cacf73af6474d2fce039b9fc2d8aceac997c9f26055eb5fff1d34ccf",
+    "tests/fixtures/historical-v1-schema.sql": "0049ed7514e81b00b13f7ed60e49d948c063ae2355691ca792c399857afd3706",
+    "tests/fixtures/scale/recipe.json": "9d355ae148a68cfb0236aaaad87c4c7ad44e7199a2f55385abf0bd7130db615b",
+    "tests/fixtures/scale/README.md": "9536847b3e03c346e5791dc91f37e57c1db773be697bdf828e29df30766a2ee8",
+    "tests/fixtures/history-b8dacd5/expected.json": "7ba11660003a3dafbf74580addf34d9106a4eddeca7cd6009bce4336692e3dc4",
+    "tests/fixtures/history-b8dacd5/provenance.json": "3890b55e69b5be738f231d1b61ceb141aca3f854cc0264c1fa8c65b24f1658b0",
+    "tests/fixtures/history-b8dacd5/recipe.json": "4740b8ac324762b8d951c56551f87b66ba34a18c89f0b9111d6c09e6573b2fbd",
+    "tests/fixtures/history-b8dacd5/README.md": "5a2d616b2f4cd49164aa5ddf3fc8efc8cba7e5bcbde0ecc48a8201af02d7328b",
+    "tests/fixtures/history-b8dacd5/legacy.db": "a73c64d63fa268788ce27f55ee96b2e912e411424ecf61b014d694ac768dcd22",
+    "tests/helpers/m3-event-worker.mjs": "04929f175d216b5966f0c01b4e60606019d79278b21d71291fe217d82d4dc9f5",
+    "scripts/scale/seed.mjs": "e24033b5fe21d1e6b8211c96fc41cd711e0d9154c1f8305db85939a806943dad",
+    "scripts/scale/d01.mjs": "e535b86b71d57e0d8d60078f0256a8e0711926268754c12aaa4bf0f2a63149d0",
+    "scripts/scale/verify-audit.mjs": "1467441ea203008e3040f04af6c5fe38f8674256cad1ff035fb3e2256fb39d8a",
+    "scripts/scale/run.mjs": "523a324bc81a89665f37f1a6bbcf5cdb0f281b1f24e9c683d3f3def6b30bc837",
+    "scripts/scale/run-verified.mjs": "ff0682e2975961336ba1766badc06d24c7e2093e44801c3e66996596720615ee",
+    "scripts/scale/run-prepare.mjs": "0bd803d632495585fd4170e60589ae7d556db9a4cafd4c9903ae8dec206c29bd",
+    "scripts/scale/run-support.mjs": "cdcecf00ef84b13446e5d905169157946227e96d310927da3c1c334af4bc9095",
+    "scripts/scale/verify.mjs": "22f6772622793c61108fa2b1ab50d29bfe513f472888b6f8d268a62cf09eb1da",
+    "scripts/scale/README.md": "78b6a1f0bf45e0024f30c5209db11d6bedbc4f310fcae0b269223fc52d0b4557",
+    "scripts/scale/verify-gate.mjs": "e557b0757b72a4203f340ff83d99c20024ec00eb8d3020ddbb5fd8e4a198592d",
+    "scripts/scale/run-server.mjs": "061bc74eeacf43ae13cb5b06118a5f1c31af2055709ede094e66b788716fd2b1",
+    "scripts/scale/verify-controls.mjs": "08e5a8f0a23f801fb850e8152a878ed54d0abc7aefe3cce1f18a681d6eedc639",
+    "scripts/scale/verify-session.mjs": "d699d6ac4de79b7096ffd553ed0f77107469e6a55753338ee34f1ef12834a95e",
+    "scripts/history-fixtures/generate-b8dacd5.mjs": "675b97535c9a53f98b2632cef2c3133639a877d544a92feaef26184bfc6e04c4",
+    ".github/workflows/ci.yml": "9ddaf1126240eaf25f5616c1583f115cf31df74ee9ff646285068d2d1dc2a5ee",
+    "pnpm-lock.yaml": "81fa2defae97fb086ee94da7aa01ff9ccda96201ddd5323816e24fb5b7886024",
+    ".gitignore": "43ed194cbc957d8825aeed511500eedec47453b00fe4833b6ddca83856dbcec8",
+    "package.json": "5be2374c95f67b64eb79bd915571cc148973c253faada6f12a674e06d5364881",
+    "tsconfig.json": "d99c716ebed63747eee8f55ec8c198e32b593fd6d431a9d9e07c0d15d7f16b5d",
+    "vitest.config.ts": "e504f890b4364085cd6650a5e23d7f7dfc36f76575416aa48a3d50afb37019bb",
+    "pnpm-workspace.yaml": "35724f7d5310056af77f4db613f48bd5eb4e293431d4b6421992f1cdbd23a490"
+  },
+  "protection_vs_stable_end": {
+    "product_source_config_test_hashes": {
+      "count": 158,
+      "changed": [],
+      "missing": []
+    },
+    "current_document_hashes": {
+      "count": 37,
+      "changed": [
+        "docs/09-validation.md"
+      ],
+      "missing": []
+    },
+    "mutable_status_document_hashes": {
+      "count": 5,
+      "changed": [
+        "README.md",
+        "docs/progress.md",
+        "docs/reviews/README.md",
+        "examples/README.md"
+      ],
+      "missing": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "count": 3190,
+      "changed": [],
+      "missing": []
+    },
+    "frozen_sql_archive_hashes": {
+      "count": 4,
+      "changed": [],
+      "missing": []
+    },
+    "schema_profile_hashes": {
+      "count": 2,
+      "changed": [],
+      "missing": []
+    },
+    "tracked_build_artifact_hashes": {
+      "count": 208,
+      "changed": [],
+      "missing": []
+    },
+    "untracked_build_artifact_hashes": {
+      "count": 48,
+      "changed": [],
+      "missing": []
+    }
+  },
+  "baseline_authorized_product_changes": [
+    "packages/core/src/services/event-service.ts",
+    "packages/server/src/routes/events.ts",
+    "packages/mcp/src/index.ts"
+  ],
+  "authorized_after_verification_docs": [
+    "README.md",
+    "docs/progress.md",
+    "docs/reviews/README.md",
+    "docs/09-validation.md",
+    "examples/README.md",
+    "docs/reviews/2026-10-06-m3-1/README.md"
+  ],
+  "own_report_edits": [
+    "coverage mapping link ../coverage-audit.md",
+    "post-verification status synchronization wording only"
+  ],
+  "final_document_hashes": {
+    "README.md": "1c549a39e038f9291817a589a0f6c712a216a2c223cc563f772324995d49aebb",
+    "docs/progress.md": "5544e857bd549a687709b2131579e577a8572fb36011029baec6a85ac1e3464c",
+    "docs/reviews/README.md": "5a09d636809d62706cf7674500a85b5c730bc425f69030207109cfde4b2c3d4e",
+    "docs/09-validation.md": "18b8f4a649ef425245b21873b46f6781aed166442d01eb66108fedb12a7f8e4a",
+    "examples/README.md": "8b259f6b791ee865ba228b12ee79b1b0bcea9fe24f3a8b9cc4cccd9cf503c55c",
+    "docs/reviews/2026-10-06-m3-1/README.md": "96a1478ed919893d6ea10efb4c9c9a010e18b3977f3ad34a68700277d1435e34",
+    "docs/reviews/2026-10-06-m3-1/coverage-audit.md": "2a42ac6c2622bc78c42619f839410500d4d54bd37b666861a18e679a0ec82e22",
+    "docs/reviews/2026-10-06-m3-1/verification/verification.md": "befcf0b670ac1cdf9dc5a196791a447f6f41235689f394de0e5a92d6d6d7e6de",
+    "docs/reviews/2026-10-06-m3-1/next-task.md": "ca5f3a68ea778a00dc62c14303aa928296bc48cec804d9204c3c9e80b0fa061a"
+  },
+  "links": {
+    "scope": "local existence only, no anchors/remote",
+    "document_count": 9,
+    "count": 226,
+    "passed": 226,
+    "missing": [],
+    "records": [
+      {
+        "source": "README.md",
+        "target": "docs/reviews/2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/reviews/2026-10-06-m3-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/progress.md#当前功能状态与未完成能力",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/artifacts-http.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/typed-posts.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/knowledge-views.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/search.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/context.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/space-rules-read.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/post-revision-read.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/thread-posts-read.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/events.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "AGENTS.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/00-implementation-brief.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/08-roadmap.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/00-implementation-brief.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/01-product-requirements.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/02-architecture.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/03-data-model.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/04-protocol.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/05-review-protocol.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/06-agent-integration.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/07-security-operations.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/08-roadmap.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/09-validation.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/10-research-and-plan-review.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/11-development-standards.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/12-decisions.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/reviews/README.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "templates/README.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "examples/README.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "integrations/README.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "archive/pre-plan.original.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "docs/progress.md",
+        "exists": true
+      },
+      {
+        "source": "README.md",
+        "target": "integrations/compatibility.json",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "08-roadmap.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "11-development-standards.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-1/planning/remaining-features.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r4/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r7/implementation-r4-b3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r12/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r11/implementation-r4-b4-2r2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r13/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r12/implementation-r4-b4-2r3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-01-m0-m1-r14/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r15/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-01-m0-m1-r14/implementation-r4-b4-3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r21/implementation-r4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m0-m1-r23/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r7/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r8/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r9/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r10/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r11/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r12/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r13/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-01-m0-m1-r14/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r15/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r16/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r17/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r18/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r19/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r20/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r21/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r22/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-2-a/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-2-b/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-a/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-b1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-c1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r5/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r5/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r4/follow-up-contracts.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r7/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r6/implementation-r4-b2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-28-m0-m1-r6/implementation-r4-b2/README.md#3-b01b12-断言证据矩阵",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r8/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r7/implementation-r4-b3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r7/implementation-r4-b3/README.md#3-b01b12-断言证据矩阵",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r9/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r8/implementation-r4-b4-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r10/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r9/implementation-r4-b4-2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r11/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-30-m0-m1-r11/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r10/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-09-29-m0-m1-r10/implementation-r4-b4-2r/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r15/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-01-m0-m1-r14/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-01-m0-m1-r14/implementation-r4-b4-3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r16/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r15/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r15/implementation-r4-b4-3r/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r16/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r16/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r17/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r17/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r18/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r18/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r19/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r19/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r20/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r20/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r21/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r22/next-agent-prompt.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r22/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-02-m0-m1-r22/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m0-m1-r23/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m0-m1-r23/implementation-c3-gate/contracts/errata.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m0-m1-r23/final-review/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m0-m1-r23/final-review/integrity.json",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-1/verification/r1-final/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-1/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-1/verification/r1-final/integrity.json",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-2-a/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-2-b/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-3/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-a/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-b1/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-b1/verification/integrity-2026-10-06.json",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-03-m2-4-b1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-1/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-1/verification/integrity.json",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-b2-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m2-4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/progress.md",
+        "target": "reviews/2026-10-06-m3-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m3-1/next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m2-4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m2-4-c1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m2-4-b2-2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-06-m2-4-b2-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-4-b1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-4-a/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-2-b/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-2-a/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m2-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-03-m0-m1-r23/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r22/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r21/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r20/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r19/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r18/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r17/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r16/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-02-m0-m1-r15/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-10-01-m0-m1-r14/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-30-m0-m1-r13/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-30-m0-m1-r12/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-30-m0-m1-r11/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-29-m0-m1-r10/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-29-m0-m1-r9/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-29-m0-m1-r8/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-29-m0-m1-r7/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1-r6/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1-r5/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1-r4/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1-r3/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1-r2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/README.md",
+        "target": "2026-09-28-m0-m1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "progress.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "../examples/shortest-path-scenario.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "reviews/2026-10-06-m2-4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "../tests/fixtures/scale/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "../scripts/scale/run-verified.mjs",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "../scripts/scale/d01.mjs",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "reviews/2026-10-06-m3-1/verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "reviews/2026-10-06-m3-1/coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/09-validation.md",
+        "target": "../examples/events.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "shortest-path-scenario.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "research-space.example.json",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "failure-publish.example.json",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "artifacts-http.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "typed-posts.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "knowledge-views.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "search.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "context.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "space-rules-read.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "post-revision-read.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "thread-posts-read.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "../scripts/scale/d01.mjs",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "../docs/reviews/2026-10-06-m2-4-c2/verification/d01-independent.json",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "../docs/reviews/2026-10-06-m2-4-c2/README.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "events.md",
+        "exists": true
+      },
+      {
+        "source": "examples/README.md",
+        "target": "../docs/reviews/2026-10-06-m3-1/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "verification/commands.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "verification/wait20-first.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "verification/tools-real.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "verification/integrity.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "implementation/core/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "implementation/protocol/README.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/README.md",
+        "target": "next-task.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/coverage-audit.md",
+        "target": "verification/commands.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/coverage-audit.md",
+        "target": "verification/phase1-commands.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/coverage-audit.md",
+        "target": "verification/verification.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "commands.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "phase1-commands.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "before-candidates.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "after-candidates.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "../../../../tests/integration/m3-event-recovery.test.ts",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "../../../../tests/helpers/m3-event-worker.mjs",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "wait20-first.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "check-wait20.mjs",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "object-scope.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "tools-real.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "integrity-final-checks.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "coverage.json",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/verification/verification.md",
+        "target": "../coverage-audit.md",
+        "exists": true
+      },
+      {
+        "source": "docs/reviews/2026-10-06-m3-1/next-task.md",
+        "target": "planning/m3-2-facts.md",
+        "exists": true
+      }
+    ]
+  },
+  "scoped_tracked_whitespace": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "public_credential_pattern_scan": {
+    "scope": "new M3.1 public files; actual-looking Bearer and raw-token named field patterns, not comprehensive secret certification",
+    "matched_files": [],
+    "values_not_emitted": true
+  },
+  "cleanup_basis": {
+    "wait20_22_owned_pids_exited": true,
+    "server_waits_pending_end": 0,
+    "runtime_tmp_removed": "formal helper/test and wait20 finally paths; no raw tokens written to public",
+    "MCP_tools": "mcp.close and in-memory fixture close in finally",
+    "readonly_ps_final_execution_end": "only query shell/rg matched, no m3-worker or MCPdist process"
+  },
+  "accepted_numbers": {
+    "formal_tests": 354,
+    "files": 39,
+    "new_core": 11,
+    "new_contract": 7,
+    "new_combination": 2,
+    "current29_passed": 29,
+    "build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "after_commands": 36,
+    "exit0": 34,
+    "self_probe_exit1": 2,
+    "date_time_ignored": 44,
+    "routes": 38,
+    "bodies": 20
+  },
+  "limitations_unchanged": [
+    "no independent129real wait clients",
+    "instant read/write n=1 each, no p95/throughput certification",
+    "stored private/object-scope defensive fixture not normal write exploitation claim",
+    "no second600s/Node22/cleaninstall/remoteCI/hostmodels/T12backup/powerloss"
+  ],
+  "status": "parent accepted M3.1 limited local engineering; M3.2 B taskbook approved, no implementation"
+}

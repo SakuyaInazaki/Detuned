@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session
+Native legal control: HTTP cap=1 me=1 session=1 post=1 ack=0; SQLite sessions=1 posts=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested shape before business HTTP with actual upstream/DB evidence
+Native rejected Me nested shape: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested extra field before business HTTP with actual upstream/DB evidence
+Native rejected Me nested extra field: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence
+Native rejected Me created_at invalid calendar date: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence
+Native rejected Me disabled_at invalid date-time: HTTP cap=1 me=1 session=0 post=0 ack=0; SQLite sessions=0 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence
+Native rejected Session wrong field type: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence
+Native rejected Session extra field: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence
+Native rejected Session invalid calendar date: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+stdout | tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence
+Native rejected Session metadata wrong shape: HTTP cap=1 me=1 session=1 post=0 ack=0; SQLite sessions=1 posts=0; replaced=1.
+
+ ✓ tests/contracts/m4-runtime-binding-native.test.ts (9 tests) 3170ms
+   ✓ M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session  353ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence  457ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence  450ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence  454ms
+   ✓ M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence  460ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  01:27:48
+   Duration  3.81s (transform 219ms, setup 0ms, collect 413ms, tests 3.17s, environment 0ms, prepare 27ms)
+

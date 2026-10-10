@@ -1,0 +1,7 @@
+# M6.4-C1 A catalog source freeze
+
+All-round directory uses existing unique space/post/round storage selection, round DESC limit+1 and strict signed actor/space/post/sort/expiry cursor. Continuation keeps original expiry; output controls can change. Module opens one current ACL/readSnapshot and reuses unchanged ReviewStatusService for each row; target redaction blocks, other material redaction remains safe status. No roster/evidence/opinion data is returned. Full UTF8 envelope including request_id and signed cursor is measured, trims tail only, last actually sent round resumes; unfit first item is QUERY_TOO_BROAD422. New route errors/success private,no-store including root early errors.
+
+Protocol local date guard/strict wholepage meta/descending order, client scope/post/count binding and existing1MiB transport; forum_read review_requests and CLI review rounds forward the same controls. OpenAPI enters existing shared policy loop, strict cursor length restored after generic normalization. No DDL/dependencies/status-service/MCP/Pi or Web source changed. Protocol index original wildcard export required no edit.
+
+Three finite author groups written, not executed: real SQLite/FastifyHTTP historical rounds/pagination/full byte size/strict query/cache; malformed page/date/order/meta/tool limits; invalid client query before transport. No A build/type/lint/test/check or server startup executed. Independent ACL/cursor/privacy/native/browser coverage and all runtime conclusions await D; this is a source freeze, not acceptance.

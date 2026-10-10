@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-context-session-chain.test.ts (1 test | 1 failed) 111ms
+   × C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision 111ms
+     → {"api_version":"1","request_id":"req-1","error":{"code":"VALIDATION_ERROR","message":"body/rules/0 must NOT have more than 500 characters","retryable":false,"details":{"issues":[{"instancePath":"/rules/0","schemaPath":"#/properties/rules/items/maxLength","keyword":"maxLength","params":{"limit":500},"message":"must NOT have more than 500 characters"}]}}}: expected 400 to be less than 300
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  20:21:59
+   Duration  780ms (transform 218ms, setup 0ms, collect 405ms, tests 111ms, environment 0ms, prepare 59ms)
+

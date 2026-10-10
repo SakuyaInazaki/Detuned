@@ -1,0 +1,36 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m4-node-credentials.test.ts (3 tests | 1 failed) 53ms
+   ✓ NC01 exposes local credentials only from the Node entry and preserves existing Node exports 1ms
+   ✓ NC02 CLI two-argument mapping preserves source selection, errors and selected files without a CLI dependency in client 2ms
+   × NC03 actual built Node package resolves the new utility while browser entry remains unchanged 51ms
+     → Command failed: /opt/homebrew/Cellar/node/26.3.0/bin/node --input-type=module -e const n=await import('@detuned/client/node');const b=await import('@detuned/client');if(n.resolveLocalToken({environmentToken:' fixture '})!=='fixture'||'resolveLocalToken' in b)process.exitCode=1;else console.log('node-composition-ok')
+node:internal/modules/package_json_reader:301
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@detuned/client' imported from /Users/sakimi/Desktop/Detuned/[eval1]
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:724:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:762:56)
+    at #resolve (node:internal/modules/esm/loader:686:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:606:35)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:635:32) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v26.3.0
+
+ ✓ tests/contracts/m4-mcp-runtime.test.ts (6 tests) 18ms
+ ✓ tests/contracts/m4-token-source.test.ts (7 tests) 182ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 15 passed (16)
+   Start at  22:19:16
+   Duration  605ms (transform 136ms, setup 0ms, collect 651ms, tests 253ms, environment 0ms, prepare 123ms)
+

@@ -1,0 +1,11 @@
+--- docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-legacy-fixture.mjs
++++ docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-legacy-fixture.mjs
+@@ -10,7 +10,7 @@
+ import { buildApp } from '../../../../../packages/server/dist/index.js';
+ import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate, classifyDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
+ 
+-// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++// M6.2-A: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
+ import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
+ function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
+ 

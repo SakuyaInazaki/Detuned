@@ -1,0 +1,55 @@
+{
+  "status": "failed",
+  "mode": "normal",
+  "prompt_sent": false,
+  "model_request_sent": false,
+  "ownership_stages": [
+    "root_registered",
+    "worker_spawned",
+    "worker_registered",
+    "native_registered"
+  ],
+  "cleanup": {
+    "driver_actual_close": true,
+    "registration_evidence_present": true,
+    "registered_direct_children_absent": true,
+    "registered_groups_absent": true,
+    "empty_registry_is_not_global_cleanup_proof": false,
+    "registered_roots_absent": true,
+    "control_directory_absent": true
+  },
+  "budgets": {
+    "normal_wait_ms": 90000,
+    "emergency_ms": 5000,
+    "absolute_ms": 95000
+  },
+  "driver_close": {
+    "code": 1,
+    "signal": null
+  },
+  "deadline_expired": false,
+  "driver_stdout_shape": "failed",
+  "driver_diagnostics": {
+    "stages": [
+      "import_begin",
+      "import_done",
+      "call_begin",
+      "call_rejected"
+    ],
+    "early_error_name": "Error",
+    "frames": [
+      {
+        "frame": "source",
+        "line": 152,
+        "column": 54
+      },
+      {
+        "frame": "driver",
+        "line": 11,
+        "column": 109
+      }
+    ]
+  },
+  "driver_stderr_empty": true,
+  "failure_priority": "original probe/capture failure retained; cleanup verification separate"
+}

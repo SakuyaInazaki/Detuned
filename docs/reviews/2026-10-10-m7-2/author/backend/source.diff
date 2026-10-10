@@ -1,0 +1,221 @@
+--- /dev/null
++++ b/examples/d01-fixed/candidate-first-discovery.mjs
+@@ -0,0 +1,6 @@
++// Deliberately incorrect: a vertex's first discovery is frozen forever.
++export function shortestPaths(graph, budget) {
++ const distances=Array(graph.vertices).fill(null);distances[graph.source]=0;const queue=[graph.source];
++ while(queue.length){budget.step();const vertex=queue.shift();for(const [from,to,weight] of graph.edges){budget.step();if(from===vertex&&distances[to]===null){distances[to]=budget.add(distances[from],weight);queue.push(to);}}}
++ return distances;
++}
+--- /dev/null
++++ b/examples/d01-fixed/candidate-relaxation.mjs
+@@ -0,0 +1,8 @@
++// Known repository implementation: relaxation with a binary min-priority queue.
++export function shortestPaths(graph,budget){
++ const distances=Array(graph.vertices).fill(null),heap=[];distances[graph.source]=0;
++ const push=entry=>{heap.push(entry);let i=heap.length-1;while(i>0){budget.step();const p=(i-1)>>1;if(heap[p][0]<=entry[0])break;heap[i]=heap[p];i=p;}heap[i]=entry;};
++ const pop=()=>{const first=heap[0],last=heap.pop();if(heap.length){let i=0;while(2*i+1<heap.length){budget.step();let child=2*i+1;if(child+1<heap.length&&heap[child+1][0]<heap[child][0])child++;if(heap[child][0]>=last[0])break;heap[i]=heap[child];i=child;}heap[i]=last;}return first;};
++ const adjacency=Array.from({length:graph.vertices},()=>[]);for(const [from,to,weight]of graph.edges){budget.step();adjacency[from].push([to,weight]);}
++ push([0,graph.source]);while(heap.length){budget.step();const [distance,vertex]=pop();if(distance!==distances[vertex])continue;for(const [to,weight]of adjacency[vertex]){budget.step();const next=budget.add(distance,weight);if(distances[to]===null||next<distances[to]){distances[to]=next;push([next,to]);}}}return distances;
++}
+--- /dev/null
++++ b/examples/d01-fixed/reference.mjs
+@@ -0,0 +1,5 @@
++// Independent Bellman-Ford reference: repeated whole-edge relaxation, no heap.
++export function referencePaths(graph,budget){
++ const distances=Array(graph.vertices).fill(null);distances[graph.source]=0;
++ for(let pass=1;pass<graph.vertices;pass++){budget.step();let changed=false;for(const[from,to,weight]of graph.edges){budget.step();if(distances[from]===null)continue;const next=budget.add(distances[from],weight);if(distances[to]===null||next<distances[to]){distances[to]=next;changed=true;}}if(!changed)break;}return distances;
++}
+--- /dev/null
++++ b/examples/d01-fixed/checker.mjs
+@@ -0,0 +1,31 @@
++import {readFileSync} from 'node:fs';
++import {shortestPaths as firstDiscovery} from './candidate-first-discovery.mjs';
++import {shortestPaths as relaxation} from './candidate-relaxation.mjs';
++import {referencePaths} from './reference.mjs';
++const config=Object.freeze(JSON.parse(readFileSync(new URL('./config.json',import.meta.url),'utf8')));
++const fixedCases=JSON.parse(readFileSync(new URL('./cases.json',import.meta.url),'utf8'));
++export class CheckResourceError extends Error {constructor(code){super(code);this.code=code;}}
++export function validateGraph(graph){
++ if(!graph||!Number.isSafeInteger(graph.vertices)||graph.vertices<1||graph.vertices>config.max_vertices||!Number.isSafeInteger(graph.source)||graph.source<0||graph.source>=graph.vertices||!Array.isArray(graph.edges)||graph.edges.length>config.max_edges)throw new CheckResourceError('INVALID_GRAPH');
++ for(const edge of graph.edges)if(!Array.isArray(edge)||edge.length!==3||!edge.every(Number.isSafeInteger)||edge[0]<0||edge[0]>=graph.vertices||edge[1]<0||edge[1]>=graph.vertices||edge[2]<0)throw new CheckResourceError('INVALID_GRAPH');
++ return graph;
++}
++export function makeBudget(maximum=config.max_operations){
++ if(!Number.isSafeInteger(maximum)||maximum<0||maximum>config.max_operations)throw new CheckResourceError('INVALID_OPERATION_BUDGET');
++ let operations=0;return{get operations(){return operations;},step(){if(++operations>maximum)throw new CheckResourceError('OPERATION_BUDGET');},add(a,b){this.step();const sum=a+b;if(!Number.isSafeInteger(sum)||sum<0)throw new CheckResourceError('UNSAFE_PATH_ARITHMETIC');return sum;}};
++}
++function cases(){
++ let seed=config.seed>>>0;const random=maximum=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed%maximum;};
++ const graphs=fixedCases.map(graph=>({...graph,edges:graph.edges.map(edge=>[...edge])}));
++ for(let n=0;n<config.generated_graphs;n++){const vertices=2+random(10),edges=[];for(let from=0;from<vertices;from++)for(let to=0;to<vertices;to++)if(from!==to&&random(4)===0)edges.push([from,to,random(12)]);graphs.push({id:'seed-'+n,vertices,source:random(vertices),edges});}
++ return graphs.flatMap(graph=>[{...graph,id:graph.id+'/original'},{...graph,id:graph.id+'/reversed',edges:[...graph.edges].reverse()}]);
++}
++export function validateOutput(value,vertices){if(!Array.isArray(value)||value.length!==vertices||!value.every(distance=>distance===null||(Number.isSafeInteger(distance)&&distance>=0)))throw new CheckResourceError('INVALID_OUTPUT');return value;}
++export function runFixedSuite(candidateId){
++ const budget=makeBudget(),failures=[];let graphs=0;
++ try{const candidate=candidateId==='first-discovery'?firstDiscovery:candidateId==='relaxation'?relaxation:null;if(!candidate)throw new CheckResourceError('UNKNOWN_CANDIDATE');
++ const suite=cases();if(suite.length>config.max_graphs)throw new CheckResourceError('GRAPH_BUDGET');
++ for(const graph of suite){validateGraph(graph);graphs++;const expected=referencePaths(graph,budget),observed=candidate(graph,budget);validateOutput(expected,graph.vertices);validateOutput(observed,graph.vertices);if(expected.some((distance,index)=>distance!==observed[index]))failures.push({case_id:graph.id,expected,observed});}
++ return{result:failures.length?'fail':'pass',graphs,operations:budget.operations,failures,error_code:null};
++ }catch(error){return{result:'error',graphs,operations:budget.operations,failures:[],error_code:error instanceof CheckResourceError?error.code:'EXECUTION_ENVIRONMENT'};}
++}
+--- /dev/null
++++ b/examples/d01-fixed/cases.json
+@@ -0,0 +1 @@
++[{"id":"first-discovery-counterexample","vertices":3,"source":0,"edges":[[0,1,10],[0,2,1],[2,1,1]]},{"id":"zero-weight","vertices":4,"source":0,"edges":[[0,1,0],[1,2,0],[0,2,2]]},{"id":"parallel-equal","vertices":4,"source":0,"edges":[[0,1,7],[0,1,2],[0,2,1],[2,1,1],[1,3,0],[2,3,1]]},{"id":"unreachable","vertices":4,"source":0,"edges":[[1,2,3]]},{"id":"single","vertices":1,"source":0,"edges":[]}]
+--- /dev/null
++++ b/examples/d01-fixed/config.json
+@@ -0,0 +1 @@
++{"check_name":"d01-fixed","semantics":"directed nonnegative integer single-source shortest paths; null means unreachable; exact distance comparison","seed":20260927,"max_graphs":128,"max_vertices":32,"max_edges":1024,"max_operations":10000000,"variants":["original","reversed-adjacency"],"generated_graphs":24,"environment_fault_result":"error","algorithm_mismatch_result":"fail"}
+--- /dev/null
++++ b/examples/d01-fixed/catalog.mjs
+@@ -0,0 +1,49 @@
++import {readFileSync} from 'node:fs';
++import {createHash} from 'node:crypto';
++const root=new URL('../../',import.meta.url);
++const pins={
++  "candidate-first-discovery": {
++    "role": "candidate-first-discovery",
++    "path": "examples/d01-fixed/candidate-first-discovery.mjs",
++    "sha256": "791af4acd590e9aee3f1a5579b8f24207d119125143fce39333e080cffb3a127",
++    "bytes": 472
++  },
++  "candidate-relaxation": {
++    "role": "candidate-relaxation",
++    "path": "examples/d01-fixed/candidate-relaxation.mjs",
++    "sha256": "5130ef39c50b7ae4a4b883e858387a36171e7bbe5660c1f55a58e8fa1e6280b2",
++    "bytes": 1144
++  },
++  "reference": {
++    "role": "reference",
++    "path": "examples/d01-fixed/reference.mjs",
++    "sha256": "0fb391e8f435f1a737485c975d7a0bbf24b57dfbf82deae2ed39a218f119319b",
++    "bytes": 533
++  },
++  "checker": {
++    "role": "checker",
++    "path": "examples/d01-fixed/checker.mjs",
++    "sha256": "3db36900cbeb69c8ad2c6540eae4a8652c3fd82bc821da0241dd82ea14f74a87",
++    "bytes": 3476
++  },
++  "cases": {
++    "role": "cases",
++    "path": "examples/d01-fixed/cases.json",
++    "sha256": "678636471464cb9553d2727a33f8fc63d0876bea1f5d5327e56d2ec5438661c4",
++    "bytes": 400
++  },
++  "config": {
++    "role": "config",
++    "path": "examples/d01-fixed/config.json",
++    "sha256": "8c8c75a7611cdcfaf0896e18859999333e5169e4dc04353a894d94e9b65d20bf",
++    "bytes": 381
++  },
++  "runner": {
++    "role": "runner",
++    "path": "scripts/checks/d01-fixed-verifier.mjs",
++    "sha256": "8ade71b57792031f0a96c6bed032063bce2bcfbb38d67611166a809c486a83e0",
++    "bytes": 7713
++  }
++};
++export const descriptors=Object.freeze(['first-discovery','relaxation'].map(id=>Object.freeze({id,candidate_role:'candidate-'+id,roles:Object.freeze(['candidate-'+id,'reference','checker','cases','config','runner'])})));
++export function assets(descriptorOrId){const descriptor=descriptors.find(item=>item.id===(typeof descriptorOrId==='string'?descriptorOrId:descriptorOrId?.id));if(!descriptor)throw new Error('Unknown fixed descriptor');return descriptor.roles.map(role=>{const pin=pins[role],content=new Uint8Array(readFileSync(new URL(pin.path,root)));if(content.length!==pin.bytes||createHash('sha256').update(content).digest('hex')!==pin.sha256)throw new Error('Fixed local material integrity failure');return {...pin,content};});}
+--- /dev/null
++++ b/scripts/checks/d01-fixed-verifier.mjs
+@@ -0,0 +1,48 @@
++#!/usr/bin/env node
++import {statSync} from 'node:fs';
++import {createHash} from 'node:crypto';
++import {pathToFileURL} from 'node:url';
++import {DetunedClient} from '../../packages/client/dist/index.js';
++import {resolveLocalToken} from '../../packages/client/dist/node.js';
++import {canonicalizeReviewJson} from '../../packages/protocol/dist/index.js';
++import {assets,descriptors} from '../../examples/d01-fixed/catalog.mjs';
++import {runFixedSuite} from '../../examples/d01-fixed/checker.mjs';
++const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
++export class VerifierError extends Error {constructor(code){super(code);this.code=code;}}
++const reject=code=>{throw new VerifierError(code);};
++export async function preflight(client,spaceId,runId){
++ const run=await client.getCheckRun(spaceId,runId),snapshot=await client.getCheckSnapshot(spaceId,runId);
++ if(run.state!=='pending'||run.space_id!==spaceId||run.id!==runId||snapshot.check_run_id!==runId||snapshot.space_id!==spaceId||snapshot.snapshot_id!==run.snapshot_id||run.check_name!=='d01-fixed'||snapshot.manifest_sha256!==run.snapshot_sha256||sha(Buffer.from(canonicalizeReviewJson(snapshot.manifest),'utf8'))!==run.snapshot_sha256)reject('PREFLIGHT_BINDING');
++ const manifest=snapshot.manifest,profiles=manifest.check_profiles.filter(p=>p.check_name===run.check_name);
++ if(profiles.length!==1||profiles[0].config_sha256!==run.check_config_sha256||!profiles[0].verifier_actor_ids.includes(run.verifier_actor_id))reject('PREFLIGHT_CONFIG');
++ const matching=descriptors.filter(descriptor=>{
++  const local=assets(descriptor);return manifest.artifacts.length===local.length&&local.every(asset=>manifest.artifacts.filter(item=>item.sha256===asset.sha256&&item.bytes===asset.bytes).length===1)&&manifest.artifacts.every(item=>local.some(asset=>item.sha256===asset.sha256&&item.bytes===asset.bytes));
++ });
++ if(matching.length!==1)reject('PREFLIGHT_MATERIAL_SET');
++ const descriptor=matching[0],local=assets(descriptor),config=local.find(item=>item.role==='config');if(config.sha256!==run.check_config_sha256)reject('PREFLIGHT_CONFIG');
++ // Actual scoped bytes must agree. No downloaded material is written or executed.
++ for(const asset of local){const item=manifest.artifacts.find(item=>item.sha256===asset.sha256&&item.bytes===asset.bytes);const download=await client.downloadCheckArtifact(spaceId,runId,item.artifact_id);if(download.bytes.length!==asset.bytes||sha(download.bytes)!==asset.sha256||!Buffer.from(download.bytes).equals(Buffer.from(asset.content)))reject('PREFLIGHT_MATERIAL_BYTES');}
++ return{run,snapshot,descriptor};
++}
++export async function verifyAndSubmit(client,{spaceId,runId,uploadKey,receiptKey,receiptId},testHooks){
++ if(typeof uploadKey!=='string'||!uploadKey.trim()||typeof receiptKey!=='string'||!receiptKey.trim()||!/^[A-Za-z0-9._:-]{1,128}$/.test(receiptId))reject('INVALID_OPTIONS');
++ const {run,snapshot,descriptor}=await preflight(client,spaceId,runId),started=new Date().toISOString();let evaluation;
++ // Controlled after-preflight fault seam is test-only; CLI never supplies hooks or arbitrary code.
++ try{if(testHooks?.afterPreflight)testHooks.afterPreflight();evaluation=runFixedSuite(descriptor.id);}catch{evaluation={result:'error',graphs:0,operations:0,failures:[],error_code:'EXECUTION_ENVIRONMENT'};}
++ const finished=new Date().toISOString(),local=assets(descriptor),runner=local.find(item=>item.role==='runner');
++ const record={check_run_id:run.id,space_id:spaceId,request_id:run.request_id,snapshot_id:run.snapshot_id,target_ref:snapshot.manifest.target.ref,snapshot_sha256:run.snapshot_sha256,config_sha256:run.check_config_sha256,candidate:descriptor.id,source_sha256:local.find(item=>item.role===descriptor.candidate_role).sha256,runner_sha256:runner.sha256,started_at:started,finished_at:finished,assumptions:'Directed nonnegative safe-integer weights; safe path arithmetic; null unreachable. First-discovery failure does not refute Dijkstra.',limits:{graphs:128,vertices:32,edges:1024,operations:10000000},limitations:'Bounded correctness examples, not exhaustive proof or performance certification. Other algorithm variants remain unexcluded.',retry_condition:'A new attempt with corrected known candidate/material may retry; environment/resource errors do not refute the algorithm.',...evaluation};
++ const logBytes=Buffer.from(JSON.stringify(record)+'\n','utf8');if(logBytes.length>65536)reject('LOG_BUDGET');
++ const artifact=await client.uploadCheckArtifact(spaceId,runId,new Blob([logBytes],{type:'text/plain'}),{},uploadKey);
++ const receipt=await client.submitCheckReceipt(spaceId,runId,{receipt_id:receiptId,observed_snapshot_sha256:run.snapshot_sha256,observed_check_config_sha256:run.check_config_sha256,result:evaluation.result,environment:'Repository fixed local verifier; timestamps are self-reported, not attested.',tool_versions:{node:process.version,runner_sha256:runner.sha256,candidate_sha256:record.source_sha256,reference_sha256:local.find(item=>item.role==='reference').sha256},execution_steps:'Validate frozen run, actual manifest JCS/config and exact scoped bytes; execute static repository candidates against independent Bellman-Ford on fixed cases and seed20260927; publish bounded log; submit immutable receipt.',started_at:started,finished_at:finished,exit_code:evaluation.result==='pass'?0:evaluation.result==='fail'?1:2,logs_artifact_id:artifact.id},receiptKey);
++ return{result:receipt.result,receipt_id:receipt.receipt_id,check_run_id:receipt.check_run_id,logs_artifact_id:receipt.logs_artifact_id};
++}
++function parseArgs(argv){const allowed=['url','space','run','token-file','upload-key','receipt-key','receipt-id'],values={};for(let i=0;i<argv.length;i+=2){const key=argv[i]?.slice(2);if(!argv[i]?.startsWith('--')||!allowed.includes(key)||key in values||typeof argv[i+1]!=='string'||!argv[i+1]||argv[i+1].startsWith('--'))reject('INVALID_OPTIONS');values[key]=argv[i+1];}if(allowed.some(key=>!(key in values)))reject('INVALID_OPTIONS');const url=new URL(values.url);if(!['http:','https:'].includes(url.protocol)||url.username||url.password||url.search||url.hash)reject('INVALID_OPTIONS');return values;}
++async function main(){
++ const controller=new AbortController(),cancel=()=>controller.abort();process.on('SIGINT',cancel);process.on('SIGTERM',cancel);
++ try{const args=parseArgs(process.argv.slice(2));if((statSync(args['token-file']).mode&0o077)!==0)reject('INVALID_TOKEN_FILE');const token=resolveLocalToken({tokenFile:args['token-file']});const rawClient=new DetunedClient({baseUrl:args.url,token});
++ // Only scoped shared-client methods; propagate cancellation without identity discovery.
++ const client={getCheckRun:(s,r)=>rawClient.getCheckRun(s,r,{signal:controller.signal}),getCheckSnapshot:(s,r)=>rawClient.getCheckSnapshot(s,r,{signal:controller.signal}),downloadCheckArtifact:(s,r,a)=>rawClient.downloadCheckArtifact(s,r,a,{signal:controller.signal}),uploadCheckArtifact:(s,r,b,m,k)=>rawClient.uploadCheckArtifact(s,r,b,m,k,{signal:controller.signal}),submitCheckReceipt:(s,r,b,k)=>rawClient.submitCheckReceipt(s,r,b,k,{signal:controller.signal})};
++ const result=await verifyAndSubmit(client,{spaceId:args.space,runId:args.run,uploadKey:args['upload-key'],receiptKey:args['receipt-key'],receiptId:args['receipt-id']});process.stdout.write(JSON.stringify(result)+'\n');process.exitCode=result.result==='pass'?0:result.result==='fail'?1:2;
++ }catch(error){process.stderr.write(JSON.stringify({error:error instanceof VerifierError?error.code:'VERIFIER_OPERATION_FAILED',submitted:false})+'\n');process.exitCode=2;}finally{process.off('SIGINT',cancel);process.off('SIGTERM',cancel);}
++}
++if(process.argv[1]&&pathToFileURL(process.argv[1]).href===import.meta.url)await main();
+--- /dev/null
++++ b/tests/integration/m7-fixed-verifier.test.ts
+@@ -0,0 +1,45 @@
++import {afterEach,expect,it} from 'vitest';
++import Database from 'better-sqlite3';
++import {mkdtemp,rm,writeFile} from 'node:fs/promises';
++import {tmpdir} from 'node:os';import {join} from 'node:path';
++import {spawn} from 'node:child_process';
++import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
++import {buildApp} from '@detuned/server';
++import {DetunedClient} from '@detuned/client';
++import {ArtifactFileStore} from '../../packages/server/src/artifact-files.js';
++const checker=await import(new URL('../../examples/d01-fixed/checker.mjs',import.meta.url).href);
++const catalog=await import(new URL('../../examples/d01-fixed/catalog.mjs',import.meta.url).href);
++const runner=await import(new URL('../../scripts/checks/d01-fixed-verifier.mjs',import.meta.url).href);
++const cleanups:Array<()=>Promise<void>>=[];afterEach(async()=>{while(cleanups.length)await cleanups.pop()!();});
++async function fixture(candidate='relaxation',extra=false){
++ const dir=await mkdtemp(join(tmpdir(),'detuned-fixed-verifier-')),db=new Database(':memory:');const token=bootstrapDatabase(db).adminToken!,storage=new SqliteStorage(db),app=buildApp({storage,artifactBlobs:await ArtifactFileStore.create(dir)});const paths:string[]=[];app.addHook('onRequest',async req=>{paths.push(req.url);});const url=await app.listen({host:'127.0.0.1',port:0});cleanups.push(async()=>{await app.close();db.close();await rm(dir,{recursive:true,force:true});});const admin=new DetunedClient({baseUrl:url,token,maxRetries:0});let serial=0;
++ async function write(path:string,body:unknown,method='POST'){const response=await fetch(url+'/api/v1'+path,{method,headers:{authorization:'Bearer '+token,'content-type':'application/json','idempotency-key':'setup-'+ ++serial},body:JSON.stringify(body)});expect(response.status).toBe(method==='POST'?201:200);return(await response.json()).data;}
++ const sid=(await write('/spaces',{slug:'fixed-verifier',objective:'fixed bounded checker',rules:[]})).space.id,tid=(await write(`/spaces/${sid}/threads`,{title:'fixed'})).thread.id;
++ const pid=(await write(`/spaces/${sid}/threads/${tid}/posts`,{kind:'claim',title:'shortest paths',summary:'fixed',body:'Repository pinned candidate with independent reference',structured:{statement:'nonnegative shortest paths',assumptions:['safe integer arithmetic'],scope:'fixed examples',falsification_plan:'first-discovery counterexample'}})).post.id;
++ const now=new Date().toISOString();for(const id of ['fixed-r1','fixed-r2','fixed-v']){storage.createActor({id,kind:id==='fixed-v'?'service':'human',display_name:id,created_at:now,disabled_at:null});if(id!=='fixed-v')storage.upsertMembership({space_id:sid,actor_id:id,role:'observer',active:true,reviewer_eligible:true,independence_group:id});}
++ const materials=catalog.assets(candidate),config=materials.find((a:any)=>a.role==='config');const rev=storage.getSpaceRevision(sid,1)!;await write(`/spaces/${sid}`,{expected_revision:1,review_policy:{...rev.review_policy,required_checks:['d01-fixed']},check_profiles:{'d01-fixed':{verifier_actor_ids:['fixed-v'],config_sha256:config.sha256,description:'fixed known candidate'}}},'PATCH');
++ const artifactIds:string[]=[];for(const asset of materials){const artifact=await admin.uploadArtifact(sid,new Blob([asset.content],{type:'application/octet-stream'}),{},'asset-'+asset.role);artifactIds.push(artifact.id);}
++ if(extra)artifactIds.push((await admin.uploadArtifact(sid,new Blob(['Unknown forum content must never execute'],{type:'text/plain'}),{},'unknown')).id);
++ const request=await write(`/spaces/${sid}/review-requests`,{target_ref:{post_id:pid,revision:1},dependency_refs:[],artifact_ids:artifactIds,code_refs:[],declared_contributors:[],reviewer_actor_ids:['fixed-r1','fixed-r2'],expected_policy_revision:storage.findSpaceById(sid)!.policy_revision,reproduction_instructions:'fixed repository verifier only'});
++ const run=await admin.createCheckRun(sid,{request_id:request.id,snapshot_id:request.snapshot_id,check_name:'d01-fixed',verifier_id:'fixed-v',expected_request_version:request.version},'create');const issued=await admin.issueCheckRunCredential(sid,run.id);const client=new DetunedClient({baseUrl:url,token:issued.token,maxRetries:1});return{dir,db,storage,app,url,sid,run,client,verify:issued.token,paths};
++}
++const options=(f:Awaited<ReturnType<typeof fixture>>)=>({spaceId:f.sid,runId:f.run.id,uploadKey:'fixed-upload',receiptKey:'fixed-receipt',receiptId:'fixed.receipt'});
++it('FV01 fixed known candidates compare all variants with independent reference; budgets and unsafe arithmetic are error',()=>{
++ const right=checker.runFixedSuite('relaxation'),wrong=checker.runFixedSuite('first-discovery');expect(right.result).toBe('pass');expect(right.graphs).toBe(58);expect(right.operations).toBeLessThanOrEqual(10000000);expect(wrong.result).toBe('fail');expect(wrong.failures.some((f:any)=>f.case_id==='first-discovery-counterexample/original'&&f.expected[1]===2&&f.observed[1]===10)).toBe(true);
++ expect(checker.runFixedSuite('unknown').result).toBe('error');expect(()=>checker.validateGraph({vertices:33,source:0,edges:[]})).toThrow();expect(()=>checker.validateGraph({vertices:2,source:0,edges:[[0,1,-1]]})).toThrow();expect(()=>checker.validateOutput([0,-1],2)).toThrow();expect(()=>checker.validateOutput([0,Infinity],2)).toThrow();expect(()=>checker.makeBudget(0).step()).toThrow();expect(()=>checker.makeBudget().add(Number.MAX_SAFE_INTEGER,1)).toThrow();
++});
++it('FV02 real TCP scoped material preflight and known relaxation produce immutable pass receipt and no identity discovery',async()=>{
++ const f=await fixture();const start=f.paths.length;const result=await runner.verifyAndSubmit(f.client,options(f));expect(result.result).toBe('pass');expect(f.storage.findCheckReceiptByRunId(f.run.id)?.exit_code).toBe(0);expect(f.paths.slice(start).some(path=>path.endsWith('/me')||path.endsWith('/sessions'))).toBe(false);
++ await expect(runner.verifyAndSubmit(f.client,options(f))).rejects.toMatchObject({code:'PREFLIGHT_BINDING'});expect(f.storage.findCheckRunById(f.run.id)?.version).toBe(2);
++});
++it('FV03 genuine first-discovery fail and controlled after-preflight environment error retain different meanings',async()=>{
++ const wrong=await fixture('first-discovery');expect((await runner.verifyAndSubmit(wrong.client,options(wrong))).result).toBe('fail');expect(wrong.storage.findCheckReceiptByRunId(wrong.run.id)?.result).toBe('fail');
++ const fault=await fixture();expect((await runner.verifyAndSubmit(fault.client,options(fault),{afterPreflight(){throw Error('controlled environment fault');}})).result).toBe('error');expect(fault.storage.findCheckReceiptByRunId(fault.run.id)?.exit_code).toBe(2);
++});
++it('FV04 real unknown material fails preflight before log/receipt write and leaves run pending',async()=>{
++ const f=await fixture('relaxation',true),before=(f.db.prepare('SELECT count(*) n FROM artifacts').get() as {n:number}).n;
++ await expect(runner.verifyAndSubmit(f.client,options(f))).rejects.toMatchObject({code:'PREFLIGHT_MATERIAL_SET'});expect(f.storage.findCheckReceiptByRunId(f.run.id)).toBeNull();expect((f.db.prepare('SELECT count(*) n FROM artifacts').get() as {n:number}).n).toBe(before);expect(f.storage.findCheckRunById(f.run.id)?.state).toBe('pending');
++});
++it('FV05 real short-lived CLI uses private token-file and only safe submitted summary stdout',async()=>{
++ const f=await fixture(),file=join(f.dir,'verify.token');await writeFile(file,f.verify,{mode:0o600});const child=spawn(process.execPath,['scripts/checks/d01-fixed-verifier.mjs','--url',f.url,'--space',f.sid,'--run',f.run.id,'--token-file',file,'--upload-key','cli-upload','--receipt-key','cli-receipt','--receipt-id','cli.receipt'],{env:{PATH:process.env.PATH,CI:'1'}});let out='',err='';child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stdout.on('data',chunk=>out+=chunk);child.stderr.on('data',chunk=>err+=chunk);const timer=setTimeout(()=>child.kill('SIGKILL'),10000);const code=await new Promise<number|null>((resolve,reject)=>{child.once('error',reject);child.once('close',resolve)}).finally(()=>clearTimeout(timer));expect(code).toBe(0);expect(err.length).toBe(0);expect((out+err).includes(f.verify)).toBe(false);expect(JSON.parse(out).result).toBe('pass');const receipt=f.storage.findCheckReceiptByRunId(f.run.id)!;expect(receipt.tool_versions.node).toBe(process.version);
++});

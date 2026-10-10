@@ -1,0 +1,24 @@
+{
+  "status": "final v2 source freeze; all four meaningful cases combined passed; no independent build/gates run",
+  "files": {
+    "packages/protocol/src/web-auth.ts": "ee97cd6ad288d8a9054f84f509b8e90bbe61ae6cd2c7ad7d7ce8127bef226f5a",
+    "packages/protocol/src/index.ts": "0d1114d6b357b1b3de16ee76e18bae032be1ce7cde3b54ad176ef1d990b63290",
+    "packages/protocol/src/response-guards.ts": "e97edc8d072f5c6307cfef5f3515414bc5d5e352829f06d149c91896e0a8cb66",
+    "packages/protocol/src/request-policies.ts": "8b6ccb26dfc3596779d690493ae7f36f053eab6a03c092e3daa4d37befb2befc",
+    "packages/protocol/src/openapi.ts": "e7f7e88c6e784d9aa29fcdf5c64c62a44ca4e087f92b24ada2709f9ba1512da0",
+    "packages/client/src/client.ts": "573f7eca056dc8d2c2576a7ce506b27f38ab8f0e1049204461bfea7d9165e5e9",
+    "packages/client/src/index.ts": "3092efb52cd65f48118f2d3bd1af771fd820d8e224bd3a65b98eb84972e2c3a3",
+    "packages/client/src/artifact-transfer.ts": "1c083c1292276728adf334a89831617880dba132bd2176966f453b9e3b394a0b",
+    "packages/client/src/export-stream.ts": "7134a9653dd26ff775bfaeb17bf330a0aade53ddba45b80dbce12a2aeb6feaea",
+    "tests/contracts/m5-web-auth-client.test.ts": "be0caec35605b46073a0deee2d4722ed696030d893bdd9ed437dc487acb95781"
+  },
+  "checks": {
+    "source_first": "exit1 1pass3fail +2listenEPERM unhandled",
+    "source_second": "exit1 3pass1fixturefail",
+    "wa01_third": "exit0 1pass3skip",
+    "source_noemit_first": 0,
+    "source_noemit_second": 0,
+    "wa04_fourth": "exit0 1pass3skip",
+    "source_noemit_third": 0
+  }
+}

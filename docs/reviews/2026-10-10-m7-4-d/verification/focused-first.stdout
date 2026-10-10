@@ -1,0 +1,20 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the enableGlobalVirtualStore setting has changed
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m7-claude-probe-ownership.test.ts (8 tests | 1 failed) 1582ms
+   ✓ CP01 real same-worker direct child is frozen/persisted before harmless ACK import  362ms
+   ✓ CP02 another actual own parent candidate is refused without confirmed authority or signal 223ms
+   ✓ CP03 invalid selector and exact exited own child refuse confirmation 121ms
+   ✓ CP04 candidate observer rejection preserves original failure and grants no confirmation or signal 108ms
+   ✓ CP05 confirmed observer rejection grants no returned proof, ACK/import or signal 111ms
+   ✓ CP06 cancellation during confirmed observer await refuses return authority and ACK/import 113ms
+   ✓ CP07 early cancellation refuses candidate observer and grants no signal/ACK/import 108ms
+   × CP08 actual production launcher gates real built MCP main until ACK and closes on EOF 436ms
+     → expected false to be true // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:04:00
+   Duration  1.76s (transform 131ms, setup 0ms, collect 21ms, tests 1.58s, environment 0ms, prepare 40ms)
+

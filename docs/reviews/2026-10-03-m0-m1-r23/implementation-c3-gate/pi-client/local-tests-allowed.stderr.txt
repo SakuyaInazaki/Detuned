@@ -1,0 +1,32 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)
+AssertionError: expected undefined to match object { source_ref: { …(2) }, …(2) }
+
+- Expected: 
+{
+  "source_ref": {
+    "post_id": "pst_c72c89f5-2287-4b8c-aedd-4a0bf56c15f8",
+    "revision": 1,
+  },
+  "target_ref": {
+    "post_id": "pst_2b85ccc7-55b7-45de-9220-ed4021ed543e",
+    "revision": 1,
+  },
+  "type": "cites",
+}
+
++ Received: 
+undefined
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:1692:46
+    1690|       });
+    1691|       const relateResult = await relateTool.execute('call-live-rel', v…
+    1692|       expect(relateResult.details?.relation).toMatchObject({
+       |                                              ^
+    1693|         source_ref: ref, target_ref: { post_id: postId2, revision: 1 }…
+    1694|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

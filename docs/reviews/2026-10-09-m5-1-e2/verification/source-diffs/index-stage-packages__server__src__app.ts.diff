@@ -1,0 +1,10 @@
+--- before-index-stage/packages/server/src/app.ts
++++ packages/server/src/app.ts
+@@ -89,6 +89,7 @@
+   }
+   if (typeof options.storage.configureResourceLimits !== 'function') throw new DetunedError(ErrorCode.TEMPORARILY_UNAVAILABLE, 'Storage does not support runtime resource limits.', 503, false);
+   options.storage.configureResourceLimits(resourceLimits);
++  options.storage.prepareRuntimeReadIndexes?.();
+   const clock = options.clock ?? new SystemClock();
+   const idGen = options.idGen ?? new CryptoIdGenerator();
+   const hasher = options.hasher ?? new CryptoHasher();

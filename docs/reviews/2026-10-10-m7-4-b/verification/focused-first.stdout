@@ -1,0 +1,32 @@
+[WARN] Your node_modules are out of sync with your lockfile. The value of the enableGlobalVirtualStore setting has changed
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts (5 tests | 5 failed) 2455ms
+   × M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release 617ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles 478ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown 444ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan 463ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors 454ms
+     → expected true to be false // Object.is equality
+ ❯ tests/contracts/m3-shutdown-contract.test.ts (4 tests | 1 failed) 796ms
+   ✓ SD B01: shutdown configuration is bounded and never echoes input 1ms
+   ✓ SD B02: one signal/listen-failure task drains before app/database/strict lock and cleans owned listeners 16ms
+   ✓ SD B03: real app root closing cancels all leases before await and rejects new business while finally settles 99ms
+   × SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly 680ms
+     → expected 1 to be +0 // Object.is equality
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 689ms
+ ❯ tests/integration/m7-local-startup.test.ts (1 test | 1 failed) 528ms
+   × LS01 real built CLI private init, readiness, graceful close, token-free reinit and same-database restart 527ms
+     → expected { journeyCompleted: false, …(2) } to deeply equal { journeyCompleted: true, …(2) }
+ ✓ tests/contracts/m7-delivery-layout.test.ts (2 tests) 4ms
+
+ Test Files  3 failed | 2 passed (5)
+      Tests  7 failed | 16 passed (23)
+   Start at  10:01:22
+   Duration  6.10s (transform 440ms, setup 0ms, collect 921ms, tests 4.47s, environment 0ms, prepare 150ms)
+

@@ -1,0 +1,20 @@
+Scope: 9 of 10 workspace projects
+packages/protocol lint$ tsc --noEmit
+packages/protocol lint: Done
+packages/core lint$ tsc --noEmit
+packages/client lint$ tsc --noEmit
+packages/client lint: Done
+packages/core lint: Done
+modules/review lint$ tsc --noEmit
+packages/mcp lint$ tsc --noEmit
+packages/adapter-pi lint$ tsc --noEmit
+packages/storage-sqlite lint$ node scripts/check-schema-sync.mjs && tsc --noEmit
+packages/storage-sqlite lint: schema.sql and schema.ts are in exact synchronization.
+modules/review lint: Done
+packages/mcp lint: Done
+packages/storage-sqlite lint: Done
+packages/adapter-pi lint: Done
+packages/server lint$ tsc --noEmit
+packages/server lint: Done
+packages/cli lint$ tsc --noEmit
+packages/cli lint: Done

@@ -1,3 +1,6 @@
+import { markReviewRequestsStale } from './review-lifecycle.js';
+import { validateNewTypedWrite } from './typed-write-validation.js';
+import { linkRevisionArtifacts } from './artifact-references.js';
 import { DetunedError, ErrorCode, } from '@detuned/protocol';
 export class PostService {
     storage;
@@ -14,70 +17,21 @@ export class PostService {
         this.authService = authService;
         this.idempotency = idempotency;
     }
+    // The other kinds retain their existing behavior; four typed kinds are checked only in new actions.
     validateStructuredContent(kind, structured) {
-        const structuredRequiredKinds = ['proposal', 'claim', 'objection', 'failure', 'summary'];
-        if (structuredRequiredKinds.includes(kind)) {
+        if (['proposal', 'claim', 'failure', 'summary'].includes(kind))
+            return;
+        if (kind === 'objection') {
             if (!structured || typeof structured !== 'object') {
                 throw new DetunedError(ErrorCode.VALIDATION_ERROR, `${kind} 类型的帖子必须提供 structured 结构化字段。`, 422);
             }
-        }
-        if (!structured)
-            return;
-        if (kind === 'proposal' || kind === 'claim') {
-            if (!structured.statement ||
-                typeof structured.statement !== 'string' ||
-                structured.statement.trim() === '' ||
-                !Array.isArray(structured.assumptions) ||
-                !structured.scope ||
-                typeof structured.scope !== 'string' ||
-                structured.scope.trim() === '' ||
-                !structured.falsification_plan ||
-                typeof structured.falsification_plan !== 'string' ||
-                structured.falsification_plan.trim() === '') {
-                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'proposal/claim 必须包含 statement, assumptions (数组), scope, falsification_plan。', 422);
-            }
-        }
-        else if (kind === 'objection') {
             if (!structured.target_ref || !structured.issue || !structured.impact) {
                 throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'objection 必须包含 target_ref, issue, impact。', 422);
-            }
-        }
-        else if (kind === 'failure') {
-            const validCategories = new Set([
-                'counterexample',
-                'proof_gap',
-                'test_failure',
-                'performance_failure',
-                'environment_error',
-                'budget_exhausted',
-            ]);
-            if (!validCategories.has(structured.category)) {
-                throw new DetunedError(ErrorCode.VALIDATION_ERROR, `非法的 failure category: ${structured.category}。有效枚举为: counterexample, proof_gap, test_failure, performance_failure, environment_error, budget_exhausted`, 422);
-            }
-            if (!structured.attempt ||
-                !Array.isArray(structured.assumptions) ||
-                !structured.tested_scope ||
-                !structured.expected ||
-                !structured.observed ||
-                !structured.ruled_out ||
-                !Array.isArray(structured.evidence_refs) ||
-                !['provided', 'unverified'].includes(structured.evidence_state) ||
-                !Array.isArray(structured.not_ruled_out) ||
-                !Array.isArray(structured.retry_when)) {
-                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'failure 必须包含 attempt, category, assumptions, tested_scope, expected, observed, ruled_out, evidence_refs, evidence_state, not_ruled_out, retry_when。', 422);
-            }
-        }
-        else if (kind === 'summary') {
-            if (!Array.isArray(structured.source_refs) || structured.source_refs.length === 0) {
-                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'summary 必须包含至少一个 source_refs。', 422);
             }
         }
     }
     createPost(auth, spaceId, threadId, req, requestKey) {
         this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
-        if (req.artifact_ids && req.artifact_ids.length > 0) {
-            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '附件存储在 M1 尚未开放 (scheduled for M2)。', 400);
-        }
         if (req.title && [...req.title].length > 160) {
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, '标题长度超出上限 (160 字符)。', 400);
         }
@@ -93,10 +47,11 @@ export class PostService {
             if (thread.state === 'archived') {
                 throw new DetunedError(ErrorCode.FORBIDDEN, '主题已归档，禁止发布新帖子。', 403);
             }
+            const structured = validateNewTypedWrite(tx, this.authService, auth, spaceId, req.kind, req.structured, req.artifact_ids) ?? req.structured;
             const now = this.clock.nowIso();
             const postId = this.idGen.generateId('pst');
             const body = req.body ?? '';
-            const contentHash = this.hasher.sha256(`${req.title}\n${req.summary}\n${body}\n${this.hasher.canonicalJson(req.structured ?? {})}`);
+            const contentHash = this.hasher.sha256(`${req.title}\n${req.summary}\n${body}\n${this.hasher.canonicalJson(structured ?? {})}`);
             const post = {
                 id: postId,
                 space_id: spaceId,
@@ -114,12 +69,13 @@ export class PostService {
                 summary: req.summary,
                 body,
                 tags: req.tags ?? [],
-                structured: req.structured ?? {},
+                structured: structured ?? {},
                 content_hash: contentHash,
                 editor_id: auth.actor.id,
                 created_at: now,
             };
             tx.createPost(post, postRev);
+            linkRevisionArtifacts(tx, spaceId, postId, 1, req.artifact_ids, structured);
             // Process references/relations if any
             const relations = [];
             if (req.refs && req.refs.length > 0) {
@@ -176,9 +132,6 @@ export class PostService {
     }
     createRevision(auth, spaceId, postId, req, requestKey) {
         this.authService.requireSpaceAccess(auth, spaceId, 'contributor');
-        if (req.artifact_ids && req.artifact_ids.length > 0) {
-            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '附件存储在 M1 尚未开放 (scheduled for M2)。', 400);
-        }
         if (req.title && [...req.title].length > 160) {
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, '标题长度超出上限 (160 字符)。', 400);
         }
@@ -190,10 +143,6 @@ export class PostService {
             if (!post || post.space_id !== spaceId) {
                 throw new DetunedError(ErrorCode.NOT_FOUND, '帖子不存在。', 404);
             }
-            // Only original author can revise
-            if (post.author_id !== auth.actor.id) {
-                throw new DetunedError(ErrorCode.FORBIDDEN, '仅原作者可为此帖子发布新修订。', 403);
-            }
             if (post.lifecycle !== 'active') {
                 throw new DetunedError(ErrorCode.FORBIDDEN, '非活跃状态的帖子不可发布新修订。', 403);
             }
@@ -201,10 +150,11 @@ export class PostService {
                 throw new DetunedError(ErrorCode.REVISION_CONFLICT, '该帖子已有新修订，请重新读取后提交。', 409, false, { current_revision: post.current_revision });
             }
             this.validateStructuredContent(post.kind, req.structured);
+            const structured = validateNewTypedWrite(tx, this.authService, auth, spaceId, post.kind, req.structured, req.artifact_ids) ?? req.structured;
             const now = this.clock.nowIso();
             const nextRevision = post.current_revision + 1;
             const body = req.body ?? '';
-            const contentHash = this.hasher.sha256(`${req.title}\n${req.summary}\n${body}\n${this.hasher.canonicalJson(req.structured ?? {})}`);
+            const contentHash = this.hasher.sha256(`${req.title}\n${req.summary}\n${body}\n${this.hasher.canonicalJson(structured ?? {})}`);
             const updatedPost = {
                 ...post,
                 current_revision: nextRevision,
@@ -216,12 +166,14 @@ export class PostService {
                 summary: req.summary,
                 body,
                 tags: req.tags ?? [],
-                structured: req.structured ?? {},
+                structured: structured ?? {},
                 content_hash: contentHash,
                 editor_id: auth.actor.id,
                 created_at: now,
             };
             tx.createPostRevision(updatedPost, postRev);
+            markReviewRequestsStale(tx, spaceId, { kind: 'post', objectId: postId, actorId: auth.actor.id, changedAt: now });
+            linkRevisionArtifacts(tx, spaceId, postId, nextRevision, req.artifact_ids, structured);
             const relations = [];
             if (req.refs && req.refs.length > 0) {
                 for (const ref of req.refs) {
@@ -272,6 +224,14 @@ export class PostService {
                 created_at: now,
             });
             return { post: updatedPost, revision: postRev, relations };
+        }, (tx) => {
+            const post = tx.findPostById(postId);
+            if (!post || post.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '帖子不存在。', 404);
+            // Only original author can revise
+            if (post.author_id !== auth.actor.id) {
+                throw new DetunedError(ErrorCode.FORBIDDEN, '仅原作者可为此帖子发布新修订。', 403);
+            }
         }).data;
     }
     withdrawPost(auth, spaceId, postId, req, requestKey) {
@@ -281,11 +241,6 @@ export class PostService {
             if (!post || post.space_id !== spaceId) {
                 throw new DetunedError(ErrorCode.NOT_FOUND, '帖子不存在。', 404);
             }
-            const isAuthor = post.author_id === auth.actor.id;
-            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
-            if (!isAuthor && !isMaintainer) {
-                throw new DetunedError(ErrorCode.FORBIDDEN, '仅作者或空间维护者可以撤回帖子。', 403);
-            }
             if (post.current_revision !== req.expected_revision) {
                 throw new DetunedError(ErrorCode.REVISION_CONFLICT, '帖子修订版本与请求不一致。', 409, false, { current_revision: post.current_revision });
             }
@@ -294,6 +249,7 @@ export class PostService {
                 lifecycle: 'withdrawn',
             };
             tx.updatePost(updated);
+            markReviewRequestsStale(tx, spaceId, { kind: 'post', objectId: postId, actorId: auth.actor.id, changedAt: this.clock.nowIso() });
             tx.appendEvent(spaceId, {
                 id: this.idGen.generateId('evt'),
                 space_id: spaceId,
@@ -305,6 +261,15 @@ export class PostService {
                 created_at: this.clock.nowIso(),
             });
             return updated;
+        }, (tx) => {
+            const post = tx.findPostById(postId);
+            if (!post || post.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '帖子不存在。', 404);
+            const isAuthor = post.author_id === auth.actor.id;
+            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
+            if (!isAuthor && !isMaintainer) {
+                throw new DetunedError(ErrorCode.FORBIDDEN, '仅作者或空间维护者可以撤回帖子。', 403);
+            }
         }).data;
     }
     getPost(auth, spaceId, postId, revision) {

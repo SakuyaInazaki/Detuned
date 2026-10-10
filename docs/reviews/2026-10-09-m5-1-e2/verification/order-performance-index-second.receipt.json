@@ -1,0 +1,1113 @@
+{
+  "scope": "Owned synthetic100k metadata seed; real Bearer HTTP,20ordinary identities,4waves/80requests",
+  "window_limit_ms": 55000,
+  "quantile": "nearest-rank: sorted[ceil(p*n)-1], per wave n=20",
+  "target_p95_ms": 500,
+  "waves": [
+    {
+      "label": "ordinary-first20",
+      "concurrency": 20,
+      "samples": 20,
+      "p50_ms": 7.830874999999992,
+      "p95_ms": 10.356832999999938,
+      "max_ms": 10.643499999999904,
+      "errors": [],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "business_counts_unchanged": true,
+      "p95_under_500ms": true
+    },
+    {
+      "label": "ordinary-next20",
+      "concurrency": 20,
+      "samples": 20,
+      "p50_ms": 6.0285840000000235,
+      "p95_ms": 6.24741599999993,
+      "max_ms": 6.262958000000026,
+      "errors": [],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "business_counts_unchanged": true,
+      "p95_under_500ms": true
+    },
+    {
+      "label": "concentrated-first20",
+      "concurrency": 20,
+      "samples": 20,
+      "p50_ms": 139.55487500000004,
+      "p95_ms": 139.72516599999994,
+      "max_ms": 147.10566599999993,
+      "errors": [],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "business_counts_unchanged": true,
+      "p95_under_500ms": true
+    },
+    {
+      "label": "concentrated-next20",
+      "concurrency": 20,
+      "samples": 20,
+      "p50_ms": 182.14541699999995,
+      "p95_ms": 182.31224999999995,
+      "max_ms": 182.32595800000013,
+      "errors": [],
+      "returned_counts": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "business_counts_unchanged": true,
+      "p95_under_500ms": true
+    }
+  ],
+  "distribution": [
+    {
+      "label": "ordinary1000threadsAverage100",
+      "total_posts": 100000,
+      "nonempty_threads": 1000,
+      "min_posts": 100,
+      "max_posts": 100
+    },
+    {
+      "label": "concentrated100kOneThread",
+      "total_posts": 100000,
+      "nonempty_threads": 1,
+      "min_posts": 100000,
+      "max_posts": 100000
+    }
+  ],
+  "explain": [
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0000",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0001",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0002",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0003",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0004",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0005",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0006",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0007",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0008",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0009",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0010",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0011",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0012",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0013",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0014",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0015",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0016",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0017",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0018",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0019",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 36,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0000",
+        "2026-01-01T05:33:20.000Z",
+        "2026-01-01T05:33:20.000Z",
+        "private-perf-post-080000",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0001",
+        "2026-01-01T05:33:19.000Z",
+        "2026-01-01T05:33:19.000Z",
+        "private-perf-post-080001",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0002",
+        "2026-01-01T05:33:18.000Z",
+        "2026-01-01T05:33:18.000Z",
+        "private-perf-post-080002",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0003",
+        "2026-01-01T05:33:17.000Z",
+        "2026-01-01T05:33:17.000Z",
+        "private-perf-post-080003",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0004",
+        "2026-01-01T05:33:16.000Z",
+        "2026-01-01T05:33:16.000Z",
+        "private-perf-post-080004",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0005",
+        "2026-01-01T05:33:15.000Z",
+        "2026-01-01T05:33:15.000Z",
+        "private-perf-post-080005",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0006",
+        "2026-01-01T05:33:14.000Z",
+        "2026-01-01T05:33:14.000Z",
+        "private-perf-post-080006",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0007",
+        "2026-01-01T05:33:13.000Z",
+        "2026-01-01T05:33:13.000Z",
+        "private-perf-post-080007",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0008",
+        "2026-01-01T05:33:12.000Z",
+        "2026-01-01T05:33:12.000Z",
+        "private-perf-post-080008",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0009",
+        "2026-01-01T05:33:11.000Z",
+        "2026-01-01T05:33:11.000Z",
+        "private-perf-post-080009",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0010",
+        "2026-01-01T05:33:10.000Z",
+        "2026-01-01T05:33:10.000Z",
+        "private-perf-post-080010",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0011",
+        "2026-01-01T05:33:09.000Z",
+        "2026-01-01T05:33:09.000Z",
+        "private-perf-post-080011",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0012",
+        "2026-01-01T05:33:08.000Z",
+        "2026-01-01T05:33:08.000Z",
+        "private-perf-post-080012",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0013",
+        "2026-01-01T05:33:07.000Z",
+        "2026-01-01T05:33:07.000Z",
+        "private-perf-post-080013",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0014",
+        "2026-01-01T05:33:06.000Z",
+        "2026-01-01T05:33:06.000Z",
+        "private-perf-post-080014",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0015",
+        "2026-01-01T05:33:05.000Z",
+        "2026-01-01T05:33:05.000Z",
+        "private-perf-post-080015",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0016",
+        "2026-01-01T05:33:04.000Z",
+        "2026-01-01T05:33:04.000Z",
+        "private-perf-post-080016",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0017",
+        "2026-01-01T05:33:03.000Z",
+        "2026-01-01T05:33:03.000Z",
+        "private-perf-post-080017",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0018",
+        "2026-01-01T05:33:02.000Z",
+        "2026-01-01T05:33:02.000Z",
+        "private-perf-post-080018",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0019",
+        "2026-01-01T05:33:01.000Z",
+        "2026-01-01T05:33:01.000Z",
+        "private-perf-post-080019",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END AS sort_key FROM posts WHERE thread_id = ?) WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?) ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?",
+      "parameters": [
+        "private-perf-thread-0000",
+        "2026-01-01T00:00:20.000Z",
+        "2026-01-01T00:00:20.000Z",
+        "private-perf-post-099980",
+        21
+      ],
+      "plan": [
+        {
+          "id": 7,
+          "parent": 0,
+          "notused": 62,
+          "detail": "SEARCH posts USING INDEX posts_thread_created_sort_v1 (thread_id=?)"
+        },
+        {
+          "id": 44,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "app_closed": true,
+    "db_closed": true,
+    "temp_absent": true
+  },
+  "seed": {
+    "method": "Owned direct transaction,metadata posts only,no revisions/events; not100kHTTPwrites",
+    "milliseconds": 541.366167,
+    "posts": 100000,
+    "threads": 1002
+  },
+  "window_ms": 686.853917,
+  "requests": 80,
+  "all_p95_under_500ms": true,
+  "resources": {
+    "rss_bytes": 172294144,
+    "db_bytes": 40284160
+  },
+  "caller_index_ddl_changes": false,
+  "runtime_index": {
+    "type": "index",
+    "tbl_name": "posts",
+    "sql": "CREATE INDEX posts_thread_created_sort_v1 ON posts(thread_id,(CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END IS NULL),CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END,id)"
+  },
+  "ordinary_read_accounts": 20,
+  "hardware": {
+    "logical_cpus": 10,
+    "total_memory_bytes": 17179869184,
+    "platform": "darwin",
+    "node": "v26.3.0"
+  }
+}

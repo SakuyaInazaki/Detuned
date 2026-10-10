@@ -1,0 +1,9 @@
+{
+  "exit_code": 1,
+  "daemon_connected": false,
+  "diagnostic": "failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory",
+  "socket": "unix:///var/run/docker.sock",
+  "command": "docker version --format {{json .Server}}",
+  "empty_private_config": true,
+  "no_containers_or_images_operation": true
+}

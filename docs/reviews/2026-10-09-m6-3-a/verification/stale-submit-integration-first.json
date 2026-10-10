@@ -1,0 +1,36 @@
+{
+  "finding": "M6.3 stale head integration with M6.2 fresh submission",
+  "source": {
+    "path": "modules/review/src/submission-service.ts",
+    "sha256": "aa09b355c7717f90c7ddc45ed18f85bd129b607c47466d18510e86d2c88eb4f9",
+    "order": "fresh phase collecting check precedes freshMaterials snapshot current check"
+  },
+  "counterexample": {
+    "source": "tests/integration/m6-review-finalization-independent.test.ts DF03",
+    "path": "actual PostService.createRevision; actual current reviewer, bound session, strict valid body and new key",
+    "expected": {
+      "code": "SNAPSHOT_STALE",
+      "statusCode": 409
+    },
+    "observed": {
+      "code": "VALIDATION_ERROR",
+      "statusCode": 400
+    },
+    "receipt": "df03-stale-submit-first.json",
+    "assertions_after_failure_not_reached": [
+      "post-operation fullRows comparison"
+    ]
+  },
+  "positive_control": {
+    "old_upload_cases": [
+      "RA04",
+      "RA05",
+      "SD09"
+    ],
+    "receipt": "old-stale-upload-first.json",
+    "passed": 3,
+    "product_upload_current_check_precedes_phase": true
+  },
+  "products_modified_by_D": false,
+  "core_and_current25_run": false
+}

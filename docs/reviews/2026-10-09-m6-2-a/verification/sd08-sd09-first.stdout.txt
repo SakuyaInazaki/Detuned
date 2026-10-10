@@ -1,0 +1,23 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-submissions-independent.test.ts (9 tests | 2 failed | 7 skipped) 189ms
+   ↓ SD01 sealed payload and cited or unused private blobs stay inaccessible across actual read/event/HTTP surfaces, then only cited evidence opens
+   ↓ SD02 the last reviewer checks earlier private evidence redaction and readiness without reading another sealed assignment or committing partial reveal
+   ↓ SD03 actual SQLite final-key failure rolls back submission/session/count/event and permits a subsequent original-key commit with exact immutable replay
+   ↓ SD04 two genuine processes sharing a key commit one initial submission, and two distinct reviewers race one atomic reveal
+   ↓ SD05 current scope, credential and sessions are enforced while observer review privileges do not become public write privileges
+   ↓ SD06 corrupt submission bytes, session binding and compact reference remain refused during reads and ordinary reopen; failed private upload cleans physical blobs
+   ↓ SD07 submission DTO and its inactive tool reject terminal linebreak hash countervectors before any business action
+   × SD08 fixed own assignment remains readable with read-only credentials or later eligibility and phase changes, while new writes retain fresh gates 67ms
+     → expected [ { stage: 'readonly', …(2) }, …(3) ] to deeply equal [ { stage: 'readonly', …(2) }, …(3) ]
+   × SD09 fresh private upload rechecks snapshot material before or during real streaming and publishing, with no new key event artifact or residual blob 122ms
+     → expected [ …(6) ] to deeply equal [ …(6) ]
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 skipped (9)
+   Start at  15:09:20
+   Duration  952ms (transform 287ms, setup 0ms, collect 613ms, tests 189ms, environment 0ms, prepare 39ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

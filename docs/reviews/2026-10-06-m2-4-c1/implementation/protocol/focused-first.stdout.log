@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-focused-context-contracts.test.ts (1 test | 1 failed) 97ms
+   × M2.4-C.1 focused context transport > F01: valid same-space focus adds mandatory full metadata and omission preserves the old shape 97ms
+     → {"api_version":"1","request_id":"焦点\"\\🙂","error":{"code":"VALIDATION_ERROR","message":"本阶段不支持 focus_thread_id，请去掉该参数读取空间上下文。","retryable":false}}: expected 400 to be 200 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  19:42:30
+   Duration  584ms (transform 159ms, setup 0ms, collect 290ms, tests 97ms, environment 0ms, prepare 37ms)
+

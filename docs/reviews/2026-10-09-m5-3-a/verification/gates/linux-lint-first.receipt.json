@@ -1,0 +1,96 @@
+{
+  "phase": "lint",
+  "image_id": "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+  "container": "detuned-m53-d-linux-lint-08937e6f16",
+  "actual_gate_uid": 1000,
+  "cold_install_or_build_repeated": false,
+  "commands": [
+    {
+      "argv": [
+        "create",
+        "--name",
+        "detuned-m53-d-linux-lint-08937e6f16",
+        "--network",
+        "none",
+        "--entrypoint",
+        "node",
+        "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+        "-e",
+        "setInterval(()=>{},1000)"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 299,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "start",
+        "detuned-m53-d-linux-lint-08937e6f16"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 108,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "0:0",
+        "detuned-m53-d-linux-lint-08937e6f16",
+        "chown",
+        "-R",
+        "1000:1000",
+        "/app"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 9559,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "1000:1000",
+        "-e",
+        "HOME=/tmp",
+        "-e",
+        "CI=1",
+        "detuned-m53-d-linux-lint-08937e6f16",
+        "pnpm",
+        "lint"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 14448,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "rm",
+        "-f",
+        "detuned-m53-d-linux-lint-08937e6f16"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 450,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "inputs": [],
+  "exit_code": 0,
+  "timed_out": false,
+  "status": "passed",
+  "cleanup": {
+    "created": true,
+    "owned_container_removed": true,
+    "owned_VM_retained": true
+  }
+}

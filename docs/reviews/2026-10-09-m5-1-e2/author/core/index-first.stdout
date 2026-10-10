@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-post-order-index.test.ts (4 tests | 1 failed) 121ms
+   ✓ E2 runtime-only creation sort index > I01 startup creates optional index after quotas, reopened current and historical runtime accept it 107ms
+   ✓ E2 runtime-only creation sort index > I02 reserved wrong-definition collision rejects startup without dropping or changing data 2ms
+   × E2 runtime-only creation sort index > I03 real page-allocation FULL rolls back index and preserves original cap/data 5ms
+     → expected error to match asymmetric matcher
+   ✓ E2 runtime-only creation sort index > I04 constructor/read/readonly/legacy leave source unindexed; query plan uses exact expression index 7ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  06:52:51
+   Duration  775ms (transform 256ms, setup 0ms, collect 450ms, tests 121ms, environment 0ms, prepare 43ms)
+

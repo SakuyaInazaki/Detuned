@@ -1,0 +1,16 @@
+// Fixed local fixture only. Raw one-time CLI credentials stay in memory and never reach logs.
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import {mkdtemp,readdir,readFile,rm,lstat} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const require=createRequire(new URL('../../../../packages/storage-sqlite/package.json',import.meta.url)),Database=require('better-sqlite3'),exec=promisify(execFile);
+const root=await mkdtemp(join(tmpdir(),'detuned-backup-secret-check-'));let result;
+const command=async args=>JSON.parse((await exec(process.execPath,[resolve('packages/cli/dist/index.js'),'--json',...args],{timeout:20000,env:{PATH:process.env.PATH}})).stdout);
+const scan=async(dir,tokens)=>{let files=0,matches=0;const walk=async path=>{for(const e of await readdir(path,{withFileTypes:true})){const file=join(path,e.name);if(e.isDirectory())await walk(file);else{const bytes=await readFile(file);files++;if(tokens.some(t=>bytes.includes(Buffer.from(t))))matches++;}}};await walk(dir);return {files,matches};};
+try{const source=join(root,'source'),backup=join(root,'backup'),target=join(root,'restored');const initial=await command(['init','--data-dir',source]);const sourceDb=new Database(join(source,'detuned.sqlite'));const oldSecret=sourceDb.prepare("SELECT value FROM instance_metadata WHERE key='token_secret'").get().value;sourceDb.close();await command(['backup','--offline','--data-dir',source,'--output',backup]);const recovered=await command(['restore','--backup',backup,'--data-dir',target]);const backupScan=await scan(backup,[initial.admin_token,recovered.admin_token]),targetScan=await scan(target,[initial.admin_token,recovered.admin_token]);const archiveScan=await scan(resolve('docs/reviews/2026-10-06-m3-3-a'),[initial.admin_token,recovered.admin_token]);assert.equal(archiveScan.matches,0);assert.equal(backupScan.matches,0);assert.equal(targetScan.matches,0);const backupDb=new Database(join(backup,'detuned.sqlite'),{readonly:true,fileMustExist:true}),restoredDb=new Database(join(target,'detuned.sqlite'),{readonly:true,fileMustExist:true});assert.equal(backupDb.prepare("SELECT value FROM instance_metadata WHERE key='token_secret'").get().value,oldSecret);assert.notEqual(restoredDb.prepare("SELECT value FROM instance_metadata WHERE key='token_secret'").get().value,oldSecret);assert.equal(restoredDb.prepare('SELECT token_hash FROM credentials WHERE actor_id=?').get(recovered.admin_actor_id).token_hash,createHash('sha256').update(recovered.admin_token).digest('hex'));backupDb.close();restoredDb.close();result={actual_known_raw_credential_matches:0,new_package_archive_files_scanned:archiveScan.files,backup_files_scanned:backupScan.files,restored_files_scanned:targetScan.files,physical_backup_contains_original_instance_secret_expected:true,restored_instance_secret_rotated:true,new_credential_database_value_is_hash:true,one_time_stdout_only_in_memory:true};}finally{await rm(root,{recursive:true,force:true});}
+try{await lstat(root);throw Error('private fixture cleanup failed');}catch(e){if(e.code!=='ENOENT')throw e;}
+console.log(JSON.stringify({...result,own_private_fixture_removed:true}));

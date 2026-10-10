@@ -1,0 +1,79 @@
+--- before/scripts/integrations/web/fixtures.ts
++++ scripts/integrations/web/fixtures.ts
+@@ -4,7 +4,7 @@
+ import {fileURLToPath} from 'node:url';
+ import path from 'node:path';
+ import Database from 'better-sqlite3';
+-import {buildApp} from '../../../packages/server/dist/index.js';
++import {buildApp, ArtifactFileStore} from '../../../packages/server/dist/index.js';
+ import {bootstrapDatabase, SqliteStorage} from '../../../packages/storage-sqlite/dist/index.js';
+ import {CryptoHasher} from '../../../packages/core/dist/index.js';
+ 
+@@ -36,9 +36,12 @@
+   seedHistoricalFailure(title: string): Promise<Post>;
+   threadsByTitle(title: string): Array<{id: string; creator_id: string; space_id: string}>;
+   seedSyntheticLargeNote(title: string): Promise<Post>;
+-  revisePost(post: Post, input: {title?: string; body: string; structured?: Json}): Promise<Post>;
++  revisePost(post: Post, input: {title?: string; summary?: string; tags?: string[]; body: string; structured?: Json}): Promise<Post>;
+   postsByTitle(title: string): Array<{id: string; author_id: string; current_revision: number; space_id: string; thread_id: string}>;
+   relationsFrom(postId: string): Array<{source_post_id: string; source_revision: number; target_post_id: string; target_revision: number; type: string}>;
++  artifacts(): Array<{id: string; owner_id: string; space_id: string; sha256: string; bytes: number; state: string}>;
++  artifactsFor(postId: string, revision: number): Array<{artifact_id: string; purpose: string}>;
++  seedArtifact(input: {bytes: Uint8Array; mime?: string; post?: Post; state?: 'ready' | 'missing' | 'redacted'; visibility?: 'space' | 'review_assignment'; crossSpace?: boolean}): Promise<string>;
+   businessCounts(): Record<string, number>;
+   readonly httpEvents: HttpEvent[];
+   faultNext(match: {method: string; path: string}, fault: Fault): FaultHandle;
+@@ -103,8 +106,8 @@
+     const index = pending.findIndex(f => f.method === method && f.path === pathname);
+     const fault = index < 0 ? undefined : pending.splice(index, 1)[0];
+     const record: HttpEvent = {method, path: pathname, status: 0};
+-    if ((pathname.endsWith('/posts') || pathname.endsWith('/threads')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
+-    if (pathname.endsWith('/search')) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
++    if ((pathname.endsWith('/posts') || pathname.endsWith('/threads') || pathname.endsWith('/artifacts')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
++    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts')) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
+     httpEvents.push(record);
+     if (!upstream || fault?.fault === 'fail-before') {
+       record.status = 503; request.resume(); unavailable(response); fault?.entered.resolve(); return;
+@@ -158,7 +161,8 @@
+   }
+   try {
+     baseURL = await listen(proxy);
+-    app = buildApp({storage: new SqliteStorage(db), clock, webOrigin: baseURL, allowInsecureLoopback: true, webAssetsDir});
++    const artifactBlobs = await ArtifactFileStore.create(owned);
++    app = buildApp({artifactBlobs, storage: new SqliteStorage(db), clock, webOrigin: baseURL, allowInsecureLoopback: true, webAssetsDir});
+     let key = 0;
+     async function seed(method: 'POST' | 'PATCH' | 'DELETE', route: string, payload?: Json): Promise<Json> {
+       clock.refill();
+@@ -240,12 +244,30 @@
+         return value;
+       },
+       async revisePost(original, input) {
+-        const result = await seed('POST', `/spaces/${space.id}/posts/${original.id}/revisions`, {expected_revision: original.revision, title: input.title ?? original.title, summary: 'Private browser fixture revision', body: input.body, ...(input.structured ? {structured: input.structured} : {})});
++        const result = await seed('POST', `/spaces/${space.id}/posts/${original.id}/revisions`, {expected_revision: original.revision, title: input.title ?? original.title, summary: input.summary ?? 'Private browser fixture revision', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.structured ? {structured: input.structured} : {})});
+         return {id: original.id, title: input.title ?? original.title, revision: Number(json(result.revision).revision)};
+       },
+       postsByTitle(title) {return db.prepare('SELECT p.id,p.author_id,p.current_revision,p.space_id,p.thread_id FROM posts p JOIN post_revisions r ON r.post_id=p.id AND r.revision=p.current_revision WHERE r.title=? ORDER BY p.id').all(title) as ReturnType<ForumFixture['postsByTitle']>;},
+       relationsFrom(postId) {return db.prepare('SELECT source_post_id,source_revision,target_post_id,target_revision,type FROM relations WHERE source_post_id=?').all(postId) as ReturnType<ForumFixture['relationsFrom']>;},
+-      businessCounts() {return Object.fromEntries(['threads', 'posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
++      artifacts() {return db.prepare('SELECT id,owner_id,space_id,sha256,bytes,state FROM artifacts ORDER BY id').all() as ReturnType<ForumFixture['artifacts']>;},
++      artifactsFor(postId, revision) {return db.prepare('SELECT artifact_id,purpose FROM revision_artifacts WHERE post_id=? AND revision=? ORDER BY artifact_id').all(postId, revision) as ReturnType<ForumFixture['artifactsFor']>;},
++      async seedArtifact(input) {
++        if (browserAccessed) throw new Error('Historical artifact fixture must precede browser access.');
++        clock.refill();
++        const form = new FormData();
++        form.append('metadata', JSON.stringify({visibility: 'space'}));
++        form.append('file', new Blob([new Uint8Array(input.bytes)], {type: input.mime ?? 'application/octet-stream'}), 'private-fixture.bin');
++        const result = await fetch(baseURL + `/api/v1/spaces/${space.id}/artifacts`, {method: 'POST', headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`}, body: form, signal: AbortSignal.timeout(5000)});
++        if (!result.ok) throw new Error(`Private artifact seed rejected (${result.status}).`);
++        const id = string(json(json(await result.json()).data).id);
++        // Legal HTTP upload precedes explicitly synthetic historical association/status.
++        if (input.post) db.prepare('INSERT INTO revision_artifacts(post_id,revision,artifact_id,purpose) VALUES(?,?,?,?)').run(input.post.id, input.post.revision, id, 'private-fixture');
++        if (input.state) db.prepare('UPDATE artifacts SET state=? WHERE id=?').run(input.state,id);
++        if (input.visibility) db.prepare('UPDATE artifacts SET visibility=? WHERE id=?').run(input.visibility,id);
++        if (input.crossSpace) db.prepare('UPDATE artifacts SET space_id=? WHERE id=?').run(hidden.id,id);
++        return id;
++      },
++      businessCounts() {return Object.fromEntries(['threads', 'posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records', 'artifacts', 'revision_artifacts'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
+       httpEvents,
+       faultNext(match, fault) {const entered = deferred(), released = deferred(); pending.push({...match, fault, entered, released}); return {entered: entered.promise, release: released.resolve};},
+     };

@@ -1,0 +1,82 @@
+$ vitest run --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-space-read-contracts.test.ts > M2.4-B.1 actual fixed space rules transport > R04: strict route inputs and direct tool calls reject unapplied legacy parameters
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/contracts/m2-space-read-contracts.test.ts:61:55
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/contracts/m2-thread-posts-read-contracts.test.ts > M2.4-B.2.2 bounded thread metadata transport > D05: client and tool dispatch retain full page, query and signal; old thread stays data-only
+AssertionError: expected [ 'forum_context', …(8) ] to deeply equal [ 'forum_context', …(7) ]
+
+- Expected
++ Received
+
+@@ -5,6 +5,7 @@
+    "forum_publish",
+    "forum_relate",
+    "forum_subscribe",
+    "forum_poll",
+    "forum_ack",
++   "forum_review",
+  ]
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts:116:44
+    114|       expect(Value.Check(ToolReadParamsSchema, invalid)).toBe(false); …
+    115|     }
+    116|     expect(DETUNED_TOOLS.map(t => t.name)).toEqual(['forum_context', '…
+       |                                            ^
+    117|   });
+    118| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/contracts/m4-pi-runtime.test.ts > Pi selected credential failure and conflict are terminal locally; pre-cancel and missing space make no client
+AssertionError: expected [Function] to throw error including 'requires a space' but got 'Invalid forum tool arguments.'
+
+Expected: "requires a space"
+Received: "Invalid forum tool arguments."
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR07 inactive cancel tool derives the strict DTO without placing transport keys in its body
+AssertionError: expected [ 'forum_context', …(8) ] to not include 'forum_review'
+ ❯ tests/integration/m6-review-requests.test.ts:97:43
+     95|  expect(ToolReviewCancelOpSchema.properties.expected_version).toBe(Can…
+     96|  expect(ToolReviewCancelOpSchema.properties.reason).toBe(CancelReviewR…
+     97|  expect(DETUNED_TOOLS.map(t=>t.name)).not.toContain('forum_review');
+       |                                           ^
+     98| });
+     99| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  packages/protocol/tests/schema.test.ts > Protocol Schemas > validates forum tools definitions
+AssertionError: expected 9 to be 8 // Object.is equality
+
+- Expected
++ Received
+
+- 8
++ 9
+
+ ❯ packages/protocol/tests/schema.test.ts:68:34
+     66| 
+     67|   it('validates forum tools definitions', () => {
+     68|     expect(DETUNED_TOOLS.length).toBe(8);
+       |                                  ^
+     69|     const toolNames = DETUNED_TOOLS.map((t) => t.name);
+     70|     expect(toolNames).toContain('forum_context');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

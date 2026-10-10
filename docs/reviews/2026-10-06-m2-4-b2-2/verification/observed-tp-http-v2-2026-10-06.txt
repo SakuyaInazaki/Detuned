@@ -1,0 +1,79 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "TP02-03",
+      "mode": "storage-null-budget",
+      "pages": 8,
+      "posts": 91,
+      "no_skip_duplicate": true
+    },
+    {
+      "id": "TP02-03",
+      "mode": "storage-more-budget",
+      "pages": 8,
+      "posts": 91,
+      "no_skip_duplicate": true
+    },
+    {
+      "id": "TP02-03",
+      "mode": "limit-only",
+      "pages": 91,
+      "posts": 91,
+      "no_skip_duplicate": true
+    },
+    {
+      "id": "TP02-03",
+      "mode": "changing-limit-budget",
+      "pages": 3,
+      "posts": 91,
+      "no_skip_duplicate": true
+    },
+    {
+      "id": "TP02-03",
+      "mode": "default",
+      "pages": 3,
+      "posts": 91,
+      "no_skip_duplicate": true
+    },
+    {
+      "id": "TP05",
+      "absent_lower_bound_accepted": true,
+      "strict_payload_binding": true
+    },
+    {
+      "id": "TP06-TTL",
+      "chain_not_extended": true,
+      "equal200_plusone400": true
+    },
+    {
+      "id": "TP01",
+      "metadata_all_lifecycles_archived": true,
+      "no_post_body_projection": true
+    },
+    {
+      "id": "TP04",
+      "empty_thread": false,
+      "accepted_quotes": 1506,
+      "rejected_quotes": 1507,
+      "actual_accepted_bytes": 4095
+    },
+    {
+      "id": "TP04",
+      "empty_thread": true,
+      "accepted_quotes": 1860,
+      "rejected_quotes": 1861,
+      "actual_accepted_bytes": 4095
+    },
+    {
+      "id": "TP06-ACL",
+      "removed404_revoked401_before_bad_cursor": true,
+      "no_read_writes": true
+    }
+  ],
+  "fixture_origin": "synthetic stored metadata, not historical success",
+  "limits": [
+    "dynamic id ASC not creation time or cross-page snapshot",
+    "wholebody cap excludes SDK/error/headers"
+  ]
+}

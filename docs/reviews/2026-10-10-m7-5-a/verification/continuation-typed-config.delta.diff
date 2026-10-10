@@ -1,0 +1,137 @@
+--- 9586 actual failed
++++ typed-config continuation
+@@ -5,7 +5,7 @@
+ import hashlib, json, os, re, selectors, shutil, signal, stat, subprocess, sys
+ import tarfile, time, urllib.parse
+ 
+-VERIFY = Path(__file__).resolve().parent / 'continuation'
++VERIFY = Path(__file__).resolve().parent / 'continuation-2'
+ PLAN = json.loads((VERIFY / 'execution-plan.json').read_text())
+ REPO = Path(PLAN['repo'])
+ START = 0.0
+@@ -70,7 +70,7 @@
+     limit = min(seconds, left())
+     if limit <= 0:
+         raise RuntimeError('TOTAL_DEADLINE')
+-    raw = ROOT / 'continuation-output'
++    raw = ROOT / 'continuation-2-output'
+     paths = [raw / (name + suffix) for suffix in ['.stdout', '.stderr']]
+     files = [open(p, 'xb') for p in paths]
+     for p in paths:
+@@ -286,6 +286,25 @@
+                 pass
+             else:
+                 raise RuntimeError('PRIOR_PID_NOT_ABSENT')
++        previous = VERIFY.parent / 'continuation'
++        for name, value in PLAN['continuation']['prior_continuation_receipt_sha256'].items():
++            if digest(previous / name) != value:
++                raise RuntimeError('PRIOR_CONTINUATION_RECEIPT_DRIFT')
++        previous_result = json.loads((previous / 'final.receipt.json').read_text())
++        if previous_result['status'] != 'failed' or previous_result['failure_enum'] != 'STAGE_NONZERO' or not previous_result['original_sources_locks_dist_verified_unchanged'] or [r['stage'] for r in previous_result['stages']] != ['esbuild']:
++            raise RuntimeError('PRIOR_CONTINUATION_BOUNDARY')
++        for row in previous_result['stages']:
++            if not row['actual_close'] or not row['group_absent'] or exists_group(row['pid']):
++                raise RuntimeError('PRIOR_CONTINUATION_GROUP_PRESENT')
++            try:
++                os.kill(row['pid'], 0)
++            except ProcessLookupError:
++                pass
++            else:
++                raise RuntimeError('PRIOR_CONTINUATION_PID_PRESENT')
++            for i, suffix in enumerate(['.stdout','.stderr']):
++                if digest(ROOT / 'continuation-output' / (row['stage'] + suffix)) != row['output_hashes'][i]:
++                    raise RuntimeError('PRIOR_CONTINUATION_OUTPUT_DRIFT')
+         for name, expected in [('node-version','v22.19.0\n'),('pnpm-version','11.7.0\n')]:
+             row = json.loads((prior / (name + '.receipt.json')).read_text())
+             if row['close_code'] != 0 or row['close_signal'] is not None or (ROOT / 'output' / (name + '.stdout')).read_text() != expected:
+@@ -314,6 +333,22 @@
+         policy = '(version 1)\n(allow default)\n(deny file-write*)\n(allow file-write* (subpath "' + str(ROOT) + '"))\n(deny file-read* (subpath "/Users/sakimi"))\n'
+         if (ROOT / 'config/pnpm/config.yaml').read_text() != yaml or (ROOT / 'policy.sb').read_text() != policy or any((ROOT / name).read_text() != '' for name in ['npm-user','npm-global']):
+             raise RuntimeError('PRIVATE_CONFIG_POLICY_DRIFT')
++        for base in [WORK, ROOT / 'home', ROOT / 'config/pnpm']:
++            for name in ['.pnpmfile.cjs','.pnpmfile.js','.pnpmfile.mjs']:
++                if os.path.lexists(base / name):
++                    raise RuntimeError('UNEXPECTED_PNPM_HOOK')
++        if any(term in (WORK / 'pnpm-workspace.yaml').read_text() for term in ['pnpmfile:', 'globalPnpmfile:', 'configDependencies:', 'config-dependencies:']):
++            raise RuntimeError('UNEXPECTED_PNPM_CONFIG_HOOK')
++        typed_yaml = yaml.replace('pmOnFail: error\n', '') + 'networkConcurrency: 1\nchildConcurrency: 1\n'
++        config_stage = ROOT / 'config/pnpm/.typed-config.stage'
++        with config_stage.open('x') as f:
++            f.write(typed_yaml)
++            f.flush()
++            os.fsync(f.fileno())
++        config_stage.chmod(0o600)
++        os.replace(config_stage, ROOT / 'config/pnpm/config.yaml')
++        if (ROOT / 'config/pnpm/config.yaml').read_text() != typed_yaml:
++            raise RuntimeError('TYPED_PRIVATE_CONFIG_WRITE')
+         ENV = {'PATH': str(node.parent) + ':/usr/bin:/bin', 'HOME': str(ROOT / 'home'),
+                'TMPDIR': str(ROOT / 'tmp'), 'XDG_CONFIG_HOME': str(ROOT / 'config'),
+                'XDG_CACHE_HOME': str(ROOT / 'cache'), 'XDG_DATA_HOME': str(ROOT / 'data'),
+@@ -321,30 +356,57 @@
+                'NPM_CONFIG_USERCONFIG': str(ROOT / 'npm-user'), 'NPM_CONFIG_GLOBALCONFIG': str(ROOT / 'npm-global'),
+                'NPM_CONFIG_CACHE': str(ROOT / 'cache'), 'CI': 'true', 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD': '1',
+                'NODE_COMPILE_CACHE': str(ROOT / 'cache/node-compile')}
+-        (ROOT / 'continuation-output').mkdir(mode=0o700)
++        (ROOT / 'continuation-2-output').mkdir(mode=0o700)
+         save('fixture-ledger.json', {'root': str(ROOT), 'uid': os.getuid(), 'mode': '0700',
+              'scope': 'exact root reused from verified empty-fixture install; no other temp scan'})
+         size_check()
+         save('continuation-preflight.receipt.json', {'passed': True, 'copy_files_verified': len(PLAN['copy_files']),
+              'prior_stage_count': 4, 'prior_actual_close_and_positive_pid_group_absence': True,
+              'fixed_node_archive_binary_and_pnpm_hashes_verified': True, 'prior_version_outputs_verified': True,
+-             'private_policy_config_unchanged': True, 'original_437_source_555_dist_verified_unchanged': True,
++             'private_policy_unchanged': True, 'private_config_minimal_typed_update': True,
++             'private_config_sha256': digest(ROOT / 'config/pnpm/config.yaml'),
++             'ignore_pnpmfile_effective_flag_claim': False, 'exact_copy_no_hook_boundary': True,
++             'original_437_source_555_dist_verified_unchanged': True,
+              'new_download_install_or_version_run': False})
+         prefix = ['/usr/bin/sandbox-exec', '-f', str(ROOT / 'policy.sb')]
+         pnpm = prefix + [str(node), PLAN['pnpm_entry']]
+-        opts = ['--config.enable-global-virtual-store=false', '--config.side-effects-cache=false',
+-                '--config.pm-on-fail=error', '--config.verify-deps-before-run=warn',
++        opts = ['--pm-on-fail=error',
+                 '--config.store-dir=' + str(ROOT / 'store'), '--config.cache-dir=' + str(ROOT / 'cache'),
+-                '--config.state-dir=' + str(ROOT / 'state'), '--config.virtual-store-dir=' + str(WORK / 'node_modules/.pnpm'),
+-                '--config.workspace-concurrency=1', '--config.network-concurrency=1',
+-                '--config.child-concurrency=1', '--config.ignore-pnpmfile=true']
++                '--config.state-dir=' + str(ROOT / 'state'), '--config.virtual-store-dir=' + str(WORK / 'node_modules/.pnpm')]
++        keys = PLAN['continuation']['effective_config_gate']['keys']
++        probe = """const {spawnSync}=require('node:child_process');
++const [entry,optionsJSON,keysJSON]=process.argv.slice(1);const options=JSON.parse(optionsJSON),keys=JSON.parse(keysJSON);
++const end=Date.now()+9000,rows=[];
++for(const key of keys){const remaining=end-Date.now();if(remaining<=0)throw Error('CONFIG_PROBE_DEADLINE');
++const r=spawnSync(process.execPath,[entry,...options,'config','get','--json',key],{env:process.env,cwd:process.cwd(),encoding:'utf8',timeout:remaining,maxBuffer:65536});
++if(r.error||r.status!==0||r.signal!==null)throw Error('CONFIG_PROBE_CHILD_FAILURE');
++let value;try{value=JSON.parse(r.stdout)}catch{throw Error('CONFIG_PROBE_JSON_FAILURE')}
++rows.push({key,type:typeof value,value,pid:r.pid,closeCode:r.status,closeSignal:r.signal,actualClose:true});}
++process.stdout.write(JSON.stringify({rows})+'\n');"""
++        phase('effective-config', prefix + [str(node), '-e', probe, PLAN['pnpm_entry'], json.dumps(opts), json.dumps(keys)], 10)
++        config_result = json.loads((ROOT / 'continuation-2-output/effective-config.stdout').read_text())
++        expected = {'enable-global-virtual-store': False, 'side-effects-cache': False,
++                    'network-concurrency': 1, 'child-concurrency': 1, 'pm-on-fail': 'error',
++                    'store-dir': str(ROOT / 'store'), 'cache-dir': str(ROOT / 'cache'),
++                    'state-dir': str(ROOT / 'state'), 'virtual-store-dir': str(WORK / 'node_modules/.pnpm'),
++                    'globalconfig': str(ROOT / 'config/pnpm/config.yaml')}
++        rows = config_result['rows']
++        if [r['key'] for r in rows] != keys:
++            raise RuntimeError('CONFIG_PROBE_KEY_BOUNDARY')
++        for row in rows:
++            value = expected[row['key']]
++            if type(row['value']) is not type(value) or row['value'] != value or row['closeCode'] != 0 or row['closeSignal'] is not None or row['actualClose'] is not True:
++                raise RuntimeError('CONFIG_PROBE_EFFECTIVE_MISMATCH')
++        save('effective-config-safe-summary.json', {'rows': rows, 'fixed_pnpm_sha256': PLAN['pnpm_bundle_sha256'],
++             'yaml_sha256': digest(ROOT / 'config/pnpm/config.yaml'), 'same_pnpm_getConfig_loader': True,
++             'not_a_hard_network_firewall': True, 'pnpm_config_dot_numbers_or_booleans_used': False})
+         phase('esbuild', pnpm + opts + ['rebuild', 'esbuild'], 60)
+         smoke = "import Database from 'better-sqlite3';const db=new Database(':memory:');if(db.prepare('SELECT 1 AS n').get().n!==1)throw Error('SQLite smoke failed');db.close();"
+         phase('sqlite-smoke', prefix + [str(node), '--input-type=module', '-e', smoke], 10)
+         for package in PLAN['packages']:
+-            phase('build-' + package, pnpm + opts + ['--filter', '@detuned/' + package, 'run', 'build'], 60)
+-        test_json = ROOT / 'continuation-output/test-results.json'
+-        phase('backend-tests', pnpm + opts + ['exec', 'vitest', 'run'] + PLAN['tests'] +
++            phase('build-' + package, pnpm + opts + ['--workspace-concurrency=1', '--filter', '@detuned/' + package, 'run', 'build'], 60)
++        test_json = ROOT / 'continuation-2-output/test-results.json'
++        phase('backend-tests', pnpm + opts + ['--workspace-concurrency=1', 'exec', 'vitest', 'run'] + PLAN['tests'] +
+               ['--maxWorkers=1', '--no-file-parallelism', '--reporter=json', '--outputFile=' + str(test_json)], 900)
+         results = json.loads(test_json.read_text())
+         assert results['success'] is True

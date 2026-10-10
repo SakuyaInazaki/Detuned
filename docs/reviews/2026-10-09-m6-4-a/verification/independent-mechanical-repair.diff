@@ -1,0 +1,18 @@
+--- tests/contracts/m6-review-http-independent.test.ts:first-runtime
++++ tests/contracts/m6-review-http-independent.test.ts:mechanical-repair
+@@ -16,13 +16,13 @@
+ afterEach(async()=>{while(cleanups.length)await cleanups.pop()!();});
+ class Clock {value=Date.parse('2026-10-09T12:00:00.000Z');now(){return new Date(this.value);}nowIso(){return this.now().toISOString();}tick(){this.value+=1000;}}
+ const policy:ReviewPolicy={enabled:true,required_reviewers:2,exclude_contributors:true,distinct_actors:true,distinct_independence_groups:true,seal_until_all_submitted:true,invalidate_on_revision:true,required_checks:[],allow_open_objections:false};
+-const tables=['artifacts','review_snapshots','review_requests','review_request_versions','review_assignments','review_assignment_sessions','review_submissions','review_decisions','events','idempotency_records'];
++const tables=['artifacts','snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions','review_decisions','events','idempotency_records'];
+ interface Wire {status:number;headers:IncomingHttpHeaders;body:unknown}
+ const object=(v:unknown):Record<string,unknown>=>{if(!v||typeof v!=='object'||Array.isArray(v))throw new Error('Owned HTTP fixture object absent.');return v as Record<string,unknown>;};
+ const text=(v:unknown):string=>{if(typeof v!=='string')throw new Error('Owned HTTP fixture string absent.');return v;};
+ const data=(r:Wire)=>object(object(r.body).data);
+ const code=(r:Wire)=>object(object(r.body).error).code;
+-async function error(run:()=>Promise<unknown>,expected:string,status?:number){let value:unknown;try{await run();}catch(e){value=e;}const e=value as {code?:unknown;status?:unknown}|undefined;expect(e?.code).toBe(expected);if(status!==undefined)expect(e?.status).toBe(status);}
++async function error(run:()=>Promise<unknown>,expected:string,status?:number){let value:unknown;try{await run();}catch(e){value=e;}const e=value as {code?:unknown;statusCode?:unknown}|undefined;expect(e?.code).toBe(expected);if(status!==undefined)expect(e?.statusCode).toBe(status);}
+ async function wire(url:string,method:string,route:string,headers:Record<string,string>={},body?:unknown):Promise<Wire>{
+  const bytes=body===undefined?undefined:JSON.stringify(body);
+  return new Promise((resolve,reject)=>{

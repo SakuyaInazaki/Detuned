@@ -1,0 +1,44 @@
+{
+  "extends": "/Users/sakimi/Desktop/Detuned/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "/Users/sakimi/Desktop/Detuned",
+    "baseUrl": "/Users/sakimi/Desktop/Detuned",
+    "paths": {
+      "@detuned/protocol": [
+        "packages/protocol/src/index.ts"
+      ],
+      "@detuned/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@detuned/storage-sqlite": [
+        "packages/storage-sqlite/src/index.ts"
+      ],
+      "@detuned/server": [
+        "packages/server/src/index.ts"
+      ],
+      "@detuned/client": [
+        "packages/client/src/index.ts"
+      ],
+      "@detuned/client/node": [
+        "packages/client/src/node.ts"
+      ]
+    },
+    "typeRoots": [
+      "/Users/sakimi/Desktop/Detuned/node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "/Users/sakimi/Desktop/Detuned/packages/protocol/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/core/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/storage-sqlite/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/server/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/cli/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/mcp/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/packages/client/src/**/*.ts",
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m4-mcp-schema.test.ts"
+  ]
+}

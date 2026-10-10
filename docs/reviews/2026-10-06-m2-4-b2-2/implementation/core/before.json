@@ -1,0 +1,23 @@
+{
+  "stage": "before",
+  "source": "existing B.2.1-accepted dist; public HTTP; isolated in-memory SQLite",
+  "full_status": 200,
+  "limit": 100,
+  "metadata_items": 60,
+  "actual_compact_http_bytes": 17913,
+  "target_budget": 4096,
+  "exceeds_budget": true,
+  "returned_metadata_exact": true,
+  "no_body_fields": true,
+  "full_meta": {
+    "truncated": false,
+    "next_cursor": null
+  },
+  "raw_cursor_equals_last_sent_id": true,
+  "first_page_count": 7,
+  "second_page_count": 53,
+  "static_collection_join_exact": true,
+  "existing_budget_query_status": 400,
+  "existing_budget_query_error": "VALIDATION_ERROR",
+  "limitation": "Existing directory returns exact complete metadata/raw keyset pages but rejects max_bytes and has no bounded signed-directory contract."
+}

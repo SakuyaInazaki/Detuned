@@ -1,0 +1,362 @@
+{
+  "rounds": [
+    {
+      "kind": "event wake then explicitack",
+      "clients": 20,
+      "wait_elapsed_ms": [
+        119.28370800000016,
+        119.51575000000003,
+        121.60058400000003,
+        124.43387499999994,
+        117.08612500000004,
+        129.07970799999998,
+        119.290708,
+        121.85279199999991,
+        122.27862500000015,
+        121.22341699999993,
+        127.91112499999986,
+        132.8537080000001,
+        127.99858299999983,
+        123.19662499999981,
+        131.48345900000004,
+        130.66170899999997,
+        124.81908300000009,
+        128.78237499999977,
+        128.63275,
+        131.35062500000004
+      ],
+      "after": {
+        "type": "stats",
+        "id": 66,
+        "pid": 44730,
+        "pending": 0,
+        "rss": 119095296,
+        "resources": [
+          "PipeWrap",
+          "PipeWrap",
+          "TCPServerWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap"
+        ]
+      }
+    },
+    {
+      "kind": "noevent realdeadline800ms",
+      "clients": 20,
+      "wait_elapsed_ms": [
+        807.2473750000001,
+        808.090334,
+        816.8419999999999,
+        812.0943750000001,
+        816.763042,
+        812.1207079999999,
+        816.6934160000001,
+        832.4703339999999,
+        809.3250409999998,
+        816.7419170000001,
+        821.7191670000002,
+        827.379958,
+        843.3238329999999,
+        827.3834159999999,
+        843.3710409999999,
+        832.4191250000001,
+        843.3748330000001,
+        832.423,
+        843.3108750000001,
+        843.3210410000002
+      ],
+      "after": {
+        "type": "stats",
+        "id": 87,
+        "pid": 44730,
+        "pending": 0,
+        "rss": 125353984,
+        "resources": [
+          "PipeWrap",
+          "PipeWrap",
+          "TCPServerWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap",
+          "TCPSocketWrap"
+        ]
+      }
+    },
+    {
+      "kind": "10userabort+10serverclose",
+      "wait_elapsed_ms": [
+        41.51029100000005,
+        41.47291599999994,
+        41.439375000000155,
+        41.405249999999796,
+        41.36720799999989,
+        41.365542000000005,
+        41.377292000000125,
+        41.80158399999982,
+        43.007166999999754,
+        42.89424999999983,
+        51.94987500000002,
+        51.95100000000002,
+        51.9027500000002,
+        51.70391600000016,
+        47.073500000000195,
+        47.08137499999975,
+        47.088457999999946,
+        47.091416999999865,
+        51.642665999999736,
+        51.64570800000001
+      ],
+      "user_aborts": 10,
+      "connected503": 10,
+      "old_server_pid": 44730,
+      "consumer_state_unchanged": true
+    }
+  ],
+  "instantaneous": [
+    {
+      "operation": "write while20pending",
+      "elapsed_ms": 4.58116700000005
+    },
+    {
+      "operation": "read whilewake",
+      "elapsed_ms": 0.7563339999999243
+    }
+  ],
+  "ACL": [
+    {
+      "client": 0,
+      "poll": 403,
+      "ack": 403,
+      "code": "FORBIDDEN",
+      "state_unchanged": true
+    },
+    {
+      "client": 1,
+      "poll": 401,
+      "ack": 401,
+      "code": "UNAUTHENTICATED",
+      "state_unchanged": true
+    },
+    {
+      "client": 2,
+      "poll": 404,
+      "ack": 404,
+      "code": "NOT_FOUND",
+      "state_unchanged": true
+    },
+    {
+      "client": 3,
+      "poll": 409,
+      "ack": 409,
+      "code": "RESYNC_REQUIRED",
+      "state_unchanged": true
+    }
+  ],
+  "before": {
+    "type": "stats",
+    "id": 23,
+    "pid": 44730,
+    "pending": 0,
+    "rss": 111312896,
+    "resources": [
+      "PipeWrap",
+      "PipeWrap",
+      "TCPServerWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap"
+    ]
+  },
+  "restart": {
+    "new_pid": 44751,
+    "all20_new_events_recovered": true,
+    "not_automatically_acked": true
+  },
+  "final_server_stats": {
+    "type": "stats",
+    "id": 137,
+    "pid": 44751,
+    "pending": 0,
+    "rss": 112934912,
+    "resources": [
+      "PipeWrap",
+      "PipeWrap",
+      "TCPServerWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap",
+      "TCPSocketWrap"
+    ]
+  },
+  "closed_original_listener": true,
+  "independent": true,
+  "scope": "three finite20 rounds, default timers/realHTTP, no 600s",
+  "processes": [
+    {
+      "pid": 44730,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44731,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44732,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44733,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44734,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44735,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44736,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44737,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44738,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44739,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44740,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44741,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44742,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44743,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44744,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44745,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44746,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44747,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44748,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44749,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44750,
+      "exit_code": 0,
+      "signal": null
+    },
+    {
+      "pid": 44751,
+      "exit_code": 0,
+      "signal": null
+    }
+  ],
+  "all_owned_processes_exited": true
+}

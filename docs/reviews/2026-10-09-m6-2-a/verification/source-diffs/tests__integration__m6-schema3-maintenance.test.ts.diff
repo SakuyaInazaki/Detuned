@@ -1,0 +1,48 @@
+--- tests/integration/m6-schema3-maintenance.test.ts (fresh exact before)
++++ tests/integration/m6-schema3-maintenance.test.ts (current)
+@@ -8,7 +8,7 @@
+ import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage, upgradeOffline, backupOffline, restoreBackup } from '../../packages/storage-sqlite/src/index.js';
+ import { validateSpaceExportLine } from '@detuned/protocol';
+ const oldSql = readFileSync(new URL('../fixtures/historical-v2-schema.sql',import.meta.url),'utf8');
+-const tables = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments'];
++const tables = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions'];
+ function historical(db: Database.Database) {
+   db.exec(oldSql);
+   db.prepare('INSERT INTO schema_migrations VALUES (?,?)').run(1,'2026-10-09T00:00:00.000Z');
+@@ -22,19 +22,19 @@
+     const db=new Database(':memory:');try{historical(db);expect(classifyDatabase(db)).toMatchObject({kind:'supported_legacy',maxVersion:2});
+       for(const mode of ['init','serve'] as const)expect(()=>openAndCoordinateDatabase(db,mode)).toThrow(/migrate/);
+       expect(db.prepare('SELECT MAX(version) AS n FROM schema_migrations').get()).toEqual({n:2});
+-      bootstrapDatabase(db);expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized',maxVersion:3});
++      bootstrapDatabase(db);expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized',maxVersion:4});
+       for(const table of tables)expect(db.prepare(`SELECT count(*) AS n FROM ${table}`).get()).toEqual({n:0});
+     }finally{db.close();}
+   });
+-  it('creates fresh schema3 and rejects incomplete formal structure and future markers',()=>{
+-    const db=new Database(':memory:');try{bootstrapDatabase(db);expect(classifyDatabase(db).kind).toBe('current_initialized');db.exec('DROP TABLE review_assignments');expect(classifyDatabase(db).kind).toBe('corrupt');db.prepare('INSERT INTO schema_migrations VALUES(4,?)').run('2026-10-09T00:00:00.000Z');expect(classifyDatabase(db).kind).toBe('future');}finally{db.close();}
++  it('creates fresh schema4 and rejects incomplete formal structure and future markers',()=>{
++    const db=new Database(':memory:');try{bootstrapDatabase(db);expect(classifyDatabase(db).kind).toBe('current_initialized');db.exec('DROP TABLE review_assignments');expect(classifyDatabase(db).kind).toBe('corrupt');db.prepare('INSERT INTO schema_migrations VALUES(5,?)').run('2026-10-09T00:00:00.000Z');expect(classifyDatabase(db).kind).toBe('future');}finally{db.close();}
+   });
+-  it('copies historical2 only to new schema3, preserving source bytes, and backs up/restores schema3',async()=>{
++  it('copies historical2 only to new schema4, preserving source bytes, and backs up/restores schema4',async()=>{
+     const root=await mkdtemp(path.join(os.tmpdir(),'detuned-m6-maint-'));try{
+       const source=path.join(root,'source');await mkdir(source,{mode:0o700});const sourceFile=path.join(source,'detuned.sqlite');const db=new Database(sourceFile);historical(db);db.close();
+       const before=createHash('sha256').update(await readFile(sourceFile)).digest('hex');
+-      const output=path.join(root,'new');const result=await upgradeOffline({dataDir:source,outputDir:output,offline:true,adminName:'Private administrator'});expect(result).toMatchObject({source_schema_version:2,schema_version:3});expect(createHash('sha256').update(await readFile(sourceFile)).digest('hex')).toBe(before);
+-      const backup=path.join(root,'backup');expect((await backupOffline({dataDir:output,outputDir:backup,offline:true})).manifest).toMatchObject({version:1,schemaVersion:3});
++      const output=path.join(root,'new');const result=await upgradeOffline({dataDir:source,outputDir:output,offline:true,adminName:'Private administrator'});expect(result).toMatchObject({source_schema_version:2,schema_version:4});expect(createHash('sha256').update(await readFile(sourceFile)).digest('hex')).toBe(before);
++      const backup=path.join(root,'backup');expect((await backupOffline({dataDir:output,outputDir:backup,offline:true})).manifest).toMatchObject({version:1,schemaVersion:4});
+       const target=path.join(root,'restore');await restoreBackup({backupDir:backup,dataDir:target});const restored=new Database(path.join(target,'detuned.sqlite'));try{expect(classifyDatabase(restored).kind).toBe('current_initialized');for(const table of tables)expect(restored.prepare(`SELECT count(*) AS n FROM ${table}`).get()).toEqual({n:0});}finally{restored.close();}
+     }finally{await rm(root,{recursive:true,force:true});}
+   });
+@@ -49,8 +49,8 @@
+       const item={snapshot_id:'snap',item_type:'target_post' as const,item_id:'p',revision:1,sha256:'b'.repeat(64)};
+       expect(()=>store.createReviewSnapshot(snapshot,[item,item])).toThrow();expect(store.findReviewSnapshotById('snap')).toBeNull();
+       store.createReviewSnapshot(snapshot,[item,{snapshot_id:'snap',item_type:'space_rules',item_id:'s',revision:1,sha256:null}]);
+-      const request={id:'r',space_id:'s',target_ref:{post_id:'p',revision:1},snapshot_id:'snap',round:1,phase:'collecting' as const,version:1,requested_by:actor,created_at:now,changed_by:actor,changed_at:now,reason:null};
+-      const version={request_id:'r',version:1,phase:'collecting' as const,changed_by:actor,changed_at:now,reason:null};const assignment={request_id:'r',reviewer_actor_id:actor,group_at_assignment:'private-fixture'};
++      const request={id:'r',space_id:'s',target_ref:{post_id:'p',revision:1},snapshot_id:'snap',round:1,phase:'collecting' as const,version:1,submitted_count:0,requested_by:actor,created_at:now,changed_by:actor,changed_at:now,reason:null};
++      const version={request_id:'r',version:1,phase:'collecting' as const,submitted_count:0,changed_by:actor,changed_at:now,reason:null};const assignment={id:'assignment',request_id:'r',reviewer_actor_id:actor,group_at_assignment:'private-fixture'};
+       expect(()=>store.createReviewRequest(request,version,[assignment,assignment])).toThrow();expect(store.findReviewRequestById('r')).toBeNull();
+       store.createReviewRequest(request,version,[assignment]);
+       db.exec("CREATE TRIGGER deny_review_version BEFORE INSERT ON review_request_versions WHEN NEW.version=2 BEGIN SELECT RAISE(ABORT,'private fault'); END");

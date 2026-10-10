@@ -1,0 +1,70 @@
+{
+  "status": "V5_capture_ready_pending_root_acceptance",
+  "schema": 5,
+  "accepted_decision": true,
+  "distinct_reviewers": 2,
+  "revealed_submissions": 2,
+  "pending_unacked_batch": true,
+  "artifacts": 0,
+  "blob_store_created": false,
+  "assets": {
+    "tests/fixtures/m7-schema5-baseline/README.md": {
+      "bytes": 2284,
+      "sha256": "ea3c803aac9dc1e1d3704ef341acf07e6932c4592bbcac6f227b6a488a55404f"
+    },
+    "tests/fixtures/m7-schema5-baseline/database.sqlite": {
+      "bytes": 331776,
+      "sha256": "d784753dd1e8e5dc63518147158efa2ac160e81d28ecbb1966656da4cb0d5752"
+    },
+    "tests/fixtures/m7-schema5-baseline/generate-v5.mjs": {
+      "bytes": 12440,
+      "sha256": "bf3bdb4ac8cab722493c7e10ec3b5a6f6d404f9a3e612398902251856030aeb5"
+    },
+    "tests/fixtures/m7-schema5-baseline/manifest.json": {
+      "bytes": 10521,
+      "sha256": "ec7d875276dc0b51c3aa7d9dbd74416675dcdf2b3b7675b13e3302e0eae9ac58"
+    }
+  },
+  "gitignore": {
+    "sha256": "2f93d99c28d883f40d7c2e0939373070590a27ff58212e904e79eacfbb195de1",
+    "exact_exception_only": true,
+    "verbose_negation": ".gitignore:25:!tests/fixtures/m7-schema5-baseline/database.sqlite\ttests/fixtures/m7-schema5-baseline/database.sqlite"
+  },
+  "source393_except_authorized_gitignore_match": true,
+  "dist535_match": true,
+  "other_protection_match": true,
+  "secrets_removed_and_scan": "All credentials/token_secret absent; generated raw tokens/credential hashes/secret absent in archive/manifest; actual generator assertions passed.",
+  "business_rows_exact_before_after_sanitization": true,
+  "archive_integrity_fk": "ok/[]",
+  "archive_runtime_classification": "corrupt by deliberate missing token_secret; raw copy hydration required, no original hydration performed",
+  "first_failure": {
+    "receipt": "generate-first.json",
+    "reason": "FTS config table has no rowid; generic rowid order failed only source table snapshot capture, after real business generation.",
+    "fix": "Canonical UTF8 JSON row ordering supports all tables; no business/formal/schema changes, before/delta preserved."
+  },
+  "final_receipt": {
+    "path": "generate-final.json",
+    "sha256": "0776e9a53ee1b213128314700bb9503d5f535f44b0ef8c0f138b3665bff876aa"
+  },
+  "sourceproof_sha256": "ab548c7ebbd6662d149a34e92d4448f352a7947b034a6348878b160bc4db8f32",
+  "cleanup": {
+    "first": {
+      "pid": 15196,
+      "owned_directory": "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-m7-v5-capture-JwUDaG",
+      "removed": true,
+      "app_closed": true,
+      "databases_closed": true,
+      "operations": "Only own capture directory removed; no old temp/VM/daemon/global scan"
+    },
+    "final": {
+      "pid": 15240,
+      "owned_directory": "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-m7-v5-capture-RkYvQk",
+      "removed": true,
+      "app_closed": true,
+      "databases_closed": true,
+      "operations": "Only own capture directory removed; no old temp/VM/daemon/global scan"
+    },
+    "both_owned_runner_pids_absent": true
+  },
+  "limits": "HTTP app.inject real handlers/services, no TCP/model proof. Capture only; A/B product/schema not dispatched. No build/gate/old environment touched."
+}

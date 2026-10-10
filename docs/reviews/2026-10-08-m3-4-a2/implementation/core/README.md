@@ -1,0 +1,11 @@
+# A M3.4-A.2 core/storage交付
+
+标准运行连接通过必需configureResourceLimits显式apply主DB页额度+startup全状态登记附件额度，维护一参SqliteStorage ctor不apply。main floor(actualpage_size)、precheckpage_count/严格实际返回，拒已有超额不偷抬/删材料。getArtifactUsage按PK最多cap+1<=10001row CAST十进制BigInt，finally释放iterator；objects为有限sentinel、O(cap)，不SQLiteSUM或研究全集。
+
+ArtifactService fresh先globalusage再原spaceSUM、insert/event/idem同transaction，replay免新占；全状态计、超巨大missing声明安全507。globaldatabase/instance及nativeFULL507false，FULL wrapper仅driver run.immediate退出catch，server sharedmapper兜direct方法；原space429/其它caps不改。安全scope database/instance_artifacts/storage，不回显原SQL/token/body。无schema/migration/ledger/维护/clientretry改动。
+
+真实作者正式m3-resource-limits.test.ts为10项：两独立connection/reopen不持久与页取整；oversizepragma真实抬高反证并严格拒；自然<=32次合法65536B正文触FULL；createPost/appendEvent/createIdempotencyRecord三阶段测试固定zeroblob真实allocationFULL（非自然负载，无产品fault面）；真实文件publish后eventFULLcleanup；1100×MAX_SAFE_INTEGER missing超过SQLiteSUM signed64范围而BigInt安全、全state/sentinel/异常iteratorrelease；两文件publication竞争最后globalbytes/object额度、replay与restart。
+
+source-first.*首9pass/1fail exit1：错误将注入挂createPostRevision却调用createPost，未走该method；真实tx路径为createPost，此失败不构成产品FULL行为反例。原日志保留。修正只该hook定位后source-second.*10/10exit0，未改其余assert或扩大搜索。source-noemit.* sourcealias一次exit0（protocol/core/storage/server），没有build/fullsuite/lint/旧probes；最终built验证交C。
+
+限额只服务connection主库有效页与登记附件声明，非WAL/SHM/temp/log/backup/staging/orphan/全目录物理硬cap。newconnection必须重apply、不持久header；超额度需操作者调整允许运行配置或处理材料。aggregateBigInt只内部，allstates声明计额不等于物理bytes。A1processmeter失败不refund；M3.4-B运维另包。SQLite官方与安装13.0.3行为引用docs07，真实环境有限证据不冒称全规模/所有磁盘故障覆盖。

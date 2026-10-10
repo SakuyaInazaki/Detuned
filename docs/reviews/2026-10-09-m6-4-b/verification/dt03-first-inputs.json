@@ -1,0 +1,20 @@
+{
+  "independent_path": "tests/contracts/m6-review-tools-independent.test.ts",
+  "independent_sha256": "450487ca64447c36939d30490ff61c161e8f0795397750d3d0cc25575a58291d",
+  "client_source_sha256": "3f180109cb837f96f375a67c53f37ca3da4567e852d205940b7dec4cfbd8607e",
+  "client_dist_sha256": "bc0cba8fc4597cd6df313f6313573e1729c75ea2a39f3ebbc9fcc64715a53946",
+  "expected": {
+    "assignment_token_change": {
+      "code": "IDENTITY_CHANGED",
+      "session_post_delta": 0
+    },
+    "session_inflight_token_change": {
+      "code": "IDENTITY_CHANGED",
+      "session_post_delta": 1
+    },
+    "abort_after_assignment": {
+      "session_post_delta": 0
+    }
+  },
+  "fixture_transport": "Actual SQLite/Fastify loopback HTTP; fetch response barrier only. No forged backend response."
+}

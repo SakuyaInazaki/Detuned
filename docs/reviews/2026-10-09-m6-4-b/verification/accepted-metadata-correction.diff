@@ -1,0 +1,32 @@
+--- gate-summary.json (v1)
++++ gate-summary.json (final accepted)
+@@ -20,7 +20,7 @@
+   },
+   "core": {
+     "state": "accepted_execution_composite",
+-    "exit_code": 0,
++    "exit_code": null,
+     "unique_cases": 816,
+     "unique_files": 128,
+     "first_complete_suite": {
+@@ -40,7 +40,8 @@
+       "added_assertions": "artifact metadata positive schema/AJV checks within original R04 case"
+     },
+     "scope": "final product A2+B1 unchanged; five test-only contract adaptations; no second whole suite",
+-    "claim_limit": "816 unique composite; not a once-green complete run of all final source bytes"
++    "claim_limit": "816 unique composite; not a once-green complete run of all final source bytes",
++    "composite_passed": true
+   },
+   "new_cases": {
+     "A": 4,
+--- independent-report.md (v1)
++++ independent-report.md (final accepted)
+@@ -32,7 +32,7 @@
+ - DT05 新 CLI 进程从私有 persistent request-key 文件恢复意图，真实私有上传重放返回同 artifact，DB artifact/event/key 不增；真实下载完整 SHA/字节，现有输出文件原字节不覆盖。首次把已有目标退出码期望为 2，实际既有 CliSafeError 映射 1；根批准仅修该期望，固定安全错误及无路径/凭据回显、无业务副作用保留。作者 B 三组是 controlled HTTP transport 的 built child 检查，不能替代 D 的 SQLite 业务实证。
+ - DT06 明确区分实际后端合法 Session 与 controlled transport 换 actor/space/date/503；每次最多一次 POST、坏响应不能伪成功。closed Pi runtime 的合法新工具调用不能懒重启或发 HTTP。
+ 
+-DT04/05 首原源与两处窄 diff 存 [夹具修正](dt04-dt05-fixture-repair.json)。首次新 80 的两失败与完整日志不覆盖。首次完整 core 的五失败来自旧九工具目录/active 契约、现在合法的 artifact metadata 及 canonical 先行错误文案；根授权五文件精确修正，其旧八样本、其他 unknown kind、made=0、HTTP=0、严格参数与固定安全错误均保持。[五文件 diff](core-five-contract-adaptation.diff) 与 [后取 before](supplement-core-five-before-manifest.json) 明确不在原 59 copy，均为首 full 后捕获且 SHA 命中 fresh，不伪称原时点备份。
++DT04/05 首原源与两处窄 diff 存 [夹具修正](dt04-dt05-fixture-repair.json)。首次新 80 的两失败与完整日志不覆盖。首次完整 core 的五失败来自旧八工具目录/active 契约、现在合法的 artifact metadata 及 canonical 先行错误文案；根授权五文件精确修正，其旧八样本、其他 unknown kind、made=0、HTTP=0、严格参数与固定安全错误均保持。[五文件 diff](core-five-contract-adaptation.diff) 与 [后取 before](supplement-core-five-before-manifest.json) 明确不在原 59 copy，均为首 full 后捕获且 SHA 命中 fresh，不伪称原时点备份。
+ 
+ ## 官方固定宿主与边界
+ 

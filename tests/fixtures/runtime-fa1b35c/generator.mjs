@@ -1,0 +1,31 @@
+// Explicit regeneration only. Ordinary regression imports runtime.mjs without Git or esbuild.
+import { execFileSync } from 'node:child_process';
+import { readFileSync, writeFileSync, realpathSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+const fixture=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(fixture,'../../..');
+const commit='fa1b35c80de02c1d601288847706495062935925';
+const git=(...args)=>execFileSync('git',args,{cwd:root,maxBuffer:16*1024*1024});
+if(git('rev-parse',commit).toString().trim()!==commit)throw new Error('Required fixed source commit is unavailable.');
+const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+const paths=git('ls-tree','-r','--name-only',commit,'packages/protocol/src','packages/core/src','packages/storage-sqlite/src','packages/server/src').toString().trim().split('\n').filter(p=>p.endsWith('.ts'));
+const sources=new Map(paths.map(p=>[p,git('show',`${commit}:${p}`)]));
+const fromVitest=createRequire(realpathSync(path.join(root,'node_modules/vitest/package.json')));
+const fromVite=createRequire(fromVitest.resolve('vite'));
+const esbuild=fromVite('esbuild');
+if(esbuild.version!=='0.28.2')throw new Error('Regeneration requires installed esbuild 0.28.2.');
+const names={ '@detuned/server':'packages/server/src/index.ts','@detuned/core':'packages/core/src/index.ts','@detuned/protocol':'packages/protocol/src/index.ts','@detuned/storage-sqlite':'packages/storage-sqlite/src/index.ts' };
+const result=await esbuild.build({entryPoints:[path.join(fixture,'entry.ts')],bundle:true,platform:'node',format:'esm',target:'node22',write:false,sourcemap:false,minify:false,legalComments:'inline',plugins:[{name:'fixed-legacy-source',setup(build){
+ build.onResolve({filter:/^@detuned\//},args=>{if(!names[args.path])throw new Error('Unexpected legacy package');return{path:names[args.path],namespace:'legacy'};});
+ build.onResolve({filter:/^\./,namespace:'legacy'},args=>{const p=path.posix.normalize(path.posix.join(path.posix.dirname(args.importer),args.path)).replace(/\.js$/,'.ts');if(!sources.has(p))throw new Error(`Unknown fixed legacy source ${p}`);return{path:p,namespace:'legacy'};});
+ build.onResolve({filter:/^(fastify|@fastify\/cors)$/},args=>({path:args.path==='fastify'?'../../../packages/server/node_modules/fastify/fastify.js':'../../../packages/server/node_modules/@fastify/cors/index.js',external:true}));
+ build.onResolve({filter:/^(node:|better-sqlite3$|@sinclair\/typebox)/},args=>({path:args.path,external:true}));
+ build.onLoad({filter:/.*/,namespace:'legacy'},args=>({contents:sources.get(args.path).toString(),loader:'ts'}));
+}}]});
+const bytes=result.outputFiles[0].contents;
+writeFileSync(path.join(fixture,'runtime.mjs'),bytes);
+const deps={};for(const [name,p] of Object.entries({'fastify':'packages/server/node_modules/fastify/package.json','@fastify/cors':'packages/server/node_modules/@fastify/cors/package.json','@sinclair/typebox':'node_modules/@sinclair/typebox/package.json','better-sqlite3':'node_modules/better-sqlite3/package.json'}))deps[name]=JSON.parse(readFileSync(path.join(root,p))).version;
+writeFileSync(path.join(fixture,'manifest.json'),JSON.stringify({format:'detuned-historical-test-runtime',version:1,source_commit:commit,source_schema_version:1,source_hashes:Object.fromEntries([...sources].map(([p,b])=>[p,hash(b)])),runtime_sha256:hash(bytes),entry_sha256:hash(readFileSync(path.join(fixture,'entry.ts'))),generator_sha256:hash(readFileSync(fileURLToPath(import.meta.url))),tools:{esbuild:esbuild.version,typescript:JSON.parse(readFileSync(path.join(root,'node_modules/typescript/package.json'))).version},external_dependencies:deps,source_maps:false,minified:false,license:'Project source license remains undecided; internal historical regression only; no third-party vendoring.'},null,2)+'\n');
+console.log(JSON.stringify({source_commit:commit,source_files:sources.size,runtime_bytes:bytes.length,runtime_sha256:hash(bytes),credentials_archived:false}));

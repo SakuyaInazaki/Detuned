@@ -1,0 +1,21 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-web-auth-client.test.ts (4 tests | 3 failed) 40057ms
+   × WA01: real human login/query/logout uses root cookie transport without default Bearer 20012ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × WA02: real cookie writes use current CSRF, logout refuses absent nonce and original Bearer works 20002ms
+     → Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ WA03: auth single-attempt transport, pending body cancellation and timeout settle without retry 34ms
+   × WA04: strict nested web response and root OpenAPI preserve formats/unknown rejection without mutation 7ms
+     → expected { openapi: '3.1.0', …(5) } to match object { Object (paths) }
+(107 matching properties omitted from actual)
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+     Errors  2 errors
+   Start at  03:43:33
+   Duration  40.87s (transform 284ms, setup 0ms, collect 526ms, tests 40.06s, environment 0ms, prepare 46ms)
+

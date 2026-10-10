@@ -1,0 +1,12 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch
+McpError: MCP error -32000: Connection closed
+ ❯ McpError.fromError node_modules/.pnpm/@modelcontextprotocol+sdk@1.30.1_zod@4.6.5/node_modules/@modelcontextprotocol/sdk/src/types.ts:2330:16
+ ❯ Client._onclose node_modules/.pnpm/@modelcontextprotocol+sdk@1.30.1_zod@4.6.5/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:662:32
+ ❯ StdioClientTransport._transport.onclose node_modules/.pnpm/@modelcontextprotocol+sdk@1.30.1_zod@4.6.5/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:618:18
+ ❯ ChildProcess.<anonymous> node_modules/.pnpm/@modelcontextprotocol+sdk@1.30.1_zod@4.6.5/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:152:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

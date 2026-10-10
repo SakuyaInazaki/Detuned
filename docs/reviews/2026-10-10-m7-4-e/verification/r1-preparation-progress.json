@@ -1,0 +1,17 @@
+{
+  "status": "R1 preparation draft; source freeze pin pending; not released for runtime",
+  "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+  "capture_draft_sha256": "74e5877d73c78c3b404ed2deaccbed4a053aa5d1863eff49b0a532fea9308865",
+  "red_receipt": "r1-cl02-red-first.receipt.json",
+  "authority": "each candidate PID matches own spawned row; driver+outer independently exact UID/nativePPID/PGID; each proof persisted before matchingPID controlACK; all candidates/proofs counted and absence looped",
+  "limit": 64,
+  "rejectsecond": "second mcp_registered callback fails after independent persisted proof; source second ACK forbidden, first cleanup retained",
+  "budgets": "original40poll/75work/85worker/90total/95outer unchanged",
+  "not_run": [
+    "R1 source/capture syntax",
+    "R1 noEmit",
+    "R1 focused",
+    "reject-second-mcp",
+    "R1 normal"
+  ]
+}

@@ -1,0 +1,50 @@
+--- before-f3
++++ after-f3
+@@ -22,7 +22,7 @@
+ };
+ try{await runClaudeCheckProbe({binary,output,onOwnership});process.stdout.write(JSON.stringify({status:'passed'})+'\n');}catch{process.stdout.write(JSON.stringify({status:'failed'})+'\n');process.exitCode=1;}
+ `;
+-let allocated,controlDir,child,closed=false,closeValue,deadline,expired=false,originalFailure,emergencyFailure;const safe={status:'pending',mode,prompt_sent:false,model_request_sent:false,ownership_stages:[],cleanup:{}};
++let allocated,controlDir,child,closed=false,closeValue,deadline,driverClose,absoluteEnd=Date.now()+75000,expired=false,originalFailure,emergencyFailure;const safe={status:'pending',mode,prompt_sent:false,model_request_sent:false,ownership_stages:[],cleanup:{}};
+ const registryRead=async()=>{try{const value=JSON.parse(await fs.readFile(path.join(controlDir,'ownership.json'),'utf8'));assert.equal(value.driverPID,child.pid);assert.ok(Array.isArray(value.entries));return value.entries;}catch(error){if(error.code==='ENOENT')return[];throw error;}};
+ const groupExists=pgid=>{try{process.kill(-pgid,0);return true;}catch(error){if(error.code==='ESRCH')return false;throw error;}};
+ const clearRegisteredGroups=async()=>{
+@@ -32,21 +32,32 @@
+ };
+ const registeredMemory=[];const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Capture operation deadline')),ms);})]);}finally{clearTimeout(timer);}};
+ let emergencyPromise;
++const remaining=()=>Math.max(0,absoluteEnd-Date.now());
++const awaitActualClose=async()=>{if(closed)return;assert.ok(remaining()>0);await bounded(driverClose,remaining());assert.equal(closed,true);};
++const stopDriver=async()=>{if(!child||closed)return;child.kill('SIGTERM');await pause(Math.min(1000,remaining()));if(!closed)child.kill('SIGKILL');await awaitActualClose();};
+ try{
+  assert.equal(hash(await fs.readFile(source)),SOURCE_SHA);try{await fs.lstat(output);throw Error('Output exists');}catch(error){if(error.code!=='ENOENT')throw error;}
+  allocated=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-capture-'));controlDir=await fs.realpath(allocated);const info=await fs.lstat(controlDir);assert.ok(info.isDirectory()&&!info.isSymbolicLink());assert.equal(info.mode&0o777,0o700);assert.equal(info.uid,process.getuid());
+  const driver=path.join(controlDir,'driver.mjs'),registry=path.join(controlDir,'ownership.json');await fs.writeFile(driver,driverSource,{mode:0o600});
+  child=spawn(process.execPath,[driver,source,binary,output,registry,mode],{cwd:repo,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',HOME:'/Users/sakimi',CI:'true'},stdio:['ignore','pipe','pipe','ipc']});let stdout='',stderr='';child.on('message',message=>{try{assert.equal(message?.type,'ownership');const row=message.value;assert.ok(['worker_registered','native_registered','mcp_registered'].includes(row.stage));assert.equal(path.dirname(row.privateRoot),'/private/tmp');assert.ok(/^detuned-claude-checks-[A-Za-z0-9]+$/.test(path.basename(row.privateRoot)));assert.ok(Number.isSafeInteger(row.workerPID)&&row.workerPID>1);assert.equal(row.workerPID,row.workerPGID);if(registeredMemory.length){assert.equal(row.workerPID,registeredMemory[0].workerPID);assert.equal(row.privateRoot,registeredMemory[0].privateRoot);}registeredMemory.push({...row});child.send({type:'ownership_ack',stage:row.stage});}catch(error){originalFailure??=error;}});child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stdout.on('data',text=>{stdout+=text});child.stderr.on('data',text=>{stderr+=text});
+- const close=new Promise(resolve=>{child.once('error',()=>{originalFailure??=Error('Driver spawn failed');});child.once('close',(code,signal)=>{closed=true;closeValue={code,signal};resolve();});});
+- deadline=setTimeout(()=>{expired=true;emergencyPromise=(async()=>{try{await clearRegisteredGroups();}catch(error){emergencyFailure=error;}finally{if(!closed){child.kill('SIGTERM');await pause(1000);if(!closed)child.kill('SIGKILL');}await close;}})();},70000);
+- await close;if(emergencyPromise)await emergencyPromise;safe.driver_close=closeValue;safe.deadline_expired=expired;safe.driver_stdout_shape=stdout.trim()==='{"status":"passed"}'?'passed':stdout.trim()==='{"status":"failed"}'?'failed':'invalid';safe.driver_stderr_empty=stderr==='';
++ absoluteEnd=Date.now()+75000;safe.budgets={normal_wait_ms:70000,emergency_ms:5000,absolute_ms:75000};
++ driverClose=new Promise(resolve=>{child.once('error',()=>{originalFailure??=Error('Driver spawn failed');});child.once('close',(code,signal)=>{closed=true;closeValue={code,signal};resolve();});});
++ deadline=setTimeout(()=>{expired=true;emergencyPromise=(async()=>{try{await clearRegisteredGroups();}catch(error){emergencyFailure=error;}finally{try{await stopDriver();}catch(error){emergencyFailure??=error;}}})();},70000);
++ await awaitActualClose();if(emergencyPromise)await bounded(emergencyPromise,remaining());safe.driver_close=closeValue;safe.deadline_expired=expired;safe.driver_stdout_shape=stdout.trim()==='{"status":"passed"}'?'passed':stdout.trim()==='{"status":"failed"}'?'failed':'invalid';safe.driver_stderr_empty=stderr==='';
+  const registered=await bounded(registryRead(),500);assert.deepEqual(registered,registeredMemory);if(mode==='normal')assert.deepEqual(registered.map(row=>row.stage),['worker_registered','native_registered','mcp_registered']);assert.equal(expired,false);assert.equal(closeValue.code,0);assert.equal(closeValue.signal,null);assert.equal(safe.driver_stdout_shape,'passed');assert.equal(stderr,'');safe.status='passed';
+ }catch(error){originalFailure??=error;safe.status='failed';process.exitCode=1;}
+ finally{
+- if(controlDir&&child){try{const entries=await clearRegisteredGroups();for(const root of [...new Set(entries.map(row=>row.privateRoot))]){let exists=true;try{const s=await bounded(fs.lstat(root),1000);assert.ok(s.isDirectory()&&!s.isSymbolicLink());assert.equal(s.uid,process.getuid());assert.equal(await bounded(fs.realpath(root),1000),root);await bounded(fs.rm(root,{recursive:true,force:true}),1000);}catch(error){if(error.code!=='ENOENT')throw error;}try{await bounded(fs.lstat(root),1000);}catch(error){if(error.code!=='ENOENT')throw error;exists=false;}assert.equal(exists,false);}safe.cleanup.registered_roots_absent=true;}catch{safe.cleanup.unverified=true;safe.status='failed';process.exitCode=1;}}
+- if(child&&!closed){const close=new Promise(resolve=>child.once('close',()=>{closed=true;resolve();}));child.kill('SIGTERM');await pause(1000);if(!closed)child.kill('SIGKILL');await close;}
++ if(deadline)clearTimeout(deadline);
++ if(child&&!closed){try{await stopDriver();}catch(error){emergencyFailure??=error;}}
+  safe.cleanup.driver_actual_close=!child||closed;
+- try{const root=controlDir??allocated;if(root)await bounded(fs.rm(root,{recursive:true,force:true}),1000);let absent=!root;try{if(root)await bounded(fs.lstat(root),1000);}catch(error){if(error.code!=='ENOENT')throw error;absent=true;}assert.equal(absent,true);safe.cleanup.control_directory_absent=absent;}catch{safe.cleanup.unverified=true;safe.status='failed';process.exitCode=1;}
++ let entries=[];
++ if(controlDir&&child){try{assert.ok(remaining()>0);entries=await bounded(clearRegisteredGroups(),remaining());}catch(error){emergencyFailure??=error;safe.cleanup.unverified=true;}}
++ if(safe.cleanup.driver_actual_close&&(!child||safe.cleanup.registered_groups_absent===true)){
++  try{for(const root of [...new Set(entries.map(row=>row.privateRoot))]){try{const s=await bounded(fs.lstat(root),Math.min(1000,remaining()));assert.ok(s.isDirectory()&&!s.isSymbolicLink());assert.equal(s.uid,process.getuid());assert.equal(await bounded(fs.realpath(root),Math.min(1000,remaining())),root);await bounded(fs.rm(root,{recursive:true,force:true}),Math.min(1000,remaining()));}catch(error){if(error.code!=='ENOENT')throw error;}try{await bounded(fs.lstat(root),Math.min(1000,remaining()));throw Error('Registered root remains');}catch(error){if(error.code!=='ENOENT')throw error;}}safe.cleanup.registered_roots_absent=true;
++   const root=controlDir??allocated;if(root)await bounded(fs.rm(root,{recursive:true,force:true}),Math.min(1000,remaining()));try{if(root){await bounded(fs.lstat(root),Math.min(1000,remaining()));throw Error('Control directory remains');}}catch(error){if(error.code!=='ENOENT')throw error;}safe.cleanup.control_directory_absent=true;
++  }catch(error){emergencyFailure??=error;safe.cleanup.unverified=true;}
++ }else{safe.cleanup.unverified=true;safe.cleanup.directories_retained=true;}
++ if(safe.cleanup.unverified){safe.status='failed';process.exitCode=1;}
+  if(originalFailure||emergencyFailure){safe.status='failed';safe.failure_priority='original probe/capture failure retained; cleanup verification separate';process.exitCode=1;}
+  if(mode!=='normal'){try{const report=JSON.parse(await fs.readFile(output,'utf8'));const supervision=report.diagnostics?.supervision;safe.controlled_expected_failure_verified=report.status==='failed'&&closeValue?.code===1&&closeValue?.signal===null&&!expired&&safe.ownership_stages.length===1&&safe.ownership_stages[0]==='worker_registered'&&supervision?.worker_registered===true&&supervision?.native_registered===false&&supervision?.mcp_registered===false&&report.cleanup?.worker_closed===true&&report.cleanup?.worker_group_closed===true&&report.cleanup?.private_directory_removed===true&&safe.cleanup.registered_groups_absent&&safe.cleanup.registered_roots_absent&&safe.cleanup.driver_actual_close&&!safe.cleanup.unverified;}catch{safe.controlled_expected_failure_verified=false;}}
+  try{await bounded(fs.writeFile(output+'.capture.json',JSON.stringify(safe,null,2)+'\n',{flag:'wx',mode:0o600}),1000);}catch{safe.cleanup.unverified=true;safe.status='failed';process.exitCode=1;}if(deadline)clearTimeout(deadline);

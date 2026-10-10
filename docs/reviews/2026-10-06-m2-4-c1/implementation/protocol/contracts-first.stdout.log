@@ -1,0 +1,18 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-focused-context-contracts.test.ts (6 tests | 1 failed) 248ms
+   ✓ M2.4-C.1 focused context transport > F01: valid same-space focus adds mandatory full metadata and omission preserves the old shape 90ms
+   × M2.4-C.1 focused context transport > F02: real full envelope accounts focus metadata and request_id, mandatory overflow is 422 49ms
+     → expected 4095 to be 4096 // Object.is equality
+   ✓ M2.4-C.1 focused context transport > F03: focus malformed/unknown/foreign transport and authorization errors retain separate policies 26ms
+   ✓ M2.4-C.1 focused context transport > F04: focused failure window filters the thread before limit while no-focus keeps space scope 32ms
+   ✓ M2.4-C.1 focused context transport > F05: full schemas reject null/partial focus metadata and keep omitted-rules correlation 24ms
+   ✓ M2.4-C.1 focused context transport > F06: existing client/tool keeps full focused and no-focus pages, strict pure shape and cancellation 26ms
+ ✓ tests/contracts/m2-context-contracts.test.ts (4 tests) 350ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 9 passed (10)
+   Start at  19:44:15
+   Duration  884ms (transform 175ms, setup 0ms, collect 619ms, tests 599ms, environment 0ms, prepare 70ms)
+

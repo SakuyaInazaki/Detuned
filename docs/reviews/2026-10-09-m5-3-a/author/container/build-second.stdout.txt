@@ -1,0 +1,67 @@
+Sending build context to Docker daemon  3.614MB
+Step 1/37 : FROM node:22.23.3-bookworm-slim@sha256:b20fe038d9592822dd534600a1ddf467e985178aa3fed60ec441a056c2cc45bd AS builder
+ ---> b20fe038d959
+Step 2/37 : WORKDIR /app
+ ---> Running in 8bc18b46038b
+ ---> Removed intermediate container 8bc18b46038b
+ ---> 32736633bf51
+Step 3/37 : ENV CI=1 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1     NPM_CONFIG_USERCONFIG=/dev/null NPM_CONFIG_GLOBALCONFIG=/dev/null
+ ---> Running in 86222b99a446
+ ---> Removed intermediate container 86222b99a446
+ ---> 28f0b992325f
+Step 4/37 : RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates openssl     && rm -rf /var/lib/apt/lists/*     && npm install --global --ignore-scripts --registry=https://registry.npmjs.org pnpm@11.7.0
+ ---> Running in c6ab1a53bfcb
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]
+Get:5 http://deb.debian.org/debian bookworm-updates/main arm64 Packages [6936 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [347 kB]
+Fetched 9285 kB in 5s (1981 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libssl3
+The following NEW packages will be installed:
+  ca-certificates libssl3 openssl
+0 upgraded, 3 newly installed, 0 to remove and 1 not upgraded.
+Need to get 3400 kB of archives.
+After this operation, 8942 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian-security bookworm-security/main arm64 libssl3 arm64 3.0.22-1~deb12u1 [1828 kB]
+Get:2 http://deb.debian.org/debian-security bookworm-security/main arm64 openssl arm64 3.0.22-1~deb12u1 [1410 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security/main arm64 ca-certificates all 20250419~deb12u1 [162 kB]
+[91mdebconf: delaying package configuration, since apt-utils is not installed
+[0mFetched 3400 kB in 4s (872 kB/s)
+Selecting previously unselected package libssl3:arm64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6090 files and directories currently installed.)
+Preparing to unpack .../libssl3_3.0.22-1~deb12u1_arm64.deb ...
+Unpacking libssl3:arm64 (3.0.22-1~deb12u1) ...
+Selecting previously unselected package openssl.
+Preparing to unpack .../openssl_3.0.22-1~deb12u1_arm64.deb ...
+Unpacking openssl (3.0.22-1~deb12u1) ...
+Selecting previously unselected package ca-certificates.
+Preparing to unpack .../ca-certificates_20250419~deb12u1_all.deb ...
+Unpacking ca-certificates (20250419~deb12u1) ...
+Setting up libssl3:arm64 (3.0.22-1~deb12u1) ...
+Setting up openssl (3.0.22-1~deb12u1) ...
+Setting up ca-certificates (20250419~deb12u1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/aarch64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Updating certificates in /etc/ssl/certs...
+150 added, 0 removed; done.
+Processing triggers for libc-bin (2.36-9+deb12u14) ...
+Processing triggers for ca-certificates (20250419~deb12u1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+[91mExit prior to config file resolving
+cause
+double-loading config "/dev/null" as "global", previously loaded as "user"
+[0m

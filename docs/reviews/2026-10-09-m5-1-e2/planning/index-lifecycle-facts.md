@@ -1,0 +1,11 @@
+# E2 性能索引生命周期事实（只读，2026-10-09）
+
+当前没有创建索引、改冻结源或追加性能实验；以下是父决定索引必要性后的候选落点。
+
+- **创建/打开。** CLI init在DirectoryLock下调用openAndCoordinateDatabase；serve在cli/index.ts:358–374取得目录锁后打开主连接、openAndCoordinateDatabase('serve')并构造SqliteStorage。bootstrap.ts:665–720先classify，当前/受支持legacy经bootstrapDatabase；:555–624事务迁移/回填、current也经过结构检查但不新造身份。构造器sqlite-storage.ts:42–65只配置既有PRAGMA，不应暗加索引，因为维护/迁移语义检查也会构造该对象。
+- **运行额度顺序。** server/app.ts:90–91在service构造/请求前显式configureResourceLimits；sqlite-storage.ts:995–1000先main页cap，再附件登记检查。sqlite-resource-limits.ts严格核当前page_count与目标返回，拒超限。CLI bootstrap发生在buildApp之前，因此在bootstrap自动建性能索引会早于所选运行cap，而且污染offline/legacy回填边界。
+- **候选精确入口。** 如确有需要，可给SQLite backend一个明确可写current-only运行准备方法，在标准buildApp现configureResourceLimits成功之后、任何请求/listen之前调用；或窄置于SQLite configureResourceLimits内部的明确运行步骤。它须事务内验证现current结构，再建立纯性能nonunique表达式索引；不从GET/readSnapshot/export只读连接或legacy源建。不能为此把必需索引列入schema2结构要求，否则没有索引的合法旧实例会被预检拒。是否storage-port显式能力/该现配置方法窄含运行准备，由父裁。
+- **索引表达式与名称。** 候选独立保留名如posts_thread_created_sort_v1，键应匹配thread_id及当前canonical CASE的unknown flag/key/id（不是只thread_id,created_at,id）。须在可写准备处检查同名现有索引实际定义，不能CREATE IF NOT EXISTS后信任碰名错误定义；不改变原排序表达式或历史数据。schema.ts:3513–3638允许额外secondaryindex，但既有PK/required约束仍严格。表达式持久化在SQLite，旧runtime/backup/import兼容需实际确认，不因不增schema版本就默认全部兼容。
+- **失败与锁。** 标准serve持有DirectoryLock，初始化IMMEDIATE写事务可能仍遇其他非合作SQLite连接BUSY；startup应失败而非开服务并静默跳过。已应用页cap下CREATE INDEX可能触SQLITE_FULL，应在驱动退事务后沿storage scope QUOTA_EXCEEDED507 false安全映射，不能抬额度或部分继续。即使成功，WAL/临时排序占用不是main页cap全目录硬保证；同步native索引构建无法JS抢占，启动时间/磁盘行为需另有界实证。
+- **离线与只读区别。** offline-backup.ts:194–211源连接实际可写且执行既有TRUNCATE checkpoint，随后stage只读结构/附件检查；它不是只读源backup路径，不能借其现checkpoint授权额外改源索引。restore采用私有stage验证/身份恢复后新目录发布。offline-upgrade.ts:42–49旧源readonly backup，只有副本bootstrap；logical-import.ts:36–37新stagebootstrap后研究导入，无运行quota，索引可延至未来serve。space-export-snapshot.ts:39–45专用readonly WAL连接不构造runtime storage，不允许DDL。
+- **最小影响文件/测试。** 若采用runtime配置内部准备，主要sqlite-storage.ts及可能新窄SQLite helper/index导出；如需明确port能力则core/ports/storage.ts、server/app.ts由父新增owner。SQL/schema/migration/offline源不改。新正式回归需current无索引→runtime建立/重开幂等、错误同名拒、低cap失败原子、readonly/legacy源不写及排序计划实际使用；不能只测试索引存在或预填性能合格。当前A已冻这些主要文件，B仅Web/Markdown锁，D有独验窗口；必须父解冻精确文件并让D暂停相关gate，不能交叉写或自动扩到维护包。

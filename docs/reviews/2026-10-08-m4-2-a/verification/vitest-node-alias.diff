@@ -1,0 +1,22 @@
+--- vitest.config.ts before
++++ vitest.config.ts after
+@@ -11,7 +11,9 @@
+     environment: 'node',
+   },
+   resolve: {
+-    alias: {
++    alias: [
++      { find: /^@detuned\/client\/node$/, replacement: path.resolve(__dirname, 'packages/client/src/node.ts') },
++      ...Object.entries({
+       '@detuned/protocol': path.resolve(__dirname, 'packages/protocol/src/index.ts'),
+       '@detuned/core': path.resolve(__dirname, 'packages/core/src/index.ts'),
+       '@detuned/storage-sqlite': path.resolve(__dirname, 'packages/storage-sqlite/src/index.ts'),
+@@ -20,6 +22,7 @@
+       '@detuned/mcp': path.resolve(__dirname, 'packages/mcp/src/index.ts'),
+       '@detuned/adapter-pi': path.resolve(__dirname, 'packages/adapter-pi/src/index.ts'),
+       '@detuned/module-review': path.resolve(__dirname, 'modules/review/src/index.ts'),
+-    },
++      }).map(([find, replacement]) => ({ find, replacement })),
++    ],
+   },
+ });

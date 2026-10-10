@@ -1,0 +1,111 @@
+--- A frozen rawprefix980e
++++ continuation3 required bindings
+@@ -5,7 +5,7 @@
+ import hashlib, json, os, re, selectors, shutil, signal, stat, subprocess, sys
+ import tarfile, time, urllib.parse
+ 
+-VERIFY = Path(__file__).resolve().parent / 'continuation-2'
++VERIFY = Path(__file__).resolve().parent / 'continuation-3'
+ PLAN = json.loads((VERIFY / 'execution-plan.json').read_text())
+ REPO = Path(PLAN['repo'])
+ START = 0.0
+@@ -70,7 +70,7 @@
+     limit = min(seconds, left())
+     if limit <= 0:
+         raise RuntimeError('TOTAL_DEADLINE')
+-    raw = ROOT / 'continuation-2-output'
++    raw = ROOT / 'continuation-3-output'
+     paths = [raw / (name + suffix) for suffix in ['.stdout', '.stderr']]
+     files = [open(p, 'xb') for p in paths]
+     for p in paths:
+@@ -305,6 +305,25 @@
+             for i, suffix in enumerate(['.stdout','.stderr']):
+                 if digest(ROOT / 'continuation-output' / (row['stage'] + suffix)) != row['output_hashes'][i]:
+                     raise RuntimeError('PRIOR_CONTINUATION_OUTPUT_DRIFT')
++        prior_probe = VERIFY.parent / 'continuation-2'
++        for name, value in PLAN['continuation']['prior_config_probe_receipt_sha256'].items():
++            if digest(prior_probe / name) != value:
++                raise RuntimeError('PRIOR_CONFIG_PROBE_RECEIPT_DRIFT')
++        probe_final = json.loads((prior_probe / 'final.receipt.json').read_text())
++        if probe_final['status'] != 'failed' or probe_final['failure_enum'] != 'STAGE_NONZERO' or not probe_final['original_sources_locks_dist_verified_unchanged'] or [r['stage'] for r in probe_final['stages']] != ['effective-config']:
++            raise RuntimeError('PRIOR_CONFIG_PROBE_BOUNDARY')
++        for row in probe_final['stages']:
++            if row['pid'] != 95812 or not row['actual_close'] or not row['group_absent'] or exists_group(row['pid']):
++                raise RuntimeError('PRIOR_CONFIG_PROBE_GROUP_PRESENT')
++            try:
++                os.kill(row['pid'], 0)
++            except ProcessLookupError:
++                pass
++            else:
++                raise RuntimeError('PRIOR_CONFIG_PROBE_PID_PRESENT')
++            for i, suffix in enumerate(['.stdout','.stderr']):
++                if digest(ROOT / 'continuation-2-output' / (row['stage'] + suffix)) != row['output_hashes'][i]:
++                    raise RuntimeError('PRIOR_CONFIG_PROBE_OUTPUT_DRIFT')
+         for name, expected in [('node-version','v22.19.0\n'),('pnpm-version','11.7.0\n')]:
+             row = json.loads((prior / (name + '.receipt.json')).read_text())
+             if row['close_code'] != 0 or row['close_signal'] is not None or (ROOT / 'output' / (name + '.stdout')).read_text() != expected:
+@@ -331,7 +350,8 @@
+                           'storeDir: ' + str(ROOT / 'store'), 'cacheDir: ' + str(ROOT / 'cache'),
+                           'stateDir: ' + str(ROOT / 'state'), 'virtualStoreDir: ' + str(WORK / 'node_modules/.pnpm')]) + '\n'
+         policy = '(version 1)\n(allow default)\n(deny file-write*)\n(allow file-write* (subpath "' + str(ROOT) + '"))\n(deny file-read* (subpath "/Users/sakimi"))\n'
+-        if (ROOT / 'config/pnpm/config.yaml').read_text() != yaml or (ROOT / 'policy.sb').read_text() != policy or any((ROOT / name).read_text() != '' for name in ['npm-user','npm-global']):
++        typed_yaml = yaml.replace('pmOnFail: error\n', '') + 'networkConcurrency: 1\nchildConcurrency: 1\n'
++        if digest(ROOT / 'config/pnpm/config.yaml') != PLAN['continuation']['current_typed_yaml_sha256'] or (ROOT / 'config/pnpm/config.yaml').read_text() != typed_yaml or (ROOT / 'policy.sb').read_text() != policy or any((ROOT / name).read_text() != '' for name in ['npm-user','npm-global']):
+             raise RuntimeError('PRIVATE_CONFIG_POLICY_DRIFT')
+         for base in [WORK, ROOT / 'home', ROOT / 'config/pnpm']:
+             for name in ['.pnpmfile.cjs','.pnpmfile.js','.pnpmfile.mjs']:
+@@ -343,16 +363,6 @@
+         for settings in [manifest, manifest.get('pnpm', {})]:
+             if any(key in settings for key in ['pnpmfile', 'globalPnpmfile', 'global-pnpmfile', 'configDependencies', 'config-dependencies']):
+                 raise RuntimeError('UNEXPECTED_MANIFEST_CONFIG_HOOK')
+-        typed_yaml = yaml.replace('pmOnFail: error\n', '') + 'networkConcurrency: 1\nchildConcurrency: 1\n'
+-        config_stage = ROOT / 'config/pnpm/.typed-config.stage'
+-        with config_stage.open('x') as f:
+-            f.write(typed_yaml)
+-            f.flush()
+-            os.fsync(f.fileno())
+-        config_stage.chmod(0o600)
+-        os.replace(config_stage, ROOT / 'config/pnpm/config.yaml')
+-        if (ROOT / 'config/pnpm/config.yaml').read_text() != typed_yaml:
+-            raise RuntimeError('TYPED_PRIVATE_CONFIG_WRITE')
+         ENV = {'PATH': str(node.parent) + ':/usr/bin:/bin', 'HOME': str(ROOT / 'home'),
+                'TMPDIR': str(ROOT / 'tmp'), 'XDG_CONFIG_HOME': str(ROOT / 'config'),
+                'XDG_CACHE_HOME': str(ROOT / 'cache'), 'XDG_DATA_HOME': str(ROOT / 'data'),
+@@ -360,14 +370,14 @@
+                'NPM_CONFIG_USERCONFIG': str(ROOT / 'npm-user'), 'NPM_CONFIG_GLOBALCONFIG': str(ROOT / 'npm-global'),
+                'NPM_CONFIG_CACHE': str(ROOT / 'cache'), 'CI': 'true', 'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD': '1',
+                'NODE_COMPILE_CACHE': str(ROOT / 'cache/node-compile')}
+-        (ROOT / 'continuation-2-output').mkdir(mode=0o700)
++        (ROOT / 'continuation-3-output').mkdir(mode=0o700)
+         save('fixture-ledger.json', {'root': str(ROOT), 'uid': os.getuid(), 'mode': '0700',
+              'scope': 'exact root reused from verified empty-fixture install; no other temp scan'})
+         size_check()
+         save('continuation-preflight.receipt.json', {'passed': True, 'copy_files_verified': len(PLAN['copy_files']),
+              'prior_stage_count': 4, 'prior_actual_close_and_positive_pid_group_absence': True,
+              'fixed_node_archive_binary_and_pnpm_hashes_verified': True, 'prior_version_outputs_verified': True,
+-             'private_policy_unchanged': True, 'private_config_minimal_typed_update': True,
++             'private_policy_unchanged': True, 'current_typed_private_config_verified_unchanged': True,
+              'private_config_sha256': digest(ROOT / 'config/pnpm/config.yaml'),
+              'ignore_pnpmfile_effective_flag_claim': False, 'exact_copy_no_hook_boundary': True,
+              'original_437_source_555_dist_verified_unchanged': True,
+@@ -388,6 +398,20 @@
+ else{try{value=JSON.parse(r.stdout)}catch{throw Error('CONFIG_PROBE_JSON_FAILURE')}type=typeof value}
+ rows.push({key,type,value,pid:r.pid,closeCode:r.status,closeSignal:r.signal,actualClose:true});}
+ process.stdout.write(JSON.stringify({rows})+'\n');"""
++        probe_bytes = probe.encode()
++        if hashlib.sha256(probe_bytes).hexdigest() != PLAN['continuation']['generated_probe_sha256']:
++            raise RuntimeError('GENERATED_PROBE_BINDING')
++        generated_file = ROOT / 'continuation-3-output/effective-config-generated.cjs'
++        with generated_file.open('xb') as f:
++            f.write(probe_bytes)
++        generated_file.chmod(0o600)
++        phase('generated-js-syntax', prefix + [str(node), '--check', str(generated_file)],
++              PLAN['continuation']['generated_probe_check_budget_seconds'])
++        if digest(generated_file) != PLAN['continuation']['generated_probe_sha256'] or hashlib.sha256(probe.encode()).hexdigest() != digest(generated_file):
++            raise RuntimeError('GENERATED_PROBE_POSTCHECK_DRIFT')
++        save('generated-js-binding.receipt.json', {'passed': True, 'sha256': digest(generated_file),
++             'bytes': len(probe_bytes), 'node_archive_sha256': PLAN['node_archive_sha256'],
++             'same_bytes_checked_and_executed': True, 'execution_mode': 'same checked bytes passed to fixed Node -e'})
+         phase('effective-config', prefix + [str(node), '-e', probe, PLAN['pnpm_entry'], json.dumps(opts), json.dumps(keys)], 10)
+         config_result = json.loads((ROOT / 'continuation-2-output/effective-config.stdout').read_text())
+         expected = {'enable-global-virtual-store': False, 'side-effects-cache': False,

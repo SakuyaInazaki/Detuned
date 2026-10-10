@@ -1,0 +1,66 @@
+{
+  "status": "draft_only_not_authorized_to_implement",
+  "task": "M6.4-A",
+  "taskbook": "m6-4-a-task-draft.md",
+  "owners": {
+    "A": {
+      "candidates": [
+        "packages/protocol/src/review.ts",
+        "packages/protocol/src/response-guards.ts",
+        "packages/protocol/src/openapi.ts",
+        "packages/protocol/src/index.ts",
+        "modules/review/src/submission-service.ts",
+        "modules/review/src/index.ts",
+        "packages/server/src/app.ts",
+        "packages/server/src/routes/meta.ts",
+        "packages/server/src/routes/reviews.ts",
+        "packages/server/src/routes/artifacts.ts",
+        "packages/server/package.json",
+        "tests/contracts/m6-review-http.test.ts"
+      ],
+      "conditional": [
+        "packages/core/src/services/artifact-service.ts: narrow private-upload admission only after root decision"
+      ],
+      "notes": [
+        "index/guard/artifact-transfer edits only where genuinely necessary",
+        "no changes to existing material-builder/JCS/old write response shapes"
+      ]
+    },
+    "B": {
+      "candidates": [
+        "packages/client/src/client.ts",
+        "packages/client/src/request-key.ts",
+        "packages/client/src/artifact-transfer.ts",
+        "pnpm-lock.yaml",
+        "tests/contracts/m6-review-client.test.ts"
+      ],
+      "notes": [
+        "lock delta only internal server workspace importer/link; no external pins",
+        "A owns server manifest; B owns lock, sequential coordination"
+      ]
+    },
+    "D": {
+      "candidates": [
+        "tests/contracts/m6-review-http-independent.test.ts",
+        "docs/reviews/<future-m6-4-a>/verification/**"
+      ],
+      "notes": [
+        "exact names assigned after fresh",
+        "sole checks execution window"
+      ]
+    }
+  },
+  "protected": [
+    "SQL/schema/DDL",
+    "external dependencies",
+    "old review packages",
+    "global configuration",
+    "VM/Colima/daemon environments",
+    "HTTP frontend/CLI/MCP/Pi/Web review activation outside this package"
+  ],
+  "open_root_decisions": [
+    "strict Snapshot/OwnAssignment/VisibleSubmissions DTO and route selection",
+    "core private-upload admission public entry/owner/return type"
+  ],
+  "execution": "No implementation, tests, build, install or link performed by this preparation."
+}

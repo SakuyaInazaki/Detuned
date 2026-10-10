@@ -1,0 +1,411 @@
+{
+  "state": "executed_final_build_type_lint_core_plus25",
+  "prior_selection": "docs/reviews/2026-10-09-m6-4-b/verification/current29-final-selection.json",
+  "prior_selection_sha256": "30b59ef2cec1c00cef249181012c9a233ccdcf6ad507bdede15008098cd1b5ce",
+  "composition": {
+    "originals": 6,
+    "prior_adapters": 19,
+    "new_adapters_this_package": 0
+  },
+  "probes": [
+    {
+      "number": 5,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "source_sha256": "365819709f97b3228ec1114a77f122e51de8e8919df1253d5300db1e53100489",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-05-first.json",
+      "receipt_sha256": "44afa5c5c8b4718aaea4eb09ac1fc133ad3a93e9afefb1a0ebfe03d0ed75df54"
+    },
+    {
+      "number": 6,
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "source_sha256": "ff8ece69ec3f1b05cc38f13ca9899294a693932f4c2c5c5ee588c3c29002983e",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [
+        {
+          "line": 7,
+          "text": "import { DETUNED_TOOLS, ToolPublishParamsSchema, ToolRelateParamsSchema } from '../../../packages/protocol/dist/index.js';"
+        },
+        {
+          "line": 42,
+          "text": "  results.push({ id: 'A05', description: 'Actual stdio bridge completes official SDK tool discovery', passes: listed.tools.length === DETUNED_TOOLS.length, count: listed.tools.length });"
+        }
+      ],
+      "receipt": "current-06-first.json",
+      "receipt_sha256": "9039060da61ba4a42c31beaa0fd7d0a189f31847fa6a2b68f56e38f0bd085023"
+    },
+    {
+      "number": 7,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "source_sha256": "23ac1d17784fca9baaeb5707b8fcbcbb8baf40725ac53e507d1b488c5b3913db",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-07-first.json",
+      "receipt_sha256": "3fd8dfbe7f91d364bcc5b4a52ec37befcc6a2114727e66ea8a7a58fc28698110"
+    },
+    {
+      "number": 8,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "source_sha256": "673b650201ebec6aff0414d3856a777137fd98e2bcd2cd7e6505878e24fda84e",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-08-first.json",
+      "receipt_sha256": "a0d13d4749d1309aedd239c5655baa40cac3d4f1c68a521d653eb7cef8972e26"
+    },
+    {
+      "number": 9,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "source_sha256": "ee52d5120b16a6a6f1e275cb3b53a68db92fb6da66bb139719c41c5657e9336f",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-09-first.json",
+      "receipt_sha256": "eeb207fe3be76636803c7138378ec7f9809964bcd5c5d8b7e0c73dacfecd83c9"
+    },
+    {
+      "number": 10,
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "source_path": "docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "source_sha256": "6cd0d9b9f7b933e9d4740c0346421d1e68991972e9ada852d6c7d4fd3a275d9b",
+      "kind": "original",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-10-first.json",
+      "receipt_sha256": "ad4135433577e70585c532dfd52f7aea40bfd9c394c156d467115c0de8aceda2"
+    },
+    {
+      "number": 11,
+      "command": "node docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs",
+      "source_path": "docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs",
+      "source_sha256": "e342eb4a3efbfb8a3f00f291059c91f93b9b135a6a6d9462ef2d64b7677fb6ea",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-11-first.json",
+      "receipt_sha256": "f844e3bd35185006219c730c00b4dee8258aae2acbd4155338148a41a78d5e5f"
+    },
+    {
+      "number": 12,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs",
+      "source_sha256": "9d4c68618da8c9c4e27efba2d0e01e69c0582b8f31d193e8941d68d90658b4e7",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-12-first.json",
+      "receipt_sha256": "92e56f7fb37dd36e8ed59b2d01f0b8519a358bd1cfdc88cbc0d1ccf6d1a9267e"
+    },
+    {
+      "number": 13,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-upgrade-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-upgrade-boundaries.mjs",
+      "source_sha256": "35a077178becf6574b53257db1b00ce4c594fb6f780bcf4af84a033bdcb1bb47",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-13-first.json",
+      "receipt_sha256": "90732bd986443f675031839a0444016f6f8d3eb1e71a65bc11836731416426f4"
+    },
+    {
+      "number": 14,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b2-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b2-completeness.mjs",
+      "source_sha256": "edb67ce46937c06996045fc8e350e447a34125a68ca0b66e8658687b036483c1",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-14-first.json",
+      "receipt_sha256": "ff1a909ec994439a711219e50e249099d5dba587ee176467845947669014c533"
+    },
+    {
+      "number": 15,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-fixture.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-fixture.mjs",
+      "source_sha256": "bfad9bd7c9047ce1b8e74fbee499a6df9e815a2fd366a92655cc0feebf3ad68e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-15-first.json",
+      "receipt_sha256": "3625dd848ba2f730c7056ae2fbdeee92e951cf3bc4b19636d90ddc03e5423ccf"
+    },
+    {
+      "number": 16,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b3-gates.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b3-gates.mjs",
+      "source_sha256": "45332b7f2819644d5b8b8bdc86fc51e1882132a1021fcdc1349ccf6da25eca3e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-16-first.json",
+      "receipt_sha256": "70dbaad9f5d0677b14e5655a620340b174c6ca56821237e6c17e7298764f8d14"
+    },
+    {
+      "number": 17,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-1-acceptance.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-1-acceptance.mjs",
+      "source_sha256": "0cebfca1113643f369bd2098e04f3b63ed06091e616fcf697d2a483c564a1b5d",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-17-first.json",
+      "receipt_sha256": "bb295ae7176c85ee94e2cf220eee9c2e4a130b2cea162a860867515652de848f"
+    },
+    {
+      "number": 18,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-2-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-b4-2-boundaries.mjs",
+      "source_sha256": "04e46853f62297ea6a657eafa03fed6a40e46aef40c5f91525806079c0add591",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-18-first.json",
+      "receipt_sha256": "3ee8e29773a0e85629f49fd8c61408851e6045e2faf4a8dfd8a6dd0755174923"
+    },
+    {
+      "number": 19,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-validation-pipeline.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-validation-pipeline.mjs",
+      "source_sha256": "bac726294ab6aa7408474ebcb4a54f62186b7665703f731b56cdacfda1c4e54e",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-19-first.json",
+      "receipt_sha256": "d6d9b185376c79dea89eb8fcab848fff8d3d7b1797d2ce5d5569b61cf143ab44"
+    },
+    {
+      "number": 20,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-precheck-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-precheck-completeness.mjs",
+      "source_sha256": "0a62da9d2b1310bbffb1037188473544ed6b69fbaecb3dc118dc4b33b1d9c6f5",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-20-first.json",
+      "receipt_sha256": "b2381e640159a8f52ada97b2f038b052a2d1a8c87d1c85c8a1d10278b8bcce31"
+    },
+    {
+      "number": 21,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs",
+      "source_sha256": "60aa18c05e14664758146d8807cee4596a0d0148de1a462a14f61d77d889fb6c",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-21-first.json",
+      "receipt_sha256": "f227f8b5485d13670baf01b01822e538fc27b90c619b6649f996159c84c44ce8"
+    },
+    {
+      "number": 22,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-helper-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-helper-boundaries.mjs",
+      "source_sha256": "d1351f52d5707d3adef8b18ad70f2de3185a7c34bca1c4308f1fc63b069dd4ac",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-22-first.json",
+      "receipt_sha256": "bdac0ee1b8eab0482ed31c3c8e443b5705c8d6f6aca1f325f20bfbc530c5255b"
+    },
+    {
+      "number": 23,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-structural-boundaries.mjs",
+      "source_sha256": "dbeea1fa86b5f020774c654dd83a1e155662013f82756944ed5b23f1e92b258d",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-23-first.json",
+      "receipt_sha256": "0f36dd124f34c1f6a5d1465b8602a11cc75d9a43fb0c5eb51ebd9a977c412708"
+    },
+    {
+      "number": 24,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-schema-semantics.mjs",
+      "source_sha256": "3b1746c3474edb2d35bd2350d7391a0b8a3d6a4a643a6798d8ca0b3ae8eb1b13",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-24-first.json",
+      "receipt_sha256": "e87fd5e78f58e67ac396c7263fc0b8d2d0d38b781a32f18d88e21f0c39ed4648"
+    },
+    {
+      "number": 25,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-profile-and-fts.mjs",
+      "source_sha256": "d536d9c271c64b48e4e445ab583a42345e425aa7ee31700926a2a22b45ce75d4",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-25-first.json",
+      "receipt_sha256": "96111ff9d1dac666852665396c31d83319b73c071c1b76838f29315bff8e4658"
+    },
+    {
+      "number": 26,
+      "command": "node docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-generation-completeness.mjs",
+      "source_sha256": "a802a7e98d9d7cbb1709820bba8158817c205f6083aa06ce4780f3306f144c61",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-26-first.json",
+      "receipt_sha256": "0caab15939b7a846f20e8b34795aa9311225f58e0f9f7f62168d326066d7c9e0"
+    },
+    {
+      "number": 27,
+      "command": "node docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs",
+      "source_sha256": "c9f1a5eecdc9b24125696260d91676b802e438b37f2e1b4aa2863b3866840f63",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [],
+      "receipt": "current-27-first.json",
+      "receipt_sha256": "997aab2573763c111a734b0279790830afc79431ef8892b048edb3da05306d2a"
+    },
+    {
+      "number": 28,
+      "command": "node docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "source_path": "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "source_sha256": "9996e5d4fc3ce1e8e2d35d80bac592827e2ba1ebeb503620ce2bc95a5bd90c5e",
+      "kind": "current_root_approved_exact_private_multipart_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [
+        {
+          "line": 20,
+          "text": "const apiV1Operations = spec => Object.entries(spec.paths).flatMap(([path, methods]) =>"
+        },
+        {
+          "line": 100,
+          "text": "    const schema = spec.paths['/spaces'].post.requestBody.content['application/json'].schema;"
+        },
+        {
+          "line": 120,
+          "text": "    const operations = apiV1Operations(spec);"
+        },
+        {
+          "line": 123,
+          "text": "    const actual = routes.filter(r => r.path.startsWith('/api/v1/') && r.method !== 'HEAD').map(r => ({ method: r.method.toLowerCase(), path: r.path.replace(/^\\/api\\/v1/, '').replace(/:([^/]+)/g, '{$1}'), schema: r.schema }));"
+        },
+        {
+          "line": 127,
+          "text": "      const op = spec.paths[route.path][route.method];"
+        },
+        {
+          "line": 155,
+          "text": "      actual_business_route_count: routes.filter(r => r.path.startsWith('/api/v1/') && r.method !== 'HEAD').length };"
+        }
+      ],
+      "receipt": "current-28-first.json",
+      "receipt_sha256": "7b3aab4c4be84ddd8a56a27c61c5d46053ca543f70976c9bde9c427d45c82ca5"
+    },
+    {
+      "number": 29,
+      "command": "node docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "source_path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "source_sha256": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c",
+      "kind": "prior_root_approved_adapter",
+      "state": "passed",
+      "hash_matches_prior_selection": true,
+      "compatibility_entry_lines": [
+        {
+          "line": 10,
+          "text": "import { generateOpenApiSpec, DETUNED_TOOLS } from '../../../../../packages/protocol/dist/index.js';"
+        },
+        {
+          "line": 20,
+          "text": "const { validateToolArguments } = await import(new URL('../pi-ai/dist/utils/validation.js', pathToFileURL(piPackage)));"
+        },
+        {
+          "line": 23,
+          "text": "const apiV1Operations = spec => Object.entries(spec.paths).flatMap(([path, methods]) =>"
+        },
+        {
+          "line": 144,
+          "text": "      const schema = spec.paths[path].get.parameters.find(p => p.in === location && p.name === parameter).schema;"
+        },
+        {
+          "line": 150,
+          "text": "    const security = spec.paths['/capabilities'].get.security ?? spec.security;"
+        },
+        {
+          "line": 155,
+          "text": "    const subRequiresKey = spec.paths['/spaces/{space_id}/subscriptions'].post.parameters.some(p => p.in === 'header' && p.name.toLowerCase() === 'idempotency-key' && p.required);"
+        },
+        {
+          "line": 161,
+          "text": "    const bodyRequired = spec.paths['/spaces/{space_id}/consumers/{id}/poll'].post.requestBody.required === true;"
+        },
+        {
+          "line": 167,
+          "text": "    const live = routes.filter(r => r.path.startsWith('/api/v1/') && r.method !== 'HEAD');"
+        },
+        {
+          "line": 170,
+          "text": "      const method = String(r.method).toLowerCase(); const op = spec.paths[path]?.[method];"
+        },
+        {
+          "line": 175,
+          "text": "    const publishedSet = apiV1Operations(spec).map(({method, path}) => `${method} ${path}`).sort();"
+        },
+        {
+          "line": 203,
+          "text": "    const schemaPreserved = DETUNED_TOOLS.every(t => isDeepStrictEqual(JSON.parse(JSON.stringify(t.schema)), JSON.parse(JSON.stringify(tools.get(t.name)?.parameters))));"
+        },
+        {
+          "line": 218,
+          "text": "      const declared = DETUNED_TOOLS.find(t => t.name === name);"
+        },
+        {
+          "line": 223,
+          "text": "      const sdkOriginal = await outcome(() => validateToolArguments({ ...registered, parameters: declared.schema }, { type: 'toolCall', id: 'r22-args', name, arguments: args }));"
+        },
+        {
+          "line": 224,
+          "text": "      const sdkAdapted = await outcome(() => validateToolArguments(registered, { type: 'toolCall', id: 'r22-args', name, arguments: args }));"
+        }
+      ],
+      "receipt": "current-29-first.json",
+      "receipt_sha256": "63c811de92d163ba1a993df6e8df9f1a8a4bebc6fbe0bff502adc6f562ef6125"
+    }
+  ],
+  "conclusion": "Nine tool names unchanged. Discovery count uses canonical registry. HTTP OpenAPI probes derive current API-v1 routes/operations dynamically, retaining bidirectional/schema assertions. No fixed prior route count nor ownership-authorized change needed; execute the same 25 selected sources once after core pass.",
+  "gate_receipts": {
+    "build": "build-b3-first.json",
+    "typecheck": "typecheck-first.json",
+    "lint": "lint-first.json",
+    "core": "core-first.json"
+  },
+  "seconds_current25": 17.858
+}

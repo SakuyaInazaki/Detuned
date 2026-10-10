@@ -1,4 +1,9 @@
-import { Actor, Credential, Space, SpaceRevision, Membership, Session, Thread, Post, PostRevision, Relation, RelationResolution, Artifact, Event, Subscription, Consumer } from '@detuned/protocol';
+import type { SpaceExportSnapshot } from './space-export-snapshot.js';
+import { ReviewSnapshotRecord, ReviewSnapshotItemRecord, ReviewRequestRecord, ReviewRequestVersionRecord, ReviewAssignmentRecord, ReviewSubmissionRecord, ReviewDecisionRecord, CheckRunRecord, CheckRunVersionRecord, CheckReceiptRecord, CheckRunCredentialRecord, Actor, ResourceLimits, StorageOperationalStatus, Credential, Space, SpaceRevision, Membership, Session, Thread, Post, PostRevision, PostRevisionMetadata, RevisionArtifactCatalogItem, Relation, RelationResolution, Artifact, Event, Subscription, Consumer } from '@detuned/protocol';
+/** Conservative candidate cardinality, not a SQLite VM/CPU time budget. */
+export interface SearchReadBudget {
+    max_candidates: number;
+}
 export interface IdempotencyRecord {
     actor_id: string;
     space_id: string;
@@ -26,8 +31,65 @@ export interface ThreadVersionRecord {
     created_at: string;
 }
 export interface StoragePort {
+    /** Optional writable runtime-only performance preparation, after quota and before requests. */
+    prepareRuntimeReadIndexes?(): void;
+    checkReadiness(): boolean;
+    sampleOperationalStatus(): StorageOperationalStatus;
+    /** Runtime connection configuration; unsupported implementations must reject, never silently skip. */
+    configureResourceLimits(limits: ResourceLimits): void;
+    /** At most maxObjects+1 rows; count may be an over-limit sentinel. BigInt stays internal. */
+    getArtifactUsage(maxObjects: number): {
+        objects: number;
+        bytes: bigint;
+    };
     transaction<T>(fn: (tx: StoragePort) => T): T;
+    /** Synchronous read-only callback on this connection; nested calls reuse its transaction. */
+    readSnapshot<T>(fn: (snapshot: StoragePort) => T): T;
     getInstanceSecret(): string;
+    /** New export only: independent file-backed reader, never a transaction on this live connection. */
+    openSpaceExportSnapshot(spaceId: string): SpaceExportSnapshot;
+    getExportEventSeq(spaceId: string): string;
+    hasExportRedactionAfter(spaceId: string, afterSeq: string, throughSeq: string): boolean;
+    createReviewSnapshot(record: ReviewSnapshotRecord, items: ReviewSnapshotItemRecord[]): void;
+    findReviewSnapshotById(id: string): ReviewSnapshotRecord | null;
+    listReviewSnapshotItems(snapshotId: string): ReviewSnapshotItemRecord[];
+    getNextReviewRequestRound(spaceId: string, targetPostId: string): number;
+    createReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord, assignments: ReviewAssignmentRecord[]): void;
+    findReviewRequestById(id: string): ReviewRequestRecord | null;
+    listPostReviewRequests(spaceId: string, postId: string, limit: number, afterRound?: number): {
+        requests: ReviewRequestRecord[];
+        has_more: boolean;
+    };
+    findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null;
+    listReviewAssignments(requestId: string): ReviewAssignmentRecord[];
+    updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void;
+    findReviewAssignmentById(id: string): ReviewAssignmentRecord | null;
+    findReviewAssignment(requestId: string, actorId: string): ReviewAssignmentRecord | null;
+    createReviewSubmission(record: ReviewSubmissionRecord): void;
+    findReviewSubmissionById(id: string): ReviewSubmissionRecord | null;
+    findReviewSubmissionByAssignmentId(id: string): ReviewSubmissionRecord | null;
+    findReviewSubmissionBySessionId(id: string): ReviewSubmissionRecord | null;
+    listReviewSubmissions(requestId: string): ReviewSubmissionRecord[];
+    revealReviewSubmissions(requestId: string, revealedAt: string): void;
+    findReviewDecisionByRequestId(requestId: string): ReviewDecisionRecord | null;
+    createReviewDecision(record: ReviewDecisionRecord): void;
+    listActiveReviewRequestsForMaterial(spaceId: string, material: {
+        kind: 'post' | 'artifact' | 'policy';
+        objectId: string;
+    }): ReviewRequestRecord[];
+    createCheckRun(record: CheckRunRecord, version: CheckRunVersionRecord): void;
+    findCheckRunById(id: string): CheckRunRecord | null;
+    getNextCheckRunAttempt(requestId: string, checkName: string): number;
+    findLatestCheckRun(requestId: string, checkName: string): CheckRunRecord | null;
+    findCheckRunVersion(runId: string, version: number): CheckRunVersionRecord | null;
+    findCheckRunVersionBeforeRequestVersion(runId: string, requestVersion: number): CheckRunVersionRecord | null;
+    updateCheckRun(record: CheckRunRecord, version: CheckRunVersionRecord): void;
+    createCheckReceipt(record: CheckReceiptRecord): void;
+    findCheckReceiptByRunId(runId: string): CheckReceiptRecord | null;
+    findCheckReceiptById(receiptId: string): CheckReceiptRecord | null;
+    createCheckRunCredential(record: CheckRunCredentialRecord): void;
+    findCheckRunCredentialByCredentialId(id: string): CheckRunCredentialRecord | null;
+    listCheckRunCredentials(runId: string): CheckRunCredentialRecord[];
     findActorById(id: string): Actor | null;
     createActor(actor: Actor): void;
     updateActor(actor: Actor): void;
@@ -62,10 +124,29 @@ export interface StoragePort {
     createPostRevision(post: Post, revision: PostRevision): void;
     updatePost(post: Post): void;
     findPostById(id: string): Post | null;
+    /** Narrow directory reads: no stored content or private attachment fields. */
+    getPostRevisionMetadata(postId: string, revision: number): PostRevisionMetadata | null;
+    listPostRevisionMetadata(postId: string, limit: number, afterRevision?: number): {
+        revisions: PostRevisionMetadata[];
+        has_more: boolean;
+    };
+    listRevisionArtifactMetadata(spaceId: string, postId: string, revision: number, limit: number, afterId?: string): {
+        artifacts: RevisionArtifactCatalogItem[];
+        has_more: boolean;
+    };
     getPostRevision(postId: string, revision: number): PostRevision | null;
     listPostRevisions(postId: string, limit?: number, cursor?: string | null): {
         revisions: PostRevision[];
         next_cursor: string | null;
+    };
+    listPostsInThreadByCreatedAt(threadId: string, limit: number, after?: {
+        key: string | null;
+        id: string;
+    }): {
+        posts: (Post & {
+            sort_key: string | null;
+        })[];
+        has_more: boolean;
     };
     listPostsInThread(threadId: string, limit?: number, cursor?: string | null): {
         posts: Post[];
@@ -75,16 +156,22 @@ export interface StoragePort {
     updateRelation(relation: Relation): void;
     findRelationById(id: string): Relation | null;
     findRelationByEndpoints(spaceId: string, sourcePostId: string, sourceRevision: number, targetPostId: string, targetRevision: number, type: string): Relation | null;
+    listRelationsByTarget(spaceId: string, targetPostId: string): Relation[];
     listOpenChallenges(spaceId: string, targetPostId?: string, targetRevision?: number): Relation[];
+    listOpenChallengesForThread(spaceId: string, threadId: string, limit: number): Relation[];
     createRelationResolution(resolution: RelationResolution): void;
     findRelationResolutionById(id: string): RelationResolution | null;
     findRelationResolutionByVersion(relationId: string, version: number): RelationResolution | null;
+    getArtifactBytesInSpace(spaceId: string): number;
+    listArtifactStorageKeys(): string[];
+    createRevisionArtifact(postId: string, revision: number, artifactId: string, purpose: string): void;
     createArtifact(artifact: Artifact): void;
     updateArtifactState(id: string, state: Artifact['state']): void;
     findArtifactById(id: string): Artifact | null;
     appendEvent(spaceId: string, event: Omit<Event, 'seq'>): Event;
     getLatestEventSeq(spaceId: string): number;
     listEventsAfter(spaceId: string, afterSeq: number, limit: number): Event[];
+    listPublicEventsForThread(spaceId: string, threadId: string, atOrBeforeSeq: number, limit: number): Event[];
     findEventById(id: string): Event | null;
     getIdempotencyRecord(actorId: string, spaceId: string, operation: string, key: string): IdempotencyRecord | null;
     createIdempotencyRecord(record: IdempotencyRecord): void;
@@ -101,11 +188,16 @@ export interface StoragePort {
     createDeliveryBatch(batch: DeliveryBatchRecord): void;
     findDeliveryBatchById(id: string): DeliveryBatchRecord | null;
     ackDeliveryBatch(id: string, ackedAt: string): void;
+    /** Metadata only; whole filtered revealed domain, ID DESC, at most maxCandidates+1. No cursor budget evasion. */
+    listPublicReviewSubmissionCandidateIds(spaceId: string, filters: {
+        request_id?: string;
+        target_post_id?: string;
+    }, maxCandidates: number): string[];
     searchPosts(spaceId: string, q: string, filters?: {
         kind?: string;
         tags?: string[];
         thread_id?: string;
-    }, limit?: number, cursor?: string | null): {
+    }, limit?: number, cursor?: string | null, budget?: SearchReadBudget): {
         items: any[];
         next_cursor: string | null;
     };

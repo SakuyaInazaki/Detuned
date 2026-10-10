@@ -1,0 +1,13 @@
+# E.R1 actual-pin 静审与阻塞记录
+
+2026-10-10，零runtime。首次source41505B/fb69c4…8b1af及capturea19423d…e039b版本静审发现下列阻塞，root已接受source两项并派窄修；旧pin/diff必须保留，不作为最终runtime批准版本。
+
+1. Source observe的真实callback未retained；Promise.race受取消先结束时callback仍pending。cleanup attempt(registration/watch/final discovery)超时仅记录错误，rootSafeToRemove未要求实际settled。须真实observer/registration/watch/finalDiscovery状态与coverage共同门禁，超时/未知保root，不增长预算/权限。
+2. Source candidate absence整个for共一个attempt，首unknown/present抛错跳后续；须每candidate独立attempt/聚合verified集。
+3. Capture clearRegisteredGroups同样整个candidate for首unknown/present抛错跳后续。须独立try聚合failure/absence-count，继续其余候选，最后alltrue才清退和删root。原组循环已有独立try，无需扩大路线。
+
+当前testf421379b…48279重算匹配，CL01相对red fixture仅登记/ACK两路径改逐PID（root已授权）；CL02实际production双launcher、ACK1不解锁2、各init/exact9/EOF0null与全部absence断言保持，5秒/4秒/1MiB不变。旧source唯一red失败2.227561s仅证明预期逐PID登记缺失并完成自身清退，不实测断言EEXIST，不升级native认证。
+
+Capture增量driver与outer按同mcpPID匹配candidate/proof，control ACK按stage+mcpPID，独立actualUID/direct native父/PGID查询与持久proof完成后ACK；拒绝第二confirmedobserver oracle要求2candidate/2proof而source confirmedobserver/authorized/ACK1。normal不硬编码单candidate/exact6stage，64上限/全count/placement聚合与sourcecoverage/count核对。outer真实ownershipTasks retained，finally actualdriverclose+settled门禁已有；source late final-discovery新增但未observer登记会count mismatch/coveragefalse并failclosed保目录。未发现ACK串线或新增权限问题。
+
+Source原protectedhelper、policy/minenv/binary/方法/预算字节保护待新v2freeze联合重核；capture当前sourcepin等待更新，不能以旧fb69pin放行。修后source/test/capture新freeze到达须只读增量核以上三项及binding，再由root选择最小gate；native/rejectsecond尚未授权。当前结论有上述明确阻塞，无runtime接受。

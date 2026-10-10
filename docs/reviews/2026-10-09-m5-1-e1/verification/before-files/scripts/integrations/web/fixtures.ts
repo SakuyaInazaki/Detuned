@@ -1,0 +1,284 @@
+import {test as base, expect, type Page} from '@playwright/test';
+import {createServer, request as httpRequest, type Server, type ServerResponse} from 'node:http';
+import {mkdtemp, rm, stat, mkdir, appendFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import Database from 'better-sqlite3';
+import {buildApp, ArtifactFileStore} from '../../../packages/server/dist/index.js';
+import {bootstrapDatabase, SqliteStorage} from '../../../packages/storage-sqlite/dist/index.js';
+import {CryptoHasher} from '../../../packages/core/dist/index.js';
+
+const repository = fileURLToPath(new URL('../../../', import.meta.url));
+const evidenceRoot = path.resolve(process.env.DETUNED_WEB_EVIDENCE_DIR ?? path.join(repository, 'test-results/web'));
+type IdentityName = 'contributor' | 'observer';
+type Identity = {actor: string; credential: string; token: string};
+type Post = {id: string; title: string; revision: number};
+type SeedPost = {title: string; body: string; summary?: string; kind?: 'note' | 'failure' | 'question'; tags?: string[]; structured?: Json; threadId?: string};
+type Json = Record<string, unknown>;
+type HttpEvent = {method: string; path: string; status: number; requestKey?: string; query?: Record<string, string>};
+type Fault = 'lose-after-commit' | 'fail-before' | 'hold-after' | 'hold-before';
+export type FaultHandle = {entered: Promise<void>; release: () => void};
+export interface ForumFixture {
+  baseURL: string;
+  evidencePath(relative: string): string;
+  space: {id: string; slug: string};
+  hidden: {id: string; slug: string};
+  alternate: {id: string; slug: string};
+  thread: {id: string; title: string};
+  post: Post;
+  actorIds: Record<IdentityName, string>;
+  login(page: Page, identity?: IdentityName): Promise<void>;
+  revokeCredential(identity: IdentityName): Promise<void>;
+  withdrawMembership(identity: IdentityName): Promise<void>;
+  seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post>;
+  seedPost(input: SeedPost): Promise<Post>;
+  seedThread(input: {title: string; initialPost?: SeedPost}): Promise<{id: string; title: string; initialPost?: Post}>;
+  seedHistoricalFailure(title: string): Promise<Post>;
+  threadsByTitle(title: string): Array<{id: string; creator_id: string; space_id: string}>;
+  seedSyntheticLargeNote(title: string): Promise<Post>;
+  revisePost(post: Post, input: {title?: string; summary?: string; tags?: string[]; body: string; structured?: Json}): Promise<Post>;
+  postsByTitle(title: string): Array<{id: string; author_id: string; current_revision: number; space_id: string; thread_id: string}>;
+  relationsFrom(postId: string): Array<{source_post_id: string; source_revision: number; target_post_id: string; target_revision: number; type: string}>;
+  artifacts(): Array<{id: string; owner_id: string; space_id: string; sha256: string; bytes: number; state: string}>;
+  artifactsFor(postId: string, revision: number): Array<{artifact_id: string; purpose: string}>;
+  seedArtifact(input: {bytes: Uint8Array; mime?: string; post?: Post; state?: 'ready' | 'missing' | 'redacted'; visibility?: 'space' | 'review_assignment'; crossSpace?: boolean}): Promise<string>;
+  businessCounts(): Record<string, number>;
+  readonly httpEvents: HttpEvent[];
+  faultNext(match: {method: string; path: string}, fault: Fault): FaultHandle;
+}
+function json(value: unknown): Json {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Private fixture response unavailable.');
+  return value as Json;
+}
+function string(value: unknown): string {
+  if (typeof value !== 'string') throw new Error('Private fixture identity unavailable.');
+  return value;
+}
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>(r => {resolve = r;});
+  return {promise, resolve};
+}
+class Clock {
+  private milliseconds = Date.parse('2026-11-01T00:00:00.000Z');
+  now() {return new Date(this.milliseconds);}
+  nowIso() {return this.now().toISOString();}
+  refill() {this.milliseconds += 60000;}
+}
+async function listen(server: Server): Promise<string> {
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {server.off('error', reject); resolve();});
+  });
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Private fixture listener unavailable.');
+  return `http://127.0.0.1:${address.port}`;
+}
+function unavailable(response: ServerResponse) {
+  response.writeHead(503, {'content-type': 'application/json', 'cache-control': 'no-store'});
+  response.end(JSON.stringify({api_version: '1', request_id: 'private-proxy', error: {code: 'TEMPORARILY_UNAVAILABLE', message: 'Private fixture response unavailable.', retryable: true}}));
+}
+async function createFixture(): Promise<{forum: ForumFixture; dispose: () => Promise<void>}> {
+  // Fail before creating a DB when the explicitly built Web bundle is absent.
+  const webAssetsDir = path.join(repository, 'packages/web/dist');
+  if (!(await stat(path.join(webAssetsDir, 'index.html'))).isFile()) throw new Error('Build the private Web test bundle first.');
+  await mkdir(path.join(evidenceRoot, 'screenshots'), {recursive: true});
+  const owned = await mkdtemp('/private/tmp/detuned-web-browser-');
+  let initialized: {db: Database.Database; adminToken: string | null};
+  try {
+    const database = new Database(path.join(owned, 'forum.sqlite'));
+    try {initialized = {db: database, adminToken: bootstrapDatabase(database).adminToken};}
+    catch {database.close(); throw new Error('Private fixture bootstrap unavailable.');}
+  } catch {await rm(owned, {recursive: true, force: true}); throw new Error('Private fixture bootstrap unavailable.');}
+  const {db, adminToken} = initialized;
+  if (!adminToken) {db.close(); await rm(owned, {recursive: true, force: true}); throw new Error('Private fixture bootstrap unavailable.');}
+  const clock = new Clock();
+  const httpEvents: HttpEvent[] = [];
+  const pending: Array<{method: string; path: string; fault: Fault; entered: ReturnType<typeof deferred>; released: ReturnType<typeof deferred>}> = [];
+  const held = new Set<ReturnType<typeof deferred>>();
+  let upstream = '';
+  let browserAccessed = false;
+  let app: ReturnType<typeof buildApp> | undefined;
+  const proxy = createServer((request, response) => {
+    const pathname = new URL(request.url ?? '/', 'http://fixture.invalid').pathname;
+    const method = request.method ?? 'GET';
+    if (typeof request.headers.authorization !== 'string') browserAccessed = true;
+    const index = pending.findIndex(f => f.method === method && f.path === pathname);
+    const fault = index < 0 ? undefined : pending.splice(index, 1)[0];
+    const record: HttpEvent = {method, path: pathname, status: 0};
+    if ((pathname.endsWith('/posts') || pathname.endsWith('/threads') || pathname.endsWith('/artifacts')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
+    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts')) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
+    httpEvents.push(record);
+    if (!upstream || fault?.fault === 'fail-before') {
+      record.status = 503; request.resume(); unavailable(response); fault?.entered.resolve(); return;
+    }
+    // Browser-supplied Host/Origin/Cookie are forwarded unchanged. No credential injection.
+    const forward = () => {
+    const inner = httpRequest(new URL(request.url ?? '/', upstream), {method, headers: request.headers}, result => {
+      record.status = result.statusCode ?? 0;
+      if (!fault || fault.fault === 'hold-before') {response.writeHead(result.statusCode ?? 502, result.headers); result.pipe(response); return;}
+      const chunks: Buffer[] = [];
+      result.on('data', bytes => {chunks.push(Buffer.from(bytes));});
+      result.on('end', () => {
+        fault.entered.resolve();
+        if (fault.fault === 'lose-after-commit') {if (!response.destroyed) unavailable(response); return;}
+        held.add(fault.released);
+        void fault.released.promise.then(() => {
+          held.delete(fault.released);
+          if (!response.destroyed) {response.writeHead(result.statusCode ?? 502, result.headers); response.end(Buffer.concat(chunks));}
+        });
+      });
+      result.on('error', () => {if (!response.destroyed) unavailable(response); fault.entered.resolve();});
+    });
+    inner.on('error', () => {if (!response.destroyed) unavailable(response); fault?.entered.resolve();});
+    inner.setTimeout(10000, () => {inner.destroy(); if (!response.destroyed) unavailable(response);});
+    request.on('aborted', () => {inner.destroy();});
+    request.pipe(inner);
+    };
+    if (fault?.fault === 'hold-before') {
+      if (method !== 'GET') {unavailable(response); fault.entered.resolve(); return;}
+      held.add(fault.released); fault.entered.resolve();
+      void fault.released.promise.then(() => {held.delete(fault.released); if (!response.destroyed) forward();});
+    } else forward();
+  });
+  let baseURL = '';
+  async function dispose() {
+    for (const f of pending) {f.entered.resolve(); f.released.resolve();}
+    for (const d of held) d.resolve();
+    proxy.closeAllConnections();
+    await new Promise<void>((resolve, reject) => {proxy.close(error => {if (error && (!('code' in error) || error.code !== 'ERR_SERVER_NOT_RUNNING')) reject(error); else resolve();});});
+    if (app) {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {await Promise.race([app.close(), new Promise<never>((_, reject) => {timer = setTimeout(() => reject(new Error('Private app cleanup deadline.')), 15000);})]);}
+      finally {if (timer) clearTimeout(timer);}
+    }
+    db.close();
+    await rm(owned, {recursive: true, force: true});
+    try {await stat(owned); throw new Error('Private fixture cleanup incomplete.');} catch (error) {if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;}
+    const evidence = evidenceRoot;
+    await mkdir(evidence, {recursive: true});
+    await appendFile(path.join(evidence, 'browser-fixture-cleanup.jsonl'), JSON.stringify({owned_temp: owned, proxy_closed: true, app_closed: true, db_closed: true, temp_absent: true}) + '\n');
+  }
+  try {
+    baseURL = await listen(proxy);
+    const artifactBlobs = await ArtifactFileStore.create(owned);
+    app = buildApp({artifactBlobs, storage: new SqliteStorage(db), clock, webOrigin: baseURL, allowInsecureLoopback: true, webAssetsDir});
+    let key = 0;
+    async function seed(method: 'POST' | 'PATCH' | 'DELETE', route: string, payload?: Json): Promise<Json> {
+      clock.refill();
+      if (upstream) {
+        const result = await fetch(baseURL + '/api/v1' + route, {method, headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`, ...(payload === undefined ? {} : {'content-type': 'application/json'})}, ...(payload === undefined ? {} : {body: JSON.stringify(payload)}), signal: AbortSignal.timeout(5000)});
+        if (result.status >= 300) throw new Error(`Private fixture seed rejected (${result.status}).`);
+        return json(json(await result.json()).data);
+      }
+      const response = await app!.inject({method, url: '/api/v1' + route, headers: {host: new URL(baseURL).host, authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`}, ...(payload === undefined ? {} : {payload})});
+      if (response.statusCode >= 300) throw new Error(`Private fixture seed rejected (${response.statusCode}).`);
+      return json(json(response.json()).data);
+    }
+    const space = {id: string(json((await seed('POST', '/spaces', {slug: 'browser-space', objective: 'Private browser research', rules: []})).space).id), slug: 'browser-space'};
+    const hidden = {id: string(json((await seed('POST', '/spaces', {slug: 'private-hidden-space', objective: 'Private hidden research', rules: []})).space).id), slug: 'private-hidden-space'};
+    const alternate = {id: string(json((await seed('POST', '/spaces', {slug: 'alternate-space', objective: 'Second private browser space', rules: []})).space).id), slug: 'alternate-space'};
+    const thread = {id: string(json((await seed('POST', `/spaces/${space.id}/threads`, {title: 'Browser discussion'})).thread).id), title: 'Browser discussion'};
+    const identities = {} as Record<IdentityName, Identity>;
+    for (const role of ['contributor', 'observer'] as const) {
+      const actor = string((await seed('POST', '/admin/actors', {kind: 'human', display_name: 'Browser ' + role})).id);
+      await seed('POST', `/spaces/${space.id}/memberships`, {actor_id: actor, role});
+      if (role === 'contributor') await seed('POST', `/spaces/${alternate.id}/memberships`, {actor_id: actor, role});
+      const credential = await seed('POST', '/admin/credentials', {actor_id: actor, allowed_space_ids: role === 'contributor' ? [space.id, alternate.id] : [space.id], capabilities: ['read', 'write']});
+      identities[role] = {actor, credential: string(credential.credential_id), token: string(credential.token)};
+    }
+    function postPayload(input: SeedPost): Json {
+      return {kind: input.kind ?? 'note', title: input.title, summary: input.summary ?? 'Private browser fixture', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.structured ? {structured: input.structured} : {})};
+    }
+    function postResult(response: Json, title: string): Post {
+      return {id: string(json(response.post).id), title, revision: Number(json(response.revision).revision)};
+    }
+    async function seedPost(input: SeedPost): Promise<Post> {
+      return postResult(await seed('POST', `/spaces/${space.id}/threads/${input.threadId ?? thread.id}/posts`, postPayload(input)), input.title);
+    }
+    async function seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post> {return seedPost(input);}
+    function historicalStructured(value: Post, structured: Json) {
+      if (browserAccessed) throw new Error('Historical fixture must precede browser access.');
+      const row = json(db.prepare('SELECT title,summary,body FROM post_revisions WHERE post_id=? AND revision=1').get(value.id));
+      const hasher = new CryptoHasher();
+      const contentHash = hasher.sha256(`${string(row.title)}\n${string(row.summary)}\n${string(row.body)}\n${hasher.canonicalJson(structured)}`);
+      db.prepare('UPDATE post_revisions SET structured=?,content_hash=? WHERE post_id=? AND revision=1').run(JSON.stringify(structured), contentHash, value.id);
+    }
+    const post = await seedNote({title: 'Fixture source', body: 'Original fixed research body.'});
+    await app.listen({host: '127.0.0.1', port: 0});
+    const address = app.server.address();
+    if (!address || typeof address === 'string') throw new Error('Private upstream listener unavailable.');
+    upstream = `http://127.0.0.1:${address.port}`;
+    const forum: ForumFixture = {
+      baseURL, space, hidden, alternate, thread, post,
+      evidencePath(relative) {if (path.isAbsolute(relative) || relative.split(/[\\/]/).includes('..')) throw new Error('Private evidence path invalid.'); return path.join(evidenceRoot, relative);},
+      actorIds: {contributor: identities.contributor.actor, observer: identities.observer.actor},
+      async login(page, identity = 'contributor') {
+        // Suppress action errors that would otherwise repeat the private token in call logs.
+        try {await page.getByLabel('访问令牌', {exact: true}).fill(identities[identity].token); await page.getByRole('button', {name: '登录', exact: true}).click();}
+        catch {throw new Error('Private browser login action failed.');}
+        await expect(page.getByRole('button', {name: '退出登录', exact: true})).toBeVisible();
+      },
+      async revokeCredential(identity) {await seed('POST', `/admin/credentials/${identities[identity].credential}/revoke`);},
+      async withdrawMembership(identity) {await seed('DELETE', `/spaces/${space.id}/memberships/${identities[identity].actor}`);},
+      seedNote, seedPost,
+      async seedThread(input) {
+        const result = await seed('POST', `/spaces/${space.id}/threads`, {title: input.title, ...(input.initialPost ? {initial_post: postPayload(input.initialPost)} : {})});
+        return {id: string(json(result.thread).id), title: input.title, ...(result.initial_post && input.initialPost ? {initialPost: postResult(json(result.initial_post), input.initialPost.title)} : {})};
+      },
+      async seedHistoricalFailure(title) {
+        // First accepted through ordinary strict HTTP. Then one owned historical
+        // record is widened before browser access; this is not a legal new failure write.
+        const value = await seedPost({kind: 'failure', title, body: 'Historical partial research record.', structured: {attempt: 'Historical attempt', category: 'test_failure', assumptions: [], tested_scope: 'Private fixture', expected: 'Complete record', observed: 'Partial historical record', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'Historical evidence unavailable', ruled_out: 'No general exclusion', not_ruled_out: ['Other variants'], retry_when: ['Obtain evidence']}});
+        historicalStructured(value, {attempt: 'Historical attempt', category: null, tested_scope: null, evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'Historical evidence unavailable'});
+        return value;
+      },
+      threadsByTitle(title) {return db.prepare('SELECT id,creator_id,space_id FROM threads WHERE title=? ORDER BY id').all(title) as ReturnType<ForumFixture['threadsByTitle']>;},
+      async seedSyntheticLargeNote(title) {
+        if (httpEvents.length) throw new Error('Synthetic historical fixture must precede browser access.');
+        // The ordinary note is first accepted through actual HTTP. This one owned
+        // historical test record is then widened before any browser sees it.
+        // Do not claim that the oversized structured material was a legal HTTP new write.
+        const value = await seedNote({title, body: 'Synthetic historical structured material.'});
+        historicalStructured(value, {historical_material: '研究🧪'.repeat(120000)});
+        return value;
+      },
+      async revisePost(original, input) {
+        const result = await seed('POST', `/spaces/${space.id}/posts/${original.id}/revisions`, {expected_revision: original.revision, title: input.title ?? original.title, summary: input.summary ?? 'Private browser fixture revision', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.structured ? {structured: input.structured} : {})});
+        return {id: original.id, title: input.title ?? original.title, revision: Number(json(result.revision).revision)};
+      },
+      postsByTitle(title) {return db.prepare('SELECT p.id,p.author_id,p.current_revision,p.space_id,p.thread_id FROM posts p JOIN post_revisions r ON r.post_id=p.id AND r.revision=p.current_revision WHERE r.title=? ORDER BY p.id').all(title) as ReturnType<ForumFixture['postsByTitle']>;},
+      relationsFrom(postId) {return db.prepare('SELECT source_post_id,source_revision,target_post_id,target_revision,type FROM relations WHERE source_post_id=?').all(postId) as ReturnType<ForumFixture['relationsFrom']>;},
+      artifacts() {return db.prepare('SELECT id,owner_id,space_id,sha256,bytes,state FROM artifacts ORDER BY id').all() as ReturnType<ForumFixture['artifacts']>;},
+      artifactsFor(postId, revision) {return db.prepare('SELECT artifact_id,purpose FROM revision_artifacts WHERE post_id=? AND revision=? ORDER BY artifact_id').all(postId, revision) as ReturnType<ForumFixture['artifactsFor']>;},
+      async seedArtifact(input) {
+        if (browserAccessed) throw new Error('Historical artifact fixture must precede browser access.');
+        clock.refill();
+        const form = new FormData();
+        form.append('metadata', JSON.stringify({visibility: 'space'}));
+        form.append('file', new Blob([new Uint8Array(input.bytes)], {type: input.mime ?? 'application/octet-stream'}), 'private-fixture.bin');
+        const result = await fetch(baseURL + `/api/v1/spaces/${space.id}/artifacts`, {method: 'POST', headers: {authorization: `Bearer ${adminToken}`, 'idempotency-key': `browser-private-seed-${++key}`}, body: form, signal: AbortSignal.timeout(5000)});
+        if (!result.ok) throw new Error(`Private artifact seed rejected (${result.status}).`);
+        const id = string(json(json(await result.json()).data).id);
+        // Legal HTTP upload precedes explicitly synthetic historical association/status.
+        if (input.post) db.prepare('INSERT INTO revision_artifacts(post_id,revision,artifact_id,purpose) VALUES(?,?,?,?)').run(input.post.id, input.post.revision, id, 'private-fixture');
+        if (input.state) db.prepare('UPDATE artifacts SET state=? WHERE id=?').run(input.state,id);
+        if (input.visibility) db.prepare('UPDATE artifacts SET visibility=? WHERE id=?').run(input.visibility,id);
+        if (input.crossSpace) db.prepare('UPDATE artifacts SET space_id=? WHERE id=?').run(hidden.id,id);
+        return id;
+      },
+      businessCounts() {return Object.fromEntries(['threads', 'posts', 'post_revisions', 'relations', 'sessions', 'events', 'idempotency_records', 'artifacts', 'revision_artifacts'].map(table => [table, Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)]));},
+      httpEvents,
+      faultNext(match, fault) {const entered = deferred(), released = deferred(); pending.push({...match, fault, entered, released}); return {entered: entered.promise, release: released.resolve};},
+    };
+    return {forum, dispose};
+  } catch {await dispose(); throw new Error('Private browser fixture setup failed.');}
+}
+
+export const test = base.extend<{forum: ForumFixture}>({
+  forum: async ({}, use) => {
+    const fixture = await createFixture();
+    try {await use(fixture.forum);} finally {await fixture.dispose();}
+  },
+});
+export {expect};

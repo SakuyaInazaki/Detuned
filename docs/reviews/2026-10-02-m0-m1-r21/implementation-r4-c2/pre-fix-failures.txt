@@ -1,0 +1,273 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+(node:44409) TimeoutOverflowWarning: 2147484000 does not fit into a 32-bit signed integer.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ tests/contracts/r4-c-contracts.test.ts (22 tests | 8 failed) 5895ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false) 119ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-2: parseIntegerQuery rejects non-digits, negative numbers, and out-of-range values 36ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-3: Core RelationService rejects invalid relation type without committing state 29ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-4: Valid relation creation and resolve/reopen lifecycle maintains idempotency and symmetry 31ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-5: Query, body, and reference validation rejects without side effects 60ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01) 30ms
+     → expected 201 to be 400 // Object.is equality
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: OpenAPI 3.1 specification body constraints agree with existing protocol and HTTP (AD02) 23ms
+     → expected 19 to be +0 // Object.is equality
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-1: HTTP 200/201 with malformed JSON rejects with ClientProtocolError 22ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-2: Missing envelope fields (api_version, request_id, data) reject with ClientProtocolError 21ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-3: Strictly preserves valid falsy data values and allows forward-compatible envelope fields 21ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-4: Distinguishes UserAbortError from TimeoutError 72ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-5: Abort listener and timer are cleanly removed in all 5 cancellation phases and on settle 45ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3814ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-7: Preserves server REVISION_CONFLICT error independently of message wording 44ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1372ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03) 34ms
+     → expected UserAbortError: Operation aborted by user { isUserAbort: true } to be an instance of ClientTransportError
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04) 23ms
+     → expected true to be false // Object.is equality
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05) 22ms
+     → promise resolved "{ data: { ok: true }, meta: undefined }" instead of rejecting
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-1: /forum-status and /forum-check log exact message and level to console when hasUI is false (headless) for both success and failure 20ms
+     → expected "error" to be called with arguments: [ StringContaining{…} ]
+
+Number of calls: 0
+
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-2: /forum-status and /forum-check notify ui when hasUI is true for both success and failure 20ms
+     → expected "spy" to be called with arguments: [ StringContaining{…}, 'error' ]
+
+Received: 
+
+  1st spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned API 正常。版本: 0.1.0, API: v1",
++   "info",
+  ]
+
+  2nd spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned 已连接。当前身份: Administrator (act_admin_47f51d541d6f), 可见空间: 1",
++   "info",
+  ]
+
+  3rd spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned 已连接。当前身份: Administrator (act_admin_47f51d541d6f), 可见空间: 1",
++   "info",
+  ]
+
+
+Number of calls: 3
+
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-3: Root package.json engines.node is >=22.19.0 to match Pi dependency requirements 18ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-4: Registered Pi tools adapt TypeBox schemas cleanly and propagate protocol and business errors 18ms
+     → expected undefined to be defined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01)
+AssertionError: expected 201 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 201
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:377:29
+    375|         payload: { slug: 'spc-ad01-bogus', objective: 'test', rules: […
+    376|       });
+    377|       expect(r1.statusCode).toBe(400);
+       |                             ^
+    378|       expect(JSON.stringify(before1)).toBe(JSON.stringify(snapshot()));
+    379| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: OpenAPI 3.1 specification body constraints agree with existing protocol and HTTP (AD02)
+AssertionError: expected 19 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 19
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:434:40
+    432|         (o) => JSON.stringify(o.op.requestBody.content['application/js…
+    433|       );
+    434|       expect(placeholderBodies.length).toBe(0);
+       |                                        ^
+    435| 
+    436|       // Verify Ajv compilation of /spaces schema matches CreateSpaceR…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03)
+AssertionError: expected UserAbortError: Operation aborted by user { isUserAbort: true } to be an instance of ClientTransportError
+ ❯ tests/contracts/r4-c-contracts.test.ts:888:32
+    886|           unsolicitedErr = e;
+    887|         }
+    888|         expect(unsolicitedErr).toBeInstanceOf(ClientTransportError);
+       |                                ^
+    889|         expect(unsolicitedErr.isUserAbort).toBe(false);
+    890|         expect(unsolicitedErr.isTimeout).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:1037:47
+    1035|         // At backoff start: 30000ms attempt timeout MUST NOT be pendi…
+    1036|         const pendingDelays = [...timers.values()].map((t) => t.delay);
+    1037|         expect(pendingDelays.includes(30000)).toBe(false);
+       |                                               ^
+    1038|         expect(getEventListeners(ctl.signal, 'abort').length).toBeLess…
+    1039| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05)
+AssertionError: promise resolved "{ data: { ok: true }, meta: undefined }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "data": {
++     "ok": true,
++   },
++   "meta": undefined,
+  }
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:1099:69
+    1097|       const client0 = new DetunedClient({ baseUrl: 'http://unused.inva…
+    1098|       try {
+    1099|         await expect(client0.getCapabilities({ signal: ctl.signal })).…
+       |                                                                     ^
+    1100|         expect(calls).toBe(1);
+    1101|         expect(getEventListeners(ctl.signal, 'abort').length).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-1: /forum-status and /forum-check log exact message and level to console when hasUI is false (headless) for both success and failure
+AssertionError: expected "error" to be called with arguments: [ StringContaining{…} ]
+
+Number of calls: 0
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:1156:26
+    1154|         await registeredCommands.get('forum-status').handler('', headl…
+    1155|         expect(headlessContext.ui.notify).not.toHaveBeenCalled();
+    1156|         expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining(…
+       |                          ^
+    1157|       } finally {
+    1158|         logSpy.mockRestore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-2: /forum-status and /forum-check notify ui when hasUI is true for both success and failure
+AssertionError: expected "spy" to be called with arguments: [ StringContaining{…}, 'error' ]
+
+Received: 
+
+  1st spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned API 正常。版本: 0.1.0, API: v1",
++   "info",
+  ]
+
+  2nd spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned 已连接。当前身份: Administrator (act_admin_47f51d541d6f), 可见空间: 1",
++   "info",
+  ]
+
+  3rd spy call:
+
+  [
+-   StringContaining "Detuned 未连接或认证失败:",
+-   "error",
++   "Detuned 已连接。当前身份: Administrator (act_admin_47f51d541d6f), 可见空间: 1",
++   "info",
+  ]
+
+
+Number of calls: 3
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:1204:37
+    1202|         process.env.DETUNED_TOKEN = 'invalid-token-r21';
+    1203|         await registeredCommands.get('forum-status').handler('', uiCon…
+    1204|         expect(uiContext.ui.notify).toHaveBeenCalledWith(
+       |                                     ^
+    1205|           expect.stringContaining('Detuned 未连接或认证失败:'),
+    1206|           'error'
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-4: Registered Pi tools adapt TypeBox schemas cleanly and propagate protocol and business errors
+AssertionError: expected undefined to be defined
+ ❯ tests/contracts/r4-c-contracts.test.ts:1240:32
+    1238|         expect(registeredTools.size).toBeGreaterThanOrEqual(1);
+    1239|         const createPostTool = registeredTools.get('create_post');
+    1240|         expect(createPostTool).toBeDefined();
+       |                                ^
+    1241|         // Schema retains properties and required
+    1242|         expect(createPostTool.parameters).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+UserAbortError: Operation aborted by user
+ ❯ DetunedClient.request packages/client/src/client.ts:331:17
+    329|       } catch (err: any) {
+    330|         if (isUserAborted || opts.signal?.aborted || err instanceof Us…
+    331|           throw new UserAbortError();
+       |                 ^
+    332|         }
+    333|         if (isTimedOut || err instanceof TimeoutError) {
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { isUserAbort: true }
+This error originated in "tests/contracts/r4-c-contracts.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05)". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 14 passed (22)
+     Errors  1 error
+   Start at  22:41:08
+   Duration  6.38s (transform 162ms, setup 0ms, collect 257ms, tests 5.89s, environment 0ms, prepare 46ms)
+

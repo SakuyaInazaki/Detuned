@@ -6,7 +6,7 @@ export class HmacTokenSigner {
         const hmac = createHmac('sha256', secret).update(dataB64).digest('base64url');
         return `${dataB64}.${hmac}`;
     }
-    verify(token, secret) {
+    verify(token, secret, nowSeconds) {
         try {
             const parts = token.split('.');
             if (parts.length !== 2)
@@ -23,7 +23,7 @@ export class HmacTokenSigner {
             const jsonStr = Buffer.from(dataB64, 'base64url').toString('utf8');
             const payload = JSON.parse(jsonStr);
             // Check expiry if exp is set
-            if (typeof payload['exp'] === 'number' && Date.now() / 1000 > payload['exp']) {
+            if (typeof payload['exp'] === 'number' && (nowSeconds ?? Date.now() / 1000) > payload['exp']) {
                 return null;
             }
             return payload;

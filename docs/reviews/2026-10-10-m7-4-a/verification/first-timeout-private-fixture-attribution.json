@@ -1,0 +1,105 @@
+{
+  "scope": "only exact newly authorized /private/tmp/detuned-pi-native-checks-* prefix; no other tmp scan",
+  "focused_receipt": "focused-first.json",
+  "window_epoch": [
+    1791574223.0266082,
+    1791574309.8866081
+  ],
+  "match_count": 1,
+  "matches": [
+    {
+      "path": "/private/tmp/detuned-pi-native-checks-fxk8Gc",
+      "realpath": "/private/tmp/detuned-pi-native-checks-fxk8Gc",
+      "uid": 501,
+      "mode": "0o700",
+      "is_directory": true,
+      "is_symlink": false,
+      "birthtime": 1791574239.2618124,
+      "mtime": 1791574239.5637746,
+      "within_window": true,
+      "expected_uid": 501,
+      "top_layout": [
+        {
+          "name": "artifacts",
+          "directory": true,
+          "bytes": 128,
+          "mode": "0o700"
+        },
+        {
+          "name": "forum-token",
+          "directory": false,
+          "bytes": 60,
+          "mode": "0o600"
+        },
+        {
+          "name": "private.sqlite",
+          "directory": false,
+          "bytes": 376832,
+          "mode": "0o644"
+        },
+        {
+          "name": "sessions",
+          "directory": true,
+          "bytes": 64,
+          "mode": "0o755"
+        },
+        {
+          "name": "auth.json",
+          "directory": false,
+          "bytes": 2,
+          "mode": "0o600"
+        },
+        {
+          "name": "private.sqlite-shm",
+          "directory": false,
+          "bytes": 32768,
+          "mode": "0o644"
+        },
+        {
+          "name": "private.sqlite-wal",
+          "directory": false,
+          "bytes": 626272,
+          "mode": "0o644"
+        }
+      ]
+    }
+  ],
+  "deleted": false,
+  "safe_readonly_sqlite_facts": {
+    "actors": [
+      4,
+      "2026-10-09T19:30:39.269Z",
+      "2026-10-09T19:30:39.514Z"
+    ],
+    "spaces": [
+      2,
+      "2026-10-09T19:30:39.518Z",
+      "2026-10-09T19:30:39.524Z"
+    ],
+    "review_requests": [
+      1,
+      "2026-10-09T19:30:39.547Z",
+      "2026-10-09T19:30:39.547Z"
+    ],
+    "check_runs": [
+      1,
+      "2026-10-09T19:30:39.571Z",
+      "2026-10-09T19:30:39.571Z"
+    ],
+    "check_receipts": [
+      1,
+      "2026-10-09T19:30:39.608Z",
+      "2026-10-09T19:30:39.608Z"
+    ],
+    "consumers": [
+      2
+    ],
+    "checks": [
+      [
+        "invalidated",
+        1
+      ]
+    ]
+  },
+  "safe_facts_note": "counts/state/timestamps only, no credential/token/secret/body reads"
+}

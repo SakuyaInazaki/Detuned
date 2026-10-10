@@ -1,0 +1,13 @@
+# E2-A runtime index v2（保留v1）
+
+根依据D首次同参数80真实HTTP性能决定集中thread必须修复；不把普通p95合格外推集中分布。本报告不预填索引后规模结果。D补before manifest b9e962ce...后才编辑，ports/sqlite绑定v1、app绑定fresh、helper/test为原不存在。
+
+StoragePort optionalprepareRuntimeReadIndexes基础设施hook，标准buildApp在configureResourceLimits全部成功后显式调用；SQLite实现独立IMMEDIATE事务，classify current_initialized且不readonly/已有事务。固定保留名posts_thread_created_sort_v1非唯一表达式索引，thread_id/unknown flag/canonical key/id，查询与DDL共用私有POST_CREATED_SORT_KEY_SQL。未进constructor/bootstrap/GET/readSnapshot/export/offline/legacy源，不改SQL/schema版本或业务数据。
+
+同名核sqlite_master type/table/确切定义，正确幂等，错误拒启动、不DROP/修复；FULL出事务后沿scope storage507false，其他固定safe startup503false，不抬页额度或继续慢查询。索引辅件非schema2必需，原缺索引preflight不拒；标准serve仍用既有DirectoryLock，无新锁架构。构建索引同步native不具JS硬deadline，WAL/临时文件不是主库页cap全目录硬限额。
+
+正式真实SQLite新I01–04：启动创建/重开幂等/classify接受；同名错误拒且数据不变；私有tightened main.max_page_count等于已有pages触真实页分配FULL，原cap/data不变/无索引/事务已退出；constructor/read/readonly/真实fa1blegacy不建、旧fa1b storage可读current额外索引，EXPLAIN用index无TEMP B-TREE及unknown续页。没有运行offline backup/export/restoreworkflow，不能从结构/oldstorage读取扩称这些全流程已复验。
+
+首index4组3pass+I03fail：真错误statusCode507，作者断言误写httpStatus；原log保留，fixture字段修后仅I03第二pass。组合四组全通过，不称首次4/4。源indexnoEmit第一0，含原order新test/indexnewtest/CLI/sourcealiases。原order4组合证据保留，未再跑它们/全suite/build/perf/browser。每runner实际exit独立归档，stdout含elapsed。
+
+v2完整13路径manifest保留v1十项manifest：ports/sqlite改及新app/helper/test，其余原七source+ordertest保持v1哈希。DDL只发生未来runtime准备，没有执行任何维护源更改。D负责统一gates和同参数第二性能。

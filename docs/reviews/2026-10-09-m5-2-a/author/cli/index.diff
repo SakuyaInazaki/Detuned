@@ -1,0 +1,55 @@
+--- baseline/packages/cli/src/index.ts
++++ packages/cli/src/index.ts
+@@ -17,7 +17,7 @@
+ import { FileRequestKeyStore } from '@detuned/client/node';
+ import { DetunedError, ErrorCode, resolveArtifactLimits, resolveWriteRateLimits, resolveResourceLimits } from '@detuned/protocol';
+ import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, openAndCoordinateDatabase, DirectoryLock, backupOffline, restoreBackup, importSpace, assertDataDirReady, MaintenanceError, ImportError, upgradeOffline, UpgradeError } from '@detuned/storage-sqlite';
+-import { buildApp, resolveWebAuthConfig, resolveWebAssetsDir, ArtifactFileStore } from '@detuned/server';
++import { buildApp, resolveWebAuthConfig, resolveWebAssetsDir, ArtifactFileStore, loadServerTlsOptions } from '@detuned/server';
+ 
+ function mapExitCode(err: any): number {
+   if (err instanceof UpgradeError) return err.code === 'INVALID_OPTIONS' || err.code === 'OFFLINE_REQUIRED' ? 2 : 1;
+@@ -300,6 +300,8 @@
+   .option('--max-database-bytes <bytes>', '主数据库页额度（默认1GiB）')
+   .option('--max-artifact-bytes <bytes>', '实例登记附件累计字节额度（默认4GiB）')
+   .option('--max-artifact-objects <count>', '实例登记附件对象额度（默认10000）')
++  .option('--tls-cert-file <file>', 'TLS PEM证书链文件（须同时tls-key-file）')
++  .option('--tls-key-file <file>', 'TLS未加密PEM私钥文件（须同时tls-cert-file）')
+   .option('--web-assets-dir <dir>', 'Web构建目录（须同时web-origin）')
+   .option('--web-origin <origin>', '启用同源Web认证的精确origin')
+   .option('--web-allow-insecure-loopback', '允许仅loopback HTTP Web认证')
+@@ -308,12 +310,15 @@
+     const isJson = Boolean(program.opts().json);
+     let lock: DirectoryLock | null = null;
+     let db: Database.Database | null = null;
+-    let app: any = null;
++    let app: ReturnType<typeof buildApp> | null = null;
+     let requestLogs: ReturnType<typeof createRequestLogWriter> | undefined;
+     let shutdown: ReturnType<typeof createServeShutdown> | undefined;
+ 
+     try {
++      if ((options.tlsCertFile !== undefined) !== (options.tlsKeyFile !== undefined)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS certificate and key files must be provided together.', 400);
++      const tls = options.tlsCertFile !== undefined ? await loadServerTlsOptions(options.tlsCertFile, options.tlsKeyFile) : undefined;
+       const webConfig=resolveWebAuthConfig({webOrigin:options.webOrigin,allowInsecureLoopback:options.webAllowInsecureLoopback});
++      if (tls && webConfig && !webConfig.secure) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS Web authentication requires an HTTPS origin.', 400);
+       const webAssetsDir=resolveWebAssetsDir(options.webAssetsDir,webConfig?.origin,path.resolve(options.dataDir));
+       if(webConfig&&!webConfig.secure&&!['localhost','127.0.0.1','::1'].includes(options.host))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Insecure Web authentication requires a loopback listener.',400);
+       const shutdownTimeoutMs = parseShutdownTimeout(options.shutdownTimeoutMs);
+@@ -379,7 +384,7 @@
+       // This process owns the existing DirectoryLock; no request can be active before listen.
+       await artifactBlobs.cleanupOrphans(storage.listArtifactStorageKeys());
+       if (options.requestLogs !== false) requestLogs = createRequestLogWriter(process.stderr);
+-      app = buildApp({ webAssetsDir, webOrigin: options.webOrigin, allowInsecureLoopback: options.webAllowInsecureLoopback, storage, requestLogSink: requestLogs?.write, artifactBlobs, artifactLimits, artifactMaxUploads, writeRateLimits, resourceLimits });
++      app = buildApp({ tls, webAssetsDir, webOrigin: options.webOrigin, allowInsecureLoopback: options.webAllowInsecureLoopback, storage, requestLogSink: requestLogs?.write, artifactBlobs, artifactLimits, artifactMaxUploads, writeRateLimits, resourceLimits });
+       const port = parseInt(options.port, 10);
+       const host = options.host;
+ 
+@@ -400,7 +405,7 @@
+       if (!isJson) {
+         const address = app.server.address();
+         const boundPort = address && typeof address === 'object' ? address.port : port;
+-        process.stderr.write(`Detuned 服务已启动: http://${host}:${boundPort}\n数据目录: ${dataDir}\n附件限额: file=${artifactLimits.max_file_bytes} space=${artifactLimits.max_space_bytes} uploads=${artifactMaxUploads}\n`);
++        process.stderr.write(`Detuned 服务已启动: ${tls ? 'https' : 'http'}://${host}:${boundPort}\n数据目录: ${dataDir}\n附件限额: file=${artifactLimits.max_file_bytes} space=${artifactLimits.max_space_bytes} uploads=${artifactMaxUploads}\n`);
+       }
+     } catch (err: any) {
+       if (shutdown) {

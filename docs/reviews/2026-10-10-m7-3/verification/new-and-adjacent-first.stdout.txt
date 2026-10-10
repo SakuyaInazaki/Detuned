@@ -1,0 +1,40 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m6-review-finalization-independent.test.ts (6 tests) 1071ms
+   ✓ DF04 two real processes allow only atomic legal finalization versus revision or objection serialization  428ms
+ ❯ tests/integration/m7-d01-reviewed-independent.test.ts (6 tests | 1 failed) 6381ms
+   × DI01 independently reads all three live ordinary HTTP checkpoints; sealed privacy and immutable accepted history survive supersession 1708ms
+     → Original challenge missing
+   ✓ DI02 actual CLI output is private and no-clobber, with a real process exit rather than ledger success alone  1886ms
+   ✓ DI03 genuine child journey observer-throw settles all owned processes and publishes no misleading output  1387ms
+   ✓ DI03 genuine child journey observer-abort settles all owned processes and publishes no misleading output  1396ms
+   ✓ DI04 controlled owned mkdtemp ENOSPC preserves its error and releases the external abort listener and real deadline without spawning 1ms
+   ✓ DI05 controlled init executable absence produces real Node ENOENT and close, settles owned cleanup and publishes no output 2ms
+ ✓ tests/integration/m7-fixed-verifier-independent.test.ts (17 tests) 6410ms
+   ✓ VI02 genuine fixed materials and standalone TCP runner submit 'fail'; terminal repeat never claims recovery  675ms
+   ✓ VI02 genuine fixed materials and standalone TCP runner submit 'pass'; terminal repeat never claims recovery  516ms
+   ✓ VI04 real snapshot both material convention rejects before any forum log or receipt  355ms
+   ✓ VI06 real committed upload and receipt response loss retry within their same client calls with stable keys  2785ms
+   ✓ VI07 after real log publication a new process with old keys conflicts safely rather than reconstructing a previous execution  383ms
+ ✓ tests/integration/m7-fixed-verifier.test.ts (5 tests) 1068ms
+   ✓ FV03 genuine first-discovery fail and controlled after-preflight environment error retain different meanings  326ms
+   ✓ FV05 real short-lived CLI uses private token-file and only safe submitted summary stdout  319ms
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ ✓ tests/integration/m4-consumer-lifecycle.test.ts (4 tests) 252ms
+ ✓ tests/integration/m4-session-subscription-client.test.ts (2 tests) 7ms
+ ❯ tests/integration/m7-d01-reviewed.test.ts (2 tests | 1 failed) 1525ms
+   × M7.3 real reviewed D01 journey > DJ01 preserves pending recovery and immutable accepted history through a later challenge 1523ms
+     → Original challenge missing
+   ✓ M7.3 real reviewed D01 journey > DJ02 rejects existing output before creating a service and preserves its bytes 1ms
+
+ Test Files  2 failed | 5 passed (7)
+      Tests  2 failed | 40 passed (42)
+   Start at  02:44:09
+   Duration  18.92s (transform 572ms, setup 0ms, collect 1.23s, tests 16.71s, environment 0ms, prepare 185ms)
+

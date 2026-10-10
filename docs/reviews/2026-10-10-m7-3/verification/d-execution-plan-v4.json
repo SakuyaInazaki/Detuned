@@ -1,0 +1,128 @@
+{
+  "status": "source_ready_pending_root_runtime_release_not_run",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "source-noemit",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+        "--noEmit",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-3/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "gate": "syntax-1",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "scripts/demos/d01-reviewed.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-2",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "scripts/demos/d01-reviewed-worker.mjs"
+      ]
+    },
+    {
+      "gate": "new-and-adjacent",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/integration/m7-d01-reviewed.test.ts",
+        "tests/integration/m7-d01-reviewed-independent.test.ts",
+        "tests/integration/m7-fixed-verifier.test.ts",
+        "tests/integration/m7-fixed-verifier-independent.test.ts",
+        "tests/integration/m6-review-finalization-independent.test.ts",
+        "tests/integration/m4-consumer-lifecycle.test.ts",
+        "tests/integration/m4-session-subscription-client.test.ts"
+      ]
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "gate": "lint",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "gate": "schema",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+      ]
+    },
+    {
+      "gate": "core-once",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    }
+  ],
+  "focused_files": [
+    "tests/integration/m7-d01-reviewed.test.ts",
+    "tests/integration/m7-d01-reviewed-independent.test.ts",
+    "tests/integration/m7-fixed-verifier.test.ts",
+    "tests/integration/m7-fixed-verifier-independent.test.ts",
+    "tests/integration/m6-review-finalization-independent.test.ts",
+    "tests/integration/m4-consumer-lifecycle.test.ts",
+    "tests/integration/m4-session-subscription-client.test.ts"
+  ],
+  "adjacent_rationale": "Fixed verifier CLI and materials, immutable decision validity, actual consumption/subscription lifecycle. No product protocol/tool changes; proposed current28/29 reuse accepted B2 evidence, no new host/browser/probe matrix.",
+  "existing_focused_hashes": {
+    "tests/integration/m7-fixed-verifier.test.ts": "eb6333f4dc881039952c1caf2b65f4c17b0f2a774af99641e15e7a89f8ef71b2",
+    "tests/integration/m7-fixed-verifier-independent.test.ts": "e3d12117cf3f6b8bf38c44f18be9a97e6cc7e55b18967c21c38eb7ae42af25a2",
+    "tests/integration/m6-review-finalization-independent.test.ts": "e02a88f5b853f27df34366509cfb984b1006bcfcbc8cab71c3ebecaddf30925f",
+    "tests/integration/m4-consumer-lifecycle.test.ts": "00ef7f7e8f1c5a57c63a170b54ca013116a6feee2242b00629032126f4c536c9",
+    "tests/integration/m4-session-subscription-client.test.ts": "299f6e9c3685707de560c3e628136ce1ad45cf8dd55547c25290f3ee51646757"
+  },
+  "limits": "Success build immediately inventories all dist. Original5000ms; worker1/file serial; own4s cancellation settles before timeout. All runtime waits root release.",
+  "new_source_case_count": {
+    "A": 2,
+    "D": 6,
+    "total": 8,
+    "not_runtime_result": true
+  },
+  "source_bindings": {
+    "tests/integration/m7-d01-reviewed-independent.test.ts": "59a4d2c935aec4c224f1497a4a8ed0d6468c0f2d9211813b9170cf4d6c119366",
+    "new-source-tsconfig.json": "24a3f50fb82a530b6aa0fec09d5feaebb91097a6c3aa6ef17afe3754c18cdc1d",
+    "author/backend/freeze-v2.json": "370eea24f111c10c1163c6daf3a12a49191449f7f00563648aabf14f53d1e135"
+  },
+  "source_version": "A v2 / D v3 realclose plus controlled filesystem and realspawn ENOENT faults, not run",
+  "author_actual_hashes": {
+    "scripts/demos/d01-reviewed.mjs": "557057f1b614fe5306991e5814927639c60a1f1eccd00295dfb6435bf6e5ada9",
+    "scripts/demos/d01-reviewed-worker.mjs": "3d4387eeacd025cb291e86c0514a23fd40ed91504dc894438befbb6ce3c40303",
+    "tests/integration/m7-d01-reviewed.test.ts": "79af43397011bac711fbe8876bee1f35bcf6db143e98ef9373f73cef8d0aca31"
+  }
+}

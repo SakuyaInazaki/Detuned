@@ -1,0 +1,45 @@
+{
+  "status": "source_ready_not_executed_root_gate_pending",
+  "captured_at": "2026-10-09T13:52:52.329074+00:00",
+  "files": [
+    {
+      "path": "scripts/integrations/web/fixtures.ts",
+      "sha256": "f4bfa572faa0cc22a7971b363eba16d63e895e730dcccbaa2f1007616a39445a",
+      "bytes": 38241
+    },
+    {
+      "path": "scripts/integrations/web/playwright.config.ts",
+      "sha256": "733320557b6cceeff7706fa353e649b1aeaffed88cf2ca22bf9e9365dfa8f051",
+      "bytes": 1038
+    },
+    {
+      "path": "tests/integration/m2-knowledge-views.test.ts",
+      "sha256": "46bae170e2e6f72bad52785ed548ba28e648d683e25c08e84f1ee942aa9b2f22",
+      "bytes": 9419
+    },
+    {
+      "path": "tests/integration/m6-knowledge-status-independent.test.ts",
+      "sha256": "42fa13c46d743d9ee41ef7abdf9c713b70fc96922a82bcd9cf6f81e7ce629358",
+      "bytes": 14086
+    },
+    {
+      "path": "scripts/integrations/web/m6-knowledge.spec.ts",
+      "sha256": "0f506cfb3c21294a43abe288e86ff14bdea9875d9f9d5a8db8b41b9fc3f21e9d",
+      "bytes": 6975
+    }
+  ],
+  "diff_sha256": "a305c23c79fadc49e27a48deda1d9d1a22935a275f0520e7cce64f9e02979260",
+  "planned_cases": {
+    "node": 4,
+    "browser": 3
+  },
+  "checks_run": false,
+  "runtime_session_or_pid": null,
+  "plan_changes": [
+    "Shared fixture adds completeKnowledgeRound using existing ordinary HTTP for claim request, distinct reviewer sessions/submissions and optional finalization; no SQL formal status.",
+    "Playwright config adds only new spec; m5-c and m6-review assertions remain untouched.",
+    "KN03 creates a real pending consumer before read and verifies all consumer/delivery rows unchanged plus ack_seq=0; second file-WAL SQLite connection commits during outer snapshot.",
+    "Controlled bad transport mocks global fetch locally and restores it; labelled separately from real HTTP/SQLite evidence."
+  ],
+  "execution": "Wait for author freezes, static cross reviews and root permission. No build, tests, typecheck, lint, noEmit or browser runtime executed."
+}

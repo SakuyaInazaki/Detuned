@@ -1,0 +1,88 @@
+{
+  "status": "fresh_ready_pending_root_dispatch",
+  "task": "docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md",
+  "A": {
+    "existing": [
+      "packages/core/src/ports/storage.ts",
+      "packages/core/src/services/search-service.ts",
+      "packages/core/src/index.ts",
+      "modules/review/src/submission-service.ts",
+      "packages/storage-sqlite/src/sqlite-storage.ts",
+      "packages/protocol/src/search.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/protocol/src/tools.ts",
+      "packages/client/src/client.ts",
+      "packages/server/src/routes/search.ts"
+    ],
+    "new": [
+      "packages/core/src/services/public-review-submission.ts",
+      "packages/core/src/services/review-submission-search-cursor.ts",
+      "tests/integration/m6-public-review-search.test.ts",
+      "tests/contracts/m6-public-review-search-contracts.test.ts"
+    ]
+  },
+  "B": {
+    "existing": [
+      "packages/cli/src/index.ts"
+    ],
+    "new": [
+      "tests/contracts/m6-public-review-search-tools-cli.test.ts"
+    ],
+    "scope": "CLI source flags and shared forum_search adapter/contracts; existing harness boundaries only, no new host activation"
+  },
+  "D": {
+    "existing": [],
+    "new": [
+      "tests/integration/m6-public-review-search-independent.test.ts"
+    ],
+    "execution": "sole serial window after exact source freeze/cross-review/root release"
+  },
+  "conditional_existing_not_authorized": [
+    "packages/protocol/src/index.ts",
+    "packages/client/src/index.ts"
+  ],
+  "conditional_note": "Canonical search/response-guards and client.ts already star-exported. New core helper composes existing intrinsic/online privacy functions; existing helper files stay protected unless root authorizes a precise necessary supplement with exact-before. No implied extension.",
+  "protected": [
+    "SQL/DDL/schema/migrations/profiles/historical fixtures",
+    "bootstrap/offline-upgrade/offline-backup/restore/export/import",
+    "dependencies/lock",
+    "sealed reviews",
+    "M7 checks/receipts",
+    "new host/model/VM/global configuration",
+    "all packages/web source including knowledge/review-panel/readers",
+    "all browser scripts/fixtures/config/tests",
+    "existing core review-artifact-access.ts/review-submission-records.ts error semantics"
+  ],
+  "unresolved": [],
+  "execution": "planning only; no product placeholders/checks/new fresh",
+  "scope": "server/HTTP/shared client/CLI/forum_search/existing harness tool plumbing only; no Web/browser/reader work",
+  "privacy_classification": "Root confirmed: intrinsic request/snapshot/assignment/session/submission/all-reveal corruption => RESYNC; only subsequent online privacy CONTENT_REDACTED/410 and current NOT_FOUND => skip without reasons/counts; other errors propagate. Missing/cross-space evidence remains current invisible behavior; no DB-health claim.",
+  "searchable_fields_root_confirmed": [
+    "verdict",
+    "coverage",
+    "checks_performed",
+    "pending_requirements[]",
+    "limitations[]",
+    "independence_statement.statement"
+  ],
+  "history": "Original Web-inclusive planning preserved under planning/c2b-before-user-scope; latest-user-scope.delta.diff records revision, no existing frontend files removed. Final narrow revision before copies under planning/c2b-before-final-narrow; c2b-final-narrow.delta.diff preserves exact final revision.",
+  "final_narrow_rules": {
+    "field_order": [
+      "verdict",
+      "coverage",
+      "checks_performed",
+      "pending_requirements[]",
+      "limitations[]",
+      "independence_statement.statement"
+    ],
+    "arrays": "preserve original order; each value independently contains",
+    "query_normalization": "trim plus ASCII A-Z lowercase for review matching and hash only; original text snippet; no Unicode normalization",
+    "snippet": "first match of first matching field; <=320 Unicode codepoints including ellipses; prefer32 preceding; full <=256cp query match visible; clamp to field bounds",
+    "page_meta": "truncated:false,next_cursor; items >262144 bytes => QUERY_TOO_BROAD; continuation retains original exp",
+    "prevalidation": "new typed review client, CLI and tool use canonical query/source-filter guard before forwarding; old client.search type/behavior unchanged",
+    "id_order": "shared SQLite TEXT/BINARY-compatible ID DESC comparison in Node/client; canonical IDs are nonempty strings, not ASCII-constrained; no localeCompare"
+  },
+  "source_ownership_path": "docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-owner-candidates.json",
+  "source_ownership_sha256": "8e5555de8232b3522924955f61a2613d558a23a0e4abd2f32ec4bb9fb5502a0e"
+}

@@ -1,0 +1,81 @@
+--- packages/protocol/src/openapi.ts v3
++++ packages/protocol/src/openapi.ts v4
+@@ -720,7 +720,32 @@
+     'x-logical-query-schema': SearchQuerySchema,
+     'x-search-limits': SEARCH_LIMITS,
+   });
+-  for (const [path, methods] of Object.entries(spec.paths)) {
++  const reviewParameter=(name:string)=>({name,in:'path',required:true,schema:Type.String({minLength:1})});
++  const reviewOperation=(response:TSchema,status:string,body?:TSchema)=>({
++    parameters:[reviewParameter('space_id'),...(body?[{name:'Idempotency-Key',in:'header',required:true,schema:NONBLANK_STRING_SCHEMA}]:[])],
++    security:[{BearerAuth:[]},{WebSessionCookie:[]}],
++    'x-query-schema':Type.Object({},{additionalProperties:false}),
++    description:'Current server ACL and sealed-material privacy apply. All responses are private, no-store. Cookie writes require same-origin CSRF.',
++    ...(body?{requestBody:{required:true,content:{'application/json':{schema:body}}}}:{}),
++    responses:{[status]:{description:'Success',headers:{'Cache-Control':{schema:{type:'string',const:'private, no-store'}}},content:{'application/json':{schema:createApiEnvelopeSchema(response)}}}},
++  });
++  const withId=(operation:ReturnType<typeof reviewOperation>,name='id')=>({...operation,parameters:[...operation.parameters,reviewParameter(name)]});
++  const reviewPaths={
++    '/spaces/{space_id}/review-requests':{post:reviewOperation(ReviewRequestViewSchema,'201',CreateReviewRequestSchema)},
++    '/spaces/{space_id}/review-requests/{id}':{get:withId(reviewOperation(ReviewRequestReadViewSchema,'200'))},
++    '/spaces/{space_id}/review-snapshots/{id}':{get:withId(reviewOperation(ReviewSnapshotViewSchema,'200'))},
++    '/spaces/{space_id}/review-requests/{id}/assignment':{get:withId(reviewOperation(OwnReviewAssignmentViewSchema,'200'))},
++    '/spaces/{space_id}/review-requests/{id}/submissions':{get:withId(reviewOperation(ReviewSubmissionsViewSchema,'200')),post:withId(reviewOperation(ReviewSubmissionAcknowledgementSchema,'201',CreateReviewSubmissionSchema))},
++    '/spaces/{space_id}/review-submissions/{id}':{get:withId(reviewOperation(ReviewSubmissionViewSchema,'200'))},
++    '/spaces/{space_id}/review-requests/{id}/finalize':{post:withId(reviewOperation(ReviewDecisionViewSchema,'200',FinalizeReviewRequestSchema))},
++    '/spaces/{space_id}/review-requests/{id}/cancel':{post:withId(reviewOperation(ReviewRequestViewSchema,'200',CancelReviewRequestSchema))},
++    '/spaces/{space_id}/review-requests/{id}/status':{get:withId(reviewOperation(ReviewStatusViewSchema,'200'))},
++    '/spaces/{space_id}/review-requests/{id}/decision':{get:withId(reviewOperation(ReviewDecisionViewSchema,'200'))},
++    '/spaces/{space_id}/review-requests/{requestId}/artifacts':{post:{...withId(reviewOperation(ReviewArtifactMetadataSchema,'201',Type.Object({})), 'requestId'),
++      requestBody:{required:true,content:{'multipart/form-data':{schema:Type.Object({file:Type.String({format:'binary'}),metadata:Type.Optional(Type.Object({},{additionalProperties:false}))},{additionalProperties:false}),encoding:{metadata:{contentType:'application/json'}}}}}}},
++  };
++  const allPaths={...spec.paths,...reviewPaths};
++  for (const [path, methods] of Object.entries(allPaths)) {
+     for (const [operationName, operation] of Object.entries(methods)) {
+       if (!['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'].includes(operationName)) continue;
+       const op = operation as { parameters?: Array<{ name: string; in: string; schema: Record<string, unknown>; required?: boolean; description?: string }>; description?: string; requestBody?: unknown; [key: string]: unknown };
+@@ -752,30 +777,6 @@
+       if (path.endsWith('/poll')) op.description = 'An object body is required; send {} for defaults.';
+     }
+   }
+-  const reviewParameter=(name:string)=>({name,in:'path',required:true,schema:Type.String({minLength:1})});
+-  const reviewOperation=(response:TSchema,status:string,body?:TSchema)=>({
+-    parameters:[reviewParameter('space_id'),...(body?[{name:'Idempotency-Key',in:'header',required:true,schema:NONBLANK_STRING_SCHEMA}]:[])],
+-    security:[{BearerAuth:[]},{WebSessionCookie:[]}],
+-    'x-query-schema':Type.Object({},{additionalProperties:false}),
+-    description:'Current server ACL and sealed-material privacy apply. All responses are private, no-store. Cookie writes require same-origin CSRF.',
+-    ...(body?{requestBody:{required:true,content:{'application/json':{schema:body}}}}:{}),
+-    responses:{[status]:{description:'Success',headers:{'Cache-Control':{schema:{type:'string',const:'private, no-store'}}},content:{'application/json':{schema:createApiEnvelopeSchema(response)}}}},
+-  });
+-  const withId=(operation:ReturnType<typeof reviewOperation>,name='id')=>({...operation,parameters:[...operation.parameters,reviewParameter(name)]});
+-  const reviewPaths={
+-    '/spaces/{space_id}/review-requests':{post:reviewOperation(ReviewRequestViewSchema,'201',CreateReviewRequestSchema)},
+-    '/spaces/{space_id}/review-requests/{id}':{get:withId(reviewOperation(ReviewRequestReadViewSchema,'200'))},
+-    '/spaces/{space_id}/review-snapshots/{id}':{get:withId(reviewOperation(ReviewSnapshotViewSchema,'200'))},
+-    '/spaces/{space_id}/review-requests/{id}/assignment':{get:withId(reviewOperation(OwnReviewAssignmentViewSchema,'200'))},
+-    '/spaces/{space_id}/review-requests/{id}/submissions':{get:withId(reviewOperation(ReviewSubmissionsViewSchema,'200')),post:withId(reviewOperation(ReviewSubmissionAcknowledgementSchema,'201',CreateReviewSubmissionSchema))},
+-    '/spaces/{space_id}/review-submissions/{id}':{get:withId(reviewOperation(ReviewSubmissionViewSchema,'200'))},
+-    '/spaces/{space_id}/review-requests/{id}/finalize':{post:withId(reviewOperation(ReviewDecisionViewSchema,'200',FinalizeReviewRequestSchema))},
+-    '/spaces/{space_id}/review-requests/{id}/cancel':{post:withId(reviewOperation(ReviewRequestViewSchema,'200',CancelReviewRequestSchema))},
+-    '/spaces/{space_id}/review-requests/{id}/status':{get:withId(reviewOperation(ReviewStatusViewSchema,'200'))},
+-    '/spaces/{space_id}/review-requests/{id}/decision':{get:withId(reviewOperation(ReviewDecisionViewSchema,'200'))},
+-    '/spaces/{space_id}/review-requests/{requestId}/artifacts':{post:{...withId(reviewOperation(ReviewArtifactMetadataSchema,'201',Type.Object({})), 'requestId'),
+-      requestBody:{required:true,content:{'multipart/form-data':{schema:Type.Object({file:Type.String({format:'binary'}),metadata:Type.Optional(Type.Object({},{additionalProperties:false}))},{additionalProperties:false}),encoding:{metadata:{contentType:'application/json'}}}}}}},
+-  };
+-  return {...spec,paths:{...spec.paths,...reviewPaths}};
++  return {...spec,paths:allPaths};
+ 
+ }
+--- packages/server/src/app.ts v3
++++ packages/server/src/app.ts v4
+@@ -161,8 +161,9 @@
+   app.addHook('preClose', async () => { app.detunedBeginDraining(); webSessions?.close(); await resources.waitForIdle(); await tlsSockets?.drain(); });
+   app.addHook('onClose', async () => { tlsSockets?.dispose(); });
+   app.addHook('onRequest', async (req,reply) => {
++    if(webConfig&&(req.routeOptions.url===WEB_AUTH_PATH||req.headers.cookie!==undefined))reply.header('cache-control','no-store');
+     if(/\/review-(?:requests|snapshots|submissions)(?:\/|$)/.test(req.routeOptions.url??''))reply.header('Cache-Control','private, no-store');
+-    if(webConfig){if(req.routeOptions.url===WEB_AUTH_PATH||req.headers.cookie!==undefined)reply.header('cache-control','no-store');checkWebRequest(req,webConfig);if(req.routeOptions.url===WEB_AUTH_PATH&&req.method==='POST'){checkWebRequest(req,webConfig,true);webSessions!.admitLoginAttempt();}}
++    if(webConfig){checkWebRequest(req,webConfig);if(req.routeOptions.url===WEB_AUTH_PATH&&req.method==='POST'){checkWebRequest(req,webConfig,true);webSessions!.admitLoginAttempt();}}
+ 
+     if (resources.closing && !['/api/v1/health/live', '/api/v1/health/ready'].includes(req.routeOptions.url ?? '')) throw new DetunedError(ErrorCode.SERVICE_NOT_READY, '服务正在关闭。', 503, true, { ready: false });
+   });

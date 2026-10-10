@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-offline-upgrade.test.ts (6 tests) 666ms
+ ❯ tests/contracts/m3-offline-upgrade-contract.test.ts (3 tests | 1 failed) 947ms
+   ✓ UP B01: persistent genuine schema1 fixture has verified bundle and rejects implicit development secret 4ms
+   × UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator 507ms
+     → expected [ { version: 1 }, { version: 2 } ] to deeply equal [ { version: 2 } ]
+   ✓ UP B03: built local migrate maps offline/options failures without network or tokenfile reads  436ms
+ ❯ tests/integration/m3-upgrade-independent.test.ts (4 tests | 4 failed) 4022ms
+   × M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip 772ms
+     → expected 1 to be +0 // Object.is equality
+   × M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime 660ms
+     → expected 1 to be +0 // Object.is equality
+   × M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes 967ms
+     → UNIQUE constraint failed: memberships.space_id, memberships.actor_id
+   × M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets 1623ms
+     → expected 1 to be +0 // Object.is equality
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  5 failed | 8 passed (13)
+   Start at  06:46:18
+   Duration  4.27s (transform 296ms, setup 0ms, collect 578ms, tests 5.64s, environment 0ms, prepare 105ms)
+

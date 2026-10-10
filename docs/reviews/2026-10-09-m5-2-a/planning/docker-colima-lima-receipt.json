@@ -1,0 +1,24 @@
+{
+  "commands": {
+    "colima": "/opt/homebrew/bin/colima",
+    "limactl": "/opt/homebrew/bin/limactl"
+  },
+  "known_paths_only": true,
+  "checks": [
+    {
+      "path": "/Users/sakimi/.colima/default/docker.sock",
+      "exists": false,
+      "errno": 2
+    },
+    {
+      "path": "/Users/sakimi/.colima/docker.sock",
+      "exists": false,
+      "errno": 2
+    },
+    {
+      "path": "/Users/sakimi/.lima/docker/sock/docker.sock",
+      "exists": false,
+      "errno": 2
+    }
+  ]
+}

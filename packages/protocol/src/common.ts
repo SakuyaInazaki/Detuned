@@ -1,3 +1,4 @@
+import { LIST_LIMIT } from './request-policies.js';
 import { Type, TSchema, Static } from '@sinclair/typebox';
 
 export const ApiMetaSchema = Type.Object({
@@ -17,7 +18,7 @@ export function createApiEnvelopeSchema<T extends TSchema>(dataSchema: T) {
 }
 
 export const PaginationQuerySchema = Type.Object({
-  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100, default: 20 })),
+  limit: Type.Optional(Type.Integer({ ...LIST_LIMIT })),
   cursor: Type.Optional(Type.String()),
 }, { additionalProperties: false });
 

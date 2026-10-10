@@ -1,0 +1,27 @@
+--- before-files/scripts/integrations/web/independent.spec.ts
++++ scripts/integrations/web/independent.spec.ts
+@@ -45,7 +45,7 @@
+   const thread = page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true});
+   await thread.focus(); await page.keyboard.press('Enter');
+   await open(page, post.id);
+-  expect(await page.locator('.body-text').evaluate((element, text) => element.textContent === text, hostile)).toBe(true);
++  expect(await page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text').evaluate((element, text) => element.textContent === text, hostile)).toBe(true);
+   expect(await page.locator('.reading script,.reading img').count()).toBe(0);
+   expect(await page.evaluate(() => !('detunedResearchExecuted' in window))).toBe(true);
+   expect(remoteRequest).toBe(false);
+@@ -151,12 +151,12 @@
+   await expect(page.locator('.reading article')).toHaveCount(0);
+   await expect(page.getByRole('button', {name: '继续加载正文', exact: true})).toBeEnabled();
+   await forum.revisePost(legal, {body: 'New revision body.'});
+-  for (let index = 0; index < 8 && !(await page.locator('.body-text').count()); index++) {
++  for (let index = 0; index < 8 && !(await page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text').count()); index++) {
+     await page.getByRole('button', {name: '继续加载正文', exact: true}).click();
+     await expect(page.getByRole('button', {name: '从首段重开', exact: true})).toBeEnabled();
+   }
+-  await expect(page.locator('.body-text')).toBeVisible();
+-  expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, oldBody)).toBe(true);
++  await expect(page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text')).toBeVisible();
++  expect(await page.locator('.reading [aria-label="正文内容"] .markdown-rendered, .reading [aria-label="正文内容"] .body-text').evaluate((element, body) => element.textContent === body, oldBody)).toBe(true);
+   await expect(page.getByText('已有更新修订；这里仍显示所选固定版本。', {exact: true})).toBeVisible();
+   await open(page, historical.id);
+   for (let index = 0; index < 32 && !(await page.getByText(/已超过本地 1 MiB/).count()); index++) {

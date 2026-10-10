@@ -1,0 +1,72 @@
+--- packages/core/src/services/artifact-service.ts
++++ packages/core/src/services/artifact-service.ts
+@@ -6,7 +6,7 @@
+ import { AuthenticatedContext, AuthService } from './auth-service.js';
+ import { IdempotencyService } from './idempotency-service.js';
+ import { assertReviewArtifactReadAccess } from './review-artifact-access.js';
+-import { readReviewSnapshotRecords, reconstructReviewRequestView } from './review-request-records.js';
++import { readReviewSnapshotRecords, reconstructReviewRequestView, assertReviewSnapshotCurrent } from './review-request-records.js';
+ import { resourceQuotaError } from './resource-quota.js';
+ 
+ export interface CreateArtifactInput { staged: StagedBlob; mime: string; metadata: CreateArtifactMetadata }
+@@ -55,8 +55,10 @@
+     const request = assignment ? this.storage.findReviewRequestById(assignment.request_id) : null;
+     if (!assignment || !request || request.space_id !== spaceId || assignment.reviewer_actor_id !== current.actor.id) throw new DetunedError(ErrorCode.NOT_FOUND,'评审身份不存在或无权访问。',404);
+     reconstructReviewRequestView(this.storage,spaceId,request.id);
+-    const {manifest} = readReviewSnapshotRecords(this.storage,spaceId,request.snapshot_id);
++    const records = readReviewSnapshotRecords(this.storage,spaceId,request.snapshot_id);
++    const {manifest} = records;
+     if (fresh) {
++      assertReviewSnapshotCurrent(this.storage,records);
+       const member = this.storage.getMembership(spaceId,current.actor.id);
+       if (!member || !member.active || !member.reviewer_eligible || !['human','agent'].includes(current.actor.kind)) throw new DetunedError(ErrorCode.FORBIDDEN,'当前身份不能上传评审附件。',403);
+       if (manifest.review_policy.distinct_independence_groups) {
+--- tests/integration/m6-review-private-artifacts.test.ts
++++ tests/integration/m6-review-private-artifacts.test.ts
+@@ -67,3 +67,16 @@
+  const {assertRevisionArtifacts}=await import('../../packages/core/src/services/artifact-references.js');expect(()=>assertRevisionArtifacts(storage,sid,[used.id],undefined)).toThrow(expect.objectContaining({code:'NOT_FOUND'}));
+  storage.updateArtifactState(used.id,'redacted');await expect(as.getMetadata(one.ctx,sid,used.id)).rejects.toMatchObject({code:'CONTENT_REDACTED'});await expect(as.getMetadata(auth,sid,used.id)).rejects.toMatchObject({code:'NOT_FOUND'});
+ });
++
++it('RA04 stale target before private upload rejects with no retained blob, row, event or key',async()=>{
++ const request=create(),one=reviewer('r1'),as=artifactService(),assignment=one.submission.getOwnAssignment(one.ctx,sid,request.id),before=counts();
++ db.prepare('UPDATE posts SET current_revision=2 WHERE id=?').run(pid);
++ await expect(upload(as,one.ctx,assignment.id,'stale-before')).rejects.toMatchObject({code:'SNAPSHOT_STALE'});
++ expect(counts()).toEqual(before);expect(storage.getArtifactUsage(100).objects).toBe(0);expect(blobs.objects.size).toBe(0);expect(blobs.stages.size).toBe(0);
++});
++it('RA05 policy changed during asynchronous publish rejects and removes own published blob',async()=>{
++ const request=create(),one=reviewer('r1'),as=artifactService(),assignment=one.submission.getOwnAssignment(one.ctx,sid,request.id),before=counts();
++ blobs.beforePublish=()=>db.prepare('UPDATE spaces SET policy_revision=2 WHERE id=?').run(sid);
++ try{await expect(upload(as,one.ctx,assignment.id,'stale-after-publish')).rejects.toMatchObject({code:'SNAPSHOT_STALE'});}finally{blobs.beforePublish=undefined;}
++ expect(counts()).toEqual(before);expect(storage.getArtifactUsage(100).objects).toBe(0);expect(blobs.objects.size).toBe(0);expect(blobs.stages.size).toBe(0);
++});
+--- tests/integration/m0-m1-r4-b-regression.test.ts
++++ tests/integration/m0-m1-r4-b-regression.test.ts
+@@ -833,7 +833,7 @@
+     writeFileSync(legacyServeDbPath, db.serialize());
+     const legacyServeDb = new Database(legacyServeDbPath);
+     try {
+-      legacyServeDb.exec('DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++      legacyServeDb.exec('DROP TABLE IF EXISTS review_submissions; DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       expect(() => openAndCoordinateDatabase(legacyServeDb, 'serve')).toThrow(/migrate/);
+       const credsAfter = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+--- tests/integration/m3-upgrade-independent.test.ts
++++ tests/integration/m3-upgrade-independent.test.ts
+@@ -22,7 +22,7 @@
+ const upgradeCLI=(source:string,target:string)=>cli(['migrate','--offline','--data-dir',source,'--output',target,'--admin-name','Independent upgrade administrator']);
+ 
+ it('M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip',async()=>{
+- const f=await fixture();try{const target=join(f.root,'upgraded'),result=await upgradeCLI(f.source,target);expect(result.code).toBe(0);const upgraded=JSON.parse(result.stdout);expect(Object.keys(upgraded).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(upgraded.source_schema_version).toBe(1);expect(upgraded.schema_version).toBe(3);expect(upgraded.admin_token===f.token).toBe(false);expect(await inventory(f.source)).toEqual(f.before);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(3);expect(db.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);expect((db.prepare('SELECT count(*) n FROM credentials WHERE revoked_at IS NULL').get() as any).n).toBe(1);expect((db.prepare('SELECT active_batch_id FROM consumers WHERE id=?').get(f.consumer) as any).active_batch_id).toBe(f.pending.batch_id);db.close();const current=await f.spawn('server',target);const request=(method:string,path:string,body?:unknown,token=upgraded.admin_token)=>f.call(method,path,body,token,current.url!);expect((await request('GET','/me',undefined,f.ordinary)).status).toBe(401);expect((await request('GET',`/spaces/${f.space}/posts/${f.post.id}/revisions/1`)).status).toBe(200);const download=await run(f.client.child,{operation:'download',url:current.url,path:`/spaces/${f.space}/artifacts/legacy-ready/content`,token:upgraded.admin_token});expect(download.status).toBe(200);expect(download.result).toEqual({bytes:f.bytes.length,sha256:sha(f.bytes)});
++ const f=await fixture();try{const target=join(f.root,'upgraded'),result=await upgradeCLI(f.source,target);expect(result.code).toBe(0);const upgraded=JSON.parse(result.stdout);expect(Object.keys(upgraded).sort()).toEqual(['data_dir','source_data_dir','source_schema_version','schema_version','upgrade_id','admin_actor_id','admin_token'].sort());expect(upgraded.source_schema_version).toBe(1);expect(upgraded.schema_version).toBe(4);expect(upgraded.admin_token===f.token).toBe(false);expect(await inventory(f.source)).toEqual(f.before);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(4);expect(db.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);expect((db.prepare('SELECT count(*) n FROM credentials WHERE revoked_at IS NULL').get() as any).n).toBe(1);expect((db.prepare('SELECT active_batch_id FROM consumers WHERE id=?').get(f.consumer) as any).active_batch_id).toBe(f.pending.batch_id);db.close();const current=await f.spawn('server',target);const request=(method:string,path:string,body?:unknown,token=upgraded.admin_token)=>f.call(method,path,body,token,current.url!);expect((await request('GET','/me',undefined,f.ordinary)).status).toBe(401);expect((await request('GET',`/spaces/${f.space}/posts/${f.post.id}/revisions/1`)).status).toBe(200);const download=await run(f.client.child,{operation:'download',url:current.url,path:`/spaces/${f.space}/artifacts/legacy-ready/content`,token:upgraded.admin_token});expect(download.status).toBe(200);expect(download.result).toEqual({bytes:f.bytes.length,sha256:sha(f.bytes)});
+  const renewed=await request('POST','/admin/credentials',{actor_id:f.actor,allowed_space_ids:[f.space],capabilities:['read','write']});expect(renewed.status).toBe(201);const freshToken=renewed.body.data.token;expect((await request('GET','/me',undefined,freshToken)).body.data.actor.id).toBe(f.actor);const oldAck=await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/ack`,{batch_id:f.pending.batch_id,next_cursor:f.pending.next_cursor},freshToken);expect(oldAck.status).toBe(409);expect(oldAck.body.error.code).toBe('ACK_INVALID');const pending=await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/poll`,{limit:100,wait_ms:0},freshToken);expect(pending.status).toBe(200);expect(pending.body.data.batch_id).toBe(f.pending.batch_id);expect(pending.body.data.next_cursor===f.pending.next_cursor).toBe(false);expect((await request('POST',`/spaces/${f.space}/consumers/${f.consumer}/ack`,{batch_id:pending.body.data.batch_id,next_cursor:pending.body.data.next_cursor},freshToken)).status).toBe(200);expect((await request('POST',`/spaces/${f.space}/threads/${f.thread}/posts`,{kind:'note',title:'fresh upgraded write',summary:'new',body:'new-generation research'},freshToken)).status).toBe(201);
+  const exported=join(f.root,'upgraded.ndjson');expect((await run(f.client.child,{operation:'export',url:current.url,space:f.space,token:upgraded.admin_token,inputPath:exported})).result.end.complete).toBe(true);const importedTarget=join(f.root,'roundtrip'),imported=await cli(['import','--input',exported,'--data-dir',importedTarget,'--admin-name','Roundtrip administrator']);expect(imported.code).toBe(0);const importedDB=new Database(join(importedTarget,'detuned.sqlite'));const key='space_import.v1.provenance.'+sha(JSON.stringify(['thread',f.thread,null]));expect(JSON.parse((importedDB.prepare('SELECT value FROM instance_metadata WHERE key=?').get(key) as any).value).history_complete).toBe(true);expect(importedDB.prepare('SELECT version,title FROM thread_versions WHERE thread_id=? ORDER BY version').all(f.thread)).toEqual([{version:1,title:'old title'},{version:2,title:'old title version2'}]);importedDB.close();expect(await inventory(f.source)).toEqual(f.before);
+  // Explicit manual compatibility boundary: research is unchanged, exactly this thread's creation-operation cache is absent. Not an original HTTP flow or proven expiry.
+@@ -42,6 +42,6 @@
+ 
+ it('M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets',async()=>{
+  const f=await fixture();try{const worker=await f.spawn('upgrade-worker');const cancelled=await run(worker.child,{sourceDir:f.source,dataDir:join(f.root,'cancelled'),cancelStage:'after-copy'});expect(cancelled.code).toBe('UPGRADE_CANCELLED');expect(await inventory(f.source)).toEqual(f.before);for(const stage of ['before-migrate','credential-reset','destination-created','publication','file-sync','readiness']){const target=join(f.root,'fault-'+stage),result=await run(worker.child,{sourceDir:f.source,dataDir:target,faultStage:stage});expect(result.code).toBe('UPGRADE_FAILED');expect(result.counts![stage]).toBeGreaterThan(0);expect(await inventory(f.source)).toEqual(f.before);if(['destination-created','publication','readiness'].includes(stage)){for(const command of ['init','serve']){const rejected=await cli([command,'--data-dir',target]);expect(rejected.code).toBe(1);expect(JSON.parse(rejected.stdout).error.code).toBe('INCOMPLETE_DIRECTORY');}}else await expect(lstat(target)).rejects.toMatchObject({code:'ENOENT'});}
+- const parent=join(f.root,'double-parent');await mkdir(parent,{mode:0o700});const target=join(parent,'complete-uncertain'),double=await run(worker.child,{sourceDir:f.source,dataDir:target,doubleFault:true});expect(double.code).toBe('UPGRADE_FAILED');expect(double.message!.includes('may be startable')).toBe(true);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(3);db.close();expect(double.result).toBeUndefined();expect(await inventory(f.source)).toEqual(f.before);expect((await upgradeCLI(f.source,join(f.root,'retry-new'))).code).toBe(0);
++ const parent=join(f.root,'double-parent');await mkdir(parent,{mode:0o700});const target=join(parent,'complete-uncertain'),double=await run(worker.child,{sourceDir:f.source,dataDir:target,doubleFault:true});expect(double.code).toBe('UPGRADE_FAILED');expect(double.message!.includes('may be startable')).toBe(true);const db=new Database(join(target,'detuned.sqlite'));expect(db.pragma('integrity_check',{simple:true})).toBe('ok');expect(db.pragma('foreign_key_check')).toEqual([]);expect((db.prepare('SELECT MAX(version) v FROM schema_migrations').get() as any).v).toBe(4);db.close();expect(double.result).toBeUndefined();expect(await inventory(f.source)).toEqual(f.before);expect((await upgradeCLI(f.source,join(f.root,'retry-new'))).code).toBe(0);
+  }finally{await f.cleanup();}
+ },120000);

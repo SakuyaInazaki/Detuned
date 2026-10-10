@@ -1,0 +1,71 @@
+Lima: Linux virtual machines
+
+Usage:
+  limactl [command]
+
+Examples:
+  Start the default instance:
+  $ limactl start
+
+  Open a shell:
+  $ lima
+
+  Run a container:
+  $ lima nerdctl run -d --name nginx -p 8080:80 nginx:alpine
+
+  Stop the default instance:
+  $ limactl stop
+
+  See also template YAMLs: /opt/homebrew/share/lima/templates
+
+Basic Commands:
+  create              Create an instance of Lima
+  delete              Delete an instance of Lima
+  edit                Edit an instance of Lima or a template
+  list                List instances of Lima
+  restart             Restart a running instance
+  shell               Execute shell in Lima
+  start               Start an instance of Lima
+  stop                Stop an instance
+
+Advanced Commands:
+  autostart           Manage automatic startup of Lima instances
+  clone               Clone an instance of Lima
+  copy                Copy files between host and guest
+  disk                Lima disk management
+  factory-reset       Factory reset an instance of Lima
+  info                Show diagnostic information
+  network             Lima network management
+  protect             Protect an instance to prohibit accidental removal
+  prune               Prune garbage objects
+  rename              Rename an instance of Lima
+  screenshot          Capture a screenshot of the VM display
+  show-ssh            Show the SSH command line (DEPRECATED; use `ssh -F` instead)
+  snapshot            Manage instance snapshots
+  sudoers             Generate the content of the /etc/sudoers.d/lima file
+  template            Lima template management (EXPERIMENTAL)
+  tunnel              Create a tunnel for Lima
+  unprotect           Unprotect an instance
+  validate            Validate YAML templates
+  watch               Watch events from instances
+
+Available Plugins (Experimental):
+  mcp                 
+
+Additional Commands:
+  completion          Generate the autocompletion script for the specified shell
+  help                Help about any command
+
+Flags:
+      --debug               Debug mode
+  -h, --help                help for limactl
+      --log-format string   Set the logging format [text, json] (default "text")
+      --log-level string    Set the logging level [trace, debug, info, warn, error]
+      --tty                 Enable TUI interactions such as opening an editor. Defaults to true when stdout is a terminal. Set to false for automation.
+  -v, --version             version for limactl
+  -y, --yes                 Alias of --tty=false
+
+Additional help topics:
+  limactl yq-restrictions     Restrictions on yq expressions in Lima
+
+Use "limactl [command] --help" for more information about a command.

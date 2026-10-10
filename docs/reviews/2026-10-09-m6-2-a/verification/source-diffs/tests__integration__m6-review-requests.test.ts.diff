@@ -1,0 +1,20 @@
+--- tests/integration/m6-review-requests.test.ts (fresh exact before)
++++ tests/integration/m6-review-requests.test.ts (current)
+@@ -31,7 +31,7 @@
+  db.prepare("INSERT INTO space_revisions SELECT space_id,2,objective,rules,json_set(review_policy,'$.enabled',json('false')),check_profiles,pinned_refs,editor_id,created_at FROM space_revisions WHERE space_id=? AND revision=1").run(sid);
+  db.prepare('UPDATE spaces SET current_revision=2,policy_revision=2 WHERE id=?').run(sid);
+  const stable=counts();expect(create()).toEqual(first);expect(service.cancelRequest(auth,sid,first.id,{expected_version:1,reason:'stop'},'cancel')).toEqual(cancelled);expect(counts()).toEqual(stable);
+- expect(service.getRequest(auth,sid,first.id)).toEqual(cancelled);expect(()=>create('fresh')).toThrow(expect.objectContaining({code:'REVISION_CONFLICT'}));
++ expect(service.getRequest(auth,sid,first.id)).toEqual({...cancelled,submitted_count:0});expect(()=>create('fresh')).toThrow(expect.objectContaining({code:'REVISION_CONFLICT'}));
+  const refs=db.prepare("SELECT result_ref FROM idempotency_records WHERE operation LIKE 'review.request.%'").all() as {result_ref:string}[];expect(refs).toHaveLength(2);for(const row of refs){expect(JSON.parse(row.result_ref)).toMatchObject({v:1,manifest_sha256:first.snapshot_sha256});expect(row.result_ref).not.toContain('statement');}
+ });
+ it('RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation',()=>{
+@@ -80,7 +80,7 @@
+  const cancelled=service.cancelRequest(other,sid,first.id,{expected_version:1,reason:'maintenance'},'maintenance');expect(cancelled.changed_by).toBe('other');
+  const reopened=new Database(db.serialize());
+  try{const ss=new SqliteStorage(reopened),aa=new AuthService(ss,hasher,clock),builder=new ReviewModule(ss,hasher,clock,new CryptoIdGenerator(),aa),rr=new ReviewRequestService(ss,aa,new IdempotencyService(ss,hasher,clock),clock,new CryptoIdGenerator(),builder);
+-  expect(rr.getRequest(other,sid,first.id)).toEqual(cancelled);expect(rr.getSnapshot(other,sid,first.snapshot_id).manifest_sha256).toBe(first.snapshot_sha256);
++  expect(rr.getRequest(other,sid,first.id)).toEqual({...cancelled,submitted_count:0});expect(rr.getSnapshot(other,sid,first.snapshot_id).manifest_sha256).toBe(first.snapshot_sha256);
+   expect(rr.cancelRequest(other,sid,first.id,{expected_version:1,reason:'maintenance'},'maintenance')).toEqual(cancelled);
+   ss.upsertMembership({...ss.getMembership(sid,'other')!,active:false});expect(()=>rr.getRequest(other,sid,first.id)).toThrow(expect.objectContaining({code:'NOT_FOUND',statusCode:404}));
+  }finally{reopened.close();}

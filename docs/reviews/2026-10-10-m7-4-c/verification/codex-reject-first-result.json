@@ -1,0 +1,27 @@
+{
+  "status": "failed",
+  "code": "NATIVE_PROBE_FAILED",
+  "diagnostics": {
+    "stages": [],
+    "supervision": {
+      "work_budget_ms": 75000,
+      "total_budget_ms": 90000,
+      "initializer_settled": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": false,
+      "group_probe": "absent",
+      "worker_registered": true,
+      "native_registered": false,
+      "mcp_registered": false
+    },
+    "supervisor_failed": true,
+    "deadline_exceeded": false,
+    "supervisor_error_name": "Error"
+  },
+  "cleanup": {
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "private_directory_removed": true
+  }
+}

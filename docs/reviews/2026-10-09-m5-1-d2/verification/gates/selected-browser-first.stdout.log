@@ -1,0 +1,56 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 9 tests using 1 worker
+
+  ✓  1 scripts/integrations/web/author.spec.ts:3:1 › human reads a fixed revision, publishes a note and cited response, then confirms logout (1.6s)
+  ✓  2 scripts/integrations/web/independent.spec.ts:95:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (8.4s)
+  ✓  3 scripts/integrations/web/independent.spec.ts:116:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (508ms)
+  ✓  4 scripts/integrations/web/independent.spec.ts:134:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (1.8s)
+  ✓  5 scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page (889ms)
+  ✘  6 scripts/integrations/web/m5-d2.spec.ts:22:1 › D201 revision pagination, fixed old reference, five actual fields and honest oversized comparison (5.5s)
+  ✓  7 scripts/integrations/web/m5-d2.spec.ts:62:1 › D202 real upload and publish each recover same intent once, exact binding and verified explicit download (17.3s)
+  ✓  8 scripts/integrations/web/m5-d2.spec.ts:128:1 › D203 artifact pagination, exact tombstones and private associations with current ACL (943ms)
+  ✘  9 scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation (5.8s)
+
+
+  1) scripts/integrations/web/m5-d2.spec.ts:22:1 › D201 revision pagination, fixed old reference, five actual fields and honest oversized comparison 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByLabel('比较版本二', { exact: true })
+
+
+      28 |   await catalog.focus(); await page.keyboard.press('Enter');
+      29 |   await expect(page.locator('.revision-list li')).toHaveCount(20);
+    > 30 |   await page.getByLabel('比较版本二', {exact: true}).selectOption('24');
+         |                                                 ^
+      31 |   await page.getByRole('button', {name: '下一页修订', exact: true}).click();
+      32 |   await expect(page.locator('.revision-list li')).toHaveCount(4);
+      33 |   expect(await page.locator('.revision-list strong').allTextContents()).toEqual(['修订 4','修订 3','修订 2','修订 1']);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-d2.spec.ts:30:49
+
+    Error Context: docs/reviews/2026-10-09-m5-1-d2/verification/browser-selected-browser-first/playwright-output/m5-d2-D201-revision-pagina-70fe8-honest-oversized-comparison/error-context.md
+
+  2) scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByLabel('比较版本一', { exact: true })
+
+
+      164 |   await expect(page.locator('.revision-list')).toHaveCount(0); await discussion(page,forum); await open(page,forum.post.id,1);
+      165 |   await page.getByRole('button',{name:'加载修订目录',exact:true}).click(); await expect(page.locator('.revision-list li')).toHaveCount(1);
+    > 166 |   await page.getByLabel('比较版本一',{exact:true}).selectOption('1'); await page.getByLabel('比较版本二',{exact:true}).selectOption('1');
+          |                                               ^
+      167 |   const comparison = forum.faultNext({method:'GET',path:`/api/v1/spaces/${forum.space.id}/posts/${forum.post.id}/revisions/1/content`},'hold-after');
+      168 |   await page.getByRole('button',{name:'比较所选版本',exact:true}).click(); await comparison.entered;
+      169 |   await open(page,other.id,1); comparison.release(); await expect(page.locator('.field-comparison')).toHaveCount(0);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-d2.spec.ts:166:47
+
+    Error Context: docs/reviews/2026-10-09-m5-1-d2/verification/browser-selected-browser-first/playwright-output/m5-d2-D204-held-catalog-co-c8b9e--space-or-logout-generation/error-context.md
+
+  2 failed
+    scripts/integrations/web/m5-d2.spec.ts:22:1 › D201 revision pagination, fixed old reference, five actual fields and honest oversized comparison 
+    scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation 
+  7 passed (45.7s)
+[ELIFECYCLE] Command failed with exit code 1.

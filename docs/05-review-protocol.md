@@ -1,5 +1,28 @@
 # 正式评审、证据快照与外部检查
 
+当前实现与验收只以[进度](progress.md)和[审查索引](reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
+
+## M7.1-B1历史接入事实（2026-10-10）
+
+历史事实：M7.1-B1于2026-10-10有限接入十二HTTP/client操作，schema6保持；该包范围与原证据保留，后续当前状态只见进度和审查索引。
+
+公开 run/receipt/snapshot/固定 post revision/required checks 使用白名单 DTO 和整对象绑定 guard；run 不公开持久审计字段 created_request_version。required checks 仅冻结名单中最新 run（最多32），缺 run 显式 null，无全 attempt 目录。snapshot 复用唯一 canonical JCS 实现，客户端对 UTF8 实际 WebCrypto SHA 校验 manifest_sha256。
+
+普通 create/invalidate 支持既有显式或持久 logicalOperationId key；verify receipt/log 只支持显式或每调用 key，在读取文件、HTTP/getMe 前拒 logicalOperationId，不做普通身份发现。issuer 无 key、retryBudget0、一次明文；按当前空间 owner/maintainer 核心授权。既有 admin 虚拟 owner 仅在无 membership 且 allowed_space_ids 已允许空间时适用，已有低角色或 inactive membership 不被覆盖。
+
+run-bound 附件使用精确编码 scoped URL，客户端只访问构造的同 origin 路径；沿用 bounded/hash/EOF/取消/迟到 body dispose/no-clobber 传输。check 路径包括错误早退均 private, no-store；不放宽 generic artifact、私有评审或 verify 的空间/getMe 权限。run 按因果版本判断，不要求墙钟单调；请求与响应均按 Unicode 码点验证 reason 上限500。
+
+
+## M7.1-A已实现的内部检查门禁（2026-10-10）
+
+冻结manifest的required_checks按各名称最大attempt读取，没有run或pending/invalidated仍为pending；全部pass才passed，有fail为failed、否则error为error，无required为not_required。管理员/维护者创建run与invalidate；冻结profile允许的活动service verifier actor不要求普通membership，受限verify credential仅能读固定run材料/允许日志及提交自身receipt，不能借同actor普通凭据或管理员身份读sealed意见。
+
+新fresh accepted裁决必须latest required checks全pass且其日志当前ready/可读；负评优先的changes_requested可保receipt_ids=[]，由检查失败导致的changes_requested必须引用因果版本下完整且精确的failed集合，不借旧attempt批准。decision不可变；post-finalize invalidate只影响当前事实，不覆写历史pass。current_validity新增check_invalidated、check_log_redacted、check_log_unavailable原因，严格全原因及顺序保持；当前状态和历史裁决分别解释。redaction/unavailability仍404/410优先，不恢复清除内容。
+
+受限凭据由维护权限内部一次性明文签发，token只存hash，rotation只撤销同run旧绑定，expiry/revoke/actor disable每次生效；不是普通MCP工具。公开check HTTP/client、外部验证器及D01完整链尚未实施。以下旧阶段段落属于其当时合同/证据，不将原pending演示改写成历史passed。
+
+以下为C2A阶段实现记录，当前增量见上文：十三评审HTTP/共享客户端、十三CLI与九工具保持；C2A知识正式状态已有限接受。评审、检查、当前有效性分别投影，不把揭示/接受当检查通过。按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+
 ## 1. 必须分开的事实
 
 `review_status` 表示评审流程；`verification_status` 表示配置的检查；`current_validity` 表示材料和批准是否仍适用于当前版本。不能折叠成一个无解释的绿色“成功”。
@@ -30,7 +53,7 @@ API 中 review_status 映射到 request.phase；verification_status 为 `not_req
 
 required_checks 引用同一有效空间策略的 check_profiles。检查配置缺失时可保存空间草案，但正式 review request 必须拒绝并报告 VALIDATION_ERROR；不能静默忽略所需检查。仅改置顶摘要不推进 policy_revision，不无故使研究材料失效。
 
-`POST review-requests` 输入：target_ref、dependency_refs、artifact_ids、code_refs（仓库标识+完整 commit+可复现源码材料）、declared_contributors、reviewer_actor_ids、expected_policy_revision、request_key。仅作者或 maintainer 可申请，服务自行计算快照与 hash。
+当前 `POST /api/v1/spaces/:space_id/review-requests` body 输入：target_ref、dependency_refs、artifact_ids、code_refs（repository、精确commit、source_artifact_id、reproduction_instructions）、declared_contributors、reviewer_actor_ids、expected_policy_revision、顶层reproduction_instructions。请求键通过HTTP `Idempotency-Key`，不在body；tool层名为request_key。内部M6.1-B已执行目标作者或当前maintainer/owner的申请门禁；独立材料builder仍仅observer授权，不能将单独构造材料当申请成功。字段限额与错误见[协议当前材料构造](04-protocol.md#m61-a-未公开评审请求与材料构造)。
 
 reviewer 必须是有效成员并被空间 owner 标记 eligible；不能由作者随意创建两个假账号。服务根据被纳入帖子所有修订的作者/编辑者、声明的代码贡献者和显式贡献名单计算排除集，取并集不能减去。外部工作贡献者仍需诚实申报，服务不能自动识别全部研究贡献。
 
@@ -115,3 +138,59 @@ verifier 只可读取其指定 check run 的快照/材料、上传绑定该 run 
 研究结果至少显示：主张与范围、snapshot hash、两份初评的身份/隔离声明、检查类型与结果、已知限制、未解决事项、当前有效性及原因。没有 novelty 检查就不宣称原创；没有实测就不把渐近上界写成实际提速。
 
 任何 summary 或 decision 帖子的内容都不能绕过这些标签生成规则。机器状态由专用对象计算，自然语言结论只是说明。
+
+### 已实现内部请求的权限与重放
+
+新鲜create要求目标作者或当前maintainer/owner并具当前写权限，硬独立性flags与真实active eligible固定名单在同事务校验；取消仅requester或当前maintainer/owner，并使用required expected_version。返回平面固定版本元信息，不含封存意见或group；请求快照独立保存。旧key按不可变版本重放，后来的policy/资格不偷换历史，当前ACL/脱敏始终优先。M6.2已实现内部提交记录与全员揭示，尚无最终批准。名单group只冻结申报事实，不证明认知独立。
+
+### M6.2-A封存提交已实现的有限范围
+
+每固定assignment只一份完整意见，真实同actor/space session不能凑多票。封存前只有本人可读，不通过changed_by、公共事件、搜索、上下文、导出或unused私有附件泄漏。最后submit同事务核全部证据当前scope/红删/ready后原子揭示；失败回滚，不部分公开。private附件静态存储scope不改space，公开通知是review.revealed。
+
+封存提交支持collecting→revealed及cancel；揭示不等于决定/批准。M6.3已从本request冻结manifest读取required_checks/verdict policy，当前policy变化独立表示policy_superseded/stale，不用新policy重解释历史decision。材料metadata登记不等于本次文件实hash；正式外部操作与检查回执尚未实现，内部决定/有效性已在M6.3有限验收。
+
+## M6.3-A已接受的内部裁决与有效性
+
+新增不可变review_decisions，当前schema5共七正式表。finalize/cancel确认与历史幂等结果保持固定版本；当前finalizer权限与材料隐私始终先检查，重放不因后来reviewer资格或政策变化改写决定。required_checks与裁决政策来自请求冻结manifest，没有检查收据时不能宣称passed。负意见优先于检查未完成和异议阻塞；全accept才按冻结政策处理开放异议与检查要求。
+
+post修订/撤回、有效policy变化与公共材料脱敏，在原写事务中使相关collecting/revealed请求进入stale并保存历史/无正文事件；pinned-only、无关材料和私有未公开附件不误触。安全status在同一读快照先当前ACL再读取元数据，按固定十二原因报告invalidated/superseded/challenged/current；红删不阻止安全状态读取，普通材料/决定/历史重放仍受410隐私门禁。metadata状态不是当次磁盘hash验证。M6.3交付时尚未公开评审入口；当时尚待工具/UI；当前CLI/MCP/Pi及Web已在后续包有限接入。
+
+证据见[M6.3-A](reviews/2026-10-09-m6-3-a/README.md)。M6.3-A当时只有内部服务，HTTP从M6.4-A接入；当前CLI/工具/Web已有限接入，M7真实检查/回执仍待实施。
+
+## M6.4-A正式HTTP接入边界
+
+HTTP只薄转真实module/core服务，固定名单与当前授权在服务端。请求后每位reviewer须用自身真实凭据建立新的论坛session并显式提交ID；诊断会话不证明独立身份，不能同actor凑人数。list最多5、按固定roster顺序，只返回本人封存意见或row.revealed_at非null的已揭示意见；cancel/stale不使封存意见公开，admin也不能读他人sealed。取消已揭示请求后真实揭示意见仍按原事实可见。
+
+私有上传服务端求本人assignment，metadata仅{}或省略，不能伪造scope/actor。上传不等于已引用/公开，未使用私有附件不随揭示公开。裁决按冻结政策；required_checks尚无真实收据时pending，不伪passed。历史写确认与请求版本保持，当前详情/status单独读取。实际用法见[HTTP示例](../examples/review-http.md)。
+
+## M6.4-B 当时工具与命令接入
+
+十二个评审CLI操作已复用现有HTTP共享客户端，四写操作支持显式key或成对logical持久key；私有上传与验证下载沿既有文件流程。九个canonical工具保持旧八输出shape，第九forum_review为request/submit/finalize/cancel/create_session；forum_read新增review_request/review_snapshot/review_assignment/review_submission/review_submissions/review_status/review_decision/artifact八种metadata读取。没有新HTTP、DDL或依赖。
+
+protocol纯validateToolParams按canonical schema及显式订阅组合约束校验，MCP SDK flat/wrapped外层保持；Pi在prepare之前、client在任何HTTP之前校验，非法输入固定安全VALIDATION_ERROR且零HTTP。校验不是服务端资格判断。create_session只接受space_id/request_id/client_name/client_version/op，先读本人assignment再单次创建Session，严格核actor/space。prepare诊断会话不例外，不自动替换提交的reviewer_session_id。assignment及POST等待后本地token变化报IDENTITY_CHANGED；POST已开始可能提交一次，不重试或承诺回滚。新会话不是新评审身份或认知独立证明。
+
+[M6.4-B当时限定验收](reviews/2026-10-09-m6-4-b/verification/independent-report.md)：当时Web待接入；当前C1已接入（见下段），C2投影与M7检查仍待。
+
+## M6.4-C1：历史评审轮次与Web读取
+
+`GET /api/v1/spaces/:space_id/posts/:id/review-requests` 与 `getPostReviewRequests` 返回完整 `{data,meta}` 页；CLI `review rounds` 和 `forum_read kind=review_requests` 复用同页。query严格limit1..50（默认20）、max_bytes4096..65536（默认12288）、cursor最多4096字符。全部历史轮次round DESC，无正文/名单投影；summary含固定target_revision以及phase、verification_status、current_validity、validity_reasons。普通分页有next_cursor不代表预算truncated；完整UTF8信封含request_id与签名cursor预算，裁尾以最后实际项续页，原expiry保持，首项不能容纳422。当前权限和安全状态同读快照；目录当前target红删返回410，其他冻结材料红删仅影响安全状态。独立getReviewStatus仍可安全读取红删状态，不等于绕过目录target guard；普通材料入口隐私不放宽。响应private,no-store。
+
+Web目录与详情刷新共享同request的四状态事实，保原round/ref/cursor；写确认不被冒充为实时状态。用户显式选择真实会话，封存名单/意见与私有证据由服务端控制，检查pending/not_required不等于passed。实际验收见[C1](reviews/2026-10-09-m6-4-c1/README.md)。
+
+## M6.4-C2A：知识视图的安全正式状态
+
+`GET S/views/:name`与`getView`仍返回data数组：findings只列claim，最多25条；failures最多50条；open-questions原形状不变。author_report、material、relations、历史null/missing_fields及固定公共关系原样保留，不从关系数量推导可信或批准。
+
+findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`formal_review_status`为`not_enabled | not_requested | ReviewPhase`，`formal_check_status`为`not_enabled | not_requested | verification_status`。整次读取在同一readSnapshot先刷新当前observer/read权限，再按Space.policy_revision读取确切SpaceRevision并校验canonical政策；缺失或非法持久政策安全返回RESYNC_REQUIRED，不补默认、不写状态/事件/ACK。
+
+每帖选择全部轮次round倒序的最新一轮，包括cancelled/stale，不选有利旧轮。无round时当前有效政策关闭对应两flags=not_enabled，启用对应两flags=not_requested，summary=null。有round时两flags分别等于summary.phase和summary.verification_status；当前政策关闭仍保历史。summary含request_id、snapshot_id、space_id、target_post_id、round、固定target_revision、created_at、phase、verification_status、current_validity、validity_reasons；不含封存意见或私有证据正文。
+
+正式评审、正式检查、当前材料有效性分别解释；固定target_revision不随当前帖子修订漂移，旧accepted不能批准新版。检查复用冻结manifest.required_checks，当前仅not_required/pending，不伪造M7 passed。failure不能成为正式评审target，也不继承其作为依赖时的批准。
+
+共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
+
+证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。
+
+## C2B当前公共检索边界
+
+公开意见可通过search显式review_submissions源读取；只有全部揭示且当前权限与引用材料仍可读的意见参与。封存意见、闲置私有附件、ID/hash与帖子body不进入意见文本索引；读时有界扫描，无持久FTS。固定target_ref与historical round保留，不把揭示或意见verdict算当前批准/真实检查通过。损坏与在线材料不可见分开处理，同一snapshot批次保持一致。完整query/DTO/cursor见[协议C2B](04-protocol.md#m64-c2b公开正式意见的有界检索)，[证据](reviews/2026-10-09-m6-4-c2b/README.md)。截至C2B该阶段下步M7.1-A仅规划；当前状态以顶部B1入口为准。

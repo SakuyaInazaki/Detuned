@@ -71,7 +71,7 @@ describe('M0-R2 / M1-R2 Adapters Regressions (S12 & Tools Discovery)', () => {
     expect(threw).toBe(true);
   });
 
-  it('Tools discovery advertises only currently implemented tools (8 active tools, no unimplemented forum_review)', () => {
+  it('Tools discovery advertises only currently implemented tools (9 active tools including implemented forum_review)', () => {
     // Only implemented tools should be in DETUNED_TOOLS discovery list
     const toolNames = DETUNED_TOOLS.map((t) => t.name);
     expect(toolNames).toContain('forum_context');
@@ -82,7 +82,7 @@ describe('M0-R2 / M1-R2 Adapters Regressions (S12 & Tools Discovery)', () => {
     expect(toolNames).toContain('forum_subscribe');
     expect(toolNames).toContain('forum_poll');
     expect(toolNames).toContain('forum_ack');
-    expect(toolNames).not.toContain('forum_review');
-    expect(toolNames.length).toBe(8);
+    expect(toolNames).toContain('forum_review');
+    expect(toolNames.length).toBe(9);
   });
 });

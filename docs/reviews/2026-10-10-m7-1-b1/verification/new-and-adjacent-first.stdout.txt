@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m7-check-http-client-independent.test.ts (10 tests | 1 failed) 2344ms
+   ✓ HI01 true ephemeral127.0.0.1 TCP client traverses fixed material/run/log/receipt and latest nullable frozen directory 262ms
+   × HI02 inject actual handler ordinary/verify/sealed boundaries reject discovery and wrong fixed material without writes 67ms
+     → expected DetunedError: Check does not exist or is … { …(6) } to match object { code: 'FORBIDDEN' }
+(6 matching properties omitted from actual)
+   ✓ HI03 issuer no-store/strict key and controlled retry0; receipt/log forbidden logical intent is rejected before file or identity discovery 51ms
+   ✓ HI04 true TCP response-loss after actual commit replays immutable receipt with exact key and no getMe request  1523ms
+   ✓ HI05 true handler credential rotation/expiry and terminal exact replay continue current log redaction 148ms
+   ✓ HI06 controlled DTO/canonical response corruption is separate from real material and whole-directory reads 49ms
+   ✓ HI07 controlled scoped stream EOF/hash/MIME/cancel/late dispose keep same-origin exact encoded URL 68ms
+   ✓ HI08 true TCP ordinary persistent create/invalidate scopes retain request/run targets while verify writes avoid identity preparation 46ms
+   ✓ HI09 real TCP successful domain mutations tolerate a legitimate wall-clock rollback; public run and directory follow causal versions 70ms
+   ✓ HI10 true TCP scoped content401/404/410 responses carry private no-store before successful streaming 59ms
+ ✓ tests/contracts/m7-check-http.test.ts (6 tests) 463ms
+stdout | tests/contracts/m6-review-http-independent.test.ts > H01 real HTTP/shared-client twelve entrances preserve independent sessions, sealed rows, reveal and immutable exact replay
+{"checkpoint":"H01-json-mime-same-key-replay","status":201,"exact_metadata":true,"db_unchanged":true,"staging_and_objects_unchanged":true}
+
+stdout | tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+{"checkpoint":"H02-cookie-origin-rejection","status":403,"code":"FORBIDDEN","cache_control":"private, no-store"}
+
+stdout | tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+{"checkpoint":"H02-cookie-csrf-rejection","status":403,"cache_control":"private, no-store"}
+
+ ✓ tests/contracts/m6-review-http-independent.test.ts (6 tests) 830ms
+ ✓ tests/contracts/m7-check-client.test.ts (9 tests) 24ms
+ ✓ tests/integration/m4-artifact-client-cli-independent.test.ts (5 tests) 8388ms
+   ✓ AB C01 ordinary identity binary and empty built CLI transfer agrees with independent HTTP/hash and private files  1526ms
+   ✓ AB C02 fresh CLI processes recover persistent intent across token rotation while actor/space keys remain independent  2245ms
+   ✓ AB C03 file targets and concurrent CLI publishers preserve winner; invalid inputs do not reach HTTP  1825ms
+   ✓ AB C04 controlled content transport ignores content_url and never publishes hash-mismatch or truncated bytes  1134ms
+   ✓ AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes  1657ms
+ ✓ tests/integration/m7-check-domain.test.ts (6 tests) 453ms
+ ✓ tests/integration/m7-check-scope-artifacts.test.ts (5 tests) 328ms
+ ✓ tests/contracts/m6-review-http.test.ts (3 tests) 291ms
+ ✓ tests/integration/m6-review-private-artifacts.test.ts (6 tests) 323ms
+ ✓ tests/integration/m4-artifact-client.test.ts (8 tests) 183ms
+ ✓ tests/contracts/m6-review-canonicalization.test.ts (7 tests) 66ms
+ ✓ tests/contracts/m6-review-client.test.ts (4 tests) 15ms
+
+ Test Files  1 failed | 11 passed (12)
+      Tests  1 failed | 74 passed (75)
+   Start at  01:08:32
+   Duration  17.15s (transform 421ms, setup 0ms, collect 1.83s, tests 13.71s, environment 1ms, prepare 295ms)
+

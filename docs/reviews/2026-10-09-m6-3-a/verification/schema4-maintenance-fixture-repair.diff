@@ -1,0 +1,33 @@
+--- tests/integration/m6-schema4-maintenance-independent.test.ts before
++++ tests/integration/m6-schema4-maintenance-independent.test.ts after
+@@ -65,7 +65,7 @@
+  await upgradeOffline({dataDir:f.source,outputDir:destination,offline:true,adminName:'owned stage administrator'});
+  expect(await digest(f.file)).toBe(sourceHash);
+  const db=new Database(path.join(destination,'detuned.sqlite'));cleanup.push(async()=>{if(db.open)db.close();});
+- expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized',maxVersion:4});
++ expect(classifyDatabase(db)).toMatchObject({kind:'current_initialized',maxVersion:5});
+  const s=services(db,f.history),sid=f.history.recipe.space_id;
+  for(const [key,original] of Object.entries(f.history.oracle)){
+   const actual=key==='cancel'?s.requests.cancelRequest(s.context(),sid,f.history.oracle.cancel.request_id,f.history.oracle.cancel.payload,original.key):s.requests.createRequest(s.context(),sid,(original as History['oracle']['create']).payload,original.key);
+@@ -80,7 +80,7 @@
+  expect(await digest(f.file)).toBe(sourceHash);
+ });
+ 
+-it('MD02 schema4 physical backup and restore preserve sealed/revealed submissions, sessions, immutable versions and unused private blobs, with fresh identity isolation',async()=>{
++it('MD02 current schema5 physical backup and restore preserve sealed/revealed submissions, sessions, immutable versions and unused private blobs, with fresh identity isolation',async()=>{
+  const f=await source3(),directory=path.join(f.root,'schema4');await upgradeOffline({dataDir:f.source,outputDir:directory,offline:true,adminName:'owned fixture administrator'});
+  const db=new Database(path.join(directory,'detuned.sqlite'));db.pragma('journal_mode=WAL');cleanup.push(async()=>{if(db.open)db.close();});
+  const s=services(db,f.history),sid=f.history.recipe.space_id,actors=f.history.recipe.actors;
+@@ -100,10 +100,10 @@
+  const objectInventory=await Promise.all([cited,unused].map(async a=>{const row=s.storage.findArtifactById(a.id)!;return {id:a.id,key:row.storage_key,hash:await digest(path.join(directory,'artifacts','objects',row.storage_key))};}));
+  db.pragma('wal_checkpoint(TRUNCATE)');db.close();
+  const backup=path.join(f.root,'backup4'),restored=path.join(f.root,'restored4');
+- const receipt=await backupOffline({dataDir:directory,outputDir:backup,offline:true});expect(receipt.manifest.schemaVersion).toBe(4);expect(receipt.manifest.artifacts).toHaveLength(2);
++ const receipt=await backupOffline({dataDir:directory,outputDir:backup,offline:true});expect(receipt.manifest.schemaVersion).toBe(5);expect(receipt.manifest.artifacts).toHaveLength(2);
+  const backupHash=await digest(path.join(backup,'detuned.sqlite'));await restoreBackup({backupDir:backup,dataDir:restored});expect(await digest(path.join(backup,'detuned.sqlite'))).toBe(backupHash);
+  const recovered=new Database(path.join(restored,'detuned.sqlite'));cleanup.push(async()=>{if(recovered.open)recovered.close();});
+- expect(classifyDatabase(recovered)).toMatchObject({kind:'current_initialized',maxVersion:4});for(const [t,value] of Object.entries(before))expect(rows(recovered,t)).toEqual(value);
++ expect(classifyDatabase(recovered)).toMatchObject({kind:'current_initialized',maxVersion:5});for(const [t,value] of Object.entries(before))expect(rows(recovered,t)).toEqual(value);
+  const restoredStorage=new SqliteStorage(recovered),restoredAuth=new AuthService(restoredStorage,s.hasher,clock);
+  expect(restoredStorage.getInstanceSecret()!==oldSecret).toBe(true);expect(()=>restoredAuth.authenticateToken(s.tokens.get(actors.one)!)).toThrow();
+  for(const object of objectInventory)expect(await digest(path.join(restored,'artifacts','objects',object.key))).toBe(object.hash);

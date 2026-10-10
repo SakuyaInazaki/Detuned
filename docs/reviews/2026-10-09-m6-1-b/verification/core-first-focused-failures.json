@@ -1,0 +1,98 @@
+[
+  {
+    "test": "tests/integration/m0-m1-r2-regression.test.ts > M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/contracts/m3-backup-cli.test.ts > M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses",
+    "diagnostic": "Error: serve early exit 1\n \u276f ChildProcess.<anonymous> tests/contracts/m3-backup-cli.test.ts:63:127\n     61|       const timer = setTimeout(() => reject(new Error('serve readiness\u2026\n     62|       child.stderr.on('data', s => { if (s.includes('Detuned \u670d\u52a1\u5df2\u542f\u52a8')) \u2026\n     63|       child.once('error', e => { clearTimeout(timer); reject(e); }); c\u2026\n       |                                                                                                                               ^\n     64|     });\n     65|     const backup = path.join(root, 'backup'); const result = await cli\u2026\n"
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > loads a hash-bound credential-free archive with the actual old HTTP business records",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > initial replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > newpost replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > revision replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays all three old keys after a current-server close and reopen without altering business/hash/ref",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content",
+    "diagnostic": ""
+  },
+  {
+    "test": "tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay",
+    "diagnostic": "DetunedError: \u65e7\u7248\u672c\u5b9e\u4f8b\u9700\u8981\u663e\u5f0f\u79bb\u7ebf\u8fc1\u79fb\u3002\u8bf7\u4f7f\u7528 detuned migrate --offline \u5c06\u5176\u5347\u7ea7\u5230\u65b0\u76ee\u5f55\u3002\n \u276f openAndCoordinateDatabase packages/storage-sqlite/src/bootstrap.ts:706:57\n    704|   }\n    705| \n    706|   if (classification.kind === 'supported_legacy') throw new DetunedErr\u2026\n       |                                                         ^\n    707| \n    708|   if (mode === 'serve') {\n \u276f start tests/integration/historical-http-replay.test.ts:25:5"
+  },
+  {
+    "test": "tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup",
+    "diagnostic": "Error: Test timed out in 5000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n \u276f tests/integration/m3-backup-recovery.test.ts:71:3\n     69|     }\n     70|   });\n     71|   it('rejects manifest shape, traversal, duplicates, wrong versions an\u2026\n       |   ^\n     72|     const cases: ((value: BackupManifest) => void)[] = [\n     73|       value => { (value as any).extra = true; }, value => { value.vers\u2026"
+  },
+  {
+    "test": "tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing",
+    "diagnostic": "Error: listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-7dIBb0/control.sock\n \u276f tests/integration/m3-logical-import.test.ts:45:10\n     43|    else{phase='invalid-ipc';terminate();}\n     44|   }});});\n     45|   server.listen(path.join(root,'control.sock'));await once(server,'lis\u2026\n       |          ^\n     46|   child=spawn('pnpm',['exec','vitest','run','tests/integration/m3-logi\u2026\n     47|   startup=setTimeout(terminate,15000);\n"
+  },
+  {
+    "test": "tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates",
+    "diagnostic": "AssertionError: expected true to be false // Object.is equality\n\n- Expected\n+ Received\n\n- false\n+ true\n\n \u276f fixture tests/integration/m3-operations-independent.test.ts:17:322"
+  },
+  {
+    "test": "tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log",
+    "diagnostic": "AssertionError: expected true to be false // Object.is equality\n\n- Expected\n+ Received\n\n- false\n+ true\n\n \u276f fixture tests/integration/m3-operations-independent.test.ts:17:322"
+  },
+  {
+    "test": "tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes",
+    "diagnostic": "AssertionError: expected true to be false // Object.is equality\n\n- Expected\n+ Received\n\n- false\n+ true\n\n \u276f fixture tests/integration/m3-operations-independent.test.ts:17:322"
+  },
+  {
+    "test": "tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint",
+    "diagnostic": "AssertionError: expected true to be false // Object.is equality\n\n- Expected\n+ Received\n\n- false\n+ true\n\n \u276f fixture tests/integration/m3-operations-independent.test.ts:17:322"
+  },
+  {
+    "test": "tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners",
+    "diagnostic": "AssertionError: expected true to be false // Object.is equality\n\n- Expected\n+ Received\n\n- false\n+ true\n\n \u276f fixture tests/integration/m3-operations-independent.test.ts:17:322"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged",
+    "diagnostic": "AssertionError: expected 1 to be +0 // Object.is equality\n\n- Expected\n+ Received\n\n- 0\n+ 1\n\n \u276f packages/storage-sqlite/tests/schema-generation.test.ts:98:26"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes",
+    "diagnostic": "AssertionError: expected 1 to be +0 // Object.is equality\n\n- Expected\n+ Received\n\n- 0\n+ 1\n\n \u276f packages/storage-sqlite/tests/schema-generation.test.ts:138:31"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)",
+    "diagnostic": "AssertionError: expected 'node:fs:436\\n    return binding.readF\u2026' to match /\u5305\u542b\u4e0d\u53d7\u652f\u6301\u7684\u6392\u5e8f\u89c4\u5219: NOCASE/\n\n- Expected: \n/\u5305\u542b\u4e0d\u53d7\u652f\u6301\u7684\u6392\u5e8f\u89c4\u5219: NOCASE/\n\n+ Received: \n\"node:fs:436\n    return binding.readFileUtf8(path, stringToFlags(options.flag));\n                   ^"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)",
+    "diagnostic": ""
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)",
+    "diagnostic": "AssertionError: expected 1 to be +0 // Object.is equality\n\n- Expected\n+ Received\n\n- 0\n+ 1\n\n \u276f packages/storage-sqlite/tests/schema-generation.test.ts:255:26"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)",
+    "diagnostic": "AssertionError: expected 'node:fs:436\\n    return binding.readF\u2026' to match /missing required migration marker/\n\n- Expected: \n/missing required migration marker/\n\n+ Received: \n\"node:fs:436\n    return binding.readFileUtf8(path, stringToFlags(options.flag));\n                   ^"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/storage.test.ts > SqliteStorage and Bootstrap > asserts complete DDL parity between fresh bootstrap and upgraded v1 database",
+    "diagnostic": "DetunedError: \u65e7\u7248\u672c\u5b9e\u4f8b\u9700\u8981\u663e\u5f0f\u79bb\u7ebf\u8fc1\u79fb\u3002\u8bf7\u4f7f\u7528 detuned migrate --offline \u5c06\u5176\u5347\u7ea7\u5230\u65b0\u76ee\u5f55\u3002\n \u276f openAndCoordinateDatabase packages/storage-sqlite/src/bootstrap.ts:706:57\n    704|   }\n    705| \n    706|   if (classification.kind === 'supported_legacy') throw new DetunedErr\u2026\n       |                                                         ^\n    707| \n    708|   if (mode === 'serve') {\n \u276f packages/storage-sqlite/tests/storage.test.ts:191:5"
+  },
+  {
+    "test": "packages/storage-sqlite/tests/storage.test.ts > SqliteStorage and Bootstrap > asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql)",
+    "diagnostic": "AssertionError: expected { \u2026(23) } to deeply equal { \u2026(28) }\n\n- Expected\n+ Received\n\n@@ -1101,254 +1101,10 @@\n            },\n          ],\n        },"
+  }
+]

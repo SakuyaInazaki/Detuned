@@ -1,0 +1,29 @@
+{
+  "status": "failed",
+  "code": "NATIVE_PROBE_FAILED",
+  "diagnostics": {
+    "stages": [],
+    "supervision": {
+      "work_budget_ms": 50000,
+      "total_budget_ms": 60000,
+      "emergency_budget_ms": 65000,
+      "initializer_settled": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": false,
+      "group_probe": "not_confirmed",
+      "worker_registered": false,
+      "native_registered": false,
+      "mcp_registered": false
+    },
+    "supervisor_failed": true,
+    "deadline_exceeded": false,
+    "supervisor_error_name": "Error",
+    "supervisor_error_code": "EPERM"
+  },
+  "cleanup": {
+    "worker_closed": true,
+    "worker_group_closed": false,
+    "private_directory_removed": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "version": "2.1.282",
+  "environment_keys": [
+    "PATH",
+    "CI"
+  ],
+  "messages": [],
+  "http": [
+    {
+      "method": "GET",
+      "route": "/api/v1/health/live"
+    }
+  ],
+  "cleanup": {
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "control_kind": "installed-internal-not-public-SDK",
+  "guard": {
+    "exit": 0,
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "allowed"
+  },
+  "failure": "Probe could not complete safely."
+}

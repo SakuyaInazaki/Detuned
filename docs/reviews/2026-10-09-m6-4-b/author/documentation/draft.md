@@ -1,0 +1,13 @@
+# M6.4-B metadata draft — not accepted yet
+
+Only this author directory is written. No current entry, guide or compatibility JSON has been changed. Exact targets and captured current bytes are in metadata-targets.json/before-current. B five current guide bytes are preserved in addition to D's initial fresh-before records; no claim that their future final bytes retain the B1 hash.
+
+Proposed README: ordinary Web and the existing twelve review HTTP/client operations remain available; this package adds twelve CLI operations, canonical ninth forum_review and eight metadata read kinds. Review has request/submit/finalize/cancel plus explicit create_session. Diagnostic and explicit forum sessions do not create independent identity or establish cognitive independence, and do not replace the submitted reviewer_session_id. Invalid canonical payloads fail before any HTTP/prepare. Two-awaited create_session now detects local token changes before POST and before returning; an already-submitted singleattempt may have left a session, never claimed rolled back.
+
+Evidence placeholders: D currently reports new13, affected80 as78+2 mechanical fixture corrections, fixed Pi SDK six and dsh official plugin three passing, type/lint0. Final full core total, gate timings/current selection and root acceptance must be taken from the final D collector, not filled now. DT03 first red and repaired result remain linked rather than overwritten. This draft claims no package acceptance.
+
+Host statements: Pi fixed0.87.1 actual SDK lifecycle/review chain and fixed dsh official plugin registry nine discovery/new session/assignment are bounded no-model tests; no complete CLI/profile/model certification. Claude remains its previous exact wrapped eight-tool scope; Codex remains static/guard and blocked native initialization. Only Pi/dsh compatibility entries get the new limited evidence; other host semantics stay unchanged.
+
+ADR069 candidate: single canonical local validation shared without new dependencies/global FormatRegistry, SDK outer validation retained, strict dispatcher before HTTP, explicit review session token snapshot and no identity multiplication. Schema5/HTTP/DDL/dependency baseline unchanged. Complete field/schema validation is not server qualification.
+
+Next: root-approved local planning/m6-4-c1-task.md (9028fda… task /27a010… ownership); no implementation before package sealing/fresh/release. M6 C2 public retrieval/knowledge projection and M7 real checks/receipts remain unfinished. Final package README links original failed records, source freezes/cross reviews and D report; next-agent-prompt references the approved task rather than copying drifting interfaces.

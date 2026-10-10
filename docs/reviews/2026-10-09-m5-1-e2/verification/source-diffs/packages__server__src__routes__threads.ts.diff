@@ -1,0 +1,19 @@
+--- before-files/packages/server/src/routes/threads.ts
++++ packages/server/src/routes/threads.ts
+@@ -20,12 +20,13 @@
+   app.get('/spaces/:space_id/threads/:id/posts', async (req, reply) => {
+     const auth = (req as any).auth as AuthenticatedContext;
+     const { space_id, id } = req.params as { space_id: string; id: string };
+-    const query = req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown };
+-    validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor']);
++    const query = req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown; sort?: unknown };
++    validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor', 'sort']);
+     const limit = parseIntegerQuery(query.limit, 'limit', integerQueryOptions(THREAD_POST_LIMIT));
+     const max_bytes = parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES));
+     const cursor = parseStringQuery(query.cursor, 'cursor', { allowEmpty: true });
+-    const page = threadPostsReadService.getPosts(auth, space_id, id, { limit, max_bytes, cursor }, { request_id: req.id });
++    const sort = parseStringQuery(query.sort, 'sort') as 'id_asc' | 'created_at_asc' | undefined;
++    const page = threadPostsReadService.getPosts(auth, space_id, id, { limit, max_bytes, cursor, sort }, { request_id: req.id });
+     return reply.type('application/json').send(serializeThreadPostsEnvelope(req.id, page));
+   });
+ 

@@ -1,0 +1,14 @@
+--- README.md (author-v3)
++++ README.md (final sealed)
+@@ -1,9 +1,9 @@
+ # M6.4-C2B：公开正式意见有界检索
+ 
+-root已接受本机有限功能，metadata冻结待末核，尚未封存。search显式review_submissions源，已全部揭示且当前可读意见逐字段字面包含；同snapshot ACL/材料隐私、全域5000候选与字节预算、固定target_ref、独立签名cursor。旧posts/九工具兼容；schema5无迁移/持久FTS/依赖改变。HTTP/client/CLI与tools复用服务端业务。
++root已接受本机有限功能与metadata末核，本包已[最终封存](verification/finalization.md)。search显式review_submissions源，已全部揭示且当前可读意见逐字段字面包含；同snapshot ACL/材料隐私、全域5000候选与字节预算、固定target_ref、独立签名cursor。旧posts/九工具兼容；schema5无迁移/持久FTS/依赖改变。HTTP/client/CLI与tools复用服务端业务。
+ 
+ [独验](verification/independent-report.md)、[gate-summary](verification/gate-summary.json)、[cleanup](verification/cleanup.json)记录首64/67三失败、授权修正后21/21，final build/source noEmit/typecheck/lint/schema通过。核心867/867、139文件一次完整，新22含内；current7各一次，其他18复用接受历史。旧S04真实schema属性兼容修复、PC03page/envelope分层修正、控制500调用禁重试均保首失败与原业务断言。cleanup仅17 runner消失与awaited teardown，无独立tmp census。
+ 
+ 真实HTTP/SQLite/WAL及受控反例区别见独验；不宣称性能/全库健康、真实模型研究价值或宿主认证升级。未运行浏览器，用户排除后续前端/视觉/浏览器专项，既有源码/证据保留。协议见[docs04](../../04-protocol.md#m64-c2b公开正式意见的有界检索)，例子见[search](../../../examples/search.md)。作者source与交叉审查见author/backend、author/cli，metadata精确before/diff/freeze见author/documentation；B没有运行gate。
+ 
+-下一M7.1-A内部检查回执闭环与schema6维护仅规划、未实施；路线已批准，见[任务](planning/m7-1a-task.md)与[候选所有权](planning/m7-1a-owner-candidates.json)。候选路径以[所有权文件](planning/m7-1a-owner-candidates.json)为准，仍待C2B封存、M7 fresh、V5 capture与root dispatch；先以当前accepted runtime生成V5脱密fixture，root核来源后才准产品写入。后续check HTTP/CLI/tool在M7.1-B。M7、D01与维护交付仍未完成。
++下一M7.1-A内部检查回执闭环与schema6维护仅规划、未实施；路线已批准，见[任务](planning/m7-1a-task.md)与[候选所有权](planning/m7-1a-owner-candidates.json)。候选路径以[所有权文件](planning/m7-1a-owner-candidates.json)为准，C2B已封存；M7 actual fresh记录另交root核验，V5 capture与产品dispatch仍待root分别放行；先以当前accepted runtime生成V5脱密fixture，root核来源后才准产品写入。后续check HTTP/CLI/tool在M7.1-B。M7、D01与维护交付仍未完成。

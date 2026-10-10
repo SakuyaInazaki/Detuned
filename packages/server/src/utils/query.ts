@@ -1,4 +1,4 @@
-import { DetunedError, ErrorCode } from '@detuned/protocol';
+import { DetunedError, ErrorCode, isNonblankString, SEARCH_LIMITS } from '@detuned/protocol';
 
 export interface ParseIntegerQueryOptions {
   min?: number;
@@ -124,7 +124,7 @@ export function parseStringQuery(
     );
   }
 
-  if (!options.allowEmpty && val.trim() === '') {
+  if (!options.allowEmpty && !isNonblankString(val)) {
     throw new DetunedError(
       ErrorCode.VALIDATION_ERROR,
       `查询参数 ${paramName} 不能为空。`,
@@ -195,4 +195,36 @@ export function validateAllowedQueryParams(
       );
     }
   }
+}
+
+export function validateNoBody(body: unknown, operationName?: string): void {
+  if (body === undefined || body === null) {
+    return;
+  }
+  if (
+    typeof body !== 'object' ||
+    Array.isArray(body) ||
+    Object.keys(body).length > 0
+  ) {
+    throw new DetunedError(
+      ErrorCode.VALIDATION_ERROR,
+      operationName
+        ? `${operationName} 操作不接受请求体参数。`
+        : '该操作不接受请求体参数。',
+      400
+    );
+  }
+}
+
+
+// The decoded raw JSON carrier has its own byte budget; core separately checks
+// the logical array before deduplication for every entry point.
+export function parseSearchTagsJson(val: unknown): string[] | undefined {
+  if (val === undefined) return undefined;
+  const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'tags_json 必须为不超过8192字节的JSON字符串数组，且不能重复指定。', 400, false);
+  if (typeof val !== 'string' || new TextEncoder().encode(val).byteLength > SEARCH_LIMITS.tags_json_bytes) throw invalid();
+  let parsed: unknown;
+  try { parsed = JSON.parse(val); } catch { throw invalid(); }
+  if (!Array.isArray(parsed) || parsed.some(tag => typeof tag !== 'string')) throw invalid();
+  return parsed;
 }

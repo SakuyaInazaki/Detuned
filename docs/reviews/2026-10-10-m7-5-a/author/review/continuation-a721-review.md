@@ -1,0 +1,10 @@
+# M7.5-A a721 continuation 独立静审
+
+实际runner a72179b7e9537d2a68ddb17b4b09f05fb1b915313fdbfaaa53fc2d88bd79a38d / plan7e66c9931d38d59faa546fd01e4c714515602b4f563d62013b9e34acda6dcf05匹配。仅读指定actual材料/精确root/固定工具代码，没有阶段执行或进程查询。
+
+两个窄阻塞已报root/D：
+
+- 顶部删除urllib.parse import，phase仍调用urllib.parse.urlparse作域诊断；匹配fetch/GET URL将触发NameError。应保urllib.parse，仅去download相关request，不移除现有诊断。
+- phase两处groupcleanup等待仍START+1800，续跑新total1200；应改取PLAN budget_seconds.total，使故障清退/最终groupwait遵守新absolute，而不改每stage或tests900预算。
+
+其它已独核：plan仅新增精确continuation关联与total1200；371copy及prior7receipt实际hash均吻合，精确root真实UID501/0700/resolve一致。共享安装依赖是本次成功空目录install的明确组合，不称一次pipeline成功；没有新的download/install/version命令。前置config-dot解析由固定pnpm normalizeOptions2:285364实际剥前缀并免standardOption未知检查，再进入有效CLI配置；ignore-pnpmfile使用CLI而非仅YAML。原policy/env字节校验、九build/158suite范围、JSON完整pass及原source/dist审计与成功cleanup门禁保持，独立continuation输出不覆盖原attempt2。两个阻塞修后再审冻结，不自动运行或扩大实验。

@@ -1,0 +1,121 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > persistent artifact scope reuses logicalID while separating actor/space, and observes token/store cancellation
+ClientProtocolError: Invalid artifact metadata or transfer integrity.
+ ❯ invalid packages/client/src/artifact-transfer.ts:6:23
+      4| const MAX_BYTES = 26214400;
+      5| export interface ArtifactDownload { metadata: ArtifactMetadata; bytes:…
+      6| const invalid = () => new ClientProtocolError('Invalid artifact metada…
+       |                       ^
+      7| export function artifactMetadata(value: unknown, spaceId: string, arti…
+      8|   if (!isArtifactMetadata(value) || value.space_id !== spaceId || (art…
+ ❯ artifactMetadata packages/client/src/artifact-transfer.ts:8:168
+ ❯ DetunedClient.uploadArtifact packages/client/src/client.ts:581:19
+ ❯ tests/integration/m4-artifact-client.test.ts:53:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > retries using fresh FormData with immutable bytes/same key, never retries complete507
+ClientProtocolError: Invalid artifact metadata or transfer integrity.
+ ❯ invalid packages/client/src/artifact-transfer.ts:6:23
+      4| const MAX_BYTES = 26214400;
+      5| export interface ArtifactDownload { metadata: ArtifactMetadata; bytes:…
+      6| const invalid = () => new ClientProtocolError('Invalid artifact metada…
+       |                       ^
+      7| export function artifactMetadata(value: unknown, spaceId: string, arti…
+      8|   if (!isArtifactMetadata(value) || value.space_id !== spaceId || (art…
+ ❯ artifactMetadata packages/client/src/artifact-transfer.ts:8:168
+ ❯ DetunedClient.uploadArtifact packages/client/src/client.ts:581:19
+ ❯ tests/integration/m4-artifact-client.test.ts:75:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > rejects malformed schema/headers, extra or truncated EOF and wrong hash without partial bytes
+AssertionError: expected undefined to be 'https://forum.test/api/v1/spaces/spac…' // Object.is equality
+
+- Expected: 
+"https://forum.test/api/v1/spaces/space/artifacts/artifact/content"
+
++ Received: 
+undefined
+
+ ❯ tests/integration/m4-artifact-client.test.ts:87:23
+     85|       vi.stubGlobal('fetch', vi.fn(async (url: string) => { urls.push(…
+     86|       await expect(client().downloadArtifact('space', 'artifact')).rej…
+     87|       expect(urls[1]).toBe('https://forum.test/api/v1/spaces/space/art…
+       |                       ^
+     88|     }
+     89|     vi.stubGlobal('fetch', vi.fn(async () => json(metadata(data, { sha…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > download cancellation releases pending reader and totaldeadline begins before metadata
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m4-artifact-client.test.ts:95:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > late content response and upload fetch abort/timeout are observed and cleaned
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m4-artifact-client.test.ts:105:3
+    103|   });
+    104| 
+    105|   it('late content response and upload fetch abort/timeout are observe…
+       |   ^
+    106|     let enter!: () => void; const entered = new Promise<void>(r => ent…
+    107|     vi.stubGlobal('fetch', vi.fn((url: string) => url.endsWith('/conte…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+ClientProtocolError: Invalid artifact metadata or transfer integrity.
+ ❯ invalid packages/client/src/artifact-transfer.ts:6:23
+      4| const MAX_BYTES = 26214400;
+      5| export interface ArtifactDownload { metadata: ArtifactMetadata; bytes:…
+      6| const invalid = () => new ClientProtocolError('Invalid artifact metada…
+       |                       ^
+      7| export function artifactMetadata(value: unknown, spaceId: string, arti…
+      8|   if (!isArtifactMetadata(value) || value.space_id !== spaceId || (art…
+ ❯ artifactMetadata packages/client/src/artifact-transfer.ts:8:168
+ ❯ DetunedClient.getArtifact packages/client/src/client.ts:588:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { isProtocolError: true }
+This error originated in "tests/integration/m4-artifact-client.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "download cancellation releases pending reader and totaldeadline begins before metadata". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+ClientProtocolError: Invalid artifact metadata or transfer integrity.
+ ❯ invalid packages/client/src/artifact-transfer.ts:6:23
+      4| const MAX_BYTES = 26214400;
+      5| export interface ArtifactDownload { metadata: ArtifactMetadata; bytes:…
+      6| const invalid = () => new ClientProtocolError('Invalid artifact metada…
+       |                       ^
+      7| export function artifactMetadata(value: unknown, spaceId: string, arti…
+      8|   if (!isArtifactMetadata(value) || value.space_id !== spaceId || (art…
+ ❯ artifactMetadata packages/client/src/artifact-transfer.ts:8:168
+ ❯ DetunedClient.getArtifact packages/client/src/client.ts:588:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { isProtocolError: true }
+This error originated in "tests/integration/m4-artifact-client.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "late content response and upload fetch abort/timeout are observed and cleaned". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

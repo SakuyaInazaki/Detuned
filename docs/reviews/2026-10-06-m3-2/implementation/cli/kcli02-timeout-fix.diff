@@ -1,0 +1,22 @@
+--- tests/contracts/m3-request-key-cli.test.ts
++++ tests/contracts/m3-request-key-cli.test.ts
+@@ -27,8 +27,9 @@
+     const file = path.join(directory, 'input.json'); await writeFile(file, JSON.stringify(input));
+     return new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve, reject) => {
+       const child = spawn(process.execPath, ['packages/cli/dist/index.js', '--url', baseUrl, '--token', token, '--json', command, '--space', sid, '--op', op, '--input', file, ...flags], { cwd: process.cwd(), env: { ...process.env, DETUNED_TOKEN: '', DETUNED_TOKEN_FILE: '' } });
++      const deadline = setTimeout(() => { child.kill('SIGKILL'); reject(new Error('CLI process exceeded 10s deadline')); }, 10_000);
+       let stdout = '', stderr = ''; child.stdout.on('data', b => { stdout += b; }); child.stderr.on('data', b => { stderr += b; });
+-      child.on('error', reject); child.on('close', code => resolve({ code, stdout, stderr }));
++      child.on('error', error => { clearTimeout(deadline); reject(error); }); child.on('close', code => { clearTimeout(deadline); resolve({ code, stdout, stderr }); });
+     });
+   }
+   const persistent = (id: string) => ['--request-key-dir', path.join(directory, 'keys'), '--logical-operation-id', id];
+@@ -63,7 +64,7 @@
+     await ok('publish', 'withdraw', { post_id: other.post.id, expected_revision: 1, reason: 'withdraw' }, persistent('withdraw'));
+     await ok('publish', 'withdraw', { post_id: other.post.id, expected_revision: 1, reason: 'withdraw' }, persistent('withdraw'));
+     expect(thread).not.toHaveProperty('api_version');
+-  });
++  }, 30_000);
+   it('KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests', async () => {
+     const cases = [
+       [{ title: 't' }, ['--request-key-dir', path.join(directory, 'keys')]],

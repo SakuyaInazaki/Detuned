@@ -1,0 +1,109 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B06: Migration failure rolls back entire transaction leaving database unchanged
+AssertionError: expected '实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或…' to contain 'Simulated SQLite write fault'
+
+Expected: "Simulated SQLite write fault"
+Received: "实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:683:29
+    681|       } catch (err: any) {
+    682|         threw = true;
+    683|         expect(err.message).toContain('Simulated SQLite write fault');
+       |                             ^
+    684|       }
+    685|       expect(threw).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B08: Atomic initialization retries cleanly; legacy db upgrade never issues new tokens
+DetunedError: 实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。
+ ❯ bootstrapDatabase packages/storage-sqlite/src/bootstrap.ts:659:11
+    657|   }
+    658|   if (classification.kind === 'corrupt') {
+    659|     throw new DetunedError(
+       |           ^
+    660|       ErrorCode.FORBIDDEN,
+    661|       `实例持久密钥缺失或损坏。${classification.reason ?? ''}请检查数据库或联系管理员。`,
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:776:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B09: openAndCoordinateDatabase rejects future schema versions and unknown databases before DDL mutation
+AssertionError: expected [Function] to throw error matching /migrate/ but got '实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或…'
+
+- Expected: 
+/migrate/
+
++ Received: 
+"实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:838:71
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J04: Migration preserves historical timestamps and detects state conflicts
+DetunedError: 实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。
+ ❯ bootstrapDatabase packages/storage-sqlite/src/bootstrap.ts:659:11
+    657|   }
+    658|   if (classification.kind === 'corrupt') {
+    659|     throw new DetunedError(
+       |           ^
+    660|       ErrorCode.FORBIDDEN,
+    661|       `实例持久密钥缺失或损坏。${classification.reason ?? ''}请检查数据库或联系管理员。`,
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1421:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-1: Unreplayable marker generated for unrecoverable thread.patch survives repeated restarts without self-locking
+DetunedError: 实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。
+ ❯ bootstrapDatabase packages/storage-sqlite/src/bootstrap.ts:659:11
+    657|   }
+    658|   if (classification.kind === 'corrupt') {
+    659|     throw new DetunedError(
+       |           ^
+    660|       ErrorCode.FORBIDDEN,
+    661|       `实例持久密钥缺失或损坏。${classification.reason ?? ''}请检查数据库或联系管理员。`,
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1728:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-2: Replaying valid unreplayable thread marker returns controlled 422 RESYNC_REQUIRED without extra writes
+DetunedError: 实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。
+ ❯ bootstrapDatabase packages/storage-sqlite/src/bootstrap.ts:659:11
+    657|   }
+    658|   if (classification.kind === 'corrupt') {
+    659|     throw new DetunedError(
+       |           ^
+    660|       ErrorCode.FORBIDDEN,
+    661|       `实例持久密钥缺失或损坏。${classification.reason ?? ''}请检查数据库或联系管理员。`,
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1758:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-4: Recoverable full legacy thread and normal thread retry replay accurately across restarts (positive control)
+DetunedError: 实例持久密钥缺失或损坏。数据库结构与版本 6 迁移记录矛盾。请检查数据库或联系管理员。
+ ❯ bootstrapDatabase packages/storage-sqlite/src/bootstrap.ts:659:11
+    657|   }
+    658|   if (classification.kind === 'corrupt') {
+    659|     throw new DetunedError(
+       |           ^
+    660|       ErrorCode.FORBIDDEN,
+    661|       `实例持久密钥缺失或损坏。${classification.reason ?? ''}请检查数据库或联系管理员。`,
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1945:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1 refused, and healthy current schema start according to contract
+AssertionError: expected 'corrupt' to be 'supported_legacy' // Object.is equality
+
+Expected: "supported_legacy"
+Received: "corrupt"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:3415:48
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+

@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m4-token-source.test.ts (7 tests) 171ms
+ ✓ tests/contracts/m4-cli-errors.test.ts (4 tests) 2040ms
+   ✓ ECLI03 real parser outputs one safe error, preserves native help/version, and respects value/terminator JSON boundaries  1108ms
+   ✓ ECLI04 legacy write JSON and unknown operation errors are safe and retain exit2  928ms
+ ✓ tests/contracts/m4-cli-boundaries-independent.test.ts (5 tests) 14280ms
+   ✓ E independent four single credential sources and anonymous/conflicting sources preserve real authorization  2074ms
+   ✓ E independent selected files fail safely without fallback or any HTTP  1034ms
+   ✓ E independent diagnostic argv consumption and genuine help/version emit once without HTTP  1310ms
+   ✓ E independent action parse/protocol/transport errors never disclose raw local markers  9482ms
+   ✓ E independent real credential success preserves exactly one stdout token and ordinary data output  380ms
+
+ Test Files  3 passed (3)
+      Tests  16 passed (16)
+   Start at  21:14:16
+   Duration  14.98s (transform 328ms, setup 0ms, collect 1.01s, tests 16.49s, environment 0ms, prepare 156ms)
+

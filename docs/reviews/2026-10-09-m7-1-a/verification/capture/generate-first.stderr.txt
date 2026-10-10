@@ -1,0 +1,15 @@
+/Users/sakimi/Desktop/Detuned/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5
+	return this[cppdb].prepare(sql, this, false, false);
+	                   ^
+
+SqliteError: no such column: rowid
+    at Database.prepare (/Users/sakimi/Desktop/Detuned/node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21)
+    at file:///Users/sakimi/Desktop/Detuned/tests/fixtures/m7-schema5-baseline/generate-v5.mjs:50:70
+    at Array.map (<anonymous>)
+    at rows (file:///Users/sakimi/Desktop/Detuned/tests/fixtures/m7-schema5-baseline/generate-v5.mjs:50:51)
+    at file:///Users/sakimi/Desktop/Detuned/tests/fixtures/m7-schema5-baseline/generate-v5.mjs:51:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'SQLITE_ERROR'
+}
+
+Node.js v26.3.0

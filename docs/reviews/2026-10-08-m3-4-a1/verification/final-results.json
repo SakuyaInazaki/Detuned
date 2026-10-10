@@ -1,0 +1,56 @@
+{
+  "status": "parentaccepted",
+  "date": "2026-10-08",
+  "scope": "M3.4-A.1 process-local unified write admission and explicit configuration",
+  "formal": {
+    "tests_passed": 467,
+    "tests_total": 467,
+    "files_passed": 57,
+    "files_total": 57,
+    "new_tests_included": 18
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "build/typecheck/lint/final suite + 24 original retained probes + 1 explicitly adapted retained scenario",
+    "original_probe_11": "failed fixture setup RATE_LIMITED; original command not successful",
+    "adapted_probe_11": "8/8 scenarios pass; exact copy with relative import relocation and explicit high seed limits"
+  },
+  "attempts": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 2,
+    "fullsuite_first": {
+      "passed": 464,
+      "total": 467,
+      "files_passed": 55,
+      "files_total": 57,
+      "cause": "three old high-volume seed cases hit new default; fixture-only local configuration changes"
+    },
+    "new_targeted_first": {
+      "passed": 17,
+      "total": 18,
+      "cause": "C expected403 for scope-hidden404; IPC listener warning in fixture"
+    },
+    "independent_corrected": {
+      "passed": 4,
+      "total": 4
+    }
+  },
+  "bounded_export_inherited_runs": 2,
+  "protected_old_review_files": 4008,
+  "source_config_test_files": 204,
+  "sql_archive_files": 4,
+  "schema_files": 2,
+  "tracked_dist_files": 208,
+  "untracked_dist_files": 116,
+  "cleanup": "no owned workers/private directories; finite known token literal pattern scan no hits",
+  "limitations": [
+    "Process-local actor bucket resets on restart; no persistent storage quota or cross-instance accounting",
+    "Manually assembled service graphs must supply one shared limiter",
+    "No 600s load, model inference, four host tests or new material-size experiment",
+    "40MiB inherited formal ran in both suites; heap sampling is evidence, not hard RSS guarantee"
+  ],
+  "accepted_date": "2026-10-08"
+}

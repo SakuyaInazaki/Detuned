@@ -1,0 +1,11 @@
+--- packages/storage-sqlite/scripts/check-schema-sync.mjs
++++ packages/storage-sqlite/scripts/check-schema-sync.mjs
+@@ -131,7 +131,7 @@
+   console.error('Error: V4 schema profile is out of sync.'); process.exit(1);
+ }
+ const reviewDdl = tsContent.match(/export const REVIEW_TABLES_DDL = `([\s\S]*?)`;/)?.[1];
+-const expectedReviewDdl = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions'].map(name => extractTableDdl(sqlContent,name)).join('\n\n');
++const expectedReviewDdl = ['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions','review_decisions'].map(name => extractTableDdl(sqlContent,name)).join('\n\n') + '\n\n' + sqlContent.match(/CREATE INDEX IF NOT EXISTS snapshot_items_material_idx[^;]*;/)[0] + '\n' + sqlContent.match(/CREATE INDEX IF NOT EXISTS review_requests_active_idx[^;]*;/)[0];
+ if (reviewDdl !== expectedReviewDdl) {console.error('Error: Review migration DDL is out of sync.');process.exit(1);}
+ 
+ const dbV5 = new Database(':memory:');dbV5.exec(sqlContent);

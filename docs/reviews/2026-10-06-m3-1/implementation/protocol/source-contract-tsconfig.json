@@ -1,0 +1,34 @@
+{
+  "extends": "../../../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "../../../../..",
+    "paths": {
+      "@detuned/protocol": [
+        "packages/protocol/src/index.ts"
+      ],
+      "@detuned/client": [
+        "packages/client/src/index.ts"
+      ],
+      "@detuned/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@detuned/server": [
+        "packages/server/src/index.ts"
+      ],
+      "@detuned/storage-sqlite": [
+        "packages/storage-sqlite/src/index.ts"
+      ],
+      "@detuned/adapter-pi": [
+        "packages/adapter-pi/src/index.ts"
+      ],
+      "fastify": [
+        "packages/server/node_modules/fastify/fastify.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "../../../../../tests/contracts/m3-events-contract.test.ts",
+    "../../../../../packages/mcp/src/index.ts"
+  ]
+}

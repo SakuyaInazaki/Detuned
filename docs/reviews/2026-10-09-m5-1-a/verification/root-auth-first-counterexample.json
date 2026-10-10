@@ -1,0 +1,18 @@
+{
+  "observed_stage": "gates/independent-loopback-first.receipt.json",
+  "actual_source_log": "gates/independent-loopback-first.stdout",
+  "result": {
+    "post_unknown_query": 400,
+    "get_unknown_query": 200,
+    "delete_nonempty_body_with_valid_cookie_origin_csrf": 204
+  },
+  "expected": {
+    "post_unknown_query": 400,
+    "get_unknown_query": 400,
+    "delete_nonempty_body_with_valid_cookie_origin_csrf": 400
+  },
+  "scope": "New root /auth/session strict empty query and logout body absent input policy; actual true counterexample, not sandbox failure",
+  "static": "authRoutes GET lacked query validation; DELETE lacked body validation; POST attachValidation broadly ignored validationError when body undefined, while global preValidation correctly rejected POST unknown query",
+  "owner_response": "reported parent; no product edit by independent verifier; whole gates after build are paused pending narrow author fix",
+  "separate_fixture_failure": "W1 used nonexistent /spaces/:id read instead of existing /context, now fixed locally; original failure preserved"
+}

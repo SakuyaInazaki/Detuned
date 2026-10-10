@@ -1,0 +1,10 @@
+--- tests/contracts/m6-review-client.test.ts
++++ tests/contracts/m6-review-client.test.ts
+@@ -47,6 +47,6 @@
+   }));
+   const c=new DetunedClient({baseUrl:'http://review.invalid',maxRetries:1});expect((await c.uploadReviewArtifact('space','request',new Blob([bytes],{type:'text/plain'}),{},'upload-key')).id).toBe('artifact');
+   expect(forms).toHaveLength(2);expect(forms[0]).not.toBe(forms[1]);expect(keys).toEqual(['upload-key','upload-key']);for(const f of forms){expect(f.get('metadata')).toBe('{}');expect(await (f.get('file') as Blob).text()).toBe('review evidence');}
+-  const before=attempt;await expect(c.uploadReviewArtifact('space','request',new Blob(),{visibility:'space'} as never,'k')).rejects.toBeInstanceOf(ClientProtocolError);expect(attempt).toBe(before);
++  const before=attempt;await expect(c.uploadReviewArtifact('space','request',new Blob([]),{visibility:'space'} as never,'k')).rejects.toBeInstanceOf(ClientProtocolError);expect(attempt).toBe(before);
+  });
+ });

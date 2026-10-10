@@ -1,0 +1,50 @@
+--- packages/storage-sqlite/src/offline-backup.ts (fresh exact before)
++++ packages/storage-sqlite/src/offline-backup.ts (current)
+@@ -12,7 +12,7 @@
+ export interface MaintenanceHooks { atStage?: (stage: MaintenanceStage) => void }
+ export interface BackupFile { path: string; bytes: number; sha256: string }
+ export interface BackupArtifact extends BackupFile { id: string; storageKey: string; state: 'ready' | 'redacted' | 'missing'; present: boolean }
+-export interface BackupManifest { format: 'detuned-physical-backup'; version: 1; schemaVersion: 2 | 3; createdAt: string; database: BackupFile; artifacts: BackupArtifact[] }
++export interface BackupManifest { format: 'detuned-physical-backup'; version: 1; schemaVersion: 2 | 3 | 4; createdAt: string; database: BackupFile; artifacts: BackupArtifact[] }
+ export interface BackupOptions { dataDir: string; outputDir: string; offline: true; hooks?: MaintenanceHooks }
+ export interface RestoreOptions { backupDir: string; dataDir: string; hooks?: MaintenanceHooks }
+ const MAX_ARTIFACTS = 10000, MAX_MANIFEST = 8 * 1024 * 1024, MAX_ARTIFACT_BYTES = 25 * 1024 * 1024;
+@@ -45,9 +45,9 @@
+   if (!await absent(target.marker)) throw new MaintenanceError('INCOMPLETE_DIRECTORY', 'An incomplete destination reservation exists; inspect it before manual cleanup.');
+   return target;
+ }
+-function validateDatabase(db: Database.Database, code: 'INVALID_SOURCE' | 'INVALID_BACKUP', schemaVersion: 2 | 3 = 3): void {
++function validateDatabase(db: Database.Database, code: 'INVALID_SOURCE' | 'INVALID_BACKUP', schemaVersion: 2 | 3 | 4 = 4): void {
+   const classification = classifyDatabase(db);
+-  if ((schemaVersion === 3 ? classification.kind !== 'current_initialized' : classification.kind !== 'supported_legacy' || classification.maxVersion !== 2) || (db.prepare('SELECT max(version) AS version FROM schema_migrations').get() as { version: number }).version !== schemaVersion) failure(code, 'Only an initialized database matching the supported schema profile is supported.');
++  if ((schemaVersion === 4 ? classification.kind !== 'current_initialized' : classification.kind !== 'supported_legacy' || classification.maxVersion !== schemaVersion) || (db.prepare('SELECT max(version) AS version FROM schema_migrations').get() as { version: number }).version !== schemaVersion) failure(code, 'Only an initialized database matching the supported schema profile is supported.');
+   const integrity = db.pragma('integrity_check') as { integrity_check: string }[];
+   if (integrity.length !== 1 || integrity[0]?.integrity_check !== 'ok' || (db.pragma('foreign_key_check') as unknown[]).length !== 0) failure(code, 'SQLite integrity or foreign key validation failed.');
+ }
+@@ -142,7 +142,7 @@
+ function parseManifest(text: string): BackupManifest {
+   let value: unknown;
+   try { value = JSON.parse(text); } catch { failure('INVALID_BACKUP', 'Backup manifest is not valid JSON.'); }
+-  if (!exact(value, ['format', 'version', 'schemaVersion', 'createdAt', 'database', 'artifacts']) || value.format !== 'detuned-physical-backup' || value.version !== 1 || (value.schemaVersion !== 2 && value.schemaVersion !== 3) || typeof value.createdAt !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value.createdAt) || !Number.isFinite(Date.parse(value.createdAt)) || !Array.isArray(value.artifacts) || value.artifacts.length > MAX_ARTIFACTS) failure('INVALID_BACKUP', 'Unsupported or malformed backup manifest.');
++  if (!exact(value, ['format', 'version', 'schemaVersion', 'createdAt', 'database', 'artifacts']) || value.format !== 'detuned-physical-backup' || value.version !== 1 || (value.schemaVersion !== 2 && value.schemaVersion !== 3 && value.schemaVersion !== 4) || typeof value.createdAt !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value.createdAt) || !Number.isFinite(Date.parse(value.createdAt)) || !Array.isArray(value.artifacts) || value.artifacts.length > MAX_ARTIFACTS) failure('INVALID_BACKUP', 'Unsupported or malformed backup manifest.');
+   if (!exact(value.database, ['path', 'bytes', 'sha256']) || value.database.path !== 'detuned.sqlite' || !safeSize(value.database.bytes) || typeof value.database.sha256 !== 'string' || !HEX.test(value.database.sha256)) failure('INVALID_BACKUP', 'Invalid database manifest entry.');
+   const ids = new Set(), keys = new Set(), paths = new Set();
+   for (const entry of value.artifacts) {
+@@ -221,7 +221,7 @@
+       if (present) { const copied = await copyMaintenanceFile(file, path.join(stage, relative), options.hooks); if (copied.bytes !== row.bytes || copied.sha256 !== row.sha256) failure('INVALID_SOURCE', 'Registered artifact bytes or hash do not match.'); }
+       artifacts.push({ id: row.id, storageKey: row.storage_key, state: row.state as BackupArtifact['state'], present, path: relative, bytes: row.bytes, sha256: row.sha256 });
+     }
+-    const manifest: BackupManifest = { format: 'detuned-physical-backup', version: 1, schemaVersion: 3, createdAt: new Date().toISOString(), database, artifacts };
++    const manifest: BackupManifest = { format: 'detuned-physical-backup', version: 1, schemaVersion: 4, createdAt: new Date().toISOString(), database, artifacts };
+     await writeManifest(stage, manifest, options.hooks); await syncTree(stage, options.hooks);
+     await publishMaintenanceDirectory(stage, target, [BACKUP_MANIFEST_FILE, 'detuned.sqlite', ...artifacts.filter(row => row.present).map(row => row.path)], options.hooks);
+     return { backupDir: target.directory, manifest };
+@@ -247,7 +247,7 @@
+       validateDatabase(db, 'INVALID_BACKUP', manifest.schemaVersion); matchInventory(artifactRows(db, 'INVALID_BACKUP'), manifest);
+       // New target only: do not mutate or migrate the source backup.
+       db.pragma('journal_mode = DELETE'); db.pragma('synchronous = FULL'); db.pragma('foreign_keys = ON');
+-      if (manifest.schemaVersion === 2) bootstrapDatabase(db);
++      if (manifest.schemaVersion !== 4) bootstrapDatabase(db);
+       ({ adminActorId, adminToken } = resetRestoredIdentity(db, 'Local recovery administrator', options.hooks));
+       const checkpoint = db.pragma('wal_checkpoint(TRUNCATE)') as { busy: number }[];
+       if (checkpoint[0]?.busy !== 0) throw new Error('Restored database checkpoint did not complete.');

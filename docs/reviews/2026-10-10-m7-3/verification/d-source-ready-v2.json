@@ -1,0 +1,25 @@
+{
+  "status": "frozen_source_only_not_run",
+  "files": {
+    "tests/integration/m7-d01-reviewed-independent.test.ts": {
+      "sha256": "38cec8cc4dd3e8d267ca652270b6ebe88cd3e7a7e6f657a38b9262f9fcd0f596",
+      "bytes": 14985
+    }
+  },
+  "cases": [
+    "DI01 three actual TCP read checkpoints, original open challenge and immutable hashes; transparent real spawn/fork and safe actual IPC before/resume/ACK observations",
+    "DI02 actual CLI success exit/0600/safe output and existing file no-clobber exit/nonmutation",
+    "DI03 observer-throw preserves original failure, own children close and private directory removed, no output",
+    "DI03 observer-abort while observer promise remains pending; actual cancellation settles own children/private directory, no output"
+  ],
+  "expanded_cases": 4,
+  "execution_plan_sha256": "4fdf71e0e570dfa36e51fb440b4fb707446629476f5d70ff3e4d6f1f7004986d",
+  "boundary_addendum_v2_sha256": "546e101b32f73d5da21652b0e6de306d6aef7c5a767ad3f8a3dbb9f7fec397c5",
+  "observation_boundary": "Proxy forwards original spawn/fork/send arguments and actual child results unchanged. Only safe PID, poll batch/events, fixed public chunk, explicit ACK metadata are retained in process; configure credential messages are never captured. Not native host certification.",
+  "cleanup_boundary": "4s owned watchdog + signal; default5000ms unchanged. finally awaits demo settle; afterEach aborts registered controllers and closes only captured owned child handles with250ms fallback. No machine/temp census. CLI descendants checked against ledger only after real CLI exit; direct-module journey additionally crosschecks child PIDs against independent handles.",
+  "static_notes": "Dynamic JS callback parameter explicitly Observation. AssetDownload from client, public search page.data, metadata.state ready, sealed ordinary R2 NOT_FOUND matches existing service. Source noEmit not run.",
+  "checks_run": [],
+  "prior_ready_sha256": "ebbeef402aa9909e373fd8bf7113a285af2cf60baff9fa6cee790b79829a3e50",
+  "delta_sha256": "a1083f766f7b794aba5f50a4b90c3ed951a055056d3d280d998e8ced60434761",
+  "close_observation": "Every direct actual child close event recorded independently. Normal two C and two server children require close code0/signalnull; actual sequence requires old close before same-role new spawn. ExitCode and ledger do not substitute actualclose. CLI launch promise also resolves on actualclose, including stdio completion."
+}

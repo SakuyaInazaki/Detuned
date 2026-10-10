@@ -1,0 +1,43 @@
+import {tlsTest as test, expect, tlsRequestJson} from './fixtures.js';
+import {writeFile} from 'node:fs/promises';
+
+test('TLS201 direct native HTTPS human cookie/Host Origin CSRF/static/write/logout remains scoped', async ({page,context,forum,tlsMaterial})=>{
+  expect(new URL(forum.baseURL).protocol).toBe('https:');
+  const resources:number[]=[];
+  page.on('response',response=>{if(new URL(response.url()).pathname.startsWith('/assets/'))resources.push(response.status());});
+  await page.goto(forum.baseURL);await forum.login(page);
+  const cookies=await context.cookies();const session=cookies.find(cookie=>cookie.name==='detuned_session');
+  expect(Boolean(session?.value)).toBe(true);
+  expect(Boolean(session?.secure&&session.httpOnly&&session.sameSite==='Strict'&&session.path==='/')).toBe(true);
+  expect(await page.evaluate(()=>!document.cookie.includes('detuned_session')&&localStorage.length===0&&sessionStorage.length===0)).toBe(true);
+  expect(resources.length>0&&resources.every(status=>status===200)).toBe(true);
+  if (!session) throw new Error('Private TLS cookie unavailable.');
+  // Secrets stay in Node memory; assertions and receipts use only safe metadata/statuses.
+  const cookie=`detuned_session=${session.value}`;
+  const good=await tlsRequestJson(forum.baseURL+'/auth/session',tlsMaterial.ca,{headers:{cookie}});
+  expect(good.status).toBe(200);expect(good.headers['cache-control']).toBe('no-store');
+  const before=forum.businessCounts();
+  const missingCsrf=await tlsRequestJson(forum.baseURL+'/auth/session',tlsMaterial.ca,{method:'DELETE',headers:{cookie,origin:forum.baseURL}});
+  const badOrigin=await tlsRequestJson(forum.baseURL+'/auth/session',tlsMaterial.ca,{headers:{cookie,origin:'https://untrusted.invalid'}});
+  const badHost=await tlsRequestJson(forum.baseURL+'/auth/session',tlsMaterial.ca,{headers:{cookie,host:'untrusted.invalid'}});
+  expect(missingCsrf.status).toBe(403);expect(badOrigin.status).toBe(403);expect(badHost.status).toBe(403);
+  expect(forum.businessCounts()).toEqual(before);
+  await page.getByRole('button',{name:`${forum.space.slug} 进入空间 →`,exact:true}).click();
+  await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'讨论',exact:true}).click();
+  await page.getByRole('button',{name:`${forum.thread.title} 开放 · 查看帖子 →`,exact:true}).click();
+  await page.locator('.post-directory li').filter({hasText:forum.post.id}).getByRole('button',{name:'查看修订 1',exact:true}).click();
+  await expect(page.getByRole('region',{name:'正文内容',exact:true}).locator('.markdown-rendered')).toHaveText('Original fixed research body.');
+  await page.getByLabel('帖子标题',{exact:true}).fill('Private TLS human note');
+  await page.getByLabel('摘要',{exact:true}).fill('Ordinary HTTPS write');
+  await page.getByLabel('正文',{exact:true}).fill('Real TLS browser creates one ordinary note.');
+  await page.getByRole('button',{name:'发布笔记',exact:true}).click();await expect(page.getByRole('status')).toContainText('帖子已发布');
+  const posts=forum.postsByTitle('Private TLS human note');expect(posts).toHaveLength(1);expect(posts[0]?.author_id===forum.actorIds.contributor&&posts[0]?.thread_id===forum.thread.id).toBe(true);
+  await page.setViewportSize({width:390,height:844});await page.locator('.reading').scrollIntoViewIfNeeded();
+  await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:forum.evidencePath('screenshots/tls-human-narrow.png')});
+  await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByRole('status')).toContainText('已退出登录');
+  expect((await context.cookies()).some(cookie=>cookie.name==='detuned_session')).toBe(false);
+  const loggedOut=await tlsRequestJson(forum.baseURL+'/auth/session',tlsMaterial.ca,{headers:{cookie}});expect(loggedOut.status).toBe(401);
+  await writeFile(forum.evidencePath('tls-browser-receipt.json'),JSON.stringify({direct_native_fastify_https:true,private_leaf_spki_exception_only:true,ignoreHTTPSErrors:false,system_PKI_not_claimed:true,secure_HttpOnly_SameSiteStrict:true,no_document_cookie_or_storage:true,static_assets_success:true,bad_host:badHost.status,bad_origin:badOrigin.status,missing_csrf:missingCsrf.status,denials_no_business_side_effects:true,ordinary_human_post_once:true,logout_server_cookie_revoked:true},null,2));
+});

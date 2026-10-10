@@ -1,9 +1,52 @@
-import { DetunedError, ErrorCode } from '@detuned/protocol';
+import { parseCheckResultReference, reconstructCheckResult } from './check-records.js';
+import { parseReviewDecisionReference, validateStoredReviewDecisionReference, readIntrinsicReviewDecision, reconstructReviewDecisionView } from './review-decision-records.js';
+import { DetunedError, ErrorCode, toArtifactMetadata, normalizeArtifactMime } from '@detuned/protocol';
+import { WriteRateLimiter } from './write-rate-limiter.js';
 import { isDeepStrictEqual as equal } from 'node:util';
+import { validateStoredReviewSubmissionReference, validateReviewSubmissionRecords, assertReviewSubmissionPostEvidencePrivacy, reviewSubmissionAcknowledgement } from './review-submission-records.js';
+import { assertStoredSubmissionEvidencePrivacy, validateStoredReviewArtifactReference, reconstructReviewArtifactResult } from './review-artifact-access.js';
+import { readReviewSnapshotRecords } from './review-request-records.js';
+import { reconstructReviewRequestView, validatePersistedReviewRequestBinding, reviewResync } from './review-request-records.js';
 export function parseOperation(operation) {
+    for (const family of ['check.run.create', 'check.run.invalidate', 'check.receipt.create', 'artifact.check.create']) {
+        if (operation.startsWith(family + ':')) {
+            const targetId = operation.slice(family.length + 1);
+            if (!targetId)
+                throw reviewResync();
+            return { family, targetId, expectedKind: family === 'artifact.check.create' ? 'artifact.check' : family === 'check.receipt.create' ? 'check.receipt' : 'check.run' };
+        }
+    }
     if (typeof operation !== 'string' || !operation.trim()) {
         throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '操作标识为空或无效。', 422);
     }
+    if (operation.startsWith('review.request.finalize:')) {
+        const targetId = operation.slice('review.request.finalize:'.length);
+        if (!targetId || targetId.trim() !== targetId)
+            throw reviewResync();
+        return { family: 'review.request.finalize', expectedKind: 'review.decision', targetId };
+    }
+    if (operation.startsWith('review.submission.create:')) {
+        const targetId = operation.slice('review.submission.create:'.length);
+        if (!targetId || targetId.trim() !== targetId)
+            throw reviewResync();
+        return { family: 'review.submission.create', expectedKind: 'review.submission', targetId };
+    }
+    if (operation.startsWith('artifact.review.create:')) {
+        const targetId = operation.slice('artifact.review.create:'.length);
+        if (!targetId || targetId.trim() !== targetId)
+            throw reviewResync();
+        return { family: 'artifact.review.create', expectedKind: 'artifact.review', targetId };
+    }
+    if (operation === 'review.request.create')
+        return { family: 'review.request.create', expectedKind: 'review.request.create' };
+    if (operation.startsWith('review.request.cancel:')) {
+        const targetId = operation.slice('review.request.cancel:'.length);
+        if (!targetId || targetId.trim() !== targetId)
+            throw reviewResync();
+        return { family: 'review.request.cancel', expectedKind: 'review.request.cancel', targetId };
+    }
+    if (operation === 'artifact.create')
+        return { family: 'artifact.create', expectedKind: 'artifact' };
     if (operation === 'space.create') {
         return { family: 'space.create', expectedKind: 'space' };
     }
@@ -97,6 +140,13 @@ export const REGISTERED_UNREPLAYABLE_REASONS = [
     'historical_thread_version_unrecoverable',
 ];
 export const allowedKeysByKind = {
+    'check.run': ['v', 'kind', 'run_id', 'run_version'],
+    'check.receipt': ['v', 'kind', 'run_id', 'run_version'],
+    'artifact.check': ['v', 'kind', 'run_id', 'run_version', 'artifact_id'],
+    'review.decision': ['v', 'kind', 'decision_id', 'request_id', 'request_version', 'snapshot_id', 'manifest_sha256'],
+    'review.request.create': ['v', 'kind', 'request_id', 'request_version', 'snapshot_id', 'manifest_sha256'],
+    'review.request.cancel': ['v', 'kind', 'request_id', 'request_version', 'snapshot_id', 'manifest_sha256'],
+    artifact: ['v', 'kind', 'artifact_id'],
     space: ['v', 'kind', 'space_id', 'revision'],
     'thread.create': ['v', 'kind', 'thread_id', 'thread_version', 'initial_post_id', 'initial_post_revision', 'relation_ids', 'relations'],
     'thread.patch': ['v', 'kind', 'thread_id', 'thread_version'],
@@ -453,6 +503,29 @@ export function validateNestedRelationsKnownFacts(storage, spaceId, sourcePostId
     }
 }
 export function validateStoredResultRefPrecheck(storage, operation, spaceId, parsed) {
+    if (operation.startsWith('check.') || operation.startsWith('artifact.check.')) {
+        reconstructCheckResult(storage, spaceId, operation, parsed, false);
+        return;
+    }
+    if (operation.startsWith('review.request.finalize:')) {
+        validateStoredReviewDecisionReference(storage, operation, spaceId, parsed);
+        return;
+    }
+    if (operation.startsWith('artifact.review.create:')) {
+        validateResultRef(operation, parsed);
+        validateStoredReviewArtifactReference(storage, operation, spaceId, parsed);
+        return;
+    }
+    if (operation.startsWith('review.submission.create:')) {
+        validateResultRef(operation, parsed);
+        validateStoredReviewSubmissionReference(storage, operation, spaceId, parsed);
+        return;
+    }
+    if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
+        const ref = validateResultRef(operation, parsed);
+        validateResultRefSemantics(storage, operation, spaceId, ref);
+        return;
+    }
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
         throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '幂等引用必须为对象。', 422);
     }
@@ -505,6 +578,17 @@ export function validateStoredResultRefPrecheck(storage, operation, spaceId, par
     }
     // Required field checks per kind & entity existence
     switch (parsed.kind) {
+        case 'review.request.create':
+        case 'review.request.cancel': {
+            const ref = validateResultRef(operation, parsed);
+            validateResultRefSemantics(storage, operation, spaceId, ref);
+            break;
+        }
+        case 'artifact': {
+            const ref = validateResultRef(operation, parsed);
+            validateResultRefSemantics(storage, operation, spaceId, ref);
+            break;
+        }
         case 'space': {
             if (typeof parsed.space_id !== 'string' || !parsed.space_id.trim()) {
                 throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '空间引用缺少 space_id。', 422);
@@ -725,6 +809,45 @@ export function validateStoredResultRefPrecheck(storage, operation, spaceId, par
     }
 }
 export function validateResultRef(operation, raw) {
+    if (operation.startsWith('check.') || operation.startsWith('artifact.check.'))
+        return parseCheckResultReference(operation, raw);
+    if (operation.startsWith('review.request.finalize:'))
+        return parseReviewDecisionReference(operation, raw);
+    if (operation.startsWith('artifact.review.create:')) {
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw))
+            throw reviewResync();
+        const r = raw, keys = ['v', 'kind', 'artifact_id', 'assignment_id'];
+        if (Object.keys(r).length !== keys.length || Object.keys(r).some(k => !keys.includes(k)) || r.v !== 1 || r.kind !== 'artifact.review' ||
+            typeof r.artifact_id !== 'string' || !r.artifact_id || typeof r.assignment_id !== 'string' || !r.assignment_id || operation !== `artifact.review.create:${r.assignment_id}`)
+            throw reviewResync();
+        return r;
+    }
+    if (operation.startsWith('review.submission.create:')) {
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw))
+            throw reviewResync();
+        const r = raw, keys = ['v', 'kind', 'submission_id', 'assignment_id', 'request_id', 'request_version', 'snapshot_id', 'manifest_sha256'];
+        if (Object.keys(r).length !== keys.length || Object.keys(r).some(k => !keys.includes(k)) || r.v !== 1 || r.kind !== 'review.submission' ||
+            ['submission_id', 'assignment_id', 'request_id', 'snapshot_id'].some(k => typeof r[k] !== 'string' || !r[k]) ||
+            !Number.isSafeInteger(r.request_version) || r.request_version < 2 || typeof r.manifest_sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(r.manifest_sha256) ||
+            operation !== `review.submission.create:${r.request_id}`)
+            throw reviewResync();
+        return r;
+    }
+    const reviewOperation = parseOperation(operation);
+    if (reviewOperation.family === 'review.request.create' || reviewOperation.family === 'review.request.cancel') {
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw))
+            throw reviewResync();
+        const obj = raw;
+        const keys = ['v', 'kind', 'request_id', 'request_version', 'snapshot_id', 'manifest_sha256'];
+        if (Object.keys(obj).length !== keys.length || Object.keys(obj).some(key => !keys.includes(key)) || obj.v !== 1 ||
+            obj.kind !== reviewOperation.expectedKind || typeof obj.request_id !== 'string' || !obj.request_id ||
+            typeof obj.snapshot_id !== 'string' || !obj.snapshot_id || typeof obj.manifest_sha256 !== 'string' ||
+            obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
+            (reviewOperation.family === 'review.request.create' ? obj.request_version !== 1 : !Number.isSafeInteger(obj.request_version) || obj.request_version < 2) ||
+            (reviewOperation.targetId !== undefined && obj.request_id !== reviewOperation.targetId))
+            throw reviewResync();
+        return obj;
+    }
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
         throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '幂等引用格式损坏，非对象数据。', 422);
     }
@@ -739,6 +862,8 @@ export function validateResultRef(operation, raw) {
         throw new DetunedError(ErrorCode.RESYNC_REQUIRED, `不受支持的幂等引用版本 (v${obj.v ?? 'unknown'})。`, 422);
     }
     const validKinds = [
+        'review.request.create', 'review.request.cancel',
+        'artifact',
         'space',
         'thread.create',
         'thread.patch',
@@ -795,6 +920,21 @@ export function validateResultRef(operation, raw) {
     }
     // Required field checks per kind
     switch (obj.kind) {
+        case 'review.request.create':
+        case 'review.request.cancel': {
+            if (typeof obj.request_id !== 'string' || !obj.request_id || typeof obj.snapshot_id !== 'string' || !obj.snapshot_id ||
+                !Number.isSafeInteger(obj.request_version) || obj.request_version < 1 ||
+                typeof obj.manifest_sha256 !== 'string' || obj.manifest_sha256.length !== 64 || !/^[0-9a-f]+$/.test(obj.manifest_sha256) ||
+                (obj.kind === 'review.request.create' ? obj.request_version !== 1 : obj.request_version < 2) ||
+                (parsedOp.targetId !== undefined && parsedOp.targetId !== obj.request_id))
+                throw reviewResync();
+            return obj;
+        }
+        case 'artifact': {
+            if (typeof obj.artifact_id !== 'string' || !obj.artifact_id.trim())
+                throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件引用缺少 artifact_id。', 422);
+            return obj;
+        }
         case 'space': {
             if (typeof obj.space_id !== 'string' || !obj.space_id.trim()) {
                 throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '空间引用缺少 space_id。', 422);
@@ -951,11 +1091,61 @@ function validateSemanticsForNestedRelations(tx, spaceId, relations, relationIds
     }
 }
 export function validateResultRefSemantics(tx, operation, spaceId, ref) {
+    if (operation.startsWith('check.') || operation.startsWith('artifact.check.')) {
+        reconstructCheckResult(tx, spaceId, operation, ref, false);
+        return;
+    }
+    if (operation.startsWith('review.request.finalize:')) {
+        validateStoredReviewDecisionReference(tx, operation, spaceId, ref);
+        const r = parseReviewDecisionReference(operation, ref);
+        reconstructReviewDecisionView(tx, spaceId, r.request_id);
+        return;
+    }
+    if (operation.startsWith('artifact.review.create:')) {
+        validateStoredReviewArtifactReference(tx, operation, spaceId, ref);
+        return;
+    }
+    if (operation.startsWith('review.submission.create:')) {
+        validateStoredReviewSubmissionReference(tx, operation, spaceId, ref);
+        const s = validateReviewSubmissionRecords(tx, spaceId, ref.submission_id);
+        readReviewSnapshotRecords(tx, spaceId, ref.snapshot_id);
+        assertReviewSubmissionPostEvidencePrivacy(tx, spaceId, s);
+        assertStoredSubmissionEvidencePrivacy(tx, spaceId, s);
+        return;
+    }
     if (ref.kind === 'unreplayable') {
         return;
     }
     const parsedOp = parseOperation(operation);
     switch (ref.kind) {
+        case 'review.decision': {
+            validateStoredReviewDecisionReference(tx, operation, spaceId, ref);
+            reconstructReviewDecisionView(tx, spaceId, ref.request_id);
+            return;
+        }
+        case 'review.request.create':
+        case 'review.request.cancel': {
+            const view = reconstructReviewRequestView(tx, spaceId, ref.request_id, ref.request_version);
+            if (view.snapshot_id !== ref.snapshot_id || view.snapshot_sha256 !== ref.manifest_sha256 ||
+                (parsedOp.targetId !== undefined && parsedOp.targetId !== view.id) ||
+                (ref.kind === 'review.request.create' ? view.phase !== 'collecting' : view.phase !== 'cancelled'))
+                throw reviewResync();
+            break;
+        }
+        case 'artifact': {
+            const artifact = tx.findArtifactById(ref.artifact_id);
+            if (!artifact || artifact.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件幂等引用作用域不匹配。', 422);
+            let validMime = false;
+            try {
+                validMime = normalizeArtifactMime(artifact.mime) === artifact.mime;
+            }
+            catch { /* malformed persisted media type */ }
+            if (!/^[0-9a-f]{64}$/.test(artifact.sha256) || !Number.isSafeInteger(artifact.bytes) || artifact.bytes < 0 || artifact.bytes > 26214400 || !validMime) {
+                throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件幂等引用实体字段损坏。', 422);
+            }
+            break;
+        }
         case 'space': {
             if (parsedOp.family === 'space.create') {
                 if (spaceId && spaceId !== 'instance') {
@@ -1121,13 +1311,69 @@ export function validateResultRefSemantics(tx, operation, spaceId, ref) {
             throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '未知的引用类型。', 422);
     }
 }
-export function extractResultRef(operation, result) {
+export function extractResultRef(operation, result, storage) {
     if (!result || typeof result !== 'object') {
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `操作 ${operation} 的返回值非法，无法生成幂等引用。`, 400);
     }
     const parsedOp = parseOperation(operation);
     let ref;
     switch (parsedOp.family) {
+        case 'check.run.create':
+        case 'check.run.invalidate':
+        case 'check.receipt.create':
+        case 'artifact.check.create': {
+            if (!storage || !parsedOp.targetId)
+                throw reviewResync();
+            const kind = parsedOp.family === 'artifact.check.create' ? 'artifact.check' : parsedOp.family === 'check.receipt.create' ? 'check.receipt' : 'check.run';
+            const runId = kind === 'check.run' ? result.id : kind === 'check.receipt' ? result.check_run_id : parsedOp.targetId;
+            const run = storage.findCheckRunById(runId), request = run ? storage.findReviewRequestById(run.request_id) : null;
+            if (!run || !request)
+                throw reviewResync();
+            ref = { v: 1, kind, run_id: run.id, run_version: kind === 'check.run' ? result.version : kind === 'check.receipt' ? result.run_version : run.version, ...(kind === 'artifact.check' ? { artifact_id: result.id } : {}) };
+            // Validate the compact immutable/history locator against the actual business result.
+            if (!equal(result, reconstructCheckResult(storage, request.space_id, operation, ref, false)))
+                throw reviewResync();
+            break;
+        }
+        case 'review.request.finalize': {
+            if (!storage || !parsedOp.targetId)
+                throw reviewResync();
+            const head = storage.findReviewRequestById(parsedOp.targetId);
+            if (!head)
+                throw reviewResync();
+            const decision = readIntrinsicReviewDecision(storage, head.space_id, head.id);
+            if (!equal(result, decision))
+                throw reviewResync();
+            ref = { v: 1, kind: 'review.decision', decision_id: decision.id, request_id: head.id, request_version: decision.request_version,
+                snapshot_id: head.snapshot_id, manifest_sha256: decision.snapshot_sha256 };
+            break;
+        }
+        case 'review.submission.create': {
+            if (!storage || typeof result.submission_id !== 'string')
+                throw reviewResync();
+            const submission = validateReviewSubmissionRecords(storage, storage.findReviewRequestById(parsedOp.targetId)?.space_id ?? 'instance', result.submission_id);
+            const head = storage.findReviewRequestById(submission.request_id);
+            if (!head || submission.request_id !== parsedOp.targetId || !equal(result, reviewSubmissionAcknowledgement(submission)))
+                throw reviewResync();
+            ref = { v: 1, kind: 'review.submission', submission_id: submission.id, assignment_id: submission.assignment_id, request_id: submission.request_id,
+                request_version: submission.request_version, snapshot_id: head.snapshot_id, manifest_sha256: submission.snapshot_sha256 };
+            break;
+        }
+        case 'artifact.review.create': {
+            ref = { v: 1, kind: 'artifact.review', artifact_id: result.id, assignment_id: result.review_assignment_id };
+            break;
+        }
+        case 'review.request.create':
+        case 'review.request.cancel': {
+            ref = { v: 1, kind: parsedOp.family, request_id: result.id, request_version: result.version, snapshot_id: result.snapshot_id, manifest_sha256: result.snapshot_sha256 };
+            break;
+        }
+        case 'artifact.create': {
+            if (typeof result.id !== 'string' || !result.id.trim())
+                throw new DetunedError(ErrorCode.VALIDATION_ERROR, '附件创建结果缺少id。', 400);
+            ref = { v: 1, kind: 'artifact', artifact_id: result.id };
+            break;
+        }
         case 'space.create':
         case 'space.patch': {
             if (!result.space ||
@@ -1389,6 +1635,8 @@ export function normalizeLegacyResultRef(tx, operation, parsed, spaceId) {
             throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '历史关系所属空间不匹配。', 422);
         }
     }
+    if (operation === 'artifact.create')
+        throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '附件创建仅支持明确v1引用。', 422);
     // 1. Space
     if ((operation.startsWith('space.create') || operation.startsWith('space.patch')) &&
         (parsed.kind === 'space' || parsed.$ref === 'space' || (parsed.space && parsed.space.id))) {
@@ -1869,6 +2117,67 @@ export function normalizeLegacyResultRef(tx, operation, parsed, spaceId) {
     throw new DetunedError(ErrorCode.RESYNC_REQUIRED, `未知或不受支持的幂等引用格式: ${parsed.kind ?? parsed.$ref ?? 'unknown'}。`, 422);
 }
 export function reconstructResult(tx, operation, resultRefStr, spaceId) {
+    if (operation.startsWith('check.') || operation.startsWith('artifact.check.')) {
+        let raw;
+        try {
+            raw = JSON.parse(resultRefStr);
+        }
+        catch {
+            throw reviewResync();
+        }
+        return reconstructCheckResult(tx, spaceId ?? 'instance', operation, raw);
+    }
+    if (operation.startsWith('review.request.finalize:')) {
+        let raw;
+        try {
+            raw = JSON.parse(resultRefStr);
+        }
+        catch {
+            throw reviewResync();
+        }
+        validateStoredReviewDecisionReference(tx, operation, spaceId ?? 'instance', raw);
+        const ref = parseReviewDecisionReference(operation, raw);
+        return reconstructReviewDecisionView(tx, spaceId ?? 'instance', ref.request_id);
+    }
+    if (operation.startsWith('artifact.review.create:')) {
+        let raw;
+        try {
+            raw = JSON.parse(resultRefStr);
+        }
+        catch {
+            throw reviewResync();
+        }
+        validateStoredReviewArtifactReference(tx, operation, spaceId ?? 'instance', raw);
+        const ref = validateResultRef(operation, raw);
+        return reconstructReviewArtifactResult(tx, spaceId ?? 'instance', ref.artifact_id);
+    }
+    if (operation.startsWith('review.submission.create:')) {
+        let raw;
+        try {
+            raw = JSON.parse(resultRefStr);
+        }
+        catch {
+            throw reviewResync();
+        }
+        validateStoredReviewSubmissionReference(tx, operation, spaceId ?? 'instance', raw);
+        const ref = validateResultRef(operation, raw);
+        const submission = validateReviewSubmissionRecords(tx, spaceId ?? 'instance', ref.submission_id);
+        readReviewSnapshotRecords(tx, spaceId ?? 'instance', ref.snapshot_id);
+        assertReviewSubmissionPostEvidencePrivacy(tx, spaceId ?? 'instance', submission);
+        assertStoredSubmissionEvidencePrivacy(tx, spaceId ?? 'instance', submission);
+        return reviewSubmissionAcknowledgement(submission);
+    }
+    if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
+        let parsed;
+        try {
+            parsed = JSON.parse(resultRefStr);
+        }
+        catch {
+            throw reviewResync();
+        }
+        const ref = validateResultRef(operation, parsed);
+        return reconstructFromValidRef(tx, operation, ref, spaceId);
+    }
     let parsed;
     try {
         parsed = JSON.parse(resultRefStr);
@@ -1929,6 +2238,13 @@ function reconstructFromValidRef(tx, operation, ref, spaceId) {
         }
     }
     switch (ref.kind) {
+        case 'review.decision': {
+            validateStoredReviewDecisionReference(tx, operation, spaceId ?? 'instance', ref);
+            return reconstructReviewDecisionView(tx, spaceId ?? 'instance', ref.request_id);
+        }
+        case 'review.request.create':
+        case 'review.request.cancel': return reconstructReviewRequestView(tx, spaceId ?? 'instance', ref.request_id, ref.request_version);
+        case 'artifact': return toArtifactMetadata(tx.findArtifactById(ref.artifact_id));
         case 'space': {
             if (parsedOp.family === 'space.create') {
                 if (spaceId && spaceId !== 'instance') {
@@ -2143,12 +2459,14 @@ export class IdempotencyService {
     storage;
     hasher;
     clock;
-    constructor(storage, hasher, clock) {
+    writeRateLimiter;
+    constructor(storage, hasher, clock, writeRateLimiter = new WriteRateLimiter(clock)) {
         this.storage = storage;
         this.hasher = hasher;
         this.clock = clock;
+        this.writeRateLimiter = writeRateLimiter;
     }
-    executeIdempotent(actorId, spaceId, operation, key, payload, statusCode, action) {
+    executeIdempotent(actorId, spaceId, operation, key, payload, statusCode, action, beforeAdmission) {
         if (!key || typeof key !== 'string' || key.trim() === '') {
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, '缺少 Idempotency-Key / request_key。', 400);
         }
@@ -2161,12 +2479,21 @@ export class IdempotencyService {
                 }
                 // Identical request retry: reconstruct result applying current redaction/visibility
                 const reconstructed = reconstructResult(tx, operation, existing.result_ref, spaceId);
+                if (operation.startsWith('review.submission.create:') && reconstructed.reviewer_actor_id !== actorId)
+                    throw reviewResync();
+                if (operation.startsWith('review.request.finalize:') && reconstructed.actor_id !== actorId)
+                    throw reviewResync();
+                if (operation.startsWith('artifact.review.create:') && reconstructed.owner_id !== actorId)
+                    throw reviewResync();
                 return { data: reconstructed, isReplay: true };
             }
+            // Authorization is evaluated before process-local admission; rollback never refunds it.
+            beforeAdmission?.(tx);
+            this.writeRateLimiter.admit(actorId);
             // Execute fresh business action
             const result = action(tx);
             // Save idempotency record with compact reference only
-            const resultRef = extractResultRef(operation, result);
+            const resultRef = extractResultRef(operation, result, tx);
             const parsedRef = JSON.parse(resultRef);
             validateResultRef(operation, parsedRef);
             validateResultRefSemantics(tx, operation, spaceId, parsedRef);
@@ -2184,5 +2511,13 @@ export class IdempotencyService {
             return { data: result, isReplay: false };
         });
     }
+}
+/** Used exclusively by startup maintenance for the two formal request operations.
+ * Online reconstruction retains current ACL/material privacy; this emits no historical material. */
+export function validateStoredReviewRequestReference(storage, operation, spaceId, raw) {
+    const ref = validateResultRef(operation, raw);
+    if (ref.kind !== 'review.request.create' && ref.kind !== 'review.request.cancel')
+        throw reviewResync();
+    validatePersistedReviewRequestBinding(storage, spaceId, ref.request_id, ref.request_version, ref.snapshot_id, ref.manifest_sha256, ref.kind === 'review.request.create' ? 'collecting' : 'cancelled');
 }
 //# sourceMappingURL=idempotency-service.js.map

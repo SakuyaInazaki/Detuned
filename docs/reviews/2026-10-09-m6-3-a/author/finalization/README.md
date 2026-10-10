@@ -1,0 +1,9 @@
+# M6.3-A 作者源码交付
+
+16文件源码冻结，作者未运行build/type/lint/test/probe；全部执行由D单窗。9个正式作者case已编写，尚不能称通过。旧请求/提交tests未改。
+
+严格Finalize expected_version与inactive共享tool；immutable Decision、固定名单排序review_ids与空check_receipt_ids；Status按冻结policy判not_required/pending，12原因固定序与invalidated/superseded/challenged/current优先级。getStatus和getDecision先当前ACL并同readSnapshot；fresh finalizer当前requester或maintainer/owner权限先samekey，replay不重查后来reviewer资格。写tx涵盖全部新鲜门禁及decision/version/event/typedref。
+
+stale helper在原mutation事务只intrinsic校验，合法redaction不因在线410回滚；正常材料get/replay仍privacy。runtime status不inspect sealed evidence；真正revealed的明确证据才参与validity。unused附件不参与。原子揭示历史不改，cancel允许revealed保revealed_at。finalize负verdict优先，all accept需无阻塞异议且required_checks为空，不伪passed。
+
+下一执行请D：先源类型与作者两文件定向，首失败保原，再必要窄修；B冻结后统一门禁。当前来源未获验收，不声称整个M6、browser/host/模型或磁盘bytes验真。

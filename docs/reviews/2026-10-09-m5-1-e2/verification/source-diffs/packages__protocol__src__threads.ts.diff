@@ -1,0 +1,30 @@
+--- before-files/packages/protocol/src/threads.ts
++++ packages/protocol/src/threads.ts
+@@ -44,6 +44,7 @@
+ export const THREAD_POSTS_READ_LIMITS = Object.freeze({ cursor_chars: 4096, cursor_ttl_seconds: 86400 });
+ export const THREAD_POSTS_CURSOR_ERROR_MESSAGE = 'Invalid or expired thread posts cursor. Remove cursor and retry the first page.';
+ export const ThreadPostsReadQuerySchema = Type.Object({
++  sort: Type.Optional(Type.Union([Type.Literal('id_asc'), Type.Literal('created_at_asc')])),
+   limit: Type.Optional(Type.Integer({ ...THREAD_POST_LIMIT })),
+   max_bytes: Type.Optional(Type.Integer({ ...CONTEXT_BYTES })),
+   cursor: Type.Optional(Type.String({ minLength: 1, maxLength: THREAD_POSTS_READ_LIMITS.cursor_chars, pattern: '\\S' })),
+@@ -55,12 +56,18 @@
+   if (!Value.Check(ThreadPostsReadQuerySchema, query))
+     throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid thread posts read parameters.', 400, false);
+ }
+-export const ThreadPostsReadCursorPayloadSchema = Type.Object({
++const IdThreadPostsReadCursorPayloadSchema = Type.Object({
+   v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'),
+   actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }),
+   thread_id: Type.String({ minLength: 1 }), sort: Type.Literal('id_asc'),
+   after_id: Type.String({ minLength: 1 }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
+ }, { additionalProperties: false });
++export const ThreadPostsReadCursorPayloadSchema = Type.Union([IdThreadPostsReadCursorPayloadSchema, Type.Object({
++  v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'),
++  actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }), thread_id: Type.String({ minLength: 1 }),
++  sort: Type.Literal('created_at_asc'), after_key: Type.Union([Type.String({ pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$' }), Type.Null()]),
++  after_id: Type.String({ minLength: 1 }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
++}, { additionalProperties: false })]);
+ export type ThreadPostsReadCursorPayload = Static<typeof ThreadPostsReadCursorPayloadSchema>;
+ export function isThreadPostsReadCursorPayload(value: unknown): value is ThreadPostsReadCursorPayload {
+   return Value.Check(ThreadPostsReadCursorPayloadSchema, value);

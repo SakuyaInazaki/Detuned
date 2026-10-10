@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/integration/m6-review-submissions-independent.test.ts",
+    "-t",
+    "RA04|RA05|SD09",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 0,
+  "seconds": 2.259,
+  "stdout": "old-stale-upload-first.stdout.txt",
+  "stderr": "old-stale-upload-first.stderr.txt",
+  "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+}

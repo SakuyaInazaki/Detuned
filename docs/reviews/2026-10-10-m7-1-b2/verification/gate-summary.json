@@ -1,0 +1,75 @@
+{
+  "status": "bounded_local_functional_pass",
+  "receipts": [
+    {
+      "receipt": "build-first.json",
+      "exit": 0,
+      "seconds": 10.138
+    },
+    {
+      "receipt": "core-once-first.json",
+      "exit": 0,
+      "seconds": 305.188
+    },
+    {
+      "receipt": "current-28-first.json",
+      "exit": 0,
+      "seconds": 0.566
+    },
+    {
+      "receipt": "current-29-first.json",
+      "exit": 0,
+      "seconds": 0.497
+    },
+    {
+      "receipt": "d-related-repair.json",
+      "exit": 0,
+      "seconds": 9.564
+    },
+    {
+      "receipt": "lint-first.json",
+      "exit": 0,
+      "seconds": 8.01
+    },
+    {
+      "receipt": "new-and-adjacent-first.json",
+      "exit": 1,
+      "seconds": 41.765
+    },
+    {
+      "receipt": "schema-first.json",
+      "exit": 0,
+      "seconds": 0.066
+    },
+    {
+      "receipt": "source-noemit-first.json",
+      "exit": 0,
+      "seconds": 2.749
+    },
+    {
+      "receipt": "typecheck-first.json",
+      "exit": 0,
+      "seconds": 8.344
+    }
+  ],
+  "full": {
+    "runs": 1,
+    "tests": 934,
+    "files": 150,
+    "new17_included": true
+  },
+  "focused": {
+    "first": "84/85; CI01 early issuercount failed before remainder",
+    "related": "D7/7 after exactpath observation correction; no repeated85/build/noEmit"
+  },
+  "new_tests": {
+    "A": 5,
+    "B": 5,
+    "D": 7,
+    "total": 17
+  },
+  "current": "B1 sealed v3 current28 and existing29 each once passed; no historic25matrix",
+  "first_failure": "D observation broad suffix included two setupadmincredentials; exact scopedpath count remains1; product unchanged",
+  "integrity": "final-integrity.json",
+  "cleanup": "cleanup.json"
+}

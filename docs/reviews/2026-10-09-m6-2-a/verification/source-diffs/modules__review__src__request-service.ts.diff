@@ -1,0 +1,49 @@
+--- modules/review/src/request-service.ts (fresh exact before)
++++ modules/review/src/request-service.ts (current)
+@@ -1,5 +1,5 @@
+ import { createHash } from 'node:crypto';
+-import { type CreateReviewRequest, type CancelReviewRequest, type ReviewRequestView, type ReviewAssignmentRecord,
++import { type CreateReviewRequest, type CancelReviewRequest, type ReviewRequestView, type ReviewRequestReadView, type ReviewAssignmentRecord,
+   type ReviewRequestRecord, type ReviewRequestVersionRecord, type ReviewSnapshotManifestData,
+   isCreateReviewRequest, isCancelReviewRequest, DetunedError, ErrorCode } from '@detuned/protocol';
+ import { type StoragePort, type ClockPort, type IdGeneratorPort, AuthService,
+@@ -54,7 +54,7 @@
+           if(!actor||actor.disabled_at||!['human','agent'].includes(actor.kind)||!member||!member.active||!member.reviewer_eligible||manifest.contributors.includes(reviewer_actor_id))throw invalid();
+           if(policy.distinct_independence_groups){const group=member.independence_group;
+             if(typeof group!=='string'||!/\S/.test(group)||groups.has(group))throw invalid();groups.add(group);}
+-          return {request_id:'',reviewer_actor_id,group_at_assignment:member.independence_group};
++          return {id:this.idGen.generateId('ras'),request_id:'',reviewer_actor_id,group_at_assignment:member.independence_group};
+         });
+         const now=this.clock.nowIso(),snapshotId=this.idGen.generateId('snp'),requestId=this.idGen.generateId('rrq');
+         const round=tx.getNextReviewRequestRound(spaceId,req.target_ref.post_id);
+@@ -65,8 +65,8 @@
+           target_ref:{...manifest.target.ref},policy_revision:manifest.policy_revision,rules_revision:manifest.rules_revision,created_by:current.actor.id,created_at:now},
+           reviewSnapshotItems(snapshotId,manifest));
+         const record:ReviewRequestRecord={id:requestId,space_id:spaceId,target_ref:{...req.target_ref},snapshot_id:snapshotId,round,
+-          phase:'collecting',version:1,requested_by:current.actor.id,created_at:now,changed_by:current.actor.id,changed_at:now,reason:null};
+-        const version:ReviewRequestVersionRecord={request_id:requestId,version:1,phase:'collecting',changed_by:current.actor.id,changed_at:now,reason:null};
++          phase:'collecting',version:1,submitted_count:0,requested_by:current.actor.id,created_at:now,changed_by:current.actor.id,changed_at:now,reason:null};
++        const version:ReviewRequestVersionRecord={request_id:requestId,version:1,phase:'collecting',submitted_count:0,changed_by:current.actor.id,changed_at:now,reason:null};
+         tx.createReviewRequest(record,version,assignments.map(a=>({...a,request_id:requestId})));
+         tx.appendEvent(spaceId,{id:this.idGen.generateId('evt'),space_id:spaceId,type:'review.requested',object_id:requestId,
+           revision:1,visibility:'public',actor_id:current.actor.id,created_at:now});
+@@ -75,8 +75,8 @@
+     });
+   }
+ 
+-  getRequest(auth:AuthenticatedContext,spaceId:string,requestId:string):ReviewRequestView{
+-    return this.storage.readSnapshot(()=>{this.readAuth(auth,spaceId);return reconstructReviewRequestView(this.storage,spaceId,requestId);});
++  getRequest(auth:AuthenticatedContext,spaceId:string,requestId:string):ReviewRequestReadView{
++    return this.storage.readSnapshot(()=>{this.readAuth(auth,spaceId);const view=reconstructReviewRequestView(this.storage,spaceId,requestId);const head=this.storage.findReviewRequestById(requestId)!;return {...view,submitted_count:head.submitted_count,changed_by:head.phase==='collecting'&&head.submitted_count>0?null:view.changed_by};});
+   }
+   getSnapshot(auth:AuthenticatedContext,spaceId:string,snapshotId:string):
+     {snapshot_id:string;space_id:string;manifest_sha256:string;manifest:ReviewSnapshotManifestData;created_by:string;created_at:string}{
+@@ -96,7 +96,7 @@
+         if(head.phase!=='collecting')throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Only collecting review requests can be cancelled.',400);
+         const now=this.clock.nowIso(),version=head.version+1;
+         tx.updateReviewRequest({...head,phase:'cancelled',version,changed_by:current.actor.id,changed_at:now,reason:req.reason},
+-          {request_id:requestId,version,phase:'cancelled',changed_by:current.actor.id,changed_at:now,reason:req.reason});
++          {request_id:requestId,version,phase:'cancelled',submitted_count:head.submitted_count,changed_by:current.actor.id,changed_at:now,reason:req.reason});
+         tx.appendEvent(spaceId,{id:this.idGen.generateId('evt'),space_id:spaceId,type:'review.cancelled',object_id:requestId,
+           revision:version,visibility:'public',actor_id:current.actor.id,created_at:now});
+         return reconstructReviewRequestView(tx,spaceId,requestId,version);

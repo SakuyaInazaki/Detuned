@@ -1,0 +1,61 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+$ vitest run tests/integration/m6-review-requests-independent.test.ts -t DI07 --maxWorkers=1 --no-file-parallelism
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-requests-independent.test.ts (7 tests | 1 failed | 6 skipped) 139ms
+   ↓ DI01 real current membership, contributor history, group and same-actor sessions cannot fabricate reviewer eligibility
+   ↓ DI02 actual SQLite last-stage idempotency failure rolls every review object and event back, then commits one compact replayable result
+   ↓ DI03 current requester-only cancel and immutable historical replay survive later policy, cancellation and real database reopen
+   ↓ DI04 actual two-process SQLite races share one key result and reserve distinct target rounds without duplicate side effects
+   ↓ DI05 current privacy and ACL override corrupt stored raw/hash/items/ref without repairing or exposing material
+   ↓ DI06 real public review metadata delivery matches target thread only and never auto-acknowledges or includes body/group
+   × DI07 legitimate target dependency or artifact redaction must not prevent ordinary schema3 reopen, while reads and replay remain gone 139ms
+     → expected [ { variant: 'target', …(2) }, …(2) ] to deeply equal [ { variant: 'target', …(1) }, …(2) ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests-independent.test.ts > DI07 legitimate target dependency or artifact redaction must not prevent ordinary schema3 reopen, while reads and replay remain gone
+AssertionError: expected [ { variant: 'target', …(2) }, …(2) ] to deeply equal [ { variant: 'target', …(1) }, …(2) ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "reopened": true,
++     "error_code": "ERROR",
++     "reopened": false,
+      "variant": "target",
+    },
+    {
+-     "reopened": true,
++     "error_code": "ERROR",
++     "reopened": false,
+      "variant": "dependency",
+    },
+    {
+-     "reopened": true,
++     "error_code": "ERROR",
++     "reopened": false,
+      "variant": "artifact",
+    },
+  ]
+
+ ❯ tests/integration/m6-review-requests-independent.test.ts:177:19
+    175|  }
+    176|  await writeFile(path.join(root,'docs/reviews/2026-10-09-m6-1-b/verifi…
+    177|  expect(outcomes).toEqual(['target','dependency','artifact'].map(varia…
+       |                   ^
+    178| },5000);
+    179| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  13:43:06
+   Duration  735ms (transform 252ms, setup 0ms, collect 433ms, tests 139ms, environment 0ms, prepare 40ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

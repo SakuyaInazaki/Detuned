@@ -1,0 +1,85 @@
+{
+  "status": "source_frozen_written_not_executed",
+  "owner": "A",
+  "files": [
+    {
+      "path": "packages/protocol/src/review.ts",
+      "bytes": 15383,
+      "sha256": "f9bb3ee76ef78e756b76462f6575dc7539f002d11b2b65d1ae4da68f3a916a18"
+    },
+    {
+      "path": "packages/protocol/src/response-guards.ts",
+      "bytes": 9450,
+      "sha256": "fb379a8979137da5e2bf675d3f629d1471d110e899a22b64e684dae385738494"
+    },
+    {
+      "path": "packages/protocol/src/openapi.ts",
+      "bytes": 44896,
+      "sha256": "9571798e96a867a30e117f762d0fae6beb910e0d3b3222d4828a1eb6b6477d28"
+    },
+    {
+      "path": "modules/review/src/submission-service.ts",
+      "bytes": 9448,
+      "sha256": "64d77bca58c437e760163e178d301f77d75baf584103d25e3c9f8877d06dc157"
+    },
+    {
+      "path": "packages/server/src/app.ts",
+      "bytes": 15951,
+      "sha256": "acd6c446b846c0cc08aec2686b487e6fb2e06c04cad552f9eb66449075d60984"
+    },
+    {
+      "path": "packages/server/src/routes/meta.ts",
+      "bytes": 1147,
+      "sha256": "6f04c17224b719baf6b25494cad02f541bbf4023e6e0f94a744330f1cabc9ffc"
+    },
+    {
+      "path": "packages/server/src/routes/reviews.ts",
+      "bytes": 4227,
+      "sha256": "f921402f4bf75aba2c6610d887b656f3c073f98c2e93c9089fd4609ca9880c0c"
+    },
+    {
+      "path": "packages/server/src/routes/artifacts.ts",
+      "bytes": 8966,
+      "sha256": "85bc494e20f9e18d6868def97463a16304bc8eebf8fb076662137cb8371f05d1"
+    },
+    {
+      "path": "packages/server/package.json",
+      "bytes": 776,
+      "sha256": "ac39af2c1b811282b5ab52a42dcece9c4d196f5c59969228bb9bff9542c78b2a"
+    },
+    {
+      "path": "tests/contracts/m6-review-http.test.ts",
+      "bytes": 13187,
+      "sha256": "0e31a026f0186d7abbeac4d285d836cc05f88922cf602c6bbfd583eeac0694a2"
+    },
+    {
+      "path": "packages/core/src/services/artifact-service.ts",
+      "bytes": 12013,
+      "sha256": "ad456cac931a7a43a74805426ef50f5ed5e7241d9c844d0671d74485a3b496c9"
+    }
+  ],
+  "authorized_unchanged": [
+    "packages/protocol/src/index.ts",
+    "modules/review/src/index.ts"
+  ],
+  "tests": [
+    "RH01 real HTTP full vertical and immutable confirmation replay",
+    "RH02 sealed roster list/private multipart/file SHA/cache/unused isolation",
+    "RH03 strict body/query/key/cache/guards/policy and historical replay"
+  ],
+  "checks_run": [],
+  "notes": [
+    "D sole execution window; no build/type/lint/test/install/generator by A",
+    "server internal workspace dependency only; B owns lock",
+    "no changes to old sealed packages, DDL, tools, CLI, Web, sessions or old write response"
+  ],
+  "previous": "freeze-manifest-v3.json",
+  "delta": {
+    "changed": [
+      "packages/protocol/src/openapi.ts",
+      "packages/server/src/app.ts"
+    ],
+    "other_9_hashes_unchanged": true,
+    "reason": "new review paths enter same shared OpenAPI normalization; private review cache header after genericcookie but before origin guard"
+  }
+}

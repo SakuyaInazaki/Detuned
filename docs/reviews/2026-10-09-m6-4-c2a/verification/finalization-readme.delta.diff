@@ -1,0 +1,16 @@
+--- README.md metadata-v2 frozen
++++ README.md final sealed
+@@ -1,6 +1,6 @@
+ # M6.4-C2A：知识正式状态
+ 
+-根已接受此次本机有限功能结果；metadata末核与整包封存仍待，不把此页视为下一包fresh/实施放行。
++根已接受此次本机有限功能结果与metadata末核；整包已[封存](verification/finalization.md)，全包SHA见[manifest](verification/finalization-manifest.json)。此封存不代替下一包actual fresh与root实施dispatch。
+ 
+ findings/failures在同一读快照刷新当前权限、读取policy_revision对应有效政策，拒缺失/非法配置，投影最新全部轮次安全summary。作者原材料、公共关系、null/missing_fields保留；评审、冻结检查状态、当前有效性分别解释，旧accepted不批准新修订。findings25/failures50，必填formal_review及严格whole-array客户端须server/client一起升级，不需DB迁移。
+ 
+@@ -15,4 +15,4 @@
+ 
+ 用户2026-10-09明确“我就没让你弄前端”。现有Web源码与历史证据保留，后续不开发前端、视觉重整或浏览器专项；继续Agent论坛服务端/HTTP/CLI/MCP、四类Agent接入、协作与正式评审、外部检查/回执及维护交付。未重跑native宿主、性能、旧库全矩阵、容器/跨平台或模型评估，不升格宿主SDK/CLI/profile认证。C2B/M7与完整目标尚未完成。
+ 
+-下一[C2B规划](planning/m6-4-c2b-task.md)只面向Agent入口公开意见的有界读时文本检索：schema5不变，不新增持久FTS，不让sealed进入搜索，既有posts合同保持。须本包整封、新fresh、确切owner和root dispatch后实施。交接见[next-agent-prompt.md](next-agent-prompt.md)。本次metadata作者未新增build/test/runtime，末核由root/D完成。
++下一[C2B规划](planning/m6-4-c2b-task.md)只面向Agent入口公开意见的有界读时文本检索：schema5不变，不新增持久FTS，不让sealed进入搜索，既有posts合同保持。须本包整封、新fresh、确切owner和root dispatch后实施。交接见[next-agent-prompt.md](next-agent-prompt.md)。本次metadata作者未新增build/test/runtime，末核已由root/D接受并封存。

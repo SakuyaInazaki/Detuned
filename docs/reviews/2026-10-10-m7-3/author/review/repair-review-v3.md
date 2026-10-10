@@ -1,0 +1,11 @@
+# M7.3 A v3真实首失败窄复核
+
+v1/v2审查保留；B先前对原challenge projection方向静核遗漏，原“无额外阻塞”结论不足。D首40/42的两失败已由root确认同因，不能把本次静态修复称恢复通过。B未运行任何检查。
+
+freeze-v3实际SHA与delta见下方绑定；三actualhash/bytes匹配freeze，唯main `15ec863415a1f337924bc6e0f38dae7f0efe4c211abd16f5e574dd51d936bc1e` /20452bytes改变，worker/test保持v1。
+
+实际core search-service.ts findings取kind claim(limit25)，其relations调用knowledge-projection.ts projectTargetRelations→listRelationsByTarget(spaceId,targetId)。原Bfailure→Aoriginal challenge是Aclaim的incoming，不在failure source的incoming列表；v3getOriginalChallenge选findings的originalPostId精确行再按challengeId选真实relation。context唯一readers构造改传original.id/originalChallenge.id，sealed/accepted/superseded三个checkpoint都由同一context获得，无可写权限、新getRelation或core变更。场景仅A/C两claim，不触25截断。
+
+实际delta只以上selector/参数/调用点，既有关系不改、不关闭，作者/D断言、timeout、v2lifecycle与其余业务字节保持。没有新增静态blocker；main syntax+两个新测试文件8例的真实结果待D，不扩42/build/noEmit重跑。
+
+freeze SHA `f0724ae4dd85e1082cfde3a534ba64f898ae3b076c308edd760c29a35fe81bda`（以实际输出核）；delta `c22c6abb0239cba8151295e493ad7bcf72fbc0380c50bc32736ced99c4be5ae4`。

@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-search-contracts.test.ts (2 tests | 2 failed) 162ms
+   × M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 128ms
+     → HTTP 404 请求失败
+   × M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 34ms
+     → HTTP 404 请求失败
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries
+DetunedError: HTTP 404 请求失败
+ ❯ DetunedClient.request packages/client/src/client.ts:469:28
+ ❯ tests/contracts/m2-search-contracts.test.ts:15:12
+     13|     const url = await app.listen({ port: 0, host: '127.0.0.1' });
+     14|     client = new DetunedClient({ baseUrl: `${url}/api/v1`, token, maxR…
+     15|     sid = (await client.createSpace({ slug: 'search-contract', objecti…
+       |            ^
+     16|     tid = (await client.createThread(sid, { title: 'search' }, 'thread…
+     17|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:17:54
+   Duration  718ms (transform 177ms, setup 0ms, collect 324ms, tests 162ms, environment 0ms, prepare 55ms)
+

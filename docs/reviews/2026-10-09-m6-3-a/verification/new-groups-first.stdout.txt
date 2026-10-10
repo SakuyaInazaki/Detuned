@@ -1,0 +1,26 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-finalization-independent.test.ts (6 tests | 3 failed) 764ms
+   ✓ DF01 finalizer current rights and ordered errors remain mandatory while immutable replay ignores later reviewer eligibility 93ms
+   × DF02 actual objections and frozen check configuration prioritize negative verdicts without inventing receipts 39ms
+     → 必须拥有源帖子或具备维护者权限才能创建关系。
+   ✓ DF03 actual mutation and stale history share one transaction; pinned and unrelated edits do not invalidate the frozen material 72ms
+   × DF04 two real processes allow only atomic legal finalization versus revision or objection serialization 425ms
+     → expected false to be true // Object.is equality
+   × DF05 the twelve metadata reasons are ordered and sealed or unused evidence health never leaks into public status 45ms
+     → 必须拥有源帖子或具备维护者权限才能创建关系。
+   ✓ DF06 revealed cancellation keeps published history and intrinsic decision faults fail safely with metadata-only public events and no ACK 89ms
+ ✓ tests/integration/m6-schema5-maintenance-independent.test.ts (2 tests) 418ms
+ ✓ tests/integration/m6-review-finalization.test.ts (6 tests) 366ms
+ ✓ tests/integration/m6-schema5-maintenance.test.ts (3 tests) 366ms
+ ✓ tests/integration/m6-review-status.test.ts (3 tests) 178ms
+ ✓ tests/integration/m6-review-material-lifecycle.test.ts (3 tests) 178ms
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  3 failed | 20 passed (23)
+   Start at  16:15:15
+   Duration  4.31s (transform 366ms, setup 0ms, collect 1.21s, tests 2.27s, environment 0ms, prepare 167ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

@@ -1,0 +1,475 @@
+{
+  "status": "29/29 accepted composite candidate; not all-original scripts",
+  "gates": {
+    "build": [
+      {
+        "stage": "build",
+        "argv": [
+          "pnpm",
+          "build"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 5.192,
+        "started_at": "2026-10-08T19:47:51.516608+00:00",
+        "finished_at": "2026-10-08T19:47:56.708972+00:00",
+        "stdout": "build.stdout",
+        "stderr": "build.stderr"
+      },
+      {
+        "stage": "build-protocol-fixed",
+        "argv": [
+          "pnpm",
+          "--filter",
+          "@detuned/protocol",
+          "build"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.985,
+        "started_at": "2026-10-08T20:01:57.294820+00:00",
+        "finished_at": "2026-10-08T20:01:58.280289+00:00",
+        "stdout": "build-protocol-fixed.stdout",
+        "stderr": "build-protocol-fixed.stderr"
+      },
+      {
+        "stage": "build-server-fixed",
+        "argv": [
+          "pnpm",
+          "--filter",
+          "@detuned/server",
+          "build"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.917,
+        "started_at": "2026-10-08T20:01:58.322911+00:00",
+        "finished_at": "2026-10-08T20:01:59.239874+00:00",
+        "stdout": "build-server-fixed.stdout",
+        "stderr": "build-server-fixed.stderr"
+      }
+    ],
+    "typecheck": [
+      {
+        "stage": "typecheck",
+        "argv": [
+          "pnpm",
+          "typecheck"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 4.941,
+        "started_at": "2026-10-08T20:02:56.469027+00:00",
+        "finished_at": "2026-10-08T20:03:01.410587+00:00",
+        "stdout": "typecheck.stdout",
+        "stderr": "typecheck.stderr"
+      }
+    ],
+    "lint": [
+      {
+        "stage": "lint",
+        "argv": [
+          "pnpm",
+          "lint"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 4.687,
+        "started_at": "2026-10-08T20:03:01.453402+00:00",
+        "finished_at": "2026-10-08T20:03:06.140713+00:00",
+        "stdout": "lint.stdout",
+        "stderr": "lint.stderr"
+      }
+    ],
+    "full": [
+      {
+        "stage": "full-fixture-fixed",
+        "argv": [
+          "/usr/bin/caffeinate",
+          "-i",
+          "pnpm",
+          "test"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 47.961,
+        "started_at": "2026-10-08T20:09:49.164510+00:00",
+        "finished_at": "2026-10-08T20:10:37.125810+00:00",
+        "stdout": "full-fixture-fixed.stdout",
+        "stderr": "full-fixture-fixed.stderr"
+      }
+    ]
+  },
+  "probes": {
+    "passed": 25,
+    "receipts": [
+      {
+        "stage": "current29-05",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1/check-behavior.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.377,
+        "started_at": "2026-10-08T20:05:13.062108+00:00",
+        "finished_at": "2026-10-08T20:05:13.438889+00:00",
+        "stdout": "current29-05.stdout",
+        "stderr": "current29-05.stderr"
+      },
+      {
+        "stage": "current29-06",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1/check-adapters.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.445,
+        "started_at": "2026-10-08T20:05:13.464233+00:00",
+        "finished_at": "2026-10-08T20:05:13.908857+00:00",
+        "stdout": "current29-06.stdout",
+        "stderr": "current29-06.stderr"
+      },
+      {
+        "stage": "current29-07",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.315,
+        "started_at": "2026-10-08T20:05:13.933267+00:00",
+        "finished_at": "2026-10-08T20:05:14.248662+00:00",
+        "stdout": "current29-07.stdout",
+        "stderr": "current29-07.stderr"
+      },
+      {
+        "stage": "current29-08",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.725,
+        "started_at": "2026-10-08T20:05:14.273688+00:00",
+        "finished_at": "2026-10-08T20:05:14.998622+00:00",
+        "stdout": "current29-08.stdout",
+        "stderr": "current29-08.stderr"
+      },
+      {
+        "stage": "current29-09",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.263,
+        "started_at": "2026-10-08T20:05:15.024980+00:00",
+        "finished_at": "2026-10-08T20:05:15.288026+00:00",
+        "stdout": "current29-09.stdout",
+        "stderr": "current29-09.stderr"
+      },
+      {
+        "stage": "current29-10",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.315,
+        "started_at": "2026-10-08T20:05:15.311326+00:00",
+        "finished_at": "2026-10-08T20:05:15.626296+00:00",
+        "stdout": "current29-10.stdout",
+        "stderr": "current29-10.stderr"
+      },
+      {
+        "stage": "current29-11",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.39,
+        "started_at": "2026-10-08T20:05:15.651509+00:00",
+        "finished_at": "2026-10-08T20:05:16.041964+00:00",
+        "stdout": "current29-11.stdout",
+        "stderr": "current29-11.stderr"
+      },
+      {
+        "stage": "current29-12",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.723,
+        "started_at": "2026-10-08T20:05:16.073177+00:00",
+        "finished_at": "2026-10-08T20:05:16.795968+00:00",
+        "stdout": "current29-12.stdout",
+        "stderr": "current29-12.stderr"
+      },
+      {
+        "stage": "current29-13",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.71,
+        "started_at": "2026-10-08T20:05:16.821177+00:00",
+        "finished_at": "2026-10-08T20:05:17.530992+00:00",
+        "stdout": "current29-13.stdout",
+        "stderr": "current29-13.stderr"
+      },
+      {
+        "stage": "current29-14",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.5,
+        "started_at": "2026-10-08T20:05:17.555727+00:00",
+        "finished_at": "2026-10-08T20:05:18.055386+00:00",
+        "stdout": "current29-14.stdout",
+        "stderr": "current29-14.stderr"
+      },
+      {
+        "stage": "current29-15",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.317,
+        "started_at": "2026-10-08T20:05:18.078644+00:00",
+        "finished_at": "2026-10-08T20:05:18.395634+00:00",
+        "stdout": "current29-15.stdout",
+        "stderr": "current29-15.stderr"
+      },
+      {
+        "stage": "current29-16",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.409,
+        "started_at": "2026-10-08T20:05:18.422055+00:00",
+        "finished_at": "2026-10-08T20:05:18.830962+00:00",
+        "stdout": "current29-16.stdout",
+        "stderr": "current29-16.stderr"
+      },
+      {
+        "stage": "current29-17",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.436,
+        "started_at": "2026-10-08T20:05:18.856743+00:00",
+        "finished_at": "2026-10-08T20:05:19.292547+00:00",
+        "stdout": "current29-17.stdout",
+        "stderr": "current29-17.stderr"
+      },
+      {
+        "stage": "current29-18",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.443,
+        "started_at": "2026-10-08T20:05:19.316205+00:00",
+        "finished_at": "2026-10-08T20:05:19.759829+00:00",
+        "stdout": "current29-18.stdout",
+        "stderr": "current29-18.stderr"
+      },
+      {
+        "stage": "current29-19",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.381,
+        "started_at": "2026-10-08T20:05:19.784472+00:00",
+        "finished_at": "2026-10-08T20:05:20.165114+00:00",
+        "stdout": "current29-19.stdout",
+        "stderr": "current29-19.stderr"
+      },
+      {
+        "stage": "current29-20",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.368,
+        "started_at": "2026-10-08T20:05:20.189078+00:00",
+        "finished_at": "2026-10-08T20:05:20.557300+00:00",
+        "stdout": "current29-20.stdout",
+        "stderr": "current29-20.stderr"
+      },
+      {
+        "stage": "current29-21",
+        "argv": [
+          "node",
+          "docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.6,
+        "started_at": "2026-10-08T20:05:20.580801+00:00",
+        "finished_at": "2026-10-08T20:05:21.180728+00:00",
+        "stdout": "current29-21.stdout",
+        "stderr": "current29-21.stderr"
+      },
+      {
+        "stage": "current29-22",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.847,
+        "started_at": "2026-10-08T20:05:21.207203+00:00",
+        "finished_at": "2026-10-08T20:05:22.054205+00:00",
+        "stdout": "current29-22.stdout",
+        "stderr": "current29-22.stderr"
+      },
+      {
+        "stage": "current29-23",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.372,
+        "started_at": "2026-10-08T20:05:22.080649+00:00",
+        "finished_at": "2026-10-08T20:05:22.452247+00:00",
+        "stdout": "current29-23.stdout",
+        "stderr": "current29-23.stderr"
+      },
+      {
+        "stage": "current29-24",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 1.022,
+        "started_at": "2026-10-08T20:05:22.478730+00:00",
+        "finished_at": "2026-10-08T20:05:23.501054+00:00",
+        "stdout": "current29-24.stdout",
+        "stderr": "current29-24.stderr"
+      },
+      {
+        "stage": "current29-25",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 2.353,
+        "started_at": "2026-10-08T20:05:23.523982+00:00",
+        "finished_at": "2026-10-08T20:05:25.877132+00:00",
+        "stdout": "current29-25.stdout",
+        "stderr": "current29-25.stderr"
+      },
+      {
+        "stage": "current29-26",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 2.053,
+        "started_at": "2026-10-08T20:05:25.905800+00:00",
+        "finished_at": "2026-10-08T20:05:27.958854+00:00",
+        "stdout": "current29-26.stdout",
+        "stderr": "current29-26.stderr"
+      },
+      {
+        "stage": "current29-27",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.263,
+        "started_at": "2026-10-08T20:05:27.984175+00:00",
+        "finished_at": "2026-10-08T20:05:28.247295+00:00",
+        "stdout": "current29-27.stdout",
+        "stderr": "current29-27.stderr"
+      },
+      {
+        "stage": "current29-28-adapter",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.433,
+        "started_at": "2026-10-08T20:07:22.834642+00:00",
+        "finished_at": "2026-10-08T20:07:23.268045+00:00",
+        "stdout": "current29-28-adapter.stdout",
+        "stderr": "current29-28-adapter.stderr"
+      },
+      {
+        "stage": "current29-29-adapter",
+        "argv": [
+          "node",
+          "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+        ],
+        "exit": 0,
+        "timeout": false,
+        "elapsed_seconds": 0.444,
+        "started_at": "2026-10-08T20:07:23.309287+00:00",
+        "finished_at": "2026-10-08T20:07:23.753724+00:00",
+        "stdout": "current29-29-adapter.stdout",
+        "stderr": "current29-29-adapter.stderr"
+      }
+    ],
+    "elapsed_sum_seconds": 15.504,
+    "original_script_count": 21,
+    "retained_adapter_scenarios": [
+      11,
+      27
+    ],
+    "new_adapter_scenarios": [
+      28,
+      29
+    ],
+    "original28_29_failed": true
+  },
+  "first_failures_retained": [
+    "full exit1 667pass/3fail",
+    "original scenario28 exit1 AD02 set mismatch",
+    "original scenario29 exit1 AE03 set mismatch"
+  ],
+  "version_note": "Whole build A v1/B v2; later protocol B v3 and server A v2 incrementally rebuilt. No other product bytes changed; full-final includes B two fixture repair hashes. New independent test final hash fixed before final tests."
+}

@@ -1,0 +1,39 @@
+{
+  "status": "pass",
+  "bindings": {
+    "A": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/author/backend/freeze-v8.json",
+      "sha256": "14c79be1ca0d0c068edc616370a94fd5f09dc4d0346722f2ea30661368a50352"
+    },
+    "B": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/author/client/freeze.json",
+      "sha256": "1c953e5036d65c4a9a7c3ade58545508e09ae1325807f8b30a35768f5203addc"
+    },
+    "D": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/verification/d-source-ready-red.json",
+      "sha256": "13e4ba28afc416480b37b62af070c69a5fc16d05e4564ba060dc029badbbeb41"
+    }
+  },
+  "sources": {
+    "packages/core/src/services/check-service.ts": "7a18b4c5311c5732687b76cd5754a7824e6da87f03cb5740bbe790347c6437ff",
+    "packages/protocol/src/review.ts": "095ef67b6a3b87f537edc660d006bfa2f8b51a54e07123105c94c16a907eff09",
+    "packages/protocol/src/response-guards.ts": "327a74e759e3a47960e5a26eec9a40bbc3786b512d6d44a14692d79ef959fd11",
+    "packages/protocol/src/openapi.ts": "082667855401b10f30df9c3356b29bb7d67950e63c5f1df19cbe3392182e814d",
+    "packages/server/src/app.ts": "a8db01147d6d827a4ed32ca62e887386ab28d40f1c98aaff10b0095bcbf582e8",
+    "packages/server/src/routes/artifacts.ts": "b9e20cae8c68ee3fa53be4b151006043ba9999179360d2b1c78af3cfb60bdd57",
+    "modules/review/src/canonical-json.ts": "6356943b0b5c29859bd3d5f9719e45be703879a929e5b584fe5c8f11c152f191",
+    "packages/protocol/src/index.ts": "20f94610b10cc971657350745fcfd42cc97423343529c751ec52db19458e1459",
+    "packages/server/src/routes/checks.ts": "1414db6b72a26843ff290b9731133928a53cefa8748a3d592e51ca6465a29024",
+    "tests/contracts/m7-check-http.test.ts": "887fffa24cb2dec3abe4a0057a514a28d0c1b6aed8e040b82e820349cd12c9f1",
+    "packages/protocol/src/review-canonical.ts": "da5f0dbb0d20760c5df62b2da8b2b07b2846c473cbcd0cb0c4e217bec6ff7b53",
+    "packages/client/src/client.ts": "67f0311a97cb6c745b678b4eb4deb5c24b824efd637e94b81c2c9a18bb4df394",
+    "packages/client/src/artifact-transfer.ts": "961b954a1559d5d8322854257a8ed7da7d4973af9648963ca815e006b4f990f8",
+    "tests/contracts/m7-check-client.test.ts": "f6cd780d4f8088ec7f53a54b8338e23541801d87821a8d9ea4e8f8701e1ec95f",
+    "packages/client/src/request-key.ts": "7aed27a9282011b374a424615fb9f83abd6943358fbe6948477a92b288729d7a",
+    "tests/contracts/m7-check-http-client-independent.test.ts": "d118ca97091735f6d01fa1570eaa0ef1b78e00bbe36ead19419d81ecb6088ef5"
+  },
+  "owner_sha256": "60a0f7924a210290d613114f4404f1262fa64528f1dd0827a750c8ee63e99e4f",
+  "mismatches": [],
+  "protected407": "all nonowner source plusV5actualhash matches; old11264inventory reused no recursive scan",
+  "dist": "prior redbuild emittedoutputs; greenbuild immediate inventory to save next"
+}

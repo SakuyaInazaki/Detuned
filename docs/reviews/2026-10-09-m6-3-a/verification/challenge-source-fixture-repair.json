@@ -1,0 +1,17 @@
+{
+  "first_23_cases": {
+    "passed": 20,
+    "failed": 3
+  },
+  "root_cause": "Owned note authored by author, relation attempted by writer who is neither source author nor maintainer. Actual RelationService rejected at its existing permission guard.",
+  "failed_cases": [
+    "DF02",
+    "DF04",
+    "DF05"
+  ],
+  "repair": "Create the challenge source through actual PostService using writer; keep relation actor, role, original assertions, actual two-child concurrency and budgets unchanged.",
+  "first_source_sha256": "1acc882c7eeda20c0d2d1689b0bb8462fc7840438382d35166d80d07ed0bf062",
+  "repaired_source_sha256": "6f0a5a0d2ce5515319eb44fcbdec0738caa9a0ac954a85eb12466a5894fada9b",
+  "DF04_first_error_code_captured": false,
+  "product_changes": false
+}

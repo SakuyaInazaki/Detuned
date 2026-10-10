@@ -1,0 +1,5 @@
+# B1 actual fresh boundary
+
+Approved10existing/5missing owner only. No placeholders, product/tests or runtime written/run. Root dispatch required next. B1 is HTTP/sharedclient only; existing domain/ports/schema/storage/CLI/MCP/Web/integrations protected. Single portable JCS helper move preserves exact algorithm/limits/three exports; sharedclient checks actual snapshot SHA. Verify discovery/sealed/privacy remains isolated, scoped logs use dedicated projection; no fifth table/allattempt directory/formal export expansion. Issuance once-only retry policy and receipt/log logicalOperationId rejection follow approved task.
+
+All other source/config/tests and built dist inventoried, plus HEAD/lock/SQL/historical profiles/archive/V5 assets/integrations. M7A whole sealed package added to accepted old11026 protection inventory without old recursive scan. Global configuration never accessed or changed. No VM/daemon/model/install/browser/oldtmp operations. No tests or gates until root dispatch and freeze/release.

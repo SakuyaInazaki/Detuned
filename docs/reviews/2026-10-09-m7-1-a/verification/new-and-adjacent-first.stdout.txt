@@ -1,0 +1,52 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (10 tests) 7717ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V6 updates and frozen V1/V2/V3/V4/V5 remain unchanged  560ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1189ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  373ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V4' profile in sync check and successfully repairs it via generate-schema (AB03)  627ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V5' profile in sync check and successfully repairs it via generate-schema (AB03)  635ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V6' profile in sync check and successfully repairs it via generate-schema (AB03)  653ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V3' profile in sync check and successfully repairs it via generate-schema (AB03)  633ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  623ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  652ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1743ms
+stdout | tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+{"fifo_ready":true,"fifo_operation_done":true,"fifo_operation_ms":2.153208000000177,"fifo_watchdog_killed":false}
+
+ ✓ tests/integration/m3-logical-import.test.ts (12 tests) 1610ms
+   ✓ rejects a FIFO with no writer in a watchdog-bounded child without publishing  1293ms
+ ✓ tests/contracts/m3-logical-import-contract.test.ts (6 tests) 1402ms
+   ✓ M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink  1368ms
+ ❯ tests/integration/m6-review-finalization-independent.test.ts (6 tests | 1 failed) 1011ms
+   ✓ DF01 finalizer current rights and ordered errors remain mandatory while immutable replay ignores later reviewer eligibility 78ms
+   ✓ DF02 actual objections and frozen check configuration prioritize negative verdicts without inventing receipts 213ms
+   ✓ DF03 actual mutation and stale history share one transaction; pinned and unrelated edits do not invalidate the frozen material 69ms
+   ✓ DF04 two real processes allow only atomic legal finalization versus revision or objection serialization  438ms
+   × DF05 the twelve metadata reasons are ordered and sealed or unused evidence health never leaks into public status 128ms
+     → expected [ 'artifact_redacted', …(11) ] to deeply equal [ 'artifact_redacted', …(14) ]
+   ✓ DF06 revealed cancellation keeps published history and intrinsic decision faults fail safely with metadata-only public events and no ACK 85ms
+ ✓ tests/integration/m7-check-domain-independent.test.ts (7 tests) 995ms
+   ✓ MI05 two real SQLite processes race expected request version; same-key replay commits one additional attempt  344ms
+ ✓ tests/integration/m7-schema6-maintenance-independent.test.ts (3 tests) 594ms
+   ✓ MSI03 real new6 run/log/receipt/decision backup restores immutable receipt yet rotates scoped identity, retaining old pending delivery  334ms
+ ✓ tests/integration/m7-check-domain.test.ts (6 tests) 439ms
+ ✓ tests/integration/m7-check-scope-artifacts.test.ts (5 tests) 323ms
+ ✓ tests/contracts/m3-space-export-contract.test.ts (6 tests) 550ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject  500ms
+ ✓ tests/integration/m6-schema5-maintenance-independent.test.ts (2 tests) 587ms
+   ✓ MS502 new5 immutable decision backup restores seven formal tables, historical sessions and private physical evidence without old identity authority  328ms
+ ✓ tests/integration/m6-review-finalization.test.ts (6 tests) 368ms
+ ✓ tests/integration/m6-review-private-artifacts.test.ts (6 tests) 288ms
+ ✓ tests/integration/m6-review-status.test.ts (3 tests) 185ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 109ms
+ ✓ tests/integration/m3-space-export.test.ts (11 tests) 138ms
+ ✓ tests/integration/m7-schema6-maintenance.test.ts (3 tests) 209ms
+ ✓ tests/integration/m4-session-subscription-client.test.ts (2 tests) 7ms
+
+ Test Files  1 failed | 16 passed (17)
+      Tests  1 failed | 100 passed (101)
+   Start at  00:04:45
+   Duration  21.26s (transform 708ms, setup 0ms, collect 2.45s, tests 16.53s, environment 1ms, prepare 420ms)
+

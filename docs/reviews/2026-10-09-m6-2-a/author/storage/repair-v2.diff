@@ -1,0 +1,22 @@
+--- packages/core/src/services/review-artifact-access.ts
++++ packages/core/src/services/review-artifact-access.ts
+@@ -2,7 +2,7 @@
+ import type { StoragePort } from '../ports/storage.js';
+ import { readReviewSnapshotRecords } from './review-request-records.js';
+ import { validateReviewSubmissionRecords } from './review-submission-records.js';
+-const absent = (): never => { throw new DetunedError(ErrorCode.NOT_FOUND, '附件不存在或无权访问。', 404); };
++function absent(): never { throw new DetunedError(ErrorCode.NOT_FOUND, '附件不存在或无权访问。', 404); }
+ function artifactPrivacy(storage: StoragePort, spaceId: string, artifact: Artifact): void {
+   if (artifact.space_id !== spaceId) absent();
+   if (artifact.visibility === 'review_assignment') {
+--- tests/integration/m6-schema4-maintenance.test.ts
++++ tests/integration/m6-schema4-maintenance.test.ts
+@@ -43,7 +43,7 @@
+ 
+ const historical3=readFileSync(new URL('../fixtures/historical-v3-schema.sql',import.meta.url),'utf8');
+ function source3FromActualRequest(file:string){
+- const fixture=JSON.parse(readFileSync(new URL('../fixtures/historical-v3-review-history.json',import.meta.url),'utf8')) as {rows:Record<string,Record<string,string|number|null>[]>,recipe:{space_id:string},oracle:{create:{response:import('@detuned/protocol').ReviewRequestView},cancel:{response:import('@detuned/protocol').ReviewRequestView},collecting:{response:import('@detuned/protocol').ReviewRequestView}};
++ const fixture=JSON.parse(readFileSync(new URL('../fixtures/historical-v3-review-history.json',import.meta.url),'utf8')) as {rows:Record<string,Record<string,string|number|null>[]>,recipe:{space_id:string},oracle:{create:{response:import('@detuned/protocol').ReviewRequestView},cancel:{response:import('@detuned/protocol').ReviewRequestView},collecting:{response:import('@detuned/protocol').ReviewRequestView}}};
+  const old=new Database(file);old.exec(historical3);old.pragma('foreign_keys = OFF');
+  for(const [name,rows] of Object.entries(fixture.rows)){if(!rows.length)continue;const columns=Object.keys(rows[0]!);const insert=old.prepare(`INSERT INTO "${name}" (${columns.map(c=>'"'+c+'"').join(',')}) VALUES (${columns.map(()=>'?').join(',')})`);for(const row of rows)insert.run(...columns.map(c=>row[c]));}
+  old.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('initialized','true');old.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('token_secret','private-independent-test-secret');

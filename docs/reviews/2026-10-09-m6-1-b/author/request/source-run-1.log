@@ -1,0 +1,57 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-requests.test.ts (5 tests | 5 failed) 245ms
+   × RR01 fixed assignment/version and compact replay survive cancellation and later policy changes 110ms
+     → Review snapshot material is invalid.
+   × RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation 51ms
+     → Review snapshot material is invalid.
+   × RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous 31ms
+     → expected [Function] to throw error including 'controlled transaction failure' but got 'Review snapshot material is invalid.'
+   × RR04 historical material reads stay detached but redaction and revoked credential gate replay 28ms
+     → Review snapshot material is invalid.
+   × RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material 25ms
+     → Review snapshot material is invalid.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR01 fixed assignment/version and compact replay survive cancellation and later policy changes
+ FAIL  tests/integration/m6-review-requests.test.ts > RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation
+ FAIL  tests/integration/m6-review-requests.test.ts > RR04 historical material reads stay detached but redaction and revoked credential gate replay
+ FAIL  tests/integration/m6-review-requests.test.ts > RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material
+DetunedError: Review snapshot material is invalid.
+ ❯ invalid modules/review/src/index.ts:26:23
+     24| const hash = (v: unknown): v is string => typeof v === 'string' && v.l…
+     25| const positive = (v: number) => Number.isSafeInteger(v) && v > 0;
+     26| const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Re…
+       |                       ^
+     27| const stale = () => new DetunedError(ErrorCode.SNAPSHOT_STALE, 'Review…
+     28| const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review ma…
+ ❯ modules/review/src/index.ts:65:130
+ ❯ modules/review/src/index.ts:62:46
+ ❯ read packages/storage-sqlite/src/sqlite-storage.ts:87:22
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:94:39
+ ❯ ReviewModule.generateSnapshotManifest modules/review/src/index.ts:43:25
+ ❯ modules/review/src/request-service.ts:47:52
+ ❯ packages/core/src/services/idempotency-service.ts:2721:22
+ ❯ SqliteStorage.transaction packages/storage-sqlite/src/sqlite-storage.ts:72:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous
+AssertionError: expected [Function] to throw error including 'controlled transaction failure' but got 'Review snapshot material is invalid.'
+
+Expected: "controlled transaction failure"
+Received: "Review snapshot material is invalid."
+
+ ❯ tests/integration/m6-review-requests.test.ts:41:161
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  13:12:20
+   Duration  1.03s (transform 290ms, setup 0ms, collect 540ms, tests 245ms, environment 0ms, prepare 41ms)
+

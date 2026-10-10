@@ -1,0 +1,31 @@
+{
+  "status": "root_scoped_candidates_pending_B2_M7_2_acceptance_seal_M7_3_fresh_dispatch",
+  "existing": {},
+  "new": {
+    "scripts/demos/d01-reviewed.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "scripts/demos/d01-reviewed-worker.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-d01-reviewed.test.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-d01-reviewed-independent.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    }
+  },
+  "B": "independent static review only",
+  "protected": [
+    "all existing product sources/tests",
+    "old scale/deployment demos",
+    "sealed review packages",
+    "normal docs",
+    "global configs/dependencies"
+  ],
+  "product_write_authorization": false
+}

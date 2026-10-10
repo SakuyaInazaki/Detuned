@@ -1,0 +1,33 @@
+--- packages/protocol/src/tools.ts (fresh exact before)
++++ packages/protocol/src/tools.ts (current)
+@@ -5,10 +5,10 @@
+ import { ContextQuerySchema, SearchQStringSchema, SearchFilterSchema, SearchCursorStringSchema } from './search.js';
+ import { Type, Static, TSchema } from '@sinclair/typebox';
+ import { PostRevisionReadQuerySchema, PostKindSchema, StructuredContentSchema, NEW_TYPED_WRITE_POLICY_DESCRIPTION } from './posts.js';
+-import { PostRefSchema, EvidenceRefSchema } from './common.js';
++import { PostRefSchema } from './common.js';
+ import { RelationTypeSchema } from './relations.js';
+ import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema } from './events.js';
+-import { CreateReviewRequestSchema, CancelReviewRequestSchema, ReviewVerdictSchema, ReviewCompletionStatusSchema, ReviewPhaseSchema } from './review.js';
++import { CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, ReviewPhaseSchema } from './review.js';
+ 
+ export const ToolContextParamsSchema = Type.Object({
+   space_id: Type.String({ minLength: 1 }),
+@@ -204,16 +204,7 @@
+   request_key: Type.String({ minLength: 1, maxLength: 128 }),
+   op: Type.Literal('submit'),
+   request_id: Type.String({ minLength: 1 }),
+-  snapshot_sha256: Type.String({ minLength: 64, maxLength: 64 }),
+-  reviewer_session_id: Type.String({ minLength: 1 }),
+-  completion_status: ReviewCompletionStatusSchema,
+-  verdict: ReviewVerdictSchema,
+-  coverage: Type.String({ minLength: 1 }),
+-  checks_performed: Type.String({ minLength: 1 }),
+-  evidence_refs: Type.Array(EvidenceRefSchema),
+-  pending_requirements: Type.Array(Type.String()),
+-  limitations: Type.Array(Type.String()),
+-  independence_statement: Type.String({ minLength: 1 }),
++  ...CreateReviewSubmissionSchema.properties,
+ }, { additionalProperties: false });
+ 
+ export const ToolReviewFinalizeOpSchema = Type.Object({

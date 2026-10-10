@@ -1,0 +1,155 @@
+{
+  "status": "install_success_not_official_execution",
+  "actual_child_exit": 0,
+  "elapsed_seconds": 117.641,
+  "stop_reason": null,
+  "same_command_and_environment_as_attempt1": true,
+  "initial_before_attempt1_allocated_bytes": 195047424,
+  "final_allocated_bytes": 4557004800,
+  "cumulative_added_bytes": 4361957376,
+  "cumulative_budget_bytes": 6442450944,
+  "current_allocated_bytes": 4557004800,
+  "current_free_bytes": 13882183680,
+  "minimum_free_floor_bytes": 6442450944,
+  "minimum_free_evidence": "six archived stdout samples, minimum observed12145356800B; <=20s monitor, not continuous reserve; current free separately measured",
+  "flags": [
+    "/opt/homebrew/bin/pnpm",
+    "install",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--ignore-pnpmfile",
+    "--registry=https://registry.npmjs.org",
+    "--store-dir=/private/tmp/detuned-m43-deps.avgrrqf7/store",
+    "--fetch-retries=1",
+    "--fetch-timeout=60000"
+  ],
+  "tracked_count_including_14_symlinks": 14208,
+  "tracked_changes": [],
+  "lock_sha256": "2893d71a9ef07d2d72d47b2199e581b9e8d90638a15ee151908eebf69dfc637c",
+  "linked_metadata": {
+    "vitest": {
+      "version": "4.1.8",
+      "resolved_metadata": "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.1_@types+node@22.20.0_@vitest+coverage-v8@4.1.8_hap_c353b8f649d25fdfb1de02f01ebaca2b/node_modules/vitest/package.json",
+      "sha256": "7514764431c71b6145ac008c36bdb8995d1998dfefe9f7bbbe3ca2da96716f3d",
+      "within_owned_source": true,
+      "matches_author": true
+    },
+    "tsx": {
+      "version": "4.22.4",
+      "resolved_metadata": "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/.pnpm/tsx@4.22.4/node_modules/tsx/package.json",
+      "sha256": "b0d63b124b9b85b53d09cff256fa7832cb6a774f8b90ae1353e63df5275824b2",
+      "within_owned_source": true,
+      "matches_author": true
+    },
+    "typescript": {
+      "version": "6.0.3",
+      "resolved_metadata": "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/.pnpm/typescript@6.0.3/node_modules/typescript/package.json",
+      "sha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9",
+      "within_owned_source": true,
+      "matches_author": true
+    },
+    "vite": {
+      "version": "8.0.16",
+      "resolved_metadata": "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/.pnpm/vite@8.0.16_@types+node@22.20.0_esbuild@0.28.1_jiti@2.7.0_tsx@4.22.4_yaml@2.9.0/node_modules/vite/package.json",
+      "sha256": "a2b943431b51bfcc2e9386eecf8b4b3f6e4bf443e56d17b1f4c8495a61b4050c",
+      "within_owned_source": true,
+      "matches_author": true
+    },
+    "client": {
+      "version": "2.0.0",
+      "resolved_metadata": "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/.pnpm/@modelcontextprotocol+client@2.0.0/node_modules/@modelcontextprotocol/client/package.json",
+      "sha256": "e82352cb01cda68e239b73ba7ca2065b3078fa9bb8d762e7cff04fcc5a141ccb",
+      "within_owned_source": true,
+      "matches_author": true
+    }
+  },
+  "owned_installer_group_remaining": [],
+  "lifecycle_scripts": "ignore-scripts/ignore-pnpmfile enforced in actual argv; no dsh runtime/build/test executed by C",
+  "owned_directories_state": "source/deps active held, not removed or classified leak",
+  "third_party_execution_by_C": false,
+  "archived_monitor_samples": {
+    "source": "Direct tool stdout from install-supervisor-attempt2.py, session81302; retained observations, not continuous disk reservation",
+    "samples": [
+      {
+        "elapsed_seconds": 0,
+        "cumulative_added_allocated_bytes": 2519535616,
+        "free_bytes": 12472020992
+      },
+      {
+        "elapsed_seconds": 20.5,
+        "cumulative_added_allocated_bytes": 2750885888,
+        "free_bytes": 12347617280
+      },
+      {
+        "elapsed_seconds": 41.0,
+        "cumulative_added_allocated_bytes": 3085303808,
+        "free_bytes": 12145356800
+      },
+      {
+        "elapsed_seconds": 61.4,
+        "cumulative_added_allocated_bytes": 3793010688,
+        "free_bytes": 13382631424
+      },
+      {
+        "elapsed_seconds": 81.9,
+        "cumulative_added_allocated_bytes": 3793010688,
+        "free_bytes": 13375606784
+      },
+      {
+        "elapsed_seconds": 102.4,
+        "cumulative_added_allocated_bytes": 3793010688,
+        "free_bytes": 13373337600
+      }
+    ],
+    "minimum_observed_free_bytes": 12145356800
+  },
+  "main_workspace_delta": {
+    "product_source_config_test_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "current_document_hashes": {
+      "changed": [
+        "integrations/dsh.md"
+      ],
+      "added": [
+        "examples/dsh-mcp.md",
+        "integrations/dsh/cordis.patch.example.yml"
+      ],
+      "removed": []
+    },
+    "mutable_status_document_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "schema_profile_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "untracked_build_artifact_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    }
+  },
+  "unauthorized_main_delta": [],
+  "main_head_unchanged": true
+}

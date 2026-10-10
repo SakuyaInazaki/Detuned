@@ -1,0 +1,7 @@
+# C final guard gap repair / readiness
+
+Static only, no syntax/guard/reject/native. Actual guard6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256, capture76ca9228648d955255c683b3f0ff89bc8038a1afd350dd58e4e0bac901c40825 and pland63853955f4f28816b0f8d8b6e2b0d2c08d2d81e826aad72353a8965d60e63f1 recomputed. Ready-v3 binds unchanged A007b…b692/freeze5da…3221. Prior finding report retained.
+
+Exact delta closes sole gap: same sandbox child writes an ordinary canonical-ownroot file using wx/mode0600, then reads fixed nonsecret bytes and verifies mode0600. Safe ordinary_write/read booleans are asserted true independently of sentinel denial. Existing sentinel read/write EPERM/EACCES, network hit1/0, actual policy pure function/minimalenv and3s child budget unchanged. Recursive ownedroot removal after actual child/server/socket closure includes this new file. Capture is byte unchanged and prior confirmed-before-bootstrap reject/failure oracle and95s cleanup review apply.
+
+No actionable blocker remains. Root may consider releasing independent guard and the one controlled reject, using proper require_escalated auto_review for outside execution while child sandbox stays strict. Actual successful guard/reject is not claimed here. A controlled fault point not reached is failure, never expectedpass; native still separately requires root actualguard acceptance/release. No installation/model/account/globalconfig/core/host certification inferred.

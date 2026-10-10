@@ -1,0 +1,22 @@
+{
+  "status": "diagnostic_source_frozen_pending_B_review_D_single_case",
+  "parent_freeze_sha256": "7f9da969574b034f068c3808ad25433c2b44da62674cbdca06d4235d9b1df685",
+  "files": {
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": {
+      "sha256": "97ec70ac774d4aa436a5addf7090c1bf6b0a5538977b6363a5a4caf6a535c3af",
+      "bytes": 26621
+    },
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": {
+      "sha256": "f4a2b8d07fa710490ef1b4a3aebb1b80f547e74ed84541a3ef36fe4f5f60547b",
+      "bytes": 6818
+    },
+    "scripts/integrations/claude-check-probe.mjs": {
+      "sha256": "a6f3a8069342647f326520d711198e4e30a0f380f95ac7b3c2c6fcd66ac4962c",
+      "bytes": 35528
+    }
+  },
+  "delta_sha256": "244e75b08face0e6b6e601f529a8f056ad0a593c509564beb3af04cefcc2e6a6",
+  "checks_run_by_A": [],
+  "old_six_prefix_and_body_static_byte_equal": true,
+  "repair": "Supervisor terminal gate after awaited initializer boundaries and before allocations/fork/bootstrap; retained initializer/registration handles; exact allocated-root fallback cleanup and unverified state on failure."
+}

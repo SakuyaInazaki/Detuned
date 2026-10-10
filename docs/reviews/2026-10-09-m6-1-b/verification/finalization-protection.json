@@ -1,0 +1,64 @@
+{
+  "freeze": [
+    {
+      "path": "author/request/freeze-manifest-v4.json",
+      "sha256": "3c002f655600b4bed054bc630ac2cd9c727be249b3dfc52bb5157642cf26d036",
+      "files": 11,
+      "mismatches": []
+    },
+    {
+      "path": "author/protocol/freeze-manifest-v3.json",
+      "sha256": "c18da1e07c3f372f6ff6aa6cd97b95fb657f3b210e74092827b496f339a68852",
+      "files": 27,
+      "mismatches": []
+    }
+  ],
+  "D_source_sha256": "367506a626950a475a8c4f070a86af7af2914903778aa3f3c52e4b8ff8023ce2",
+  "old_review_checked": 8398,
+  "old_review_mismatches": [],
+  "existing_product_changes": [
+    "modules/review/src/index.ts",
+    "packages/cli/src/index.ts",
+    "packages/core/src/index.ts",
+    "packages/core/src/ports/storage.ts",
+    "packages/core/src/services/event-service.ts",
+    "packages/core/src/services/idempotency-service.ts",
+    "packages/core/src/services/space-export-service.ts",
+    "packages/protocol/src/events.ts",
+    "packages/protocol/src/export.ts",
+    "packages/protocol/src/review.ts",
+    "packages/protocol/src/tools.ts",
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+    "packages/storage-sqlite/scripts/generate-schema.mjs",
+    "packages/storage-sqlite/src/bootstrap.ts",
+    "packages/storage-sqlite/src/logical-import.ts",
+    "packages/storage-sqlite/src/offline-backup.ts",
+    "packages/storage-sqlite/src/offline-upgrade.ts",
+    "packages/storage-sqlite/src/schema.sql",
+    "packages/storage-sqlite/src/schema.ts",
+    "packages/storage-sqlite/src/sqlite-storage.ts",
+    "packages/storage-sqlite/tests/schema-generation.test.ts",
+    "packages/storage-sqlite/tests/storage.test.ts",
+    "tests/contracts/m3-backup-cli.test.ts",
+    "tests/contracts/m3-offline-upgrade-contract.test.ts",
+    "tests/contracts/m3-space-export-contract.test.ts",
+    "tests/integration/historical-http-replay.test.ts",
+    "tests/integration/m0-m1-r4-b-regression.test.ts",
+    "tests/integration/m3-backup-recovery.test.ts",
+    "tests/integration/m3-import-independent.test.ts",
+    "tests/integration/m3-logical-import.test.ts",
+    "tests/integration/m3-space-export.test.ts",
+    "tests/integration/m3-upgrade-independent.test.ts"
+  ],
+  "outside_authorized": [],
+  "old_sql_archive_unchanged": {
+    "archive/README.md": true,
+    "archive/pre-plan.original.md": true,
+    "tests/fixtures/historical-v1-schema.sql": true
+  },
+  "lock_unchanged": true,
+  "HEAD": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "old_Hasher_JCS_unchanged": true,
+  "schema3_change_authorized_and_current_A4_B3_freeze_bound": true,
+  "dist_build_changes_per_functional_integrity": true
+}

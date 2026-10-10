@@ -1,0 +1,22 @@
+{
+  "extends": "/Users/sakimi/Desktop/Detuned/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "/Users/sakimi/Desktop/Detuned",
+    "baseUrl": "/Users/sakimi/Desktop/Detuned",
+    "paths": {
+      "@detuned/client/node": ["packages/client/src/node.ts"],
+      "@detuned/protocol": ["packages/protocol/src/index.ts"],
+      "@detuned/core": ["packages/core/src/index.ts"],
+      "@detuned/storage-sqlite": ["packages/storage-sqlite/src/index.ts"],
+      "@detuned/server": ["packages/server/src/index.ts"],
+      "@detuned/client": ["packages/client/src/index.ts"]
+    },
+    "typeRoots": ["/Users/sakimi/Desktop/Detuned/node_modules/@types"],
+    "types": ["node"]
+  },
+  "include": [
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m4-runtime-binding-native.test.ts",
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m4-runtime-response-validation.test.ts"
+  ]
+}

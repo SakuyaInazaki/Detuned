@@ -1,0 +1,14 @@
+{
+  "stage": "before",
+  "source": "accepted B2.2 dist; actual HTTP inject; isolated memory SQLite",
+  "own_thread_exists": true,
+  "ordinary_status": 200,
+  "ordinary_has_focus_field": false,
+  "focused_status": 400,
+  "focused_error": {
+    "code": "VALIDATION_ERROR",
+    "message": "本阶段不支持 focus_thread_id，请去掉该参数读取空间上下文。",
+    "retryable": false
+  },
+  "credentials_persisted": false
+}

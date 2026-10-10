@@ -1,0 +1,153 @@
+import {afterEach,expect,it,vi} from 'vitest';
+import Database from 'better-sqlite3';
+import {mkdtemp,rm,readdir,writeFile,readFile} from 'node:fs/promises';
+import path from 'node:path';
+import {tmpdir} from 'node:os';
+import {randomBytes} from 'node:crypto';
+import {request as httpRequest,createServer,type IncomingHttpHeaders} from 'node:http';
+import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
+import {AuthService,CryptoHasher,CryptoIdGenerator,IdempotencyService,PostService,RedactionService,type BlobStorePort} from '@detuned/core';
+import {buildApp} from '@detuned/server';
+import {ArtifactFileStore} from '../../packages/server/src/artifact-files.js';
+import {DetunedClient,ClientProtocolError,UserAbortError} from '@detuned/client';
+import type {ReviewPolicy,ReviewRequestView,CreateReviewSubmission,CreateReviewRequest} from '@detuned/protocol';
+
+import {spawn} from 'node:child_process';
+import {Client as McpClient} from '@modelcontextprotocol/sdk/client/index.js';
+import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
+import {DETUNED_TOOLS,validateToolParams,isSession,isReviewRequestView,isReviewSubmissionAcknowledgement,isReviewRequestReadView,isReviewDecisionView,isReviewStatusView,isReviewSubmissionView,isReviewSubmissionsView,isOwnReviewAssignmentView,DetunedError} from '@detuned/protocol';
+import {getMcpTools,validateMcpToolArguments} from '../../packages/mcp/src/tool-validation.js';
+import {createPiRuntime} from '../../packages/adapter-pi/src/runtime.js';
+
+const cleanups:Array<()=>Promise<void>>=[];
+afterEach(async()=>{vi.restoreAllMocks();while(cleanups.length)await cleanups.pop()!();});
+class Clock {value=Date.parse('2026-10-09T12:00:00.000Z');now(){return new Date(this.value);}nowIso(){return this.now().toISOString();}tick(){this.value+=1000;}}
+const policy:ReviewPolicy={enabled:true,required_reviewers:2,exclude_contributors:true,distinct_actors:true,distinct_independence_groups:true,seal_until_all_submitted:true,invalidate_on_revision:true,required_checks:[],allow_open_objections:false};
+const tables=['artifacts','snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions','review_decisions','events','idempotency_records'];
+interface Wire {status:number;headers:IncomingHttpHeaders;body:unknown}
+const object=(v:unknown):Record<string,unknown>=>{if(!v||typeof v!=='object'||Array.isArray(v))throw new Error('Owned HTTP fixture object absent.');return v as Record<string,unknown>;};
+const text=(v:unknown):string=>{if(typeof v!=='string')throw new Error('Owned HTTP fixture string absent.');return v;};
+const data=(r:Wire)=>object(object(r.body).data);
+const code=(r:Wire)=>object(object(r.body).error).code;
+async function error(run:()=>Promise<unknown>,expected:string,status?:number){let value:unknown;try{await run();}catch(e){value=e;}const e=value as {code?:unknown;statusCode?:unknown}|undefined;expect(e?.code).toBe(expected);if(status!==undefined)expect(e?.statusCode).toBe(status);}
+async function wire(url:string,method:string,route:string,headers:Record<string,string>={},body?:unknown):Promise<Wire>{
+ const bytes=body===undefined?undefined:JSON.stringify(body);
+ return new Promise((resolve,reject)=>{
+  const q=httpRequest(new URL(route,url),{method,headers:{...headers,...(bytes===undefined?{}:{'content-type':'application/json','content-length':String(Buffer.byteLength(bytes))})}},r=>{
+   let raw='';r.setEncoding('utf8');r.on('data',b=>{raw+=String(b);});
+   r.on('end',()=>{try{resolve({status:r.statusCode??0,headers:r.headers,body:raw?JSON.parse(raw):undefined});}catch{reject(new Error('Owned HTTP JSON decode failed.'));}});
+  });
+  q.on('error',()=>reject(new Error('Owned HTTP request failed.')));q.setTimeout(5000,()=>q.destroy());q.end(bytes);
+ });
+}
+async function fixture(override:Partial<ReviewPolicy>={},web=false){
+ const dir=await mkdtemp(path.join(tmpdir(),'detuned-review-tools-independent-')),db=new Database(path.join(dir,'forum.sqlite'));db.pragma('journal_mode=WAL');const bootstrap=bootstrapDatabase(db);if(!bootstrap.adminToken)throw new Error('Owned bootstrap unavailable.');
+ let closeApp:()=>Promise<void>=async()=>{};cleanups.push(async()=>{try{await closeApp();}finally{try{if(db.open)db.close();}finally{await rm(dir,{recursive:true,force:true});}}});
+ const storage=new SqliteStorage(db),clock=new Clock(),hasher=new CryptoHasher(),ids=new CryptoIdGenerator(),auth=new AuthService(storage,hasher,clock),idem=new IdempotencyService(storage,hasher,clock);
+ const sid='spc-http-review-owned',other='spc-http-review-other',tid='thd-http-review-owned';const actors={author:'act-http-author',one:'act-http-one',two:'act-http-two',reader:'act-http-reader',readonly:'act-http-readonly'};const tokens=new Map<string,string>();
+ for(const [name,id] of Object.entries(actors)){const token=randomBytes(32).toString('hex');tokens.set(id,token);storage.createActor({id,kind:'human',display_name:id,created_at:clock.nowIso(),disabled_at:null});storage.createCredential({id:'cred-'+id,actor_id:id,token_hash:hasher.sha256(token),allowed_space_ids:[sid,other],capabilities:name==='reader'||name==='readonly'?['read']:['read','write'],created_at:clock.nowIso(),expires_at:null,revoked_at:null});}
+ for(const s of [sid,other]){storage.createSpace({id:s,slug:s,current_revision:1,policy_revision:1,acl_epoch:1,created_at:clock.nowIso()},{space_id:s,revision:1,objective:'Synthetic real HTTP review',rules:['Owned rule'],review_policy:{...policy,...override},check_profiles:{local:{verifier_actor_ids:[actors.reader],config_sha256:'a'.repeat(64),description:'No actual receipt'}},pinned_refs:[],editor_id:actors.author,created_at:clock.nowIso()});for(const [name,id] of Object.entries(actors))storage.upsertMembership({space_id:s,actor_id:id,role:name==='author'?'owner':'observer',active:true,reviewer_eligible:name==='one'||name==='two'||name==='readonly',independence_group:'group-'+name});}
+ storage.createThread({id:tid,space_id:sid,title:'HTTP research fixture',version:1,state:'open',creator_id:actors.author,created_at:clock.nowIso(),updated_at:clock.nowIso()});
+ const context=(actor=actors.author)=>auth.authenticateToken(tokens.get(actor)!);const posts=new PostService(storage,ids,clock,hasher,auth,idem),redact=new RedactionService(storage,ids,clock,auth,idem);
+ const target=posts.createPost(context(),sid,tid,{kind:'claim',title:'HTTP owned target',summary:'Owned claim',body:'Owned public research body',structured:{statement:'Claim for independent HTTP verification',assumptions:['Synthetic'],scope:'local',falsification_plan:'counterexample'}},'owned-target').post;
+ const blobs=await ArtifactFileStore.create(dir);let observe:(()=>void)|undefined;
+ const port:BlobStorePort={stage:async(chunks,max,signal)=>{observe?.();observe=undefined;return blobs.stage(chunks,max,signal);},publish:(s,k)=>blobs.publish(s,k),discardStage:s=>blobs.discardStage(s),discardPublished:k=>blobs.discardPublished(k),exists:k=>blobs.exists(k),open:k=>blobs.open(k)};
+ const requests:Array<{method:string;path:string}>=[];const opts={storage,clock,artifactBlobs:port};let app=buildApp(opts);app.addHook('onRequest',async q=>{requests.push({method:q.method,path:q.url.split('?')[0]!});});closeApp=()=>app.close();await app.listen({host:'127.0.0.1',port:0});let address=app.server.address();if(!address||typeof address==='string')throw new Error('Owned listener absent.');const url='http://127.0.0.1:'+address.port;
+ if(web){await app.close();app=buildApp({...opts,webOrigin:url,allowInsecureLoopback:true});await app.listen({host:'127.0.0.1',port:address.port});}
+ const client=(actor=actors.author)=>new DetunedClient({baseUrl:url,token:tokens.get(actor),timeoutMs:5000});const admin=new DetunedClient({baseUrl:url,token:bootstrap.adminToken,timeoutMs:5000});
+ const requestBody:CreateReviewRequest={target_ref:{post_id:target.id,revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:[actors.one,actors.two],expected_policy_revision:1,reproduction_instructions:'Owned independent HTTP recipe'};
+ const make=()=>client().createReviewRequest(sid,requestBody,'request-create');
+ const counts=()=>Object.fromEntries(tables.map(t=>[t,(db.prepare('SELECT count(*) n FROM '+t).get() as {n:number}).n]));
+ const revision=()=>posts.createRevision(context(),sid,target.id,{expected_revision:1,title:'Changed HTTP target',summary:'Changed',body:'Changed real material',structured:storage.getPostRevision(target.id,1)!.structured},'owned-revision');
+ const member=(actor:string,active:boolean)=>storage.upsertMembership({...storage.getMembership(sid,actor)!,active});
+ const prepare=async(r:ReviewRequestView,actor:string,refs:CreateReviewSubmission['evidence_refs']=[])=>{clock.tick();const s=await client(actor).createSession(sid,{client_name:'independent-http',client_version:'1'});return {snapshot_sha256:r.snapshot_sha256,reviewer_session_id:s.data.id,completion_status:'complete',verdict:'accept',coverage:'Full synthetic coverage',checks_performed:'No external check receipt',evidence_refs:refs,pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'Separate ordinary group'}} satisfies CreateReviewSubmission;};
+ const submit=async(r:ReviewRequestView,actor:string,refs:CreateReviewSubmission['evidence_refs']=[])=>client(actor).submitReview(sid,r.id,await prepare(r,actor,refs),'submit-'+actor);
+ const reveal=async(r:ReviewRequestView)=>{await submit(r,actors.one);await submit(r,actors.two);};
+ const raw=(actor:string|undefined,method:string,route:string,body?:unknown,headers:Record<string,string>={})=>wire(url,method,route,{...(actor?{authorization:'Bearer '+tokens.get(actor)}:{}),...headers},body);
+ const artifactFiles=async()=>({stage:await readdir(path.join(dir,'artifacts/staging')),objects:await readdir(path.join(dir,'artifacts/objects'))});
+ return {requests,dir,db,storage,clock,hasher,sid,other,tid,actors,tokens,context,posts,redact,target,app,url,client,admin,requestBody,make,counts,revision,member,prepare,submit,reveal,raw,artifactFiles,watchStage:()=>new Promise<void>(resolve=>{observe=resolve;})};
+}
+type Fixture=Awaited<ReturnType<typeof fixture>>;
+const route=(f:Fixture,id:string,suffix='')=>`/api/v1/spaces/${f.sid}/review-requests/${id}${suffix}`;
+
+function checked<T>(value:unknown,guard:(value:unknown)=>value is T):T{if(!guard(value))throw Error('Owned tool result failed strict fixture guard.');return value;}
+function decoded(value:unknown):unknown{return object(object(value).structuredContent).result;}
+function codeOf(error:unknown):unknown{return error instanceof Error&&'code' in error?error.code:undefined;}
+async function failure(action:()=>Promise<unknown>){try{await action();return undefined;}catch(e){return e;}}
+async function nativeBridge(f:Fixture,actor:string,mode:'flat'|'wrapped'='flat'){
+ const file=path.join(f.dir,'stdio-'+actor+'-'+mode);await writeFile(file,f.tokens.get(actor)!,{mode:0o600});const transport=new StdioClientTransport({command:process.execPath,args:['packages/mcp/dist/index.js'],env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',DETUNED_BASE_URL:f.url,DETUNED_TOKEN_FILE:file,DETUNED_MCP_INPUT_MODE:mode},stderr:'pipe'});
+ let stderr='';transport.stderr?.on('data',x=>{stderr+=String(x);});const sdk=new McpClient({name:'owned-review-independent',version:'1'},{capabilities:{}});cleanups.push(async()=>{await sdk.close();expect(stderr).toBe('');});await sdk.connect(transport);
+ return{sdk,call:async(name:string,input:Record<string,unknown>)=>sdk.callTool({name,arguments:mode==='flat'?input:{input}})};
+}
+const sessionArgs=(f:Fixture,id:string)=>({space_id:f.sid,op:'create_session',request_id:id,client_name:'explicit-review',client_version:'1'});
+const submitBody=(r:ReviewRequestView,session:string):CreateReviewSubmission=>({snapshot_sha256:r.snapshot_sha256,reviewer_session_id:session,completion_status:'complete',verdict:'accept',coverage:'Independent bounded source check',checks_performed:'No external receipt claimed',evidence_refs:[],pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'Independent ordinary actor group'}});
+const samples:Record<string,Record<string,unknown>>={forum_context:{space_id:'s'},forum_search:{space_id:'s',q:'study'},forum_read:{space_id:'s',kind:'post_revision',id:'p',revision:1},forum_publish:{space_id:'s',op:'thread',title:'T',request_key:'k'},forum_relate:{space_id:'s',op:'create',source_ref:{post_id:'p',revision:1},target_ref:{post_id:'q',revision:1},type:'cites',request_key:'k'},forum_subscribe:{space_id:'s',consumer_key:'c',start:'beginning',request_key:'k'},forum_poll:{space_id:'s',consumer_id:'c',wait_ms:0},forum_ack:{space_id:'s',consumer_id:'c',batch_id:'b',next_cursor:'opaque'},forum_review:{space_id:'s',op:'create_session',request_id:'r',client_name:'review',client_version:'1'}};
+
+it('DT01 nine complete flat/wrapped schemas and canonical client/MCP/Pi rejection precede all diagnostic HTTP',async()=>{
+ const f=await fixture();const runtime=createPiRuntime({snapshot:()=>({baseUrl:f.url,environmentToken:f.tokens.get(f.actors.one)})});cleanups.push(()=>runtime.close());
+ expect(DETUNED_TOOLS.map(t=>t.name)).toEqual(Object.keys(samples));expect(getMcpTools()).toHaveLength(9);expect(getMcpTools('wrapped')).toHaveLength(9);
+ const bad:Array<{name:string;input:Record<string,unknown>}>=[];
+ for(const tool of DETUNED_TOOLS){const input=samples[tool.name];if(!input)throw Error('Owned canonical sample missing.');const before=JSON.stringify(input);expect(validateToolParams(tool.name,input)).toBe(true);expect(validateMcpToolArguments(tool.name,input)).toBe(input);expect(validateMcpToolArguments(tool.name,{input},'wrapped')).toBe(input);expect(JSON.stringify(input)).toBe(before);expect(getMcpTools().find(t=>t.name===tool.name)!.inputSchema).toBe(tool.schema);expect(getMcpTools('wrapped').find(t=>t.name===tool.name)!.inputSchema).toEqual({type:'object',properties:{input:tool.schema},required:['input'],additionalProperties:false});bad.push({name:tool.name,input:{...input,space_id:7}},{name:tool.name,input:{...input,PRIVATE_TOOL_MARKER:true}});}
+ bad.push({name:'forum_review',input:{...samples.forum_review,request_key:'PRIVATE_TOOL_MARKER'}},{name:'forum_review',input:{...samples.forum_review,actor_id:'PRIVATE_TOOL_MARKER'}},{name:'forum_review',input:{...samples.forum_review,metadata:{}}},{name:'forum_review',input:{...samples.forum_review,op:'PRIVATE_TOOL_MARKER'}},{name:'forum_subscribe',input:{space_id:f.sid,consumer_key:'x',request_key:'k',start:'context_checkpoint'}},{name:'forum_subscribe',input:{space_id:f.sid,consumer_key:'x',request_key:'k',start:'now',checkpoint_token:'PRIVATE_TOOL_MARKER'}});
+ const start=f.requests.length;for(const {name,input} of bad){const before=JSON.stringify(input);expect(validateToolParams(name,input)).toBe(false);for(const action of [()=>f.client().callTool(name,input),()=>runtime.tool(name,input)]){const e=await failure(action);expect(codeOf(e)).toBe('VALIDATION_ERROR');expect(e instanceof Error&&e.message.includes('PRIVATE_TOOL_MARKER')).toBe(false);}expect(JSON.stringify(input)).toBe(before);}
+ for(const mode of ['flat','wrapped'] as const){const b=await nativeBridge(f,f.actors.one,mode);expect((await b.sdk.listTools()).tools).toEqual(JSON.parse(JSON.stringify(getMcpTools(mode))));for(const {name,input} of bad){const value=await b.call(name,input);expect(object(value).isError).toBe(true);expect(object(object(value).structuredContent).error).toEqual({code:'VALIDATION_ERROR',message:'Invalid forum tool arguments.'});expect(JSON.stringify(value).includes('PRIVATE_TOOL_MARKER')).toBe(false);}const mismatch=await b.sdk.callTool({name:'forum_review',arguments:mode==='flat'?{input:samples.forum_review}:samples.forum_review});expect(object(mismatch).isError).toBe(true);}
+ expect(f.requests.length).toBe(start);expect(f.db.prepare('SELECT count(*) n FROM sessions').get()).toEqual({n:0});
+},30000);
+
+it('DT02 actual stdio two-actor review pipeline keeps diagnostic binding separate, seals independently and replays immutable outcomes',async()=>{
+ const f=await fixture(),author=await nativeBridge(f,f.actors.author),one=await nativeBridge(f,f.actors.one,'wrapped'),two=await nativeBridge(f,f.actors.two);
+ const req={space_id:f.sid,op:'request',request_key:'tool-request',...f.requestBody};const r=checked(decoded(await author.call('forum_review',req)),isReviewRequestView);expect(Object.hasOwn(r,'submitted_count')).toBe(false);
+ expect(checked(decoded(await one.call('forum_read',{space_id:f.sid,kind:'review_assignment',id:r.id})),isOwnReviewAssignmentView).reviewer_actor_id).toBe(f.actors.one);
+ expect(object(decoded(await one.call('forum_read',{space_id:f.sid,kind:'review_snapshot',id:r.snapshot_id}))).manifest_sha256).toBe(r.snapshot_sha256);
+ f.clock.tick();const s1=checked(decoded(await one.call('forum_review',sessionArgs(f,r.id))),isSession);expect(s1.actor_id).toBe(f.actors.one);
+ const diag=f.db.prepare('SELECT id FROM sessions WHERE actor_id=? AND client_name=?').all(f.actors.one,'detuned-mcp');expect(diag).toHaveLength(1);expect(text(object(diag[0]).id)===s1.id).toBe(false);
+ const a1=checked(decoded(await one.call('forum_review',{space_id:f.sid,op:'submit',request_id:r.id,request_key:'review-one',...submitBody(r,s1.id)})),isReviewSubmissionAcknowledgement);
+ expect(checked(decoded(await one.call('forum_read',{space_id:f.sid,kind:'review_submission',id:a1.submission_id})),isReviewSubmissionView).revealed_at).toBeNull();
+ expect(checked(decoded(await two.call('forum_read',{space_id:f.sid,kind:'review_submissions',id:r.id})),isReviewSubmissionsView).submissions).toEqual([]);
+ const head1=checked(decoded(await author.call('forum_read',{space_id:f.sid,kind:'review_request',id:r.id})),isReviewRequestReadView);expect(head1).toMatchObject({submitted_count:1,changed_by:null});
+ f.clock.tick();const s2=checked(decoded(await two.call('forum_review',sessionArgs(f,r.id))),isSession);expect(s2.actor_id).toBe(f.actors.two);expect(s2.actor_id===s1.actor_id).toBe(false);
+ checked(decoded(await two.call('forum_review',{space_id:f.sid,op:'submit',request_id:r.id,request_key:'review-two',...submitBody(r,s2.id)})),isReviewSubmissionAcknowledgement);
+ const list=checked(decoded(await author.call('forum_read',{space_id:f.sid,kind:'review_submissions',id:r.id})),isReviewSubmissionsView);expect(list.submissions.map(x=>x.reviewer_actor_id)).toEqual([f.actors.one,f.actors.two]);expect(list.submissions.every(x=>x.revealed_at!==null)).toBe(true);
+ const head=checked(decoded(await author.call('forum_read',{space_id:f.sid,kind:'review_request',id:r.id})),isReviewRequestReadView);const finalize={space_id:f.sid,op:'finalize',request_id:r.id,expected_version:head.version,request_key:'tool-finalize'};const decision=checked(decoded(await author.call('forum_review',finalize)),isReviewDecisionView);expect(decision.outcome).toBe('accepted');expect(checked(decoded(await author.call('forum_read',{space_id:f.sid,kind:'review_decision',id:r.id})),isReviewDecisionView)).toEqual(decision);expect(checked(decoded(await author.call('forum_read',{space_id:f.sid,kind:'review_status',id:r.id})),isReviewStatusView).verification_status).toBe('not_required');
+ const before=f.counts();expect(decoded(await author.call('forum_review',req))).toEqual(r);expect(decoded(await author.call('forum_review',finalize))).toEqual(decision);expect(f.counts()).toEqual(before);
+ expect(f.db.prepare('SELECT count(*) n FROM sessions WHERE actor_id=?').get(f.actors.one)).toEqual({n:2});expect(f.db.prepare('SELECT count(*) n FROM sessions WHERE actor_id=?').get(f.actors.two)).toEqual({n:2});expect(f.requests.filter(x=>x.path.endsWith('/ack'))).toEqual([]);
+ const cancelRequest=checked(await f.client().callTool('forum_review',{...req,request_key:'cancel-round'}),isReviewRequestView);const cancelled=checked(await f.client().callTool('forum_review',{space_id:f.sid,op:'cancel',request_id:cancelRequest.id,expected_version:1,reason:'Owned tool cancellation',request_key:'tool-cancel'}),isReviewRequestView);expect(cancelled.phase).toBe('cancelled');
+},30000);
+
+it('DT03 observable credential changes reject before Session POST; post-inflight change and cancellation never fake binding or retry',async()=>{
+ const f=await fixture(),r=await f.make();
+ for(const point of ['assignment','session','abort'] as const){const client=f.client(f.actors.one),args=sessionArgs(f,r.id),real=globalThis.fetch;let enter!:()=>void,release!:()=>void;const entered=new Promise<void>(resolve=>enter=resolve),released=new Promise<void>(resolve=>release=resolve);let held=false;
+  const spy=vi.spyOn(globalThis,'fetch').mockImplementation(async(...params:Parameters<typeof fetch>)=>{const response=await real(...params);const pathname=new URL(String(params[0])).pathname;const matched=point==='session'?pathname.endsWith('/sessions'):pathname.endsWith('/assignment');if(matched&&!held){held=true;enter();await released;}return response;});
+  const controller=new AbortController(),before=f.requests.filter(x=>x.method==='POST'&&x.path.endsWith('/sessions')).length;const task=client.callTool('forum_review',args,{signal:controller.signal});const observed=task.then(value=>({value,error:undefined}),error=>({value:undefined,error}));await Promise.race([entered,observed.then(()=>{if(!held)throw Error('Owned assignment barrier was not reached.');})]);
+  if(point==='abort')controller.abort();else client.setToken(f.tokens.get(f.actors.two)!);release();const result=await observed;spy.mockRestore();const delta=f.requests.filter(x=>x.method==='POST'&&x.path.endsWith('/sessions')).length-before;
+  console.info(JSON.stringify({checkpoint:'DT03-'+point,session_post_delta:delta,error_name:result.error instanceof Error?result.error.name:undefined,error_code:codeOf(result.error),returned_session:result.value!==undefined}));
+  expect(result.value).toBeUndefined();if(point!=='abort')expect(codeOf(result.error)).toBe('IDENTITY_CHANGED');else expect(result.error instanceof Error).toBe(true);expect(delta).toBe(point==='session'?1:0);
+ }
+ const before=f.requests.filter(x=>x.path.endsWith('/sessions')).length;const good=checked(await f.client(f.actors.one).callTool('forum_review',sessionArgs(f,r.id)),isSession);expect(good.actor_id).toBe(f.actors.one);expect(f.requests.filter(x=>x.path.endsWith('/sessions')).length-before).toBe(1);
+},30000);
+
+it('DT04 current ACL precedes history and new sessions cannot fill slots; readonly/admin/nonreviewers cannot see others sealed',async()=>{
+ const f=await fixture(),r=await f.make(),one=f.client(f.actors.one);f.clock.tick();const session=checked(await one.callTool('forum_review',sessionArgs(f,r.id)),isSession);const a=checked(await one.callTool('forum_review',{space_id:f.sid,op:'submit',request_id:r.id,request_key:'sealed-one',...submitBody(r,session.id)}),isReviewSubmissionAcknowledgement);const head=await f.client().getReviewRequest(f.sid,r.id);expect(head.submitted_count).toBe(1);
+ f.clock.tick();const duplicate=checked(await one.callTool('forum_review',sessionArgs(f,r.id)),isSession);const before=f.counts();const e=await failure(()=>one.callTool('forum_review',{space_id:f.sid,op:'submit',request_id:r.id,request_key:'same-actor-another-session',...submitBody(r,duplicate.id)}));expect(e instanceof DetunedError&&e.statusCode===409).toBe(true);expect(f.counts()).toEqual(before);expect((await f.client().getReviewRequest(f.sid,r.id)).submitted_count).toBe(1);
+ for(const client of [f.admin,f.client(f.actors.reader),f.client(f.actors.two)]){expect(checked(await client.callTool('forum_read',{space_id:f.sid,kind:'review_submissions',id:r.id}),isReviewSubmissionsView).submissions).toEqual([]);const hidden=await failure(()=>client.callTool('forum_read',{space_id:f.sid,kind:'review_submission',id:a.submission_id}));expect(hidden instanceof DetunedError&&hidden.code==='NOT_FOUND'&&hidden.statusCode===404).toBe(true);}
+ const readonlyToken=randomBytes(32).toString('hex');f.storage.createCredential({id:'cred-owned-readonly-one',actor_id:f.actors.one,token_hash:f.hasher.sha256(readonlyToken),allowed_space_ids:[f.sid],capabilities:['read'],created_at:f.clock.nowIso(),expires_at:null,revoked_at:null});const readonly=new DetunedClient({baseUrl:f.url,token:readonlyToken});expect(checked(await readonly.callTool('forum_read',{space_id:f.sid,kind:'review_assignment',id:r.id}),isOwnReviewAssignmentView).reviewer_actor_id).toBe(f.actors.one);const denied=await failure(()=>readonly.callTool('forum_review',{space_id:f.sid,op:'submit',request_id:r.id,request_key:'readonly',...submitBody(r,duplicate.id)}));expect(denied instanceof DetunedError&&denied.statusCode===403).toBe(true);
+ f.member(f.actors.author,false);const replay=await failure(()=>f.client().callTool('forum_review',{space_id:f.sid,op:'request',request_key:'request-create',...f.requestBody}));expect(replay instanceof DetunedError&&replay.code==='NOT_FOUND'&&replay.statusCode===404).toBe(true);expect(f.counts()).toEqual(before);
+},30000);
+
+async function cli(f:Fixture,actor:string,args:string[],input=''){
+ const file=path.join(f.dir,'cli-token-'+actor);await writeFile(file,f.tokens.get(actor)!,{mode:0o600});const child=spawn(process.execPath,['packages/cli/dist/index.js','--url',f.url,'--token-file',file,'--json',...args],{env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'1'},stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stdout.setEncoding('utf8');child.stderr.setEncoding('utf8');child.stdout.on('data',x=>stdout+=x);child.stderr.on('data',x=>stderr+=x);child.stdin.on('error',()=>{});child.stdin.end(input);const timer=setTimeout(()=>child.kill('SIGKILL'),10000);const result=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>resolve({code,signal}));}).finally(()=>clearTimeout(timer));expect((stdout+stderr).includes(f.tokens.get(actor)!)).toBe(false);return{...result,stdout,stderr,pid:child.pid};
+}
+it('DT05 actual CLI processes recover private upload keys and SHA download without overwriting owned files or leaking errors',async()=>{
+ const f=await fixture(),r=await f.make(),file=path.join(f.dir,'owned-evidence.txt'),keys=path.join(f.dir,'private-keys'),bytes='Bounded private review evidence';await writeFile(file,bytes,{mode:0o600});const args=['review','artifact','upload',f.sid,r.id,file,'--mime','text/plain','--request-key-dir',keys,'--logical-operation-id','bounded-private-intent'];
+ const first=await cli(f,f.actors.one,args);expect({code:first.code,signal:first.signal}).toEqual({code:0,signal:null});const artifact=object(JSON.parse(first.stdout));const before=f.counts(),second=await cli(f,f.actors.one,args);expect(second.code).toBe(0);expect(first.pid===second.pid).toBe(false);expect(JSON.parse(second.stdout)).toEqual(artifact);expect(f.counts()).toEqual(before);
+ const output=path.join(f.dir,'owned-download');const downloaded=await cli(f,f.actors.one,['artifact','download',f.sid,text(artifact.id),'--output',output]);expect(downloaded.code).toBe(0);expect(await readFile(output,'utf8')).toBe(bytes);expect(f.hasher.sha256(await readFile(output))).toBe(artifact.sha256);const duplicate=await cli(f,f.actors.one,['artifact','download',f.sid,text(artifact.id),'--output',output]);expect(duplicate.code).toBe(2);expect(await readFile(output,'utf8')).toBe(bytes);
+ const malformed=await cli(f,f.actors.author,['review','cancel',f.sid,r.id],'{PRIVATE_INVALID_INPUT');expect(malformed.code).toBe(2);expect(malformed.stdout+malformed.stderr).not.toContain('PRIVATE_INVALID_INPUT');expect(f.counts()).toEqual(before);
+},40000);
+
+it('DT06 controlled session wire substitution is safe singleattempt while a closed Pi runtime cannot restart',async()=>{
+ const f=await fixture(),r=await f.make(),client=f.client(f.actors.one);f.clock.tick();const session=checked(await client.callTool('forum_review',sessionArgs(f,r.id)),isSession),assignment=await client.getOwnReviewAssignment(f.sid,r.id);let mode='good',posts=0;
+ const server=createServer((q,s)=>{if(q.method==='POST')posts++;q.resume();q.on('end',()=>{const data=q.url?.endsWith('/assignment')?assignment:mode==='actor'?{...session,actor_id:f.actors.two}:mode==='space'?{...session,space_id:f.other}:mode==='date'?{...session,created_at:'2026-02-30T12:00:00Z'}:session;s.setHeader('content-type','application/json');if(mode==='unavailable'&&q.method==='POST'){s.writeHead(503);s.end(JSON.stringify({api_version:'1',request_id:'controlled-session',error:{code:'INTERNAL_ERROR',message:'Controlled unavailable',retryable:true}}));}else s.end(JSON.stringify({api_version:'1',request_id:'controlled-session',data}));});});await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));const addr=server.address();if(!addr||typeof addr==='string')throw Error('Owned controlled listener missing.');const transport=new DetunedClient({baseUrl:'http://127.0.0.1:'+addr.port,timeoutMs:5000});
+ try{expect(await transport.callTool('forum_review',sessionArgs(f,r.id))).toEqual(session);for(const bad of ['actor','space','date','unavailable']){mode=bad;const before=posts,e=await failure(()=>transport.callTool('forum_review',sessionArgs(f,r.id)));expect(e instanceof Error).toBe(true);if(bad!=='unavailable')expect(e instanceof ClientProtocolError).toBe(true);expect(posts-before).toBe(1);}}
+ finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+ const runtime=createPiRuntime({snapshot:()=>({baseUrl:f.url,environmentToken:f.tokens.get(f.actors.one)})});await runtime.close();const before=f.requests.length;expect(await failure(()=>runtime.tool('forum_review',sessionArgs(f,r.id))) instanceof UserAbortError).toBe(true);expect(f.requests.length).toBe(before);
+},30000);

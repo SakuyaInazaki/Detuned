@@ -1,0 +1,11 @@
+{
+  "root_authorized": "Optional runReviewedDemo signal only trusted in-process; CLI stays --output only.",
+  "boundary_sha256": "d094b1ba5ccca4524fc13fc0cb1edcaa3883405d85be4ff381ac256cc63aa032",
+  "requirements": [
+    "HTTP/child/IPC/ready/observe waits cancel and settle with finally cleanup",
+    "Normal actual close and lock release; after bounded grace force only owned child, never claim normal recovery",
+    "D owned 4s abort watchdog awaits settlement, default5000ms unchanged",
+    "No source/runtime dispatch expansion"
+  ],
+  "status": "source phase, no runtime"
+}

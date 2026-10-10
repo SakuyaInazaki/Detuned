@@ -1,0 +1,25 @@
+--- hash-approved-afterward-before/packages/client/src/artifact-transfer.ts
++++ current/packages/client/src/artifact-transfer.ts
+@@ -88,7 +88,7 @@
+ 
+ /** New artifact JSON transport only; old generic JSON requests keep their semantics. */
+ export async function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error): Promise<unknown> {
+-  if (!response.body) throw new ClientProtocolError('Invalid artifact JSON response.');
++  if (!response.body) throw new ClientProtocolError('Invalid JSON response.');
+   const reader = response.body.getReader();
+   const maximum = 1048576;
+   const buffer = new Uint8Array(maximum);
+@@ -97,11 +97,11 @@
+     while (true) {
+       const part = await waitForArtifact(reader.read(), signal, error);
+       if (part.done) break;
+-      if (!(part.value instanceof Uint8Array) || part.value.length > maximum - size) throw new ClientProtocolError('Artifact JSON response exceeds the client limit.');
++      if (!(part.value instanceof Uint8Array) || part.value.length > maximum - size) throw new ClientProtocolError('JSON response exceeds the client limit.');
+       buffer.set(part.value, size); size += part.value.length;
+     }
+     try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, size))); }
+-    catch { throw new ClientProtocolError('Invalid artifact JSON response.'); }
++    catch { throw new ClientProtocolError('Invalid JSON response.'); }
+   } finally {
+     void reader.cancel().catch(() => {});
+     try { reader.releaseLock(); } catch {}

@@ -1,0 +1,41 @@
+# M7.1-B1 public-shape facts (read-only)
+
+Root scoped next package to HTTP/shared client only: eleven current domain operations plus one ordinary read-only required-latest-check directory. CLI/MCP waits B2. This note identifies actual fields/reuse/conflicts, not an implemented/public contract, selected route design, new tool count or owner dispatch. Current A frozen v3/domain and B frozen storage were only read; no runtime/gate here.
+
+## Existing eleven domain operations
+
+CheckService in packages/core/src/services/check-service.ts already has createRun(auth,spaceId,CreateCheckRun,key):CheckRunRecord; getRun(auth,spaceId,runId):CheckRunRecord; getSnapshot(auth,spaceId,runId): underlying readReviewSnapshotRecords object; getPostRevision(auth,spaceId,runId,postId,revision):PostRevision; issueCredential(auth,spaceId,runId,ttlSeconds=3600):{credential_id,token,expires_at}; submitReceipt(auth,spaceId,runId,SubmitCheckReceipt,key):CheckReceiptRecord; getReceipt(auth,spaceId,runId):CheckReceiptRecord; invalidateRun(auth,spaceId,runId,InvalidateCheckRun,key):CheckRunRecord. ArtifactService has createForCheck(auth,spaceId,runId,CreateArtifactInput,key):Promise<ArtifactMetadata>, getCheckMetadata(auth,spaceId,runId,id):Promise<ArtifactMetadata>, getCheckContent(...):Promise<ArtifactContent>. authorizeCheckUpload is existing authorization helper, not a twelfth transport operation.
+
+## Internal field inventory and whitelist candidates
+
+Internal CheckRunRecord fields: id, request_id, snapshot_id, snapshot_sha256, check_name, attempt, verifier_actor_id, check_config_sha256, created_request_version, state, version, created_by, created_at, changed_by, changed_at, invalidation_reason. No token/hash/credential binding in the record. A plausible public allowlist is those identity/frozen hash/state/attempt/version/audit fields except created_request_version, which records an internal concurrency cause. Public scope space_id is not stored in run: it must be derived from the already-bound request/explicit authorized context if a DTO requires it. These are candidates, not root-final shape. No run history array or observed_request_version exposure implied.
+
+Internal CheckReceiptRecord is exact SubmitCheckReceipt input (receipt_id, observed_snapshot_sha256, observed_check_config_sha256, result, environment, tool_versions, execution_steps, started_at, finished_at, exit_code, logs_artifact_id) plus check_run_id, verifier_actor_id, received_at, run_version. This is a candidate full execution-report allowlist, not permission to expose credential or storage locators. SubmitCheckReceipt already rejects unknown keys, invalid ISO/order/pass exit, nonfinite integer, bound strings/map/JSON65536bytes. Current input parser should be reused rather than recreated by transport. Strict targeted read guard must bind actual request/run/space/revision and canonical dates/field whitelist; internal interfaces alone are not existing public guard schemas.
+
+CheckRunCredentialRecord {credential_id,check_run_id,created_at} is internal binding history, not run DTO payload. Issue response already returns only credential_id/token/expires_at once; privileged operation has no idempotency key and must use retryBudget0, as root scope requires. Ordinary MCP must not advertise this operation.
+
+## Exact existing fixed-material DTO reuse
+
+ReviewSnapshotViewSchema in protocol/review.ts is strict public {snapshot_id,space_id,manifest_sha256,manifest,created_by,created_at}. modules/review/request-service.ts getSnapshot projects readReviewSnapshotRecords {record,manifest,items}; it also checks canonical manifest hash. CheckService.getSnapshot currently returns the underlying records object, so a thin public projection is required to reuse the public schema/targeted guard; serializing internal record/items as that DTO is incorrect. Reusing module service getSnapshot directly would invoke ordinary ACL and reject verify, so reuse schema/projection facts rather than bypassing run authorization.
+
+CheckService.getPostRevision only allows exact target/dependency ref from fixed manifest and returns stored PostRevision. protocol/posts.ts PostRevisionSchema is exact post_id,revision,title,summary,body,tags,structured,content_hash,editor_id,created_at. It has no space_id or post_kind. Existing PostRevisionContentPage is a distinct whole/chunked ordinary reader with ref/post_kind/meta, not identical to this stored full revision return. A targeted transport guard must bind post_id/revision to requested fixed ref; no declared automatic cursor/chunk equivalence or new material source.
+
+## Canonical log URL conflict
+
+A v3 correctly uses protocol toArtifactMetadata for domain create/read/replay. Its strict ordinary metadata fields include canonical content_url `/api/v1/spaces/<encodedSpace>/artifacts/<encodedArtifact>/content`. That generic handler calls ordinary artifact permission and intentionally denies verify credentials. Returning it unchanged as the actionable verifier log/material download URL creates an unusable link, even though CheckService/ArtifactService scoped run reads work. Root requires a scoped readable URL projection and guard, without broadening generic artifact ACL. HTTP-only projection must retain run/space/artifact binding, encoded IDs and strict expected URL shape; it must not contaminate domain compact idempotency/history stored result equality with a transport-only URL. Snapshot public artifact URLs need the same verifier-access consideration for declared fixed artifacts. No actual scoped route path is selected here.
+
+Existing client.downloadArtifact calls getArtifact and downloads the generic path via artifact-transfer.ts. It cannot be called unchanged for verify scoped logs; file hashing/bytes/cancel/no-overwrite mechanics may be reusable after supplying scoped metadata/content transport, without assuming the generic URL is allowed.
+
+## Required latest directory, no new storage port needed
+
+core/check-records.ts readRequiredCheckFacts(storage,spaceId,requestId) already reads exact frozen manifest.required_checks in order and invokes findLatestCheckRun(requestId,name); returns checks[{name,run:null|CheckRunRecord,receipt:null|CheckReceiptRecord}] plus verification_status. Frozen names max32; missing run is already explicit null. Receipt internal content should not be accidentally emitted by a directory that only needs current run/receipt IDs and selected status facts. A new ordinary read-only core entry could refresh ordinary observer/read ACL, hold one readSnapshot and project these facts. verify must be rejected before directory/request discovery; current getRun does not provide a directory.
+
+Storage already has findLatestCheckRun, findCheckReceiptByRunId and intrinsic readers. No all-attempt listing or extra port/table is needed for this bounded required-only directory. Selection and status formulas remain core, not route/client, and no defaults replace frozen required names.
+
+## Client prevalidation/key and impact contacts
+
+Direct DetunedClient constructor/request do not getMe. prepareWriteKey invokes getMe only for logicalOperationId+persistent key storage, which verify must not use. Per root, new receipt/log methods support explicit key or per-invocation generated key only; runtime supplied logicalOperationId must be rejected with zeroHTTP before file snapshot/network/identity discovery, even if TypeScript options omit that field. Do not fix it by allowing getMe or preparing a forum session. Issue must reject/omit idempotency key and never retry.
+
+Minimal structural contacts: protocol/review.ts (public DTO schemas), response-guards.ts (targeted whitelist/binding), openapi.ts (final operation/component construction); server/app.ts (service/plugin registration), current routes/reviews.ts convention and artifacts.ts bounded multipart/stream engine plus the root-selected check route plugin; client/client.ts and artifact-transfer.ts for scoped strict transport/key/stream operations. CheckService may need only the ordinary directory entry; existing eleven domain methods remain thin business calls. No CLI/tool/adapter or ordinary session-binding change is authorized by B1 facts.
+
+Current gate work takes priority. This document makes no new passing/host/model/browser claim and does not modify current product.

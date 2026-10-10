@@ -1,0 +1,35 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-backup-cli.test.ts > M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config
+AssertionError: expected { …(5) } to match object { …(4) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "artifact_count": 0,
+-   "backup_dir": "/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-cli-aYZ9Zp/backup",
++   "backup_dir": "/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-cli-aYZ9Zp/backup",
+    "schema_version": 2,
+    "version": 1,
+  }
+
+ ❯ tests/contracts/m3-backup-cli.test.ts:46:21
+     44|     const saved = await cli(['backup', '--offline', '--data-dir', sour…
+     45|     expect(saved.code, saved.stdout + saved.stderr).toBe(0); const sum…
+     46|     expect(summary).toMatchObject({ backup_dir: path.join(await realpa…
+       |                     ^
+     47|     const manifestBytes = await readFile(path.join(backup, 'backup-man…
+     48|     const recovery = await cli(['restore', '--backup', backup, '--data…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m3-backup-recovery-independent.test.ts > M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup
+SqliteError: UNIQUE constraint failed: memberships.space_id, memberships.actor_id
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts:39:960
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

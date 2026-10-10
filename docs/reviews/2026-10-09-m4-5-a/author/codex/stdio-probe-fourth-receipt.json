@@ -1,0 +1,32 @@
+{
+  "owned": "/private/tmp/detuned-codex-stdio-enSO7F",
+  "guard": {
+    "exit": 0,
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "rpc": [],
+  "children": [
+    {
+      "pid": 73599,
+      "code": 0,
+      "signal": null
+    },
+    {
+      "pid": 73600,
+      "code": 1,
+      "signal": null
+    }
+  ],
+  "outcome": "blocked_or_rpc_failed",
+  "guardRaw": {
+    "stdout": "{\"allowed\":\"allowed\",\"forbidden\":\"EPERM\",\"sentinel\":\"EPERM\"}\n",
+    "stderr": ""
+  },
+  "overrides": {
+    "sqlite_home": "<owned>/state",
+    "log_dir": "<owned>/logs"
+  },
+  "stderr": "WARNING: proceeding, even though we could not create PATH aliases: File exists (os error 17)\n\u001b[2m2026-10-08T18:58:41.523782Z\u001b[0m \u001b[31mERROR\u001b[0m \u001b[2mcodex_app_server\u001b[0m\u001b[2m:\u001b[0m Invalid configuration; using defaults. Failed to read config file /Users/sakimi/.codex/config.toml: Operation not permitted (os error 1)\nError: File exists (os error 17)\n"
+}

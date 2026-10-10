@@ -1,0 +1,156 @@
+{
+  "status": "optional Codex native compatibility failure safely stopped; root final acceptance/metadata/seal pending",
+  "source_sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99",
+  "gates": {
+    "syntax_original": [
+      {
+        "command": [
+          "node",
+          "--check",
+          "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+        ],
+        "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+        "exit_code": 0,
+        "elapsed_seconds": 0.047657082992373034
+      },
+      {
+        "command": [
+          "node",
+          "--check",
+          "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only.mjs"
+        ],
+        "source_sha256": "6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256",
+        "exit_code": 0,
+        "elapsed_seconds": 0.040467375016305596
+      },
+      {
+        "command": [
+          "node",
+          "--check",
+          "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs"
+        ],
+        "source_sha256": "76ca9228648d955255c683b3f0ff89bc8038a1afd350dd58e4e0bac901c40825",
+        "exit_code": 0,
+        "elapsed_seconds": 0.04020658400258981
+      }
+    ],
+    "independent_guard": {
+      "command": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only.mjs",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only-result.json"
+      ],
+      "sandbox_mode": "require_escalated",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6252795830077957
+    },
+    "controlled_reject": {
+      "command": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-reject-first-result.json",
+        "--mode",
+        "reject-worker"
+      ],
+      "sandbox_mode": "require_escalated",
+      "exit_code": 0,
+      "elapsed_seconds": 0.5666907499835361
+    },
+    "syntax_v2": [
+      {
+        "command": [
+          "node",
+          "--check",
+          "/Users/sakimi/Desktop/Detuned/scripts/integrations/codex-check-probe.mjs"
+        ],
+        "source_sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99",
+        "exit_code": 0,
+        "elapsed_seconds": 0.05461604200536385
+      },
+      {
+        "command": [
+          "node",
+          "--check",
+          "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs"
+        ],
+        "source_sha256": "6fc4094bb6eaaf161baed7f87db5146880400018951ae486c0300b9a1ef819f5",
+        "exit_code": 0,
+        "elapsed_seconds": 0.040535459003876895
+      }
+    ],
+    "native_first": {
+      "command": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-native-first-result.json"
+      ],
+      "sandbox_mode": "require_escalated",
+      "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+      "binary_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff",
+      "exit_code": 1,
+      "elapsed_seconds": 1.0146453750203364
+    },
+    "native_v2": {
+      "command": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-native-v2-result.json"
+      ],
+      "sandbox_mode": "require_escalated",
+      "source_sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99",
+      "capture_sha256": "6fc4094bb6eaaf161baed7f87db5146880400018951ae486c0300b9a1ef819f5",
+      "exit_code": 1,
+      "elapsed_seconds": 4.335381583019625
+    }
+  },
+  "guard_actual_pass": true,
+  "controlled_expected_failure_verified": true,
+  "reject_producer_status": "failed",
+  "reject_driver_exit": 1,
+  "normal_native_pass": false,
+  "native_attempts": 2,
+  "native_v2_failure": "mcp_same_worker_group=false at group-match; not registered/acknowledged; strict group requirement retained",
+  "v2_candidate_coverage_verified": true,
+  "v2_registered_candidate_absence_verified": true,
+  "first_unregistered_candidate_cleanup_not_verified": true,
+  "historical_reuse_only": {
+    "M7_4_A_core": {
+      "tests": 967,
+      "files": 155
+    },
+    "M7_4_B_focused": {
+      "tests": 23,
+      "files": 5
+    },
+    "M7_4_B_docs_smoke": "accepted bounded run, not C execution"
+  },
+  "C_not_run": [
+    "build",
+    "core/full",
+    "type",
+    "lint",
+    "schema",
+    "current28",
+    "current29",
+    "prompt",
+    "turn/start",
+    "model",
+    "account/login"
+  ],
+  "current_source_count": 434,
+  "dist_count": 555,
+  "nonowner_drift": 0,
+  "integrity_sha256": "a16f13600255c931578d021d23ec96b5f3a8a2d6306da767d687ec866a6bf083",
+  "evidence": {
+    "codex-guard-only-result.json": "2c9c83f263e6df91d999207d960e5b04080f3e8ae6c79a98551b72e20786b976",
+    "codex-reject-first-result.json": "c5d4e9c8e91463558671b7bef86faf4dba67ec46241d15f61eb2e6f1b022511c",
+    "codex-reject-first-result.json.capture.json": "8739bf745c80975fe85472708d03e1450d18ad5b15ac9e146b7a18f72307b930",
+    "codex-native-first-result.json": "55d10333e2940d70793adac6dad0a2fc9ce2983748b01b44670db93b2eaa8fb7",
+    "codex-native-first-result.json.capture.json": "eea32a87516d447edbe8c6cb9c9117f61434e9d8011afabf724909914a1520fb",
+    "codex-native-v2-result.json": "848faee98c58026622e556c96cc8c1bd8882bc4b517901b730a41adbf94c8ecb",
+    "codex-native-v2-result.json.capture.json": "0b4f785afc8c1649e47d6d43ce106784619b8101b429875860173c8ac55388c4"
+  }
+}

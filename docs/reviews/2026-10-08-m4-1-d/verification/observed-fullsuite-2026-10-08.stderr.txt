@@ -1,0 +1,433 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 42 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-backup-cli.test.ts > M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config
+Error: CLI deadline exceeded
+ ❯ Timeout._onTimeout tests/contracts/m3-backup-cli.test.ts:24:70
+     22|     return new Promise<{ code: number | null; stdout: string; stderr: …
+     23|       const child = launch(['--json', ...args]); let stdout = '', stde…
+     24|       const timer = setTimeout(() => { child.kill('SIGKILL'); reject(n…
+       |                                                                      ^
+     25|       child.stdout.on('data', s => { stdout += s; }); child.stderr.on(…
+     26|       child.once('error', e => { clearTimeout(timer); reject(e); }); c…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/43]⎯
+
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E01: legal positive wait actually waits at an empty consumer without creating or acknowledging a batch
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/contracts/m3-events-contract.test.ts:20:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/43]⎯
+
+ FAIL  tests/contracts/m3-logical-import-contract.test.ts > M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-logical-import-contract.test.ts:46:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/43]⎯
+
+ FAIL  tests/contracts/m3-operations-contract.test.ts > OP B01: anonymous strict health and authenticated administrator diagnostics have single source shapes
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-operations-contract.test.ts:10:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/43]⎯
+
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-request-key-cli.test.ts:85:3
+     83|     expect(writes).toBe(0); expect(await readdir(directory)).toEqual([…
+     84|   }, 30_000);
+     85|   it('KCLI04: old explicit keys preserve precedence and no optional st…
+       |   ^
+     86|     const first = await ok('publish', 'thread', { title: 'old', reques…
+     87|     expect((await ok('publish', 'thread', { title: 'old' }, ['--reques…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/43]⎯
+
+ FAIL  tests/contracts/m3-resource-limits-contract.test.ts > RS B04: built CLI invalid resource flags precede mkdir and existing overquota rejects before listen
+Error: Test timed out in 45000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-resource-limits-contract.test.ts:35:48
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/43]⎯
+
+ FAIL  tests/contracts/m3-shutdown-contract.test.ts > SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly
+Error: Test timed out in 45000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-shutdown-contract.test.ts:15:48
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/43]⎯
+
+ FAIL  tests/contracts/m4-admin-cli.test.ts > AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m4-admin-cli.test.ts:17:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/43]⎯
+
+ FAIL  tests/contracts/m4-artifact-cli.test.ts > AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent
+Error: bounded CLI watchdog exceeded
+ ❯ Timeout.<anonymous> tests/contracts/m4-artifact-cli.test.ts:15:348
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/43]⎯
+
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits
+Error: CLI watchdog exceeded
+ ❯ Timeout._onTimeout tests/contracts/m4-read-cli-contract.test.ts:16:60
+     14|   const child=spawn(process.execPath,['packages/cli/dist/index.js','--…
+     15|   let out='',err='';child.stdout.setEncoding('utf8');child.stderr.setE…
+     16|   const timer=setTimeout(()=>{child.kill('SIGKILL');reject(new Error('…
+       |                                                            ^
+     17|   child.stdout.on('data',x=>out+=x);child.stderr.on('data',x=>err+=x);
+     18|   child.once('error',e=>{clearTimeout(timer);reject(e);});child.once('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/43]⎯
+
+ FAIL  tests/contracts/m4-write-consume-cli.test.ts > WD B02: space/thread writes preserve body/key/data and existing group reads
+Error: CLI bounded watchdog exceeded
+ ❯ Timeout.<anonymous> tests/contracts/m4-write-consume-cli.test.ts:11:474
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/43]⎯
+
+ FAIL  tests/contracts/m4-write-consume-cli.test.ts > WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP
+Error: CLI bounded watchdog exceeded
+ ❯ Timeout._onTimeout tests/contracts/m4-write-consume-cli.test.ts:11:474
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/43]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-14: Finite Retry-After positive controls: HTTP-date, invalid fallback, and date over budget (AE05)
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/contracts/r4-c-contracts.test.ts:43:3
+     41|   let client: DetunedClient;
+     42| 
+     43|   beforeEach(async () => {
+       |   ^
+     44|     db = new Database(':memory:');
+     45|     const boot = bootstrapDatabase(db);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/43]⎯
+
+ FAIL  tests/integration/m0-m1-r2-regression.test.ts > M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m0-m1-r2-regression.test.ts:402:3
+    400|   });
+    401| 
+    402|   it('CLI: post, revision, withdraw commands succeed without schema er…
+       |   ^
+    403|     const spaceRes = await send('POST', '/spaces', adminToken, { slug:…
+    404|     const spaceId = getData(spaceRes).space.id;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/43]⎯
+
+ FAIL  tests/integration/m2-artifacts-cli.test.ts > M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/integration/m2-artifacts-cli.test.ts:34:3
+     32|   let root: string;
+     33|   let children: ChildProcess[];
+     34|   beforeEach(async () => {
+       |   ^
+     35|     root = await mkdtemp(path.join(tmpdir(), 'detuned-artifacts-cli-')…
+     36|     children = [];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/43]⎯
+
+ FAIL  tests/integration/m2-artifacts-cli.test.ts > M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m2-artifacts-cli.test.ts:100:3
+     98|     expect(await readdir(root)).not.toContain('detuned.lock');
+     99|   });
+    100|   it('rejects invalid configuration before initializing artifact direc…
+       |   ^
+    101|     for (const extra of [
+    102|       ['--artifact-max-file-bytes', '26214401'], ['--artifact-max-spac…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/43]⎯
+
+ FAIL  tests/integration/m2-thread-posts-read.test.ts > M2.4-B.2.2 bounded dynamic thread posts metadata > D05: strict signed bindings reject uniformly and nonexistent after_id remains a valid keyset bound
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ tests/integration/m2-thread-posts-read.test.ts:15:3
+     13|   const ids = new CryptoIdGenerator(), clock = new SystemClock(), hash…
+     14|   const requestId = '目录"\\中🙂';
+     15|   beforeEach(() => {
+       |   ^
+     16|     db = new Database(':memory:'); storage = new SqliteStorage(db);
+     17|     const limiter = new WriteRateLimiter(clock, { per_minute: 60000, b…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/43]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-backup-recovery.test.ts:71:3
+     69|     }
+     70|   });
+     71|   it('rejects manifest shape, traversal, duplicates, wrong versions an…
+       |   ^
+     72|     const cases: ((value: BackupManifest) => void)[] = [
+     73|       value => { (value as any).extra = true; }, value => { value.vers…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/43]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects links, extra paths and checksum tampering
+Error: ENOTEMPTY: directory not empty, rmdir '/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-DhfFkh'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/43]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-backup-recovery.test.ts:135:3
+    133|     } finally { reader.exec('ROLLBACK'); reader.close(); writer.close(…
+    134|   });
+    135|   it('rejects non-current, corrupt and foreign-key-invalid source data…
+       |   ^
+    136|     for (const kind of ['future', 'legacy', 'corrupt', 'fk']) {
+    137|       const f = await fixture(); const db = new Database(path.join(f.s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/43]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-backup-recovery.test.ts:148:3
+    146|   });
+    147| 
+    148|   it('reports complete but uncertain delivery when post-unlink sync an…
+       |   ^
+    149|     const f = await fixture(); await backupOffline({ dataDir: f.source…
+    150|     const before = await readFile(path.join(f.backup, 'detuned.sqlite'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/43]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail
+Error: ENOTEMPTY: directory not empty, rmdir '/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-backup-mUq8H6'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/43]⎯
+
+ FAIL  tests/integration/m3-event-core.test.ts > M3.1 event core correctness > E04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-event-core.test.ts:17:2
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/43]⎯
+
+ FAIL  tests/integration/m3-event-recovery.test.ts > T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-event-recovery.test.ts:20:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/43]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-export-independent.test.ts:18:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/43]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m3-export-independent.test.ts:40:388
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/43]⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > represents post/artifact tombstones and converts a ready manifest to missing without files
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-logical-import.test.ts:20:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/43]⎯
+
+ FAIL  tests/integration/m3-milestone-gate.test.ts > T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-milestone-gate.test.ts:26:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/43]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-request-key-recovery.test.ts:19:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/43]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST
+Error: Test timed out in 30000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-request-key-recovery.test.ts:39:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/43]⎯
+
+ FAIL  tests/integration/m3-resource-limits-independent.test.ts > M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-resource-limits-independent.test.ts:50:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/43]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-shutdown-independent.test.ts:26:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/43]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-shutdown-independent.test.ts:42:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/43]⎯
+
+ FAIL  tests/integration/m3-space-export.test.ts > M3.3-B.1 independent snapshot export > delivers strict white records and an exact hash-chain completion while excluding internals
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-space-export.test.ts:34:3
+     32| const parsed = (wire: string[]) => wire.map(line => JSON.parse(line));
+     33| describe('M3.3-B.1 independent snapshot export', () => {
+     34|   it('delivers strict white records and an exact hash-chain completion…
+       |   ^
+     35|     const f = await fixture(); const wire = await lines(f.service.open…
+     36|     expect(output.every(validateSpaceExportLine)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/43]⎯
+
+ FAIL  tests/integration/m3-write-limits-independent.test.ts > M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent
+Error: Test timed out in 90000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-write-limits-independent.test.ts:25:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/43]⎯
+
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m4-artifact-client-cli-independent.test.ts:42:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/43]⎯
+
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m4-artifact-client.test.ts:20:3
+     18| 
+     19| describe('M4.1-B bounded artifact shared client', () => {
+     20|   it('real HTTP multipart binary/zero, replay, changed content409 and …
+       |   ^
+     21|     const root = await mkdtemp(path.join(tmpdir(), 'detuned-client-art…
+     22|     const db = new Database(':memory:'); const token = bootstrapDataba…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/43]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths
+Error: Test timed out in 90000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m4-read-cli-independent.test.ts:73:1
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/43]⎯
+
+ FAIL  tests/integration/m4-write-consume-independent.test.ts > WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt
+Error: Private CLI bounded deadline/output exceeded
+ ❯ ChildProcess.<anonymous> tests/integration/m4-write-consume-independent.test.ts:25:163
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/43]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:123:3
+    121|   });
+    122| 
+    123|   it('tracks real named index and FTS source changes into runtime prof…
+       |   ^
+    124|     // 1. Real named index mutation on idx_events_space_seq
+    125|     const dirIndex = copyProject('real-index-change');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/43]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:238:4
+    236|     { version: 'V2', profileName: 'V2_SCHEMA_TABLES' },
+    237|     { version: 'V1', profileName: 'V1_SCHEMA_TABLES' },
+    238|   ])('detects corrupt $version profile in sync check and successfully …
+       |    ^
+    239|     const dir = copyProject(`repair-corrupted-profile-${profileName}`);
+    240|     const tsFile = join(dir, 'packages/storage-sqlite/src/schema.ts');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/43]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)
+AssertionError: expected null to be +0 // Object.is equality
+
+- Expected: 
+0
+
++ Received: 
+null
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:293:67
+    291|     expect(genBeginRecover.exitCode).toBe(0);
+    292|     expect(hash(readFileSync(tsBeginFile, 'utf8'))).not.toBe(hashBegin…
+    293|     expect(runScript(dirBegin, 'check-schema-sync.mjs').exitCode).toBe…
+       |                                                                   ^
+    294| 
+    295|     // 2. Missing END MIGRATION_DDL marker with source SQL change
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/43]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError node_modules/.pnpm/vitest@3.2.7_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout node_modules/.pnpm/vitest@3.2.7_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

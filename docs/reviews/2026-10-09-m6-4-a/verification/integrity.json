@@ -1,0 +1,112 @@
+{
+  "checked_at": "2026-10-09T09:48:33.932596+00:00",
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "head_unchanged": true,
+  "lock_sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+  "lock_unchanged": false,
+  "lock_only_authorized_workspace_link": true,
+  "freezes": [
+    {
+      "path": "author/server/freeze-manifest-v4.json",
+      "sha256": "99cf8a65b1b4a6fbc64b199828d01430f3914b0169891232736c057783cae53b",
+      "files": 11,
+      "mismatches": []
+    },
+    {
+      "path": "author/client/freeze-manifest-v2.json",
+      "sha256": "f79c6b08e5abab6001aefce3e0481f45f69514039f6ac0910b18daaa85a6d358",
+      "files": 4,
+      "mismatches": []
+    }
+  ],
+  "product_changed": [
+    "modules/review/src/submission-service.ts",
+    "packages/client/src/client.ts",
+    "packages/client/src/request-key.ts",
+    "packages/core/src/services/artifact-service.ts",
+    "packages/protocol/src/openapi.ts",
+    "packages/protocol/src/response-guards.ts",
+    "packages/protocol/src/review.ts",
+    "packages/server/package.json",
+    "packages/server/src/app.ts",
+    "packages/server/src/routes/artifacts.ts",
+    "packages/server/src/routes/meta.ts",
+    "pnpm-lock.yaml"
+  ],
+  "product_added": [
+    "packages/server/src/routes/reviews.ts",
+    "tests/contracts/m6-review-client.test.ts",
+    "tests/contracts/m6-review-http-independent.test.ts",
+    "tests/contracts/m6-review-http.test.ts"
+  ],
+  "unauthorized_source_changes": [],
+  "protected": {
+    "protected_review_probe_log_evidence_hashes": {
+      "checked": 9715,
+      "mismatches": []
+    },
+    "current_document_hashes": {
+      "checked": 61,
+      "mismatches": []
+    },
+    "mutable_status_document_hashes": {
+      "checked": 5,
+      "mismatches": []
+    },
+    "sql_archive_before_hashes": {
+      "checked": 7,
+      "mismatches": []
+    },
+    "schema_profile_before_hashes": {
+      "checked": 2,
+      "mismatches": []
+    }
+  },
+  "JCS_Hasher_preserved": true,
+  "dist_inventory_scope": "packages and modules; actual build changes inventoried",
+  "dist_changed": [
+    "modules/review/dist/submission-service.d.ts",
+    "modules/review/dist/submission-service.d.ts.map",
+    "modules/review/dist/submission-service.js",
+    "modules/review/dist/submission-service.js.map",
+    "packages/client/dist/client.d.ts",
+    "packages/client/dist/client.d.ts.map",
+    "packages/client/dist/client.js",
+    "packages/client/dist/client.js.map",
+    "packages/client/dist/request-key.js",
+    "packages/client/dist/request-key.js.map",
+    "packages/core/dist/services/artifact-service.d.ts",
+    "packages/core/dist/services/artifact-service.d.ts.map",
+    "packages/core/dist/services/artifact-service.js",
+    "packages/core/dist/services/artifact-service.js.map",
+    "packages/protocol/dist/openapi.d.ts.map",
+    "packages/protocol/dist/openapi.js",
+    "packages/protocol/dist/openapi.js.map",
+    "packages/protocol/dist/response-guards.d.ts",
+    "packages/protocol/dist/response-guards.d.ts.map",
+    "packages/protocol/dist/response-guards.js",
+    "packages/protocol/dist/response-guards.js.map",
+    "packages/protocol/dist/review.d.ts",
+    "packages/protocol/dist/review.d.ts.map",
+    "packages/protocol/dist/review.js",
+    "packages/protocol/dist/review.js.map",
+    "packages/server/dist/app.d.ts.map",
+    "packages/server/dist/app.js",
+    "packages/server/dist/app.js.map",
+    "packages/server/dist/routes/artifacts.d.ts.map",
+    "packages/server/dist/routes/artifacts.js",
+    "packages/server/dist/routes/artifacts.js.map",
+    "packages/server/dist/routes/meta.js",
+    "packages/server/dist/routes/meta.js.map",
+    "packages/server/dist/routes/reviews.d.ts",
+    "packages/server/dist/routes/reviews.d.ts.map",
+    "packages/server/dist/routes/reviews.js",
+    "packages/server/dist/routes/reviews.js.map",
+    "packages/web/dist/assets/index-CfoTJ0BH.js",
+    "packages/web/dist/assets/index-D7YoGpHt.js",
+    "packages/web/dist/index.html"
+  ],
+  "dist_current_count": 519,
+  "independent_source_sha256": "f6e231f34dfd1b3edfc0a7d587f91e45541e542a6e58e72e57389be998ff2d77",
+  "execution": "Bounded file hashes and git read only; no tests/install/environment management"
+}

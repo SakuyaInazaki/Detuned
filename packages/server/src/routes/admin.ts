@@ -1,5 +1,4 @@
 import { FastifyPluginAsync } from 'fastify';
-import { randomBytes, createHash } from 'node:crypto';
 import {
   DetunedError,
   ErrorCode,
@@ -13,15 +12,12 @@ import {
   PatchMembershipRequestSchema,
   CreateRedactionRequest,
   CreateRedactionRequestSchema,
-  SpaceRole,
 } from '@detuned/protocol';
-import { AuthService, AuthenticatedContext } from '@detuned/core';
+import { AdminService, AuthenticatedContext } from '@detuned/core';
+import { validateNoBody } from '../utils/query.js';
 
 export const adminRoutes: FastifyPluginAsync = async (app) => {
-  const authService = (app as any).authService as AuthService;
-  const storage = (app as any).storage;
-  const idGen = (app as any).idGen;
-  const clock = (app as any).clock;
+  const adminService = (app as any).adminService as AdminService;
   const redactionService = (app as any).redactionService;
 
   app.post(
@@ -29,21 +25,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     { schema: { body: CreateActorRequestSchema } },
     async (req, reply) => {
       const auth = (req as any).auth as AuthenticatedContext;
-      authService.requireInstanceAdmin(auth);
-
-      const body = req.body as CreateActorRequest;
-
-      const actorId = idGen.generateId('act');
-      const now = clock.nowIso();
-      const actor = {
-        id: actorId,
-        kind: body.kind,
-        display_name: body.display_name,
-        created_at: now,
-        disabled_at: null,
-      };
-
-      storage.createActor(actor);
+      const actor = adminService.createActor(auth, req.body as CreateActorRequest);
       reply.status(201);
       return {
         api_version: '1',
@@ -58,47 +40,15 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     { schema: { body: CreateCredentialRequestSchema } },
     async (req, reply) => {
       const auth = (req as any).auth as AuthenticatedContext;
-      authService.requireInstanceAdmin(auth);
-
-      const body = req.body as CreateCredentialRequest;
-
-      const actor = storage.findActorById(body.actor_id);
-      if (!actor) {
-        throw new DetunedError(ErrorCode.NOT_FOUND, 'Actor 不存在。', 404);
-      }
-
-      const rawToken = `detuned_tok_${randomBytes(24).toString('hex')}`;
-      const tokenHash = createHash('sha256').update(rawToken).digest('hex');
-      const credId = idGen.generateId('crd');
-      const now = clock.nowIso();
-
-      const credential = {
-        id: credId,
-        actor_id: body.actor_id,
-        token_hash: tokenHash,
-        allowed_space_ids: body.allowed_space_ids ?? ['*'],
-        capabilities: body.capabilities ?? ['read', 'write'],
-        expires_at: body.expires_at ?? null,
-        revoked_at: null,
-        created_at: now,
-      };
-
-      storage.createCredential(credential);
-
+      const data = adminService.createCredential(auth, req.body as CreateCredentialRequest);
       reply.status(201);
       return {
         api_version: '1',
         request_id: req.id,
-        data: {
-          credential_id: credId,
-          actor_id: body.actor_id,
-          token: rawToken, // Returned only once at creation!
-        },
+        data,
       };
     }
   );
-
-  const validRoles: SpaceRole[] = ['observer', 'contributor', 'maintainer', 'owner'];
 
   app.post(
     '/spaces/:space_id/memberships',
@@ -106,25 +56,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     async (req, reply) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id } = req.params as { space_id: string };
-      authService.requireSpaceAccess(auth, space_id, 'owner');
-
-      const body = req.body as CreateMembershipRequest;
-
-      const actor = storage.findActorById(body.actor_id);
-      if (!actor) {
-        throw new DetunedError(ErrorCode.NOT_FOUND, 'Actor 不存在。', 404);
-      }
-
-      const membership = {
-        space_id,
-        actor_id: body.actor_id,
-        role: body.role,
-        active: true,
-        reviewer_eligible: body.reviewer_eligible ?? true,
-        independence_group: body.independence_group ?? null,
-      };
-
-      storage.upsertMembership(membership);
+      const membership = adminService.createMembership(auth, space_id, req.body as CreateMembershipRequest);
       reply.status(201);
       return {
         api_version: '1',
@@ -140,25 +72,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     async (req) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, actor_id } = req.params as { space_id: string; actor_id: string };
-      authService.requireSpaceAccess(auth, space_id, 'owner');
-
-      const existing = storage.getMembership(space_id, actor_id);
-      if (!existing) {
-        throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
-      }
-
-      const body = req.body as PatchMembershipRequest;
-
-      const updated = {
-        space_id,
-        actor_id,
-        role: body.role ?? existing.role,
-        active: body.active !== undefined ? body.active : existing.active,
-        reviewer_eligible: body.reviewer_eligible !== undefined ? body.reviewer_eligible : existing.reviewer_eligible,
-        independence_group: body.independence_group !== undefined ? body.independence_group : existing.independence_group,
-      };
-
-      storage.upsertMembership(updated);
+      const updated = adminService.patchMembership(auth, space_id, actor_id, req.body as PatchMembershipRequest);
       return {
         api_version: '1',
         request_id: req.id,
@@ -168,56 +82,27 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
   );
 
   app.delete('/spaces/:space_id/memberships/:actor_id', async (req) => {
+    validateNoBody(req.body, 'Delete membership');
     const auth = (req as any).auth as AuthenticatedContext;
     const { space_id, actor_id } = req.params as { space_id: string; actor_id: string };
-    authService.requireSpaceAccess(auth, space_id, 'owner');
-
-    const existing = storage.getMembership(space_id, actor_id);
-    if (!existing) {
-      throw new DetunedError(ErrorCode.NOT_FOUND, '成员关系不存在。', 404);
-    }
-
-    storage.upsertMembership({
-      ...existing,
-      active: false,
-    });
+    const data = adminService.deactivateMembership(auth, space_id, actor_id);
 
     return {
       api_version: '1',
       request_id: req.id,
-      data: { deactivated: true },
+      data,
     };
   });
 
   app.post('/admin/credentials/:id/revoke', async (req) => {
+    validateNoBody(req.body, 'Revoke credential');
     const auth = (req as any).auth as AuthenticatedContext;
-    authService.requireInstanceAdmin(auth);
-
-    if (req.body !== undefined && req.body !== null) {
-      if (
-        typeof req.body !== 'object' ||
-        Array.isArray(req.body) ||
-        Object.keys(req.body).length > 0
-      ) {
-        throw new DetunedError(
-          ErrorCode.VALIDATION_ERROR,
-          'Revoke 操作不接受请求体参数。',
-          400
-        );
-      }
-    }
-
     const { id } = req.params as { id: string };
-    const cred = storage.findCredentialById(id);
-    if (!cred) {
-      throw new DetunedError(ErrorCode.NOT_FOUND, '凭据不存在。', 404);
-    }
-
-    storage.revokeCredential(id, clock.nowIso());
+    const data = adminService.revokeCredential(auth, id);
     return {
       api_version: '1',
       request_id: req.id,
-      data: { revoked: true },
+      data,
     };
   });
 

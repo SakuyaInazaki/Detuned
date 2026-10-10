@@ -1,0 +1,1 @@
+D new-source-noemit-second.stdout.txt preserves first TS2571. Only author HTTP JSON boundary narrowed from unknown; checked() uses existing strict DTO guards and seed entity IDs use real object checks. Product 10 hashes unchanged. All original assertions/budgets retained. A ran no checks.

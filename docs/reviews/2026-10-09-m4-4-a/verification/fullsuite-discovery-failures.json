@@ -1,0 +1,29 @@
+{
+  "attempts": [
+    {
+      "label": "fullsuite",
+      "exit_code": 1,
+      "core_tests_passed": 627,
+      "core_files_passed": 90,
+      "external_setup_failed_files": [
+        "scripts/integrations/dsh-runtime/loader.spec.ts",
+        "scripts/integrations/dsh-runtime/runtime.spec.ts",
+        "docs/reviews/2026-10-08-m4-3-a/verification/independent/independent.spec.ts",
+        "docs/reviews/2026-10-09-m4-3-b/verification/independent/independent.spec.ts"
+      ],
+      "stderr_file": "observed-fullsuite.stderr.txt"
+    },
+    {
+      "label": "fullsuite-ci-discovery-fixed",
+      "exit_code": 1,
+      "core_tests_passed": 627,
+      "core_files_passed": 90,
+      "external_setup_failed_files": [
+        "scripts/integrations/dsh-runtime/loader.spec.ts",
+        "scripts/integrations/dsh-runtime/runtime.spec.ts"
+      ],
+      "stderr_file": "observed-fullsuite-ci-discovery-fixed.stderr.txt"
+    }
+  ],
+  "correction": "First brief report omitted scripts external specs after looking only at tail; full stderr independently corrected this classification. Raw failed command evidence is preserved."
+}

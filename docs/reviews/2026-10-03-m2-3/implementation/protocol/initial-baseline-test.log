@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-search-contracts.test.ts (2 tests | 2 failed) 121ms
+   × M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 95ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 25ms
+     → listen EPERM: operation not permitted 127.0.0.1
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:16:21
+   Duration  673ms (transform 161ms, setup 0ms, collect 317ms, tests 121ms, environment 0ms, prepare 35ms)
+

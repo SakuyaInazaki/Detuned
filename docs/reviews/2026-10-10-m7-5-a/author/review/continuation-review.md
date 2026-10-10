@@ -1,0 +1,11 @@
+# M7.5-A 最终专用 continuation 静审
+
+结论：冻结续跑可由root按既定边界单独放行，无新增阻塞；本审查没有runtime或进程查询。
+
+实际runner `9586dbacd73e4b68b1fb242f42364f9256f91ab6e5563ba78fcee8197b65ae39`，plan `7e66c9931d38d59faa546fd01e4c714515602b4f563d62013b9e34acda6dcf05`。独立从保留a721字节比对stored delta，仅3处修复：保urllib.parse供既有域诊断；两phase cleanup/finalgroupwait取PLAN total1200而非旧1800。两个已报阻塞闭合，plan不变；原拒绝记录保留。
+
+保持a721审查已核其它结论：仅本次空目录成功install的精确root续跑，实际371copy、prior7receipts hash、UID501/0700/rootresolve匹配，preflight继续核固定archive/Nodebinary/pnpm、policy/config原字节、旧4stage实际close与针对PID/group absence；未检查前不启动阶段。不新download/install/version，不复用其它cache或扫描tmp。新continuation输出与wx收据不覆盖attempt2首失败。原env/policy保持，固定有效typed config-dot前置（含ignore-pnpmfile）解决command-specific flag拒绝，九后端build/158suite/worker1/fileserial/原断言timeout保持。
+
+1200s含90cleanup、900tests及每build60取剩余absolute；logical/allocated各2GiB、stdout/stderr8MiB、精确自有stageproof/close/groupabsence、原437source555dist审计与JSON完整pass/unhandledCLIexit0保持。只有全部通过和实际root清退才passed；失败/未知retainrootledger。内部detached仅既有测试自身close/absence/awaitedteardown，非outer独立census；网络仍configboundary非硬域防火墙。
+
+未来成功只能称attempt2已成功clean install与专用continuation的组合证据，不称单次pipeline成功；目前SQLite、九build和158测试没有新成功结论。首失败、参数拒绝和本次静审拒绝保留，root最终单独放行，不自动重试。

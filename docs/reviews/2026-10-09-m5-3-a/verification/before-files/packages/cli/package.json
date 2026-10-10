@@ -1,0 +1,27 @@
+{
+  "name": "@detuned/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "detuned": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@detuned/client": "workspace:*",
+    "@detuned/core": "workspace:*",
+    "@detuned/protocol": "workspace:*",
+    "@detuned/server": "workspace:*",
+    "@detuned/storage-sqlite": "workspace:*",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

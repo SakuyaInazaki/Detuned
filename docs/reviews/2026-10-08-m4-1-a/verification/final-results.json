@@ -1,0 +1,121 @@
+{
+  "status": "parentaccepted",
+  "date": "2026-10-08",
+  "scope": "M4.1-A read/diagnostic/health/list/view CLI and explicit search pagination; two thin health client wrappers, existing server business authority unchanged",
+  "formal": {
+    "tests_passed": 525,
+    "tests_total": 525,
+    "files_passed": 69,
+    "files_total": 69,
+    "new_tests_included": 8,
+    "new_composition": {
+      "B": 4,
+      "C": 4,
+      "A_new_mirror_tests": 0
+    }
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4gate + 24 original retained probes + approved A.1 scenario11 adapter",
+    "original_scenario11": "not rerun; old failed default seed evidence preserved",
+    "fullsuite_command": "pnpm test (same vitest run as test:all)"
+  },
+  "attempts": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "first_new_targeted": {
+      "passed": 4,
+      "failed": 4,
+      "total": 8,
+      "B": "three built cases failed at createSpace fixture before CLI due missing mandatory Clock.nowIso",
+      "C": "view HTTP data array mistaken for core internal view/items wrapper"
+    },
+    "corrected_original_four_cases": {
+      "passed": 4,
+      "skipped": 4,
+      "exit_code": 0
+    },
+    "product_change_or_rebuild_after_first": false,
+    "inherited_40MiB_fullsuite_case": 1
+  },
+  "independent_actual": {
+    "identity_and_lists": {
+      "identities": 2,
+      "isolated_spaces": 2,
+      "ordinary_space_ids": 1,
+      "private_other_thread_list": "404 NOT_FOUND exit1",
+      "thread_states": [
+        "open",
+        "archived"
+      ],
+      "post_revisions": [
+        1,
+        2,
+        3
+      ],
+      "space_thread_revision_limit1_pages_terminated": true,
+      "old_read_data_and_post_read_thread_posts_fullpages_compatible": true
+    },
+    "search": {
+      "matches": 3,
+      "limit": 1,
+      "legacy": "data array",
+      "new_page_and_cursor": "data/meta with next_cursor",
+      "unique_all_three_hits": true,
+      "thread_filtered_hits": 2,
+      "changed_query_same_cursor": "VALIDATION_ERROR exit2 server binding",
+      "invalid_limit_commands": 16,
+      "invalid_limit_HTTP_requests": 0
+    },
+    "health_and_diagnostics": {
+      "anonymous_live": "alive200",
+      "anonymous_ready": "ready200",
+      "observed_initial_health_headers": 2,
+      "authorization_absent": true,
+      "anonymous_me": "401 exit3",
+      "ordinary_diagnostics": "403 exit3",
+      "administrator_diagnostics": "data readytrue without rawpath/token",
+      "private_directory_and_schema_variants": "ready503 SERVICE_NOT_READY details readyfalse exit1, live200, restored ready200",
+      "revoked_me": "401 exit3",
+      "closed_connection": "nonzero error; no false healthy response"
+    },
+    "views_and_abort": {
+      "view_names": [
+        "findings",
+        "failures",
+        "open-questions"
+      ],
+      "legal_claim_failure_question_material_and_HTTP_data_array_match": true,
+      "invalid_enum_HTTP_requests": 0,
+      "both_health_wrappers_preaborted": "UserAbortError without HTTP",
+      "no_pseudo_meta_or_core_wrapper_fields": true
+    }
+  },
+  "protection": {
+    "old_review_files": 4491,
+    "HEAD_SQL_schema_mutable_unchanged": true,
+    "A3_B6_freeze_match": true,
+    "source_files": 232,
+    "current_docs_files": 46,
+    "tracked_dist_files": 208,
+    "untracked_dist_files": 164,
+    "owned_worker_CLI_private_dir_residue": 0,
+    "finite_new_archive_token_pattern_files_scanned": 94,
+    "known_token_pattern_match_files": 0
+  },
+  "limits": [
+    "Local real HTTP/private file-backed SQLite and built CLI only; not four real host/model certification",
+    "Existing global Commander parse/error JSON policy and credential token-file flag not expanded",
+    "No new server authorization/filter/cursor business; not all legacy list cursors cryptographically signed",
+    "List paging uses stable small fixture, not a new snapshot guarantee across concurrent changes",
+    "Client timeout/retry/token-file fallback unchanged; ready503 and closed connection use existing request budget",
+    "C child deadline15s and output cap1048576 UTF16 code units; not claimed as exact UTF8 byte cap",
+    "One inherited40MiB export fullsuite case only; heap sampling does not prove hard RSS",
+    "No600s/model/network inference/installation/global config/git write"
+  ],
+  "parent_acceptance_date": "2026-10-08",
+  "parent_acceptance_scope": "Limited local read/diagnostic/health/list/view CLI and explicit search pagination; M4 not complete"
+}

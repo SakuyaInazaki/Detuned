@@ -1,0 +1,19 @@
+{
+  "test_sha256": "f770401a2d0b2e002f0ea9449f81c0d11b737d43fb0fe0c9bac72143a36b4bd7",
+  "scope": "test-only; all product hashes match freeze",
+  "startup_ms": 15000,
+  "operation_ms": 2000,
+  "operation_start": "parent ready received immediately before go",
+  "operation_stop": "done received after expected INVALID_INPUT settled",
+  "reap_ms": 15000,
+  "outer_case_ms": 35000,
+  "assertions": [
+    "killed false",
+    "ready true",
+    "done true",
+    "child exit0",
+    "source FIFO unchanged",
+    "destination ENOENT"
+  ],
+  "cleanup": "clear timers, kill and reap detached process group if alive, close private socket, remove own private fixture"
+}

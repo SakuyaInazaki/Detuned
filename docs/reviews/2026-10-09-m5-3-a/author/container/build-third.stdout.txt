@@ -1,0 +1,261 @@
+Sending build context to Docker daemon  3.614MB
+Step 1/37 : FROM node:22.23.3-bookworm-slim@sha256:b20fe038d9592822dd534600a1ddf467e985178aa3fed60ec441a056c2cc45bd AS builder
+ ---> b20fe038d959
+Step 2/37 : WORKDIR /app
+ ---> Using cache
+ ---> 32736633bf51
+Step 3/37 : ENV CI=1 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1     NPM_CONFIG_USERCONFIG=/tmp/npm-user-empty.rc NPM_CONFIG_GLOBALCONFIG=/tmp/npm-global-empty.rc
+ ---> Running in 55b3acabd1e7
+ ---> Removed intermediate container 55b3acabd1e7
+ ---> 7bf850156ef5
+Step 4/37 : RUN touch /tmp/npm-user-empty.rc /tmp/npm-global-empty.rc     && apt-get update && apt-get install -y --no-install-recommends ca-certificates openssl     && rm -rf /var/lib/apt/lists/*     && npm install --global --ignore-scripts --registry=https://registry.npmjs.org pnpm@11.7.0
+ ---> Running in 55b1bcd4524c
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+Get:4 http://deb.debian.org/debian bookworm/main arm64 Packages [8689 kB]
+Get:5 http://deb.debian.org/debian bookworm-updates/main arm64 Packages [6936 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main arm64 Packages [347 kB]
+Fetched 9285 kB in 8s (1110 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libssl3
+The following NEW packages will be installed:
+  ca-certificates libssl3 openssl
+0 upgraded, 3 newly installed, 0 to remove and 1 not upgraded.
+Need to get 3400 kB of archives.
+After this operation, 8942 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian-security bookworm-security/main arm64 libssl3 arm64 3.0.22-1~deb12u1 [1828 kB]
+Get:2 http://deb.debian.org/debian-security bookworm-security/main arm64 openssl arm64 3.0.22-1~deb12u1 [1410 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security/main arm64 ca-certificates all 20250419~deb12u1 [162 kB]
+[91mdebconf: delaying package configuration, since apt-utils is not installed
+[0mFetched 3400 kB in 4s (823 kB/s)
+Selecting previously unselected package libssl3:arm64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6090 files and directories currently installed.)
+Preparing to unpack .../libssl3_3.0.22-1~deb12u1_arm64.deb ...
+Unpacking libssl3:arm64 (3.0.22-1~deb12u1) ...
+Selecting previously unselected package openssl.
+Preparing to unpack .../openssl_3.0.22-1~deb12u1_arm64.deb ...
+Unpacking openssl (3.0.22-1~deb12u1) ...
+Selecting previously unselected package ca-certificates.
+Preparing to unpack .../ca-certificates_20250419~deb12u1_all.deb ...
+Unpacking ca-certificates (20250419~deb12u1) ...
+Setting up libssl3:arm64 (3.0.22-1~deb12u1) ...
+Setting up openssl (3.0.22-1~deb12u1) ...
+Setting up ca-certificates (20250419~deb12u1) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/aarch64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Updating certificates in /etc/ssl/certs...
+150 added, 0 removed; done.
+Processing triggers for libc-bin (2.36-9+deb12u14) ...
+Processing triggers for ca-certificates (20250419~deb12u1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+
+added 1 package in 6s
+
+1 package is looking for funding
+  run `npm fund` for details
+ ---> Removed intermediate container 55b1bcd4524c
+ ---> 16b50d9b8170
+Step 5/37 : COPY . .
+ ---> d8d499714378
+Step 6/37 : RUN pnpm install --frozen-lockfile --ignore-scripts --ignore-pnpmfile     && pnpm rebuild esbuild     && node --input-type=module -e "import Database from 'better-sqlite3'; const db=new Database(':memory:'); if(db.prepare('SELECT 1 AS n').get().n!==1) throw new Error('SQLite smoke failed'); db.close(); console.log('Linux SQLite smoke passed');"     && pnpm build
+ ---> Running in fb271a164d53
+Scope: all 11 workspace projects
+? Verifying lockfile against supply-chain policies (458 entries)...
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +407
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 407, reused 0, downloaded 0, added 0
+Progress: resolved 407, reused 0, downloaded 1, added 0
+Progress: resolved 407, reused 0, downloaded 46, added 46
+Progress: resolved 407, reused 0, downloaded 84, added 84
+[WARN] Tarball download average speed 34 KiB/s (size 36 KiB) is below 50 KiB/s: https://registry.npmjs.org/json-schema-typed/-/json-schema-typed-8.0.2.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 109, added 109
+Progress: resolved 407, reused 0, downloaded 125, added 125
+Progress: resolved 407, reused 0, downloaded 145, added 145
+Progress: resolved 407, reused 0, downloaded 160, added 160
+[WARN] Tarball download average speed 13 KiB/s (size 20 KiB) is below 50 KiB/s: https://registry.npmjs.org/@smithy/signature-v4/-/signature-v4-5.7.4.tgz (GET)
+[WARN] Tarball download average speed 43 KiB/s (size 62 KiB) is below 50 KiB/s: https://registry.npmjs.org/bowser/-/bowser-2.14.1.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 184, added 184
+Progress: resolved 407, reused 0, downloaded 207, added 207
+Progress: resolved 407, reused 0, downloaded 222, added 222
+[WARN] Tarball download average speed 30 KiB/s (size 105 KiB) is below 50 KiB/s: https://registry.npmjs.org/gaxios/-/gaxios-7.3.1.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 239, added 239
+[WARN] Tarball download average speed 25 KiB/s (size 102 KiB) is below 50 KiB/s: https://registry.npmjs.org/@aws-sdk/core/-/core-3.978.1.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 257, added 257
+Progress: resolved 407, reused 0, downloaded 289, added 289
+[WARN] Tarball download average speed 16 KiB/s (size 50 KiB) is below 50 KiB/s: https://registry.npmjs.org/commander/-/commander-13.1.0.tgz (GET)
+[WARN] Tarball download average speed 23 KiB/s (size 77 KiB) is below 50 KiB/s: https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.3.1.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 322, added 322
+[WARN] Tarball download average speed 33 KiB/s (size 34 KiB) is below 50 KiB/s: https://registry.npmjs.org/avvio/-/avvio-9.3.0.tgz (GET)
+[WARN] Tarball download average speed 23 KiB/s (size 108 KiB) is below 50 KiB/s: https://registry.npmjs.org/grok-mermaid/-/grok-mermaid-0.2.3.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 357, added 356
+Progress: resolved 407, reused 0, downloaded 389, added 389
+[WARN] Tarball download average speed 39 KiB/s (size 106 KiB) is below 50 KiB/s: https://registry.npmjs.org/@isaacs/cliui/-/cliui-9.0.0.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 400, added 400
+[WARN] Tarball download average speed 40 KiB/s (size 571 KiB) is below 50 KiB/s: https://registry.npmjs.org/rollup/-/rollup-4.63.5.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 401, added 400
+Progress: resolved 407, reused 0, downloaded 401, added 401
+Progress: resolved 407, reused 0, downloaded 402, added 402
+Progress: resolved 407, reused 0, downloaded 403, added 402
+[WARN] Request took 19874ms: https://registry.npmjs.org/@types%2Fnode
+[WARN] Tarball download average speed 41 KiB/s (size 626 KiB) is below 50 KiB/s: https://registry.npmjs.org/protobufjs/-/protobufjs-7.6.6.tgz (GET)
+Progress: resolved 407, reused 0, downloaded 404, added 404
+Progress: resolved 407, reused 0, downloaded 405, added 405
+[WARN] Request took 11737ms: https://registry.npmjs.org/react
+[WARN] Request took 13092ms: https://registry.npmjs.org/react-dom
+Progress: resolved 407, reused 0, downloaded 406, added 405
+Progress: resolved 407, reused 0, downloaded 406, added 406
+Progress: resolved 407, reused 0, downloaded 407, added 407, done
+✓ Lockfile passes supply-chain policies (458 entries in 31.6s)
+
+devDependencies:
++ @modelcontextprotocol/sdk 1.30.1
++ @playwright/test 1.64.0
++ @sinclair/typebox 0.34.52
++ @types/better-sqlite3 7.6.13
++ @types/node 22.20.4
++ better-sqlite3 13.0.3
++ typescript 5.9.3
++ vitest 3.2.7
+
+Done in 32.1s using pnpm v11.7.0
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+Linux SQLite smoke passed
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+[91m$ pnpm -r run build
+[0mScope: 10 of 11 workspace projects
+packages/protocol build$ tsc
+packages/protocol build: Done
+packages/client build$ tsc
+packages/core build$ tsc
+packages/client build: Done
+packages/core build: Done
+modules/review build$ tsc
+packages/adapter-pi build$ tsc
+modules/review build: Done
+packages/mcp build$ tsc
+packages/mcp build: Done
+packages/storage-sqlite prebuild$ node scripts/generate-schema.mjs
+packages/storage-sqlite prebuild: Successfully generated schema.ts from schema.sql
+packages/storage-sqlite prebuild: Done
+packages/storage-sqlite build$ node scripts/generate-schema.mjs && tsc
+packages/storage-sqlite build: Successfully generated schema.ts from schema.sql
+packages/storage-sqlite build: Done
+packages/web build$ tsc --noEmit && vite build
+packages/adapter-pi build: Done
+packages/web build: [36mvite v7.3.7 [32mbuilding client environment for production...[36m[39m
+packages/web build: transforming...
+packages/web build: [32m✓[39m 614 modules transformed.
+packages/web build: rendering chunks...
+packages/web build: computing gzip size...
+packages/web build: [2mdist/[22m[32mindex.html                 [39m[1m[2m  0.35 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+packages/web build: [2mdist/[22m[2massets/[22m[35mindex-CAbrs-9F.css  [39m[1m[2m  9.63 kB[22m[1m[22m[2m │ gzip:   2.79 kB[22m
+packages/web build: [2mdist/[22m[2massets/[22m[36mindex-B3eI9qMT.js   [39m[1m[33m667.60 kB[39m[22m[2m │ gzip: 198.17 kB[22m
+packages/web build: [32m✓ built in 610ms[39m
+packages/web build: [33m
+packages/web build: (!) Some chunks are larger than 500 kB after minification. Consider:
+packages/web build: - Using dynamic import() to code-split the application
+packages/web build: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+packages/web build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+packages/web build: Done
+packages/server build$ tsc
+packages/server build: Done
+packages/cli build$ tsc
+packages/cli build: Done
+ ---> Removed intermediate container fb271a164d53
+ ---> c085ace64bf1
+Step 7/37 : FROM node:22.23.3-bookworm-slim@sha256:b20fe038d9592822dd534600a1ddf467e985178aa3fed60ec441a056c2cc45bd AS runtime
+ ---> b20fe038d959
+Step 8/37 : WORKDIR /app
+ ---> Using cache
+ ---> 32736633bf51
+Step 9/37 : ENV NODE_ENV=production
+ ---> Running in 499ed944076d
+ ---> Removed intermediate container 499ed944076d
+ ---> 0bb79fbc0023
+Step 10/37 : RUN mkdir -p /data && chown node:node /data
+ ---> Running in 12d5f2abc5ff
+ ---> Removed intermediate container 12d5f2abc5ff
+ ---> 8013468be117
+Step 11/37 : COPY --from=builder /app/node_modules ./node_modules
+ ---> c5210bd25c4d
+Step 12/37 : COPY --from=builder /app/packages/cli/package.json ./packages/cli/package.json
+ ---> 05753ad3876d
+Step 13/37 : COPY --from=builder /app/packages/cli/node_modules ./packages/cli/node_modules
+ ---> 2c00575bb8a6
+Step 14/37 : COPY --from=builder /app/packages/cli/dist ./packages/cli/dist
+ ---> f6d90fa1f59e
+Step 15/37 : COPY --from=builder /app/packages/client/package.json ./packages/client/package.json
+ ---> 47569f4b3580
+Step 16/37 : COPY --from=builder /app/packages/client/node_modules ./packages/client/node_modules
+ ---> 5ae4e4c1a66f
+Step 17/37 : COPY --from=builder /app/packages/client/dist ./packages/client/dist
+ ---> 5633c1163f6d
+Step 18/37 : COPY --from=builder /app/packages/core/package.json ./packages/core/package.json
+ ---> 9123b387d7c5
+Step 19/37 : COPY --from=builder /app/packages/core/node_modules ./packages/core/node_modules
+ ---> 44c66d27e11a
+Step 20/37 : COPY --from=builder /app/packages/core/dist ./packages/core/dist
+ ---> d536a42ee2df
+Step 21/37 : COPY --from=builder /app/packages/protocol/package.json ./packages/protocol/package.json
+ ---> 23385cd8b242
+Step 22/37 : COPY --from=builder /app/packages/protocol/node_modules ./packages/protocol/node_modules
+ ---> f2b7e0783594
+Step 23/37 : COPY --from=builder /app/packages/protocol/dist ./packages/protocol/dist
+ ---> 5bd5a1f6e024
+Step 24/37 : COPY --from=builder /app/packages/server/package.json ./packages/server/package.json
+ ---> 2f592b7ff062
+Step 25/37 : COPY --from=builder /app/packages/server/node_modules ./packages/server/node_modules
+ ---> 95ec199e9f5c
+Step 26/37 : COPY --from=builder /app/packages/server/dist ./packages/server/dist
+ ---> 9c695fc4565e
+Step 27/37 : COPY --from=builder /app/packages/storage-sqlite/package.json ./packages/storage-sqlite/package.json
+ ---> 447489323234
+Step 28/37 : COPY --from=builder /app/packages/storage-sqlite/node_modules ./packages/storage-sqlite/node_modules
+ ---> f11007197361
+Step 29/37 : COPY --from=builder /app/packages/storage-sqlite/dist ./packages/storage-sqlite/dist
+ ---> 053c86d0f0be
+Step 30/37 : COPY --from=builder /app/packages/web/dist ./packages/web/dist
+ ---> e9a1e2ee8ea7
+Step 31/37 : COPY --from=builder /app/scripts/integrations/deployment/container-health.mjs ./scripts/integrations/deployment/container-health.mjs
+ ---> 62f47a0f5bc2
+Step 32/37 : USER 1000:1000
+ ---> Running in 463f14925394
+ ---> Removed intermediate container 463f14925394
+ ---> fe20685b356b
+Step 33/37 : VOLUME ["/data"]
+ ---> Running in afa4063a644e
+ ---> Removed intermediate container afa4063a644e
+ ---> 0cb6c891a548
+Step 34/37 : EXPOSE 3000
+ ---> Running in ab8ec5b4bb94
+ ---> Removed intermediate container ab8ec5b4bb94
+ ---> 3169b10b9537
+Step 35/37 : STOPSIGNAL SIGTERM
+ ---> Running in 32ce498fa4c9
+ ---> Removed intermediate container 32ce498fa4c9
+ ---> de8cf73f1355
+Step 36/37 : ENTRYPOINT ["node", "/app/packages/cli/dist/index.js"]
+ ---> Running in 517a080b00f2
+ ---> Removed intermediate container 517a080b00f2
+ ---> 89aeea9238f1
+Step 37/37 : CMD ["serve", "--host", "0.0.0.0", "--port", "3000", "--data-dir", "/data/instance"]
+ ---> Running in 0439c652f90e
+ ---> Removed intermediate container 0439c652f90e
+ ---> 4a9168b405b2
+Successfully built 4a9168b405b2
+Successfully tagged detuned-m53-owned:runtime

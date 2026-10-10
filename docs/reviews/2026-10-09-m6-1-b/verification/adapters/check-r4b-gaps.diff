@@ -1,0 +1,58 @@
+--- docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-r4b-gaps.mjs
+@@ -7,11 +7,15 @@
+ import { createRequire } from 'node:module';
+ import { execFileSync, spawnSync } from 'node:child_process';
+ import { isDeepStrictEqual } from 'node:util';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase, isDatabaseInitialized } from '../../../packages/storage-sqlite/dist/index.js';
+-
+-const root = fileURLToPath(new URL('../../../', import.meta.url));
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate, isDatabaseInitialized } from '../../../../../packages/storage-sqlite/dist/index.js';
++
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const root = fileURLToPath(new URL('../../../../../', import.meta.url));
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-review-r5-'));
+ const db = new Database(join(directory, 'source.sqlite'));
+@@ -49,7 +53,7 @@
+   const path = join(directory, `${name}.sqlite`);
+   writeFileSync(path, db.serialize());
+   const database = new Database(path);
+-  database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++  database.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+   return { path, database };
+ }
+ async function onUpgradedApp(database, action) {
+@@ -233,12 +237,12 @@
+       let rejected = false;
+       let error;
+       let response;
+-      try { response = openAndCoordinateDatabase(database, 'serve'); } catch (err) { rejected = true; error = err.message; }
++      try { response = currentCoordinate(database, 'serve'); } catch (err) { rejected = true; error = err.message; }
+       const extra = database.prepare('SELECT count(*) AS n FROM credentials').get().n - countBefore;
+-      record('G08', 'The shared serve coordinator upgrades a recognized old initialized schema before applying the new metadata gate',
+-        { rejected: false, initialized: true, extra_credentials: 0, issued_admin_token: false },
++      record('G08', 'Ordinary serve refuses a recognized old initialized schema without issuing identity or migrating',
++        { rejected: true, initialized: false, extra_credentials: 0, issued_admin_token: false },
+         { rejected, error: error ?? null, initialized: isDatabaseInitialized(database), schema_version: maxVersion(database), extra_credentials: extra, issued_admin_token: Boolean(response?.adminToken) },
+-        !rejected && isDatabaseInitialized(database) && maxVersion(database) >= 2 && extra === 0 && !response?.adminToken);
++        rejected && !isDatabaseInitialized(database) && maxVersion(database) === 1 && extra === 0 && !response?.adminToken);
+     } finally { database.close(); }
+   }
+ 
+@@ -269,7 +273,7 @@
+       initRun.status !== null && initRun.status !== 0 && serveRun.status !== null && serveRun.status !== 0 && !initOutput?.success && Boolean(serveOutput?.error) && !leftLock && !initRun.error && !serveRun.error);
+   }
+ 
+-  const baseline = JSON.parse(readFileSync(new URL('./baseline.json', import.meta.url), 'utf8'));
++  const baseline = JSON.parse(readFileSync(new URL('../../../2026-09-28-m0-m1-r5/baseline.json', import.meta.url), 'utf8'));
+   const output = {
+     reviewed_date: '2026-09-28', reviewed_head: baseline.head, reviewed_state: 'HEAD plus uncommitted implementation; see baseline.json hashes',
+     runtime: process.version, mode: 'temporary file SQLite, Fastify inject, SQLite write faults, native CLI failure paths; no model calls',

@@ -1,0 +1,100 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-snapshot.test.ts (5 tests | 4 failed) 264ms
+   × RS01 one read snapshot, immutable detached materials, collection permutation and semantic array hash 124ms
+     → Review snapshot material is invalid.
+   × RS02 current/lifecycle, policy conflict and revoked credential fail with fixed domain errors 40ms
+     → Review snapshot material is invalid.
+   × RS03 strict DTO duplicates, code correspondence and artifact availability/hash reject 35ms
+     → Review snapshot material is invalid.
+   ✓ RS04 only required configuration, empty verifier facts, pinned stable and policy pointer changes 33ms
+   × RS05 all historical metadata editors via keyset, no historical bodies, bounded contribution traversal 32ms
+     → Review snapshot material is invalid.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-snapshot.test.ts > RS01 one read snapshot, immutable detached materials, collection permutation and semantic array hash
+DetunedError: Review snapshot material is invalid.
+ ❯ invalid modules/review/src/index.ts:26:23
+     24| const hash = (v: unknown): v is string => typeof v === 'string' && /^[…
+     25| const positive = (v: number) => Number.isSafeInteger(v) && v > 0;
+     26| const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Re…
+       |                       ^
+     27| const stale = () => new DetunedError(ErrorCode.SNAPSHOT_STALE, 'Review…
+     28| const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review ma…
+ ❯ modules/review/src/index.ts:62:130
+ ❯ modules/review/src/index.ts:59:46
+ ❯ sqliteTransaction.read packages/storage-sqlite/src/sqlite-storage.ts:86:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:94:38
+ ❯ ReviewModule.generateSnapshotManifest modules/review/src/index.ts:40:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/integration/m6-review-snapshot.test.ts > RS02 current/lifecycle, policy conflict and revoked credential fail with fixed domain errors
+DetunedError: Review snapshot material is invalid.
+ ❯ invalid modules/review/src/index.ts:26:23
+     24| const hash = (v: unknown): v is string => typeof v === 'string' && /^[…
+     25| const positive = (v: number) => Number.isSafeInteger(v) && v > 0;
+     26| const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Re…
+       |                       ^
+     27| const stale = () => new DetunedError(ErrorCode.SNAPSHOT_STALE, 'Review…
+     28| const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review ma…
+ ❯ modules/review/src/index.ts:62:130
+ ❯ modules/review/src/index.ts:59:46
+ ❯ sqliteTransaction.read packages/storage-sqlite/src/sqlite-storage.ts:86:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:94:38
+ ❯ ReviewModule.generateSnapshotManifest modules/review/src/index.ts:40:25
+ ❯ snapshot tests/integration/m6-review-snapshot.test.ts:26:27
+ ❯ tests/integration/m6-review-snapshot.test.ts:44:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/integration/m6-review-snapshot.test.ts > RS03 strict DTO duplicates, code correspondence and artifact availability/hash reject
+DetunedError: Review snapshot material is invalid.
+ ❯ invalid modules/review/src/index.ts:26:23
+     24| const hash = (v: unknown): v is string => typeof v === 'string' && /^[…
+     25| const positive = (v: number) => Number.isSafeInteger(v) && v > 0;
+     26| const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Re…
+       |                       ^
+     27| const stale = () => new DetunedError(ErrorCode.SNAPSHOT_STALE, 'Review…
+     28| const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review ma…
+ ❯ modules/review/src/index.ts:62:130
+ ❯ modules/review/src/index.ts:59:46
+ ❯ sqliteTransaction.read packages/storage-sqlite/src/sqlite-storage.ts:86:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:94:38
+ ❯ ReviewModule.generateSnapshotManifest modules/review/src/index.ts:40:25
+ ❯ snapshot tests/integration/m6-review-snapshot.test.ts:26:27
+ ❯ tests/integration/m6-review-snapshot.test.ts:55:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/integration/m6-review-snapshot.test.ts > RS05 all historical metadata editors via keyset, no historical bodies, bounded contribution traversal
+DetunedError: Review snapshot material is invalid.
+ ❯ invalid modules/review/src/index.ts:26:23
+     24| const hash = (v: unknown): v is string => typeof v === 'string' && /^[…
+     25| const positive = (v: number) => Number.isSafeInteger(v) && v > 0;
+     26| const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Re…
+       |                       ^
+     27| const stale = () => new DetunedError(ErrorCode.SNAPSHOT_STALE, 'Review…
+     28| const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review ma…
+ ❯ modules/review/src/index.ts:62:130
+ ❯ modules/review/src/index.ts:59:46
+ ❯ sqliteTransaction.read packages/storage-sqlite/src/sqlite-storage.ts:86:22
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.readSnapshot packages/storage-sqlite/src/sqlite-storage.ts:94:38
+ ❯ ReviewModule.generateSnapshotManifest modules/review/src/index.ts:40:25
+ ❯ snapshot tests/integration/m6-review-snapshot.test.ts:26:27
+ ❯ tests/integration/m6-review-snapshot.test.ts:78:113
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  12:27:28
+   Duration  1.24s (transform 320ms, setup 0ms, collect 600ms, tests 264ms, environment 0ms, prepare 103ms)
+

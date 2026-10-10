@@ -1,0 +1,91 @@
+{
+  "build": {
+    "evidence": "../author/container/build-third.receipt.json",
+    "exit": 0,
+    "seconds": 129.563,
+    "health_layer_seconds": 1.911,
+    "reused_real_author_Linux_build": true
+  },
+  "Linux_typecheck": {
+    "exit": 0,
+    "gate_ms": 15236,
+    "uid": 1000
+  },
+  "Linux_lint": {
+    "exit": 0,
+    "gate_ms": 14448,
+    "uid": 1000
+  },
+  "Linux_core_first": {
+    "exit": 1,
+    "unique_tests": 699,
+    "passed": 686,
+    "failed": 13,
+    "files": 105,
+    "passed_files": 102,
+    "failed_files": 3,
+    "vitest_seconds": 248.4,
+    "timeout": false
+  },
+  "Linux_core_targeted": {
+    "exit": 0,
+    "passed": 38,
+    "files": 3,
+    "vitest_seconds": 12.39,
+    "repaired_previous_failures": 13
+  },
+  "Linux_core_combination": {
+    "unique_passed_tests": 699,
+    "unique_files": 105,
+    "not_a_single_final_whole_green_run": true,
+    "composition": "First full 686 passes plus all 13 repaired tests in targeted three-file 38-pass run; 25 already-passed tests repeated only as part of affected files."
+  },
+  "D01_Linux": {
+    "exit": 0,
+    "total_ms": 27478,
+    "smoke_ms": 25724,
+    "processes": 20,
+    "shared_ordinary_C_actor": true,
+    "source_and_restored_smoke_counts": {
+      "posts": 21,
+      "revisions": 21,
+      "events": 21,
+      "idem": 21,
+      "same_key_posts": 1,
+      "same_key_idem": 1,
+      "unique_titles": 20
+    },
+    "children": 29,
+    "natural_exit_0": 6,
+    "terminated_SIGTERM": 23,
+    "SIGKILL": 0,
+    "oracle_posts_projection": "Posts count uses unique revision=1 rows for smoke titles, relying on stored post FK and backup/restore validity; not direct SELECT COUNT(*) FROM posts."
+  },
+  "final_runtime": {
+    "image": "sha256:2190f6a9739816322aee3164691acc2ec53d70da7dd7f7801ce2892fa43fcbc2",
+    "transport": "runtime-third.receipt.json",
+    "remaining": "runtime-fourth.receipt.json",
+    "Node_HTTP_not_browser": true
+  },
+  "Mac_reuse": {
+    "accepted_core_tests": 699,
+    "files": 105,
+    "current29": true,
+    "Linux_current25_not_run": true,
+    "new_browser_not_run": true
+  },
+  "cleanup": {
+    "runtime_attempt_registered_resources": 31,
+    "builder_phase_containers": 6,
+    "final_owned_containers": 0,
+    "final_owned_volumes": 0,
+    "VM_images_intentionally_retained": true
+  },
+  "limits": [
+    "D01 C improvement is a fixed no-model template after actual forum search/fixed reads, not independent research reasoning.",
+    "20 clients share C identity; not 20 actors or 600-second capacity certification.",
+    "No GitHub workflow execution, public deployment, x86 or browser validation in this package.",
+    "Compose default origin/health semantics exercised through final image Docker containers; no claim of docker compose CLI orchestration execution."
+  ],
+  "final_test_version": "Three final portable test files docker-copied only into disposable targeted container; runtime product compiled bytes unchanged."
+}

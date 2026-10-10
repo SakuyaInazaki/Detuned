@@ -1,0 +1,63 @@
+{
+  "scope": "M5.1-B A static/build composition; excludes B UI and D browser/gates",
+  "files": [
+    {
+      "path": "package.json",
+      "sha256": "fa2ee4b7cccbd28dbd4cc9708d2b62eedf578d1b6e0a425493e0292787486af0"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "sha256": "4b9c400d02f9aec911104a3a50baab2dad78d4110cdac856bc4718ec30935b63"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "49c72b4c1b0a127c9715e96d4eef06b99d645440e2aaf3de13b3fd86be4fa006"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "985410289d868c23bdfdfdcbc3ca7b56b7300741e1fbd9cda5c21991355eb882"
+    },
+    {
+      "path": "packages/web/package.json",
+      "sha256": "f3acf554c9c2976765a3154d38213d05691c9af1f882a16589e65a9825a68292"
+    },
+    {
+      "path": "packages/web/tsconfig.json",
+      "sha256": "3bff93c62833af154b2f8db516b8d65af1a9c6d5ba1227c273f24f4617c13c84"
+    },
+    {
+      "path": "packages/web/vite.config.ts",
+      "sha256": "f8e631be303d230028fa71b7ca0d9d6304d90cbdbabf697fcd625fd46365f8f9"
+    },
+    {
+      "path": "packages/web/index.html",
+      "sha256": "65c250382ebaed4cda6a24f95d7014d9c6351d1f28b6744f0e59ae09f6f65636"
+    },
+    {
+      "path": "packages/server/src/static-web.ts",
+      "sha256": "8e8df1c19b6748739e4df88a242444b1133ca48524bfcfec7f0d89485e6dabf3"
+    },
+    {
+      "path": "packages/server/src/app.ts",
+      "sha256": "acaea5cff0b721f0f2a824917c625667660ffd0212cc6999abe4f10ff68c5523"
+    },
+    {
+      "path": "packages/server/src/index.ts",
+      "sha256": "f034636136db766a117d376f35b5f4cb4935149185a252851d3ded387c497b09"
+    },
+    {
+      "path": "packages/cli/src/index.ts",
+      "sha256": "47b4e739a36fa192f77ad221674ae716c9f493498564a98318dab6fb631f9500"
+    },
+    {
+      "path": "tests/contracts/m5-web-static.test.ts",
+      "sha256": "f40b021942a60077e3fcd7db2ead55f625a454614d0f705f4cea899574af30d7"
+    }
+  ],
+  "checks": {
+    "standard_script_final": "5/5 exit0, known pnpmfile state warning",
+    "source_noemit_final": "exit0 incl new test/CLI/server",
+    "build_full_browser": "not run by A"
+  },
+  "status": "A source/tests/config frozen"
+}

@@ -1,4 +1,5 @@
 import { Type } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
 export const EventTypeSchema = Type.Union([
     Type.Literal('space.revised'),
     Type.Literal('thread.created'),
@@ -10,11 +11,16 @@ export const EventTypeSchema = Type.Union([
     Type.Literal('relation.created'),
     Type.Literal('relation.resolved'),
     Type.Literal('relation.reopened'),
+    Type.Literal('artifact.created'),
     Type.Literal('artifact.redacted'),
     Type.Literal('review.requested'),
+    Type.Literal('review.cancelled'),
+    Type.Literal('review.submitted'),
     Type.Literal('review.revealed'),
     Type.Literal('review.finalized'),
+    Type.Literal('review.stale'),
     Type.Literal('review.invalidated'),
+    Type.Literal('check.created'),
     Type.Literal('check.completed'),
     Type.Literal('check.invalidated'),
 ]);
@@ -38,13 +44,27 @@ export const SubscriptionStartSchema = Type.Union([
     Type.Literal('now'),
     Type.Literal('context_checkpoint'),
 ]);
+/** Shared HTTP/tool advertisement and direct-core start/token shape constraint. */
+export const SubscriptionStartConstraintSchema = Type.Union([
+    Type.Object({
+        start: Type.Literal('context_checkpoint'),
+        checkpoint_token: Type.String({ minLength: 1 }),
+    }, { additionalProperties: true }),
+    Type.Object({
+        start: Type.Optional(Type.Union([Type.Literal('beginning'), Type.Literal('now')])),
+        checkpoint_token: Type.Optional(Type.Never()),
+    }, { additionalProperties: true }),
+]);
+export function isSubscriptionStartValid(value) {
+    return Value.Check(SubscriptionStartConstraintSchema, value);
+}
 export const CreateSubscriptionRequestSchema = Type.Object({
     thread_ids: Type.Optional(Type.Array(Type.String())),
     event_types: Type.Optional(Type.Array(EventTypeSchema)),
     consumer_key: Type.String({ minLength: 1, maxLength: 64 }),
     start: Type.Optional(SubscriptionStartSchema),
-    checkpoint_token: Type.Optional(Type.String()),
-}, { additionalProperties: false });
+    checkpoint_token: Type.Optional(Type.String({ minLength: 1 })),
+}, { additionalProperties: false, allOf: [SubscriptionStartConstraintSchema] });
 export const SubscriptionSchema = Type.Object({
     id: Type.String(),
     actor_id: Type.String(),

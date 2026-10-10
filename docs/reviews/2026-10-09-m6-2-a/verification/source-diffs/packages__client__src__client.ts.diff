@@ -1,0 +1,30 @@
+--- packages/client/src/client.ts (fresh exact before)
++++ packages/client/src/client.ts (current)
+@@ -1,6 +1,6 @@
+ import { isPostRevisionCatalogPage, isPostRevisionArtifactsPage, type PostRevisionCatalogQuery, type RevisionArtifactsQuery, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from '@detuned/protocol';
+ import { WEB_AUTH_PATH, WEB_CSRF_HEADER, isWebSessionResponse, type WebSessionResponse } from '@detuned/protocol';
+-import { artifactMetadata, snapshotUpload, downloadArtifactBytes, waitForArtifact, readArtifactJson, type ArtifactDownload } from './artifact-transfer.js';
++import { artifactMetadata, readableArtifactMetadata, snapshotUpload, downloadArtifactBytes, waitForArtifact, readArtifactJson, type ArtifactDownload } from './artifact-transfer.js';
+ export type { ArtifactDownload } from './artifact-transfer.js';
+ import { streamSpaceExport, type SpaceExportOptions } from './export-stream.js';
+ export type { SpaceExportOptions } from './export-stream.js';
+@@ -18,6 +18,7 @@
+   DeactivateMembershipData,
+   RedactionResult,
+   ArtifactMetadata,
++  ReadableArtifactMetadata,
+   CreateArtifactMetadata,
+   ErrorCode,
+   ErrorCodeType,
+@@ -638,9 +639,9 @@
+     return value;
+   }
+ 
+-  async getArtifact(spaceId: string, artifactId: string, opts?: { signal?: AbortSignal }): Promise<ArtifactMetadata> {
++  async getArtifact(spaceId: string, artifactId: string, opts?: { signal?: AbortSignal }): Promise<ReadableArtifactMetadata> {
+     const result = await this.requestWithBody<unknown>({ method: 'GET', path: `/spaces/${encodeURIComponent(spaceId)}/artifacts/${encodeURIComponent(artifactId)}`, signal: opts?.signal }, undefined, true);
+-    return artifactMetadata(result.data, spaceId, artifactId);
++    return readableArtifactMetadata(result.data, spaceId, artifactId);
+   }
+ 
+   downloadArtifact(spaceId: string, artifactId: string, opts?: { signal?: AbortSignal }): Promise<ArtifactDownload> {

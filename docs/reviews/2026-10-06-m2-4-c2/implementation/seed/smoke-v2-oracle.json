@@ -1,0 +1,145 @@
+{
+  "format_version": 1,
+  "recipe_sha256": "44b85c26915092429414ce27440d681feacf03eadc24db7cb234136617fdb432",
+  "seed_counts": {
+    "posts": 1000,
+    "post_revisions": 9914,
+    "events": 10000,
+    "threads": 40,
+    "relations": 40,
+    "actors": 21,
+    "sessions": 20
+  },
+  "initial_space_seq": 10000,
+  "logical_sha256": {
+    "actors": "bb150f598bc20237143cb442dacf8378318146631f1292977fbefe4403ff97b1",
+    "memberships": "689b979cc65b31e5b5510012ada287ad7da020d30d529e713b1d5bca999cf734",
+    "sessions": "6aa9cc7b8e2ce4d14b99e7431736a5e54bd9e8f6a4101ea5983b5bd337e6746d",
+    "spaces": "e6b6dd438f60c424c9e8a44c180c76de47e7a86c711f929ed7038683aafc52b3",
+    "space_revisions": "96645381cc586b45c686122cd80464bf7e8ac921ee1b440f40c64044303c36a7",
+    "threads": "e0131e5cc7c8945f8eacbd3f5119f460a62ae2b55c61d8bf1cfd3c49dad824f4",
+    "thread_versions": "92fc533c911d5fafb877fae065eb9639bf8f11c4165639fb4358fd359e443fc5",
+    "posts": "887f517da1894f17b9740e33880e3a0ff17d1735a137d8955f86ab36ec583c3a",
+    "post_revisions": "e2115937cf7a793ec1fd7da7fdf7641b92a37287c9a991b9772ceea79edf929b",
+    "relations": "b11c7725966f638eacc33adcefde4ed76078055a75814ce00078806fe805330b",
+    "events": "f7b4219e4208070e8d6ffe016281be65fdd2d2c0e0b5767941699de6e8dd3a73",
+    "post_fts": "92acab0bbb2412337c0e760027f32907282ac939db4e3442f2a77842fd070138"
+  },
+  "task": {
+    "failure_ref": {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000007",
+      "revision": 10,
+      "document_sha256": "2a9cf333e66f3adabedba3e20107dc0270940d017464c0b5082e5cc8991e92d7",
+      "document_bytes": 1144
+    },
+    "summary_ref": {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000008",
+      "revision": 10,
+      "document_sha256": "4951c160620e3e4bde635fba2da4e69aa6ad6f7029bd4359d888e3ebe244b215",
+      "document_bytes": 673
+    },
+    "source_refs": [
+      {
+        "post_id": "pst_c2_000000",
+        "revision": 10
+      },
+      {
+        "post_id": "pst_c2_000007",
+        "revision": 10
+      },
+      {
+        "post_id": "pst_c2_000975",
+        "revision": 1
+      }
+    ],
+    "expected_failure_fields": {
+      "attempt": "首次发现节点后固定距离；s→a=10，s→b=1，b→a=1",
+      "category": "counterexample",
+      "assumptions": [
+        "非负权有向图"
+      ],
+      "tested_scope": "三点有向图；先发现a即固定为10会失效，正确距离为2",
+      "expected": "距离为2",
+      "observed": "错误算法距离为10",
+      "evidence_refs": [],
+      "evidence_state": "unverified",
+      "evidence_missing_reason": "模拟配方材料；未运行外部独立验证器",
+      "ruled_out": "此三点图上的首次发现即固定规则",
+      "not_ruled_out": [
+        "已使用松弛的算法",
+        "负权或不同前提"
+      ],
+      "retry_when": [
+        "允许重新松弛并复测三条边"
+      ]
+    }
+  },
+  "representative_posts": [
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000000",
+      "revision": 10,
+      "document_sha256": "4d24fd8122039d1920211babe0c734675a5d04c8c3b6e1ed658d905dd0522cce",
+      "document_bytes": 524
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000005",
+      "revision": 10,
+      "document_sha256": "9817df2e496d7e7b442887ab8db2d78b8f62045577d7970c0dae06a4b1a9f329",
+      "document_bytes": 690
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000007",
+      "revision": 10,
+      "document_sha256": "2a9cf333e66f3adabedba3e20107dc0270940d017464c0b5082e5cc8991e92d7",
+      "document_bytes": 1144
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000008",
+      "revision": 10,
+      "document_sha256": "4951c160620e3e4bde635fba2da4e69aa6ad6f7029bd4359d888e3ebe244b215",
+      "document_bytes": 673
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000099",
+      "revision": 10,
+      "document_sha256": "5b3693d819d7d2cc3580feb4b2a60daba2e5a1847ae5946aea1175b2f7c7ba7e",
+      "document_bytes": 17662
+    },
+    {
+      "space_id": "spc_c2_main",
+      "post_id": "pst_c2_000999",
+      "revision": 9,
+      "document_sha256": "dab311cbc7018cb4cd1abea568e2e3e2ecdbee9b918e06755a30dba4a40ff0a6",
+      "document_bytes": 17644
+    }
+  ],
+  "challenge_samples": [
+    "rel_c2_0000",
+    "rel_c2_0001",
+    "rel_c2_0002",
+    "rel_c2_0003",
+    "rel_c2_0004",
+    "rel_c2_0005",
+    "rel_c2_0006",
+    "rel_c2_0007",
+    "rel_c2_0008",
+    "rel_c2_0009",
+    "rel_c2_0010",
+    "rel_c2_0011",
+    "rel_c2_0012",
+    "rel_c2_0013",
+    "rel_c2_0014",
+    "rel_c2_0015",
+    "rel_c2_0016",
+    "rel_c2_0017",
+    "rel_c2_0018",
+    "rel_c2_0019"
+  ]
+}

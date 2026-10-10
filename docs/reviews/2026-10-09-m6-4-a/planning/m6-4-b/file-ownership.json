@@ -1,0 +1,59 @@
+{
+  "state": "root approved; awaiting current package seal/new fresh/explicit release",
+  "A_product": [
+    "packages/protocol/src/tools.ts",
+    "packages/client/src/client.ts",
+    "packages/mcp/src/tool-validation.ts",
+    "packages/mcp/src/bridge.ts"
+  ],
+  "A_new": [
+    "tests/contracts/m6-review-tools.test.ts"
+  ],
+  "B_product": [
+    "packages/cli/src/index.ts",
+    "packages/adapter-pi/src/index.ts",
+    "packages/adapter-pi/src/runtime.ts"
+  ],
+  "B_new": [
+    "tests/contracts/m6-review-cli.test.ts",
+    "examples/review-cli.md"
+  ],
+  "B_guides": [
+    "examples/mcp-bridge.md",
+    "examples/pi-extension.md",
+    "integrations/pi.md",
+    "integrations/dsh.md"
+  ],
+  "D_new": [
+    "tests/contracts/m6-review-tools-independent.test.ts"
+  ],
+  "D_exact_catalog_fixture_candidates": [
+    "tests/contracts/cross-interface-contract.test.ts",
+    "tests/contracts/m0-m1-r2-adapters.test.ts",
+    "tests/contracts/m2-focused-context-contracts.test.ts",
+    "tests/contracts/m2-post-revision-read-contracts.test.ts",
+    "tests/contracts/m3-events-contract.test.ts",
+    "tests/contracts/m4-mcp-runtime.test.ts",
+    "tests/contracts/m4-runtime-binding-native.test.ts",
+    "tests/contracts/m4-mcp-lifecycle-independent.test.ts",
+    "tests/contracts/m4-mcp-binding-independent.test.ts",
+    "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+    "tests/contracts/m4-mcp-input-mode.test.ts"
+  ],
+  "retained_old_eight_samples_not_delete": [
+    "tests/contracts/m4-mcp-schema.test.ts"
+  ],
+  "official_lane": "existing retained runtime only, first read-only ownership/version/existence; no installs/downloads",
+  "checks": "D sole serial; authors source only",
+  "D_official_writable": [
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs",
+    "tests/contracts/m4-pi-native-lifecycle.test.ts",
+    "scripts/integrations/dsh-runtime/runtime.spec.ts"
+  ],
+  "D_official_readonly": [
+    "scripts/integrations/dsh-runtime/launch.mjs",
+    "scripts/integrations/dsh-runtime/experiment.config.ts"
+  ],
+  "MCP_prepare": "unchanged, no exception",
+  "D_catalog_change_scope": "only extend discovery/coverage8\u21929 and update inactive-review exclusion, preserve all old assertions"
+}

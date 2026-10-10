@@ -1,0 +1,61 @@
+{
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "baseline_head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "groups": {
+    "product_source_config_test_hashes": {
+      "baseline_count": 322,
+      "changed": [],
+      "missing": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "baseline_count": 8055,
+      "changed": [],
+      "missing": []
+    },
+    "frozen_sql_archive_hashes": {
+      "baseline_count": 4,
+      "changed": [],
+      "missing": []
+    },
+    "schema_profile_hashes": {
+      "baseline_count": 2,
+      "changed": [],
+      "missing": []
+    },
+    "tracked_build_artifact_hashes": {
+      "baseline_count": 208,
+      "changed": [],
+      "missing": []
+    },
+    "untracked_build_artifact_hashes": {
+      "baseline_count": 263,
+      "changed": [],
+      "missing": []
+    }
+  },
+  "lock_sha256": "ea84a3709fe9a54b1a1fb1e0e9403ab9fd6e363ed8a3ecf7ba0cbf536be94f4f",
+  "author_freezes": {
+    "author/d01/freeze-manifest-v2.json": {
+      "manifest_sha256": "6365b6c7c0c8bfc6c7a05d69754b8d2c95c8d7f3c8c9578ebbf8b2220ae6c054",
+      "entry_count": 3,
+      "mismatches": []
+    },
+    "author/container/freeze-manifest.json": {
+      "manifest_sha256": "4b93dbdf350c867ee7de18aae1146739fdc9f8471db15394c17716315fe86004",
+      "entry_count": 7,
+      "mismatches": [],
+      "evidence_entry_count": 36,
+      "evidence_mismatches": []
+    }
+  },
+  "new_source_config_test_paths": [
+    ".dockerignore",
+    ".github/workflows/deployment.yml",
+    "Dockerfile",
+    "compose.yaml",
+    "scripts/integrations/deployment/README.md",
+    "scripts/integrations/deployment/container-health.mjs",
+    "scripts/integrations/deployment/d01-recovery.mjs",
+    "scripts/integrations/deployment/d01-worker.mjs"
+  ]
+}

@@ -1,0 +1,11 @@
+--- independent-report-v1.md
++++ independent-report.md
+@@ -13,7 +13,7 @@
+ 
+ 精确命令、耗时、退出码见 [gate-summary.json](gate-summary.json)、[output-audit.json](output-audit.json) 和原始 `*-first.stdout.txt` / `*-first.stderr.txt`。所有操作串行，仅既有本地 Node/pnpm/已安装 Chrome/锁定 SDK。浏览器单 worker、非持久 context，无 HAR/trace/video/storageState，无凭据截图。
+ 
+-D 的四目录组使用真正临时文件 SQLite/WAL、Fastify ephemeral HTTP 与 shared client；DC01 的 CLI 是真实已构建新进程。14 个真实评审轮次按 round DESC seek 完整续页，limit 和预算变化保持无漏重；整 wire UTF-8 预算包含 API/version/request_id/meta/签名 cursor，多字节 request_id 的首项不能容纳真实 422。普通 has_more 保持 truncated=false，实际字节裁尾才 true。DC02 验 actor/space/post/secret/purpose/sort/原 expiry、每页当前 ACL、TTL不续；真实目标红删410，其他冻结材料红删只给安全状态。sealed summary 精确11字段，绝不带意见、附件健康或 reviewer payload。DC03 cookie 早 Origin 错误仍 private,no-store、非法 query 无业务写入/ACK。DC04 是明确 controlled transport 坏 parent/date/unknown/order/meta/limit/1MiB/abort 对照，不冒称后端实际产生坏数据。
++D 的四目录组使用真正临时文件 SQLite/WAL、Fastify ephemeral HTTP 与 shared client；DC01 的 CLI 是真实已构建新进程。14 个真实评审轮次按 round DESC seek 完整续页，limit 和预算变化保持无漏重；整 wire UTF-8 预算包含 API/version/request_id/meta/签名 cursor，多字节 request_id 的首项不能容纳反例是在同一真实 SQLite 服务上直接调用 getRequests 并注入超长 request_id，真实得到服务层 422；不是 HTTP 进程收到该 ID 的端到端 422。普通 has_more 保持 truncated=false，实际字节裁尾才 true。DC02 验 actor/space/post/secret/purpose/sort/原 expiry、每页当前 ACL、TTL不续；真实目标红删410，其他冻结材料红删只给安全状态。sealed summary 精确11字段，绝不带意见、附件健康或 reviewer payload。DC03 cookie 早 Origin 错误仍 private,no-store、非法 query 无业务写入/ACK。DC04 是明确 controlled transport 坏 parent/date/unknown/order/meta/limit/1MiB/abort 对照，不冒称后端实际产生坏数据。
+ 
+ 四浏览器旅程通过真实 HTTP 和 DB：普通申请者 claim→request→固定 snapshot；两个真实不同 reviewer 顺序登录、创建独立论坛 Session，候选须显式选用；私有附件仅显式加入 evidence，sealed 本人可见、另 reviewer 隐藏、全部提交后揭示；最终决定保留历史，真正原作者修订后 current_validity 变更。required checks pending 的最终决定真实拒绝，不能假造 passed receipt；取消仍保留已揭示历史。提交后代理真实丢响应，耗尽默认有限 retry 后显式同 body/key 恢复只有一份 DB 副作用；不会自动替换 Session。晚目录/snapshot/已开始 Session 结果不能跨 space/ref/logout 回填，Session POST 可能已创建一次，不宣称回滚已开始 POST；无暗重试。CW04 同时完成390px键盘与普通帖子发布。B3 CW01 原显式 refresh 后同轮目录与详情都 accepted；固定 round/ref/cursor 不变。
+ 

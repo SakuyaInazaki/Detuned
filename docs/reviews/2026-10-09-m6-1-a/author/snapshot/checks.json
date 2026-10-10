@@ -1,0 +1,70 @@
+{
+  "source_tests": [
+    {
+      "log": "source-run-1.log",
+      "actual_runner_exit": 1,
+      "summary": "1 passed / 4 failed; fixture default required profile absent",
+      "runner_reported_duration_seconds": 1.24
+    },
+    {
+      "log": "source-run-2.log",
+      "actual_runner_exit": 0,
+      "summary": "5 passed",
+      "runner_reported_duration_seconds": 1.04
+    },
+    {
+      "log": "source-run-3-targeted.log",
+      "actual_runner_exit": 0,
+      "summary": "RS01/RS04 2 passed, 3 skipped",
+      "runner_reported_duration_seconds": 1.06
+    },
+    {
+      "log": "source-run-4-config.log",
+      "actual_runner_exit": 1,
+      "summary": "RS04 fixture restoration reads intentionally corrupted JSON",
+      "runner_reported_duration_seconds": 0.891
+    },
+    {
+      "log": "source-run-5-config.log",
+      "actual_runner_exit": 0,
+      "summary": "RS04 1 passed / 4 skipped",
+      "runner_reported_duration_seconds": 0.867
+    },
+    {
+      "log": "source-run-6-exacthex.log",
+      "actual_runner_exit": 0,
+      "summary": "RS03 1 passed / 4 skipped",
+      "runner_reported_duration_seconds": 0.888
+    }
+  ],
+  "noemit": [
+    {
+      "log": "noemit-1.log",
+      "actual_exit": 2,
+      "wall_elapsed": "not separately archived"
+    },
+    {
+      "log": "noemit-2.log",
+      "actual_exit": 0,
+      "wall_elapsed": "not separately archived"
+    },
+    {
+      "log": "noemit-3-final.log",
+      "actual_exit": 0,
+      "wall_elapsed": "not separately archived"
+    },
+    {
+      "log": "noemit-4-final.log",
+      "actual_exit": 0,
+      "wall_elapsed": "not separately archived"
+    }
+  ],
+  "not_run": [
+    "root build",
+    "full suite",
+    "current29",
+    "independent tests",
+    "model/network inference"
+  ],
+  "fixture": "real private in-memory SQLite; Fastify inject only; all app/db closed afterEach"
+}

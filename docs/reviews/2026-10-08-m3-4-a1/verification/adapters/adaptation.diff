@@ -1,0 +1,25 @@
+--- docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs
++++ docs/reviews/2026-10-08-m3-4-a1/verification/adapters/check-unfinished-contracts.mjs
+@@ -6,16 +6,16 @@
+ import { createRequire } from 'node:module';
+ import { execFileSync } from 'node:child_process';
+ import { isDeepStrictEqual } from 'node:util';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized } from '../../../packages/storage-sqlite/dist/index.js';
+-import { DetunedClient } from '../../../packages/client/dist/index.js';
+-
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { DetunedClient } from '../../../../../packages/client/dist/index.js';
++
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-review-r4-'));
+ const db = new Database(join(directory, 'review.sqlite'));
+ const boot = bootstrapDatabase(db);
+-const app = buildApp({ storage: new SqliteStorage(db) });
++const app = buildApp({ storage: new SqliteStorage(db), writeRateLimits: { per_minute: 60000, burst: 10000 } });
+ const results = [];
+ let serial = 0;
+ const quote = value => "'" + value.replaceAll("'", "''") + "'";

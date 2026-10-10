@@ -1,0 +1,27 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m3-backup-cli.test.ts (5 tests | 1 failed) 2721ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  782ms
+   × M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config 416ms
+     → expected { …(5) } to match object { …(4) }
+(1 matching property omitted from actual)
+   ✓ M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses  561ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  654ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  308ms
+ ✓ tests/integration/m3-backup-recovery.test.ts (10 tests) 3803ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  360ms
+   ✓ M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup  1830ms
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  799ms
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts (4 tests | 1 failed) 5905ms
+   ✓ M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch  2136ms
+   × M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup 869ms
+     → UNIQUE constraint failed: memberships.space_id, memberships.actor_id
+   ✓ M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets  1695ms
+   ✓ M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes  1203ms
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 17 passed (19)
+   Start at  23:09:49
+   Duration  6.45s (transform 223ms, setup 0ms, collect 655ms, tests 12.43s, environment 0ms, prepare 124ms)
+

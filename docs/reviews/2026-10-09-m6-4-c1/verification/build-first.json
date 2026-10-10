@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "-r",
+    "--workspace-concurrency=1",
+    "run",
+    "build"
+  ],
+  "exit_code": 0,
+  "seconds": 10.534,
+  "runner_pid": 73182,
+  "stdout": "build-first.stdout.txt",
+  "stderr": "build-first.stderr.txt",
+  "source_freeze": "independent-source-freeze.json",
+  "concurrency": "global one; workspace1/test worker1/file serial; original timeouts"
+}

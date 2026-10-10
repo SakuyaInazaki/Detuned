@@ -1,0 +1,64 @@
+{
+  "status": "pass",
+  "sources": {
+    "examples/d01-fixed/candidate-first-discovery.mjs": "791af4acd590e9aee3f1a5579b8f24207d119125143fce39333e080cffb3a127",
+    "examples/d01-fixed/candidate-relaxation.mjs": "5130ef39c50b7ae4a4b883e858387a36171e7bbe5660c1f55a58e8fa1e6280b2",
+    "examples/d01-fixed/reference.mjs": "0fb391e8f435f1a737485c975d7a0bbf24b57dfbf82deae2ed39a218f119319b",
+    "examples/d01-fixed/checker.mjs": "3db36900cbeb69c8ad2c6540eae4a8652c3fd82bc821da0241dd82ea14f74a87",
+    "examples/d01-fixed/cases.json": "678636471464cb9553d2727a33f8fc63d0876bea1f5d5327e56d2ec5438661c4",
+    "examples/d01-fixed/config.json": "8c8c75a7611cdcfaf0896e18859999333e5169e4dc04353a894d94e9b65d20bf",
+    "examples/d01-fixed/catalog.mjs": "1950e6306074f3f834e8f4f362f70a1c328dcfd0a62802affa4be6263f3eea66",
+    "scripts/checks/d01-fixed-verifier.mjs": "8ade71b57792031f0a96c6bed032063bce2bcfbb38d67611166a809c486a83e0",
+    "tests/integration/m7-fixed-verifier.test.ts": "eb6333f4dc881039952c1caf2b65f4c17b0f2a774af99641e15e7a89f8ef71b2",
+    "tests/integration/m7-fixed-verifier-independent.test.ts": "58ed7cfd05d72cbe4d77a9b41e122efeaf273d2e72a6d4ae6983f25046c22081"
+  },
+  "A_freeze_sha256": "e879c34c6c46cf0a7b2cad95b2e18b3e4ec42febf01f933e1da60b7383857c69",
+  "D_ready_sha256": "0d755d673e3fc73b5a2c81cd5bf524eb845af33c1870f16b9b2f09232aabe9ac",
+  "catalog_actual_pins": {
+    "candidate-first-discovery": {
+      "role": "candidate-first-discovery",
+      "path": "examples/d01-fixed/candidate-first-discovery.mjs",
+      "sha256": "791af4acd590e9aee3f1a5579b8f24207d119125143fce39333e080cffb3a127",
+      "bytes": 472
+    },
+    "candidate-relaxation": {
+      "role": "candidate-relaxation",
+      "path": "examples/d01-fixed/candidate-relaxation.mjs",
+      "sha256": "5130ef39c50b7ae4a4b883e858387a36171e7bbe5660c1f55a58e8fa1e6280b2",
+      "bytes": 1144
+    },
+    "reference": {
+      "role": "reference",
+      "path": "examples/d01-fixed/reference.mjs",
+      "sha256": "0fb391e8f435f1a737485c975d7a0bbf24b57dfbf82deae2ed39a218f119319b",
+      "bytes": 533
+    },
+    "checker": {
+      "role": "checker",
+      "path": "examples/d01-fixed/checker.mjs",
+      "sha256": "3db36900cbeb69c8ad2c6540eae4a8652c3fd82bc821da0241dd82ea14f74a87",
+      "bytes": 3476
+    },
+    "cases": {
+      "role": "cases",
+      "path": "examples/d01-fixed/cases.json",
+      "sha256": "678636471464cb9553d2727a33f8fc63d0876bea1f5d5327e56d2ec5438661c4",
+      "bytes": 400
+    },
+    "config": {
+      "role": "config",
+      "path": "examples/d01-fixed/config.json",
+      "sha256": "8c8c75a7611cdcfaf0896e18859999333e5169e4dc04353a894d94e9b65d20bf",
+      "bytes": 381
+    },
+    "runner": {
+      "role": "runner",
+      "path": "scripts/checks/d01-fixed-verifier.mjs",
+      "sha256": "8ade71b57792031f0a96c6bed032063bce2bcfbb38d67611166a809c486a83e0",
+      "bytes": 7713
+    }
+  },
+  "baseline415": "allsource/protectionmatch",
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "old11578": "acceptedinventory reusedno recursivescan"
+}

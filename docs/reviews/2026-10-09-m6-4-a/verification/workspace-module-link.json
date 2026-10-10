@@ -1,0 +1,35 @@
+{
+  "decision": "root authorizes single project-local existing workspace module symlink, no install/link command",
+  "checked_at": "2026-10-09T09:15:05.167748+00:00",
+  "server_manifest_only_dependency_delta": true,
+  "lock_only_three_lines_internal_link": true,
+  "lock_sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+  "parents_target_before": [
+    {
+      "path": "packages/server/node_modules",
+      "kind": "directory",
+      "uid": 501,
+      "realpath": "packages/server/node_modules"
+    },
+    {
+      "path": "packages/server/node_modules/@detuned",
+      "kind": "directory",
+      "uid": 501,
+      "realpath": "packages/server/node_modules/@detuned"
+    },
+    {
+      "path": "modules/review",
+      "kind": "directory",
+      "uid": 501,
+      "realpath": "modules/review"
+    }
+  ],
+  "before": "missing",
+  "link": "packages/server/node_modules/@detuned/module-review",
+  "relative_target": "../../../../modules/review",
+  "after_kind": "symlink",
+  "resolved_target": "modules/review",
+  "external_pins_changed": false,
+  "other_links_modified": false,
+  "install_or_scripts_executed": false
+}

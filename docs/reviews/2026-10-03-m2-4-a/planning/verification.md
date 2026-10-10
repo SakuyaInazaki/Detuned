@@ -1,0 +1,38 @@
+# M2.4-A independent verification plan
+
+Preparation only, no product execution. Interface still pending parent freeze. Own files limited to this planning/verification.md and verification/. Current uncommitted accepted M2.3 is legitimate baseline, never reverted.
+
+| ID | Finite independent evidence after freeze |
+|---|---|
+| CX01 | Actual complete compact HTTP response bytes from raw response.body, including real request_id, escaped Unicode/control/quotes/backslashes, api_version/data/meta JSON punctuation; success4096/65536/default12288 within exact bound. Verify budget equality/boundary if deterministic frozen serializer permits. |
+| CX02 | invalid core/HTTP/tool max_bytes below4096/above65536/noninteger/empty/duplicate/unknown parameters; no accidental transport-only validation. |
+| CX03 | mandatory objective/rules/identifiers/checkpoint alone exceeds4096→422 QUERY_TOO_BROAD, untouched strings and no truncated success; higher legal budget succeeds when sufficient; mandatory >65536 fails explicitly. No invented continuation facility. |
+| CX04 | Deterministic optional material growth and approved priority activity→failures→blockers→pins, whole-item removal, truthful meta.truncated/approved omitted counters only; no string clipping, fixed-ref drift or loss of retained null/missing/redacted facts. |
+| CX05 | Actual shared client and forum_context page data/meta, installed Pi registered executor and MCPstdio preserve meta.truncated; clarify SDK pretty text/content/details envelope is outside HTTP max_bytes. CLI actual behavior recorded, not promised without contract. |
+| CX06 | Read current credentials/member/space ACL, cross-space403/404 policy, redacted behavior; compare relevant complete DB/events/idempotency/delivery/ack rows before/after successful and rejected context reads, no writes/automatic ack. |
+| CX07 | Two real SQLite connections in WAL temp DB; controlled method-boundary barrier commits rule revision+public event via second connection after first snapshot begins before seq/material reads. Old response/rules and signed checkpoint seq agree; subsequent normal context seesnew, subscription from oldcheckpoint obtains committed newevent. Barrier explicit synchronous execution, no sleeps as race proof. |
+| CX08 | Fixed injected Clock checkpoint24h token timestamps, actor/space binding and expiry negatives through existing subscription flow; existing search cursor and older signer-default regressions retained. Snapshot includes auth/rules/material/highwater, token signs returned seq after snapshot. |
+| CX09 | focus_thread_id precisely frozen semantics/error, actual material selection or explicit refusal; no silent ignored argument accepted as implemented. |
+| CX10 | Current versioned29/fullformal/oldSQ/KV/three real historical successes + integrity; limited addon compatibility versions only after parent conflict adjudication, original historical28/29 distinct. |
+
+Baseline verification/baseline.json: HEAD b8dacd56779a007a2e7045b682bca0c036fdfc44;120 product/config/test,34currentdocs/material,2078all previous reviews/probes/log/evidence,4SQL/archive,2schema/profile,208trackeddist+36untracked. Current runtimeNode26.3.0/pnpm11.7.0. No node_modules content dump or model credentials. Build outputs separately hashed.
+
+Potential exact old contract impacts found read-only:
+
+- tests/integration/m2-knowledge-views.test.ts V06:57 requires4096 overflow still retaining40 source_refs in firstpin; intentional old one-pass non-hard limit conflicts new whole-item removal. Change requires parent-approved formal adaptation preserving source-byte motivation, not weakening new budget.
+- Same file oldContextService4parameter construction may need explicit clock/serializer context per approved new constructor. A/B implementers own formal changes; verifier never patches product tests.
+- tests/contracts/cross-interface-contract.test.ts:74–80 treats client.callTool forum_context result as directspace_id/rules/checkpoint, whereas approved new result becomesdata/meta. Parent approve precise consumer migration.
+- Old standalone M2.2-B KV08 tests small.meta.truncated and large fullsourcefields but does not require smallpin persistence: likely still valid, source-only inference until execution.
+- Historical29 errors/auth probes targetcontext mostly to reject invalid bodies/query or revokedread, not demand old tool shape. M2.1ADv2 checks actual current schema, no old JSON-only overwrite; exact applicability audited after freeze. No known current29 incompatible success assertion yet.
+
+Need frozen serializer/envelope context signature, approved DTO/meta additions or none, focus semantics,readSnapshot signature,Clock constructor ordering before executable fixtures. Actual emitted bytes must be measured, not reconstructed approximate object. No hard error-envelopes guarantee unless specifically approved. CX07 barrier hooks in independent test storage only, no production test-only hook required.
+
+Not run: product tests/build/fullsuite/current29/newprobe,Node22/clean install/remoteCI/actualhost-model,100kload,M2.4-B continue-read/M6. Scope only A, no entireT06/M2 claims. Preparation finishes here pending interface freeze.
+
+Parent clarified snapshot minimal proof: reader already read rules, writer separate WALconnection commits rule+correspondingevent through deterministic callback barrier, then reader takes highwater/othermaterial. Assert WAL mode, oldrules+oldseq response, and actual newevent from subsequent checkpoint subscription—not merely token existence. Successful HTTPcompactbody bound excludes status/headers/SDK wrappers; mandatory oversized data explicit422. Old tests minimal adjustment awaits parent A/B interface approval.
+
+Interface now frozen: ContextPage existingdata/meta(truncated,next_cursor:null), no new counts/ref. Shared buildContextEnvelope/serializeContextEnvelope/contextEnvelopeBytes(requestId,page). ContextService getContext fourth budget{request_id} required; constructor fifthclock defaultlegacy butapp explicit. focus anynonundefined afterspaceauth→400 withoutthreadlookups. readSnapshot callback(snapshotStorage), existingdb.inTransaction reuse otherwise synchronousdeferred. EventService checkpointverify consumes injectedclock,exp equalvalid/+1invalid. No pollack change.
+
+Independent check-context-http.mjs prepared against frozen HTTPcontract, node --checkexit0 only. Actual envelope bytes/minmaxdefault, invalid/focus, 50source wholepin removal largecontrol, storagefixture mandatory6k/90k failures, readonlysnapshots, nativeclient callToolpage meta. Product runtime import not attempted while implementation proceeds. CX07–08 independent WAL/checkpoint fixture will bind actual frozen event/subscription constructor/source when present, avoiding guessed imports; priority multiarray checked against actualcore plus formal with read-only independence. Never label nonexistent newruntime import as productionfailure beforebuild.
+
+Independent CX07–08 check-context-snapshot.mjs prepared without developer assertion functions: temp WAL/two connections, reader oldrule methodcallback asserts transaction, writer commits newrevision+event, readeroldrule/oldseq and nextcontextnewseq; actualcheckpointconsumer poll must contain event. Fixed2030Clock expiry equal201/+1expired422. check-context-tools.mjs independently builds app/storagefixture, runs installedPi validateToolArguments→registeredexecutor and actualMCPstdio, both must retain true truncatedmeta from50source wholepin fixture. All syntaxchecks0, no runtime imports/productexecution. Two attempted tool-orchestration calls had JavaScript parsing SyntaxError before shell execution; no product/evidence mutation from those calls. No developerbefore/assertion helper reused.

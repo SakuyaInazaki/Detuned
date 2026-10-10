@@ -1,0 +1,62 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "PR01-empty",
+      "empty_stored_fields_preserved": true
+    },
+    {
+      "id": "PR01-03",
+      "budget": 4096,
+      "pages": 42,
+      "stored_bytes": 105164,
+      "stored_title_replaced": true,
+      "structured_surrogate_preserved": true
+    },
+    {
+      "id": "PR01-03",
+      "budget": 65536,
+      "pages": 3,
+      "stored_bytes": 105164,
+      "stored_title_replaced": true,
+      "structured_surrogate_preserved": true
+    },
+    {
+      "id": "PR01-03",
+      "budget": 12288,
+      "pages": 13,
+      "stored_bytes": 105164,
+      "stored_title_replaced": true,
+      "structured_surrogate_preserved": true
+    },
+    {
+      "id": "PR02",
+      "old_revision_after_head_update": true,
+      "withdrawn": true,
+      "current_newer": true
+    },
+    {
+      "id": "PR05",
+      "ttl_not_extended": true,
+      "budget_change": true,
+      "expiry_equal_200_plus_one_400": true,
+      "strict_payload_and_boundary": true
+    },
+    {
+      "id": "PR04",
+      "accepted_quotes": 1695,
+      "rejected_quotes": 1696,
+      "actual_accepted_bytes": 4096
+    },
+    {
+      "id": "PR06",
+      "removed404_revoked401_redacted410_before_bad_cursor": true,
+      "no_read_writes": true
+    }
+  ],
+  "fixture_origin": "synthetic stored historical shape; not old captured HTTP",
+  "limits": [
+    "stored title isolated surrogate was replaced on SQLite TEXT write",
+    "no header/error/SDK cap"
+  ]
+}

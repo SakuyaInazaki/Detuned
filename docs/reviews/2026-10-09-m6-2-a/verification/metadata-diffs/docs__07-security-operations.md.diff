@@ -1,0 +1,25 @@
+--- docs/07-security-operations.md (fresh before)
++++ docs/07-security-operations.md (metadata v2)
+@@ -93,7 +93,7 @@
+ 
+ ### 6.2 M3.3-A 受控本地离线备份与新目录恢复
+ 
+-本包提供`detuned backup --offline --data-dir SOURCE --output NEW_BACKUP_DIR`及`detuned restore --backup BACKUP_DIR --data-dir NEW_DATA_DIR`。当前backup接受schema3与format1；restore严格接受原schema2或schema3备份并核source profile，旧2仅新stage升级3，绝不升级来源；future/unknown/corrupt拒绝。活跃合作服务持DirectoryLock时拒备份；显式检查WAL checkpoint busy并正常关闭后复制一致主DB。目录锁是合作边界，不承诺阻止忽略锁的任意writer；成功checkpoint可能改变源库物理布局。
++本包提供`detuned backup --offline --data-dir SOURCE --output NEW_BACKUP_DIR`及`detuned restore --backup BACKUP_DIR --data-dir NEW_DATA_DIR`。当前backup创建schema4与format1；restore严格接受schema2/3/4备份并核source profile，旧2/3仅新stage升级4，绝不升级来源；future/unknown/corrupt拒绝。活跃合作服务持DirectoryLock时拒备份；显式检查WAL checkpoint busy并正常关闭后复制一致主DB。目录锁是合作边界，不承诺阻止忽略锁的任意writer；成功checkpoint可能改变源库物理布局。
+ 
+ 私有备份目录0700、文件0600，仅包含backup-manifest.json、detuned.sqlite与登记present附件objects。manifest严格字段、路径与重复名校验，最大8MiB/10000附件，单附件25MiB。ready必须存在且hash/bytes匹配；redacted/missing保留状态，登记file存在则校验后保存，不存在记present=false。私有物理备份可含脱敏历史bytes和credential hashes，不能当公开导出或全球擦除。排除未登记对象、staging、log、本机客户端key store、锁及WAL副本；不额外收集客户端凭据文件或恢复输出token。数据库中已有研究正文按物理内容保留，不能保证帖子没有敏感文本。
+ 
+@@ -217,6 +217,12 @@
+ 
+ 固定Node22.23.3 arm64官方digest、原pnpm锁，LinuxnativeSQLite真运行；runtime UID1000 exec CLI，whole `/data`持久卷、显式init、roTLS与assets分离。健康loopback连接/精确HTTP authority/严格CA及TLSname分别验证，不关闭校验。D01普通同身份20进程有限争用与模板演练不等容量/研究认证；物理restore撤旧凭据/轮换secret，新签名poll保pending，ACK仅显式。实际范围见[独验](reviews/2026-10-09-m5-3-a/verification/independent-report.md)。
+ 
+-## M6.1-B维护与在线保密性
++## M6.1-B阶段的维护与在线保密性
+ 
+ current3普通serve/init拒legacy1|2，不原地迁移；显式offline migrate仅复制新stage。正式snapshot/request五表物理恢复保持历史，逻辑public导出明确excluded且不带正式对象。维护校验compact/原SHA/header/items/固定名单/同space引用，允许合法脱敏后重开；在线读取与历史重放仍当前ACL及410/404门禁，绝不还原被清正文。根本机串行与及时合成tmp清退决策见开发规范，不能视为内存问题全部解决；禁止VM/Colima操作。
++
++## M6.2-A当前维护与封存隐私
++
++current schema4普通serve/init拒legacy1/2/3并指引offline migrate；copy只新stage升级4，backup源2/3/4按历史profile核验，current4保六formal表。逻辑public export排除所有formal及review_assignment附件，import不继承批准。旧schema2容器证据不认证current4镜像。
++
++sealed意见/明确私有证据本人或真实revealed才可读，admin无提前读取权；unused私有附件不公开。redaction事件随artifact静态scope，公共poll及pending再次过滤旧误public事件。维护严格intrinsic检查但不借在线红删使合法实例不能重开，在线ACL/404/410仍优先。VM/Colima禁令不变。

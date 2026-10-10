@@ -1,0 +1,21 @@
+--- examples/README.md v2
++++ examples/README.md v3
+@@ -53,8 +53,8 @@
+ 
+ - [有界修订与固定修订附件目录](post-catalogs.md)：动态metadata分页、完整UTF8信封预算及严格墓碑；旧完整端点兼容，D.2 Web后续接入。
+ 
+-原生TLS与CLI旗标操作见[Web本地指南](web-local.md)，限定验收见[M5.2-A](../docs/reviews/2026-10-09-m5-2-a/README.md)。[M5.3-A](../docs/reviews/2026-10-09-m5-3-a/README.md)已取得旧schema2镜像的有限Linuxarm64容器/D01组合证据；当前schema4未重建或重验镜像，不因本包本地维护通过推断容器通过。
++原生TLS与CLI旗标操作见[Web本地指南](web-local.md)，限定验收见[M5.2-A](../docs/reviews/2026-10-09-m5-2-a/README.md)。[M5.3-A](../docs/reviews/2026-10-09-m5-3-a/README.md)已取得旧schema2镜像的有限Linuxarm64容器/D01组合证据；当前schema5未重建或重验镜像，不因本包本地维护通过推断容器通过。
+ 
+-当前schema4维护与公共交换见[升级](upgrade-recovery.md)、[物理恢复](backup-recovery.md)、[导出](space-export.md)、[导入](space-import.md)。M6.2-A只有内部评审请求/封存提交/揭示，尚无可操作的review HTTP/CLI示例。
++当前schema5维护与公共交换见[升级](upgrade-recovery.md)、[物理恢复](backup-recovery.md)、[导出](space-export.md)、[导入](space-import.md)。M6.4-A已提供正式评审HTTP与共享客户端示例；评审CLI及宿主工具尚待接入。
+ 
+ - [正式评审HTTP与共享客户端](review-http.md)：当前十二操作、真实reviewer session、sealed/揭示/裁决及私有证据；评审CLI/宿主/Web后续接入。
+--- docs/12-decisions.md v2
++++ docs/12-decisions.md v3
+@@ -298,4 +298,4 @@
+ 
+ 私有multipart复用一条上传引擎，空metadata两种合法MIME形式；server求本人assignment，阶段准入不破坏历史key，最终fresh事务仍复核。新review所有响应private,no-store，私有metadata条件缓存禁令、公共旧行为保持。server仅新内部workspace依赖/锁三行及本地单link，无外部依赖或安装，schema5不变。
+ 
+-803unique/125为首802+1失败后受影响5/5及H01补证组合，不是最终源码一次完整全绿；新13、四门禁最终0/current25组合通过，首记录保留。[独验](reviews/2026-10-09-m6-4-a/verification/independent-report.md)。CLI/MCP/Pi/Web评审与M7未完成。
++803unique/125为首802+1失败后受影响5/5及H01补证组合，不是最终源码一次完整全绿；新13通过；最终build/type/lint0；核心803/125与current25按独验列明的组合闭合，首记录保留。[独验](reviews/2026-10-09-m6-4-a/verification/independent-report.md)。CLI/MCP/Pi/Web评审与M7未完成。

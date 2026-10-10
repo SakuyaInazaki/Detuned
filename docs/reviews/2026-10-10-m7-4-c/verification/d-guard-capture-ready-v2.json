@@ -1,0 +1,23 @@
+{
+  "status": "source preparation only; no runtime authorized",
+  "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+  "author_freeze_sha256": "5da281f6cf740664e7e063974f217ed18920e8cedaa34b3627262b5d2ead3221",
+  "files": {
+    "codex-guard-only.mjs": "efed18f6ba76a64873c56402588e06008e9dfa48f661229789fb994351364a2d",
+    "codex-bounded-capture.mjs": "76ca9228648d955255c683b3f0ff89bc8038a1afd350dd58e4e0bac901c40825",
+    "guard-source-binding.json": "e129658eba261bd6bbc15be4a78dc6f326529efe9697bae21b9cc22de033c3ce",
+    "d-guard-capture-plan.json": "714ac103a073883d3d3f694c5e955bceaa495c27b901c6b8a545e8e8896a5611",
+    "capture-reject.delta.diff": "0cfb669577ebc64afa55a5b4813943c550631427d78fd31082dfdbe9f75aaaaf"
+  },
+  "not_run": [
+    "syntax",
+    "guard",
+    "reject-worker",
+    "native"
+  ],
+  "budgets": {
+    "source_total_ms": 90000,
+    "outer_total_ms": 95000
+  },
+  "controlled_failure_not_reached_is_failure": true
+}

@@ -1,0 +1,48 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J04: Migration preserves historical timestamps and detects state conflicts
+DetunedError: 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+ ❯ openAndCoordinateDatabase packages/storage-sqlite/src/bootstrap.ts:706:57
+    704|   }
+    705| 
+    706|   if (classification.kind === 'supported_legacy') throw new DetunedErr…
+       |                                                         ^
+    707| 
+    708|   if (mode === 'serve') {
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:1422:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y02: Existing initialization materials without migrations or actors reject as corrupt in all modes and CLI
+AssertionError: expected 'VALIDATION_ERROR' to be 'FORBIDDEN' // Object.is equality
+
+Expected: "FORBIDDEN"
+Received: "VALIDATION_ERROR"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:3574:33
+    3572|         expect(existsSync(join(y02Dir, 'detuned.lock'))).toBe(false);
+    3573|         const out = JSON.parse(child.stderr || child.stdout);
+    3574|         expect(out.error?.code).toBe('FORBIDDEN');
+       |                                 ^
+    3575|         expect(out.error?.message).toMatch(/数据库包含持久化初始化材料|实例持久密钥缺失或损坏/…
+    3576|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/m0-m1-r4-b-regression.test.ts > M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock
+AssertionError: expected 'VALIDATION_ERROR' to be 'FORBIDDEN' // Object.is equality
+
+Expected: "FORBIDDEN"
+Received: "VALIDATION_ERROR"
+
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts:3802:38
+    3800|           expect(existsSync(join(dirY02, 'detuned.lock'))).toBe(false);
+    3801|           const parsed = JSON.parse(run.stderr || run.stdout);
+    3802|           expect(parsed.error?.code).toBe('FORBIDDEN');
+       |                                      ^
+    3803|           const checkDb = new Database(fileY02);
+    3804|           expect(fullLogicalSnapshot(checkDb)).toEqual(beforeY02);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

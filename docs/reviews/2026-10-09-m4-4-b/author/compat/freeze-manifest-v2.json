@@ -1,0 +1,13 @@
+{
+  "files": {
+    "tests/contracts/r4-c-contracts.test.ts": "21251b6ab41e04fc2791022f1dcbc41794fc5381697c0a525bc7945074ed5463",
+    "tests/contracts/m2-post-revision-read-contracts.test.ts": "975610184208c07ae501601fc3d6885732730dd99da6a988776e22581516518d"
+  },
+  "checks": {
+    "source_first": "exit1;4 EPERM setup failures",
+    "loopback_targeted": "exit0;C03 4passed,22 unselected",
+    "test_noemit": "exit2; whole-file diagnostics outside modified C03 lines; original-file baseline not reproduced, not proven pre-existing; not claimed passed",
+    "P07": "exit0;1passed/6unselected;753ms"
+  },
+  "docs": "pending independent acceptance"
+}

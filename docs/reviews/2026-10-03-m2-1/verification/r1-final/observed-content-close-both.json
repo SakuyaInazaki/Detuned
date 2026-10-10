@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "bytes": 8,
+      "trace": [
+        {
+          "phase": "client_consumed",
+          "status": 200,
+          "expected_bytes": "complete",
+          "actual_bytes": "complete",
+          "ms": 22,
+          "active_requests": [
+            {
+              "method": "GET",
+              "url": "/api/v1/spaces/spc_58c1bc67-42e0-45a1-ae05-53cfb7229f48/artifacts/art_14e3ce85-a0f9-4735-acd6-57c0b5d08981/content"
+            }
+          ],
+          "socket_count": 2
+        },
+        {
+          "phase": "server_settled",
+          "ms": 74,
+          "active_requests": [],
+          "socket_count": 2
+        },
+        {
+          "phase": "normal_app_close",
+          "closed": true,
+          "ms": 75,
+          "active_requests": [],
+          "socket_count": 2
+        }
+      ],
+      "passes": true
+    },
+    {
+      "bytes": 0,
+      "trace": [
+        {
+          "phase": "client_consumed",
+          "status": 200,
+          "expected_bytes": "",
+          "actual_bytes": "",
+          "ms": 15,
+          "active_requests": [],
+          "socket_count": 2
+        },
+        {
+          "phase": "server_settled",
+          "ms": 67,
+          "active_requests": [],
+          "socket_count": 2
+        },
+        {
+          "phase": "normal_app_close",
+          "closed": true,
+          "ms": 67,
+          "active_requests": [],
+          "socket_count": 2
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "passes": true
+}

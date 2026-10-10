@@ -1,0 +1,16 @@
+{
+  "platform": "linux/arm64",
+  "official_platform_digest": "sha256:b20fe038d9592822dd534600a1ddf467e985178aa3fed60ec441a056c2cc45bd",
+  "node_patch_version": "not_observed_until_actual_pull/run",
+  "pnpm": "11.7.0",
+  "install_policy": "frozen-lockfile + ignore-scripts + ignore-pnpmfile, then only esbuild rebuild; no compile toolchain without real failure and root authorization",
+  "runtime_layout": "necessary workspace plus full Linux node_modules, no prune/deploy",
+  "whole_data_volume": "/data",
+  "data_dir": "/data/instance",
+  "trusted_assets": "/app",
+  "owned_VM_root": "/private/tmp/detuned-colima-owned-608g1enf",
+  "owned_Docker_socket": "/private/tmp/detuned-colima-owned-608g1enf/colima/detuned-owned/docker.sock",
+  "environment_basis": "docs/reviews/2026-10-09-m5-2-a/planning/colima-owned/retained-state.json",
+  "not_repository_source": true,
+  "fresh_only_no_container_operation": true
+}

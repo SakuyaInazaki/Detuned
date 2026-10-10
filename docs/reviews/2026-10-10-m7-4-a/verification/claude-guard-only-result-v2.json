@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "source_sha256": "e733a5ad1cf5963fa525910364b99c2602480c42855b8c137abaea16c48805b6",
+  "binary_sha256": "fcfd837103965c64de34a6b9b94370d77a347ea71819715a27d5f0ef01775ea4",
+  "binary_launched": false,
+  "model_calls": 0,
+  "guard": {
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "cleanup": {
+    "child_closed": true,
+    "allowed_closed": true,
+    "forbidden_closed": true,
+    "private_directory_removed": true,
+    "private_directory_absent": true,
+    "allocated_fallback_used": false
+  },
+  "policy_template_sha256": "02ea2a24fffbecc5e934c2a01d4311f8a8da89e8473ff839f4f0a2ed2f481ec7",
+  "canonical": {
+    "allocated_alias_changed": true,
+    "owned_realpath_equal": true,
+    "no_symlink": true,
+    "directory": true,
+    "mode0700": true,
+    "current_uid": true,
+    "sentinel_realpath_equal": true,
+    "profile_realpath_equal": true
+  },
+  "profile_sha256": "5f196abdd9269117006e19ad3d8f2d3804183b4e438e01e5b222bfc5de01e1b9",
+  "hits": {
+    "allowed": 1,
+    "forbidden": 0
+  },
+  "child_close": {
+    "code": 0,
+    "signal": null
+  },
+  "child_observation": {
+    "error": false,
+    "expired": false,
+    "stderr_bytes": 0
+  }
+}

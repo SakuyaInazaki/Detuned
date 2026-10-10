@@ -1,0 +1,39 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 11 tests using 1 worker
+
+  ✓   1 scripts/integrations/web/author.spec.ts:3:1 › human reads a fixed revision, publishes a note and cited response, then confirms logout (1.1s)
+  ✓   2 scripts/integrations/web/independent.spec.ts:23:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout (745ms)
+  ✓   3 scripts/integrations/web/independent.spec.ts:69:1 › BI02 observer write denial, hidden space and immediate membership/credential withdrawal (863ms)
+  ✓   4 scripts/integrations/web/independent.spec.ts:95:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (8.0s)
+  ✓   5 scripts/integrations/web/independent.spec.ts:116:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (540ms)
+  ✓   6 scripts/integrations/web/independent.spec.ts:134:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (1.8s)
+  ✓   7 scripts/integrations/web/m5-c.spec.ts:22:1 › C01 atomic thread with optional first note and lost committed response keeps one intent (8.4s)
+  ✘   8 scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page (527ms)
+  ✓   9 scripts/integrations/web/m5-c.spec.ts:109:1 › C03 real author failure fields/historical missing values, fifty cap and inert material (797ms)
+  ✓  10 scripts/integrations/web/m5-c.spec.ts:136:1 › C04 pending actual query cannot cross space/logout and withdrawal before authorization rejects (802ms)
+  ✓  11 scripts/integrations/web/m5-c.spec.ts:156:1 › C05 keyboard/narrow search and finite connection failure recover without false results (8.2s)
+
+
+  1) scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      80 |   expect(second.data.length).toBe(2); expect(second.meta.next_cursor).toBeNull();
+      81 |   const request = forum.httpEvents.filter(value => value.path.endsWith('/search')).at(-1)!;
+    > 82 |   expect(request.query !== undefined && request.query.cursor === first.meta.next_cursor && request.query.q === 'Quasar' && request.query.kind === 'note' && request.query.thread_id === other.id && request.query.tags === JSON.stringify(['science', 'fixed'])).toBe(true);
+         |                                                                                                                                                                                                                                                                  ^
+      83 |   const selected = targets.get(second.data[0].post_id)!; await forum.revisePost(selected, {body: 'Revised current body.'});
+      84 |   await page.locator('.search-results li').filter({hasText: selected.id}).getByRole('button', {name: '查看搜索修订 1', exact: true}).click();
+      85 |   await expect(page.locator('.body-text')).toBeVisible(); expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, selected.body)).toBe(true);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-c.spec.ts:82:258
+
+    Error Context: docs/reviews/2026-10-09-m5-1-c/verification/browser-first/playwright-output/m5-c-C02-real-search-filte-a6c92-eturn-preserve-applied-page/error-context.md
+
+  1 failed
+    scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page 
+  10 passed (34.7s)
+[ELIFECYCLE] Command failed with exit code 1.

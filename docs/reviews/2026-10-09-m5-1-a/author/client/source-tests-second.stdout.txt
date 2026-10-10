@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m5-web-auth-client.test.ts (4 tests | 1 failed) 211ms
+   × WA01: real human login/query/logout uses root cookie transport without default Bearer 107ms
+     → expected DetunedError: Invalid web request. { …(6) } to match object { statusCode: 401 }
+(6 matching properties omitted from actual)
+   ✓ WA02: real cookie writes use current CSRF, logout refuses absent nonce and original Bearer works 70ms
+   ✓ WA03: auth single-attempt transport, pending body cancellation and timeout settle without retry 32ms
+   ✓ WA04: strict nested web response and root OpenAPI preserve formats/unknown rejection without mutation 1ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  03:44:48
+   Duration  767ms (transform 218ms, setup 0ms, collect 354ms, tests 211ms, environment 0ms, prepare 43ms)
+

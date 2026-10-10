@@ -1,0 +1,26 @@
+{
+  "node": "v26.3.0",
+  "hash_protocol": "SHA256(prevDigestRaw32 || exactUtf8LineWithLF); initial zero32; header included; end excluded",
+  "records_planned": 20000,
+  "records_completed": 20000,
+  "header_lines": 1,
+  "total_bytes": 20417875,
+  "elapsed_ms": 200.516084,
+  "stopped_at_15s": false,
+  "final_digest": "51f0107317c2b6b12161f098a173ff819de056ce34bc26664e0a49b01f0dce1b",
+  "memory_before": {
+    "rss": 49168384,
+    "heapTotal": 6438912,
+    "heapUsed": 4164664,
+    "external": 1582801,
+    "arrayBuffers": 71933
+  },
+  "memory_after": {
+    "rss": 64012288,
+    "heapTotal": 12730368,
+    "heapUsed": 7202080,
+    "external": 2995789,
+    "arrayBuffers": 1102565
+  },
+  "bounded_design": "Only current line/joined buffer and previous digest are retained; memory delta alone is not a bounded-memory proof"
+}

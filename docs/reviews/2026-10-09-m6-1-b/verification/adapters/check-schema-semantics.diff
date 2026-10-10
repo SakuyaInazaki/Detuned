@@ -1,0 +1,24 @@
+--- docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-schema-semantics.mjs
+@@ -7,12 +7,16 @@
+ import { createRequire } from 'node:module';
+ import { spawnSync } from 'node:child_process';
+ import { isDeepStrictEqual as equal } from 'node:util';
+-import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage } from '../../../packages/storage-sqlite/dist/index.js';
+-import { SCHEMA_SQL } from '../../../packages/storage-sqlite/dist/schema.js';
+-import { buildApp } from '../../../packages/server/dist/index.js';
++import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase as currentCoordinate, SqliteStorage } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { SCHEMA_SQL } from '../../../../../packages/storage-sqlite/dist/schema.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
+ 
+-const root = fileURLToPath(new URL('../../../', import.meta.url));
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const root = fileURLToPath(new URL('../../../../../', import.meta.url));
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-r16-semantics-'));
+ const source = new Database(join(directory, 'source.sqlite'));

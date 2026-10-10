@@ -1,0 +1,17 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-post-revision-read-contracts.test.ts > M2.4-B.2.1 fixed post revision transport contracts > P07: installed Pi validator reaches actual registered execute for new and unchanged old post kinds
+TypeError: pi.on is not a function
+ ❯ activate packages/adapter-pi/src/index.ts:22:6
+     20|     environmentTokenFile: process.env.DETUNED_TOKEN_FILE,
+     21|   }) });
+     22|   pi.on('session_shutdown', async () => { await runtime.close(); });
+       |      ^
+     23|   pi.on('session_start', async () => { await runtime.start(); });
+     24| 
+ ❯ tests/contracts/m2-post-revision-read-contracts.test.ts:200:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,21 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'UserAbortError'
+- 'AbortError'
+
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m3-1/verification/check-tools-real-v2.mjs:8:962
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'UserAbortError',
+  expected: 'AbortError',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.3.0

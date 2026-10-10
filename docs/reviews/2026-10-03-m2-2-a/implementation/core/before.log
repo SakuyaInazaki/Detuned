@@ -1,0 +1,90 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-typed-writes.test.ts (8 tests | 8 failed) 53ms
+   × M2.2-A new typed writes and historical replay > T01: weak initial failure path rejects missing evidence_state atomically 17ms
+     → expected [Function] to throw an error
+   × M2.2-A new typed writes and historical replay > T02: proposal uses one strict rule across all three entry points 6ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: claim uses one strict rule across all three entry points 5ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: failure uses one strict rule across all three entry points 5ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T02: summary uses one strict rule across all three entry points 4ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T03: failure provided requires real fixed evidence and unverified requires nonblank reason 3ms
+     → expected function to throw an error, but it didn't
+   × M2.2-A new typed writes and historical replay > T04: fixed old versions remain readable after new revisions/withdrawal; new refs reject wrong/cross-space/redacted targets 9ms
+     → 帖子修订版本与请求不一致。
+   × M2.2-A new typed writes and historical replay > T05: genuine baseline success replays same raw key after restart while new key rejects; changed payload still conflicts 4ms
+     → no such column: request_key
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T01: weak initial failure path rejects missing evidence_state atomically
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m2-typed-writes.test.ts:23:112
+     21|   it('T01: weak initial failure path rejects missing evidence_state at…
+     22|     const { evidence_state, ...bad } = failure(); const before = count…
+     23|     expect(() => threads.createThread(auth, sid, { title:'bad', initia…
+       |                                                                                                                ^
+     24|     expect(counts()).toEqual(before);
+     25|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: proposal uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: claim uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: failure uses one strict rule across all three entry points
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T02: summary uses one strict rule across all three entry points
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:33:44
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T03: failure provided requires real fixed evidence and unverified requires nonblank reason
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-typed-writes.test.ts:40:118
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T04: fixed old versions remain readable after new revisions/withdrawal; new refs reject wrong/cross-space/redacted targets
+DetunedError: 帖子修订版本与请求不一致。
+ ❯ packages/core/src/services/post-service.ts:460:17
+    458| 
+    459|         if (post.current_revision !== req.expected_revision) {
+    460|           throw new DetunedError(
+       |                 ^
+    461|             ErrorCode.REVISION_CONFLICT,
+    462|             '帖子修订版本与请求不一致。',
+ ❯ packages/core/src/services/idempotency-service.ts:2651:22
+ ❯ sqliteTransaction.<anonymous> packages/storage-sqlite/src/sqlite-storage.ts:55:16
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.transaction packages/storage-sqlite/src/sqlite-storage.ts:60:16
+ ❯ IdempotencyService.executeIdempotent packages/core/src/services/idempotency-service.ts:2633:25
+ ❯ PostService.withdrawPost packages/core/src/services/post-service.ts:436:29
+ ❯ tests/integration/m2-typed-writes.test.ts:50:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/integration/m2-typed-writes.test.ts > M2.2-A new typed writes and historical replay > T05: genuine baseline success replays same raw key after restart while new key rejects; changed payload still conflicts
+SqliteError: no such column: request_key
+ ❯ Database.prepare node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21
+ ❯ tests/integration/m2-typed-writes.test.ts:65:27
+     63|     const req={title:'legacy',initial_post:content('failure',wide)};
+     64|     const first=old.createThread(auth,sid,req,'legacy');
+     65|     const beforeRecord=db.prepare("SELECT * FROM idempotency_records W…
+       |                           ^
+     66|     expect(threads.createThread(auth,sid,req,'legacy')).toEqual(first);
+     67|     expect(() => threads.createThread(auth,sid,req,'new-key')).toThrow…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  14:52:00
+   Duration  544ms (transform 165ms, setup 0ms, collect 253ms, tests 53ms, environment 0ms, prepare 39ms)
+

@@ -1,0 +1,132 @@
+{
+  "status": "accepted_by_parent_finalized",
+  "date": "2026-10-09",
+  "head_unchanged": true,
+  "counts": {
+    "product_source_config_test_hashes": 274,
+    "current_document_hashes": 53,
+    "mutable_status_document_hashes": 5,
+    "protected_review_probe_log_evidence_hashes": 5630,
+    "frozen_sql_archive_hashes": 4,
+    "schema_profile_hashes": 2,
+    "tracked_build_artifact_hashes": 208,
+    "untracked_build_artifact_hashes": 216
+  },
+  "delta": {
+    "product_source_config_test_hashes": {
+      "changed": [
+        "packages/client/src/index.ts",
+        "packages/mcp/src/session-binding.ts",
+        "packages/mcp/src/tool-validation.ts",
+        "packages/protocol/src/index.ts",
+        "vitest.config.ts"
+      ],
+      "added": [
+        "packages/protocol/src/response-guards.ts",
+        "tests/contracts/m4-runtime-binding-native.test.ts",
+        "tests/contracts/m4-runtime-response-validation.test.ts",
+        "packages/client/src/session-binding.ts"
+      ],
+      "removed": []
+    },
+    "current_document_hashes": {
+      "changed": [
+        "docs/00-implementation-brief.md",
+        "docs/08-roadmap.md",
+        "docs/09-validation.md",
+        "docs/11-development-standards.md",
+        "docs/12-decisions.md"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "mutable_status_document_hashes": {
+      "changed": [
+        "README.md",
+        "docs/progress.md",
+        "docs/reviews/README.md",
+        "examples/README.md"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "schema_profile_hashes": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "changed": [
+        "packages/client/dist/index.d.ts",
+        "packages/client/dist/index.d.ts.map",
+        "packages/client/dist/index.js",
+        "packages/client/dist/index.js.map",
+        "packages/protocol/dist/index.d.ts",
+        "packages/protocol/dist/index.d.ts.map",
+        "packages/protocol/dist/index.js",
+        "packages/protocol/dist/index.js.map"
+      ],
+      "added": [],
+      "removed": []
+    },
+    "untracked_build_artifact_hashes": {
+      "changed": [
+        "packages/mcp/dist/session-binding.d.ts",
+        "packages/mcp/dist/session-binding.d.ts.map",
+        "packages/mcp/dist/session-binding.js",
+        "packages/mcp/dist/session-binding.js.map",
+        "packages/mcp/dist/tool-validation.d.ts.map",
+        "packages/mcp/dist/tool-validation.js",
+        "packages/mcp/dist/tool-validation.js.map"
+      ],
+      "added": [
+        "packages/protocol/dist/response-guards.js.map",
+        "packages/protocol/dist/response-guards.d.ts",
+        "packages/client/dist/session-binding.d.ts",
+        "packages/client/dist/session-binding.js",
+        "packages/client/dist/session-binding.d.ts.map",
+        "packages/client/dist/session-binding.js.map",
+        "packages/protocol/dist/response-guards.js",
+        "packages/protocol/dist/response-guards.d.ts.map"
+      ],
+      "removed": []
+    }
+  },
+  "allowed_source_config_test_files": [
+    "packages/client/src/index.ts",
+    "packages/client/src/session-binding.ts",
+    "packages/mcp/src/session-binding.ts",
+    "packages/mcp/src/tool-validation.ts",
+    "packages/protocol/src/index.ts",
+    "packages/protocol/src/response-guards.ts",
+    "tests/contracts/m4-runtime-binding-native.test.ts",
+    "tests/contracts/m4-runtime-response-validation.test.ts",
+    "vitest.config.ts"
+  ],
+  "unauthorized_delta": [],
+  "freeze_mismatches": {
+    "A": [],
+    "B": []
+  },
+  "local_links": {
+    "markdown_files": 17,
+    "checked": 291,
+    "missing": []
+  },
+  "trailing_whitespace": [],
+  "git_diff_check": 0,
+  "lock_sql_schema_archive_oldreviews_protected": true,
+  "primary_lock_unchanged": true,
+  "core_checks_rerun_by_C": false,
+  "held_dsh_resources": "retained; not touched by C; no all-owned-zero assertion"
+}

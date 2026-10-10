@@ -1,0 +1,25 @@
+{
+  "status": "source preparation only; no runtime authorized",
+  "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+  "author_freeze_sha256": "5da281f6cf740664e7e063974f217ed18920e8cedaa34b3627262b5d2ead3221",
+  "files": {
+    "codex-guard-only.mjs": "6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256",
+    "codex-bounded-capture.mjs": "76ca9228648d955255c683b3f0ff89bc8038a1afd350dd58e4e0bac901c40825",
+    "guard-source-binding.json": "aee952538982425d2d0a2f6273b6561710d641aad9869fc4e46a344dd94a8706",
+    "d-guard-capture-plan.json": "d63853955f4f28816b0f8d8b6e2b0d2c08d2d81e826aad72353a8965d60e63f1",
+    "capture-reject.delta.diff": "0cfb669577ebc64afa55a5b4813943c550631427d78fd31082dfdbe9f75aaaaf",
+    "guard-file-positive.delta.diff": "206090435a6c4bddf2648434138acabf57d8506a7e2e4fdea110e7422da3a3ad"
+  },
+  "not_run": [
+    "syntax",
+    "guard",
+    "reject-worker",
+    "native"
+  ],
+  "budgets": {
+    "source_total_ms": 90000,
+    "outer_total_ms": 95000
+  },
+  "controlled_failure_not_reached_is_failure": true,
+  "change": "only independent ordinary own-file positive; actual A source/policy/minimalenv and capture logic unchanged"
+}

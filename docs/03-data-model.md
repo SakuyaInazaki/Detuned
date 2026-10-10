@@ -1,5 +1,31 @@
 # 数据模型与状态不变量
 
+当前实现与验收只以[进度](progress.md)和[审查索引](reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
+
+## M7.1-B1历史接入事实（2026-10-10）
+
+历史事实：M7.1-B1于2026-10-10有限接入十二HTTP/client操作，schema6保持；该包范围与原证据保留，后续当前状态只见进度和审查索引。
+
+本包未迁移数据库、未增表或导出 family；schema6四表及因果历史保持 M7.1-A 已接受合同。HTTP白名单和 scoped URL 只是公开投影，不重建日志可信回执身份。
+
+公开 run/receipt/snapshot/固定 post revision/required checks 使用白名单 DTO 和整对象绑定 guard；run 不公开持久审计字段 created_request_version。required checks 仅冻结名单中最新 run（最多32），缺 run 显式 null，无全 attempt 目录。snapshot 复用唯一 canonical JCS 实现，客户端对 UTF8 实际 WebCrypto SHA 校验 manifest_sha256。
+
+
+## M7.1-A当前持久契约（2026-10-10）
+
+当前schema6新增且仅新增四表，既有七formal表与研究材料保留：
+
+| 表 | 固定绑定与约束 |
+|---|---|
+| check_runs | request/snapshot、snapshot_sha256、check_name、attempt、verifier_actor_id、check_config_sha256、created_request_version；状态pending/pass/fail/error/invalidated、正version及审计字段；UNIQUE(request_id,check_name,attempt)，latest按attempt而非时间 |
+| check_run_versions | PK(check_run_id,version)，正observed_request_version、state、nullable receipt_id、审计与invalidation_reason；连续不可变历史，因果版本单调且不晚于request head |
+| check_receipts | 全局唯一receipt_id、每run唯一receipt；observed摘要、result、环境/工具/步骤、严格date-time、exit_code、logs_artifact_id，以及run/verifier/received_at/run_version；写后不可覆盖 |
+| check_run_credentials | credential_id PK/FK、run FK、created_at，保签发/轮换绑定；不级联删除 |
+
+run/request/snapshot/actor、receipt→run/log与credential→run/credential均有明确FK；history receipt_id不加造成循环写序的即时FK，其completion双向因果由同事务和intrinsic读取核对。无第五表。snapshot/config摘要取已核固定snapshot/profile，不接受caller替换，不增加policy_digest。历史decision版本v按每required latest run中observed_request_version<v的最大run.version还原：终态后invalidate不改历史决定，终态request禁止新attempt。逻辑导出不携这四表、凭据绑定或可信receipt身份，header仅扩schema6。
+
+阶段历史状态见[进度](progress.md)：M7.1-A内部checks与schema6维护已有限接受，截至M7.1-A当时公开check HTTP/client仍待B1。以下C2A/C2B及宿主阶段记录保留当时事实，不升级原宿主认证。
+
 本文件规定语义及数据库约束。M0 将其落实为 schema、迁移和类型；本文件不是已经执行的建表脚本。
 
 ## 1. 通用约定
@@ -24,7 +50,7 @@
 | relations | id, space_id, source_post_id/revision, target_post_id/revision, type, state, version, creator_id | 两端同空间且精确修订；相同端点+type 唯一 |
 | relation_resolutions | relation_id, version, resolver_id, reason_ref, action, created_at | 追加；仅 challenges 可 open/resolve/reopen |
 | artifacts | id, space_id, owner_id, visibility, review_assignment_id?, check_run_id?, sha256, bytes, mime, storage_key, state | ready/redacted/missing；visibility=space 或 review_assignment；验证日志可绑定 check_run；路径不由上传者控制 |
-| revision_artifacts | post_id, revision, artifact_id, purpose | 复合外键检查同空间、附件 ready、可见范围 |
+| revision_artifacts | post_id, revision, artifact_id, purpose | 服务端同事务检查同空间、附件 ready、可见范围；现SQL保留artifact FK，帖子修订归属由业务校验 |
 | subscriptions | id, actor_id, space_id, thread_ids, event_types, created_at | 筛选条件不可变；变更须新建订阅 |
 | consumers | id, subscription_id, consumer_key, ack_seq, version, active_batch_id, acl_epoch | (subscription_id,consumer_key) 唯一；一个待确认批次 |
 | delivery_batches | id, consumer_id, from_seq, through_seq, event_ids, acked_at, created_at | 不保存正文；顺序固定；持久存储未确认批次 |
@@ -59,6 +85,13 @@ v0.1 的 review/decision 只是文章类型，不产生机器认可的批准状�
 failure 的 `category` 枚举：`counterexample | proof_gap | test_failure | performance_failure | environment_error | budget_exhausted`。若无可上传证据，填写 `evidence_missing_reason` 并标记 `evidence_state=unverified`，不得省略整个失败。环境故障、预算耗尽必须使 `ruled_out` 描述限于此次执行，而不是数学方向。
 
 `evidence_state` 仅为 `provided | unverified`：provided 表示提供了可读引用，不表示证据已经证明结论；证据独立验证另由关系/回执表达。
+
+M2.2-A 新写约束：thread 初始帖子、新帖子及修订统一验证 proposal/claim/failure/summary 的既有字段、元素、长度与枚举；目标 structured 及引用对象的未知键拒绝。修订按已存不可变 kind 校验。failure.evidence_state 显式必填，无默认；provided 至少一条当前可读固定证据，unverified 必须有非空白 evidence_missing_reason，可携带有效上下文证据。proposal/claim 的 statement、scope、falsification_plan 保留非空白约束，保存文本不裁剪；其余字段仅按现有 schema，不自动升级空数组规则。
+
+source_refs 与 post 证据均固定到精确 post_id + revision，须存在、同空间且符合当前读取权限，不跟随 latest。withdrawn 的可读旧版本可引用；新引用不可见/不存在/错误版本返回404，授权后的 redacted 返回410。附件引用沿 M2.1 的事务内 DB 状态及 artifact_ids 规则，不引入异步文件检查。provided 不代表独立验证，environment_error/budget_exhausted 不自动成为算法否定；本包不采用关键词或模型裁判正文语义。
+
+严格校验仅运行在新幂等写事务内。原始请求先计算 request_hash，不新增默认、裁剪或重编码；历史已成功原 key + 原 payload 重放沿既有权限和脱敏投影，既存引用与结构不被新写验证器追溯改写。非法新写的实体、事件、引用及幂等记录全部回滚。知识视图及 summary 来源更新留后续 M2.2-B。
+
 
 所有正文长度受限；summary ≤ 280 Unicode 码点，title ≤ 160，tags ≤ 20 个且每个 ≤ 48；body ≤ 64 KiB UTF-8；总 JSON 请求 ≤ 256 KiB。不得在省略时偷偷截断写入。
 
@@ -100,7 +133,27 @@ failure 的 `category` 枚举：`counterexample | proof_gap | test_failure | per
 
 这些都是当前表与不可变材料的索引，不维护可被单独编辑的另一套“真理表”。
 
+M2.2-B 读取投影保留 failures/findings/open-questions 三个入口与 data 数组；findings只列claim（proposal仍可search/thread读取）。claim/failure标明author_report，公共supports/challenges/reproduces只报告带作者/创建者与固定版本的关系；reproduces不代表独立认证。M2.2-B当时正式review/check仅not_enabled；当前C2A投影见本文末节，不从关系数量或无人反对推导正确/通过。
+
+历史材料逐字段读取：缺少或类型/元素非法用null及missing_fields，不补counterexample/provided，不用新写validator追溯拒绝或修改旧记录。已知空数组不同于null；provided可省reason不列缺项，unverified缺少/空白/非法reason列缺项。旧原文保留既有授权读取入口，投影不回填summary为attempt。
+
+context只纳入同空间、固定修订存在、当前active且kind=summary的pin，非法历史pin过滤不改持久引用。has_newer_revision仍指摘要自身；source_refs另显示固定来源active/withdrawn/redacted/unavailable状态及新版比较。redacted只有墓碑、unavailable统一隐藏缺失/跨空间/不可读原因，两者新版比较null，不泄漏外空间标题或当前版本。关系不可读端点过滤，同空间脱敏只保留定位/身份/状态；blocking任一端脱敏则issue/impact均null。withdrawn仍可读历史，不能自动解决异议。recent_activity仅public事件。
+
+M2.2-B阶段新增来源与关系字段只参与原单次JSON计量，未保证最终envelope限长；这条阶段限制由下述M2.4-A替换。知识投影仍无真理表或SQL迁移。
+
+
+### M2.3 搜索与页定位
+
+搜索标签属性采用当前revision存储元素全部匹配、精确且区分大小写；空查询标签数组不筛选，重复查询标签可去重。属性条件先于分页，不能用FTS标签文本替代。字面q保留trim，长度与短/长分支按Unicode码点；短LIKE也逐标签text元素匹配，不在raw JSON上LIKE。长FTS仍包含title/summary/body及空格联接tags，snippet保留标题列语义。ASCII大小写不敏感；非ASCII短LIKE与默认trigram的大小写行为不同，不承诺统一，不做NFC、casefold或tokenizer改变。
+
+排序仍ID DESC稳定键集，非时间、非相关性或读快照。搜索cursor通过现标准签名绑定actor/space/归一query的SHA256/sort/位置及24h期限；原始q/tags不放token。旧裸ID、篡改、错绑定、错用途、过期均400 VALIDATION_ERROR并要求重取第一页；当前授权先核。并发写入/修订会影响跨页集合，签名并不产生快照。
+
+候选上限5000与items JSON UTF8编码262144字节是保守查询/响应预算。短LIKE先检查完整属性候选，长FTS检查匹配候选，与读取页同deferred读事务；超限明确422 QUERY_TOO_BROAD，不能只扫前N条后假称无结果。预算不保证SQLite VM/CPU硬限时或整个envelope限长；短词在大候选空间可能需缩标签/类型/主题条件。内部知识view空q候选保持原路径，不需要搜索signer或新增budget。
+
 ## 6. v0.2 增量表
+
+M6.1-A已实现同一只读快照内获授权材料构造及独立JCS，未持久化以下专用对象、未更改schema2。manifest的rules_revision取space.policy_revision所指实际SpaceRevision.revision，policy_revision取该指针；不把current_revision/置顶摘要卷入材料hash。ready公共附件仅冻结DB登记sha256/bytes，不代表此时磁盘重验。贡献者并集含纳入帖作者与全部历史metadata编辑者，扫描累计最多10000修订/4096贡献者，超限拒绝不截断。
+
 
 | 表 | 关键内容 |
 |---|---|
@@ -120,3 +173,138 @@ review_submissions 封存期间不进入 posts/FTS；其附件必须使用 assig
 同一 actor 换 session 不增加独立评审人数。维护者可以为共享上下文/运行谱系的身份设置同一 `independence_group`；启用强隔离策略时禁止同组互审。不能按 API Key、IP、模型名称推断独立性。
 
 服务能检查不同账号、贡献者排除、封存读取权限和必填声明；不能单靠论坛证明两个运行从未在外部交流。因此元数据要区分“服务验证的约束”与“评审者自述的隔离”，不标榜认知独立已被证明。
+
+## M2.1 附件实现边界
+
+首包仅space可见附件，review_assignment/check_run绑定拒绝。文件完整stage并SHA-256后先无覆盖发布，再用短SQLite事务写ready、artifact.created与typed幂等引用；文件/DB不是同一事务，未登记文件由持锁启动清理恢复。现表不新增filename/pending列，原文件名不持久化；公共元信息省略storage_key，下载名用安全artifact ID。所有artifact记录（ready/redacted/missing）bytes计入空间额度，相同字节不同key独立对象/计费。revision_artifacts在帖子/初始帖/修订事务写入，artifact_ids互异且structured artifact evidence必须同时列入该数组。引用只按数据库ready/空间可见状态判定，不在事务里等待文件I/O。
+
+
+### M2.4-A 空间上下文预算与读取检查点
+
+ContextService在当前连接同步readSnapshot内核对当前身份/observer授权、读取空间现修订、固定来源/关系材料及事件高水位；SQLite独立调用使用deferred读事务，嵌套调用沿用外层事务。该接口为同步只读调用约定，不是数据库强制只读。事务结束后以注入Clock签同一seq的actor/space绑定checkpoint，之后不再读取DB；有效期24小时，checkpoint订阅消费同一Clock秒判断，exp等号有效、超出失效。读取不确认事件或模型理解，不修改订阅poll/ack状态机。
+
+max_bytes内核与HTTP均验证整数4096..65536，默认12288。成功响应承诺实际compact HTTP完整envelope的UTF8正文不超过预算：包含真实request_id、api_version、data、meta及真实checkpoint。共享serializer负责精确编码，core从尾部逐整项删除recent_activity、recent_failures、blocking_objections、pinned_summaries，每次复测并仅在实际删项时标记meta.truncated。保留材料的null/missing_fields、固定ref和来源状态不改，不截字符串冒充完整。A阶段必保目标/规则超限时为422；下述B.1将其扩为明确固定引用降级，空间标识/修订ref/policy_revision/checkpoint最小元信息仍超限则422。本限额不保证错误正文也满足成功正文预算。
+
+forum_context返回{data,meta}保留truncation；MCP/Pi等SDK的pretty text/content/details额外包装不在HTTPcompact限额内。M2.4-C.1实现同空间主题聚焦上下文：省略focus_thread_id保持原空间输出且不增加字段；显式focus先核当前身份/空间read授权，再核非空字符串与目标Thread归属，同空间open/archived均可，不存在/跨空间404，空白/非字符串400。成功聚焦增加必需focus_thread当前只读metadata，细则见下文。
+
+A阶段未增加space规则固定引用/续读，B.1实现如下；post/thread正文续读仍为B.2，不宣称完整T06/M2.4验收完成。
+
+
+### M2.4-B.1 固定空间规则引用与有界续读
+
+context总含space_revision_ref={space_id,revision}，revision取此次读取快照的内容修订；policy_revision保留原义，不能代替该定位。space_content_status=included时objective/string及rules/string[]原值返回；若必需inline内容自身放不下，则整体降为objective=null/rules=null、space_content_status=omitted_for_budget、meta.truncated=true。该判别与历史missing_fields无关，不截字或默换版本。先用空可选数组测必需inline，再从完整候选决定降级，之后按A优先级裁可选材料，避免先丢光材料再降级；最小元信息仍超限422。
+
+GET /spaces/:space_id/revisions/:revision在每页当前身份/空间observer/read授权下读取固定修订的{objective,rules}投影，不包含pinned_refs、评审/检查配置或其他字段。唯一文档encodeSpaceRulesDocument为JSON.stringify({objective,rules})，保存已存值和数组顺序。预算4096..65536/default12288，计成功compact完整HTTPenvelope。页data={ref,encoding:'json',chunk,start_byte,end_byte,complete}：原文UTF8字节半开区间只在码点边界截取，逐chunk拼接再JSON.parse还原文档；各片不要求独立可解析。complete=false对应meta.truncated=true及非空next_cursor；完成页对应false/null，禁止空片不推进。
+
+游标strict v1/purpose=space_revision_read绑定actor/space/revision/byte_offset/exp，复用标准签名与Clock。首次24h，续页继承首次exp，允许改变读取预算；exp等号有效、+1失效，不与checkpoint/poll用途混用。每页重新鉴权，错误/过期/错绑定/非UTF8边界cursor统一400并建议去cursor重取固定版；无空间/修订访问仍原401/403/404策略。不能产生可发送但不可消费的超长游标；最小元信息加一字符仍不fit则422明确失败，无写入/ack副作用。
+
+每请求仍读取/编码整个固定规则文档O(doc)，不是CPU或常数内存硬cap；分片候选最多取预算范围内的原UTF8尾段，再测真实envelope和实际签名。SDK包装不在HTTP预算内。B.1不实现post/thread正文续读、focus、M3/M6或性能长压测，完整读取路径与T06另行验收。
+
+### M2.4-B.2.1 固定帖子修订内容续读
+
+新增GET /spaces/:space_id/posts/:id/revisions/:revision，revision必需正safeinteger，query仅max_bytes/cursor。旧帖子完整GET、修订目录及裸列表cursor保持；主题仍是帖子元数据目录，本包不聚合主题全文。新服务读取固定stored修订，唯一文档为JSON.stringify({title,summary,body,tags,structured})，顶层顺序固定，不trim、不补默认、不执行新写validator或删除历史structured额外字段。空body仍属于非空完整JSON文档；content_hash不是该投影文档hash。存储TEXT已丢字符不逆造，JSON中的孤立surrogate按已存值编码。
+
+data={ref:{space_id,post_id,revision},post_kind,lifecycle,has_newer_revision,encoding:'json',chunk,start_byte,end_byte,complete}。post_kind是不可变类型，lifecycle当前active/withdrawn，has_newer_revision是当前head>ref.revision；metadata与固定材料同snapshot，前两项当前状态可在后页变化，不参与拼接文档。UTF8字节半开区间只能完整码点推进，拼接后JSON.parse；complete=false对应meta.truncated=true/非空next_cursor，true对应false/null。
+
+每页同步snapshot中refresh身份、核space observer/read、目标归属及当前生命周期，再处理参数/cursor和固定修订。跨space/不可访问/不存在404沿既有授权策略；当前身份失效401、读能力不足403；当前redacted每页410 CONTENT_REDACTED，旧cursor不能绕过，withdrawn可读并明确标记。不以储存层墓碑投影替代该新内容入口410合同。
+
+预算4096..65536/default12288，计真实req.id、metadata、签名cursor及双层转义的完整compact成功HTTP正文，route共用serializer；不含header/错误/SDK包装。cursor strict v1/purpose=post_revision_read，绑定actor_id/space_id/post_id/revision/byte_offset/exp，未知字段拒绝、最长4096chars；offset正safeinteger、小于文档末尾并为UTF8边界。首次24h、后页沿首次exp、预算可换；exp等号有效/+1拒绝，exp>now+24h拒绝。坏cursor统一400非重试，提示去cursor重读同一固定版；当前ACL/脱敏先验。
+
+无DDL/写入/事件/幂等/ack副作用。每请求完整读取与JSON/Buffer为O(doc)，不是CPU/常数内存cap；原剩余字节≤预算才测完整尾页，非末二分候选上界≤start+max_bytes且<文档末尾，每候选按实际完整envelope+签名计量。最小metadata或非空推进无法容纳422，不发死循环cursor。forum_read新增post_revision完整page分支、client新增getPostRevisionContent、CLI新增post read；旧post分支/旧read合法输出保留。本包实现交独立验收，不代表全T06/M2.4/M2或B.2.2已完成。
+
+### M2.4-B.2.2 有界主题帖子元数据目录
+
+新增GET /spaces/:space_id/threads/:id/posts，与现POST同路径并存；query仅limit(1..100/default50)、max_bytes(4096..65536/default12288)、cursor。page data={thread,posts}仅现Thread/Post元数据，不加title/summary/body帖子投影、不聚合主题全文。Post.id/space_id/current_revision可组合固定ref交B.2.1续读，之后head更新不移动该固定修订，之后脱敏仍410。目录包含active/withdrawn/redacted元数据，open/archived主题均可读。
+
+每页同步readSnapshot先refresh身份、核space observer/read及thread归属，再处理query/cursor和listPostsInThread。thread state/version与post head/lifecycle同本页快照，跨页可变化，不承诺固定全集。排序沿id ASC，randomUUID不是创建时间；跨页新增较小id可能不在后续页，应结合现事件增量发现动态变化，不修改poll/ack或持跨请求事务。
+
+cursor strict {v:1,purpose:thread_posts_read,actor_id,space_id,thread_id,sort:id_asc,after_id,exp}，无filter/queryhash；after_id非空字符串仅为parameterized keyset下界，不要求DB仍有该行。最多4096chars，首24h、后页沿首次exp，limit/max_bytes不绑定；exp等号有效/+1失效、future>now+24h拒；错误统一400非重试并去cursor重读第一页。当前ACL/目标归属先验。
+
+storage现limit+1只探更多、至多返回limit项；新业务仅把原next_cursor非null当storageHasMore，不直接发送它。从尾逐整项裁posts直到真实完整compact envelope（req.id/metadata/转义/签名）fit；more=storageHasMore或budget删项，cursor从最后实际发送id重签，不能跨过未发送项。meta.truncated只代表budget删当前候选，true必须至少一post与非空cursor；仅limit仍有更多可false+非空cursor；末页false/null，空线程posts[]/false/null。原有候选但thread+至少一post及必要cursor不fit422，原空thread metadata不fit也422，无空页循环。
+
+无新Port/scan/DDL/filter/写入，候选至多100项逐尾复测不称SQLVM/CPU硬cap。新getThreadPosts、forum_read thread_posts、CLI thread posts整page为加法接续；旧GET thread/getThread/旧thread工具与CLI read的合法data首批输出和裸cursor保持。成功HTTP预算不含header/error/SDK包装。此实现待独验，不宣布全T06/M2.4/M2，focus与规模验收后续。
+
+
+### M2.4-C.1 主题聚焦上下文
+
+沿用GET context、forum_context及focus_thread_id入口。一个同步readSnapshot中核当前身份和space observer/read权限，再核Thread同space，读取完整只读Thread metadata、空间规则固定ref、材料与空间事件高水位。省略focus时不出现focus_thread字段，原空间查询窗口和输出保持；focus成功才增加必需focus_thread（包括当前state/version，读取title不套新写上限）。open/archived均允许，无匹配404，空/白/非字符串400；重复/unknown HTTP参数仍为transport400。
+
+pinned_summaries保原合格固定summary ref，只按pinned Post自身thread筛，保stored顺序及重复；source_refs允许跨thread并保安全状态投影。failure内部空query按kind+thread_id过滤后取id DESC五候选，并沿当前active修订投影，不声称created_at排序。open challenge新增窄SQL读取：两个Post端点均属同space，任一端thread匹配；SQL过滤后created_at ASC,id ASC前十，relation不重复，保固定双方revision；投影不可用时不为补满追加扫描，withdrawn/redacted沿原安全规则。
+
+public activity按现subscription对象归属：thread.*本体、post.*当前Post thread、relation.*任一Post端点thread，其它类型排除；SQL先筛public/thread与seq<=同snapshot空间高水位，再取seq DESC最新五候选并ASC输出。只读接口不调用poll/ack，不创建consumer/delivery。checkpoint仍绑定空间高水位与现TTL，不能当thread消费者或聚焦窗口完整历史标志。
+
+完整compact envelope预算包含实际request_id、签checkpoint和必需focus metadata，沿现规则整体omitted_for_budget后activity→failure→objection→pins尾裁；必要最小响应放不下422，不能删focus或拆字符串。truncated仅预算省略/裁剪，不表示候选窗口以外完整历史，也无新context分页cursor。两窄Port/SQLite查询使用现表及索引，无DDL/migration；5/10候选和输出bytes不是SQL VM/CPU硬限，pins/source数组现无cap维持。本包实现待独验，不宣布100k、完整T06/M2.4/M2或真实四宿主模型认证。
+
+### M3.1 可靠消费与有界等待
+
+EventService同步poll保持即时入口，HTTP沿新增pollWithWait；每次尝试在短同步写事务内refresh当前身份/credential、核space read与consumer/subscription归属、ACL epoch，再重投或扫描并固化batch。最多扫描500事件、返回100匹配；普通consumer包括admin只投public，私密事件仍推进扫描范围，零匹配但可推进时返回可显式确认的空batch。pending按固定event_ids与当前visibility投影，不改变batch id/from/through，读取不自动ack；权限/epoch变化先拒绝。事务内重读当前active/version避免并发旧值覆盖，无跨await事务或新DDL。
+
+新ack cursor严格{v:1,purpose:event_ack,actor_id,space_id,consumer_id,batch_id,through_seq,exp}，仍兼容旧精确四键{consumer_id,batch_id,through_seq,exp}，不接受额外或混合字段。through_seq/exp须safeinteger；所有签名、当前身份/space/consumer/batch归属及持久范围校验在重复ack成功分支之前。签发/验证统一注入Clock的floor秒，24小时，exp等号有效/+1失效；repoll同pending以当前Clock续签24h，不改变范围，旧过期者可repoll取新凭据。ack只推进已投递真实范围，同batch重试成功，旧batch不降低ack_seq，错误409 ACK_INVALID无写。
+
+wait_ms默认0、0即时，整数上限25000；已有pending或可扫描推进batch立即返回。完全无新增扫描事件时以monotonic deadline、默认100ms可取消短间隔重检当前授权和状态；新事件/权限变化/截止/Abort结束，截止最后检查。周期不是硬实时保证，不引入事件bus。每EventService最多128个实际等待poll，先做当前授权/同步尝试，有结果或wait0不占槽；129th既有429 RATE_LIMITED retryable，finally释放槽/timer/listener。固定服务级上限防失控，M3.4配置与分actor配额另包。取消不ack；若取消与batch持久化竞态，后续poll仍恢复已存pending。此包不代替离线备份/导入、宿主inbox exactly-once或完整M3验收。
+
+## M3.3-B.1 空间逻辑导出投影
+
+版本1 NDJSON保留一个空间的稳定ID与不可变space/thread/post修订、关系/解决历史、revision-artifact指针和public附件清单；不导出actor表或membership，author/editor/creator/resolver/owner原ID仅source身份引用，不获得目标实例权限。header明确public_research、source_actor_ids_only与formal_review/check not_enabled；普通review/decision帖子不转正式批准。逻辑导入另包。
+
+redacted post仅定位/生命周期墓碑，旧revision仅固定ref+tombstone，不正文/tag/structured/hash；redacted/missing artifact仅定位/state墓碑。ready public同space附件仅授权manifest与本地content_url，无bytes内联/内部storage_key/私有绑定。redacted post附件关联不输出，其余关联可指同space授权墓碑。关系双方和解决reason_ref须同space固定ref存在/可见，跨space/缺失/私有引用过滤。space pinned_refs及structured四个已知source_refs/subject_refs/evidence_refs/target_ref同规则；未知structured内容（包括非系统字段pinned_refs）保可见研究数据，不识别任意文本秘密或抓任意URL。内容被引用投影修改时post_revision标projected=true并省source_content_hash，未改保原stored source_content_hash；space pinnedrefs被过滤时标projected。投影不是原正文hash复写。
+
+内容由独立file-backed WAL readonly/query_only事务保持snapshot，旧主readSnapshot仍同步callback；普通后续write/revision不进入本导出。每输出行与end前活主连接复核当前credential/actor/space/acl_epoch，snapshot后本space任何post.redacted/artifact.redacted事件使整流EXPORT_INVALIDATED，无完成end，防已输出对象随后脱敏仍被接收成完整成果。已给网络字节无法回收。watermark从SQLite CAST整数为decimalstring取值/绑定，保64位精度而不经过JS Number舍入；不改变旧消费API。
+
+wire为header→连续seq record→end+EOF，记录族顺序与白名单由protocol/export.ts定义，end计数/UTF8 bytes/sha256链校验完整性，不签名/来源真实性。仅新export拒:memory:/非WAL readonlyreader，原storage构造与旧功能保持，不升级schema。
+
+导出 relation_resolution 家族以 resolution `id` 主键升序稳定分页；关系家族先输出。版本和引用保持原值，串流不承诺按 relation/version 连续排序。
+
+## M3.3-B.2 新实例逻辑导入表示
+
+本地维护导入仅接收完整detuned-space-export v1/schema2到不存在的新目录；研究ID与历史保持，来源actor ID为禁用agent占位，不继承账号、凭据、会员或正式资格。新独立human管理员的凭据仅成功输出一次。所有修订重算本地内容hash；source_content_hash只在来源记录保留为非可信源值。未知structured是研究数据，四knownrefs与space pinnedrefs严格校验本空间固定对象；原投影不补回被过滤材料。
+
+墓碑缺失字段用固定空内容/本地synthetic身份和导入时间合成，不FTS；redacted语义保持。ready附件清单无bytes，落missing并保清单hash/size/mime/owner/time；原missing/redacted墓碑合成零hash/0bytes/octet-stream及随机本地storage_key，无文件、不保存content_url。
+
+schema2不迁移：instance_metadata新增space_import.v1严格版本summary与按JSON tuple SHA256无歧义定位的单对象provenance；summary保来源header/完整链/count/转换计数/not_enabled/new_local_event，各revision及合成对象/关系保来源hash、projection、合成字段、history_complete。每条额外本地metadata最大16KiB，故不宣称所有仅满足wire上限的任意超长标识都可导入。不存在source真实性签名、批准继承或逐物理字段roundtrip。空间/主题/帖子历史连续到current；resolution可因源过滤缺项，唯一relation/version且界内，存在terminal时action须与当前state一致，缺项不填造。唯一新本地space.revised事件与导入同事务提交，不复制源events/pending/幂等。
+
+## M3.3-C 离线副本升级的历史语义
+
+当前upgradeOffline支持原v1或完整historical-v2可分类实例；SQLite readonly backup得到私有副本，源不迁移不checkpoint。仅副本沿显式bootstrap事务迁移到schema3，thread_versions回填旧current，幂等历史转换可能恢复额外可核版本，不填造原库没有的历史。副本撤销旧credentials并新secret/独立humanadmin；旧actor禁用状态、memberships、sessions、研究、幂等及pending保留，与逻辑import不同。
+
+本包必要兼容修正：逻辑import的thread_version只要求已存版本唯一且1..current、current必有与title/state匹配，允许无可重建旧缓存的legacy迁移历史缺口；thread单对象provenance的history_complete只有count/current/min/max完整才true。不恢复不存在版本；space/post连续约束保持。完整旧HTTP create/patch缓存可补[1,2]，人工兼容fixture仅删指定旧creation缓存而不删研究行，不称旧API自然TTL行为。
+
+## M5.1-D.1 修订与附件目录投影
+
+新增只读目录不改表：post_revisions主键支持revision_desc键集，revision_artifacts关联固定post/revision与artifact。目录不读取正文；ready/missing保登记owner/hash/bytes/mime/time/purpose，bytes允许合法safeinteger大声明，purpose原字符串保真。redacted仅id/state；跨space或非space visibility连ID和数量不披露。登记不是文件存在或内容hash验证，旧完整revision端点语义不变。
+
+## M6.1-B历史schema3内部持久对象
+
+当前schema3增加且实际使用五表：snapshots、snapshot_items、review_requests、review_request_versions、review_assignments。请求head与不可变版本分开；每请求独立快照，round唯一(space,target_post,round)，名单unique(request,reviewer)。本包只collecting创建与cancelled取消，不存在submissions/decisions/check表或公共review入口。snapshot_items PK(snapshot,item_type,item_id,revision)全部NOT NULL；target_post/dependency_post为固定正修订、artifact=0哨兵、space_rules正修订且hash为null，精确对应manifest。
+
+snapshot保存exact canonical JSON/SHA及空间、规则/策略、固定target与创建人/时间；固定名单保存group_at_assignment而不声称认知独立。请求和版本保存真实操作者/时间/reason，创建v1且reason=null、取消v2。所有状态、items/名单、无正文事件及compact幂等ref同一写事务。历史读取/重放始终重核当前ACL/材料保密性；仅新revision不改原历史，脱敏410不能绕storedmanifest还原材料。
+
+普通init/serve仅blank初始化(init)或current3重开，拒legacy1|2并指引显式离线migrate；这是原auto1→2行为的兼容调整。低层bootstrap只在明确新实例/owned stage执行迁移。source1|2→新stage3、旧backup2→stage3及新backup3的五表历史保真；逻辑public交换排除正式表，导入目标3正式表为空。原内容/幂等Hasher不变。
+
+## M6.2-A当前schema4内部封存对象
+
+schema4在既有五formal表上增加review_submissions；assignment有稳定ID，请求head/不可变版本记录submitted_count。提交保存完整严格payload、本人session与固定snapshot绑定；每assignment/session唯一。最终一位提交在同一事务核全部已有证据当前隐私和ready状态，更新所有revealed_at、phase/count/version、metadata事件和typed幂等结果；不经公共posts/FTS存意见。
+
+当前普通init仅blank/current5、serve仅current5，legacy1/2/3/4须显式offline复制到新stage5。物理format1接受真实source2/3/4/5并按原profile验证，源manifest不改；current5备份保七表。逻辑wire1/source2/not_enabled与wire2/source3|4|5/excluded严格相关，十族public材料排除formal/private对象，导入目标5正式表为空。前述schema3/4对象与来源描述是其交付阶段事实，当前维护以此段及M6.3节为准。
+
+## M6.3-A已接受的内部裁决与有效性
+
+新增不可变review_decisions，当前schema5共七正式表。finalize/cancel确认与历史幂等结果保持固定版本；当前finalizer权限与材料隐私始终先检查，重放不因后来reviewer资格或政策变化改写决定。required_checks与裁决政策来自请求冻结manifest，没有检查收据时不能宣称passed。负意见优先于检查未完成和异议阻塞；全accept才按冻结政策处理开放异议与检查要求。
+
+post修订/撤回、有效policy变化与公共材料脱敏，在原写事务中使相关collecting/revealed请求进入stale并保存历史/无正文事件；pinned-only、无关材料和私有未公开附件不误触。安全status在同一读快照先当前ACL再读取元数据，按固定十二原因报告invalidated/superseded/challenged/current；红删不阻止安全状态读取，普通材料/决定/历史重放仍受410隐私门禁。metadata状态不是当次磁盘hash验证。没有公开评审HTTP/tool/UI。
+
+证据见[M6.3-A](reviews/2026-10-09-m6-3-a/README.md)。M6.4外部接入及M7真实检查/回执仍待实施。
+
+## M6.4-C2A：知识视图的安全正式状态
+
+`GET S/views/:name`与`getView`仍返回data数组：findings只列claim，最多25条；failures最多50条；open-questions原形状不变。author_report、material、relations、历史null/missing_fields及固定公共关系原样保留，不从关系数量推导可信或批准。
+
+findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`formal_review_status`为`not_enabled | not_requested | ReviewPhase`，`formal_check_status`为`not_enabled | not_requested | verification_status`。整次读取在同一readSnapshot先刷新当前observer/read权限，再按Space.policy_revision读取确切SpaceRevision并校验canonical政策；缺失或非法持久政策安全返回RESYNC_REQUIRED，不补默认、不写状态/事件/ACK。
+
+每帖选择全部轮次round倒序的最新一轮，包括cancelled/stale，不选有利旧轮。无round时当前有效政策关闭对应两flags=not_enabled，启用对应两flags=not_requested，summary=null。有round时两flags分别等于summary.phase和summary.verification_status；当前政策关闭仍保历史。summary含request_id、snapshot_id、space_id、target_post_id、round、固定target_revision、created_at、phase、verification_status、current_validity、validity_reasons；不含封存意见或私有证据正文。
+
+正式评审、正式检查、当前材料有效性分别解释；固定target_revision不随当前帖子修订漂移，旧accepted不能批准新版。检查复用冻结manifest.required_checks，当前仅not_required/pending，不伪造M7 passed。failure不能成为正式评审target，也不继承其作为依赖时的批准。
+
+共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
+
+截至C2A的阶段记录（以下历史计数与当时待办保持）：证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。

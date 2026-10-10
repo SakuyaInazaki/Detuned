@@ -1,0 +1,1013 @@
+[
+  {
+    "number": 5,
+    "stdout_bytes": 3656,
+    "stdout_sha256": "c730a8655aa21cbc3ca50059a38b97ef64129610d16ee4ef90cf8b2752f184a6",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "R01",
+        "description": "Read-only capability cannot create a thread",
+        "passes": true
+      },
+      {
+        "id": "R02",
+        "description": "A-scoped token must not enumerate B",
+        "passes": true
+      },
+      {
+        "id": "R03a",
+        "description": "HTTP rejects unknown schema properties",
+        "passes": true
+      },
+      {
+        "id": "R03b",
+        "description": "HTTP enforces title length <= 160",
+        "passes": true
+      },
+      {
+        "id": "R03c",
+        "description": "Claim without required structured fields is rejected",
+        "passes": true
+      },
+      {
+        "id": "R04",
+        "description": "initial_post persists its declared relation",
+        "passes": true
+      },
+      {
+        "id": "R05a",
+        "description": "Idempotency scope includes target thread",
+        "passes": true
+      },
+      {
+        "id": "R05b",
+        "description": "Writes require a durable idempotency key",
+        "passes": true
+      },
+      {
+        "id": "R06",
+        "description": "Redaction covers revision listing and idempotent replay",
+        "passes": true
+      },
+      {
+        "id": "R07",
+        "description": "A owner cannot redact B post through A route",
+        "passes": true
+      },
+      {
+        "id": "R08",
+        "description": "ACK cannot advance beyond persisted delivery batch",
+        "passes": true
+      },
+      {
+        "id": "R09a",
+        "description": "New filters do not silently reuse a different subscription",
+        "passes": true
+      },
+      {
+        "id": "R09b",
+        "description": "Thread-filtered subscription excludes other thread posts",
+        "passes": true
+      },
+      {
+        "id": "R10",
+        "description": "Fresh initialized DB records applied migration version",
+        "passes": true
+      },
+      {
+        "id": "R11",
+        "description": "Lock can recover after owning process is gone",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 6,
+    "stdout_bytes": 1153,
+    "stdout_sha256": "bea6573f9228c55e719ed6dc1ccafa86667cb7cafe9088f09c282a55a90372ac",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "A01",
+        "description": "Schema accepts its documented valid tool input",
+        "passes": true
+      },
+      {
+        "id": "A02",
+        "description": "Schema accepts its documented valid tool input",
+        "passes": true
+      },
+      {
+        "id": "A03",
+        "description": "Pi commands follow registerCommand(name, options)",
+        "passes": true
+      },
+      {
+        "id": "A04",
+        "description": "Pi registered tool definitions include official required label field",
+        "passes": true
+      },
+      {
+        "id": "A05",
+        "description": "Actual stdio bridge completes official SDK tool discovery",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 7,
+    "stdout_bytes": 3564,
+    "stdout_sha256": "cb71aead42fa842608b447857b9d9f8f34ee25e3246ebfe904c408e6cc870bab",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "S01",
+        "description": "Redacted initial_post cannot reappear through thread.create replay",
+        "passes": true
+      },
+      {
+        "id": "S02",
+        "description": "Redacted tags cannot reappear through post.create replay",
+        "passes": true
+      },
+      {
+        "id": "S03",
+        "description": "Relation resolve idempotency must account for URL target",
+        "passes": true
+      },
+      {
+        "id": "S04",
+        "description": "Public development secret must not authorize a future checkpoint",
+        "passes": true
+      },
+      {
+        "id": "S05",
+        "description": "Context checkpoint is bound to the requesting actor",
+        "passes": true
+      },
+      {
+        "id": "S06",
+        "description": "Thread filter retains a relation whose two endpoints are inside the subscribed thread",
+        "passes": true
+      },
+      {
+        "id": "S07",
+        "description": "Membership alone cannot bypass empty credential capabilities",
+        "passes": true
+      },
+      {
+        "id": "S08",
+        "description": "A legal 60-codepoint Chinese title is accepted",
+        "passes": true
+      },
+      {
+        "id": "S09",
+        "description": "Accepted failure kind validates category and mandatory evidence/scope fields (M2.2 coverage)",
+        "passes": true
+      },
+      {
+        "id": "S10",
+        "description": "Failed redaction audit insert rolls back content and lifecycle changes",
+        "passes": true
+      },
+      {
+        "id": "S11",
+        "description": "Bootstrap can recover after failure between admin actor and credential creation, including reopen",
+        "passes": true
+      },
+      {
+        "id": "S12",
+        "description": "Pi execute must throw for failure per the official extension contract",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 8,
+    "stdout_bytes": 714,
+    "stdout_sha256": "4953e2dd9819795510242d2aa633d7654c9a61cb3d056efc319fddd381b9200e",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": []
+  },
+  {
+    "number": 9,
+    "stdout_bytes": 3856,
+    "stdout_sha256": "f35108593c87350c4ab151cfdf9347c9059a10b50b96f4f9f63f3091eca84dc9",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "T01",
+        "description": "An immediate resolve retry preserves its immutable resolution result",
+        "passes": true
+      },
+      {
+        "id": "T02",
+        "description": "Thread create replay does not silently become a newer operation version",
+        "passes": true
+      },
+      {
+        "id": "T03",
+        "description": "Legacy full-JSON space.create result can be replayed after upgrade",
+        "passes": true
+      },
+      {
+        "id": "T04",
+        "description": "An empty allowed-space set has the same deny semantics in enumeration and direct access",
+        "passes": true
+      },
+      {
+        "id": "T05",
+        "description": "Redaction retry commits exactly one audit/result and one invalidation event",
+        "passes": true
+      },
+      {
+        "id": "T06",
+        "description": "An already initialized v1 upgrade preserves credentials and migrates old content caches",
+        "passes": true
+      },
+      {
+        "id": "T07",
+        "description": "Unsupported schema version is rejected before any DDL mutation",
+        "passes": true
+      },
+      {
+        "id": "T08",
+        "description": "ACL epoch invalidation applies consistently to poll and ack",
+        "passes": true
+      },
+      {
+        "id": "T09",
+        "description": "Pi cancellation while a request is running reaches fetch and rejects without retry",
+        "passes": true
+      },
+      {
+        "id": "T10",
+        "description": "HTTP cancellation remains active until response body parsing completes",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 10,
+    "stdout_bytes": 450,
+    "stdout_sha256": "4fb09cf29f73fdda755e26a64a4776207b0d4995d469c4f8a6b041c6b6da8e75",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": []
+  },
+  {
+    "number": 11,
+    "stdout_bytes": 4230,
+    "stdout_sha256": "be356150855505032d57fc6cc580e51e0e169144b3689332475f341003aec283",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "U01",
+        "description": "A migration write failure aborts the upgrade and rolls back earlier conversions, including after reopen",
+        "passes": true
+      },
+      {
+        "id": "U02",
+        "description": "Upgraded c4f041f resolve references preserve the original operation version after a later reopen",
+        "passes": true
+      },
+      {
+        "id": "U03",
+        "description": "Revoking all credentials preserves initialization and never implicitly creates an administrator credential",
+        "passes": true
+      },
+      {
+        "id": "U04",
+        "description": "An unknown idempotency reference kind/version is rejected instead of returned with HTTP 201",
+        "passes": true
+      },
+      {
+        "id": "U05",
+        "description": "Invalid relation enums are rejected at the HTTP boundary without committing business state",
+        "passes": true
+      },
+      {
+        "id": "U06",
+        "description": "A truncated HTTP 200 JSON body cannot be reported as successful undefined data",
+        "passes": true
+      },
+      {
+        "id": "U07",
+        "description": "Redaction audit and sanitization cover 25 revisions, beyond the default page size",
+        "passes": true
+      },
+      {
+        "id": "U08",
+        "description": "Failed redaction event/result insertion rolls back content, FTS, audit, event, and result",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 12,
+    "stdout_bytes": 5412,
+    "stdout_sha256": "4941e3df81bc1a5fb15aae1f5a18138b897853b54da2b52884ab2da6fd86f84a",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "G01",
+        "description": "A fresh relation.create retry preserves its original result after resolve",
+        "passes": true
+      },
+      {
+        "id": "G02",
+        "description": "A missing old thread version never attaches the current title to version 1",
+        "passes": true
+      },
+      {
+        "id": "G03",
+        "description": "A failed immutable-history INSERT aborts and rolls back the complete upgrade after reopen",
+        "passes": true
+      },
+      {
+        "id": "G04",
+        "description": "Malformed historical JSON stops migration and leaves an unchanged database for diagnosis",
+        "passes": true
+      },
+      {
+        "id": "G05",
+        "description": "Unknown nonempty schemas are refused before creating Detuned tables or credentials",
+        "passes": true
+      },
+      {
+        "id": "G06",
+        "description": "Typed result references validate version, required fields, and operation-kind binding",
+        "passes": true
+      },
+      {
+        "id": "G07",
+        "description": "Recoverable direct-entity historical results remain replayable after migration",
+        "passes": true
+      },
+      {
+        "id": "G08",
+        "description": "Ordinary serve refuses a recognized old initialized schema without issuing identity or migrating",
+        "passes": true
+      },
+      {
+        "id": "G09",
+        "description": "Missing persistent secret fails both CLI entry points with diagnostics and releases the directory lock",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 13,
+    "stdout_bytes": 6440,
+    "stdout_sha256": "a4c4baf6bbd56f02b14ebd30522b6efda4fbf32c40f07da1a327e423a029c0dd",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "H01",
+        "description": "Upgrading known old relation.create references never substitutes the current state",
+        "passes": true
+      },
+      {
+        "id": "H02",
+        "description": "Fresh thread times and nested relation versions remain tied to the original operation",
+        "passes": true
+      },
+      {
+        "id": "H03",
+        "description": "A current instance with lost metadata is refused without generating a replacement secret",
+        "passes": true
+      },
+      {
+        "id": "H04",
+        "description": "Missing required schema or contradictory migration markers fail before mutation",
+        "passes": true
+      },
+      {
+        "id": "H05",
+        "description": "Unsupported references and incompatible legacy results abort the complete upgrade",
+        "passes": true
+      },
+      {
+        "id": "H06",
+        "description": "Reference validation rejects unregistered operations, invalid optional fields and extra cached content",
+        "passes": true
+      },
+      {
+        "id": "H07",
+        "description": "Replay checks the operation target and does not silently drop missing associated records",
+        "passes": true
+      },
+      {
+        "id": "H08",
+        "description": "Conflicting history for the same immutable key rejects migration instead of discarding the old evidence",
+        "passes": true
+      },
+      {
+        "id": "H09",
+        "description": "Migration diagnostics identify the record without copying old body content to CLI output",
+        "passes": true
+      },
+      {
+        "id": "H10",
+        "description": "Version-marker and metadata SQL failures both roll back the whole upgrade after reopen",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 14,
+    "stdout_bytes": 5040,
+    "stdout_sha256": "ede6b8e71e78af2e0638835fd71a3d327efb84a3e35bb2d5d102e2d83853586c",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "J01",
+        "description": "Migration preserves the result of a relation.create that reused an existing v2 relation",
+        "passes": true
+      },
+      {
+        "id": "J02",
+        "description": "Current instance material loss is refused consistently by bootstrap, init and serve",
+        "passes": true
+      },
+      {
+        "id": "J03",
+        "description": "A current schema with all table names but a missing required column is rejected",
+        "passes": true
+      },
+      {
+        "id": "J04",
+        "description": "Migration recovers known historical timestamps and detects non-title snapshot conflicts",
+        "passes": true
+      },
+      {
+        "id": "J05",
+        "description": "Reconstruction validates space ownership and resolution-to-relation binding",
+        "passes": true
+      },
+      {
+        "id": "J06",
+        "description": "Encoding, validation and unreplayable migration have no bypasses for invalid fields or content",
+        "passes": true
+      },
+      {
+        "id": "J07",
+        "description": "Current-format reuse and newly encoded nested relation snapshots remain correct",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 15,
+    "stdout_bytes": 1033,
+    "stdout_sha256": "8688a895ce2aa542cd84695ed7dc37289368c85842b02143577777f576ab0ad8",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "K01",
+        "description": "A genuine old schema preserves credentials, cleans old content cache and replays correctly across reopen",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 16,
+    "stdout_bytes": 4296,
+    "stdout_sha256": "9f185168428a33670aed53d18cab9c7fcf409f281ff50239c895be3b75b42e3e",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "L01",
+        "description": "Normal space.create retry uses instance scope and returns the original result",
+        "passes": true
+      },
+      {
+        "id": "L02",
+        "description": "An accepted migration must not write a marker rejected by the next startup",
+        "passes": true
+      },
+      {
+        "id": "L03",
+        "description": "Current schema lacking the idempotency primary key is rejected before mutation",
+        "passes": true
+      },
+      {
+        "id": "L04",
+        "description": "Old nested relation results are recovered accurately or explicitly refused",
+        "passes": true
+      },
+      {
+        "id": "L05",
+        "description": "Historical conflicts include operation timestamps, not only title and state",
+        "passes": true
+      },
+      {
+        "id": "L06",
+        "description": "Migration and replay reject same-space initial-post and resolution/version mismatches",
+        "passes": true
+      },
+      {
+        "id": "L07",
+        "description": "Encoder, partial legacy conversion and paired fields have no validation bypass",
+        "passes": true
+      },
+      {
+        "id": "L08",
+        "description": "Normal thread retries and recoverable full legacy results remain supported",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 17,
+    "stdout_bytes": 3184,
+    "stdout_sha256": "1f86be6b9164a244897547c531131b41106e2ecc0163b02e7530349d214b4e43",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "N01",
+        "description": "A real response-layer failure after commit recovers the complete original space result",
+        "passes": true
+      },
+      {
+        "id": "N02",
+        "description": "Full target markers and legacy family markers survive three starts and replay safely",
+        "passes": true
+      },
+      {
+        "id": "N03",
+        "description": "Invalid marker migration refuses atomically, including after closing and reopening",
+        "passes": true
+      },
+      {
+        "id": "N04",
+        "description": "Migrated relation.create unreplayable marker remains valid across three starts",
+        "passes": true
+      },
+      {
+        "id": "N05",
+        "description": "Instance-scoped create fix preserves space.patch binding to an actual existing space",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 18,
+    "stdout_bytes": 4531,
+    "stdout_sha256": "fa2967de4ea70507fbb0ffc782483ab17055de9970944e8b6c875f85d2a53b2f",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "P01",
+        "description": "Nested refs must bind to the result source and to a provable historical version",
+        "passes": true
+      },
+      {
+        "id": "P02",
+        "description": "Every migration early return validates the original operation, shape and known entity bindings",
+        "passes": true
+      },
+      {
+        "id": "P03",
+        "description": "Legacy online replay does not bypass target binding or replace historical updated_at",
+        "passes": true
+      },
+      {
+        "id": "P04",
+        "description": "A missing timestamp is recovered from evidence or refused, never replaced with wall time",
+        "passes": true
+      },
+      {
+        "id": "P05",
+        "description": "The new encoder rejects malformed required states/versions rather than defaulting them",
+        "passes": true
+      },
+      {
+        "id": "P06",
+        "description": "Modern and recoverable full legacy results still replay exactly after later changes and restart",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 19,
+    "stdout_bytes": 4483,
+    "stdout_sha256": "521a68773b8bd5be5edb87cf31bcc4962cc59d97b570222dccea76be86e8dea5",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "Q01",
+        "description": "Incomplete prevalidation still converts damaged typed refs into accepted markers",
+        "passes": true
+      },
+      {
+        "id": "Q02",
+        "description": "Legacy normalizers must reject malformed supplied values before defaulting or coercing them",
+        "passes": true
+      },
+      {
+        "id": "Q03",
+        "description": "Missing historical patch updated_at may be refused, but cannot borrow thread created_at",
+        "passes": true
+      },
+      {
+        "id": "Q04",
+        "description": "Invalid action output is rejected before persistence, with business/events/results rolled back",
+        "passes": true
+      },
+      {
+        "id": "Q05",
+        "description": "Positive controls prevent accepting fixes that reject legal writes or break semantic rollback",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 20,
+    "stdout_bytes": 3340,
+    "stdout_sha256": "472ead752eab65a5455d5e4b2518fb54a30a0f12522bb9f07539d686553ab71a",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "V01",
+        "description": "Typed ID-only compatibility cannot hide missing revisions or known relation ownership errors",
+        "passes": true
+      },
+      {
+        "id": "V02",
+        "description": "Legacy explicit malformed arrays and known contradictions must not be discarded or persisted as markers",
+        "passes": true
+      },
+      {
+        "id": "V03",
+        "description": "Explicit null relation output fails and rolls back business/events/results",
+        "passes": true
+      },
+      {
+        "id": "V04",
+        "description": "Explicit v1 updated_at conflicting with the historical snapshot is refused atomically",
+        "passes": true
+      },
+      {
+        "id": "V05",
+        "description": "Legal old inputs, complete history and empty relation arrays remain supported",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 21,
+    "stdout_bytes": 4669,
+    "stdout_sha256": "8fb7fa098fca22e2722fd6b0c6c1eda98e7a22add56670b90e888c6ef38aa236",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "W01",
+        "description": "Legacy initial_post malformed envelopes, explicit revisions and orphan pairs must not disappear or default to v1",
+        "passes": true
+      },
+      {
+        "id": "W02",
+        "description": "Explicit null legacy fields must fail before alias/default selection or missing-history markers",
+        "passes": true
+      },
+      {
+        "id": "W03",
+        "description": "Legal paired controls preserve full initial result, omission, historical post and ID-only handling",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 22,
+    "stdout_bytes": 6844,
+    "stdout_sha256": "02239d7b920673416e4f176c7785ce34e56e7364a95a57b1d5ca1e0e17078714",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "X01",
+        "description": "Explicit invalid/conflicting aliases reject in HTTP and migration without writes",
+        "passes": true
+      },
+      {
+        "id": "X02",
+        "description": "Legal empty/full relation arrays and equivalent aliases preserve complete output across restart",
+        "passes": true
+      },
+      {
+        "id": "X03",
+        "description": "Known future version contradictions reject before legal missing-state fallback; valid partial history remains controlled",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 23,
+    "stdout_bytes": 14251,
+    "stdout_sha256": "6c4ce9bcff7d450304d5e737c12790b8f3b16df679b3074fc5e7be414e40ef67",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": {
+      "passed": 4,
+      "failed": 0
+    },
+    "probes": [
+      {
+        "id": "Y01",
+        "description": "Semantic structure changes cannot masquerade as required constraints or a real FTS table",
+        "passes": true
+      },
+      {
+        "id": "Y02",
+        "description": "Existing initialization materials must prevent blank classification and credential reissuance",
+        "passes": true
+      },
+      {
+        "id": "Y03",
+        "description": "Current v2 materials with contradictory migration history reject before repair",
+        "passes": true
+      },
+      {
+        "id": "Y04",
+        "description": "True blank, supported raw schemas, real historical fixture and current instance retain healthy startup",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 24,
+    "stdout_bytes": 12365,
+    "stdout_sha256": "f394c9982924cc16bb5deadd20eb5f392b0e8593c8c6b314e840761f2853ca18",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": {
+      "passed": 4,
+      "total": 4
+    },
+    "probes": [
+      {
+        "id": "Z01",
+        "description": "All index key terms, PK collation and named-index sort/collation participate in structure validation",
+        "passes": true
+      },
+      {
+        "id": "Z02",
+        "description": "FTS body must retain its indexed status; required words in DDL are not a semantic comparison",
+        "passes": true
+      },
+      {
+        "id": "Z03",
+        "description": "Equivalent full unique index, healthy body search and distinct case-sensitive keys remain usable",
+        "passes": true
+      },
+      {
+        "id": "Z04",
+        "description": "Actual CLI init/serve reject both Y02/Y03, release lock, emit no success credential and preserve reopened snapshot",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 25,
+    "stdout_bytes": 7234,
+    "stdout_sha256": "3a38af2152f5ea33eef00b1f0b7ea9d61f8430eda2cbc45d8af198c82991d3bd",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": {
+      "passed": 4,
+      "total": 4
+    },
+    "probes": [
+      {
+        "id": "AA01",
+        "description": "Unsupported FTS detail option cannot pass preflight and break the existing search API",
+        "passes": true
+      },
+      {
+        "id": "AA02",
+        "description": "Generated current schema and its full runtime profile stay in agreement, or source checks explicitly reject drift",
+        "passes": true
+      },
+      {
+        "id": "AA03",
+        "description": "Missing required driver or historical source cannot silently disable profile checks and preserve a corrupt profile",
+        "passes": true
+      },
+      {
+        "id": "AA04",
+        "description": "Healthy generation and an actually supported column-profile change work with native driver and frozen historical source",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 26,
+    "stdout_bytes": 13391,
+    "stdout_sha256": "4110f5002c0b2eb3ac64ea30e1f70783b7d0f709fa3ef8693ba25109e44f58f5",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": {
+      "passed": 4,
+      "total": 4
+    },
+    "probes": [
+      {
+        "id": "AB01",
+        "description": "PK key collation/direction is generated consistently or explicitly rejected at build time",
+        "passes": true
+      },
+      {
+        "id": "AB02",
+        "description": "Missing migration block markers cannot produce a successful partial schema update",
+        "passes": true
+      },
+      {
+        "id": "AB03",
+        "description": "With complete inputs, actual sync commands reject corrupt profiles and generation repairs them",
+        "passes": true
+      },
+      {
+        "id": "AB04",
+        "description": "Other required input failures reject without modifying schema.ts",
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 27,
+    "stdout_bytes": 10714,
+    "stdout_sha256": "c21731f91a7a1332cd70ed866c57504e736b486de024cd2b8a5a04d7ba46321a",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": null,
+    "probes": [
+      {
+        "id": "AC01",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AC02",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AC03",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AC04",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AC05",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AC06",
+        "description": null,
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 28,
+    "stdout_bytes": 21263,
+    "stdout_sha256": "c57234a7d117991a883c8c6a416cd05eb597c0ac76d9871209dbbb1e9dde95fd",
+    "stderr_bytes": 8254,
+    "stderr": "unknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/focus_thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/recent_activity/items/properties/occurred_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/recent_activity/items/properties/occurred_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/focus_thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/focus_thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/focus_thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/recent_activity/items/properties/occurred_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/recent_activity/items/properties/occurred_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/thread/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/thread/properties/updated_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/posts/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/revisions/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/0/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/1/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/artifacts/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/anyOf/2/properties/data/properties/artifacts/items/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/0/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/0/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/1/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/1/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/2/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/2/items/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/disabled_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/disabled_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/0/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/1/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/anyOf/1/properties/created_at\"\n",
+    "json_complete": true,
+    "summary": {
+      "passed": 5,
+      "failed": 0
+    },
+    "probes": [
+      {
+        "id": "AD01",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AD02",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AD03",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AD04",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AD05",
+        "description": null,
+        "passes": true
+      }
+    ]
+  },
+  {
+    "number": 29,
+    "stdout_bytes": 28682,
+    "stdout_sha256": "b7e0b7b33fadd599e4993e663ca2c3ec49b41cf43b11f2202dbdc8c96206f444",
+    "stderr_bytes": 0,
+    "stderr": "",
+    "json_complete": true,
+    "summary": {
+      "passed": 5,
+      "failed": 0
+    },
+    "probes": [
+      {
+        "id": "AE01",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AE02",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AE03",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AE04",
+        "description": null,
+        "passes": true
+      },
+      {
+        "id": "AE05",
+        "description": null,
+        "passes": true
+      }
+    ]
+  }
+]

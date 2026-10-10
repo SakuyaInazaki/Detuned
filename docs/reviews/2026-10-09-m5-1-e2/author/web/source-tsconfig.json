@@ -1,0 +1,18 @@
+{
+  "extends": "../../../../../packages/web/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../../../../..",
+    "paths": {
+      "@detuned/client": [
+        "packages/client/src/index.ts"
+      ],
+      "@detuned/protocol": [
+        "packages/protocol/src/index.ts"
+      ]
+    },
+    "types": []
+  },
+  "include": [
+    "../../../../../packages/web/src"
+  ]
+}

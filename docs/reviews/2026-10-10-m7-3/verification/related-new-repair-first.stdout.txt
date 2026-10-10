@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m7-d01-reviewed-independent.test.ts (6 tests) 6152ms
+   ✓ DI01 independently reads all three live ordinary HTTP checkpoints; sealed privacy and immutable accepted history survive supersession  1929ms
+   ✓ DI02 actual CLI output is private and no-clobber, with a real process exit rather than ledger success alone  1868ms
+   ✓ DI03 genuine child journey observer-throw settles all owned processes and publishes no misleading output  1174ms
+   ✓ DI03 genuine child journey observer-abort settles all owned processes and publishes no misleading output  1177ms
+ ✓ tests/integration/m7-d01-reviewed.test.ts (2 tests) 1603ms
+   ✓ M7.3 real reviewed D01 journey > DJ01 preserves pending recovery and immutable accepted history through a later challenge  1602ms
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  02:48:05
+   Duration  8.08s (transform 138ms, setup 0ms, collect 40ms, tests 7.75s, environment 0ms, prepare 62ms)
+

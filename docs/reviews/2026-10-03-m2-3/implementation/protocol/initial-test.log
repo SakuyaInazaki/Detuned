@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-search-contracts.test.ts (2 tests | 2 failed) 15ms
+   × M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 13ms
+     → Cannot read properties of undefined (reading 'candidates')
+   × M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 1ms
+     → Cannot read properties of undefined (reading 'candidates')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries
+TypeError: Cannot read properties of undefined (reading 'candidates')
+ ❯ new SearchService packages/core/src/services/search-service.ts:21:119
+     19|     private readonly authService: AuthService,
+     20|     private readonly cursorDependencies?: SearchCursorDependencies,
+     21|     private readonly limits: { max_candidates: number; max_response_by…
+       |                                                                                                                       ^
+     22|   ) {}
+     23| 
+ ❯ buildApp packages/server/src/app.ts:77:25
+ ❯ tests/contracts/m2-search-contracts.test.ts:12:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:16:02
+   Duration  544ms (transform 159ms, setup 0ms, collect 313ms, tests 15ms, environment 0ms, prepare 36ms)
+

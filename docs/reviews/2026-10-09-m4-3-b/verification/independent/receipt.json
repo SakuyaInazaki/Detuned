@@ -1,0 +1,50 @@
+{
+  "parse_failure_type": "Error",
+  "status": "PASS",
+  "exact_names": [
+    "mcp__detuned__forum_ack",
+    "mcp__detuned__forum_context",
+    "mcp__detuned__forum_poll",
+    "mcp__detuned__forum_publish",
+    "mcp__detuned__forum_read",
+    "mcp__detuned__forum_relate",
+    "mcp__detuned__forum_search",
+    "mcp__detuned__forum_subscribe"
+  ],
+  "real_refreshes": 2,
+  "parse_failures": 1,
+  "invalid_http_increment": 0,
+  "invalid_business_increment": 0,
+  "invalid_child_increment": 0,
+  "observed_behavior": "previous valid A remains active after parse failure; later valid B reload succeeds",
+  "author_before": "A",
+  "author_after": "B",
+  "ack_requests": 0,
+  "old_pids": [
+    52936,
+    52937
+  ],
+  "old_exited": true,
+  "cleanup_failures": [],
+  "actual_exit": 0,
+  "runs": 1,
+  "tests_passed": 1,
+  "duration_seconds": 5.66,
+  "owned_pids": [
+    52936,
+    52937,
+    52939,
+    52940
+  ],
+  "all_exited": true,
+  "watcher_cleanup": "await disposer (close+drain) returned; runner exited naturally; cleanup_failures empty",
+  "fixture_sha256": "dcd6f9a04ab9d268cf5e98e99e439941d613ae78a7a255c83770b817f4a4d855",
+  "source_sha": "5badb15009ae1756c3afe0ae0cef1faafc290ccc",
+  "command": "/usr/bin/env -i PATH=/opt/homebrew/bin:/usr/bin:/bin /opt/homebrew/bin/node docs/reviews/2026-10-09-m4-3-b/verification/independent/run.mjs",
+  "environment": "outer env-i PATH only; child explicit PATH/CI/SUITE/REPO/SOURCE",
+  "owned_tmp": [
+    "/private/tmp/make-b-independent.py",
+    "/private/tmp/detuned-m43-runtime.MU1a4q/.detuned-m43/b-independent.spec.ts",
+    "/private/tmp/detuned-m43-runtime.MU1a4q/.detuned-m43/b-independent.config.ts"
+  ]
+}

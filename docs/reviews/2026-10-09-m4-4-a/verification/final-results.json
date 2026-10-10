@@ -1,0 +1,39 @@
+{
+  "status": "accepted_by_parent",
+  "date": "2026-10-09",
+  "functional_executor": "/root/m44_verify",
+  "formal": {
+    "passed": 627,
+    "files": 90,
+    "new": 12,
+    "new_files": 2,
+    "guards": 3,
+    "native": 9
+  },
+  "current29": {
+    "passed": 29,
+    "composition": "4gates+24original probes+approvedA1scenario11adapter"
+  },
+  "gate_runs": {
+    "build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 3,
+    "probes": 25
+  },
+  "full_final_duration_seconds": 43.732,
+  "first_failures_preserved": [
+    "native sandboxEPERM9 failures, same fixture loopback escalation passed9",
+    "first default full core627/90 passed but 2review+2runtime externalspec setup failures exit1",
+    "second default full onlyreview excluded core627/90 passed but2runtime setupfailures exit1",
+    "classification originally missed runtime scripts; corrected in independent report"
+  ],
+  "old_MCP_in_final_full": {
+    "files": 5,
+    "cases": 27
+  },
+  "functional_report": "verification.md",
+  "results": "independent-results.json",
+  "C_role": "fresh and metadata only; did not rerun functional gates",
+  "held_dsh_source_dependencies_not_touched": true
+}

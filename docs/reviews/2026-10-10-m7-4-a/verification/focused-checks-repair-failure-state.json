@@ -1,0 +1,52 @@
+{
+  "status": "diagnostic_fail_stopped",
+  "receipt": "focused-checks-repair.json",
+  "safe_trace": {
+    "lastStage": "directory-cleanup-done",
+    "stages": [
+      "setup-begin",
+      "setup-done",
+      "SDK-begin",
+      "SDK-done",
+      "matrix-invalid",
+      "matrix-create",
+      "matrix-log-receipt",
+      "matrix-reads",
+      "matrix-scope",
+      "matrix-invalidate",
+      "matrix-done",
+      "subscribe-begin",
+      "subscribe-done",
+      "wait-begin",
+      "wait-entry",
+      "abort",
+      "flight-settled",
+      "host-cleanup-begin",
+      "host-cleanup-done",
+      "app-cleanup-begin",
+      "app-cleanup-fail",
+      "db-cleanup-begin",
+      "db-cleanup-done",
+      "directory-cleanup-begin",
+      "directory-cleanup-done"
+    ],
+    "caught": {}
+  },
+  "actual_close": "parent awaited SIGKILL close, code null; not graceful",
+  "parent_private_root_cleanup": "rm in finally and ENOENT assertion reached before failing exit compare; no scan or extra deletion",
+  "SDK_host": "host-cleanup-done reached",
+  "app": "app-cleanup-fail reached, no graceful appclose claim",
+  "db": "db-cleanup-done reached",
+  "directory": "directory-cleanup-done reached",
+  "runner_pid_alive": false,
+  "raw_secret_pattern_hit": false,
+  "unrun": [
+    "type",
+    "lint",
+    "schema",
+    "oncefull",
+    "Claude guard",
+    "Claude native"
+  ],
+  "count": "single failed1, old6 skipped; original28/29 retained"
+}

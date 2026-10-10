@@ -1,0 +1,80 @@
+{
+  "schema_generation": {
+    "exit_code": 0,
+    "tool_wall_seconds": 0.037221417,
+    "output": "Successfully generated schema.ts from schema.sql"
+  },
+  "schema_sync": {
+    "exit_code": 0
+  },
+  "maintenance_first": {
+    "exit_code": 0,
+    "passed": 4,
+    "vitest_duration_seconds": 0.819
+  },
+  "maintenance_expanded": {
+    "exit_code": 0,
+    "passed": 5,
+    "vitest_duration_seconds": 1.13
+  },
+  "source_noemit_first": {
+    "exit_code": 0,
+    "includes_new_test": true,
+    "elapsed_not_captured": true
+  },
+  "source_noemit_expanded": {
+    "exit_code": 0,
+    "includes_new_test": true,
+    "elapsed_not_captured": true
+  },
+  "existing_source_first": {
+    "exit_code": 1,
+    "passed": 33,
+    "failed": 1,
+    "vitest_duration_seconds": 7.5,
+    "failure": "Existing FIFO control Unix socket listen EPERM before input business execution"
+  },
+  "fifo_authorized_recheck": {
+    "exit_code": 0,
+    "passed": 1,
+    "skipped": 11,
+    "vitest_duration_seconds": 1.98
+  },
+  "legacy_selected_first": {
+    "exit_code": 1,
+    "passed": 19,
+    "failed": 3,
+    "skipped": 60,
+    "vitest_duration_seconds": 2.98,
+    "failures": [
+      "J04 legacy coordinator now correctly refuses implicit upgrade; fixture migration path corrected to explicit bootstrap",
+      "Y02 built CLI still schema2; pending new build",
+      "Z04 built CLI still schema2; pending new build"
+    ]
+  },
+  "legacy_j04_selection_mistake": {
+    "exit_code": 0,
+    "passed": 0,
+    "skipped": 82,
+    "not_validation": true
+  },
+  "legacy_j04_recheck": {
+    "exit_code": 0,
+    "passed": 1,
+    "skipped": 81,
+    "vitest_duration_seconds": 1.13
+  },
+  "legacy_migration_selected_final": {
+    "exit_code": 0,
+    "passed": 5,
+    "skipped": 77,
+    "vitest_duration_seconds": 1.33
+  },
+  "not_run": [
+    "workspace build",
+    "full suite",
+    "current29",
+    "built CLI new3 contracts",
+    "independent maintenance runtime"
+  ]
+}

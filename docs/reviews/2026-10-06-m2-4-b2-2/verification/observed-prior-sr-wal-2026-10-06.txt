@@ -1,0 +1,19 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "CX07",
+      "wal": true,
+      "barrier": "after old rule read before seq",
+      "old_seq": 1,
+      "current_seq": 2,
+      "delivered_event": "barrier-event"
+    },
+    {
+      "id": "CX08",
+      "clock_exp_equal": 201,
+      "clock_exp_plus_one": 422,
+      "token_ttl_seconds": 86400
+    }
+  ]
+}

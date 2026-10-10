@@ -1,0 +1,11 @@
+--- examples/space-export.md (fresh before)
++++ examples/space-export.md (metadata v2)
+@@ -22,6 +22,6 @@
+ 
+ 导出只投影当前空间public白名单，不含credential、token_secret、session内部密钥/cookie、消费batch/cursor或幂等内部材料，不导出actor个人属性；脱敏材料只墓碑，withdrawn历史保持可读。白名单不能识别用户粘贴在可见研究正文中的任意秘密，导出文件仍应私有保管。
+ 
+-若link已经成功但父目录fsync失败，文件内容完整而发布持久性未确认，CLI报失败并保留final，不能当命令成功或盲删既有成果；应检查目标后另行重试到新文件。本地逻辑导入与受支持schema1|2离线复制到新schema3已有限验收；跨平台/任意旧库、封存提交与完整M6/M7仍待后续，无自动ack或宿主/全局配置更改。
++若link已经成功但父目录fsync失败，文件内容完整而发布持久性未确认，CLI报失败并保留final，不能当命令成功或盲删既有成果；应检查目标后另行重试到新文件。本地逻辑导入与受支持schema1|2|3离线复制到新schema4已有限验收；跨平台/任意旧库、决定/当前有效性与完整M6/M7仍待后续，无自动ack或宿主/全局配置更改。
+ 
+-当前header.version=2/source.schema_version=3，两formal状态excluded；旧version1/source2/not_enabled仍严格支持解码/import，拒混配或未知未来版本。固定十族public材料不含snapshots/requests/assignments/private评审附件或正式批准。
++当前header.version=2/source.schema_version=3|4，两formal状态excluded；旧version1/source2/not_enabled仍严格支持解码/import，拒混配或未知未来版本。固定十族public材料不含snapshots/requests/assignments/submissions/private评审附件或正式批准。

@@ -1,0 +1,21 @@
+name: Container build (arm64)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  container:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cold arm64 image build
+        run: docker build --platform linux/arm64 --target runtime -t detuned-ci:arm64 .
+      - name: Nonroot CLI entrypoint
+        run: |
+          test "$(docker image inspect --format '{{.Config.User}}' detuned-ci:arm64)" = '1000:1000'
+          docker run --rm --network none detuned-ci:arm64 --version
+      # No push, credentials, public deployment or model account in this workflow.

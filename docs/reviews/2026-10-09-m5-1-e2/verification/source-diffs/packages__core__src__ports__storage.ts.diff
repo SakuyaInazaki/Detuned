@@ -1,0 +1,19 @@
+--- before-files/packages/core/src/ports/storage.ts
++++ packages/core/src/ports/storage.ts
+@@ -55,6 +55,8 @@
+ }
+ 
+ export interface StoragePort {
++  /** Optional writable runtime-only performance preparation, after quota and before requests. */
++  prepareRuntimeReadIndexes?(): void;
+   checkReadiness(): boolean;
+   sampleOperationalStatus(): StorageOperationalStatus;
+   /** Runtime connection configuration; unsupported implementations must reject, never silently skip. */
+@@ -120,6 +122,7 @@
+   listRevisionArtifactMetadata(spaceId: string, postId: string, revision: number, limit: number, afterId?: string): { artifacts: RevisionArtifactCatalogItem[]; has_more: boolean };
+   getPostRevision(postId: string, revision: number): PostRevision | null;
+   listPostRevisions(postId: string, limit?: number, cursor?: string | null): { revisions: PostRevision[]; next_cursor: string | null };
++  listPostsInThreadByCreatedAt(threadId: string, limit: number, after?: { key: string | null; id: string }): { posts: (Post & { sort_key: string | null })[]; has_more: boolean };
+   listPostsInThread(threadId: string, limit?: number, cursor?: string | null): { posts: Post[]; next_cursor: string | null };
+ 
+   // Relations & Resolutions

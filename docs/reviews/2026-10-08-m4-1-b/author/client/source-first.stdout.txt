@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m4-artifact-client.test.ts (6 tests | 6 failed) 10118ms
+   × M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download 98ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.1-B bounded artifact shared client > persistent artifact scope reuses logicalID while separating actor/space, and observes token/store cancellation 7ms
+     → Invalid artifact metadata or transfer integrity.
+   × M4.1-B bounded artifact shared client > retries using fresh FormData with immutable bytes/same key, never retries complete507 2ms
+     → Invalid artifact metadata or transfer integrity.
+   × M4.1-B bounded artifact shared client > rejects malformed schema/headers, extra or truncated EOF and wrong hash without partial bytes 2ms
+     → expected undefined to be 'https://forum.test/api/v1/spaces/spac…' // Object.is equality
+   × M4.1-B bounded artifact shared client > download cancellation releases pending reader and totaldeadline begins before metadata 5004ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × M4.1-B bounded artifact shared client > late content response and upload fetch abort/timeout are observed and cleaned 5005ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+     Errors  2 errors
+   Start at  18:13:43
+   Duration  10.80s (transform 261ms, setup 0ms, collect 451ms, tests 10.12s, environment 0ms, prepare 41ms)
+

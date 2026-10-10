@@ -1,0 +1,168 @@
+--- scripts/integrations/web/fixtures.ts before
++++ scripts/integrations/web/fixtures.ts current
+@@ -29,6 +29,7 @@
+   baseURL: string;
+   setupReview(options?: {requiredChecks?: boolean}): Promise<ReviewSetup>;
+   loginReview(page: Page, identity: ReviewIdentityName): Promise<void>;
++  completeKnowledgeRound(setup: ReviewSetup, options?: {dependency?: Post; finalize?: boolean}): Promise<{requestId:string}>;
+   reviewRows(): {counts: Record<string,number>; requests: Array<{id:string;round:number;phase:string;submitted_count:number}>; submissions: Array<{id:string;reviewer_actor_id:string;reviewer_session_id:string;revealed_at:string|null}>};
+   evidencePath(relative: string): string;
+   space: {id: string; slug: string};
+@@ -273,6 +274,17 @@
+         const value=await ordinaryPost(identities.contributor,`/spaces/${space.id}/threads/${thread.id}/posts`,{kind:'claim',title:'Browser independent review claim',summary:'Owned ordinary research',body:'A fixed ordinary claim for browser review.',structured:{statement:'Independent local claim',assumptions:['Synthetic fixture'],scope:'Private local browser',falsification_plan:'Read and report counterexamples'}});
+         return {target:postResult(value,'Browser independent review claim'),requesterId:identities.contributor.actor,reviewerIds,policyRevision:Number(json(db.prepare('SELECT policy_revision FROM spaces WHERE id=?').get(space.id)).policy_revision)};
+       },
++      async completeKnowledgeRound(setup,options={}) {
++        const requester=reviewIdentities.get('requester');if(!requester)throw new Error('Private review requester unavailable.');
++        const created=await ordinaryPost(requester,`/spaces/${space.id}/review-requests`,{target_ref:{post_id:setup.target.id,revision:setup.target.revision},dependency_refs:options.dependency?[{post_id:options.dependency.id,revision:options.dependency.revision}]:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:setup.reviewerIds,expected_policy_revision:setup.policyRevision,reproduction_instructions:'Owned HTTP knowledge recipe'});
++        const requestId=string(created.id),hash=string(created.snapshot_sha256);
++        for(const name of ['one','two'] as const){const identity=reviewIdentities.get(name);if(!identity)throw new Error('Private review identity unavailable.');
++          const session=await ordinaryPost(identity,`/spaces/${space.id}/sessions`,{client_name:'knowledge-browser-seed',client_version:'1'});
++          await ordinaryPost(identity,`/spaces/${space.id}/review-requests/${requestId}/submissions`,{snapshot_sha256:hash,reviewer_session_id:string(session.id),completion_status:'complete',verdict:'accept',coverage:'Owned knowledge '+name,checks_performed:'Fixed material only; no external receipt',evidence_refs:[],pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'Separate ordinary actor and group'}});
++        }
++        if(options.finalize!==false)await ordinaryPost(requester,`/spaces/${space.id}/review-requests/${requestId}/finalize`,{expected_version:3});
++        return {requestId};
++      },
+       async loginReview(page,name) {const identity=reviewIdentities.get(name);if(!identity)throw new Error('Private review identity unavailable.');await loginIdentity(page,identity);},
+       reviewRows() {
+         return {counts:Object.fromEntries(['snapshots','snapshot_items','review_requests','review_request_versions','review_assignments','review_submissions','review_decisions','artifacts','events','idempotency_records','sessions'].map(table=>[table,Number(json(db.prepare(`SELECT count(*) n FROM ${table}`).get()).n)])),requests:db.prepare('SELECT id,round,phase,submitted_count FROM review_requests ORDER BY round').all() as ReturnType<ForumFixture['reviewRows']>['requests'],submissions:db.prepare('SELECT id,reviewer_actor_id,reviewer_session_id,revealed_at FROM review_submissions ORDER BY id').all() as ReturnType<ForumFixture['reviewRows']>['submissions']};
+--- scripts/integrations/web/playwright.config.ts before
++++ scripts/integrations/web/playwright.config.ts current
+@@ -6,7 +6,7 @@
+ 
+ export default defineConfig({
+   testDir: fileURLToPath(new URL('.', import.meta.url)),
+-  testMatch: ['author.spec.ts', 'independent.spec.ts', 'm5-c.spec.ts', 'm5-d2.spec.ts', 'm5-e1.spec.ts', 'm5-e2.spec.ts', 'm5-tls.spec.ts', 'm6-review.spec.ts'],
++  testMatch: ['author.spec.ts', 'independent.spec.ts', 'm5-c.spec.ts', 'm5-d2.spec.ts', 'm5-e1.spec.ts', 'm5-e2.spec.ts', 'm5-tls.spec.ts', 'm6-review.spec.ts', 'm6-knowledge.spec.ts'],
+   fullyParallel: false,
+   workers: 1,
+   retries: 0,
+--- tests/integration/m2-knowledge-views.test.ts before
++++ tests/integration/m2-knowledge-views.test.ts current
+@@ -15,7 +15,7 @@
+   it('V01: findings contain only claims, reports and fixed relation provenance, never certification',()=>{
+     post('proposal',content,'proposal');const claim=post('claim',content,'claim'),source=post('note',{},'source');relation(source,claim,'supports','support');relation(source,claim,'reproduces','reproduction');relation(source,claim,'cites','citation');
+     posts.createRevision(auth,sid,claim.post.id,{title:'new',summary:'s',structured:content,expected_revision:1},'claim-new');
+-    const items=views.getView(auth,sid,'findings').items;expect(items).toHaveLength(1);expect(items[0]).toMatchObject({type:'claim',report_kind:'author_report',formal_review_status:'not_enabled',formal_check_status:'not_enabled'});
++    const items=views.getView(auth,sid,'findings').items;expect(items).toHaveLength(1);expect(items[0]).toMatchObject({type:'claim',report_kind:'author_report',formal_review_status:'not_requested',formal_check_status:'not_requested',formal_review:null});
+     expect(items[0].relations).toHaveLength(2);expect(items[0].relations[0]).toMatchObject({target_ref:{post_id:claim.post.id,revision:1},target_has_newer_revision:true,source_author_id:auth.actor.id,creator_id:auth.actor.id});
+   });
+   it('V02: historical invalid fields become null/missing without inventing failure facts',()=>{
+--- tests/integration/m6-knowledge-status-independent.test.ts before
++++ tests/integration/m6-knowledge-status-independent.test.ts current
+@@ -0,0 +1,80 @@
++import {afterEach,expect,it,vi} from 'vitest';
++import Database from 'better-sqlite3';
++import {mkdtemp,rm} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import path from 'node:path';
++import {bootstrapDatabase,SqliteStorage} from '@detuned/storage-sqlite';
++import {buildApp} from '@detuned/server';
++import {AuthService,CryptoHasher,SearchService} from '@detuned/core';
++import {DetunedClient,ClientProtocolError} from '@detuned/client';
++import {isFindingsView,type CreateReviewSubmission,type ReviewPolicy,type ReviewRequestView} from '@detuned/protocol';
++
++const cleanup:Array<()=>Promise<void>>=[];
++afterEach(async()=>{vi.restoreAllMocks();while(cleanup.length)await cleanup.pop()!();});
++const policy:ReviewPolicy={enabled:true,required_reviewers:2,exclude_contributors:true,distinct_actors:true,distinct_independence_groups:true,seal_until_all_submitted:true,invalidate_on_revision:true,required_checks:[],allow_open_objections:false};
++const claim={statement:'Independent knowledge claim',assumptions:['Synthetic fixture'],scope:'Local only',falsification_plan:'Read the counterexample'};
++const object=(v:unknown):Record<string,unknown>=>{if(!v||typeof v!=='object'||Array.isArray(v))throw new Error('Owned object absent');return v as Record<string,unknown>;};
++const string=(v:unknown):string=>{if(typeof v!=='string')throw new Error('Owned string absent');return v;};
++async function fixture(required=false){
++ const dir=await mkdtemp(path.join(tmpdir(),'detuned-knowledge-independent-'));const db=new Database(path.join(dir,'forum.sqlite'));db.pragma('journal_mode=WAL');
++ const token=bootstrapDatabase(db).adminToken!;const storage=new SqliteStorage(db);let milliseconds=Date.parse('2026-10-09T14:00:00.000Z');const clock={now:()=>new Date(milliseconds),nowIso:()=>new Date(milliseconds).toISOString()};
++ const app=buildApp({storage,clock});cleanup.push(async()=>{await app.close();if(db.open)db.close();await rm(dir,{recursive:true,force:true});});await app.listen({host:'127.0.0.1',port:0});const address=app.server.address();if(!address||typeof address==='string')throw new Error('Owned listener absent');const url='http://127.0.0.1:'+address.port;
++ let key=0;async function write(route:string,body:unknown,method='POST',ownedToken=token){milliseconds+=60000;const response=await fetch(url+'/api/v1'+route,{method,headers:{authorization:'Bearer '+ownedToken,'content-type':'application/json','idempotency-key':'knowledge-owned-'+ ++key},body:JSON.stringify(body),signal:AbortSignal.timeout(5000)});const payload:unknown=await response.json();if(!response.ok)throw new Error('Owned setup rejected '+response.status+' '+String(object(object(payload).error).code));return object(object(payload).data);}
++ const sid=string(object((await write('/spaces',{slug:'knowledge-independent',objective:'Owned experiment',rules:[],review_policy:{...policy,required_checks:required?['local']:[]},check_profiles:required?{local:{verifier_actor_ids:[],config_sha256:'a'.repeat(64),description:'Pending only'}}:{}})).space).id);
++ const tid=string(object((await write(`/spaces/${sid}/threads`,{title:'Owned knowledge'})).thread).id);
++ const post=async(kind='claim')=>string(object((await write(`/spaces/${sid}/threads/${tid}/posts`,{kind,title:'Owned '+kind,summary:'Owned material',body:'Public body',structured:kind==='claim'?claim:{attempt:'Owned attempt',category:'test_failure',assumptions:[],tested_scope:'local',expected:'success',observed:'failure',evidence_refs:[],evidence_state:'unverified',evidence_missing_reason:'No retained evidence',ruled_out:'No general exclusion',not_ruled_out:['Other variants'],retry_when:['New evidence']}})).post).id);
++ const target=await post();const reviewers:Array<{id:string;token:string}>=[];
++ for(const name of ['one','two','reader']){const id=string((await write('/admin/actors',{kind:'human',display_name:'Knowledge '+name})).id);await write(`/spaces/${sid}/memberships`,{actor_id:id,role:'observer',reviewer_eligible:name!=='reader',independence_group:'owned-'+name});const c=await write('/admin/credentials',{actor_id:id,allowed_space_ids:[sid],capabilities:name==='reader'?['read']:['read','write']});reviewers.push({id,token:string(c.token)});}
++ const client=(ownedToken=token)=>new DetunedClient({baseUrl:url,token:ownedToken,timeoutMs:5000});
++ const create=async(dependency?:string,revision=1)=>client().createReviewRequest(sid,{target_ref:{post_id:target,revision},dependency_refs:dependency?[{post_id:dependency,revision:1}]:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:reviewers.slice(0,2).map(r=>r.id),expected_policy_revision:storage.findSpaceById(sid)!.policy_revision,reproduction_instructions:'Owned independent HTTP recipe'},'request-'+ ++key);
++ const submit=async(request:ReviewRequestView,index:number)=>{milliseconds+=60000;const c=client(reviewers[index]!.token),session=await c.createSession(sid,{client_name:'knowledge-independent',client_version:'1'});const body:CreateReviewSubmission={snapshot_sha256:request.snapshot_sha256,reviewer_session_id:session.data.id,completion_status:'complete',verdict:'accept',coverage:'SEALED_KNOWLEDGE_COVERAGE_'+index,checks_performed:'No external receipt',evidence_refs:[],pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'Different actor and group'}};return c.submitReview(sid,request.id,body,'submit-'+ ++key);};
++ const rows=()=>Object.fromEntries(['posts','post_revisions','relations','spaces','space_revisions','review_requests','review_request_versions','review_submissions','review_decisions','events','idempotency_records','subscriptions','consumers','delivery_batches'].map(t=>[t,db.prepare('SELECT * FROM '+t+' ORDER BY rowid').all()]));
++ const patch=async(body:Record<string,unknown>)=>write(`/spaces/${sid}`,{expected_revision:storage.findSpaceById(sid)!.current_revision,...body},'PATCH');
++ const revise=async(id=target)=>write(`/spaces/${sid}/posts/${id}/revisions`,{expected_revision:storage.findPostById(id)!.current_revision,title:'Revised owned material',summary:'revision',body:'Later public body',structured:storage.getPostRevision(id,1)!.structured});
++ return {dir,db,storage,clock,url,sid,tid,target,reviewers,token,client,write,post,create,submit,rows,patch,revise};
++}
++
++it('KN01 actual policy pointer survives pinned-only revision; missing, invalid and raw JSON policies fail safely without writes; disabled policy preserves round history',async()=>{
++ const f=await fixture();expect((await f.client().getView(f.sid,'findings')).data[0]).toMatchObject({formal_review_status:'not_requested',formal_check_status:'not_requested',formal_review:null});
++ await f.patch({pinned_refs:[]});expect(f.storage.findSpaceById(f.sid)).toMatchObject({current_revision:2,policy_revision:1});
++ expect((await f.client().getView(f.sid,'findings')).data[0]!.formal_review_status).toBe('not_requested');
++ const saved=f.db.prepare('SELECT review_policy FROM space_revisions WHERE space_id=? AND revision=1').get(f.sid) as {review_policy:string};
++ for(const mode of ['missing','invalid','json']){
++  if(mode==='missing')f.db.prepare('UPDATE spaces SET policy_revision=999 WHERE id=?').run(f.sid);else f.db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=? AND revision=1').run(mode==='json'?'{bad':JSON.stringify({...policy,enabled:'yes'}),f.sid);
++  const before=f.rows();await expect(f.client().getView(f.sid,'findings')).rejects.toMatchObject({code:'RESYNC_REQUIRED'});expect(f.rows()).toEqual(before);
++  f.db.prepare('UPDATE spaces SET policy_revision=1 WHERE id=?').run(f.sid);f.db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=? AND revision=1').run(saved.review_policy,f.sid);
++ }
++ await f.patch({review_policy:{...policy,enabled:false}});expect((await f.client().getView(f.sid,'findings')).data[0]).toMatchObject({formal_review_status:'not_enabled',formal_check_status:'not_enabled',formal_review:null});
++ await f.patch({review_policy:policy});const r=await f.create();await f.patch({review_policy:{...policy,enabled:false}});const before=f.rows();expect((await f.client().getView(f.sid,'findings')).data[0]).toMatchObject({formal_review_status:'stale',formal_check_status:'not_required',formal_review:{request_id:r.id,target_revision:1,current_validity:'superseded'}});expect(f.rows()).toEqual(before);
++});
++
++it('KN02 real independent HTTP round accepted then latest cancellation/staleness supersedes it; frozen required checks stay pending',async()=>{
++ const f=await fixture(),r=await f.create();await f.submit(r,0);await f.submit(r,1);await f.client().finalizeReviewRequest(f.sid,r.id,{expected_version:3},'owned-finalize');
++ expect((await f.client().getView(f.sid,'findings')).data[0]).toMatchObject({formal_review_status:'accepted',formal_check_status:'not_required',formal_review:{request_id:r.id,target_revision:1,current_validity:'current'}});
++ const next=await f.create();await f.client().cancelReviewRequest(f.sid,next.id,{expected_version:1,reason:'Owned cancellation'},'owned-cancel');expect((await f.client().getView(f.sid,'findings')).data[0]!.formal_review).toMatchObject({request_id:next.id,phase:'cancelled',round:2});
++ const latest=await f.create();await f.revise();expect((await f.client().getView(f.sid,'findings')).data[0]).toMatchObject({revision:2,formal_review_status:'stale',formal_review:{request_id:latest.id,target_revision:1,current_validity:'superseded'}});
++ expect(f.storage.findReviewDecisionByRequestId(r.id)).toMatchObject({outcome:'accepted'});
++ const checks=await fixture(true),pending=await checks.create();await checks.submit(pending,0);await checks.submit(pending,1);await checks.patch({review_policy:policy,check_profiles:{}});expect((await checks.client().getView(checks.sid,'findings')).data[0]).toMatchObject({formal_check_status:'pending',formal_review:{request_id:pending.id,current_validity:'superseded'}});
++});
++
++it('KN03 ACL first, redacted dependency safe metadata and sealed absence; real second WAL connection commits during one outer view snapshot',async()=>{
++ const f=await fixture(),dependency=await f.post('failure'),r=await f.create(dependency);await f.submit(r,0);
++ const reader=f.client(f.reviewers[2]!.token);const subscription=await reader.subscribe(f.sid,{consumer_key:'owned-knowledge-ack',start:'beginning'});const consumerId=string(object(object(subscription.data).consumer).id);await reader.poll(f.sid,consumerId,{limit:50});expect(f.storage.findConsumerById(consumerId)!.ack_seq).toBe(0);
++ const before=f.rows(),view=(await f.client(f.reviewers[2]!.token).getView(f.sid,'findings')).data;expect(JSON.stringify(view)).not.toContain('SEALED_KNOWLEDGE_COVERAGE');expect(f.rows()).toEqual(before);
++ await f.write(`/spaces/${f.sid}/redactions`,{target_type:'post',target_id:dependency,reason:'Owned dependency redaction'});
++ expect((await f.client().getView(f.sid,'findings')).data[0]!.formal_review).toMatchObject({current_validity:'invalidated',validity_reasons:['dependency_redacted']});
++ f.storage.upsertMembership({...f.storage.getMembership(f.sid,f.reviewers[2]!.id)!,active:false});await expect(f.client(f.reviewers[2]!.token).getView(f.sid,'findings')).rejects.toMatchObject({code:'NOT_FOUND'});
++ const g=await fixture();await g.post();const auth=new AuthService(g.storage,new CryptoHasher(),g.clock);const views=new SearchService(g.storage,auth);const second=new Database(path.join(g.dir,'forum.sqlite'));let commits=0;
++ try{const original=g.storage.listPostReviewRequests.bind(g.storage);const spy=vi.spyOn(g.storage,'listPostReviewRequests').mockImplementation((...args)=>{if(!commits){second.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=? AND revision=1').run(JSON.stringify({...policy,enabled:false}),g.sid);commits++;}return original(...args);});
++ const rowsBefore=g.rows();const result=views.getView(auth.authenticateToken(g.token),g.sid,'findings');expect(commits).toBe(1);expect(result.items).toHaveLength(2);if(!isFindingsView(result.items,g.sid))throw new Error('Owned findings absent');expect(result.items.every(item=>item.formal_review_status==='not_requested')).toBe(true);spy.mockRestore();
++ const rowsAfter=g.rows();expect({...rowsAfter,space_revisions:rowsBefore.space_revisions}).toEqual(rowsBefore);const fresh=views.getView(auth.authenticateToken(g.token),g.sid,'findings').items;if(!isFindingsView(fresh,g.sid))throw new Error('Owned findings absent');expect(fresh.every(item=>item.formal_review_status==='not_enabled')).toBe(true);
++ }finally{second.close();}
++});
++
++it('KN04 real HTTP/shared-client typed whole arrays versus separately labelled controlled bad transport responses',async()=>{
++ const f=await fixture(),r=await f.create();const actual=await f.client().getView(f.sid,'findings');expect(actual.data).toHaveLength(1);expect(actual.data[0]!.formal_review).toMatchObject({request_id:r.id,space_id:f.sid,target_post_id:f.target});
++ const failure=await f.post('failure');expect((await f.client().getView(f.sid,'failures')).data[0]).toMatchObject({post_id:failure,report_kind:'author_report',formal_review:null,formal_review_status:'not_requested'});
++ const original=structuredClone(actual.data[0]!);const variants=[{...original,unexpected:true},{...original,formal_review_status:'accepted'},{...original,formal_review:{...original.formal_review!,space_id:'wrong-space'}},{...original,formal_review:{...original.formal_review!,target_post_id:'wrong-post'}},{...original,created_at:'not-a-date'}];
++ // These mocks prove transport parsing only, independently of preceding real HTTP and SQLite evidence.
++ for(const item of variants){const fakeFetch:typeof fetch=async()=>new Response(JSON.stringify({api_version:'1',request_id:'controlled-transport',data:[original,item]}),{status:200,headers:{'content-type':'application/json'}});const mock=vi.spyOn(globalThis,'fetch').mockImplementation(fakeFetch);try{const client=new DetunedClient({baseUrl:'http://controlled.invalid',timeoutMs:5000});await expect(client.getView(f.sid,'findings')).rejects.toBeInstanceOf(ClientProtocolError);}finally{mock.mockRestore();}}
++});
+--- scripts/integrations/web/m6-knowledge.spec.ts before
++++ scripts/integrations/web/m6-knowledge.spec.ts current
+@@ -0,0 +1,32 @@
++import type {Page} from '@playwright/test';
++import {test,expect,type ForumFixture} from './fixtures.js';
++async function findings(page:Page,forum:ForumFixture){
++ await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();
++ await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();
++ await expect(page.getByRole('heading',{name:'研究发现',exact:true})).toBeVisible();
++ return page.locator('.finding-report');
++}
++async function login(page:Page,forum:ForumFixture){await page.goto(forum.baseURL);await forum.loginReview(page,'requester');}
++
++test('KW01 real HTTP accepted round distinguishes current/historical revisions and opens fixed target through existing review panel',async({page,forum})=>{
++ const setup=await forum.setupReview();const round=await forum.completeKnowledgeRound(setup);await login(page,forum);let card=await findings(page,forum);
++ await expect(card).toHaveCount(1);await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('历史裁决：接受');await expect(card).toContainText(round.requestId);await expect(card).toContainText('此轮无需检查（不表示检查通过）');
++ await forum.reviseReviewTarget(setup.target,{body:'Later real claim body.',structured:{statement:'Later claim',assumptions:['Synthetic fixture'],scope:'Local only',falsification_plan:'Read counterexample'}});
++ await page.getByRole('button',{name:'刷新研究发现',exact:true}).click();card=page.locator('.finding-report');await expect(card).toContainText('当前条目修订 2');await expect(card).toContainText('材料或规则已有更新');await expect(card).toContainText('评审对象固定修订 1');await expect(card).toContainText('历史接受不代表当前条目修订获批');
++ await card.getByRole('button',{name:'阅读当前条目修订 2',exact:true}).click();await expect(page.locator('.reading')).toContainText('Later real claim body.');await page.getByRole('button',{name:'返回研究发现',exact:true}).click();
++ await page.locator('.finding-report').getByRole('button',{name:'阅读评审对象修订 1',exact:true}).click();await expect(page.locator('.reading')).toContainText('A fixed ordinary claim for browser review.');await expect(page.locator('.reading')).not.toContainText('Later real claim body.');
++ await page.getByRole('button',{name:'正式评审',exact:true}).click();const panel=page.getByRole('region',{name:'正式评审',exact:true});await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toHaveCount(0);await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:'打开第 1 轮',exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toContainText('Independent local claim');expect(forum.reviewRows().counts.review_decisions).toBe(1);
++});
++
++test('KW02 real pending checks and legacy failure dependency preserve author reports, unknown fields and fixed provenance without inherited approval',async({page,forum})=>{
++ const setup=await forum.setupReview({requiredChecks:true});const dependency=await forum.seedHistoricalFailure('Knowledge historical dependency');await forum.completeKnowledgeRound(setup,{dependency,finalize:false});await login(page,forum);const card=await findings(page,forum);
++ await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('已揭示');await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('待完成');await expect(card).toContainText('评审对象固定修订 1');await expect(card).not.toContainText('历史裁决：接受');
++ await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'失败报告',exact:true}).click();const failure=page.locator('.failure-report').filter({hasText:dependency.title});await expect(failure).toContainText('作者报告');await expect(failure).toContainText('历史报告缺失字段');await expect(failure).toContainText('未提供');await expect(failure).toContainText('已提供空列表');await expect(failure.getByRole('region',{name:'正式状态',exact:true})).toContainText('未发起');await expect(failure).toContainText('其作为依赖材料被评审，不赋予本报告批准');await expect(failure.getByRole('button',{name:'阅读评审对象修订 1',exact:true})).toHaveCount(0);await failure.getByRole('button',{name:'查看报告修订 1',exact:true}).click();await expect(page.locator('.reading')).toContainText('Historical partial research record.');expect(forum.reviewRows().counts.review_decisions).toBe(0);
++});
++
++test('KW03 held real findings never refill after space switch or logout; 390px keyboard action reads fixed claim',async({page,forum})=>{
++ await forum.setupReview();await login(page,forum);await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();
++ const path=`/api/v1/spaces/${forum.space.id}/views/findings`,late=forum.faultNext({method:'GET',path},'hold-after');await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();await late.entered;await page.getByRole('button',{name:new RegExp('^'+forum.alternate.slug)}).first().click();late.release();await expect(page.getByRole('heading',{name:'空间概览',exact:true})).toBeVisible();await expect(page.locator('.finding-report')).toHaveCount(0);
++ const held=forum.faultNext({method:'GET',path},'hold-after');await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();await held.entered;await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();held.release();await expect(page.locator('.finding-report')).toHaveCount(0);
++ await forum.loginReview(page,'requester');await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();const nav=page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true});await nav.focus();await expect(nav).toBeFocused();await page.keyboard.press('Enter');await expect(nav).toHaveAttribute('aria-current','page');await expect(page.locator('.finding-report')).toHaveCount(1);const open=page.locator('.finding-report').getByRole('button',{name:'阅读当前条目修订 1',exact:true});await open.focus();await page.keyboard.press('Enter');await expect(page.locator('.reading')).toContainText('A fixed ordinary claim for browser review.');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:forum.evidencePath('screenshots/c2a-knowledge-narrow.png')});
++});

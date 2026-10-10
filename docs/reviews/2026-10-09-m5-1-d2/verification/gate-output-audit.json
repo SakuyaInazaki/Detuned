@@ -1,0 +1,185 @@
+{
+  "full_outputs_read": true,
+  "gates": [
+    {
+      "stage": "web-build",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "build"
+      ],
+      "exit_code": 0,
+      "seconds": 1.984,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-web-build",
+      "stdout_sha256": "efdf95a5f0ea0750338bba7ef5001c49740efb38915279b3c6db46841f86a738",
+      "stderr_sha256": "b99f98f4dd4ae400b94f31b4231998daecf44315b70fafe33ec028ad48067f4f",
+      "complete_stdout_bytes": 443,
+      "complete_stderr_bytes": 361,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "web-typecheck",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "seconds": 0.919,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-web-typecheck",
+      "stdout_sha256": "7f3953bfc451156f2c21d7695e09ff11cf29fda989cdf242a47924d9b71e1efc",
+      "stderr_sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "complete_stdout_bytes": 92,
+      "complete_stderr_bytes": 15,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "web-lint",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "--filter",
+        "@detuned/web",
+        "lint"
+      ],
+      "exit_code": 0,
+      "seconds": 0.943,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-web-lint",
+      "stdout_sha256": "7f3953bfc451156f2c21d7695e09ff11cf29fda989cdf242a47924d9b71e1efc",
+      "stderr_sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "complete_stdout_bytes": 92,
+      "complete_stderr_bytes": 15,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "selected-browser-first",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "D20[1-4]|human reads a fixed revision|BI03|BI04|BI05|C02"
+      ],
+      "exit_code": 1,
+      "seconds": 46.227,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-selected-browser-first",
+      "stdout_sha256": "dba6b1a08c3afdf697fee2262591bbc27b492c4c1dd3f8eeaa96ff12aaf34389",
+      "stderr_sha256": "ee45ecb0be5e7eb69e377f1bc02b44b2b355405ffdff9f733dda70dbfc61d589",
+      "complete_stdout_bytes": 4616,
+      "complete_stderr_bytes": 467,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "locator-browser-second",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "D201|D204"
+      ],
+      "exit_code": 1,
+      "seconds": 63.284,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-locator-browser-second",
+      "stdout_sha256": "cf9d0b25d1f922cb9472aae88c2b1fdfa550d0faa2aa248694f1c602fa49282d",
+      "stderr_sha256": "daed62e471cc8c0a7f8a8dd041748737633033e5f1385e2dcb8ab7f89dc2ad00",
+      "complete_stdout_bytes": 2328,
+      "complete_stderr_bytes": 256,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "path-browser-third",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "D204"
+      ],
+      "exit_code": 0,
+      "seconds": 3.168,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-path-browser-third",
+      "stdout_sha256": "18f7fbc412abba578a26eb4139f6877253c6f6ebf223aa941e1a536048b86f28",
+      "stderr_sha256": "471c0bb9ecc0baf224b1fb700abf9904912290bdfdf39750b4421ab84ee6c06c",
+      "complete_stdout_bytes": 312,
+      "complete_stderr_bytes": 249,
+      "pnpm_warning": true
+    },
+    {
+      "stage": "comparison-visual-fourth",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "test:e2e",
+        "--grep",
+        "D201"
+      ],
+      "exit_code": 0,
+      "seconds": 4.296,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-comparison-visual-fourth",
+      "stdout_sha256": "a479c5a295a5460e6be83d27861cf7aa9ca36075e7aaacce650d875cf128d3f3",
+      "stderr_sha256": "f41b8d8c37c0bc494a68e47d3e73452efbbd435e371c3a497ff2bb4e40356daf",
+      "complete_stdout_bytes": 305,
+      "complete_stderr_bytes": 249,
+      "pnpm_warning": true,
+      "purpose": "Root-requested uncovered comparison visual viewport, only D201 rerun; unique scene count unchanged"
+    },
+    {
+      "stage": "minimal-dom-diagnostic",
+      "command": [
+        "/opt/homebrew/bin/pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "docs/reviews/2026-10-09-m5-1-d2/verification/visual-diagnostic.config.ts"
+      ],
+      "exit_code": 0,
+      "seconds": 3.32,
+      "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m5-1-d2/verification/browser-minimal-dom-diagnostic",
+      "stdout_sha256": "91cd8b206b32f1e9b01d0e94c6a2080e1aa5c8babd53b790ab6a8bea8b2a9ff8",
+      "stderr_sha256": "80971e348c7e6cfe55b7837f27956b6dd87589b99b94b589e9181fc78c3686bb",
+      "complete_stdout_bytes": 289,
+      "complete_stderr_bytes": 164,
+      "pnpm_warning": true,
+      "purpose": "Root-approved one minimal short-two-revisions DOM and viewport diagnostic; not a new functional scenario"
+    }
+  ],
+  "browser_unique_passes": 9,
+  "new_cases": 4,
+  "selected_existing_cases": 5,
+  "composite": "first7 + secondD201 + thirdD204; not one all-green invocation",
+  "cleanup": [
+    {
+      "run": "selected-browser-first",
+      "fixtures": 9,
+      "all_cleanup_fields_true": true
+    },
+    {
+      "run": "locator-browser-second",
+      "fixtures": 2,
+      "all_cleanup_fields_true": true
+    },
+    {
+      "run": "path-browser-third",
+      "fixtures": 1,
+      "all_cleanup_fields_true": true
+    },
+    {
+      "run": "comparison-visual-fourth",
+      "fixtures": 1,
+      "all_cleanup_fields_true": true
+    },
+    {
+      "run": "minimal-dom-diagnostic",
+      "fixtures": 1,
+      "all_cleanup_fields_true": true
+    }
+  ],
+  "total_fixtures": 14,
+  "source_noemit": {
+    "first_exit": 2,
+    "second_exit": 0,
+    "locator_exit": 0,
+    "final_path_exit": 0,
+    "visual_exit": 0,
+    "diagnostic_exit": 0
+  }
+}

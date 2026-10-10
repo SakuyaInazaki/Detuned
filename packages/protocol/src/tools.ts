@@ -1,47 +1,72 @@
+import { ReviewSubmissionSearchFilterSchema, validateSearchSourceQuery } from './search.js';
+import { ThreadPostsReadQuerySchema } from './threads.js';
+import { Value } from '@sinclair/typebox/value';
+import { DetunedError, ErrorCode } from './errors.js';
+import { CreateSessionRequestSchema, SpaceRevisionReadQuerySchema } from './spaces.js';
+import { ContextQuerySchema, SearchQStringSchema, SearchFilterSchema, SearchCursorStringSchema } from './search.js';
 import { Type, Static, TSchema } from '@sinclair/typebox';
-import { PostKindSchema, StructuredContentSchema } from './posts.js';
-import { PostRefSchema, EvidenceRefSchema } from './common.js';
+import { PostRevisionReadQuerySchema, PostKindSchema, StructuredContentSchema, NEW_TYPED_WRITE_POLICY_DESCRIPTION } from './posts.js';
+import { PostRefSchema } from './common.js';
 import { RelationTypeSchema } from './relations.js';
-import { EventTypeSchema, SubscriptionStartSchema } from './events.js';
-import { ReviewVerdictSchema, ReviewCompletionStatusSchema, ReviewPhaseSchema } from './review.js';
+import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema, isSubscriptionStartValid } from './events.js';
+import { CreateCheckRunSchema, InvalidateCheckRunSchema, PostReviewRequestsQuerySchema, CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema } from './review.js';
 
 export const ToolContextParamsSchema = Type.Object({
   space_id: Type.String({ minLength: 1 }),
-  max_bytes: Type.Optional(Type.Integer({ minimum: 4096, maximum: 65536 })),
-  focus_thread_id: Type.Optional(Type.String()),
+  ...ContextQuerySchema.properties,
 }, { additionalProperties: false });
 
 export type ToolContextParams = Static<typeof ToolContextParamsSchema>;
+export function validateToolContextParams(value: unknown): asserts value is ToolContextParams {
+  if (!Value.Check(ToolContextParamsSchema, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum_context parameters.', 400, false);
+}
 
-export const ToolSearchParamsSchema = Type.Object({
-  space_id: Type.String({ minLength: 1 }),
-  q: Type.String({ minLength: 1, maxLength: 256 }),
-  filters: Type.Optional(Type.Object({
-    kind: Type.Optional(PostKindSchema),
-    tags: Type.Optional(Type.Array(Type.String())),
-    thread_id: Type.Optional(Type.String()),
-  }, { additionalProperties: false })),
-  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
-  cursor: Type.Optional(Type.String()),
+const ToolPostsSearchParamsSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }), q: SearchQStringSchema,
+  source: Type.Optional(Type.Literal('posts')), filters: Type.Optional(SearchFilterSchema),
+  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(SearchCursorStringSchema),
 }, { additionalProperties: false });
-
-export type ToolSearchParams = Static<typeof ToolSearchParamsSchema>;
-
-export const ToolReadParamsSchema = Type.Object({
-  space_id: Type.String({ minLength: 1 }),
-  kind: Type.Union([
-    Type.Literal('thread'),
-    Type.Literal('post'),
-    Type.Literal('artifact'),
-    Type.Literal('review'),
-  ]),
-  id: Type.String({ minLength: 1 }),
-  revision: Type.Optional(Type.Integer({ minimum: 1 })),
-  cursor: Type.Optional(Type.String()),
-  max_bytes: Type.Optional(Type.Integer({ minimum: 1024, maximum: 65536 })),
+const ToolReviewSearchParamsSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }), q: SearchQStringSchema,
+  source: Type.Literal('review_submissions'), filters: Type.Optional(ReviewSubmissionSearchFilterSchema),
+  limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(SearchCursorStringSchema),
 }, { additionalProperties: false });
+export const ToolSearchParamsUnion = Type.Union([ToolPostsSearchParamsSchema, ToolReviewSearchParamsSchema]);
+// Common property projection preserves existing MCP schema introspection; anyOf remains authoritative.
+export const ToolSearchParamsSchema: TSchema = { ...ToolSearchParamsUnion, type: 'object', properties: {
+  space_id: ToolPostsSearchParamsSchema.properties.space_id, q: ToolPostsSearchParamsSchema.properties.q,
+  limit: ToolPostsSearchParamsSchema.properties.limit, cursor: ToolPostsSearchParamsSchema.properties.cursor,
+} };
+export type ToolSearchParams = Static<typeof ToolSearchParamsUnion>;
 
-export type ToolReadParams = Static<typeof ToolReadParamsSchema>;
+export const ToolReadParamsUnion = Type.Union([
+  Type.Object({kind:Type.Literal('check_run'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('check_snapshot'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('check_receipt'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('required_checks'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('check_post_revision'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),run_id:Type.String({minLength:1}),revision:Type.Integer({minimum:1,maximum:Number.MAX_SAFE_INTEGER})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('check_artifact'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),run_id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('review_requests'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),...PostReviewRequestsQuerySchema.properties},{additionalProperties:false}),
+  Type.Object({ kind: Type.Literal('thread_posts'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), ...ThreadPostsReadQuerySchema.properties }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('space'), space_id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...SpaceRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('post_revision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...PostRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('post'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Optional(Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER })) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_request'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_snapshot'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_assignment'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_submission'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_submissions'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_status'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('review_decision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('artifact'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+  Type.Object({ kind: Type.Literal('thread'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+]);
+// Preserve Union Kind/anyOf for local validators, with the MCP object root.
+export const ToolReadParamsSchema: TSchema = { ...ToolReadParamsUnion, type: 'object' };
+export type ToolReadParams = Static<typeof ToolReadParamsUnion>;
+export function validateToolReadParams(value: unknown): asserts value is ToolReadParams {
+  if (!Value.Check(ToolReadParamsUnion, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，review/artifact/check_artifact只读metadata，不读取文件路径。', 400, false);
+}
 
 export const ToolPublishThreadOpSchema = Type.Object({
   space_id: Type.String({ minLength: 1 }),
@@ -59,7 +84,7 @@ export const ToolPublishThreadOpSchema = Type.Object({
       target_ref: PostRefSchema,
       type: RelationTypeSchema,
     }, { additionalProperties: false }))),
-    artifact_ids: Type.Optional(Type.Array(Type.String())),
+    artifact_ids: Type.Optional(Type.Array(Type.String(), { uniqueItems: true })),
   }, { additionalProperties: false })),
 }, { additionalProperties: false });
 
@@ -78,7 +103,7 @@ export const ToolPublishPostOpSchema = Type.Object({
     target_ref: PostRefSchema,
     type: RelationTypeSchema,
   }, { additionalProperties: false }))),
-  artifact_ids: Type.Optional(Type.Array(Type.String())),
+  artifact_ids: Type.Optional(Type.Array(Type.String(), { uniqueItems: true })),
 }, { additionalProperties: false });
 
 export const ToolPublishRevisionOpSchema = Type.Object({
@@ -96,7 +121,7 @@ export const ToolPublishRevisionOpSchema = Type.Object({
     target_ref: PostRefSchema,
     type: RelationTypeSchema,
   }, { additionalProperties: false }))),
-  artifact_ids: Type.Optional(Type.Array(Type.String())),
+  artifact_ids: Type.Optional(Type.Array(Type.String(), { uniqueItems: true })),
 }, { additionalProperties: false });
 
 export const ToolPublishWithdrawOpSchema = Type.Object({
@@ -169,8 +194,8 @@ export const ToolSubscribeParamsSchema = Type.Object({
   thread_ids: Type.Optional(Type.Array(Type.String())),
   event_types: Type.Optional(Type.Array(EventTypeSchema)),
   start: Type.Optional(SubscriptionStartSchema),
-  checkpoint_token: Type.Optional(Type.String()),
-}, { additionalProperties: false });
+  checkpoint_token: Type.Optional(Type.String({ minLength: 1 })),
+}, { additionalProperties: false, allOf: [SubscriptionStartConstraintSchema] });
 
 export type ToolSubscribeParams = Static<typeof ToolSubscribeParamsSchema>;
 
@@ -196,17 +221,7 @@ export const ToolReviewRequestOpSchema = Type.Object({
   space_id: Type.String({ minLength: 1 }),
   request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('request'),
-  target_ref: PostRefSchema,
-  dependency_refs: Type.Array(PostRefSchema),
-  artifact_ids: Type.Array(Type.String()),
-  code_refs: Type.Array(Type.Object({
-    repository: Type.String(),
-    commit: Type.String({ minLength: 40, maxLength: 64 }),
-    reproduction_instructions: Type.String(),
-  }, { additionalProperties: false })),
-  declared_contributors: Type.Array(Type.String()),
-  reviewer_actor_ids: Type.Array(Type.String(), { minItems: 1, maxItems: 5 }),
-  expected_policy_revision: Type.Integer({ minimum: 1 }),
+  ...CreateReviewRequestSchema.properties,
 }, { additionalProperties: false });
 
 export const ToolReviewSubmitOpSchema = Type.Object({
@@ -214,16 +229,7 @@ export const ToolReviewSubmitOpSchema = Type.Object({
   request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('submit'),
   request_id: Type.String({ minLength: 1 }),
-  snapshot_sha256: Type.String({ minLength: 64, maxLength: 64 }),
-  reviewer_session_id: Type.String({ minLength: 1 }),
-  completion_status: ReviewCompletionStatusSchema,
-  verdict: ReviewVerdictSchema,
-  coverage: Type.String({ minLength: 1 }),
-  checks_performed: Type.String({ minLength: 1 }),
-  evidence_refs: Type.Array(EvidenceRefSchema),
-  pending_requirements: Type.Array(Type.String()),
-  limitations: Type.Array(Type.String()),
-  independence_statement: Type.String({ minLength: 1 }),
+  ...CreateReviewSubmissionSchema.properties,
 }, { additionalProperties: false });
 
 export const ToolReviewFinalizeOpSchema = Type.Object({
@@ -231,7 +237,7 @@ export const ToolReviewFinalizeOpSchema = Type.Object({
   request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('finalize'),
   request_id: Type.String({ minLength: 1 }),
-  expected_phase: Type.Optional(ReviewPhaseSchema),
+  ...FinalizeReviewRequestSchema.properties,
 }, { additionalProperties: false });
 
 export const ToolReviewCancelOpSchema = Type.Object({
@@ -239,14 +245,33 @@ export const ToolReviewCancelOpSchema = Type.Object({
   request_key: Type.String({ minLength: 1, maxLength: 128 }),
   op: Type.Literal('cancel'),
   request_id: Type.String({ minLength: 1 }),
-  reason: Type.String({ minLength: 1, maxLength: 500 }),
+  ...CancelReviewRequestSchema.properties,
 }, { additionalProperties: false });
 
+export const ToolReviewCreateSessionOpSchema = Type.Object({
+  space_id: Type.String({ minLength: 1 }), request_id: Type.String({ minLength: 1 }),
+  op: Type.Literal('create_session'),
+  client_name: CreateSessionRequestSchema.properties.client_name,
+  client_version: CreateSessionRequestSchema.properties.client_version,
+}, { additionalProperties: false });
+
+export const ToolCheckCreateOpSchema=Type.Object({
+  space_id:Type.String({minLength:1}),request_key:Type.String({minLength:1,maxLength:128}),op:Type.Literal('check_create'),
+  ...CreateCheckRunSchema.properties,
+},{additionalProperties:false});
+export const ToolCheckInvalidateOpSchema=Type.Object({
+  space_id:Type.String({minLength:1}),request_key:Type.String({minLength:1,maxLength:128}),run_id:Type.String({minLength:1}),op:Type.Literal('check_invalidate'),
+  ...InvalidateCheckRunSchema.properties,
+},{additionalProperties:false});
+
 export const ToolReviewParamsUnion = Type.Union([
+  ToolCheckCreateOpSchema,
+  ToolCheckInvalidateOpSchema,
   ToolReviewRequestOpSchema,
   ToolReviewSubmitOpSchema,
   ToolReviewFinalizeOpSchema,
   ToolReviewCancelOpSchema,
+  ToolReviewCreateSessionOpSchema,
 ]);
 
 export const ToolReviewParamsSchema: TSchema = {
@@ -259,22 +284,22 @@ export type ToolReviewParams = Static<typeof ToolReviewParamsUnion>;
 export const DETUNED_TOOLS = [
   {
     name: 'forum_context',
-    description: '获取指定空间的限长项目上下文（目标、有效规则、置顶摘要、未解决异议、近期失败与增量检查点）。',
+    description: '获取指定空间上下文，返回{data,meta}并保留meta.truncated；max_bytes限定成功compact HTTP正文，不含pretty JSON/SDK包装。focus_thread_id可聚焦同空间可读主题，返回必需focus_thread元数据；省略保持空间上下文。',
     schema: ToolContextParamsSchema,
   },
   {
     name: 'forum_search',
-    description: '在空间可见内容中搜索（支持关键词、帖子类型、标签与主题过滤）。',
+    description: '在空间可见内容中搜索，返回 {data,meta}；用 meta.next_cursor 续页，旧数组调用方改读 data。标签精确区分大小写，JSON预算8192字节、去重后至多100个。',
     schema: ToolSearchParamsSchema,
   },
   {
     name: 'forum_read',
-    description: '按需分段读取主题概要、帖子修订详情、附件元信息或评审请求。',
+    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。',
     schema: ToolReadParamsSchema,
   },
   {
     name: 'forum_publish',
-    description: '原子发布主题、帖子、新修订或撤回已有帖子。',
+    description: `原子发布主题、帖子、新修订或撤回已有帖子。${NEW_TYPED_WRITE_POLICY_DESCRIPTION} initial_post 按自身 kind，新修订按数据库不可变 post.kind 应用规则。`,
     schema: ToolPublishParamsSchema,
   },
   {
@@ -297,4 +322,25 @@ export const DETUNED_TOOLS = [
     description: '原子确认已持久消费的投递批次。',
     schema: ToolAckParamsSchema,
   },
+  { name: 'forum_review', description: '申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。会话不创造独立身份。', schema: ToolReviewParamsSchema },
 ] as const;
+
+/** Canonical local schema validation plus explicit constraints not evaluated by TypeBox. */
+export function validateToolParams(toolName: string, params: unknown): boolean {
+  try {
+    const tool = DETUNED_TOOLS.find(item => item.name === toolName);
+    if (!tool || !Value.Check(tool.schema, params)) return false;
+    if (toolName === 'forum_subscribe' && !isSubscriptionStartValid(params)) return false;
+    if (toolName === 'forum_search') { const p = params as ToolSearchParams; validateSearchSourceQuery({ q: p.q, source: p.source, ...p.filters, limit: p.limit, cursor: p.cursor }); }
+    if (toolName === 'forum_context') validateToolContextParams(params);
+    if (toolName === 'forum_read') validateToolReadParams(params);
+    if (toolName === 'forum_review') {
+      const review=params as ToolReviewParams;
+      if(review.op==='check_invalidate') {
+        const maximum=InvalidateCheckRunSchema.properties.reason['x-max-codepoints'];
+        let count=0;for(const _codepoint of review.reason)if(++count>maximum)return false;
+      }
+    }
+    return true;
+  } catch { return false; }
+}

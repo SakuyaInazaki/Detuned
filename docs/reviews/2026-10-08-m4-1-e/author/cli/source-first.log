@@ -1,0 +1,26 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-cli-errors.test.ts [ tests/contracts/m4-cli-errors.test.ts ]
+Error: Cannot find package 'commander' imported from '/Users/sakimi/Desktop/Detuned/tests/contracts/m4-cli-errors.test.ts'
+ ❯ tests/contracts/m4-cli-errors.test.ts:2:1
+      1| import {it,expect} from 'vitest';
+      2| import {Command} from 'commander';
+       | ^
+      3| import {spawn} from 'node:child_process';
+      4| import {DetunedError,ErrorCode} from '@detuned/protocol';
+
+Caused by: Error: Failed to load url commander (resolved id: commander) in /Users/sakimi/Desktop/Detuned/tests/contracts/m4-cli-errors.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.6_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  21:09:30
+   Duration  226ms (transform 16ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 32ms)
+

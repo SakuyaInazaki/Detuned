@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-export-independent.test.ts (4 tests | 1 failed | 2 skipped) 1208ms
+   × B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records 469ms
+     → expected 422 to be less than 300
+   ✓ B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end  739ms
+   ↓ B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial
+   ↓ B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 2 skipped (4)
+   Start at  23:52:27
+   Duration  1.74s (transform 184ms, setup 0ms, collect 293ms, tests 1.21s, environment 0ms, prepare 52ms)
+

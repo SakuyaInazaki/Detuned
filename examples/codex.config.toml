@@ -1,0 +1,12 @@
+# Merge this table into the chosen trusted project .codex/config.toml or
+# user config.toml after reviewing the existing configuration. This repository
+# never writes that configuration for you. Replace every absolute placeholder.
+[mcp_servers.detuned]
+command = "/absolute/path/to/node"
+args = ["/absolute/path/to/Detuned/packages/mcp/dist/index.js"]
+
+[mcp_servers.detuned.env]
+DETUNED_BASE_URL = "http://127.0.0.1:3000"
+DETUNED_TOKEN_FILE = "/private/path/to/ordinary-actor-token"
+# Do not simultaneously inherit a non-empty DETUNED_TOKEN.
+# The token is not a model API key; restrict it to the required forum spaces.

@@ -1,0 +1,68 @@
+{
+  "scope": "Real SQLite and loopback HTTP catalog checks",
+  "checks": [
+    {
+      "name": "wire UTF-8 budget, metadata-only revision pagination and precise cursor tail",
+      "passed": true,
+      "details": {
+        "pages": 2,
+        "revisions": 24,
+        "full_wire_max_bytes": 4096,
+        "old_full_methods_not_called": true,
+        "select_projection_count": 2,
+        "observed_parameterized_selects": [
+          "SELECT revision,editor_id,created_at,content_hash FROM post_revisions\n      WHERE post_id=?  ORDER BY revision DESC LIMIT ?",
+          "SELECT revision,editor_id,created_at,content_hash FROM post_revisions\n      WHERE post_id=? AND revision<? ORDER BY revision DESC LIMIT ?"
+        ]
+      }
+    },
+    {
+      "name": "artifact dynamic pages, historical public fields, redacted tombstone and invisible links",
+      "passed": true,
+      "details": {
+        "pages": 5,
+        "items": 27,
+        "invisible_associations": 2,
+        "max_wire_bytes": 4089,
+        "historical_import_fixture": true,
+        "download_not_attempted": true
+      }
+    },
+    {
+      "name": "cursor domains, count continuation, TTL boundary and original expiry retained",
+      "passed": true,
+      "details": {
+        "actor_post_space_purpose_revision_binding": true,
+        "count_page_cursor": true,
+        "ttl_seconds": 86400,
+        "exp_equality_valid": true,
+        "expiry_not_renewed": true
+      }
+    },
+    {
+      "name": "strict query, current ACL/credential and redacted post residual hash",
+      "passed": true,
+      "details": {
+        "current_membership": true,
+        "current_credential": true,
+        "redacted_post": 410,
+        "strict_query": true
+      }
+    },
+    {
+      "name": "existing full revisions remains complete, directory GETs have no writes or credential logs",
+      "passed": true,
+      "details": {
+        "full_revisions": 24,
+        "original_body_utf8_bytes": 30018,
+        "read_db_counts_unchanged": true,
+        "credential_log_leak": false
+      }
+    }
+  ],
+  "cleanup": {
+    "app_closed": true,
+    "db_closed": true,
+    "temp_absent": true
+  }
+}

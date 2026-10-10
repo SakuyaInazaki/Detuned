@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stderr | tests/integration/m3-logical-import.test.ts > imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance
+AUTHOR_DIAGNOSTIC TypeError:This database connection is busy executing a query
+
+ ❯ tests/integration/m3-logical-import.test.ts (6 tests | 1 failed | 5 skipped) 26ms
+   × imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance 26ms
+     → Logical import failed; retain the input and retry to another new directory.
+   ↓ rejects truncated input and leaves no published directory
+   ↓ rejects existing target without touching source or target
+   ↓ cancels after a staged record without publishing
+   ↓ keeps a failed partial publication behind the readiness gate
+   ↓ does not describe a fully published instance as partial on a late abort
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance
+ImportError: Logical import failed; retain the input and retry to another new directory.
+ ❯ importSpace packages/storage-sqlite/src/logical-import.ts:70:939
+
+ ❯ tests/integration/m3-logical-import.test.ts:8:201
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  12:24:51
+   Duration  473ms (transform 167ms, setup 0ms, collect 254ms, tests 26ms, environment 0ms, prepare 34ms)
+

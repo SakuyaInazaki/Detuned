@@ -1,0 +1,2922 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+$ vitest run
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m4-read-cli-contract.test.ts (4 tests | 3 failed) 356ms
+   ✓ RD B01: page limit rejects nonintegers/out of range without echo and accepts bounded integers 2ms
+   × RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP 193ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request 98ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits 63ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m4-cli-boundaries-independent.test.ts (5 tests | 5 failed) 518ms
+   × E independent four single credential sources and anonymous/conflicting sources preserve real authorization 155ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × E independent selected files fail safely without fallback or any HTTP 69ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × E independent diagnostic argv consumption and genuine help/version emit once without HTTP 93ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × E independent action parse/protocol/transport errors never disclose raw local markers 89ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × E independent real credential success preserves exactly one stdout token and ordinary data output 111ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m3-request-key-cli.test.ts (5 tests | 5 failed) 529ms
+   × M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes 125ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output 131ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests 65ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created 102ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.2 CLI persistent request keys > KCLI05: rejected persistence sends no business request and does not overwrite existing material 103ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m4-read-cli-independent.test.ts (4 tests | 4 failed) 2060ms
+   × M4 independent built CLI identities and isolated list/history pages retain existing fixed reads 569ms
+     → expected true to be false // Object.is equality
+   × M4 independent search legacy array and signed page cursor retain server binding and local invalid limits send no HTTP 426ms
+     → expected true to be false // Object.is equality
+   × M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths 601ms
+     → expected true to be false // Object.is equality
+   × M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior 463ms
+     → expected true to be false // Object.is equality
+ ❯ tests/integration/m4-artifact-client-cli-independent.test.ts (5 tests | 5 failed) 2355ms
+   × AB C01 ordinary identity binary and empty built CLI transfer agrees with independent HTTP/hash and private files 576ms
+     → expected true to be false // Object.is equality
+   × AB C02 fresh CLI processes recover persistent intent across token rotation while actor/space keys remain independent 434ms
+     → expected true to be false // Object.is equality
+   × AB C03 file targets and concurrent CLI publishers preserve winner; invalid inputs do not reach HTTP 623ms
+     → expected true to be false // Object.is equality
+   × AB C04 controlled content transport ignores content_url and never publishes hash-mismatch or truncated bytes 358ms
+     → Private artifact worker exited before result
+   × AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes 363ms
+     → Private artifact worker exited before result
+ ❯ tests/integration/m4-admin-cli-independent.test.ts (4 tests | 4 failed) 2188ms
+   × AC C01 real new CLI stdin management lifecycle creates scoped nonadmin credentials and changes actual write authority 511ms
+     → expected true to be false // Object.is equality
+   × AC C02 ordinary seven management operations cannot mutate nonempty state; space owner can manage members and redact but cannot mint credentials 575ms
+     → expected true to be false // Object.is equality
+   × AC C03 real CLI persistent post/artifact redaction recovers records, conflicts on changed body and rechecks current owner permission 564ms
+     → expected true to be false // Object.is equality
+   × AC C04 real upstream commit followed by proxy response loss never retries actor/credential and full retryable errors remain single attempt 537ms
+     → expected true to be false // Object.is equality
+ ❯ tests/contracts/m4-write-consume-cli.test.ts (4 tests | 3 failed) 345ms
+   ✓ WD B01: poll strict integer boundaries are safe and allow wait zero/max 2ms
+   × WD B02: space/thread writes preserve body/key/data and existing group reads 184ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × WD B03: sessions are distinct same-actor records and delivered consumer termination keeps forum data 64ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP 95ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts (4 tests | 4 failed) 2027ms
+   × M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch 532ms
+     → Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup 515ms
+     → Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets 474ms
+     → Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes 504ms
+     → Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/integration/m3-import-independent.test.ts (4 tests | 4 failed) 2169ms
+   × B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing 581ms
+     → Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target 528ms
+     → Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes 532ms
+     → Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target 527ms
+     → Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts (4 tests | 4 failed) 3131ms
+   × M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip 796ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime 808ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes 735ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets 793ms
+     → Cannot read properties of undefined (reading 'adminToken')
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests | 6 failed) 843ms
+   × Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged 115ms
+     → expected 1 to be +0 // Object.is equality
+   × Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes 113ms
+     → expected 1 to be +0 // Object.is equality
+   × Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01) 99ms
+     → expected 'node:fs:436\n    return binding.readF…' to match /包含不受支持的排序规则: NOCASE/
+   × Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03) 184ms
+     → expected 1 to be +0 // Object.is equality
+   × Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03) 209ms
+     → expected 1 to be +0 // Object.is equality
+   × Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04) 112ms
+     → expected 'node:fs:436\n    return binding.readF…' to match /missing required migration marker/
+ ❯ tests/contracts/m4-runtime-binding-native.test.ts (9 tests | 9 failed) 757ms
+   × M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session 150ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Me nested shape before business HTTP with actual upstream/DB evidence 94ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Me nested extra field before business HTTP with actual upstream/DB evidence 48ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence 73ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence 49ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence 87ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence 66ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence 108ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence 82ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m4-mcp-lifecycle-independent.test.ts (6 tests | 6 failed) 641ms
+   × MCP independent official stdio discovery is eight tools and zero HTTP/session, native processes isolate real identities 221ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP independent small result/page and large text summary retain complete structured research data 88ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP independent safe errors and conflicting/bad startup credentials send no unauthorized HTTP or raw stderr 89ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP independent SDK cancellation aborts an entered native HTTP poll without ACK and process remains usable 95ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP independent explicit stdin EOF and repeated SIGTERM cancel active HTTP before real exit zero 55ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP independent new stdio process replays the same unacknowledged batch without assuming permanent cursor bytes 92ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m4-admin-cli.test.ts (4 tests | 3 failed) 338ms
+   ✓ AC B01: management input parses an object and maps parse/read/array failures to safe validation errors 2ms
+   × AC B02: actual CLI actor credential membership flow returns data once and identity/revoke/deactivate take effect 172ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP 93ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × AC B04: redact strips input key, preserves explicit priority and persistent intent conflicts without storing body 68ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m3-export-independent.test.ts (4 tests | 4 failed) 2034ms
+   × B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records 565ms
+     → Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end 615ms
+     → Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial 333ms
+     → Error: fixture exited before IPC node:events:487
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink 520ms
+     → Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/integration/m3-request-key-recovery.test.ts (6 tests | 6 failed) 3200ms
+   × M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes 531ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets 595ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material 539ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay 508ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST 511ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × M3.2 controlled preparation barriers stop token changes during getMe/store and promptly cancel pending store without POST 516ms
+     → Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/contracts/m4-artifact-cli.test.ts (4 tests | 2 failed) 560ms
+   ✓ AB B01: same FD regular input accepts zero/25MiB, rejects links/dirs/oversize/MIME and no-writer FIFO is bounded  331ms
+   ✓ AB B02: actual private publication preserves existing targets/race winner and completed final on sync failure, cleans own temp 28ms
+   × AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent 130ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output 70ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m3-shutdown-independent.test.ts (5 tests | 5 failed) 4238ms
+   × M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release 892ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles 850ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown 843ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan 860ms
+     → expected true to be false // Object.is equality
+   × M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors 792ms
+     → expected true to be false // Object.is equality
+ ❯ tests/integration/m3-write-limits-independent.test.ts (4 tests | 4 failed) 3204ms
+   × M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps 810ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent 784ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records 817ms
+     → Cannot read properties of undefined (reading 'adminToken')
+   × M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget 792ms
+     → Cannot read properties of undefined (reading 'adminToken')
+ ❯ tests/integration/m3-event-recovery.test.ts (2 tests | 2 failed) 1012ms
+   × T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected 491ms
+     → Error: worker exited before expected message node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+   × T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans 520ms
+     → Error: worker exited before expected message node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/integration/m4-write-consume-independent.test.ts (4 tests | 4 failed) 2136ms
+   × WD C01 actual pending and acknowledged consumers terminate atomically; peer research persists, old cursors cannot revive and same key restarts at explicit highwater 490ms
+     → expected true to be false // Object.is equality
+   × WD C02 URL space and consumer ownership reject without mutation; private parent-delete fault observes child deletion then restores complete transaction 554ms
+     → expected true to be false // Object.is equality
+   × WD C03 signed context checkpoint retains T0 boundary; illegal combinations and wrong identity/space cannot create or reposition even existing consumer 519ms
+     → expected true to be false // Object.is equality
+   × WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt 572ms
+     → expected true to be false // Object.is equality
+ ❯ tests/contracts/m4-mcp-binding-independent.test.ts (6 tests | 6 failed) 572ms
+   × MCP binding independent discovery and full nested/allOf rejection precede every HTTP/session 182ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP binding independent concurrent real posts share one preflight/session, spaces and actor processes stay isolated 96ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP binding independent one cancelled waiter leaves a real shared HTTP flight for another successful caller 74ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP binding independent all global waiters cancel native HTTP, then a new explicit call can reinitialize 59ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP binding independent actual committed session response loss is one attempt and terminal until reconnect 85ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × MCP binding independent EOF and repeated signal during cap/session initialization settle native HTTP without late business or ACK 75ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/r4-c-contracts.test.ts (26 tests | 26 failed) 1797ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false) 215ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-2: parseIntegerQuery rejects non-digits, negative numbers, and out-of-range values 61ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-3: Core RelationService rejects invalid relation type without committing state 44ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-4: Valid relation creation and resolve/reopen lifecycle maintains idempotency and symmetry 58ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-5: Query, body, and reference validation rejects without side effects 77ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01) 89ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: API-v1 OpenAPI 3.1 body constraints agree with existing protocol and HTTP (AD02) 66ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-8: API-v1 OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03) 69ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-1: HTTP 200/201 with malformed JSON rejects with ClientProtocolError 75ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-2: Missing envelope fields (api_version, request_id, data) reject with ClientProtocolError 49ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-3: Strictly preserves valid falsy data values and allows forward-compatible envelope fields 49ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-4: Distinguishes UserAbortError from TimeoutError 64ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-5: Abort listener and timer are cleanly removed in all 5 cancellation phases and on settle 79ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries 76ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-7: Preserves server REVISION_CONFLICT error independently of message wording 57ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies 77ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03) 55ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04) 64ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05) 48ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-12: Cancellation and timeout win over pending body fulfillment on 200 and 409 responses (AE01) 73ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-13: Body stream transport classification, unsolicited abort, and retry allowlist (AE02) 70ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-14: Finite Retry-After positive controls: HTTP-date, invalid fallback, and date over budget (AE05) 66ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-1: Both Pi commands report exact content and isolated channels in all 8 UI/headless success/failure combinations 46ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-3: Root package.json engines.node is >=22.19.0 to match Pi dependency requirements 68ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-4: Registered Pi tools reject bad JSON and preserve complete 409 business error fields 55ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04) 45ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m3-resource-limits-independent.test.ts (4 tests | 4 failed) 3330ms
+   × M3.4-A2 independent natural bounded research fills real main database, rolls back failed post/event/idempotency and keeps reads usable 829ms
+     → expected true to be false // Object.is equality
+   × M3.4-A2 independent real uploads race global bytes and object quotas, replay and restarted service preserve registered usage 820ms
+     → expected true to be false // Object.is equality
+   × M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation 814ms
+     → expected true to be false // Object.is equality
+   × M3.4-A2 independent published artifact real allocation FULL cleans this call files and CLI invalid resource config is rejected before mkdir 865ms
+     → expected true to be false // Object.is equality
+ ❯ tests/contracts/cli-tls.test.ts (3 tests | 1 failed) 2441ms
+   ✓ TLS CLI01: paired flags and unreadable PEM files fail safely before creating the data directory  1063ms
+   ✓ TLS CLI02: HTTPS Web rejects HTTP origin before data access  447ms
+   × TLS CLI03: API-only TLS advertises HTTPS, serves trusted health and closes on SIGTERM 930ms
+     → TLS process closed before readiness
+ ❯ tests/contracts/m4-mcp-wrapped-independent.test.ts (5 tests | 5 failed) 581ms
+   × wrapped independent default/explicit flat advertises the original eight schemas; wrapped nests every canonical keyword exactly with no HTTP 237ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback 115ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post 69ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK 78ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × wrapped independent invalid startup modes exit safely without environment/token output or HTTP 81ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts (6 tests | 6 failed) 6757ms
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native identity uses isolated ordinary credentials and awaited lifecycle cleanup 1185ms
+     → expected { mode: 'identity', code: 1, …(3) } to deeply equal { mode: 'identity', code: +0, …(3) }
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native new uses isolated ordinary credentials and awaited lifecycle cleanup 1176ms
+     → expected { mode: 'new', code: 1, …(3) } to deeply equal { mode: 'new', code: +0, …(3) }
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native switch uses isolated ordinary credentials and awaited lifecycle cleanup 1036ms
+     → expected { mode: 'switch', code: 1, …(3) } to deeply equal { mode: 'switch', code: +0, …(3) }
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native fork uses isolated ordinary credentials and awaited lifecycle cleanup 1131ms
+     → expected { mode: 'fork', code: 1, …(3) } to deeply equal { mode: 'fork', code: +0, …(3) }
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native reload uses isolated ordinary credentials and awaited lifecycle cleanup 1017ms
+     → expected { mode: 'reload', code: 1, …(3) } to deeply equal { mode: 'reload', code: +0, …(3) }
+   × M4.4-B independent real Pi 0.87.1 SDK lifecycle > native shutdown uses isolated ordinary credentials and awaited lifecycle cleanup 1211ms
+     → expected { mode: 'shutdown', code: 1, …(3) } to deeply equal { mode: 'shutdown', code: +0, …(3) }
+ ❯ tests/contracts/m3-backup-cli.test.ts (5 tests | 1 failed) 6641ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  1671ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config  1830ms
+   × M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses 901ms
+     → serve early exit 1
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  1480ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  758ms
+ ❯ tests/integration/m0-m1-r2-regression.test.ts (12 tests | 1 failed) 1160ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay 226ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S02: Redacted tags cannot reappear through post.create replay 103ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S03: Relation resolve and reopen idempotency must account for URL target 84ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S04: Public development secret must not authorize a future checkpoint 115ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S05: Context checkpoint is bound to the requesting actor 65ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S06: Thread filter retains a relation whose endpoints are inside the subscribed thread 78ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S07: Membership alone cannot bypass empty credential capabilities 72ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S08: A legal 60-codepoint Chinese title is accepted 75ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S09: Failure kind validates category and mandatory fields 60ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S10: Failed redaction audit insert rolls back content and lifecycle changes 67ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S11: Bootstrap recovers after failure between admin actor and credential creation 108ms
+   × M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors 106ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m4-cli-errors.test.ts (4 tests) 4539ms
+   ✓ ECLI03 real parser outputs one safe error, preserves native help/version, and respects value/terminator JSON boundaries  2346ms
+   ✓ ECLI04 legacy write JSON and unknown operation errors are safe and retain exit2  2184ms
+ ❯ tests/contracts/m2-post-revision-read-contracts.test.ts (7 tests | 2 failed) 805ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P01: raw 4K/64K/default pages preserve fixed stored projection while current head changes  329ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P02: strict path/query and unsupported old pagination reject without changing old full getters 114ms
+   × M2.4-B.2.1 fixed post revision transport contracts > P03: real HTTP client new-kind pages and old-kind full data remain distinct; signal cancels 106ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P04: shared tool branches strictly reject contradictions while preserving the eight tool names 99ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P05: page/envelope schemas correlate completion/meta and exclude redacted success or extra fields 66ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P06: new OpenAPI route declares all parameters, complete envelope and strict cursor after policy traversal 51ms
+   × M2.4-B.2.1 fixed post revision transport contracts > P07: installed Pi validator reaches actual registered execute for new and unchanged old post kinds 40ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m2-thread-posts-read-contracts.test.ts (8 tests) 977ms
+ ✓ tests/integration/m3-event-core.test.ts (11 tests) 3446ms
+   ✓ M3.1 event core correctness > E03 repeat ack still checks persisted through_seq before idempotent success  581ms
+   ✓ M3.1 event core correctness > E04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes  2575ms
+ ❯ tests/integration/m3-milestone-gate.test.ts (2 tests | 2 failed) 2722ms
+   × T02 independent ten real HTTP requests reach one server barrier then replay one intent with unique post/event/idempotency and conflict409 913ms
+     → expected true to be false // Object.is equality
+   × T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs 1808ms
+     → expected true to be false // Object.is equality
+ ✓ tests/contracts/m3-logical-import-contract.test.ts (6 tests) 2743ms
+   ✓ M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink  2681ms
+ ❯ tests/integration/m3-operations-independent.test.ts (5 tests | 5 failed) 4693ms
+   × M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates 923ms
+     → expected true to be false // Object.is equality
+   × M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log 792ms
+     → expected true to be false // Object.is equality
+   × M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes 995ms
+     → expected true to be false // Object.is equality
+   × M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint 1221ms
+     → expected true to be false // Object.is equality
+   × M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners 761ms
+     → expected true to be false // Object.is equality
+ ❯ tests/contracts/m2-context-contracts.test.ts (4 tests | 4 failed) 382ms
+   × M2.4-A actual context body and tool contracts > C01: oversized UTF8 rules downgrade to a fixed revision reference with real reconstruction 173ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.4-A actual context body and tool contracts > C02: shared forum_context retains real truncation meta after optional source material exceeds budget 68ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.4-A actual context body and tool contracts > C03: actual compact success body covers true req.id, escaping, and all approved byte budgets 82ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.4-A actual context body and tool contracts > C04: shared envelope schema requires truthful meta and exactly measures true/false encoding 58ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m5-web-auth-independent.test.ts (7 tests | 7 failed) 849ms
+   × M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation 206ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent persisted credential revoke/expiry, actor disable and membership withdrawal affect an already issued cookie immediately 121ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent failed replacement and full target credential preserve old login; TTL is absolute and restart forgets cookies without losing forum identity 111ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes 103ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent client root auth uses only one login/logout attempt across actual upstream commits and observes entered-request cancellation safely 135ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen 73ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M5 independent anonymous login budget charges trusted credential/body failures once, excludes hostile origins and refills with controlled time 99ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests) 1174ms
+   ✓ M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer  835ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1267ms
+ ❯ tests/contracts/m3-events-contract.test.ts (7 tests | 5 failed) 751ms
+   ✓ M3.1 event HTTP and adapter cancellation contracts > E01: legal positive wait actually waits at an empty consumer without creating or acknowledging a batch 293ms
+   ✓ M3.1 event HTTP and adapter cancellation contracts > E02: existing strict poll schema defaults and bounds reach the async service unchanged 72ms
+   × M3.1 event HTTP and adapter cancellation contracts > E03: a completed request body is not cancellation, but client user abort cancels the live HTTP wait 90ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.1 event HTTP and adapter cancellation contracts > E04: client timeout cancels the same server wait and does not retry or acknowledge 53ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.1 event HTTP and adapter cancellation contracts > E05: app shutdown aborts active waits before socket drain and returns retryable 503 48ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.1 event HTTP and adapter cancellation contracts > E06: lost HTTP delivery preserves the actual persisted batch for redelivery and explicit ack only 96ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch 98ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/integration/m2-artifacts-cli.test.ts (4 tests | 1 failed) 4023ms
+   × M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits 1637ms
+     → CLI exited before listen: Detuned 服务启动失败。
+
+   ✓ M2.1 CLI locked startup artifact lifecycle > never cleans objects when another process owns DirectoryLock  327ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > never cleans when database coordination fails and releases its acquired lock  369ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen  1689ms
+ ❯ tests/integration/historical-http-replay.test.ts (7 tests | 7 failed) 113ms
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > loads a hash-bound credential-free archive with the actual old HTTP business records 29ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > initial replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 23ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > newpost replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 12ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > revision replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business 25ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > replays all three old keys after a current-server close and reopen without altering business/hash/ref 5ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content 7ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay 9ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+ ❯ tests/contracts/m3-shutdown-contract.test.ts (4 tests | 1 failed) 1512ms
+   ✓ SD B01: shutdown configuration is bounded and never echoes input 1ms
+   ✓ SD B02: one signal/listen-failure task drains before app/database/strict lock and cleans owned listeners 17ms
+   ✓ SD B03: real app root closing cancels all leases before await and rejects new business while finally settles 245ms
+   × SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly 1248ms
+     → expected 1 to be +0 // Object.is equality
+ ❯ tests/contracts/m3-resource-limits-contract.test.ts (4 tests | 1 failed) 2019ms
+   ✓ RS B01: strict resource configuration rejects unknown, unsafe and disabled values without echo 3ms
+   ✓ RS B02: invalid configuration and unsupported storage reject before business access 1ms
+   × RS B03: real HTTP maps native FULL safely and shared client does not retry complete 507 132ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ RS B04: built CLI invalid resource flags precede mkdir and existing overquota rejects before listen  1882ms
+ ❯ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests | 1 failed) 916ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A01: ToolPublishParamsSchema accepts its documented valid tool input 5ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A02: ToolRelateParamsSchema accepts its documented valid tool input 0ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A03: Pi commands follow registerCommand(name, options) 0ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A04: Pi registered tool definitions include official required label field 0ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  487ms
+   × M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls 422ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m3-offline-upgrade-contract.test.ts (3 tests) 2841ms
+   ✓ UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator  1799ms
+   ✓ UP B03: built local migrate maps offline/options failures without network or tokenfile reads  1035ms
+ ❯ tests/integration/m2-context-session-chain.test.ts (1 test | 1 failed) 189ms
+   × C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision 189ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m3-write-limits-contract.test.ts (5 tests) 1293ms
+   ✓ WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input  989ms
+ ❯ tests/contracts/m3-space-export-contract.test.ts (6 tests | 1 failed) 225ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB01: fixed public raw32 hash vector matches Node and WebCrypto with UTF-8 LF 10ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB02: one-byte UTF-8 chunks yield provisional exact lines and resolve only with terminal proof plus EOF 16ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB03: missing/extra terminal, repeated seq, CRLF, empty line, bad hash, malformed header and invalid UTF-8 reject without retry 12ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB04: cancellation and timeout promptly settle while a sink stays pending, observing later rejection 36ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB05: oversized line and successful JSON responses are protocol errors 3ms
+   × M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject 146ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ❯ tests/contracts/m2-search-contracts.test.ts (5 tests | 4 failed) 452ms
+   × M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 138ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 57ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.3 actual search transport and tool pagination > S03: HTTP JSON tags preserve all exact strings, with strict carrier/CSV/query rejection 77ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta 79ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M2.3 shared logical query contracts > S05: Unicode boundaries agree across TypeBox and both installed AJV RegExp flags 99ms
+ ❯ tests/integration/m2-artifacts-http.test.ts (8 tests | 1 failed) 1158ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > accepts either field order, returns safe metadata/download headers and permits ready attachment references 254ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > validates every trailing part before committing and cleans staging on malformed forms 124ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > normalizes bounded metadata JSON errors to400 for text/plain and application/json with no rejected-upload residue 115ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > rejects oversize and missing key without ready objects, then accepts a new valid upload 112ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > DB failure removes its published blob and same-key retry leaves one blob/charge/event 175ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > missing files stay ready in DB but return404; redacted returns410 after ACL and new requests reflect revoked membership 164ms
+   ✓ M2.1 HTTP artifact transport with real SQLite and FS > a missing backend is explicit500 without side effects and buildApp never performs GC 141ms
+   × M2.1 HTTP artifact transport with real SQLite and FS > holds four upload leases through parsing, rejects the fifth, and releases all after real disconnects 73ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/integration/m6-review-snapshot-independent.test.ts (6 tests) 622ms
+   ✓ MI05 real narrow metadata pagination includes old editors and enforces exact aggregate history/contributor limits  491ms
+ ✓ tests/contracts/m2-focused-context-contracts.test.ts (6 tests) 571ms
+ ❯ tests/contracts/server-tls.test.ts (4 tests | 2 failed) 750ms
+   ✓ server native TLS > TLS01 same-FD PEM loader accepts pair and safely rejects special/oversize/invalid/mismatch files 81ms
+   × server native TLS > TLS02 real HTTPS trusts only private CA/hostname, limits TLS and headers, snapshots caller bytes 192ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × server native TLS > TLS03 unhandshaken raw TCP drains naturally after business finalization on app.close 76ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ server native TLS > TLS04 TLS+Web requires https, redundant loopback flag preserves Secure and HTTP compatibility 204ms
+ ✓ tests/integration/m2-artifacts-filesystem.test.ts (6 tests) 1309ms
+   ✓ M2.1 real artifact filesystem > accepts exactly 25 MiB and removes an over-limit or failed stream before publication  1071ms
+ ✓ tests/contracts/m5-post-catalogs.test.ts (5 tests) 472ms
+ ❯ tests/contracts/m2-space-read-contracts.test.ts (5 tests | 1 failed) 491ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R01: large context is budget-omitted with a usable fixed space revision reference 171ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R02: explicit fixed-revision rules route exists and retains the requested revision 63ms
+   × M2.4-B.1 actual fixed space rules transport > R03: real client/tool pages stay fixed through updates and reassemble exact UTF8 document 91ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M2.4-B.1 actual fixed space rules transport > R04: strict route inputs and direct tool calls reject unapplied legacy parameters 94ms
+   ✓ M2.4-B.1 actual fixed space rules transport > R05: page/envelope schemas enforce completion/meta correspondence 72ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1730ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  438ms
+ ❯ tests/integration/m3-backup-recovery.test.ts (11 tests | 1 failed) 9835ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  661ms
+   ✓ M3.3-A offline physical maintenance > requires offline mode, rejects active cooperative writers and never overwrites destinations 17ms
+   ✓ M3.3-A offline physical maintenance > rejects ready missing or corrupt bytes without publishing a backup 86ms
+   × M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup 5172ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ M3.3-A offline physical maintenance > rejects links, extra paths and checksum tampering  348ms
+   ✓ M3.3-A offline physical maintenance > preserves incomplete reservations and rejects runtime entry at publication faults  412ms
+   ✓ M3.3-A offline physical maintenance > fails before publication at copy, manifest, checkpoint and recovery transaction boundaries 242ms
+   ✓ M3.3-A offline physical maintenance > keeps legacy directory gate compatibility but refuses incomplete source and physical backup as source 125ms
+   ✓ M3.3-A offline physical maintenance > accepts a current DELETE journal source and refuses an unfinished WAL checkpoint 94ms
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  1867ms
+   ✓ M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail  808ms
+ ✓ tests/contracts/m6-review-canonicalization.test.ts (7 tests) 142ms
+ ✓ tests/contracts/m5-thread-post-order.test.ts (4 tests) 504ms
+ ✓ tests/integration/m3-offline-upgrade.test.ts (6 tests) 2058ms
+   ✓ copies real schema1 history with preserved source DB/WAL and permits sparse migrated thread history through export/import  648ms
+   ✓ copies only registered verified legacy-profile attachments and refuses mismatched ready bytes  523ms
+   ✓ rejects missing-current and future thread versions even in otherwise complete valid export streams  433ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 569ms
+ ❯ tests/integration/m3-logical-import.test.ts (12 tests | 1 failed) 858ms
+   ✓ imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance 157ms
+   ✓ rejects truncated input and leaves no published directory 59ms
+   ✓ rejects existing target without touching source or target 25ms
+   ✓ cancels after a staged record without publishing 48ms
+   ✓ keeps a failed partial publication behind the readiness gate 79ms
+   ✓ does not describe a fully published instance as partial on a late abort 62ms
+   ✓ represents post/artifact tombstones and converts a ready manifest to missing without files 74ms
+   ✓ rejects complete-hash streams with missing revision, duplicate or cross-space reference 106ms
+   ✓ accepts filtered resolution gaps but rejects a present terminal action inconsistent with current state 135ms
+   ✓ reports post-unlink double publication failure accurately while preserving input 67ms
+   × rejects a FIFO with no writer in a watchdog-bounded child without publishing 18ms
+     → listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-7dIBb0/control.sock
+   ✓ rejects an orphan forward thread version using bounded final foreign key detection 26ms
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+ ❯ tests/contracts/m5-web-auth-client.test.ts (4 tests | 2 failed) 52ms
+   × WA01: real human login/query/logout uses root cookie transport without default Bearer 7ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × WA02: real cookie writes use current CSRF, logout refuses absent nonce and original Bearer works 4ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ WA03: auth single-attempt transport, pending body cancellation and timeout settle without retry 35ms
+   ✓ WA04: strict nested web response and root OpenAPI preserve formats/unknown rejection without mutation 4ms
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ ✓ tests/integration/m4-consumer-lifecycle.test.ts (4 tests) 454ms
+ ✓ tests/contracts/m5-web-auth-server.test.ts (6 tests) 555ms
+ ✓ tests/integration/m3-request-key-store.test.ts (8 tests) 293ms
+ ✓ tests/integration/m6-review-snapshot.test.ts (5 tests) 610ms
+ ❯ tests/contracts/m3-operations-contract.test.ts (4 tests | 1 failed) 404ms
+   ✓ OP B01: anonymous strict health and authenticated administrator diagnostics have single source shapes 193ms
+   ✓ OP B02: throwing sink and legacy actor identity do not change response or copy untrusted inputs 87ms
+   ✓ OP B03: real slow writable is bounded, drops summarize after drain and listeners clean without destruction 16ms
+   × OP B04: real HTTP shared client gets administrator diagnostics without adding write admission 104ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m5-web-static.test.ts (5 tests) 393ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 483ms
+ ✓ tests/integration/m3-resource-limits.test.ts (10 tests) 499ms
+ ✓ tests/integration/m2-thread-posts-read.test.ts (10 tests) 490ms
+ ❯ tests/integration/m4-artifact-client.test.ts (8 tests | 1 failed) 263ms
+   × M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download 184ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M4.1-B bounded artifact shared client > persistent artifact scope reuses logicalID while separating actor/space, and observes token/store cancellation 22ms
+   ✓ M4.1-B bounded artifact shared client > retries using fresh FormData with immutable bytes/same key, never retries complete507 8ms
+   ✓ M4.1-B bounded artifact shared client > rejects malformed schema/headers, extra or truncated EOF and wrong hash without partial bytes 8ms
+   ✓ M4.1-B bounded artifact shared client > download cancellation releases pending reader and totaldeadline begins before metadata 10ms
+   ✓ M4.1-B bounded artifact shared client > late content response and upload fetch abort/timeout are observed and cleaned 12ms
+   ✓ M4.1-B bounded artifact shared client > validates full RFC3339 using the locked validator while retaining every schema field 0ms
+   ✓ M4.1-B bounded artifact shared client > cancels real pending artifact JSON readers and rejects response-cap violations safely 18ms
+ ✓ tests/integration/m3-space-export.test.ts (11 tests) 233ms
+ ✓ tests/integration/m6-review-requests-independent.test.ts (6 tests) 828ms
+   ✓ DI04 actual two-process SQLite races share one key result and reserve distinct target rounds without duplicate side effects  616ms
+ ✓ tests/contracts/m4-node-credentials.test.ts (3 tests) 218ms
+ ✓ tests/contracts/m4-token-source.test.ts (7 tests) 349ms
+   ✓ M4.1-E explicit CLI credential sources > rejects a real no-writer FIFO in a bounded child and closes successful or failed input FDs  333ms
+ ✓ tests/contracts/m5-post-order-index.test.ts (4 tests) 259ms
+ ✓ tests/integration/m2-post-revision-read.test.ts (10 tests) 318ms
+ ❯ tests/contracts/cross-interface-contract.test.ts (2 tests | 2 failed) 317ms
+   × Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions 232ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > executes forum_context and forum_publish via client.callTool with identical semantics 84ms
+     → listen EPERM: operation not permitted 127.0.0.1
+ ✓ tests/contracts/m2-typed-write-contracts.test.ts (5 tests) 162ms
+ ✓ tests/integration/m6-schema3-maintenance.test.ts (5 tests) 541ms
+   ✓ M6 schema3 maintenance > copies historical2 only to new schema3, preserving source bytes, and backs up/restores schema3  327ms
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 181ms
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 118ms
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ❯ packages/storage-sqlite/tests/storage.test.ts (7 tests | 2 failed) 81ms
+   ✓ SqliteStorage and Bootstrap > bootstraps database and creates initial admin credential 9ms
+   ✓ SqliteStorage and Bootstrap > enforces atomic rollback in transactions 4ms
+   ✓ SqliteStorage and Bootstrap > indexes posts into FTS and retrieves with trigram and short LIKE fallback 5ms
+   ✓ SqliteStorage and Bootstrap > prevents multiple processes from locking the same directory 8ms
+   ✓ SqliteStorage and Bootstrap > verifies schema.sql and SCHEMA_SQL in schema.ts are strictly identical (single DDL source of truth) 4ms
+   × SqliteStorage and Bootstrap > asserts complete DDL parity between fresh bootstrap and upgraded v1 database 17ms
+     → 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+   × SqliteStorage and Bootstrap > asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql) 34ms
+     → expected { …(23) } to deeply equal { …(28) }
+ ✓ tests/integration/m4-admin-client.test.ts (5 tests) 252ms
+ ✓ tests/integration/m2-context.test.ts (7 tests) 179ms
+ ✓ tests/integration/m2-context-focus.test.ts (9 tests) 216ms
+ ✓ tests/integration/m3-write-rate-limit.test.ts (9 tests) 53ms
+ ✓ tests/integration/m3-shutdown-resources.test.ts (6 tests) 124ms
+ ✓ tests/integration/m3-operations.test.ts (6 tests) 217ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 103ms
+ ✓ tests/contracts/m5-post-catalogs-client.test.ts (4 tests) 75ms
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 63ms
+ ✓ tests/core/m5-web-session.test.ts (6 tests) 30ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 13ms
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 78ms
+ ✓ tests/integration/m4-session-subscription-client.test.ts (2 tests) 23ms
+ ✓ tests/integration/m6-review-requests.test.ts (7 tests) 672ms
+ ✓ tests/contracts/m4-mcp-session.test.ts (5 tests) 20ms
+ ✓ tests/contracts/m4-mcp-schema.test.ts (4 tests) 18ms
+ ✓ tests/contracts/m4-mcp-input-mode.test.ts (4 tests) 29ms
+ ✓ tests/contracts/m4-mcp-runtime.test.ts (6 tests) 33ms
+ ✓ tests/contracts/m4-pi-runtime.test.ts (5 tests) 7ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 7ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 5ms
+ ✓ tests/contracts/m4-runtime-response-validation.test.ts (3 tests) 3ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 7890ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  478ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  698ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 198 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/cli-tls.test.ts > TLS CLI03: API-only TLS advertises HTTPS, serves trusted health and closes on SIGTERM
+Error: TLS process closed before readiness
+ ❯ ChildProcess.<anonymous> tests/contracts/cli-tls.test.ts:33:362
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/198]⎯
+
+ FAIL  tests/contracts/cross-interface-contract.test.ts > Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > ensures tools surface identical names and schemas across client and protocol definitions
+ FAIL  tests/contracts/cross-interface-contract.test.ts > Cross-Interface Contract Consistency (HTTP, Client, MCP, Pi) > executes forum_context and forum_publish via client.callTool with identical semantics
+ FAIL  tests/contracts/m0-m1-adapters-regression.test.ts > M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C01: oversized UTF8 rules downgrade to a fixed revision reference with real reconstruction
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C02: shared forum_context retains real truncation meta after optional source material exceeds budget
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C03: actual compact success body covers true req.id, escaping, and all approved byte budgets
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C04: shared envelope schema requires truthful meta and exactly measures true/false encoding
+ FAIL  tests/contracts/m2-post-revision-read-contracts.test.ts > M2.4-B.2.1 fixed post revision transport contracts > P03: real HTTP client new-kind pages and old-kind full data remain distinct; signal cancels
+ FAIL  tests/contracts/m2-post-revision-read-contracts.test.ts > M2.4-B.2.1 fixed post revision transport contracts > P07: installed Pi validator reaches actual registered execute for new and unchanged old post kinds
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S03: HTTP JSON tags preserve all exact strings, with strict carrier/CSV/query rejection
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta
+ FAIL  tests/contracts/m2-space-read-contracts.test.ts > M2.4-B.1 actual fixed space rules transport > R03: real client/tool pages stay fixed through updates and reassemble exact UTF8 document
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E03: a completed request body is not cancellation, but client user abort cancels the live HTTP wait
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E04: client timeout cancels the same server wait and does not retry or acknowledge
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E05: app shutdown aborts active waits before socket drain and returns retryable 503
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E06: lost HTTP delivery preserves the actual persisted batch for redelivery and explicit ack only
+ FAIL  tests/contracts/m3-events-contract.test.ts > M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch
+ FAIL  tests/contracts/m3-operations-contract.test.ts > OP B04: real HTTP shared client gets administrator diagnostics without adding write admission
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI05: rejected persistence sends no business request and does not overwrite existing material
+ FAIL  tests/contracts/m3-resource-limits-contract.test.ts > RS B03: real HTTP maps native FULL safely and shared client does not retry complete 507
+ FAIL  tests/contracts/m3-space-export-contract.test.ts > M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject
+ FAIL  tests/contracts/m4-admin-cli.test.ts > AC B02: actual CLI actor credential membership flow returns data once and identity/revoke/deactivate take effect
+ FAIL  tests/contracts/m4-admin-cli.test.ts > AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP
+ FAIL  tests/contracts/m4-admin-cli.test.ts > AC B04: redact strips input key, preserves explicit priority and persistent intent conflicts without storing body
+ FAIL  tests/contracts/m4-artifact-cli.test.ts > AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent
+ FAIL  tests/contracts/m4-artifact-cli.test.ts > AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output
+ FAIL  tests/contracts/m4-cli-boundaries-independent.test.ts > E independent four single credential sources and anonymous/conflicting sources preserve real authorization
+ FAIL  tests/contracts/m4-cli-boundaries-independent.test.ts > E independent selected files fail safely without fallback or any HTTP
+ FAIL  tests/contracts/m4-cli-boundaries-independent.test.ts > E independent diagnostic argv consumption and genuine help/version emit once without HTTP
+ FAIL  tests/contracts/m4-cli-boundaries-independent.test.ts > E independent action parse/protocol/transport errors never disclose raw local markers
+ FAIL  tests/contracts/m4-cli-boundaries-independent.test.ts > E independent real credential success preserves exactly one stdout token and ordinary data output
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent discovery and full nested/allOf rejection precede every HTTP/session
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent concurrent real posts share one preflight/session, spaces and actor processes stay isolated
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent one cancelled waiter leaves a real shared HTTP flight for another successful caller
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent all global waiters cancel native HTTP, then a new explicit call can reinitialize
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent actual committed session response loss is one attempt and terminal until reconnect
+ FAIL  tests/contracts/m4-mcp-binding-independent.test.ts > MCP binding independent EOF and repeated signal during cap/session initialization settle native HTTP without late business or ACK
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent official stdio discovery is eight tools and zero HTTP/session, native processes isolate real identities
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent small result/page and large text summary retain complete structured research data
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent safe errors and conflicting/bad startup credentials send no unauthorized HTTP or raw stderr
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent SDK cancellation aborts an entered native HTTP poll without ACK and process remains usable
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent explicit stdin EOF and repeated SIGTERM cancel active HTTP before real exit zero
+ FAIL  tests/contracts/m4-mcp-lifecycle-independent.test.ts > MCP independent new stdio process replays the same unacknowledged batch without assuming permanent cursor bytes
+ FAIL  tests/contracts/m4-mcp-wrapped-independent.test.ts > wrapped independent default/explicit flat advertises the original eight schemas; wrapped nests every canonical keyword exactly with no HTTP
+ FAIL  tests/contracts/m4-mcp-wrapped-independent.test.ts > wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback
+ FAIL  tests/contracts/m4-mcp-wrapped-independent.test.ts > wrapped independent publish preserves ordinary actor, target scope and request key; real replay creates only one post
+ FAIL  tests/contracts/m4-mcp-wrapped-independent.test.ts > wrapped independent cancellation settles a real entered HTTP poll, preserves a separate pending batch and sends no ACK
+ FAIL  tests/contracts/m4-mcp-wrapped-independent.test.ts > wrapped independent invalid startup modes exit safely without environment/token output or HTTP
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B02: real CLI read groups preserve pages and existing subcommands use shared HTTP
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B03: search legacy data and explicit page/cursor/thread match HTTP and local invalid options send no request
+ FAIL  tests/contracts/m4-read-cli-contract.test.ts > RD B04: anonymous CLI health, authenticated diagnostics and fixed readiness/identity error exits
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > legal real Me/Session responses reach business HTTP and commit one diagnostic session
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested shape before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me nested extra field before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me created_at invalid calendar date before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Me disabled_at invalid date-time before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session wrong field type before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session extra field before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session invalid calendar date before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-runtime-binding-native.test.ts > M4.4-A independent native runtime response boundary > rejects Session metadata wrong shape before business HTTP with actual upstream/DB evidence
+ FAIL  tests/contracts/m4-write-consume-cli.test.ts > WD B02: space/thread writes preserve body/key/data and existing group reads
+ FAIL  tests/contracts/m4-write-consume-cli.test.ts > WD B03: sessions are distinct same-actor records and delivered consumer termination keeps forum data
+ FAIL  tests/contracts/m4-write-consume-cli.test.ts > WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP
+ FAIL  tests/contracts/m5-web-auth-client.test.ts > WA01: real human login/query/logout uses root cookie transport without default Bearer
+ FAIL  tests/contracts/m5-web-auth-client.test.ts > WA02: real cookie writes use current CSRF, logout refuses absent nonce and original Bearer works
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent persisted credential revoke/expiry, actor disable and membership withdrawal affect an already issued cookie immediately
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent failed replacement and full target credential preserve old login; TTL is absolute and restart forgets cookies without losing forum identity
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent client root auth uses only one login/logout attempt across actual upstream commits and observes entered-request cancellation safely
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent disabled Web preserves Bearer, explicit loopback HTTP cookie is scoped, and invalid built CLI Web config precedes mkdir/listen
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent anonymous login budget charges trusted credential/body failures once, excludes hostile origins and refills with controlled time
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-2: parseIntegerQuery rejects non-digits, negative numbers, and out-of-range values
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-3: Core RelationService rejects invalid relation type without committing state
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-4: Valid relation creation and resolve/reopen lifecycle maintains idempotency and symmetry
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-5: Query, body, and reference validation rejects without side effects
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: API-v1 OpenAPI 3.1 body constraints agree with existing protocol and HTTP (AD02)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-8: API-v1 OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-1: HTTP 200/201 with malformed JSON rejects with ClientProtocolError
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-2: Missing envelope fields (api_version, request_id, data) reject with ClientProtocolError
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-3: Strictly preserves valid falsy data values and allows forward-compatible envelope fields
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-4: Distinguishes UserAbortError from TimeoutError
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-5: Abort listener and timer are cleanly removed in all 5 cancellation phases and on settle
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-7: Preserves server REVISION_CONFLICT error independently of message wording
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-12: Cancellation and timeout win over pending body fulfillment on 200 and 409 responses (AE01)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-13: Body stream transport classification, unsolicited abort, and retry allowlist (AE02)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-14: Finite Retry-After positive controls: HTTP-date, invalid fallback, and date over budget (AE05)
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-1: Both Pi commands report exact content and isolated channels in all 8 UI/headless success/failure combinations
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-3: Root package.json engines.node is >=22.19.0 to match Pi dependency requirements
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-4: Registered Pi tools reject bad JSON and preserve complete 409 business error fields
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)
+ FAIL  tests/contracts/server-tls.test.ts > server native TLS > TLS02 real HTTPS trusts only private CA/hostname, limits TLS and headers, snapshots caller bytes
+ FAIL  tests/contracts/server-tls.test.ts > server native TLS > TLS03 unhandshaken raw TCP drains naturally after business finalization on app.close
+ FAIL  tests/integration/m0-m1-r2-regression.test.ts > M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors
+ FAIL  tests/integration/m2-artifacts-http.test.ts > M2.1 HTTP artifact transport with real SQLite and FS > holds four upload leases through parsing, rejects the fifth, and releases all after real disconnects
+ FAIL  tests/integration/m2-context-session-chain.test.ts > C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision
+ FAIL  tests/integration/m4-artifact-client.test.ts > M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/198]⎯
+
+ FAIL  tests/contracts/m3-backup-cli.test.ts > M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses
+Error: serve early exit 1
+ ❯ ChildProcess.<anonymous> tests/contracts/m3-backup-cli.test.ts:63:127
+     61|       const timer = setTimeout(() => reject(new Error('serve readiness…
+     62|       child.stderr.on('data', s => { if (s.includes('Detuned 服务已启动')) …
+     63|       child.once('error', e => { clearTimeout(timer); reject(e); }); c…
+       |                                                                                                                               ^
+     64|     });
+     65|     const backup = path.join(root, 'backup'); const result = await cli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/198]⎯
+
+ FAIL  tests/contracts/m3-shutdown-contract.test.ts > SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/contracts/m3-shutdown-contract.test.ts:16:170
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native identity uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'identity', code: 1, …(3) } to deeply equal { mode: 'identity', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "identity",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"identity\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native new uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'new', code: 1, …(3) } to deeply equal { mode: 'new', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "new",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"new\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native switch uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'switch', code: 1, …(3) } to deeply equal { mode: 'switch', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "switch",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"switch\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native fork uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'fork', code: 1, …(3) } to deeply equal { mode: 'fork', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "fork",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"fork\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native reload uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'reload', code: 1, …(3) } to deeply equal { mode: 'reload', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "reload",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"reload\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/198]⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M4.4-B independent real Pi 0.87.1 SDK lifecycle > native shutdown uses isolated ordinary credentials and awaited lifecycle cleanup
+AssertionError: expected { mode: 'shutdown', code: 1, …(3) } to deeply equal { mode: 'shutdown', code: +0, …(3) }
+
+- Expected
++ Received
+
+  {
+-   "code": 0,
++   "code": 1,
+    "killed": false,
+    "mode": "shutdown",
+    "signal": null,
+-   "stderr": "",
++   "stderr": "{\"mode\":\"shutdown\",\"passed\":false,\"error_name\":\"Error\",\"error_code\":\"EPERM\",\"location\":[\"    at Server.setupListenHandle [as _listen2] (node:net:1986:21)\",\"    at listenInCluster (node:net:2065:12)\"]}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:16:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/198]⎯
+
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > loads a hash-bound credential-free archive with the actual old HTTP business records
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > initial replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > newpost replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > revision replays exact fixed result, rejects fresh bad writes and conflicts without duplicate business
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays all three old keys after a current-server close and reopen without altering business/hash/ref
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > replays current redaction tombstones for all three fixed references without restoring content
+ FAIL  tests/integration/historical-http-replay.test.ts > H-R1 persistent real b8dacd5 HTTP history compatibility > checks current credential revocation before every old-key replay
+DetunedError: 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+ ❯ openAndCoordinateDatabase packages/storage-sqlite/src/bootstrap.ts:706:57
+    704|   }
+    705| 
+    706|   if (classification.kind === 'supported_legacy') throw new DetunedErr…
+       |                                                         ^
+    707| 
+    708|   if (mode === 'serve') {
+ ❯ start tests/integration/historical-http-replay.test.ts:25:5
+ ❯ tests/integration/historical-http-replay.test.ts:53:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/198]⎯
+
+ FAIL  tests/integration/m2-artifacts-cli.test.ts > M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits
+Error: CLI exited before listen: Detuned 服务启动失败。
+
+ ❯ waitStarted tests/integration/m2-artifacts-cli.test.ts:25:44
+     23|   for (let i = 0; i < 200; i++) {
+     24|     if (run.output().stderr.includes('Detuned 服务已启动')) return;
+     25|     if (run.child.exitCode !== null) throw new Error(`CLI exited befor…
+       |                                            ^
+     26|     await new Promise((resolve) => setTimeout(resolve, 10));
+     27|   }
+ ❯ tests/integration/m2-artifacts-cli.test.ts:66:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/198]⎯
+
+ FAIL  tests/integration/m3-backup-recovery-independent.test.ts > M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch
+Error: Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-backup-recovery-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-backup-recovery-independent.test.ts:18:270
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts:21:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/198]⎯
+
+ FAIL  tests/integration/m3-backup-recovery-independent.test.ts > M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup
+Error: Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-backup-recovery-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-backup-recovery-independent.test.ts:18:270
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts:38:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/198]⎯
+
+ FAIL  tests/integration/m3-backup-recovery-independent.test.ts > M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets
+Error: Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-backup-recovery-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-backup-recovery-independent.test.ts:18:270
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts:45:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/198]⎯
+
+ FAIL  tests/integration/m3-backup-recovery-independent.test.ts > M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes
+Error: Error: worker exited before IPC result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-backup-recovery-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-backup-recovery-independent.test.ts:18:270
+ ❯ tests/integration/m3-backup-recovery-independent.test.ts:51:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/198]⎯
+
+ FAIL  tests/integration/m3-backup-recovery.test.ts > M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/m3-backup-recovery.test.ts:71:3
+     69|     }
+     70|   });
+     71|   it('rejects manifest shape, traversal, duplicates, wrong versions an…
+       |   ^
+     72|     const cases: ((value: BackupManifest) => void)[] = [
+     73|       value => { (value as any).extra = true; }, value => { value.vers…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/198]⎯
+
+ FAIL  tests/integration/m3-event-recovery.test.ts > T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected
+Error: Error: worker exited before expected message node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-event-recovery.test.ts:13:420
+
+ ❯ fixture tests/integration/m3-event-recovery.test.ts:17:226
+ ❯ tests/integration/m3-event-recovery.test.ts:21:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/198]⎯
+
+ FAIL  tests/integration/m3-event-recovery.test.ts > T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans
+Error: Error: worker exited before expected message node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-event-recovery.test.ts:13:420
+
+ ❯ fixture tests/integration/m3-event-recovery.test.ts:17:226
+ ❯ tests/integration/m3-event-recovery.test.ts:31:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/198]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records
+Error: Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-export-independent.test.ts:11:365
+
+ ❯ fixture tests/integration/m3-export-independent.test.ts:15:282
+ ❯ tests/integration/m3-export-independent.test.ts:19:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/198]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end
+Error: Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-export-independent.test.ts:11:365
+
+ ❯ fixture tests/integration/m3-export-independent.test.ts:15:282
+ ❯ tests/integration/m3-export-independent.test.ts:28:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/198]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial
+Error: Error: fixture exited before IPC node:events:487
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-export-independent.test.ts:11:365
+
+ ❯ tests/integration/m3-export-independent.test.ts:35:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/198]⎯
+
+ FAIL  tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+Error: Error: fixture exited before IPC node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-export-independent.test.ts:11:365
+
+ ❯ fixture tests/integration/m3-export-independent.test.ts:15:282
+ ❯ tests/integration/m3-export-independent.test.ts:40:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/198]⎯
+
+ FAIL  tests/integration/m3-import-independent.test.ts > B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing
+Error: Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-import-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-import-independent.test.ts:21:297
+ ❯ tests/integration/m3-import-independent.test.ts:28:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/198]⎯
+
+ FAIL  tests/integration/m3-import-independent.test.ts > B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target
+Error: Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-import-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-import-independent.test.ts:21:297
+ ❯ tests/integration/m3-import-independent.test.ts:35:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/198]⎯
+
+ FAIL  tests/integration/m3-import-independent.test.ts > B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes
+Error: Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-import-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-import-independent.test.ts:21:297
+ ❯ tests/integration/m3-import-independent.test.ts:40:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/198]⎯
+
+ FAIL  tests/integration/m3-import-independent.test.ts > B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target
+Error: Error: worker exited before private result node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-import-independent.test.ts:12:365
+
+ ❯ fixture tests/integration/m3-import-independent.test.ts:21:297
+ ❯ tests/integration/m3-import-independent.test.ts:46:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/198]⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+Error: listen EPERM: operation not permitted /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-import-fifo-7dIBb0/control.sock
+ ❯ tests/integration/m3-logical-import.test.ts:45:10
+     43|    else{phase='invalid-ipc';terminate();}
+     44|   }});});
+     45|   server.listen(path.join(root,'control.sock'));await once(server,'lis…
+       |          ^
+     46|   child=spawn('pnpm',['exec','vitest','run','tests/integration/m3-logi…
+     47|   startup=setTimeout(terminate,15000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/198]⎯
+
+ FAIL  tests/integration/m3-milestone-gate.test.ts > T02 independent ten real HTTP requests reach one server barrier then replay one intent with unique post/event/idempotency and conflict409
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-milestone-gate.test.ts:17:369
+
+ ❯ tests/integration/m3-milestone-gate.test.ts:22:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/198]⎯
+
+ FAIL  tests/integration/m3-milestone-gate.test.ts > T13 independent one marker traverses research/history/FTS/context/attachment before redaction then disappears from reads/export/replay with precise audit and safe logs
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-milestone-gate.test.ts:17:369
+
+ ❯ tests/integration/m3-milestone-gate.test.ts:27:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/198]⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent real HTTP logs exclude body/header/query/rawpath markers and use server IDs and route templates
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-operations-independent.test.ts:17:322
+
+ ❯ tests/integration/m3-operations-independent.test.ts:21:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/198]⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent barrier-controlled partial HTTP body disconnect and complete response each emit one terminal log
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-operations-independent.test.ts:17:322
+
+ ❯ tests/integration/m3-operations-independent.test.ts:26:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/198]⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent anonymous health uses exact routes and fixed safe readiness under private directory/schema changes
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-operations-independent.test.ts:17:322
+
+ ❯ tests/integration/m3-operations-independent.test.ts:31:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/198]⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent administrator diagnostics isolate identities and sample held-reader WAL without advancing checkpoint
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-operations-independent.test.ts:17:322
+
+ ❯ tests/integration/m3-operations-independent.test.ts:36:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/198]⎯
+
+ FAIL  tests/integration/m3-operations-independent.test.ts > M3.4-B1 independent throwing log sink preserves committed business and slow writable bounds pending/drop and cleans own listeners
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-operations-independent.test.ts:17:322
+
+ ❯ tests/integration/m3-operations-independent.test.ts:41:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:20:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:25:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:30:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:35:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:40:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/198]⎯
+
+ FAIL  tests/integration/m3-request-key-recovery.test.ts > M3.2 controlled preparation barriers stop token changes during getMe/store and promptly cancel pending store without POST
+Error: Error: worker exited node:net:1986
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted 127.0.0.1
+    at Server.setupListenHandle [as _listen2] (node:net:1986:21)
+    at listenInCluster (node:net:2065:12)
+    at node:net:2274:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '127.0.0.1'
+}
+
+Node.js v26.3.0
+
+ ❯ start tests/integration/m3-request-key-recovery.test.ts:14:393
+
+ ❯ fixture tests/integration/m3-request-key-recovery.test.ts:17:198
+ ❯ tests/integration/m3-request-key-recovery.test.ts:45:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/198]⎯
+
+ FAIL  tests/integration/m3-resource-limits-independent.test.ts > M3.4-A2 independent natural bounded research fills real main database, rolls back failed post/event/idempotency and keeps reads usable
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-resource-limits-independent.test.ts:22:93
+
+ ❯ tests/integration/m3-resource-limits-independent.test.ts:35:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/198]⎯
+
+ FAIL  tests/integration/m3-resource-limits-independent.test.ts > M3.4-A2 independent real uploads race global bytes and object quotas, replay and restarted service preserve registered usage
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-resource-limits-independent.test.ts:22:93
+
+ ❯ tests/integration/m3-resource-limits-independent.test.ts:44:122
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/198]⎯
+
+ FAIL  tests/integration/m3-resource-limits-independent.test.ts > M3.4-A2 independent huge missing declarations reject runtime startup deterministically without SUM overflow or research mutation
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-resource-limits-independent.test.ts:22:93
+
+ ❯ tests/integration/m3-resource-limits-independent.test.ts:51:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/198]⎯
+
+ FAIL  tests/integration/m3-resource-limits-independent.test.ts > M3.4-A2 independent published artifact real allocation FULL cleans this call files and CLI invalid resource config is rejected before mkdir
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-resource-limits-independent.test.ts:22:93
+
+ ❯ tests/integration/m3-resource-limits-independent.test.ts:58:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/198]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:22:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/198]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:27:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/198]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:33:55
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/198]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:38:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/198]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:43:84
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/198]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-upgrade-independent.test.ts:19:514
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:25:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/198]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-upgrade-independent.test.ts:19:514
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:34:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/198]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-upgrade-independent.test.ts:19:514
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:39:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/198]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-upgrade-independent.test.ts:19:514
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:44:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/198]⎯
+
+ FAIL  tests/integration/m3-write-limits-independent.test.ts > M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-write-limits-independent.test.ts:18:365
+
+ ❯ tests/integration/m3-write-limits-independent.test.ts:21:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/198]⎯
+
+ FAIL  tests/integration/m3-write-limits-independent.test.ts > M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-write-limits-independent.test.ts:18:365
+
+ ❯ tests/integration/m3-write-limits-independent.test.ts:26:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/198]⎯
+
+ FAIL  tests/integration/m3-write-limits-independent.test.ts > M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-write-limits-independent.test.ts:18:365
+
+ ❯ tests/integration/m3-write-limits-independent.test.ts:31:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/198]⎯
+
+ FAIL  tests/integration/m3-write-limits-independent.test.ts > M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget
+TypeError: Cannot read properties of undefined (reading 'adminToken')
+ ❯ fixture tests/integration/m3-write-limits-independent.test.ts:18:365
+
+ ❯ tests/integration/m3-write-limits-independent.test.ts:36:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/198]⎯
+
+ FAIL  tests/integration/m4-admin-cli-independent.test.ts > AC C01 real new CLI stdin management lifecycle creates scoped nonadmin credentials and changes actual write authority
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-admin-cli-independent.test.ts:29:330
+
+ ❯ fixture tests/integration/m4-admin-cli-independent.test.ts:30:159
+ ❯ tests/integration/m4-admin-cli-independent.test.ts:37:142
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[59/198]⎯
+
+ FAIL  tests/integration/m4-admin-cli-independent.test.ts > AC C02 ordinary seven management operations cannot mutate nonempty state; space owner can manage members and redact but cannot mint credentials
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-admin-cli-independent.test.ts:29:330
+
+ ❯ fixture tests/integration/m4-admin-cli-independent.test.ts:30:159
+ ❯ tests/integration/m4-admin-cli-independent.test.ts:40:168
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[60/198]⎯
+
+ FAIL  tests/integration/m4-admin-cli-independent.test.ts > AC C03 real CLI persistent post/artifact redaction recovers records, conflicts on changed body and rechecks current owner permission
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-admin-cli-independent.test.ts:29:330
+
+ ❯ fixture tests/integration/m4-admin-cli-independent.test.ts:30:159
+ ❯ tests/integration/m4-admin-cli-independent.test.ts:42:157
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[61/198]⎯
+
+ FAIL  tests/integration/m4-admin-cli-independent.test.ts > AC C04 real upstream commit followed by proxy response loss never retries actor/credential and full retryable errors remain single attempt
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-admin-cli-independent.test.ts:29:330
+
+ ❯ fixture tests/integration/m4-admin-cli-independent.test.ts:30:159
+ ❯ tests/integration/m4-admin-cli-independent.test.ts:44:163
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[62/198]⎯
+
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C01 ordinary identity binary and empty built CLI transfer agrees with independent HTTP/hash and private files
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-artifact-client-cli-independent.test.ts:30:330
+
+ ❯ fixture tests/integration/m4-artifact-client-cli-independent.test.ts:31:162
+ ❯ tests/integration/m4-artifact-client-cli-independent.test.ts:38:137
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[63/198]⎯
+
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C02 fresh CLI processes recover persistent intent across token rotation while actor/space keys remain independent
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-artifact-client-cli-independent.test.ts:30:330
+
+ ❯ fixture tests/integration/m4-artifact-client-cli-independent.test.ts:31:162
+ ❯ tests/integration/m4-artifact-client-cli-independent.test.ts:39:141
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[64/198]⎯
+
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C03 file targets and concurrent CLI publishers preserve winner; invalid inputs do not reach HTTP
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-artifact-client-cli-independent.test.ts:30:330
+
+ ❯ fixture tests/integration/m4-artifact-client-cli-independent.test.ts:31:162
+ ❯ tests/integration/m4-artifact-client-cli-independent.test.ts:40:124
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[65/198]⎯
+
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C04 controlled content transport ignores content_url and never publishes hash-mismatch or truncated bytes
+ FAIL  tests/integration/m4-artifact-client-cli-independent.test.ts > AB C05 actual pending content shared-client deadline and abort settle and close without completed bytes
+Error: Private artifact worker exited before result
+ ❯ ChildProcess.exited tests/integration/m4-artifact-client-cli-independent.test.ts:12:26
+     10|  const timer=setTimeout(()=>finish(Error('Private artifact worker IPC …
+     11|  const receive=(m:Message)=>{if(predicate(m))finish(undefined,m);};
+     12|  const exited=()=>finish(Error('Private artifact worker exited before …
+       |                          ^
+     13|  function finish(error?:Error,message?:Message){clearTimeout(timer);ch…
+     14|  child.on('message',receive);child.once('exit',exited);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[66/198]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent built CLI identities and isolated list/history pages retain existing fixed reads
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m4-read-cli-independent.test.ts:32:113
+
+ ❯ tests/integration/m4-read-cli-independent.test.ts:45:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[67/198]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent search legacy array and signed page cursor retain server binding and local invalid limits send no HTTP
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m4-read-cli-independent.test.ts:32:113
+
+ ❯ tests/integration/m4-read-cli-independent.test.ts:60:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[68/198]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent anonymous health follows actual readiness, identity/admin errors and closed connection without credentials or paths
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m4-read-cli-independent.test.ts:32:113
+
+ ❯ tests/integration/m4-read-cli-independent.test.ts:74:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[69/198]⎯
+
+ FAIL  tests/integration/m4-read-cli-independent.test.ts > M4 independent three knowledge views keep data-only material, invalid enum sends no request, health abort preserves shared client behavior
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m4-read-cli-independent.test.ts:32:113
+
+ ❯ tests/integration/m4-read-cli-independent.test.ts:83:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[70/198]⎯
+
+ FAIL  tests/integration/m4-write-consume-independent.test.ts > WD C01 actual pending and acknowledged consumers terminate atomically; peer research persists, old cursors cannot revive and same key restarts at explicit highwater
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-write-consume-independent.test.ts:28:330
+
+ ❯ fixture tests/integration/m4-write-consume-independent.test.ts:29:161
+ ❯ tests/integration/m4-write-consume-independent.test.ts:36:189
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[71/198]⎯
+
+ FAIL  tests/integration/m4-write-consume-independent.test.ts > WD C02 URL space and consumer ownership reject without mutation; private parent-delete fault observes child deletion then restores complete transaction
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-write-consume-independent.test.ts:28:330
+
+ ❯ fixture tests/integration/m4-write-consume-independent.test.ts:29:161
+ ❯ tests/integration/m4-write-consume-independent.test.ts:39:176
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[72/198]⎯
+
+ FAIL  tests/integration/m4-write-consume-independent.test.ts > WD C03 signed context checkpoint retains T0 boundary; illegal combinations and wrong identity/space cannot create or reposition even existing consumer
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-write-consume-independent.test.ts:28:330
+
+ ❯ fixture tests/integration/m4-write-consume-independent.test.ts:29:161
+ ❯ tests/integration/m4-write-consume-independent.test.ts:41:175
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[73/198]⎯
+
+ FAIL  tests/integration/m4-write-consume-independent.test.ts > WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ worker tests/integration/m4-write-consume-independent.test.ts:28:330
+
+ ❯ fixture tests/integration/m4-write-consume-independent.test.ts:29:161
+ ❯ tests/integration/m4-write-consume-independent.test.ts:43:165
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[74/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:98:26
+     96| 
+     97|     const gen = runScript(dir, 'generate-schema.mjs');
+     98|     expect(gen.exitCode).toBe(0);
+       |                          ^
+     99| 
+    100|     const sync = runScript(dir, 'check-schema-sync.mjs');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[75/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:138:31
+    136| 
+    137|     const genIndex = runScript(dirIndex, 'generate-schema.mjs');
+    138|     expect(genIndex.exitCode).toBe(0);
+       |                               ^
+    139| 
+    140|     const syncIndex = runScript(dirIndex, 'check-schema-sync.mjs');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[76/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)
+AssertionError: expected 'node:fs:436\n    return binding.readF…' to match /包含不受支持的排序规则: NOCASE/
+
+- Expected: 
+/包含不受支持的排序规则: NOCASE/
+
++ Received: 
+"node:fs:436
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/pk-collation-rejection/tests/fixtures/historical-v2-schema.sql'
+    at readFileSync (node:fs:436:20)
+    at file:///private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/pk-collation-rejection/packages/storage-sqlite/scripts/generate-schema.mjs:39:22 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/pk-collation-rejection/tests/fixtures/historical-v2-schema.sql'
+}
+
+Node.js v26.3.0
+"
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:199:33
+    197|     const genCollation = runScript(dirCollation, 'generate-schema.mjs'…
+    198|     expect(genCollation.exitCode).toBe(1);
+    199|     expect(genCollation.stderr).toMatch(/包含不受支持的排序规则: NOCASE/);
+       |                                 ^
+    200| 
+    201|     const syncCollation = runScript(dirCollation, 'check-schema-sync.m…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[77/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:255:26
+    253|     // Generation repairs the profile
+    254|     const gen = runScript(dir, 'generate-schema.mjs');
+    255|     expect(gen.exitCode).toBe(0);
+       |                          ^
+    256| 
+    257|     // Sync check passes after repair
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[78/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/schema-generation.test.ts > Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)
+AssertionError: expected 'node:fs:436\n    return binding.readF…' to match /missing required migration marker/
+
+- Expected: 
+/missing required migration marker/
+
++ Received: 
+"node:fs:436
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/missing-begin-marker/tests/fixtures/historical-v2-schema.sql'
+    at readFileSync (node:fs:436:20)
+    at file:///private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/missing-begin-marker/packages/storage-sqlite/scripts/generate-schema.mjs:39:22 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-test-gen-nAc8nY/missing-begin-marker/tests/fixtures/historical-v2-schema.sql'
+}
+
+Node.js v26.3.0
+"
+
+ ❯ packages/storage-sqlite/tests/schema-generation.test.ts:282:33
+    280|     const genBeginFail = runScript(dirBegin, 'generate-schema.mjs');
+    281|     expect(genBeginFail.exitCode).toBe(1);
+    282|     expect(genBeginFail.stderr).toMatch(/missing required migration ma…
+       |                                 ^
+    283|     expect(hash(readFileSync(tsBeginFile, 'utf8'))).toBe(hashBeginBefo…
+    284| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[79/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/storage.test.ts > SqliteStorage and Bootstrap > asserts complete DDL parity between fresh bootstrap and upgraded v1 database
+DetunedError: 旧版本实例需要显式离线迁移。请使用 detuned migrate --offline 将其升级到新目录。
+ ❯ openAndCoordinateDatabase packages/storage-sqlite/src/bootstrap.ts:706:57
+    704|   }
+    705| 
+    706|   if (classification.kind === 'supported_legacy') throw new DetunedErr…
+       |                                                         ^
+    707| 
+    708|   if (mode === 'serve') {
+ ❯ packages/storage-sqlite/tests/storage.test.ts:191:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[80/198]⎯
+
+ FAIL  packages/storage-sqlite/tests/storage.test.ts > SqliteStorage and Bootstrap > asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql)
+AssertionError: expected { …(23) } to deeply equal { …(28) }
+
+- Expected
++ Received
+
+@@ -1101,254 +1101,10 @@
+            },
+          ],
+        },
+      ],
+    },
+-   "review_assignments": {
+-     "columns": [
+-       {
+-         "name": "request_id",
+-         "notnull": true,
+-         "pk": 1,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "reviewer_actor_id",
+-         "notnull": true,
+-         "pk": 2,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "group_at_assignment",
+-         "notnull": false,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-     ],
+-     "foreignKeys": [
+-       {
+-         "from": "reviewer_actor_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "actors",
+-         "to": "id",
+-       },
+-       {
+-         "from": "request_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "review_requests",
+-         "to": "id",
+-       },
+-     ],
+-     "name": "review_assignments",
+-     "uniqueConstraints": [],
+-   },
+-   "review_request_versions": {
+-     "columns": [
+-       {
+-         "name": "request_id",
+-         "notnull": true,
+-         "pk": 1,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "version",
+-         "notnull": true,
+-         "pk": 2,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "phase",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "changed_by",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "changed_at",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "reason",
+-         "notnull": false,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-     ],
+-     "foreignKeys": [
+-       {
+-         "from": "changed_by",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "actors",
+-         "to": "id",
+-       },
+-       {
+-         "from": "request_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "review_requests",
+-         "to": "id",
+-       },
+-     ],
+-     "name": "review_request_versions",
+-     "uniqueConstraints": [],
+-   },
+-   "review_requests": {
+-     "columns": [
+-       {
+-         "name": "id",
+-         "notnull": true,
+-         "pk": 1,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "space_id",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "target_post_id",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "target_revision",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "snapshot_id",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "round",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "phase",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "version",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "requested_by",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "created_at",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "changed_by",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "changed_at",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "reason",
+-         "notnull": false,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-     ],
+-     "foreignKeys": [
+-       {
+-         "from": "changed_by",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "actors",
+-         "to": "id",
+-       },
+-       {
+-         "from": "requested_by",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "actors",
+-         "to": "id",
+-       },
+-       {
+-         "from": "snapshot_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "snapshots",
+-         "to": "id",
+-       },
+-       {
+-         "from": "target_post_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "posts",
+-         "to": "id",
+-       },
+-       {
+-         "from": "space_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "spaces",
+-         "to": "id",
+-       },
+-     ],
+-     "name": "review_requests",
+-     "uniqueConstraints": [
+-       {
+-         "columns": [
+-           "space_id",
+-           "target_post_id",
+-           "round",
+-         ],
+-         "keyTerms": [
+-           {
+-             "coll": "BINARY",
+-             "desc": 0,
+-             "name": "space_id",
+-           },
+-           {
+-             "coll": "BINARY",
+-             "desc": 0,
+-             "name": "target_post_id",
+-           },
+-           {
+-             "coll": "BINARY",
+-             "desc": 0,
+-             "name": "round",
+-           },
+-         ],
+-       },
+-     ],
+-   },
+    "revision_artifacts": {
+      "columns": [
+        {
+          "name": "post_id",
+          "notnull": true,
+@@ -1471,144 +1227,10 @@
+          "table": "actors",
+          "to": "id",
+        },
+      ],
+      "name": "sessions",
+-     "uniqueConstraints": [],
+-   },
+-   "snapshot_items": {
+-     "columns": [
+-       {
+-         "name": "snapshot_id",
+-         "notnull": true,
+-         "pk": 1,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "item_type",
+-         "notnull": true,
+-         "pk": 2,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "item_id",
+-         "notnull": true,
+-         "pk": 3,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "revision",
+-         "notnull": true,
+-         "pk": 4,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "sha256",
+-         "notnull": false,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-     ],
+-     "foreignKeys": [
+-       {
+-         "from": "snapshot_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "snapshots",
+-         "to": "id",
+-       },
+-     ],
+-     "name": "snapshot_items",
+-     "uniqueConstraints": [],
+-   },
+-   "snapshots": {
+-     "columns": [
+-       {
+-         "name": "id",
+-         "notnull": true,
+-         "pk": 1,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "space_id",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "manifest_json",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "manifest_sha256",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "policy_revision",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "rules_revision",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "target_post_id",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "target_revision",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "INTEGER",
+-       },
+-       {
+-         "name": "created_by",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-       {
+-         "name": "created_at",
+-         "notnull": true,
+-         "pk": 0,
+-         "type": "TEXT",
+-       },
+-     ],
+-     "foreignKeys": [
+-       {
+-         "from": "created_by",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "actors",
+-         "to": "id",
+-       },
+-       {
+-         "from": "target_post_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "posts",
+-         "to": "id",
+-       },
+-       {
+-         "from": "space_id",
+-         "on_delete": "NO ACTION",
+-         "on_update": "NO ACTION",
+-         "table": "spaces",
+-         "to": "id",
+-       },
+-     ],
+-     "name": "snapshots",
+      "uniqueConstraints": [],
+    },
+    "space_revisions": {
+      "columns": [
+        {
+
+ ❯ packages/storage-sqlite/tests/storage.test.ts:240:30
+    238|     v2Db.exec(v2Sql);
+    239|     const expectedV2 = extractDatabaseRequirements(v2Db);
+    240|     expect(V2_SCHEMA_TABLES).toEqual(expectedV2);
+       |                              ^
+    241| 
+    242|     // 2. V1 Profile Parity against frozen historical fixture
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[81/198]⎯
+
+
+ Test Files  53 failed | 58 passed (111)
+      Tests  198 failed | 537 passed (735)
+   Start at  13:28:19
+   Duration  27.30s (transform 2.12s, setup 0ms, collect 34.45s, tests 135.14s, environment 13ms, prepare 5.74s)
+
+[ELIFECYCLE] Test failed. See above for more details.

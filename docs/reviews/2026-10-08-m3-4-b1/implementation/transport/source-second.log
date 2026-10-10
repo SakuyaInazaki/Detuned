@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m3-operations-contract.test.ts (4 tests | 1 failed) 154ms
+   ✓ OP B01: anonymous strict health and authenticated administrator diagnostics have single source shapes 82ms
+   ✓ OP B02: throwing sink and legacy actor identity do not change response or copy untrusted inputs 28ms
+   ✓ OP B03: real slow writable is bounded, drops summarize after drain and listeners clean without destruction 5ms
+   × OP B04: real HTTP shared client gets administrator diagnostics without adding write admission 40ms
+     → client.getDiagnostics is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-operations-contract.test.ts > OP B04: real HTTP shared client gets administrator diagnostics without adding write admission
+TypeError: client.getDiagnostics is not a function
+ ❯ tests/contracts/m3-operations-contract.test.ts:26:513
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  16:05:23
+   Duration  671ms (transform 203ms, setup 0ms, collect 317ms, tests 154ms, environment 0ms, prepare 46ms)
+

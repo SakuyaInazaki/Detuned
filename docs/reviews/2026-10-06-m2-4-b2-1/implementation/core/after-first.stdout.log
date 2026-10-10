@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-post-revision-read.test.ts (10 tests | 2 failed) 99ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P01: 4K, 64K and default pages preserve stored Unicode, escaping and unique five-field order 40ms
+   × M2.4-B.2.1 fixed stored post revision content > P02: fixed document does not drift after head updates, while current metadata updates on the next page 5ms
+     → posts.revisePost is not a function
+   ✓ M2.4-B.2.1 fixed stored post revision content > P03: historical structured and JSON isolated surrogate remain exact without new-write validation 2ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P04: empty body completes its nonempty JSON document and stored TEXT surrogate loss is not invented back 3ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P05: withdrawn remains readable and redaction overrides both a valid and invalid old cursor 5ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P06: strict signatures, payload bindings and signed UTF8 positions reject uniformly 5ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P07: current identity, capabilities, membership and target space are checked before bad cursor 3ms
+   × M2.4-B.2.1 fixed stored post revision content > P08: advancing clock between two nonterminal pages preserves original expiry and allows budget changes 9ms
+     → expected false to be true // Object.is equality
+   ✓ M2.4-B.2.1 fixed stored post revision content > P09: success, validation, access and minimum-metadata failures never write any database table 20ms
+   ✓ M2.4-B.2.1 fixed stored post revision content > P10: two WAL connections preserve material and current lifecycle metadata in one controlled snapshot 6ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  15:35:44
+   Duration  600ms (transform 171ms, setup 0ms, collect 276ms, tests 99ms, environment 0ms, prepare 42ms)
+

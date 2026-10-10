@@ -1,0 +1,32 @@
+{
+  "status": "root-authorized one literal fixture repair; no runtime",
+  "before_test_sha256": "115c7807619614c4c0786ad8d7616b0da2b85b0b2ed281367507f8de791f1ce3",
+  "after_test_sha256": "2bb5417897548b8acf0a51bdbebb220c4a5efbb288cf6e6c8c6e706a75d6731d",
+  "before_path": "docs/reviews/2026-10-10-m7-4-d/verification/before-token-fix/tests/contracts/m7-claude-probe-ownership.test.ts",
+  "delta_sha256": "7ebd7abb1b19f2a1eabdecc80626f1dc0d2b2209a4070efe82fe75eeea9483fa",
+  "replacement": {
+    "before": "fixed harmless own test credential",
+    "after": "fixed-own-test-token"
+  },
+  "source_sha256": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+  "unchanged": "assertions/default5s/env/tool catalogue/firstfocused outputs/source/capture/guard",
+  "existing_cleanup_assertion": "CP08 asserts actual EOF close0/null and exact PID/group absence. Prior childstderr/actualclose values not persisted; no fabricated diagnostic",
+  "related_argv": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "tests/contracts/m7-claude-probe-ownership.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "-t",
+    "^CP08 "
+  ],
+  "runtime_permission": "pending B delta review and root release; require_escalated actual ownNode/ps only",
+  "not_rerun": [
+    "source/capture syntax",
+    "noEmit",
+    "CP01-CP07",
+    "source/capture/guard"
+  ]
+}

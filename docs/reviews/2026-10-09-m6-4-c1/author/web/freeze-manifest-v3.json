@@ -1,0 +1,50 @@
+{
+  "status": "source_frozen_not_executed",
+  "files": [
+    {
+      "path": "packages/web/src/app.tsx",
+      "sha256": "39ffa0a285277a79d5fb320454fdb5debf42b98fdce2729b21df5272164bb129",
+      "bytes": 52980
+    },
+    {
+      "path": "packages/web/src/styles.css",
+      "sha256": "52480d0894f56847405524ffc3a4d73877cc6eb7b1a6fbd55b6b7f675056a320",
+      "bytes": 12531
+    },
+    {
+      "path": "packages/web/src/review-panel.tsx",
+      "sha256": "20eaef2377c3c45c8a0ed1dd09cbe5b780470d704f554cacc501df43ea13b05e",
+      "bytes": 23504
+    },
+    {
+      "path": "packages/web/src/review-input.ts",
+      "sha256": "b85a7ef67b356cb36c2eae16029244555402f462b03abe4b598bc7d8b3ac7f18",
+      "bytes": 1844
+    },
+    {
+      "path": "tests/contracts/m6-review-web-input.test.ts",
+      "sha256": "0886dfc2e131258be2d1cd3321bb4f80b81d200afeb53d98f08a53f3c3d49612",
+      "bytes": 2386
+    },
+    {
+      "path": "examples/review-web.md",
+      "sha256": "29d4b56cbef3fc58d92abb82a929bcb4415f91af1d98d8acb97698a0b8e4a3f3",
+      "bytes": 2172
+    }
+  ],
+  "checks_by_author": [],
+  "new_test_cases": [
+    "WI01",
+    "WI02",
+    "WI03"
+  ],
+  "protected_untouched": [
+    "content.ts",
+    "knowledge.ts",
+    "revision-evidence.tsx",
+    "main.tsx",
+    "client/protocol/server/storage/dependencies"
+  ],
+  "version": 3,
+  "delta": "Only review-panel.tsx refresh safeStatus synchronizes four existing row state fields; removes milestone text; no new HTTP/checks."
+}

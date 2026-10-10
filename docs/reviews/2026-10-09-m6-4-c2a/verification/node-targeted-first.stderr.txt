@@ -1,0 +1,74 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m6-knowledge-status-contracts.test.ts > KC01 real HTTP/shared client preserve typed array envelope and canonical OpenAPI, accepted review never means checks passed
+ FAIL  tests/contracts/m6-knowledge-status-contracts.test.ts > KC02 real HTTP invalid persisted policy returns safe RESYNC_REQUIRED rather than a default, shared client surfaces it
+ FAIL  tests/contracts/m6-knowledge-status-contracts.test.ts > KC03 controlled transport rejects every malformed row, scope/date/flags mismatch and over-limit findings arrays
+ FAIL  tests/contracts/m6-knowledge-status-contracts.test.ts > KC04 controlled transport preserves null semantics and failure array guard, unrelated view behavior stays unchanged
+ FAIL  tests/integration/m6-knowledge-status-independent.test.ts > KN01 actual policy pointer survives pinned-only revision; missing, invalid and raw JSON policies fail safely without writes; disabled policy preserves round history
+ FAIL  tests/integration/m6-knowledge-status-independent.test.ts > KN02 real independent HTTP round accepted then latest cancellation/staleness supersedes it; frozen required checks stay pending
+ FAIL  tests/integration/m6-knowledge-status-independent.test.ts > KN03 ACL first, redacted dependency safe metadata and sealed absence; real second WAL connection commits during one outer view snapshot
+ FAIL  tests/integration/m6-knowledge-status-independent.test.ts > KN04 real HTTP/shared-client typed whole arrays versus separately labelled controlled bad transport responses
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  tests/integration/m6-knowledge-status.test.ts > KS01 enabled/disabled with no round preserve author reports and failure materials
+AssertionError: {"api_version":"1","request_id":"req-4","error":{"code":"VALIDATION_ERROR","message":"body must have required property 'body'","retryable":false,"details":{"issues":[{"instancePath":"","schemaPath":"#/required","keyword":"required","params":{"missingProperty":"body"},"message":"must have required property 'body'"}]}}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ call tests/integration/m6-knowledge-status.test.ts:18:46
+     16|   tick += 1500;
+     17|   const response = await app.inject({ method, url: `/api/v1${suffix}`,…
+     18|   expect(response.statusCode, response.body).toBe(status);
+       |                                              ^
+     19|   return response.json().data;
+     20| }
+ ❯ tests/integration/m6-knowledge-status.test.ts:62:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  tests/integration/m6-knowledge-status.test.ts > KS03 accepted historical target remains fixed while current revision and disabled policy change validity
+AssertionError: {"api_version":"1","request_id":"req-b","error":{"code":"VALIDATION_ERROR","message":"body must have required property 'body'","retryable":false,"details":{"issues":[{"instancePath":"","schemaPath":"#/required","keyword":"required","params":{"missingProperty":"body"},"message":"must have required property 'body'"}]}}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ call tests/integration/m6-knowledge-status.test.ts:18:46
+     16|   tick += 1500;
+     17|   const response = await app.inject({ method, url: `/api/v1${suffix}`,…
+     18|   expect(response.statusCode, response.body).toBe(status);
+       |                                              ^
+     19|   return response.json().data;
+     20| }
+ ❯ tests/integration/m6-knowledge-status.test.ts:82:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  tests/integration/m6-knowledge-status.test.ts > KS04 real collecting round becomes stale on revision; frozen checks remain pending
+AssertionError: {"api_version":"1","request_id":"req-6","error":{"code":"VALIDATION_ERROR","message":"body must have required property 'body'","retryable":false,"details":{"issues":[{"instancePath":"","schemaPath":"#/required","keyword":"required","params":{"missingProperty":"body"},"message":"must have required property 'body'"}]}}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ call tests/integration/m6-knowledge-status.test.ts:18:46
+     16|   tick += 1500;
+     17|   const response = await app.inject({ method, url: `/api/v1${suffix}`,…
+     18|   expect(response.statusCode, response.body).toBe(status);
+       |                                              ^
+     19|   return response.json().data;
+     20| }
+ ❯ tests/integration/m6-knowledge-status.test.ts:90:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+

@@ -1,0 +1,21 @@
+{
+  "authors": {
+    "core": [],
+    "transport": []
+  },
+  "independent": {
+    "tests/helpers/m3-shutdown-worker.mjs": "54532d8110c99a1c7ce26845899e4152dbce744ebbe8ac281fa79970b2a74ccc",
+    "tests/integration/m3-shutdown-independent.test.ts": "4b2fb43bb2c50423628538e42c82f36f6753d19d0d4b0940394a9b45867ef763",
+    "tests/integration/m3-milestone-gate.test.ts": "0baadf904382875c766b7bf75e7a2169246924ebedb7c86011d8d7f2ed46f16e"
+  },
+  "source_noemit": {
+    "command": "pnpm exec tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck --strict tests/integration/m3-shutdown-independent.test.ts tests/integration/m3-milestone-gate.test.ts",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds_tool": 0.832377375,
+    "note": "one actual source self-check before build; not product execution"
+  },
+  "helper_node_check": 0,
+  "formal_cases": 7
+}

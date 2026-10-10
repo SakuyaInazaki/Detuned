@@ -1,0 +1,10 @@
+--- examples/backup-recovery.md (fresh before)
++++ examples/backup-recovery.md (metadata v2)
+@@ -1,6 +1,6 @@
+ # 离线物理备份与新目录恢复
+ 
+-当前backup创建schema3/backup-format1；restore接受严格source profile匹配的旧schema2与新schema3备份。仅旧2在新stage升级到3；新3保五formal表历史，源backup和原manifest均不改，不覆盖已有目标。目标父目录必须已存在；新目录0700、文件0600。manifest最多8MiB，同时最多10000条登记附件；单附件最多25MiB，清单字节与条目限制同时适用。先停止Detuned服务，再明确执行离线备份：
++当前backup创建schema4/backup-format1；restore接受严格source profile匹配的schema2/3/4备份。旧2/3仅在新stage升级到4，新4保六formal表历史，源backup和原manifest均不改，不覆盖已有目标。目标父目录必须已存在；新目录0700、文件0600。manifest最多8MiB，同时最多10000条登记附件；单附件最多25MiB，清单字节与条目限制同时适用。先停止Detuned服务，再明确执行离线备份：
+ 
+ ```sh
+ detuned --json backup --offline --data-dir ./data --output ./private-backup-2026-10-06

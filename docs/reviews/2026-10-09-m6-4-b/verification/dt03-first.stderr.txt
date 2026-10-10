@@ -1,0 +1,18 @@
+$ vitest run tests/contracts/m6-review-tools-independent.test.ts -t DT03 --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m6-review-tools-independent.test.ts > DT03 observable credential changes reject before Session POST; post-inflight change and cancellation never fake binding or retry
+AssertionError: expected undefined to be 'IDENTITY_CHANGED' // Object.is equality
+
+- Expected: 
+"IDENTITY_CHANGED"
+
++ Received: 
+undefined
+
+ ❯ tests/contracts/m6-review-tools-independent.test.ts:124:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

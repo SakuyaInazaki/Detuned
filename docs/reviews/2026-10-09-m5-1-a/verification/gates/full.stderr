@@ -1,0 +1,151 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: OpenAPI 3.1 specification body constraints agree with existing protocol and HTTP (AD02)
+AssertionError: expected [ 'delete /auth/session', …(45) ] to deeply equal [ …(42) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,11 @@
+  [
++   "delete /auth/session",
+    "delete /spaces/{space_id}/consumers/{id}",
+    "delete /spaces/{space_id}/memberships/{actor_id}",
+    "get /admin/diagnostics",
++   "get /auth/session",
+    "get /capabilities",
+    "get /health/live",
+    "get /health/ready",
+    "get /me",
+    "get /spaces",
+@@ -24,10 +26,11 @@
+    "patch /spaces/{space_id}/memberships/{actor_id}",
+    "patch /spaces/{space_id}/threads/{id}",
+    "post /admin/actors",
+    "post /admin/credentials",
+    "post /admin/credentials/{id}/revoke",
++   "post /auth/session",
+    "post /spaces",
+    "post /spaces/{space_id}/artifacts",
+    "post /spaces/{space_id}/consumers/{id}/ack",
+    "post /spaces/{space_id}/consumers/{id}/poll",
+    "post /spaces/{space_id}/memberships",
+@@ -39,6 +42,7 @@
+    "post /spaces/{space_id}/relations/{id}/resolve",
+    "post /spaces/{space_id}/sessions",
+    "post /spaces/{space_id}/subscriptions",
+    "post /spaces/{space_id}/threads",
+    "post /spaces/{space_id}/threads/{id}/posts",
++   "servers /auth/session",
+  ]
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:435:67
+    433|         Object.entries(ms).map(([method, op]) => ({ path, method, op: …
+    434|       );
+    435|       expect(operations.map(o => `${o.method} ${o.path}`).sort()).toEq…
+       |                                                                   ^
+    436|       for (const route of routeContracts) {
+    437|         const schema = (spec.paths as any)[route.path][route.method].r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-8: OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)
+AssertionError: expected [ 'delete /auth/session', …(45) ] to deeply equal [ …(42) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,11 @@
+  [
++   "delete /auth/session",
+    "delete /spaces/{space_id}/consumers/{id}",
+    "delete /spaces/{space_id}/memberships/{actor_id}",
+    "get /admin/diagnostics",
++   "get /auth/session",
+    "get /capabilities",
+    "get /health/live",
+    "get /health/ready",
+    "get /me",
+    "get /spaces",
+@@ -24,10 +26,11 @@
+    "patch /spaces/{space_id}/memberships/{actor_id}",
+    "patch /spaces/{space_id}/threads/{id}",
+    "post /admin/actors",
+    "post /admin/credentials",
+    "post /admin/credentials/{id}/revoke",
++   "post /auth/session",
+    "post /spaces",
+    "post /spaces/{space_id}/artifacts",
+    "post /spaces/{space_id}/consumers/{id}/ack",
+    "post /spaces/{space_id}/consumers/{id}/poll",
+    "post /spaces/{space_id}/memberships",
+@@ -39,6 +42,7 @@
+    "post /spaces/{space_id}/relations/{id}/resolve",
+    "post /spaces/{space_id}/sessions",
+    "post /spaces/{space_id}/subscriptions",
+    "post /spaces/{space_id}/threads",
+    "post /spaces/{space_id}/threads/{id}/posts",
++   "servers /auth/session",
+  ]
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:559:25
+    557|         Object.keys(ms).map((m) => `${m} ${path}`)
+    558|       ).sort();
+    559|       expect(specPaths).toEqual(routeContracts.map(r => `${r.method} $…
+       |                         ^
+    560|     });
+    561|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/contracts/r4-c-route-contracts.test.ts > C.3-GATE complete route contracts > G01: compares every actual method/path and every body schema, including absence
+AssertionError: expected [ …(42) ] to deeply equal [ 'delete /auth/session', …(45) ]
+
+- Expected
++ Received
+
+@@ -1,11 +1,9 @@
+  [
+-   "delete /auth/session",
+    "delete /spaces/{space_id}/consumers/{id}",
+    "delete /spaces/{space_id}/memberships/{actor_id}",
+    "get /admin/diagnostics",
+-   "get /auth/session",
+    "get /capabilities",
+    "get /health/live",
+    "get /health/ready",
+    "get /me",
+    "get /spaces",
+@@ -26,11 +24,10 @@
+    "patch /spaces/{space_id}/memberships/{actor_id}",
+    "patch /spaces/{space_id}/threads/{id}",
+    "post /admin/actors",
+    "post /admin/credentials",
+    "post /admin/credentials/{id}/revoke",
+-   "post /auth/session",
+    "post /spaces",
+    "post /spaces/{space_id}/artifacts",
+    "post /spaces/{space_id}/consumers/{id}/ack",
+    "post /spaces/{space_id}/consumers/{id}/poll",
+    "post /spaces/{space_id}/memberships",
+@@ -42,7 +39,6 @@
+    "post /spaces/{space_id}/relations/{id}/resolve",
+    "post /spaces/{space_id}/sessions",
+    "post /spaces/{space_id}/subscriptions",
+    "post /spaces/{space_id}/threads",
+    "post /spaces/{space_id}/threads/{id}/posts",
+-   "servers /auth/session",
+  ]
+
+ ❯ tests/contracts/r4-c-route-contracts.test.ts:46:61
+     44|   it('G01: compares every actual method/path and every body schema, in…
+     45|     const declared = Object.entries(spec.paths).flatMap(([path, method…
+     46|     expect(routes.map(r => `${r.method} ${r.path}`).sort()).toEqual(de…
+       |                                                             ^
+     47|     for (const route of routes) {
+     48|       const op = spec.paths[route.path][route.method];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

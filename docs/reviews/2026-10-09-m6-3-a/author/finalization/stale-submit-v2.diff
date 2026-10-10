@@ -1,0 +1,10 @@
+--- modules/review/src/submission-service.ts v1
++++ modules/review/src/submission-service.ts v2
+@@ -58,6 +58,7 @@
+       if(!isCreateReviewSubmission(req)||(req.verdict==='accept'&&req.pending_requirements.length!==0))throw invalid();
+       return this.idempotency.executeIdempotent(initial.current.actor.id,spaceId,`review.submission.create:${requestId}`,key,req,201,()=>{
+         const {current,head,assignment}=this.assignment(auth,spaceId,requestId,true);
++        if(head.phase==='stale')throw stale();
+         if(head.phase!=='collecting'||tx.findReviewSubmissionByAssignmentId(assignment.id))throw invalid();
+         const snapshot=this.freshMaterials(spaceId,head.snapshot_id);
+         if(req.snapshot_sha256!==snapshot.manifest_sha256)throw stale();

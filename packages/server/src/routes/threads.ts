@@ -1,3 +1,4 @@
+import { CONTEXT_BYTES, serializeThreadPostsEnvelope, LIST_LIMIT, THREAD_POST_LIMIT, THREAD_STATES, integerQueryOptions, isNonblankString } from '@detuned/protocol';
 import { FastifyPluginAsync } from 'fastify';
 import {
   CreateThreadRequest,
@@ -7,13 +8,27 @@ import {
   DetunedError,
   ErrorCode,
 } from '@detuned/protocol';
-import { ThreadService, AuthenticatedContext, AuthService } from '@detuned/core';
+import { ThreadPostsReadService, ThreadService, AuthenticatedContext, AuthService } from '@detuned/core';
 import { parseIntegerQuery, parseStringQuery, validateAllowedQueryParams } from '../utils/query.js';
 
 export const threadRoutes: FastifyPluginAsync = async (app) => {
   const threadService = (app as any).threadService as ThreadService;
   const authService = (app as any).authService as AuthService;
   const storage = (app as any).storage;
+
+  const threadPostsReadService = (app as any).threadPostsReadService as ThreadPostsReadService;
+  app.get('/spaces/:space_id/threads/:id/posts', async (req, reply) => {
+    const auth = (req as any).auth as AuthenticatedContext;
+    const { space_id, id } = req.params as { space_id: string; id: string };
+    const query = req.query as { limit?: unknown; max_bytes?: unknown; cursor?: unknown; sort?: unknown };
+    validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor', 'sort']);
+    const limit = parseIntegerQuery(query.limit, 'limit', integerQueryOptions(THREAD_POST_LIMIT));
+    const max_bytes = parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES));
+    const cursor = parseStringQuery(query.cursor, 'cursor', { allowEmpty: true });
+    const sort = parseStringQuery(query.sort, 'sort') as 'id_asc' | 'created_at_asc' | undefined;
+    const page = threadPostsReadService.getPosts(auth, space_id, id, { limit, max_bytes, cursor, sort }, { request_id: req.id });
+    return reply.type('application/json').send(serializeThreadPostsEnvelope(req.id, page));
+  });
 
   app.get('/spaces/:space_id/threads', async (req) => {
     const auth = (req as any).auth as AuthenticatedContext;
@@ -22,8 +37,8 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
 
     const query = req.query as { state?: unknown; limit?: unknown; cursor?: unknown };
     validateAllowedQueryParams(query, ['state', 'limit', 'cursor']);
-    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 20 }) ?? 20;
-    const state = parseStringQuery(query?.state, 'state', { allowedValues: new Set(['open', 'archived']) });
+    const limit = parseIntegerQuery(query?.limit, 'limit', integerQueryOptions(LIST_LIMIT)) ?? 20;
+    const state = parseStringQuery(query?.state, 'state', { allowedValues: new Set(THREAD_STATES) });
     const cursor = parseStringQuery(query?.cursor, 'cursor');
 
     const result = storage.listThreads(space_id, state, limit, cursor);
@@ -45,7 +60,7 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id } = req.params as { space_id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',
@@ -76,7 +91,7 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
 
     const query = req.query as { limit?: unknown; cursor?: unknown };
     validateAllowedQueryParams(query, ['limit', 'cursor']);
-    const limit = parseIntegerQuery(query?.limit, 'limit', { min: 1, max: 100, defaultValue: 50 }) ?? 50;
+    const limit = parseIntegerQuery(query?.limit, 'limit', integerQueryOptions(THREAD_POST_LIMIT)) ?? 50;
     const cursor = parseStringQuery(query?.cursor, 'cursor');
 
     const postsResult = storage.listPostsInThread(id, limit, cursor);
@@ -102,7 +117,7 @@ export const threadRoutes: FastifyPluginAsync = async (app) => {
       const auth = (req as any).auth as AuthenticatedContext;
       const { space_id, id } = req.params as { space_id: string; id: string };
       const key = (req.headers['idempotency-key'] as string) ?? (req.headers['Idempotency-Key'] as string);
-      if (!key || typeof key !== 'string' || key.trim() === '') {
+      if (!isNonblankString(key)) {
         throw new DetunedError(
           ErrorCode.VALIDATION_ERROR,
           '缺少必需的 Idempotency-Key 请求头。',

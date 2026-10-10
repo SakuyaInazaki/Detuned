@@ -1,0 +1,60 @@
+{
+  "status": "source bound; B review/root phased release pending",
+  "guard": "codex-guard-only.mjs calls actual pure codexSandboxPolicy, policy rawsource/env literal bound; sandboxexec Node only, no Codex launch",
+  "guard_assertions": [
+    "own endpoint hit1",
+    "other own endpoint hit0 +EPERM/EACCES",
+    "own sentinel read andwrite denied",
+    "actualguard childclose0/null within3s; minimalnativeEnv PATH/CI/HOME/ownCODEX_HOME",
+    "actualowned sockets/serverclose/rootabsence, unknown retained/failed",
+    "same sandbox child ordinary own file wx0600 fixed bytes/readback/mode true; sentinel deny assertions unchanged; 3s child budget unchanged"
+  ],
+  "native_capture": "codex-bounded-capture.mjs publicsupervised export sameCLI implementation; root/directpositivechild/confirmedPGID exacttrusted callbacks; no candidate negativekill; source90includesfinally, outer95withextra5onlycleanup/record",
+  "phase_order": [
+    "finalA freeze/hash/policy/env+protectedhelpers/binaryfixed read-onlybind",
+    "B staticreview",
+    "rootrelease syntax+independentguard require_escalated needed loopback",
+    "rootrelease single reject-worker after B review; actual controlled_expected_failure_verified required before native decision",
+    "rootactualguardaccepted then single native release require_escalated; failure stop noauto retry"
+  ],
+  "not_run": [
+    "syntax",
+    "guard",
+    "native",
+    "core/build/tests"
+  ],
+  "permissions": "defaultsandboxEPERM fact recorded fromB; future requiredbounded localprocess/loopback auto_review only, actualchildOSpolicy not loosened",
+  "secret": "private0700 registry; canonical roots/PIDs only trustedprivatecontrol; safe source/driverlinecol/name/code/syscall; no rawnative/control/stderr/token/message/stack",
+  "source_sha256": "007b5c0f7b660b6e2520d435c8af2a73fc1325bba78c1a35b50ff7ad7980b692",
+  "author_freeze_sha256": "5da281f6cf740664e7e063974f217ed18920e8cedaa34b3627262b5d2ead3221",
+  "guard_source_sha256": "6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256",
+  "capture_source_sha256": "76ca9228648d955255c683b3f0ff89bc8038a1afd350dd58e4e0bac901c40825",
+  "binding_sha256": "aee952538982425d2d0a2f6273b6561710d641aad9869fc4e46a344dd94a8706",
+  "guard_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only.mjs",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-guard-only-result.json"
+  ],
+  "capture_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-native-first-result.json"
+  ],
+  "source_budget": {
+    "work_ms": 75000,
+    "worker_ms": 85000,
+    "whole_with_finally_ms": 90000,
+    "outer_total_ms": 95000
+  },
+  "future_permissions": "require_escalated auto_review only after specific root release, localownedloopback/process; noOSpolicy weakening",
+  "reject_argv": [
+    "node",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-bounded-capture.mjs",
+    "--output",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-c/verification/codex-reject-first-result.json",
+    "--mode",
+    "reject-worker"
+  ],
+  "controlled_reject": "Only worker_registered after canonical root/positive directchild/confirmedgroup trusted registration persisted, before bootstrap callback rejects; exact three stages, source failed/bootstrap false/native false/MCP false, driverclose1/null, group/direct/root/control absent. Not reached injection means failed, not expected pass."
+}

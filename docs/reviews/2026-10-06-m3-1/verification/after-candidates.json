@@ -1,0 +1,54 @@
+{
+  "product_version": "frozen new dist; build-first exit0",
+  "independent": true,
+  "scope": "finite inject HTTP candidate reproduction, not T08 process certification",
+  "records": [
+    {
+      "candidate": "stored private visibility first poll",
+      "setup": "real HTTP owned post/revision plus explicit legal review_assignment visibility stored fixture",
+      "observed_event_ids": [],
+      "private_returned": false
+    },
+    {
+      "candidate": "Clock sign",
+      "injected_clock_seconds": 978307200,
+      "observed_exp": 978393600,
+      "expected_injected_plus24h": 978393600,
+      "payload_keys": [
+        "v",
+        "purpose",
+        "actor_id",
+        "space_id",
+        "consumer_id",
+        "batch_id",
+        "through_seq",
+        "exp"
+      ]
+    },
+    {
+      "candidate": "pending current visibility",
+      "private_returned": false,
+      "same_batch": true
+    },
+    {
+      "candidate": "signed wrong through_seq repeated ack",
+      "signed_fixture": true,
+      "status": 409,
+      "code": "ACK_INVALID",
+      "confirmed": false,
+      "ack_before": 4,
+      "ack_after": 4
+    },
+    {
+      "candidate": "signed wrong purpose/actor/space repeated ack",
+      "signed_fixture": true,
+      "status": 409,
+      "confirmed": false
+    },
+    {
+      "candidate": "actual other consumer binding",
+      "status": 409,
+      "code": "ACK_INVALID"
+    }
+  ]
+}

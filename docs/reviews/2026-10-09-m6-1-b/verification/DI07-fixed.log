@@ -1,0 +1,19 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+$ vitest run tests/integration/m6-review-requests-independent.test.ts -t DI07 --maxWorkers=1 --no-file-parallelism
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests-independent.test.ts [ tests/integration/m6-review-requests-independent.test.ts ]
+Error: ENOSPC: no space left on device, open '/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/D2rmfkiCnPNbEGjaeCrrp/ssr/9df72554911da2535482892dd2c1678b255e7a08'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  13:47:15
+   Duration  209ms (transform 44ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 40ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

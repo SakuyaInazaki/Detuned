@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-post-revision-read-contracts.test.ts (7 tests | 2 failed) 290ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P01: raw 4K/64K/default pages preserve fixed stored projection while current head changes 126ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P02: strict path/query and unsupported old pagination reject without changing old full getters 39ms
+   × M2.4-B.2.1 fixed post revision transport contracts > P03: real HTTP client new-kind pages and old-kind full data remain distinct; signal cancels 29ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P04: shared tool branches strictly reject contradictions while preserving the eight tool names 25ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P05: page/envelope schemas correlate completion/meta and exclude redacted success or extra fields 26ms
+   ✓ M2.4-B.2.1 fixed post revision transport contracts > P06: new OpenAPI route declares all parameters, complete envelope and strict cursor after policy traversal 22ms
+   × M2.4-B.2.1 fixed post revision transport contracts > P07: installed Pi validator reaches actual registered execute for new and unchanged old post kinds 22ms
+     → listen EPERM: operation not permitted 127.0.0.1
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  15:38:04
+   Duration  1.02s (transform 219ms, setup 0ms, collect 418ms, tests 290ms, environment 0ms, prepare 44ms)
+

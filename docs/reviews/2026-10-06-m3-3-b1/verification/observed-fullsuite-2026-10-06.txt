@@ -1,0 +1,130 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-event-recovery.test.ts (2 tests) 4171ms
+   ✓ T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected  3310ms
+   ✓ T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans  860ms
+ ✓ tests/contracts/m3-backup-cli.test.ts (5 tests) 6203ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  1268ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config  2405ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses  970ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  1065ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  495ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (26 tests) 7474ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3576ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1258ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)  310ms
+ ✓ tests/integration/m3-event-core.test.ts (11 tests) 3269ms
+   ✓ M3.1 event core correctness > E03 repeat ack still checks persisted through_seq before idempotent success  421ms
+   ✓ M3.1 event core correctness > E04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes  2332ms
+   ✓ M3.1 event core correctness > E10 cancellation after persistence preserves pending batch and before cancellation has no write  386ms
+ ✓ tests/integration/m3-backup-recovery.test.ts (11 tests) 8633ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  675ms
+   ✓ M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup  4027ms
+   ✓ M3.3-A offline physical maintenance > rejects links, extra paths and checksum tampering  344ms
+   ✓ M3.3-A offline physical maintenance > preserves incomplete reservations and rejects runtime entry at publication faults  541ms
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  1687ms
+   ✓ M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail  555ms
+ ✓ tests/integration/m3-request-key-recovery.test.ts (6 tests) 9021ms
+   ✓ M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes  1833ms
+   ✓ M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets  1608ms
+   ✓ M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material  839ms
+   ✓ M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay  1141ms
+   ✓ M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST  3138ms
+   ✓ M3.2 controlled preparation barriers stop token changes during getMe/store and promptly cancel pending store without POST  461ms
+ ✓ tests/integration/m2-artifacts-cli.test.ts (4 tests) 2722ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits  766ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > never cleans objects when another process owns DirectoryLock  312ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen  1378ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 9766ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  1071ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  2776ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  663ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  993ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  1005ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  3236ms
+ ✓ tests/contracts/m3-events-contract.test.ts (7 tests) 1305ms
+   ✓ M3.1 event HTTP and adapter cancellation contracts > E01: legal positive wait actually waits at an empty consumer without creating or acknowledging a batch  304ms
+   ✓ M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch  515ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1891ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  1078ms
+ ✓ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests) 1149ms
+   ✓ M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer  809ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1202ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T11: detuned serve refuses unsupported schema version 999 before listening  340ms
+ ✓ tests/integration/m2-context-session-chain.test.ts (1 test) 1265ms
+   ✓ C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision  1265ms
+ ✓ tests/contracts/m2-search-contracts.test.ts (5 tests) 1101ms
+   ✓ M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta  576ms
+ ✓ tests/contracts/m2-thread-posts-read-contracts.test.ts (8 tests) 1052ms
+ ✓ tests/integration/m2-artifacts-http.test.ts (8 tests) 1232ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1124ms
+ ✓ tests/contracts/m2-context-contracts.test.ts (4 tests) 743ms
+ ✓ tests/integration/m3-backup-recovery-independent.test.ts (4 tests) 12093ms
+   ✓ M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch  4495ms
+   ✓ M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup  1766ms
+   ✓ M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets  3484ms
+   ✓ M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes  2347ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1035ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  736ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 12242ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  554ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B03 (Symmetric Reopen): Reopen database and replay legacy $ref for both resolve and reopen preserving historical results  305ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H09: Migration diagnostics never print raw body marker  383ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J02: Current instance material loss is refused consistently across bootstrap, init and serve without mutating secrets  322ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V01: Typed ID-only references cannot hide missing post revision or nonexistent nested relations without precheck failure  461ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X01: Explicit invalid/conflicting aliases reject in HTTP and migration without writes  439ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X02: Legal empty/full relation arrays and equivalent aliases preserve complete output across restart  351ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X03: Known future version contradictions reject before legal missing-state fallback; valid partial history remains controlled  379ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-7: CLI serve rejects corrupt database before listening on socket and releases directory lock  345ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y02: Existing initialization materials without migrations or actors reject as corrupt in all modes and CLI  318ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  1188ms
+ ✓ tests/contracts/m2-post-revision-read-contracts.test.ts (7 tests) 939ms
+ ✓ tests/integration/historical-http-replay.test.ts (7 tests) 780ms
+ ✓ tests/integration/m2-artifacts-filesystem.test.ts (6 tests) 278ms
+ ✓ tests/contracts/m2-focused-context-contracts.test.ts (6 tests) 627ms
+ ✓ tests/contracts/m2-space-read-contracts.test.ts (5 tests) 603ms
+ ✓ tests/contracts/m3-space-export-contract.test.ts (6 tests) 869ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject  804ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 728ms
+ ✓ tests/integration/m2-thread-posts-read.test.ts (10 tests) 545ms
+ ✓ tests/integration/m3-request-key-store.test.ts (8 tests) 206ms
+ ✓ tests/integration/m2-post-revision-read.test.ts (10 tests) 283ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 481ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 412ms
+ ✓ tests/contracts/m2-typed-write-contracts.test.ts (5 tests) 213ms
+ ✓ tests/integration/m2-context-focus.test.ts (9 tests) 115ms
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 78ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 243ms
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-context.test.ts (7 tests) 125ms
+ ✓ tests/contracts/m3-request-key-cli.test.ts (5 tests) 14533ms
+   ✓ M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes  2365ms
+   ✓ M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output  5978ms
+   ✓ M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests  4414ms
+   ✓ M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created  1428ms
+   ✓ M3.2 CLI persistent request keys > KCLI05: rejected persistence sends no business request and does not overwrite existing material  347ms
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 132ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 16ms
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 62ms
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 79ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 61ms
+ ✓ tests/integration/m3-space-export.test.ts (11 tests) 201ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 6ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 5ms
+stdout | tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+B1 bounded material samples {"rows":640,"bodyBytes":41943040,"wireBytes":42399852,"receiverMaxHeap":31008968,"receiverSamples":23,"serverMaxHeap":36653360,"serverSamples":1,"serverHeapBefore":33880520}
+
+ ✓ tests/integration/m3-export-independent.test.ts (4 tests) 5860ms
+   ✓ B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records  1552ms
+   ✓ B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end  1477ms
+   ✓ B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial  484ms
+   ✓ B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink  2347ms
+
+ Test Files  48 passed (48)
+      Tests  414 passed (414)
+   Start at  23:59:03
+   Duration  18.75s (transform 1.37s, setup 0ms, collect 13.75s, tests 117.17s, environment 9ms, prepare 2.47s)
+

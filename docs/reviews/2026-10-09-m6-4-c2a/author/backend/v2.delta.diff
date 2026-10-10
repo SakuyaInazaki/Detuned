@@ -1,0 +1,40 @@
+--- tests/integration/m6-knowledge-status.test.ts (v1 freeze)
++++ tests/integration/m6-knowledge-status.test.ts (v2)
+@@ -59,7 +59,7 @@
+ afterEach(async () => { vi.restoreAllMocks(); await app.close(); db.close(); });
+ 
+ it('KS01 enabled/disabled with no round preserve author reports and failure materials', async () => {
+-  await call('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', structured: failure }, 'failure');
++  await call('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', body: 'failure report', structured: failure }, 'failure');
+   for (const enabled of [true, false, true]) {
+     await patchPolicy({ enabled }, `enabled-${enabled}-${tick}`);
+     const state = enabled ? 'not_requested' : 'not_enabled';
+@@ -79,7 +79,7 @@
+ });
+ it('KS03 accepted historical target remains fixed while current revision and disabled policy change validity', async () => {
+   await patchPolicy({ required_checks: [] }, 'no-checks'); const first = await request('first'); await accept(first);
+-  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', structured: claim }, 'revise');
++  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', body: 'revised claim', structured: claim }, 'revise');
+   await patchPolicy({ enabled: false, required_checks: ['later'] }, 'disable');
+   expect(findings()[0]).toMatchObject({ revision: 2, formal_review_status: 'accepted', formal_check_status: 'not_required', formal_review: { request_id: first.id, target_revision: 1, phase: 'accepted', current_validity: 'superseded', validity_reasons: ['target_superseded', 'policy_superseded'] } });
+ });
+@@ -87,7 +87,7 @@
+   await call('PATCH', path(), { expected_revision: 1, check_profiles: { reproduce: { verifier_actor_ids: [], config_sha256: 'a'.repeat(64), description: 'external' } } }, 'profile');
+   const first = await request('pending');
+   expect(findings()[0]).toMatchObject({ formal_review_status: 'collecting', formal_check_status: 'pending' });
+-  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', structured: claim }, 'revise');
++  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', body: 'revised claim', structured: claim }, 'revise');
+   await patchPolicy({ required_checks: [] }, 'remove-checks');
+   const item = findings()[0]!;
+   expect(item).toMatchObject({ formal_review_status: 'stale', formal_check_status: 'pending', formal_review: { request_id: first.id, target_revision: 1, current_validity: 'superseded' } });
+--- tests/contracts/m6-knowledge-status-contracts.test.ts (v1 freeze)
++++ tests/contracts/m6-knowledge-status-contracts.test.ts (v2)
+@@ -38,7 +38,7 @@
+   sid = (await write('POST', '/spaces', { slug: 'knowledge-contract', objective: 'o', rules: [] }, 'space')).space.id;
+   const tid = (await write('POST', path('/threads'), { title: 't' }, 'thread')).thread.id;
+   pid = (await write('POST', path(`/threads/${tid}/posts`), { kind: 'claim', title: 'claim', summary: 's', body: 'original', structured: { statement: 'claim', assumptions: [], scope: 'scope', falsification_plan: 'test' } }, 'claim')).post.id;
+-  await write('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', structured: { attempt: 'run', category: 'environment_error', assumptions: [], tested_scope: 'run', expected: 'done', observed: 'offline', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'no log', ruled_out: 'this run', not_ruled_out: [], retry_when: ['online'] } }, 'failure');
++  await write('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', body: 'failure report', structured: { attempt: 'run', category: 'environment_error', assumptions: [], tested_scope: 'run', expected: 'done', observed: 'offline', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'no log', ruled_out: 'this run', not_ruled_out: [], retry_when: ['online'] } }, 'failure');
+   const hash = new CryptoHasher();
+   for (const id of ['r1', 'r2']) {
+     storage.createActor({ id, kind: 'human', display_name: id, created_at: clock.nowIso(), disabled_at: null });

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/opt/homebrew/bin/pnpm",
+    "--config.verify-deps-before-run=error",
+    "test",
+    "tests/contracts/m5-web-static.test.ts"
+  ],
+  "exit": 1,
+  "env_keys": [
+    "PATH",
+    "HOME",
+    "CI",
+    "npm_config_userconfig",
+    "npm_config_globalconfig",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_TERMINAL_PROMPT"
+  ],
+  "safety": "dependency-status error instead of any implicit install"
+}

@@ -1,0 +1,43 @@
+{
+  "direct_dependency": {
+    "name": "react-markdown",
+    "version": "10.1.0",
+    "license": "MIT",
+    "peer_dependencies": {
+      "@types/react": ">=18",
+      "react": ">=18"
+    },
+    "integrity": "sha512-qKxVopLT/TyA6BX3Ue5NwabOsAzm0Q7kAPwq6L+wWDwisYs7R8vZ0nRXqq6rkueboxpkjvLGU9fWifiX/ZZFxQ=="
+  },
+  "existing_web_pins_unchanged": {
+    "react": true,
+    "react-dom": true,
+    "@detuned/client": true,
+    "@detuned/protocol": true
+  },
+  "existing_dev_pins_unchanged": true,
+  "install_attempts": [
+    {
+      "attempt": 1,
+      "exit_code": 1,
+      "cause": "CI default frozen-lockfile rejected authorized manifest change",
+      "stdout": "install-first.stdout.txt",
+      "stderr": "install-first.stderr.txt"
+    },
+    {
+      "attempt": 2,
+      "exit_code": 0,
+      "duration_seconds": 9.4,
+      "registry": "https://registry.npmjs.org",
+      "ignore_scripts": true,
+      "ignore_pnpmfile": true,
+      "empty_user_global_config": true,
+      "downloaded": 31,
+      "linked_added": 79,
+      "linked_removed": 1,
+      "stdout": "install-second.stdout.txt",
+      "stderr": "install-second.stderr.txt"
+    }
+  ],
+  "lock_note": "Existing vitest 3.2.7 runtime version unchanged; added @types/debug from actual graph changes optional peer snapshot key. No further install requested."
+}

@@ -1,0 +1,48 @@
+--- docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs
++++ docs/reviews/2026-10-09-m4-4-b/verification/adapters/check-c-boundaries.mjs
+@@ -1,11 +1,11 @@
+ // R20 independent C01/C02/C03 checks. In-memory DB, controlled fetch; no model/network.
+ import { createRequire } from 'node:module';
+ import { getEventListeners } from 'node:events';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+-import { DetunedClient, UserAbortError, TimeoutError } from '../../../packages/client/dist/index.js';
+-import { DetunedError } from '../../../packages/protocol/dist/index.js';
+-import activate from '../../../packages/adapter-pi/dist/index.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { DetunedClient, UserAbortError, TimeoutError } from '../../../../../packages/client/dist/index.js';
++import { DetunedError } from '../../../../../packages/protocol/dist/index.js';
++import activate from '../../../../../packages/adapter-pi/dist/index.js';
+ 
+ const require = createRequire(import.meta.url);
+ const Database = require('better-sqlite3');
+@@ -193,7 +193,7 @@
+   try {
+     process.env.DETUNED_BASE_URL = 'http://unused.invalid';
+     delete process.env.DETUNED_TOKEN; delete process.env.DETUNED_TOKEN_FILE;
+-    activate({ registerTool(t) { tools.set(t.name, t); }, registerCommand(n, c) { commands.set(n, c); } });
++    activate({ registerTool(t) { tools.set(t.name, t); }, registerCommand(n, c) { commands.set(n, c); }, on() { return () => undefined; } });
+     console.log = (...args) => outputs.push({ channel: 'log', text: args.join(' ') });
+     console.error = (...args) => outputs.push({ channel: 'error', text: args.join(' ') });
+     const cases = [];
+@@ -206,9 +206,17 @@
+       cases.push({ hasUI, name, outputs: outputs.slice(a), notifications: notifications.slice(b),
+         passes: hasUI ? notifications.length === b + 1 && outputs.length === a : outputs.length === a + 1 && notifications.length === b });
+     }
+-    globalThis.fetch = async () => new Response('{"data":', { status: 200 });
++    // Approved M4.4-B adapter: reach the same malformed BUSINESS JSON after legal shared preflight.
++    const toolHttpStages = [];
++    globalThis.fetch = async url => {
++      const stage = new URL(url).pathname.split('/').at(-1); toolHttpStages.push(stage);
++      if (stage === 'capabilities') return response(envelope({ api_version: '1', server_version: 'test' }));
++      if (stage === 'me') return response(envelope({ actor: { id: 'local-actor', kind: 'agent', display_name: 'Local', created_at: '2026-10-09T00:00:00Z', disabled_at: null }, capabilities: ['read'], allowed_space_ids: ['local-space'], visible_spaces: [] }));
++      if (stage === 'sessions') return response(envelope({ id: 'local-session', actor_id: 'local-actor', space_id: 'local-space', client_name: 'detuned-pi', client_version: '0.1.0', harness_session_id: null, metadata: {}, created_at: '2026-10-09T00:00:00Z' }));
++      return new Response('{"data":', { status: 200 });
++    };
+     const toolResult = await outcome(() => tools.get('forum_context').execute('r20-tool', { space_id: 'local-space' }, new AbortController().signal));
+-    return { passes: cases.every(c => c.passes) && !toolResult.resolved, cases, malformed_json_tool: toolResult,
++    return { passes: cases.every(c => c.passes) && !toolResult.resolved && JSON.stringify(toolHttpStages) === JSON.stringify(['capabilities', 'me', 'sessions', 'context']), cases, malformed_json_tool: toolResult, malformed_json_http_stages: toolHttpStages,
+       scope: 'registered extension callbacks only; not real host certification' };
+   } finally {
+     console.log = oldLog; console.error = oldError;

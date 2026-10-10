@@ -1,0 +1,345 @@
+{
+  "final_stage_receipts": [
+    {
+      "receipt": "build-b3-first.json",
+      "receipt_sha256": "4c12fe98b48fa282361e791d25c34d6dae115247e1d794213d9a4a52f478fcaa",
+      "exit_code": 0,
+      "seconds": 10.506,
+      "stdout_sha256": "e56cbea6955d391c6239ef568c5b72c02c8822a3985d1d4e79800794c88ed3bc",
+      "stderr_sha256": "cec69d9e94dc853216b4a9e11bcbbcaa4756d0bd46faaddd5a1fab13f93251f6",
+      "pnpm_state_warning": true,
+      "stderr": "$ tsc\n$ tsc\n$ tsc\n$ tsc\n$ tsc\n$ tsc\n$ node scripts/generate-schema.mjs\n$ node scripts/generate-schema.mjs && tsc\n$ tsc --noEmit && vite build\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n$ tsc\n$ tsc"
+    },
+    {
+      "receipt": "new-source-noemit-b3-first.json",
+      "receipt_sha256": "bcdb56a122db24f446b4b4df14cbd4c58d3ec1a268866387388f28b4411e2e72",
+      "exit_code": 0,
+      "seconds": 1.542,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pnpm_state_warning": false,
+      "stderr": ""
+    },
+    {
+      "receipt": "new-contracts-first.json",
+      "receipt_sha256": "f71bebb58e50cfd88c5eb83615c1013ae416a52a542c91f1f9811746d50f6ded",
+      "exit_code": 0,
+      "seconds": 2.745,
+      "stdout_sha256": "aaa744a1a5fbadaef9276c0ba5ae026399a4cfbfc5d92cc0c246ad7dbfec84b3",
+      "stderr_sha256": "52f2c3b563266dbef950ac0400afd2c504c5f1db3a81b9dce629455d5bed9317",
+      "pnpm_state_warning": true,
+      "stderr": "$ vitest run tests/contracts/m6-review-catalog.test.ts tests/contracts/m6-review-web-input.test.ts tests/contracts/m6-review-catalog-independent.test.ts --maxWorkers=1 --no-file-parallelism"
+    },
+    {
+      "receipt": "browser-b3-first.json",
+      "receipt_sha256": "8ebe03a849c79e1aa51ebe368180e84e9f01d162adf4d826f979bc737d616195",
+      "exit_code": 0,
+      "seconds": 25.293,
+      "stdout_sha256": "754c5c902484b29163c894aba173893262062e5a07df560d89a5bc8714ec2372",
+      "stderr_sha256": "ed94a8da55da21db21011607301113431516e1ecabff84912e26bfeef343d2a6",
+      "pnpm_state_warning": true,
+      "stderr": "$ playwright test --config scripts/integrations/web/playwright.config.ts scripts/integrations/web/m6-review.spec.ts --workers=1\n(node:75275) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)"
+    },
+    {
+      "receipt": "typecheck-first.json",
+      "receipt_sha256": "3521ed8876246303cc99c9c5c6eb1771ad8278d79fd6e89bf9ef8335486b4252",
+      "exit_code": 0,
+      "seconds": 8.023,
+      "stdout_sha256": "da24a2802618672ca9b7e4dba1579435e8e559fbcc3e4abd98b0ceb8aa202443",
+      "stderr_sha256": "6bba7a8786709a43d0aad26d70dfe24f53c35644d743380882e60a19eebef24e",
+      "pnpm_state_warning": true,
+      "stderr": "$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit"
+    },
+    {
+      "receipt": "lint-first.json",
+      "receipt_sha256": "bb638ad964f1147b9e7d265b87f023093ece28bdbf5362a3fd8e5a595be295ab",
+      "exit_code": 0,
+      "seconds": 7.691,
+      "stdout_sha256": "5173766b613f2357823ac030f341d90273574dd507a2049fa02667d5f64be9a8",
+      "stderr_sha256": "5a4c5d8668bb4e4edb9ea871139c3de41cea3894558ffb1e32d9ffd79ce8fed3",
+      "pnpm_state_warning": true,
+      "stderr": "$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ node scripts/check-schema-sync.mjs && tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit\n$ tsc --noEmit"
+    },
+    {
+      "receipt": "old-browser-first.json",
+      "receipt_sha256": "e72605df5836702132e9905e6fd4a7970d6b9d965825f1e37678d5865a4b6ff9",
+      "exit_code": 0,
+      "seconds": 71.071,
+      "stdout_sha256": "ec9aad55ad90e3f256470d769a9e2cfed51f5a8c88d428d0b24b3990516c34d1",
+      "stderr_sha256": "5de8e1aaa80e9b5845e6d5e78ce13dfcc83af9b3fa473c36551edd210e0c6eed",
+      "pnpm_state_warning": true,
+      "stderr": "$ playwright test --config scripts/integrations/web/playwright.config.ts scripts/integrations/web/author.spec.ts scripts/integrations/web/independent.spec.ts scripts/integrations/web/m5-c.spec.ts scripts/integrations/web/m5-d2.spec.ts scripts/integrations/web/m5-e1.spec.ts scripts/integrations/web/m5-e2.spec.ts scripts/integrations/web/m5-tls.spec.ts --workers=1\n(node:75964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:76208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)"
+    },
+    {
+      "receipt": "core-first.json",
+      "receipt_sha256": "8614db42109f9fa2c3f21133e6ea20bcd8218c316d907ec5a1efe30493ddc131",
+      "exit_code": 0,
+      "seconds": 266.866,
+      "stdout_sha256": "9960ce7caae17f8f0236e5c9aa33993ce2fe7d65e750a4f3a208c05fc6d6a128",
+      "stderr_sha256": "2e722231477432bc676d47610fb4186c4d6303f80ced42f4b345d5b34cdeffc9",
+      "pnpm_state_warning": true,
+      "stderr": "$ vitest run --maxWorkers=1 --no-file-parallelism"
+    }
+  ],
+  "current25": [
+    {
+      "number": 5,
+      "exit_code": 0,
+      "seconds": 0.361,
+      "passed": 15,
+      "failed": 0,
+      "probe_rows": 15,
+      "stdout_sha256": "7457b69716e5ea645a3ce0ef6179c2275abbc5bd443b18f8eb8d0dc6e0b5c687",
+      "stderr": ""
+    },
+    {
+      "number": 6,
+      "exit_code": 0,
+      "seconds": 0.42,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "022d4d8f22ee86fc48716ba4e8e45323c17e3e92789684535c14c0ea960b68e5",
+      "stderr": ""
+    },
+    {
+      "number": 7,
+      "exit_code": 0,
+      "seconds": 0.303,
+      "passed": 12,
+      "failed": 0,
+      "probe_rows": 12,
+      "stdout_sha256": "cb71aead42fa842608b447857b9d9f8f34ee25e3246ebfe904c408e6cc870bab",
+      "stderr": ""
+    },
+    {
+      "number": 8,
+      "exit_code": 0,
+      "seconds": 0.876,
+      "passed": 3,
+      "failed": 0,
+      "probe_rows": 0,
+      "stdout_sha256": "4953e2dd9819795510242d2aa633d7654c9a61cb3d056efc319fddd381b9200e",
+      "stderr": ""
+    },
+    {
+      "number": 9,
+      "exit_code": 0,
+      "seconds": 0.349,
+      "passed": 10,
+      "failed": 0,
+      "probe_rows": 10,
+      "stdout_sha256": "f35108593c87350c4ab151cfdf9347c9059a10b50b96f4f9f63f3091eca84dc9",
+      "stderr": ""
+    },
+    {
+      "number": 10,
+      "exit_code": 0,
+      "seconds": 0.298,
+      "passed": null,
+      "failed": null,
+      "probe_rows": 0,
+      "stdout_sha256": "4fb09cf29f73fdda755e26a64a4776207b0d4995d469c4f8a6b041c6b6da8e75",
+      "stderr": "",
+      "single_probe_passes": true
+    },
+    {
+      "number": 11,
+      "exit_code": 0,
+      "seconds": 0.35,
+      "passed": 8,
+      "failed": 0,
+      "probe_rows": 8,
+      "stdout_sha256": "be356150855505032d57fc6cc580e51e0e169144b3689332475f341003aec283",
+      "stderr": ""
+    },
+    {
+      "number": 12,
+      "exit_code": 0,
+      "seconds": 0.772,
+      "passed": 9,
+      "failed": 0,
+      "probe_rows": 9,
+      "stdout_sha256": "4941e3df81bc1a5fb15aae1f5a18138b897853b54da2b52884ab2da6fd86f84a",
+      "stderr": ""
+    },
+    {
+      "number": 13,
+      "exit_code": 0,
+      "seconds": 0.773,
+      "passed": 10,
+      "failed": 0,
+      "probe_rows": 10,
+      "stdout_sha256": "a4c4baf6bbd56f02b14ebd30522b6efda4fbf32c40f07da1a327e423a029c0dd",
+      "stderr": ""
+    },
+    {
+      "number": 14,
+      "exit_code": 0,
+      "seconds": 0.669,
+      "passed": 7,
+      "failed": 0,
+      "probe_rows": 7,
+      "stdout_sha256": "ede6b8e71e78af2e0638835fd71a3d327efb84a3e35bb2d5d102e2d83853586c",
+      "stderr": ""
+    },
+    {
+      "number": 15,
+      "exit_code": 0,
+      "seconds": 0.33,
+      "passed": 1,
+      "failed": 0,
+      "probe_rows": 1,
+      "stdout_sha256": "8688a895ce2aa542cd84695ed7dc37289368c85842b02143577777f576ab0ad8",
+      "stderr": ""
+    },
+    {
+      "number": 16,
+      "exit_code": 0,
+      "seconds": 0.486,
+      "passed": 8,
+      "failed": 0,
+      "probe_rows": 8,
+      "stdout_sha256": "9f185168428a33670aed53d18cab9c7fcf409f281ff50239c895be3b75b42e3e",
+      "stderr": ""
+    },
+    {
+      "number": 17,
+      "exit_code": 0,
+      "seconds": 0.611,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "1f86be6b9164a244897547c531131b41106e2ecc0163b02e7530349d214b4e43",
+      "stderr": ""
+    },
+    {
+      "number": 18,
+      "exit_code": 0,
+      "seconds": 0.548,
+      "passed": 6,
+      "failed": 0,
+      "probe_rows": 6,
+      "stdout_sha256": "fa2967de4ea70507fbb0ffc782483ab17055de9970944e8b6c875f85d2a53b2f",
+      "stderr": ""
+    },
+    {
+      "number": 19,
+      "exit_code": 0,
+      "seconds": 0.473,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "c6d2d6e181d62d79e1c94f5743f223eefa6142c114f1f41ff97391e2410b14bc",
+      "stderr": ""
+    },
+    {
+      "number": 20,
+      "exit_code": 0,
+      "seconds": 0.531,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "472ead752eab65a5455d5e4b2518fb54a30a0f12522bb9f07539d686553ab71a",
+      "stderr": ""
+    },
+    {
+      "number": 21,
+      "exit_code": 0,
+      "seconds": 0.736,
+      "passed": 3,
+      "failed": 0,
+      "probe_rows": 3,
+      "stdout_sha256": "8fb7fa098fca22e2722fd6b0c6c1eda98e7a22add56670b90e888c6ef38aa236",
+      "stderr": ""
+    },
+    {
+      "number": 22,
+      "exit_code": 0,
+      "seconds": 0.97,
+      "passed": 3,
+      "failed": 0,
+      "probe_rows": 3,
+      "stdout_sha256": "02239d7b920673416e4f176c7785ce34e56e7364a95a57b1d5ca1e0e17078714",
+      "stderr": ""
+    },
+    {
+      "number": 23,
+      "exit_code": 0,
+      "seconds": 0.46,
+      "passed": 4,
+      "failed": 0,
+      "probe_rows": 4,
+      "stdout_sha256": "6c4ce9bcff7d450304d5e737c12790b8f3b16df679b3074fc5e7be414e40ef67",
+      "stderr": ""
+    },
+    {
+      "number": 24,
+      "exit_code": 0,
+      "seconds": 1.309,
+      "passed": 4,
+      "failed": null,
+      "probe_rows": 4,
+      "stdout_sha256": "f394c9982924cc16bb5deadd20eb5f392b0e8593c8c6b314e840761f2853ca18",
+      "stderr": ""
+    },
+    {
+      "number": 25,
+      "exit_code": 0,
+      "seconds": 2.671,
+      "passed": 4,
+      "failed": null,
+      "probe_rows": 4,
+      "stdout_sha256": "54df6f753c9fa685ada9bc4ccbde9ce53d6f24320d5876502301901bf3f62a20",
+      "stderr": ""
+    },
+    {
+      "number": 26,
+      "exit_code": 0,
+      "seconds": 2.272,
+      "passed": 4,
+      "failed": null,
+      "probe_rows": 4,
+      "stdout_sha256": "7b38dad0b6698ca2ad15001508472c194aa8dd212b22a8cf688c44d5383d2f6b",
+      "stderr": ""
+    },
+    {
+      "number": 27,
+      "exit_code": 0,
+      "seconds": 0.283,
+      "passed": 6,
+      "failed": 0,
+      "probe_rows": 6,
+      "stdout_sha256": "c21731f91a7a1332cd70ed866c57504e736b486de024cd2b8a5a04d7ba46321a",
+      "stderr": ""
+    },
+    {
+      "number": 28,
+      "exit_code": 0,
+      "seconds": 0.486,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "eb4be259f02af59676266117f2f409abd3992c3aa8c619d5daf619dc331e66e2",
+      "stderr": "unknown format \"date-time\" ignored in schema at path \"#/properties/data/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/items/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/changed_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/changed_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/changed_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/changed_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submitted_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submitted_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submitted_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submitted_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/revealed_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/revealed_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submissions/items/properties/submitted_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/submissions/items/properties/submitted_at\"\n"
+    },
+    {
+      "number": 29,
+      "exit_code": 0,
+      "seconds": 0.521,
+      "passed": 5,
+      "failed": 0,
+      "probe_rows": 5,
+      "stdout_sha256": "025e81315c57c910397efcadbff41fecb0baef33c4190edc67ab7e5d31a41e34",
+      "stderr": ""
+    }
+  ],
+  "core": {
+    "files": 131,
+    "tests": 826,
+    "exit_code": 0,
+    "seconds": 266.866
+  },
+  "warnings": "Existing pnpm list-of-pnpmfiles dependency-state warning retained; no install. Build JS bundle708.19kB/>500kB warning retained. Playwright NO_COLOR/FORCE_COLOR warning retained. Current #28/#29 AJV unknown date-time format warnings retained; these probes do not prove date-format validation, independent strict client date countervectors do. No global format registry change.",
+  "audit": "Read complete raw stdout/stderr; JSON probe rows/failed counters checked, whole suite actual collector verified. Truncated tool rendering does not truncate saved evidence."
+}

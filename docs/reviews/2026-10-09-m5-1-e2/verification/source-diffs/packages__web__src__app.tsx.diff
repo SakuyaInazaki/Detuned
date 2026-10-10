@@ -1,0 +1,66 @@
+--- before-files/packages/web/src/app.tsx
++++ packages/web/src/app.tsx
+@@ -2,6 +2,7 @@
+ import { DetunedClient, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
+ import { DetunedError, type WebSessionResponse, type CreatePostRequest, type CreateThreadRequest, type SearchQuery, type PostRevisionMetadata, type RevisionArtifactCatalogItem, type ArtifactMetadata, type MeResponse, isMeResponse, POST_KINDS } from '@detuned/protocol';
+ import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
++import { SafeMarkdown } from './safe-markdown.js';
+ import { SpaceOverview, PersonalSettings, parseOverview, type OverviewData } from './space-overview.js';
+ import { RevisionEvidence } from './revision-evidence.js';
+ import { appendContent, CONTENT_BUDGET, initialContent, compareDocuments, type ContentComparison, type FixedContent, initialRules, appendRules, type FixedRules } from './content.js';
+@@ -274,10 +275,10 @@
+     if (!space) return;
+     newGeneration(); setView('discussion'); setThread(value); setContent(null); clearComposer(); setPostPage([]); setPostCursor(null);
+     void run(async signal => {
+-      const id = generation.current; const result = await client.getThreadPosts(space.id, value.id, { limit: 20, max_bytes: CONTENT_BUDGET, ...(cursor ? { cursor } : {}) }, { signal });
++      const id = generation.current; const result = await client.getThreadPosts(space.id, value.id, { limit: 20, max_bytes: CONTENT_BUDGET, sort: 'created_at_asc', ...(cursor ? { cursor } : {}) }, { signal });
+       const items = posts(result.data); const next = nextCursor(result.meta);
+       if (id === generation.current) { setPostPage(items); setPostCursor(next); }
+-    }, '帖子目录已加载（按 ID 升序）。');
++    }, '帖子目录已按创建时间加载；历史未知时间排在末尾。');
+   }
+   function openPost(postId: string, revision: number, resultThreadId?: string) {
+     if (!space) return;
+@@ -345,7 +346,7 @@
+     newGeneration(); setThread(null); setPostPage([]); setPostCursor(null); clearComposer();
+     void run(async signal => {
+       const id = generation.current;
+-      const result = await client.getThreadPosts(space.id, selected.threadId, { limit: 20, max_bytes: CONTENT_BUDGET }, { signal });
++      const result = await client.getThreadPosts(space.id, selected.threadId, { limit: 20, max_bytes: CONTENT_BUDGET, sort: 'created_at_asc' }, { signal });
+       const [actualThread] = threads([result.data.thread]);
+       const items = posts(result.data); const next = nextCursor(result.meta);
+       if (!actualThread || actualThread.id !== selected.threadId || result.data.thread.space_id !== space.id) throw new ClientProtocolError('Invalid referenced thread response.');
+@@ -380,7 +381,7 @@
+       setFirstTitle(''); setFirstSummary(''); setFirstBody(''); setView('discussion'); setThread(created);
+       clearComposer(); setContent(initial); setPostPage([]); setPostCursor(null);
+       try {
+-        const page = await client.getThreadPosts(operation.spaceId, created.id, { limit: 20, max_bytes: CONTENT_BUDGET }, { signal });
++        const page = await client.getThreadPosts(operation.spaceId, created.id, { limit: 20, max_bytes: CONTENT_BUDGET, sort: 'created_at_asc' }, { signal });
+         const items = posts(page.data); const next = nextCursor(page.meta);
+         if (id === generation.current) { setPostPage(items); setPostCursor(next); }
+         if (initial) {
+@@ -489,7 +490,7 @@
+       if (id === generation.current) {
+         setIntent(null); clearComposer();
+         try {
+-          const page = await client.getThreadPosts(operation.spaceId, operation.threadId, { limit: 20, max_bytes: CONTENT_BUDGET }, { signal });
++          const page = await client.getThreadPosts(operation.spaceId, operation.threadId, { limit: 20, max_bytes: CONTENT_BUDGET, sort: 'created_at_asc' }, { signal });
+           const items = posts(page.data); const next = nextCursor(page.meta);
+           if (id === generation.current) { setPostPage(items); setPostCursor(next); }
+         } catch (e) { if (id === generation.current) setError(`帖子已发布，但目录刷新未完成。${errorText(e)}`); }
+@@ -535,13 +536,13 @@
+             <ul className="directory threads">{threadPage.map(item => <li key={item.id}><button aria-pressed={thread?.id === item.id} onClick={() => loadPosts(item)}>{item.title}<span>{item.state === 'open' ? '开放' : '归档'} · 查看帖子 →</span></button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadThreads(threadState)}>主题首页</button>{threadCursor && <button disabled={busy} onClick={() => loadThreads(threadState, threadCursor)}>下一页主题</button>}</div>
+           </section>}
+-          {thread && view === 'discussion' && <section className="panel" aria-labelledby="posts-heading"><div className="section-heading"><h2 id="posts-heading">{thread.title}</h2><span>帖子列表</span></div>
++          {thread && view === 'discussion' && <section className="panel" aria-labelledby="posts-heading"><div className="section-heading"><h2 id="posts-heading">{thread.title}</h2><span>按创建时间 · 历史未知时间置末</span></div>
+             {!postPage.length && !busy && <p className="empty">当前页暂无帖子。</p>}
+             <ul className="post-directory">{postPage.map(item => <li key={item.id}><div><strong>{item.kind}</strong><small>{item.id}</small><span>{item.lifecycle}</span></div><button onClick={() => openPost(item.id, item.current_revision)}>查看修订 {item.current_revision}</button></li>)}</ul>
+             <div className="paging"><button className="quiet" disabled={busy} onClick={() => loadPosts(thread)}>帖子首页</button>{postCursor && <button disabled={busy} onClick={() => loadPosts(thread, postCursor)}>下一页帖子</button>}</div>
+           </section>}
+           {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'overview' ? '返回空间概览' : (resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{view === 'overview' && <p className="reference">当前从概览打开固定正文；可在所属主题内阅读后引用。</p>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+-            {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><pre className="body-text">{content.document.body}</pre><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
++            {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><SafeMarkdown source={content.document.body} label="正文"/><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+             <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button>{view !== 'overview' && <button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button>}</div>
+             <RevisionEvidence busy={busy} revisions={revisions} currentRevision={catalogCurrent} revisionsLoaded={revisionsLoaded} revisionCursor={revisionCursor}
+               loadRevisions={loadRevisionCatalog} openRevision={revision => openPost(content.postId, revision, resultReading?.threadId)}

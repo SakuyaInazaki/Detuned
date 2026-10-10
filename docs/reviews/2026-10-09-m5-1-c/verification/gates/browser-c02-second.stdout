@@ -1,0 +1,28 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 1 test using 1 worker
+
+  ✘  1 scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page (697ms)
+
+
+  1) scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      80 |   expect(second.data.length).toBe(2); expect(second.meta.next_cursor).toBeNull();
+      81 |   const request = forum.httpEvents.filter(value => value.path.endsWith('/search')).at(-1)!;
+    > 82 |   expect(request.query !== undefined && request.query.cursor === first.meta.next_cursor && request.query.q === 'Quasar' && request.query.kind === 'note' && request.query.thread_id === other.id && request.query.tags === 'science,fixed').toBe(true);
+         |                                                                                                                                                                                                                                             ^
+      83 |   const selected = targets.get(second.data[0].post_id)!; await forum.revisePost(selected, {body: 'Revised current body.'});
+      84 |   await page.locator('.search-results li').filter({hasText: selected.id}).getByRole('button', {name: '查看搜索修订 1', exact: true}).click();
+      85 |   await expect(page.locator('.body-text')).toBeVisible(); expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, selected.body)).toBe(true);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-c.spec.ts:82:237
+
+    Error Context: docs/reviews/2026-10-09-m5-1-c/verification/browser-c02-second/playwright-output/m5-c-C02-real-search-filte-a6c92-eturn-preserve-applied-page/error-context.md
+
+  1 failed
+    scripts/integrations/web/m5-c.spec.ts:56:1 › C02 real search filters/cursor, fixed old result and return preserve applied page 
+[ELIFECYCLE] Command failed with exit code 1.

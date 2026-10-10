@@ -1,0 +1,20 @@
+--- docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-b4-2-boundaries.mjs
++++ docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-b4-2-boundaries.mjs
+@@ -9,7 +9,7 @@
+ import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate } from '../../../../../packages/storage-sqlite/dist/index.js';
+ import { extractResultRef } from '../../../../../packages/core/dist/index.js';
+ 
+-// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++// M6.2-A: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
+ import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
+ function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
+ 
+@@ -42,7 +42,7 @@
+ function clone(name, logicalV1 = false) {
+   const path = join(dir, `${name}.sqlite`); writeFileSync(path, db.serialize());
+   const database = new Database(path);
+-  if (logicalV1) database.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++  if (logicalV1) database.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+   return { path, database };
+ }
+ function setRef(database, key, value) {

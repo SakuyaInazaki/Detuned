@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-10-06T15:46:05.790501+00:00",
+  "state": "prepared; product tests not run; no build",
+  "files": {
+    "tests/integration/m3-export-independent.test.ts": "6c130fb00bcca5f03b9f61a66be72eff3db5d6df49031751d6adab11bfbffa0a",
+    "tests/helpers/m3-export-worker.mjs": "86954f6ebbc3b699c578cd376bf39b17c6a60fda14798b7bf2d8782fd04ed44e"
+  },
+  "only_preflight": {
+    "command": "node --check tests/helpers/m3-export-worker.mjs",
+    "exit": 0
+  },
+  "matrix": [
+    {
+      "case": 1,
+      "scope": "real HTTP, shared client and CLI, history/source identity/relation resolution, cross-space and private sentinels, projected hashes, artifact tombstones, destination nooverwrite"
+    },
+    {
+      "case": 2,
+      "scope": "IPC after T0 snapshot open/header, concurrent real writer accepted but excluded; in-space post redaction and same-actor membership revocation no terminal; revoked CLI no final"
+    },
+    {
+      "case": 3,
+      "scope": "fixed raw HTTP valid chain and ten malformed modes, CLI truncation removes only its temp"
+    },
+    {
+      "case": 4,
+      "scope": "one 640-row exact 64KiB ~40MiB streamed material, discarded sink/setImmediate scheduling; real process heap samples are bounded observations not proof; hanging sink abort and timeout; small fresh-export followup"
+    }
+  ],
+  "limits": "No model/network inference, no600s load, no four harness evaluation. WAL-only export readiness separate from backup DELETE support.",
+  "fixture_delta": "Before any execution: parent approved finite 40MiB; stored fixture adjusted640\u00d764KiB, no duplicate run. Memory server sample counters reset immediately before large export; after hanging-sink cancellation bounded IPC stats confirm active slots released.",
+  "scope_clarification": "Parent confirmed structured known references only source_refs/subject_refs/evidence_refs/target_ref plus SpaceRevision.pinned_refs. structured.pinned_refs is unknown research data, no recursive secret recognition.",
+  "credential_scope": "Exact fixture live admin/ordinary token checks in memory use boolean assertions only, never include token as expectation text."
+}

@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m7-check-http-client-independent.test.ts (10 tests) 2505ms
+   ✓ HI04 true TCP response-loss after actual commit replays immutable receipt with exact key and no getMe request  1519ms
+ ✓ tests/integration/m7-check-domain-independent.test.ts (7 tests) 1039ms
+   ✓ MI05 two real SQLite processes race expected request version; same-key replay commits one additional attempt  350ms
+ ✓ tests/integration/m7-fixed-verifier-independent.test.ts (17 tests) 5801ms
+   ✓ VI02 genuine fixed materials and standalone TCP runner submit 'fail'; terminal repeat never claims recovery  603ms
+   ✓ VI02 genuine fixed materials and standalone TCP runner submit 'pass'; terminal repeat never claims recovery  500ms
+   ✓ VI06 real committed upload and receipt response loss retry within their same client calls with stable keys  2680ms
+   ✓ VI07 after real log publication a new process with old keys conflicts safely rather than reconstructing a previous execution  394ms
+ ✓ tests/integration/m7-check-scope-artifacts.test.ts (5 tests) 325ms
+ ✓ tests/integration/m6-review-private-artifacts.test.ts (6 tests) 299ms
+ ✓ tests/integration/m4-artifact-client.test.ts (8 tests) 178ms
+ ✓ tests/integration/m7-fixed-verifier.test.ts (5 tests) 1024ms
+   ✓ FV03 genuine first-discovery fail and controlled after-preflight environment error retain different meanings  321ms
+ ✓ tests/contracts/m6-review-canonicalization.test.ts (7 tests) 66ms
+ ✓ tests/contracts/m7-check-client.test.ts (9 tests) 24ms
+
+ Test Files  9 passed (9)
+      Tests  74 passed (74)
+   Start at  02:10:56
+   Duration  14.22s (transform 509ms, setup 0ms, collect 1.75s, tests 11.26s, environment 1ms, prepare 231ms)
+

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "packages/storage-sqlite/tests/schema-generation.test.ts",
+    "packages/storage-sqlite/tests/storage.test.ts",
+    "tests/integration/historical-http-replay.test.ts",
+    "tests/integration/m6-review-requests.test.ts",
+    "tests/integration/m6-schema3-maintenance.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 0,
+  "duration_s": 8.492,
+  "product_version": "A-v4/B-v3",
+  "maxWorkers": 1,
+  "file_parallelism": false
+}

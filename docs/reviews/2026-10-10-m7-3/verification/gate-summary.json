@@ -1,0 +1,78 @@
+{
+  "status": "functional_validation_complete_pending_root_acceptance",
+  "new_cases": {
+    "A": 2,
+    "D": 6,
+    "total": 8,
+    "included_in_full": true
+  },
+  "first_focused": {
+    "passed": 40,
+    "total": 42,
+    "files_passed": 5,
+    "files_total": 7,
+    "exit": 1,
+    "seconds": 19.346,
+    "failures": [
+      "DJ01",
+      "DI01"
+    ],
+    "reason": "Demo observer selected source failure row, while relation projection uses target incoming rows. Both stopped at accepted getOriginalChallenge; later DI01 assertions not reached."
+  },
+  "repair": {
+    "A_main_only": "Existing findings fixed original A claim target row + exact challenge ID, no core/API/relations/tests/assertion/timeout changes",
+    "main_syntax": 0,
+    "related_tests": 8,
+    "related_files": 2,
+    "exit": 0,
+    "seconds": 8.495,
+    "build_noemit_focused42_not_repeated": true
+  },
+  "full_once": {
+    "passed": 964,
+    "total": 964,
+    "files_passed": 154,
+    "files_total": 154,
+    "exit": 0,
+    "seconds": 330.292
+  },
+  "other_gates": {
+    "source-noemit-first.json": {
+      "exit": 0,
+      "seconds": 0.991
+    },
+    "schema-first.json": {
+      "exit": 0,
+      "seconds": 0.071
+    },
+    "build-first.json": {
+      "exit": 0,
+      "seconds": 11.058
+    },
+    "syntax-1-first.json": {
+      "exit": 0,
+      "seconds": 0.053
+    },
+    "syntax-1-repair.json": {
+      "exit": 0,
+      "seconds": 0.054
+    },
+    "syntax-2-first.json": {
+      "exit": 0,
+      "seconds": 0.043
+    },
+    "lint-first.json": {
+      "exit": 0,
+      "seconds": 8.299
+    },
+    "typecheck-first.json": {
+      "exit": 0,
+      "seconds": 8.626
+    }
+  },
+  "current_probes": "No current28/29 executed in M7.3. Accepted sealed B2 evidence reused.",
+  "counts_rule": "New8 included in full964, not added; firstfocused40/42 + related8/8 combination retains first failure, not claim first focused all green. One full only.",
+  "integrity_sha256": "8c7c3eda80b046ba25946e2145cd8084aa3e15f057d49f276373db933ba59e62",
+  "cleanup_sha256": "130d89b124b47be2230107e73c467ecb6edd4a32cff7f9321735b08340b79fc4",
+  "scope": "Bounded local deterministic no-model D01 journey; not mathematical proof, native host certification, disk crash/backup recovery, cross-process verifier recovery or M8 effectiveness."
+}

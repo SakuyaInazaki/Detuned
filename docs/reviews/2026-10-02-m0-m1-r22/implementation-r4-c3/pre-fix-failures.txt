@@ -1,0 +1,99 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/r4-c-contracts.test.ts (27 tests | 4 failed) 6441ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false) 126ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-2: parseIntegerQuery rejects non-digits, negative numbers, and out-of-range values 38ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-3: Core RelationService rejects invalid relation type without committing state 32ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-4: Valid relation creation and resolve/reopen lifecycle maintains idempotency and symmetry 33ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-5: Query, body, and reference validation rejects without side effects 29ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-6: Unknown query on write routes and unexpected body on no-body write routes reject before mutation (AD01) 25ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-7: OpenAPI 3.1 specification body constraints agree with existing protocol and HTTP (AD02) 44ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-8: OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03) 53ms
+     → expected true to be false // Object.is equality
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-1: HTTP 200/201 with malformed JSON rejects with ClientProtocolError 25ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-2: Missing envelope fields (api_version, request_id, data) reject with ClientProtocolError 22ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-3: Strictly preserves valid falsy data values and allows forward-compatible envelope fields 22ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-4: Distinguishes UserAbortError from TimeoutError 72ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-5: Abort listener and timer are cleanly removed in all 5 cancellation phases and on settle 44ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3880ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-7: Preserves server REVISION_CONFLICT error independently of message wording 22ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1530ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-9: Unsolicited AbortError and network failures are distinguished from user abort and server DetunedError (AD03) 21ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-10: Single attempt timeout timer and external abort listener are cleared before backoff starts (AD04) 21ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-11: Oversized Retry-After stops automatic retries safely without Node timer overflow (AD05) 21ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-12: Cancellation and timeout win over pending body fulfillment on 200 and 409 responses (AE01) 20ms
+     → expected undefined to be defined
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-13: Body stream transport classification, unsolicited abort, and retry allowlist (AE02) 24ms
+     → expected ClientProtocolError: 响应体 JSON 解析失败: termi… { isProtocolError: true } to be an instance of ClientTransportError
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-14: Finite Retry-After positive controls: HTTP-date, invalid fallback, and date over budget (AE05) 24ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-1: /forum-status and /forum-check log exact message and level to console when hasUI is false (headless) for both success and failure 23ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-2: /forum-status and /forum-check notify ui when hasUI is true for both success and failure 22ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-3: Root package.json engines.node is >=22.19.0 to match Pi dependency requirements 20ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-4: Registered Pi tools adapt TypeBox schemas cleanly and propagate protocol and business errors 23ms
+   × R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04) 221ms
+     → expected undefined to be defined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-8: OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/contracts/r4-c-contracts.test.ts:488:26
+    486|         headers: { authorization: `Bearer ${adminToken}` },
+    487|       });
+    488|       expect(limitValid).toBe(limitRes.statusCode < 400);
+       |                          ^
+    489|       expect(limitRes.statusCode).toBe(400);
+    490| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-12: Cancellation and timeout win over pending body fulfillment on 200 and 409 responses (AE01)
+AssertionError: expected undefined to be defined
+ ❯ tests/contracts/r4-c-contracts.test.ts:1259:31
+    1257| 
+    1258|             const expectedName = mode === 'user' ? 'UserAbortError' : …
+    1259|             expect(resultErr).toBeDefined();
+       |                               ^
+    1260|             expect(resultErr.name).toBe(expectedName);
+    1261|             expect(calls).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-13: Body stream transport classification, unsolicited abort, and retry allowlist (AE02)
+AssertionError: expected ClientProtocolError: 响应体 JSON 解析失败: termi… { isProtocolError: true } to be an instance of ClientTransportError
+ ❯ tests/contracts/r4-c-contracts.test.ts:1299:26
+    1297|             caught = e;
+    1298|           }
+    1299|           expect(caught).toBeInstanceOf(ClientTransportError);
+       |                          ^
+    1300|           expect(calls).toBe(1);
+    1301|           expect(caught.cause?.cause?.code).toBe('UND_ERR_SOCKET');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/contracts/r4-c-contracts.test.ts > R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)
+AssertionError: expected undefined to be defined
+ ❯ tests/contracts/r4-c-contracts.test.ts:1692:51
+    1690|       const pubResult = await publishTool.execute('call-live-pub', val…
+    1691|       expect(pubResult).toBeDefined();
+    1692|       expect(pubResult.details?.data?.thread?.id).toBeDefined();
+       |                                                   ^
+    1693|     } finally {
+    1694|       if (oldBaseUrl !== undefined) process.env.DETUNED_BASE_URL = old…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 23 passed (27)
+   Start at  09:21:31
+   Duration  6.98s (transform 187ms, setup 0ms, collect 326ms, tests 6.44s, environment 0ms, prepare 43ms)
+

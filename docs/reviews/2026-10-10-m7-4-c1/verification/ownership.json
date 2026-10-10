@@ -1,0 +1,26 @@
+{
+  "status": "fresh only; root implementation dispatch required",
+  "task_path": "docs/reviews/2026-10-10-m7-4-c/planning/m7-4-c1-task.md",
+  "task_sha256": "dd249e1a979023b485dc6731ac485166afd30779ce45c95c5129de62028525e9",
+  "source_owner_path": "docs/reviews/2026-10-10-m7-4-c/planning/m7-4-c1-ownership.md",
+  "source_owner_sha256": "c1b171ac3274ea24d910aa381b08f53c63543ed6952d707ebdd47f118c85d096",
+  "existing": {
+    "scripts/integrations/codex-check-probe.mjs": {
+      "owner": "A",
+      "sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99",
+      "before": "before/scripts/integrations/codex-check-probe.mjs"
+    }
+  },
+  "new": {
+    "tests/contracts/m7-codex-owned-group.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    }
+  },
+  "counts": {
+    "existing": 1,
+    "missing": 1
+  },
+  "B": "static review",
+  "D": "new independent exact-owned-group test plus verification only"
+}

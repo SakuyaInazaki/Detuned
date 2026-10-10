@@ -1,0 +1,8 @@
+tests/contracts/m4-cli-boundaries-independent.test.ts(14,691): error TS2345: Argument of type '{ DETUNED_TOKEN?: undefined; DETUNED_TOKEN_FILE?: undefined; } | { DETUNED_TOKEN: string; DETUNED_TOKEN_FILE?: undefined; } | { DETUNED_TOKEN_FILE: string; DETUNED_TOKEN?: undefined; }' is not assignable to parameter of type 'Record<string, string> | undefined'.
+  Type '{ DETUNED_TOKEN?: undefined; DETUNED_TOKEN_FILE?: undefined; }' is not assignable to type 'Record<string, string>'.
+    Property 'DETUNED_TOKEN' is incompatible with index signature.
+      Type 'undefined' is not assignable to type 'string'.
+tests/contracts/m4-cli-boundaries-independent.test.ts(14,989): error TS2345: Argument of type '{ DETUNED_TOKEN?: undefined; DETUNED_TOKEN_FILE?: undefined; } | { DETUNED_TOKEN: string; DETUNED_TOKEN_FILE?: undefined; } | { DETUNED_TOKEN_FILE: string; DETUNED_TOKEN?: undefined; } | { ...; } | ... 4 more ... | { ...; }' is not assignable to parameter of type 'Record<string, string> | undefined'.
+  Type '{ DETUNED_TOKEN?: undefined; DETUNED_TOKEN_FILE?: undefined; }' is not assignable to type 'Record<string, string>'.
+    Property 'DETUNED_TOKEN' is incompatible with index signature.
+      Type 'undefined' is not assignable to type 'string'.

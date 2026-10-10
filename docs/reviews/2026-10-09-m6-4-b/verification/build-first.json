@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "-r",
+    "--workspace-concurrency=1",
+    "run",
+    "build"
+  ],
+  "exit_code": 0,
+  "seconds": 10.243,
+  "stdout": "build-first.stdout.txt",
+  "stderr": "build-first.stderr.txt",
+  "concurrency": "workspace=1; single global execution window",
+  "input_freeze": "independent-source-freeze-first.json"
+}

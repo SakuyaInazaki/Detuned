@@ -1,0 +1,1549 @@
+{
+  "runtime": "v26.3.0",
+  "policies": [
+    {
+      "method": "POST",
+      "path": "/admin/actors",
+      "body": "CreateActorRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateActorRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/admin/credentials",
+      "body": "CreateCredentialRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateCredentialRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/admin/credentials/{id}/revoke",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": {
+        "accepted": [
+          "undefined",
+          "null",
+          "{}"
+        ],
+        "rejected": "nonempty objects, arrays and primitives"
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/capabilities",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/me",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces",
+      "body": "CreateSpaceRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateSpaceRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/spaces/{space_id}",
+      "body": "PatchSpaceRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "PatchSpaceRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/spaces/{space_id}/consumers/{id}",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": {
+        "accepted": [
+          "undefined",
+          "null",
+          "{}"
+        ],
+        "rejected": "nonempty objects, arrays and primitives"
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/consumers/{id}/ack",
+      "body": "AckRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "AckRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/consumers/{id}/poll",
+      "body": "PollRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "PollRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/context",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "max_bytes",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 4096,
+            "maximum": 65536,
+            "default": 12288
+          }
+        },
+        {
+          "name": "focus_thread_id",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/memberships",
+      "body": "CreateMembershipRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateMembershipRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/spaces/{space_id}/memberships/{actor_id}",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "actor_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": {
+        "accepted": [
+          "undefined",
+          "null",
+          "{}"
+        ],
+        "rejected": "nonempty objects, arrays and primitives"
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/spaces/{space_id}/memberships/{actor_id}",
+      "body": "PatchMembershipRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "actor_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "PatchMembershipRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/posts/{id}",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "revision",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/posts/{id}/revisions",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/posts/{id}/revisions",
+      "body": "CreatePostRevisionRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreatePostRevisionRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/posts/{id}/withdraw",
+      "body": "WithdrawPostRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "WithdrawPostRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/redactions",
+      "body": "CreateRedactionRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateRedactionRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/relations",
+      "body": "CreateRelationRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateRelationRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/relations/{id}/reopen",
+      "body": "ReopenRelationRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "ReopenRelationRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/relations/{id}/resolve",
+      "body": "ReopenRelationRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "ReopenRelationRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/search",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "q",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "description": "Trim before checking length: 1–256 JavaScript string code units. Authorization and business validation remain in core.",
+          "x-trimmed-length": {
+            "minimum": 1,
+            "maximum": 256
+          }
+        },
+        {
+          "name": "kind",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "note",
+              "question",
+              "proposal",
+              "claim",
+              "objection",
+              "failure",
+              "summary",
+              "review",
+              "decision"
+            ]
+          }
+        },
+        {
+          "name": "tags",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "One comma-separated string; repeated parameters reject. Empty string yields []; trim entries and omit empty entries.",
+          "style": "form",
+          "explode": false
+        },
+        {
+          "name": "thread_id",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/sessions",
+      "body": "CreateSessionRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateSessionRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/subscriptions",
+      "body": "CreateSubscriptionRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateSubscriptionRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/threads",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "state",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "open",
+              "archived"
+            ]
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/threads",
+      "body": "CreateThreadRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreateThreadRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/threads/{id}",
+      "body": "none",
+      "body_required": false,
+      "query": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "PATCH",
+      "path": "/spaces/{space_id}/threads/{id}",
+      "body": "PatchThreadRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "PatchThreadRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/spaces/{space_id}/threads/{id}/posts",
+      "body": "CreatePostRequestSchema",
+      "body_required": true,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "business_headers": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        }
+      ],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": "CreatePostRequestSchema",
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/spaces/{space_id}/views/{name}",
+      "body": "none",
+      "body_required": false,
+      "query": [],
+      "params": [
+        {
+          "name": "space_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "failures",
+              "findings",
+              "open-questions"
+            ]
+          }
+        }
+      ],
+      "business_headers": [],
+      "query_policy": {
+        "unknown_fields": "reject",
+        "repeated_parameters": "reject; CSV values use one comma-separated parameter",
+        "omitted": "use declared default, otherwise undefined; required parameters reject",
+        "empty": "integer and scalar string reject; tags CSV accepts empty as []",
+        "integer": "decimal digits only after trimming, safe integer, no body coercion"
+      },
+      "no_body_policy": null,
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "source": {
+        "body": null,
+        "parameters": "protocol/src/request-policies.ts + openapi.ts; server utils/query.ts + actual route",
+        "assertion": "r4-c-route-contracts.test.ts G01; representative behavior G02–G04; existing C01-1–8"
+      }
+    }
+  ],
+  "note": "Transport extensions document policy; ordinary OpenAPI parameter validation does not implement unknown or repeated query rejection. Standard HTTP headers are allowed. Path IDs remain strings; ACL and business existence checks stay in core."
+}

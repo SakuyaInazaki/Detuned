@@ -1,0 +1,75 @@
+{
+  "stage": "root-authorized red only completed; stop before product fixes/full release",
+  "build_runs": [
+    {
+      "label": "first",
+      "exit": 2,
+      "reason": "protocol generic TS write errors"
+    },
+    {
+      "label": "v2",
+      "exit": 0,
+      "seconds": 10.945,
+      "full_dist_inventory": "build-red-v2-dist.json"
+    },
+    {
+      "label": "v3",
+      "exit": 2,
+      "reason": "AJV plugin Fastify context/return typing"
+    },
+    {
+      "label": "v4",
+      "exit": 0,
+      "seconds": 10.224,
+      "full_dist_inventory": "build-red-v4-dist.json"
+    }
+  ],
+  "red_three_first": {
+    "exit": 1,
+    "seconds": 1.691,
+    "failed": 3,
+    "skipped": 12,
+    "reason": "Fastify x-max-codepoints boot blocker; none reached intended assertion"
+  },
+  "red_four_first": {
+    "exit": 1,
+    "seconds": 1.836,
+    "failed": 4,
+    "skipped": 12,
+    "findings": {
+      "HI09": "realTCP receipt201 and actualpass/invalidate commits, publicget/directory/invalidate response409 afterClockrollback instead200",
+      "HI10": "actualscopedcontent statuses401/404/410 all Cache-Control=null",
+      "CH03": "controlled501emoji invalidation reason guard accepts true insteadfalse",
+      "CH04": "actualOpenAPI revision genericminLength1 lacks canonicaldigits pattern"
+    }
+  },
+  "raw_paths": [
+    "red-four-first.json",
+    "red-four-first.stdout.txt",
+    "red-four-first.stderr.txt"
+  ],
+  "raw_hashes": {
+    "red-four-first.json": "7f1a1c29b9d19df0a02a4da9fc0b218fd9f45b0331e7a08801aee5957fb9536f",
+    "red-four-first.stdout.txt": "cf1f26d0e99f2b0bf4b13025566a95c0c1a232e5f5135eb441d8ae1f791c0993",
+    "red-four-first.stderr.txt": "05f76c84164fd5cefdf2c0bc32cf81d05b70332e6d192cd13744b048ee50cff5"
+  },
+  "othergates": "No focused/noEmit/type/lint/schema/full/current run",
+  "cleanup": {
+    "registered_pids": [
+      25874,
+      25876,
+      26247,
+      26250,
+      26595,
+      26596,
+      27222,
+      27224,
+      27745,
+      27747,
+      28020,
+      28021
+    ],
+    "live": [],
+    "no_actions": "fixture-ownedfinally cleanup; no oldtmp scan orkill; no independentcompletefixturecensus"
+  }
+}

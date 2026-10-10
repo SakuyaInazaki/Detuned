@@ -1,0 +1,38 @@
+--- tests/integration/m6-review-requests-independent.test.ts (fresh exact before)
++++ tests/integration/m6-review-requests-independent.test.ts (current)
+@@ -1,6 +1,6 @@
+ import {afterEach, expect, it} from 'vitest';
+ import Database from 'better-sqlite3';
+-import {mkdtemp, rm, writeFile} from 'node:fs/promises';
++import {mkdir,mkdtemp, rm, writeFile} from 'node:fs/promises';
+ import {tmpdir} from 'node:os';
+ import path from 'node:path';
+ import {fileURLToPath} from 'node:url';
+@@ -86,7 +86,7 @@
+  f.storage.upsertMembership({...f.storage.getMembership(f.sid,f.ids.one)!,reviewer_eligible:false,independence_group:'current-group-changed'});f.storage.upsertMembership({...f.storage.getMembership(f.sid,f.ids.two)!,independence_group:'current-group-changed'});const counts=f.counts();f.reopen();
+  expect(create(f,'history',creator)).toEqual(first);
+  expect(f.service.cancelRequest(f.context(creator),f.sid,first.id,{expected_version:1,reason:'owned cancellation'},'cancel-key')).toEqual(cancel);expect(f.counts()).toEqual(counts);
+- expect(f.service.getRequest(f.context(f.ids.reader),f.sid,first.id)).toEqual(cancel);
++ expect(f.service.getRequest(f.context(f.ids.reader),f.sid,first.id)).toEqual({...cancel,submitted_count:0});
+  rejected(()=>create(f,'history',creator,{...f.request,reproduction_instructions:'changed owned payload'}),'IDEMPOTENCY_CONFLICT',409);
+  rejected(()=>f.service.cancelRequest(f.context(creator),f.sid,first.id,{expected_version:2,reason:'fresh second cancel'},'new-key'),'VALIDATION_ERROR',400);
+ });
+@@ -172,7 +172,7 @@
+   rejected(()=>f.service.getSnapshot(f.context(f.ids.reader),f.sid,affected.snapshot_id),'CONTENT_REDACTED',410);
+   rejected(()=>f.service.getRequest(f.context(f.ids.reader),f.sid,affected.id),'CONTENT_REDACTED',410);
+   rejected(()=>create(f,'m01-affected',f.ids.author,req),'CONTENT_REDACTED',410);
+-  expect(f.service.getRequest(f.context(f.ids.reader),f.sid,safe.id)).toEqual(safe);
++  expect(f.service.getRequest(f.context(f.ids.reader),f.sid,safe.id)).toEqual({...safe,submitted_count:0});
+   expect(f.service.getSnapshot(f.context(f.ids.reader),f.sid,safe.snapshot_id).snapshot_id).toBe(safe.snapshot_id);
+   expect(f.db.prepare("SELECT result_ref FROM idempotency_records WHERE operation LIKE 'review.request.%' ORDER BY key").all()).toEqual(beforeRefs);
+   const member=f.storage.getMembership(f.sid,f.ids.reader)!;f.storage.upsertMembership({...member,active:false});
+@@ -185,6 +185,8 @@
+   outcomes[outcomes.length-1]!.corruption_refused=refused;
+  }
+  const label=process.env.DETUNED_REVIEW_EVIDENCE_LABEL??'next';if(!/^[a-z0-9-]{1,32}$/.test(label))throw new Error('Invalid owned evidence label');
+- await writeFile(path.join(root,'docs/reviews/2026-10-09-m6-1-b/verification/DI07-'+label+'-observations.json'),JSON.stringify({outcomes,privacy_checks_only_after_successful_reopen:true},null,2)+'\n');
++ const evidenceRoot=process.env.DETUNED_REVIEW_EVIDENCE_DIR??path.join(root,'test-results/review');
++ await mkdir(evidenceRoot,{recursive:true});
++ await writeFile(path.join(evidenceRoot,'DI07-'+label+'-observations.json'),JSON.stringify({outcomes,privacy_checks_only_after_successful_reopen:true},null,2)+'\n');
+  expect(outcomes).toEqual(['target','dependency','artifact'].map(variant=>({variant,reopened:true,corruption_refused:true})));
+ },5000);

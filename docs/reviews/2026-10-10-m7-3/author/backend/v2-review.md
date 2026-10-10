@@ -1,0 +1,5 @@
+# v2 lifecycle repair
+
+Static peer review found that v1 closed() could resolve from exitCode/signalCode before the actual close event. track() now creates and caches one actual-close promise per owned child; only close updates ledger and removes ownership. All command, stop and worker shutdown waits use that promise. Spawn/fork error is consumed and recorded as a safe internal failure; it does not resolve the close promise. Normal command/worker/server restart checks require actual close with exit 0 and signal null. Cancellation keeps its separate bounded own-child termination semantics. Original failure remains preferred over cleanup errors. No runtime was run; v1 evidence retained.
+
+Fourth static lifecycle finding: mkdtemp could reject before the main try/finally after the external listener and 45s timer were installed. Its precise failure catch now clears that timer, removes that listener and rethrows the original error; no directory exists to delete on this path. All four findings are static; no runtime red/green evidence is claimed.

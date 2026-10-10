@@ -1,0 +1,18 @@
+node:internal/modules/esm/resolve:314
+  return new ERR_PACKAGE_PATH_NOT_EXPORTED(
+         ^
+
+Error [ERR_PACKAGE_PATH_NOT_EXPORTED]: No "exports" main defined in /var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-hr1-generate-Q3Dh7m/old/packages/core/node_modules/@detuned/protocol/package.json
+    at exportsNotFound (node:internal/modules/esm/resolve:314:10)
+    at packageExportsResolve (node:internal/modules/esm/resolve:605:13)
+    at resolveExports (node:internal/modules/cjs/loader:709:36)
+    at Module._findPath (node:internal/modules/cjs/loader:776:31)
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1504:27)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1073:27)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1124:12)
+    at require.resolve (node:internal/modules/helpers:209:31)
+    at file:///Users/sakimi/Desktop/Detuned/scripts/history-fixtures/generate-b8dacd5.mjs:37:127 {
+  code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'
+}
+
+Node.js v26.3.0

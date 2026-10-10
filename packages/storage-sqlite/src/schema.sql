@@ -242,3 +242,148 @@ CREATE VIRTUAL TABLE IF NOT EXISTS post_fts USING fts5(
   tags,
   tokenize="trigram"
 );
+
+
+CREATE TABLE IF NOT EXISTS snapshots (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  manifest_json TEXT NOT NULL,
+  manifest_sha256 TEXT NOT NULL,
+  policy_revision INTEGER NOT NULL,
+  rules_revision INTEGER NOT NULL,
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS snapshot_items (
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  item_type TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  revision INTEGER NOT NULL,
+  sha256 TEXT,
+  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
+);
+
+CREATE TABLE IF NOT EXISTS review_requests (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  round INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  version INTEGER NOT NULL,
+  requested_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  UNIQUE (space_id, target_post_id, round)
+);
+
+CREATE TABLE IF NOT EXISTS review_request_versions (
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  version INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  PRIMARY KEY (request_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS review_assignments (
+  id TEXT NOT NULL UNIQUE,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  group_at_assignment TEXT,
+  PRIMARY KEY (request_id, reviewer_actor_id)
+);
+
+CREATE TABLE IF NOT EXISTS review_submissions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  assignment_id TEXT NOT NULL UNIQUE REFERENCES review_assignments(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  reviewer_session_id TEXT NOT NULL UNIQUE REFERENCES sessions(id),
+  snapshot_sha256 TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  submitted_at TEXT NOT NULL,
+  revealed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS review_decisions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL UNIQUE REFERENCES review_requests(id),
+  actor_id TEXT NOT NULL REFERENCES actors(id),
+  snapshot_sha256 TEXT NOT NULL,
+  review_ids_json TEXT NOT NULL,
+  check_receipt_ids_json TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  rationale TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS snapshot_items_material_idx ON snapshot_items(item_type,item_id,snapshot_id);
+CREATE INDEX IF NOT EXISTS review_requests_active_idx ON review_requests(space_id,phase,snapshot_id);
+
+CREATE TABLE IF NOT EXISTS check_runs (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  snapshot_sha256 TEXT NOT NULL,
+  check_name TEXT NOT NULL,
+  attempt INTEGER NOT NULL CHECK (attempt > 0),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  check_config_sha256 TEXT NOT NULL,
+  created_request_version INTEGER NOT NULL CHECK (created_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  version INTEGER NOT NULL CHECK (version > 0),
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  UNIQUE (request_id, check_name, attempt)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_versions (
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  version INTEGER NOT NULL CHECK (version > 0),
+  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  receipt_id TEXT,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  PRIMARY KEY (check_run_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS check_receipts (
+  receipt_id TEXT PRIMARY KEY,
+  check_run_id TEXT NOT NULL UNIQUE REFERENCES check_runs(id),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  observed_snapshot_sha256 TEXT NOT NULL,
+  observed_check_config_sha256 TEXT NOT NULL,
+  result TEXT NOT NULL CHECK (result IN ('pass','fail','error')),
+  environment TEXT NOT NULL,
+  tool_versions_json TEXT NOT NULL,
+  execution_steps TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT NOT NULL,
+  exit_code INTEGER NOT NULL,
+  logs_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+  received_at TEXT NOT NULL,
+  run_version INTEGER NOT NULL CHECK (run_version > 0)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_credentials (
+  credential_id TEXT PRIMARY KEY REFERENCES credentials(id),
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS check_run_credentials_run_idx ON check_run_credentials(check_run_id);

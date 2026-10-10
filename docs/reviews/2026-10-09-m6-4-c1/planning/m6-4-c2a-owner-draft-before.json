@@ -1,0 +1,43 @@
+{
+  "status": "draft_pending_root_and_web_facts_not_implementation_authorization",
+  "A_candidates": {
+    "existing": [
+      "packages/core/src/services/search-service.ts",
+      "packages/core/src/services/knowledge-projection.ts",
+      "packages/core/src/index.ts",
+      "modules/review/src/status-service.ts",
+      "packages/protocol/src/search.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/client/src/client.ts"
+    ],
+    "new": [
+      "packages/core/src/services/review-status-facts.ts",
+      "tests/integration/m6-knowledge-status.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts"
+    ],
+    "conditional": [
+      "packages/protocol/src/index.ts",
+      "packages/server/src/routes/search.ts"
+    ]
+  },
+  "B_web_pending": {
+    "known_required_adaptation": "packages/web/src/knowledge.tsx",
+    "other_paths": "pending B facts and root scope; no empty interface"
+  },
+  "D_candidates": {
+    "new": [
+      "tests/integration/m6-knowledge-status-independent.test.ts"
+    ],
+    "browser": "pending root Web scope",
+    "execution": "sole serial check window"
+  },
+  "protected": [
+    "SQL/schema/migrations",
+    "dependency manifests/lock",
+    "public submission search/FTS",
+    "M7 checks/receipts",
+    "sealed old reviews",
+    "current C1 product sources"
+  ]
+}

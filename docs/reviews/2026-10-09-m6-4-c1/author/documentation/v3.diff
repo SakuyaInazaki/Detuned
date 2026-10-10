@@ -1,0 +1,33 @@
+--- examples/README.md v2
++++ examples/README.md v3
+@@ -59,7 +59,7 @@
+ 
+ - [正式评审HTTP与共享客户端](review-http.md)：当前十三操作（含历史目录）、真实reviewer session、sealed/揭示/裁决及私有证据；评审CLI/MCP/Pi已有限接入，正式Web评审已有限验收。
+ 
+-- [正式评审CLI](review-cli.md)：十二操作、显式会话与私有证据上传/校验下载；九工具metadata接入见[MCP](mcp-bridge.md)/[Pi](pi-extension.md)，固定宿主有限范围见[本包](../docs/reviews/2026-10-09-m6-4-b/README.md)。
++- [正式评审CLI](review-cli.md)：十三操作（含 rounds）、显式会话与私有证据上传/校验下载；九工具metadata接入见[MCP](mcp-bridge.md)/[Pi](pi-extension.md)，固定宿主有限范围见[本包](../docs/reviews/2026-10-09-m6-4-b/README.md)。
+ 
+ ## 当前 C1 接入范围
+ 
+--- docs/04-protocol.md v2
++++ docs/04-protocol.md v3
+@@ -506,7 +506,7 @@
+ 
+ protocol纯validateToolParams按canonical schema及显式订阅组合约束校验，MCP SDK flat/wrapped外层保持；Pi在prepare之前、client在任何HTTP之前校验，非法输入固定安全VALIDATION_ERROR且零HTTP。校验不是服务端资格判断。create_session只接受space_id/request_id/client_name/client_version/op，先读本人assignment再单次创建Session，严格核actor/space。prepare诊断会话不例外，不自动替换提交的reviewer_session_id。assignment及POST等待后本地token变化报IDENTITY_CHANGED；POST已开始可能提交一次，不重试或承诺回滚。新会话不是新评审身份或认知独立证明。
+ 
+-[真实限定验收](reviews/2026-10-09-m6-4-b/verification/independent-report.md)；Web正式评审/C2公开投影与M7检查仍未完成。
++[M6.4-B当时限定验收](reviews/2026-10-09-m6-4-b/verification/independent-report.md)：当时Web待接入；当前C1已接入（见下段），C2投影与M7检查仍待。
+ 
+ ## M6.4-C1：历史评审轮次与Web读取
+ 
+--- docs/05-review-protocol.md v2
++++ docs/05-review-protocol.md v3
+@@ -148,7 +148,7 @@
+ 
+ protocol纯validateToolParams按canonical schema及显式订阅组合约束校验，MCP SDK flat/wrapped外层保持；Pi在prepare之前、client在任何HTTP之前校验，非法输入固定安全VALIDATION_ERROR且零HTTP。校验不是服务端资格判断。create_session只接受space_id/request_id/client_name/client_version/op，先读本人assignment再单次创建Session，严格核actor/space。prepare诊断会话不例外，不自动替换提交的reviewer_session_id。assignment及POST等待后本地token变化报IDENTITY_CHANGED；POST已开始可能提交一次，不重试或承诺回滚。新会话不是新评审身份或认知独立证明。
+ 
+-[真实限定验收](reviews/2026-10-09-m6-4-b/verification/independent-report.md)；Web正式评审/C2公开投影与M7检查仍未完成。
++[M6.4-B当时限定验收](reviews/2026-10-09-m6-4-b/verification/independent-report.md)：当时Web待接入；当前C1已接入（见下段），C2投影与M7检查仍待。
+ 
+ ## M6.4-C1：历史评审轮次与Web读取
+ 

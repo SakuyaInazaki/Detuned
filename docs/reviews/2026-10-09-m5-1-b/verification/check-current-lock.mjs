@@ -1,0 +1,11 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
+const root=new URL('../../../../',import.meta.url);const require=createRequire(root);
+const yaml=require(new URL('node_modules/.pnpm/yaml@2.9.0/node_modules/yaml',root).pathname);
+const bytes=await readFile(new URL('pnpm-lock.yaml',root));const lock=yaml.parse(bytes.toString());
+const expected={'.':{'@playwright/test':'1.64.0'},'packages/web':{react:'19.3.0','react-dom':'19.3.0','@types/react':'19.3.0','@types/react-dom':'19.3.0',vite:'7.3.7'}};
+const pins=[];for(const [importer,deps]of Object.entries(expected))for(const [name,version]of Object.entries(deps)){const item=lock.importers[importer].dependencies?.[name]??lock.importers[importer].devDependencies?.[name];pins.push({importer,name,expected:version,specifier:item?.specifier,version:item?.version,exact:item?.specifier===version&&item?.version?.split('(')[0]===version});}
+const installed=[];for(const file of ['node_modules/@playwright/test/package.json','packages/web/node_modules/react/package.json','packages/web/node_modules/react-dom/package.json','packages/web/node_modules/@types/react/package.json','packages/web/node_modules/@types/react-dom/package.json','packages/web/node_modules/vite/package.json']){const value=JSON.parse(await readFile(new URL(file,root),'utf8'));installed.push({name:value.name,version:value.version,license:value.license});}
+const result={lock_sha256:createHash('sha256').update(bytes).digest('hex'),lockfile_version:lock.lockfileVersion,overrides:lock.overrides,pins,installed,importers:lock.importers,package_count:Object.keys(lock.packages).length,snapshot_count:Object.keys(lock.snapshots).length,vite_7_3_6_keys:Object.keys(lock.packages).concat(Object.keys(lock.snapshots)).filter(v=>v.startsWith('vite@7.3.6')),scope:'Current graph/importers/exact installed pins only. HEAD and Git index hashes do not equal fresh baseline; no exact pre-install lock byte copy exists here, so no complete historical semantic delta is claimed.'};
+await writeFile(new URL('./current-lock-audit.json',import.meta.url),JSON.stringify(result,null,2)+'\n');if(!pins.every(v=>v.exact)||result.vite_7_3_6_keys.length)throw new Error('Current exact pins invalid.');

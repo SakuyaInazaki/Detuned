@@ -1,0 +1,21 @@
+--- a/examples/d01-fixed/README.md
++++ b/examples/d01-fixed/README.md
+@@ -6,9 +6,16 @@
+ 
+ 本地catalog定义first-discovery（已知错误首次发现规则）和relaxation（优先队列松弛）两个descriptor；选择一个，不能选择“任意通过者”。每次manifest必须恰六材料：所选candidate、reference、checker、cases、config、runner。catalog七literal SHA/bytes覆盖两个candidate与五common材料，含runner provenance；catalog不自hash。角色只按exact SHA/bytes识别，不按文件名/描述/帖子指令。extra/duplicate/missing/both candidates/config不匹配及实际下载byte损坏预检拒，零日志/回执写。
+ 
+-普通控制者先按[check HTTP](../check-http.md)与[check CLI](../check-cli.md)真实建立claim、独立评审请求和run。用本地catalog `assets('relaxation')`或`assets('first-discovery')`返回的六真实bytes逐项普通artifact上传，并将全部真实artifact IDs纳入冻结review snapshot；不用SQL构造成功formal记录。冻结profile check_name=`d01-fixed`，config_sha256取本地config pin，verifier_actor_ids为真实允许的V actor；V无需普通membership。createRun使用当前request.version、真实snapshot和该V。issuer由空间owner/maintainer签发一次绑定verify凭据，无key/自动retry；只有无membership且allowed_scope允许时既有admin规则可虚拟owner，不绕现低角色/inactive身份。
++普通控制者按[check HTTP](../check-http.md)与[check CLI](../check-cli.md)真实setup，顺序如下：
+ 
+-token只由自有私有0600普通文件提供，不放argv、stdout日志/ledger或全局配置。运行前需已有本地build dist（root/D运行窗负责）；runner静态导入仓库sharedclient/protocol dist，无新安装或包依赖。不能在此示例令runner创建身份/request/run/凭据。
++1. 准备真实V actor与冻结profile：check_name=`d01-fixed`，config_sha256取本地config pin，verifier_actor_ids允许该V。V无需普通membership。
++2. 建立claim，并把本地catalog `assets('relaxation')`或`assets('first-discovery')`返回的六真实bytes逐项普通artifact上传，保存全部真实artifact IDs。
++3. 用claim固定引用及全部六IDs创建独立review request，生成包含完整材料的冻结snapshot；不能先冻结空材料再追加。
++4. 读取当前request.version与真实snapshot，以当前版本、固定snapshot、profile名和V创建run；不用SQL构造成功formal状态。
++5. 空间owner/maintainer一次签发绑定verify凭据，并将token私有保存到自有0600普通文件。issuer确有一次明文输出，无key/自动retry；只有无membership且allowed_scope允许时既有admin规则可虚拟owner，不覆盖已有低角色/inactive身份。
++6. 使用下面七flags运行固定验证器。
++
++issuer成功明文须妥善私有保存；token不进入runner argv、runner stdout/log、ledger或全局配置。运行前需要已有本地构建产物；runner静态导入仓库sharedclient/protocol dist，无新安装或包依赖。runner不会创建身份/request/run/凭据。
+ 
+ ## 七固定CLIflags
+ 

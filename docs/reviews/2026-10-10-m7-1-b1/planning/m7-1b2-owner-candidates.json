@@ -1,0 +1,51 @@
+{
+  "status": "root_scoped_candidates_pending_B1_acceptance_metadata_seal_B2_fresh_dispatch",
+  "existing": {
+    "packages/cli/src/index.ts": {
+      "owner": "A",
+      "state": "existing"
+    },
+    "packages/protocol/src/tools.ts": {
+      "owner": "B",
+      "state": "existing"
+    },
+    "packages/client/src/client.ts": {
+      "owner": "B",
+      "state": "existing",
+      "scope": "callTool new ordinary check dispatch only; preserve accepted B1 typed methods"
+    }
+  },
+  "new": {
+    "tests/contracts/m7-check-cli.test.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/contracts/m7-check-tools.test.ts": {
+      "owner": "B",
+      "state": "missing"
+    },
+    "tests/contracts/m7-check-cli-tools-independent.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    }
+  },
+  "protected": [
+    "packages/core/**",
+    "packages/server/**",
+    "packages/storage-sqlite/**",
+    "packages/web/**",
+    "packages/client/src/artifact-transfer.ts",
+    "packages/client/src/request-key.ts",
+    "packages/client/src/session-binding.ts",
+    "packages/mcp/src/**",
+    "packages/adapter-pi/src/**",
+    "integrations/**",
+    "all sealed review packages"
+  ],
+  "notes": [
+    "3 existing + 3 missing are candidates, not write authorization.",
+    "Reuse existing CLI safe IO/key store/signal helpers and canonical host tool registration; no store/schema/HTTP/host changes.",
+    "Existing MCP/Pi regression sources read/run only per D root-selected gate, no unsolicited edits; if a necessary conflict emerges report root for precise owner extension.",
+    "Metadata/examples/compatibility closing ownership separately approved after evidence; fixed dsh evidence does not certify new branch execution."
+  ]
+}

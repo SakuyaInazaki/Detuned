@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m6-review-finalization-independent.test.ts",
+    "-t",
+    "DF02|DF04|DF05",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 0,
+  "seconds": 2.273,
+  "stdout": "new-groups-fixture-repaired.stdout.txt",
+  "stderr": "new-groups-fixture-repaired.stderr.txt",
+  "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+}

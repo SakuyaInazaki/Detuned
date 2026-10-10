@@ -1,0 +1,107 @@
+{
+  "reviewed_date": "2026-09-29",
+  "runtime": "v26.3.0",
+  "fixture_note": "Synthetic controlled response failure and marker fixtures; no TCP disconnect, old binary, model or real credentials. Snapshots include metadata and credentials but output exposes only comparison booleans.",
+  "probes": [
+    {
+      "id": "N01",
+      "description": "A real response-layer failure after commit recovers the complete original space result",
+      "observed": {
+        "fault_hits": 1,
+        "committed_visible_from_other_connection": true,
+        "first_status": 500,
+        "retry_status": 201,
+        "reopened_status": 201,
+        "retry_exact": true,
+        "reopened_exact": true,
+        "no_extra_writes": true
+      },
+      "passes": true
+    },
+    {
+      "id": "N02",
+      "description": "Full target markers and legacy family markers survive three starts and replay safely",
+      "observed": [
+        {
+          "form": "full",
+          "all_three_starts_succeed": true,
+          "canonical_full_operation": true,
+          "stable_after_first_start": true,
+          "status": 422,
+          "error": "RESYNC_REQUIRED",
+          "replay_no_mutation": true
+        },
+        {
+          "form": "family",
+          "all_three_starts_succeed": true,
+          "canonical_full_operation": true,
+          "stable_after_first_start": true,
+          "status": 422,
+          "error": "RESYNC_REQUIRED",
+          "replay_no_mutation": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "N03",
+      "description": "Invalid marker migration refuses atomically, including after closing and reopening",
+      "observed": [
+        {
+          "label": "wrong_target",
+          "rejected": true,
+          "code": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "label": "unknown_operation",
+          "rejected": true,
+          "code": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "label": "unknown_reason",
+          "rejected": true,
+          "code": null,
+          "unchanged_after_reopen": true
+        },
+        {
+          "label": "extra_body",
+          "rejected": true,
+          "code": null,
+          "unchanged_after_reopen": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "N04",
+      "description": "Migrated relation.create unreplayable marker remains valid across three starts",
+      "observed": {
+        "all_three_starts_succeed": true,
+        "stable_after_first_start": true,
+        "marker_kind": "unreplayable",
+        "marker_op": "relation.create",
+        "status": 422,
+        "error": "RESYNC_REQUIRED",
+        "replay_no_mutation": true
+      },
+      "passes": true
+    },
+    {
+      "id": "N05",
+      "description": "Instance-scoped create fix preserves space.patch binding to an actual existing space",
+      "observed": {
+        "normal_status": 200,
+        "normal_exact": true,
+        "cross_space_status": 422,
+        "cross_space_error": "RESYNC_REQUIRED",
+        "migration_rejected": true,
+        "no_mutation_after_reopen": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 5,
+  "failed": 0
+}

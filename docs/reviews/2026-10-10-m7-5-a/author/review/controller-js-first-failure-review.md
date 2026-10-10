@@ -1,0 +1,5 @@
+# M7.5-A controller JS 首失败独核
+
+真实首失败保留。仅读PythonAST字面量（未import/执行runner）与actual effective-config receipt，生成probe JS与argv[5]逐字节完全相同，SHA256 `34d663a767acfcec8cdc7299e29c981bd8ca93d33166745de11bab3d878c779d`。Python普通triplequote中的反斜杠n解释为引号间literalLF，实际Node报eval第10行SyntaxError；safe429Bstderr与receipt吻合。解析在body执行前失败，未执行12个pnpm config get或esbuild。
+
+actualclose1/null、stage95812原ownproof/groupabsence成立；本审查未查进程/运行Node。原source/dist核对及root保留以真实收据为准，不把PythonAST通过升级为JS语法有效。待A仅字面量修、D固定Node22对actualgeneratedJS node--check门禁与后续同字节/hash执行绑定；root另行放行，当前没有probe或pipeline成功。旧freeze/首stderr/错误建议与失败全部保留。

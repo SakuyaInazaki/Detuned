@@ -1,0 +1,1 @@
+旧backup/restore只current2，现serve/init可原地迁移legacy但不提供保源副本升级。C baseline为独立来源；本包新增能力不以missing-import编译错误称before产品失败。

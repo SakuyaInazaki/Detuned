@@ -1,0 +1,34 @@
+packages/mcp/src/tool-validation.ts(7,100): error TS2345: Argument of type 'TSchema | TObject<{ max_bytes: TOptional<TInteger>; focus_thread_id: TOptional<TString>; space_id: TString; }> | TObject<...> | TObject<...> | TObject<...> | TObject<...>' is not assignable to parameter of type 'JsonSchemaType'.
+  Type 'TObject<{ max_bytes: TOptional<TInteger>; focus_thread_id: TOptional<TString>; space_id: TString; }>' is not assignable to type 'JsonSchemaType'.
+    Types of property 'properties' are incompatible.
+      Type '{ max_bytes: TOptional<TInteger>; focus_thread_id: TOptional<TString>; space_id: TString; }' is not assignable to type 'Record<string, JSONSchema<any, TypeValue>>'.
+        Property 'focus_thread_id' is incompatible with index signature.
+          Type 'TOptional<TString>' is not assignable to type 'JSONSchema<any, TypeValue>'.
+            Type 'TOptional<TString>' is not assignable to type '{ $anchor?: string | undefined; $comment?: string | undefined; $defs?: Record<string, JSONSchema<any, TypeValue>> | undefined; $dynamicAnchor?: string | undefined; ... 55 more ...; writeOnly?: boolean | undefined; }'.
+              Types of property 'contentEncoding' are incompatible.
+                Type 'StringContentEncodingOption | undefined' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+                  Type '{} & string' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+packages/mcp/src/tool-validation.ts(8,46): error TS2345: Argument of type 'TObject<{ actor: TObject<{ id: TString; kind: TUnion<[TLiteral<"human">, TLiteral<"agent">, TLiteral<"service">]>; display_name: TString; created_at: TString; disabled_at: TUnion<...>; }>; capabilities: TArray<...>; allowed_space_ids: TArray<...>; visible_spaces: TArray<...>; }>' is not assignable to parameter of type 'JsonSchemaType'.
+  Types of property 'properties' are incompatible.
+    Type '{ actor: TObject<{ id: TString; kind: TUnion<[TLiteral<"human">, TLiteral<"agent">, TLiteral<"service">]>; display_name: TString; created_at: TString; disabled_at: TUnion<...>; }>; capabilities: TArray<...>; allowed_space_ids: TArray<...>; visible_spaces: TArray<...>; }' is not assignable to type 'Record<string, JSONSchema<any, TypeValue>>'.
+      Property 'actor' is incompatible with index signature.
+        Type 'TObject<{ id: TString; kind: TUnion<[TLiteral<"human">, TLiteral<"agent">, TLiteral<"service">]>; display_name: TString; created_at: TString; disabled_at: TUnion<...>; }>' is not assignable to type 'JSONSchema<any, TypeValue>'.
+          Type 'TObject<{ id: TString; kind: TUnion<[TLiteral<"human">, TLiteral<"agent">, TLiteral<"service">]>; display_name: TString; created_at: TString; disabled_at: TUnion<...>; }>' is not assignable to type '{ $anchor?: string | undefined; $comment?: string | undefined; $defs?: Record<string, JSONSchema<any, TypeValue>> | undefined; $dynamicAnchor?: string | undefined; ... 55 more ...; writeOnly?: boolean | undefined; }'.
+            Types of property 'properties' are incompatible.
+              Type '{ id: TString; kind: TUnion<[TLiteral<"human">, TLiteral<"agent">, TLiteral<"service">]>; display_name: TString; created_at: TString; disabled_at: TUnion<...>; }' is not assignable to type 'Record<string, JSONSchema<any, TypeValue>>'.
+                Property 'id' is incompatible with index signature.
+                  Type 'TString' is not assignable to type 'JSONSchema<any, TypeValue>'.
+                    Type 'TString' is not assignable to type '{ $anchor?: string | undefined; $comment?: string | undefined; $defs?: Record<string, JSONSchema<any, TypeValue>> | undefined; $dynamicAnchor?: string | undefined; ... 55 more ...; writeOnly?: boolean | undefined; }'.
+                      Types of property 'contentEncoding' are incompatible.
+                        Type 'StringContentEncodingOption | undefined' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+                          Type '{} & string' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+packages/mcp/src/tool-validation.ts(9,48): error TS2345: Argument of type 'TObject<{ id: TString; actor_id: TString; space_id: TString; client_name: TString; client_version: TString; harness_session_id: TUnion<[TString, TNull]>; metadata: TRecord<...>; created_at: TString; }>' is not assignable to parameter of type 'JsonSchemaType'.
+  Types of property 'properties' are incompatible.
+    Type '{ id: TString; actor_id: TString; space_id: TString; client_name: TString; client_version: TString; harness_session_id: TUnion<[TString, TNull]>; metadata: TRecord<...>; created_at: TString; }' is not assignable to type 'Record<string, JSONSchema<any, TypeValue>>'.
+      Property 'id' is incompatible with index signature.
+        Type 'TString' is not assignable to type 'JSONSchema<any, TypeValue>'.
+          Type 'TString' is not assignable to type '{ $anchor?: string | undefined; $comment?: string | undefined; $defs?: Record<string, JSONSchema<any, TypeValue>> | undefined; $dynamicAnchor?: string | undefined; ... 55 more ...; writeOnly?: boolean | undefined; }'.
+            Types of property 'contentEncoding' are incompatible.
+              Type 'StringContentEncodingOption | undefined' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+                Type '{} & string' is not assignable to type '"7bit" | "8bit" | "binary" | "quoted-printable" | "base64" | "ietf-token" | "x-token" | undefined'.
+packages/mcp/src/tool-validation.ts(13,30): error TS2345: Argument of type 'string' is not assignable to parameter of type '"forum_context" | "forum_search" | "forum_read" | "forum_publish" | "forum_relate" | "forum_subscribe" | "forum_poll" | "forum_ack"'.

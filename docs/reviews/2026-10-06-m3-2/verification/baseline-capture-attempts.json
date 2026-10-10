@@ -1,0 +1,16 @@
+[
+  {
+    "command": "python3 docs/reviews/2026-10-06-m3-2/verification/capture-baseline.py",
+    "attempt": 1,
+    "exit_code": 1,
+    "classification": "verification fixture only",
+    "reason": "posix.uname_result has no _asdict; no product execution or file hash result emitted",
+    "repair": "serialize uname tuple as list"
+  },
+  {
+    "command": "python3 docs/reviews/2026-10-06-m3-2/verification/capture-baseline.py",
+    "attempt": 2,
+    "exit_code": 0,
+    "result": "baseline.json"
+  }
+]

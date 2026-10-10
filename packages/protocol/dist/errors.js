@@ -1,5 +1,10 @@
 import { Type } from '@sinclair/typebox';
 export const ErrorCode = {
+    INTERNAL_ERROR: 'INTERNAL_ERROR',
+    SERVICE_NOT_READY: 'SERVICE_NOT_READY',
+    EXPORT_INVALIDATED: 'EXPORT_INVALIDATED',
+    EXPORT_LIMIT_EXCEEDED: 'EXPORT_LIMIT_EXCEEDED',
+    EXPORT_UNAVAILABLE: 'EXPORT_UNAVAILABLE',
     VALIDATION_ERROR: 'VALIDATION_ERROR',
     UNAUTHENTICATED: 'UNAUTHENTICATED',
     FORBIDDEN: 'FORBIDDEN',
@@ -21,6 +26,11 @@ export const ErrorCode = {
     TEMPORARILY_UNAVAILABLE: 'TEMPORARILY_UNAVAILABLE',
 };
 export const ErrorCodeSchema = Type.Union([
+    Type.Literal('INTERNAL_ERROR'),
+    Type.Literal('SERVICE_NOT_READY'),
+    Type.Literal('EXPORT_INVALIDATED'),
+    Type.Literal('EXPORT_LIMIT_EXCEEDED'),
+    Type.Literal('EXPORT_UNAVAILABLE'),
     Type.Literal('VALIDATION_ERROR'),
     Type.Literal('UNAUTHENTICATED'),
     Type.Literal('FORBIDDEN'),
@@ -53,6 +63,8 @@ export const ApiErrorResponseSchema = Type.Object({
     error: ApiErrorDetailSchema,
 }, { additionalProperties: false });
 export class DetunedError extends Error {
+    isDetunedError = true;
+    isTransportError = false;
     code;
     statusCode;
     retryable;

@@ -1,0 +1,143 @@
+{
+  "phase": "core",
+  "image_id": "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+  "container": "detuned-m53-d-linux-core-def3851213",
+  "actual_gate_uid": 1000,
+  "cold_install_or_build_repeated": false,
+  "commands": [
+    {
+      "argv": [
+        "create",
+        "--name",
+        "detuned-m53-d-linux-core-def3851213",
+        "--network",
+        "none",
+        "--entrypoint",
+        "node",
+        "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+        "-e",
+        "setInterval(()=>{},1000)"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 215,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "start",
+        "detuned-m53-d-linux-core-def3851213"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 90,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "detuned-m53-d-linux-core-def3851213",
+        "node",
+        "-e",
+        "require('node:fs').mkdirSync('/app/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures',{recursive:true})"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 51,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-post-service.js",
+        "detuned-m53-d-linux-core-def3851213:/app/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-post-service.js"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 25,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-thread-service.ts",
+        "detuned-m53-d-linux-core-def3851213:/app/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-thread-service.ts"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 19,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "0:0",
+        "detuned-m53-d-linux-core-def3851213",
+        "chown",
+        "-R",
+        "1000:1000",
+        "/app"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 10376,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "1000:1000",
+        "-e",
+        "HOME=/tmp",
+        "-e",
+        "CI=1",
+        "detuned-m53-d-linux-core-def3851213",
+        "pnpm",
+        "test"
+      ],
+      "exit": 1,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 249078,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "rm",
+        "-f",
+        "detuned-m53-d-linux-core-def3851213"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 432,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-post-service.js",
+      "sha256": "63888521f6d792785a149bd246f2a9a7735faee180b96431559eaf25f531e7ec"
+    },
+    {
+      "path": "docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/legacy-thread-service.ts",
+      "sha256": "408328902c356c1610bb68605639e3b5043abe3e88e5faa260aafa630e40bdd8"
+    }
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "status": "failed",
+  "cleanup": {
+    "created": true,
+    "owned_container_removed": true,
+    "owned_VM_retained": true
+  }
+}

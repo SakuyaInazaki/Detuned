@@ -1,0 +1,15 @@
+$ vitest run tests/contracts/m6-review-http-independent.test.ts --maxWorkers=1 --no-file-parallelism -t 'H02 '
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+AssertionError: expected 'no-store' to be 'private, no-store' // Object.is equality
+
+Expected: "private, no-store"
+Received: "no-store"
+
+ ❯ tests/contracts/m6-review-http-independent.test.ts:90:444
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

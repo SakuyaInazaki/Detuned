@@ -1,0 +1,54 @@
+{
+  "status": "root_approved_pending_c1_seal_new_fresh_and_dispatch",
+  "protected": [
+    "SQL/schema/migrations",
+    "dependency manifests/lock",
+    "public submission search/FTS",
+    "M7 checks/receipts",
+    "sealed old reviews",
+    "packages/web/src/review-panel.tsx",
+    "MCP/Pi/CLI/new host activation"
+  ],
+  "A": {
+    "existing": [
+      "packages/core/src/services/search-service.ts",
+      "packages/core/src/services/knowledge-projection.ts",
+      "packages/core/src/index.ts",
+      "modules/review/src/status-service.ts",
+      "packages/protocol/src/search.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/client/src/client.ts",
+      "packages/protocol/src/index.ts",
+      "packages/server/src/routes/search.ts"
+    ],
+    "new": [
+      "packages/core/src/services/review-status-facts.ts",
+      "tests/integration/m6-knowledge-status.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts"
+    ]
+  },
+  "B": {
+    "existing": [
+      "packages/web/src/app.tsx",
+      "packages/web/src/knowledge.tsx",
+      "packages/web/src/styles.css"
+    ],
+    "new": [
+      "tests/contracts/m6-knowledge-web-input.test.ts"
+    ]
+  },
+  "D": {
+    "new": [
+      "tests/integration/m6-knowledge-status-independent.test.ts",
+      "scripts/integrations/web/m6-knowledge.spec.ts"
+    ],
+    "browser": "real HTTP/SQLite claim-target journey; no fake formal status",
+    "execution": "sole serial check window",
+    "existing": [
+      "scripts/integrations/web/fixtures.ts",
+      "scripts/integrations/web/playwright.config.ts"
+    ]
+  },
+  "current_planning_boundary": "All C1 source stays frozen now; after new fresh only dispatched C2A owner paths may change."
+}

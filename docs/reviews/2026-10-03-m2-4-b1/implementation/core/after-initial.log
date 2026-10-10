@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S01: large mandatory rules return an explicit fixed reference instead of having no bounded context path
+S01 observed {"page":{"data":{"space_id":"spc_4cb9ee8b-b7d4-4640-a97a-f78e3d700f02","slug":"rules","space_revision_ref":{"space_id":"spc_4cb9ee8b-b7d4-4640-a97a-f78e3d700f02","revision":2},"space_content_status":"omitted_for_budget","objective":null,"rules":null,"policy_revision":2,"pinned_summaries":[],"blocking_objections":[],"recent_failures":[],"recent_activity":[{"type":"space.revised","object_id":"spc_4cb9ee8b-b7d4-4640-a97a-f78e3d700f02","occurred_at":"2026-10-03T12:21:41.489Z"},{"type":"space.revised","object_id":"spc_4cb9ee8b-b7d4-4640-a97a-f78e3d700f02","occurred_at":"2026-10-03T12:21:41.490Z"}],"checkpoint_token":"eyJwdXJwb3NlIjoiY2hlY2twb2ludCIsInNwYWNlX2lkIjoic3BjXzRjYjllZThiLWI3ZDQtNDY0MC1hOTdhLWY3OGUzZDcwMGYwMiIsImFjdG9yX2lkIjoiYWN0X2FkbWluXzM4NDMzMzI5NTJkNiIsInNlcSI6MiwiZXhwIjoxNzkxMTE2NTAxfQ.qDO-MZWeIql-S3veTj27BuHoMl3k0AoiXsVBz7qKl2w"},"meta":{"truncated":true,"next_cursor":null}}}
+
+stdout | tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S02: normal context includes its actual content revision reference, distinct from policy_revision
+S02 observed {"ref":{"space_id":"spc_8007ce38-7550-4ffc-b1de-e3a422601bca","revision":1},"policy_revision":1,"rules":["first rule"]}
+
+ ✓ tests/integration/m2-space-revision-read.test.ts (2 tests) 13ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  20:21:41
+   Duration  457ms (transform 143ms, setup 0ms, collect 238ms, tests 13ms, environment 0ms, prepare 36ms)
+

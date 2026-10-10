@@ -1,0 +1,33 @@
+{
+  "observations": [
+    {
+      "name": "new_fixed_route_missing",
+      "status": 404,
+      "body": {
+        "message": "Route GET:/api/v1/spaces/spc_d90888de-ccee-48e3-bdea-4c9e9f173fe0/posts/pst_3fb28bf6-6084-4863-8f47-bcf34362f0a7/revisions/1?max_bytes=4096 not found",
+        "error": "Not Found",
+        "statusCode": 404
+      }
+    },
+    {
+      "name": "legal_old_full_get_exceeds_4k",
+      "status": 200,
+      "actual_body_bytes": 29492,
+      "has_page_meta": false,
+      "revision": 1
+    },
+    {
+      "name": "new_tool_kind_missing",
+      "code": "VALIDATION_ERROR",
+      "status": 400,
+      "message": "forum_read 参数组合不合法；space 需显式revision，post/thread不支持cursor/max_bytes，artifact/review尚未支持。"
+    },
+    {
+      "name": "new_cli_entry_missing",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: unknown command 'post'\n(Did you mean poll?)\n"
+    }
+  ],
+  "status": "four baseline limitations actually observed; no new behavior implemented"
+}

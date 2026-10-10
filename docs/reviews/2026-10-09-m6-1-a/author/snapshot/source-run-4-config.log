@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-snapshot.test.ts (5 tests | 1 failed | 4 skipped) 113ms
+   ↓ RS01 one read snapshot, immutable detached materials, collection permutation and semantic array hash
+   ↓ RS02 current/lifecycle, policy conflict and revoked credential fail with fixed domain errors
+   ↓ RS03 strict DTO duplicates, code correspondence and artifact availability/hash reject
+   × RS04 only required configuration, empty verifier facts, pinned stable and policy pointer changes 113ms
+     → Expected property name or '}' in JSON at position 1 (line 1 column 2)
+   ↓ RS05 all historical metadata editors via keyset, no historical bodies, bounded contribution traversal
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-snapshot.test.ts > RS04 only required configuration, empty verifier facts, pinned stable and policy pointer changes
+SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+ ❯ SqliteStorage.getSpaceRevision packages/storage-sqlite/src/sqlite-storage.ts:299:28
+    297|       rules: JSON.parse(row.rules),
+    298|       review_policy: JSON.parse(row.review_policy),
+    299|       check_profiles: JSON.parse(row.check_profiles),
+       |                            ^
+    300|       pinned_refs: JSON.parse(row.pinned_refs),
+    301|       editor_id: row.editor_id,
+ ❯ policy tests/integration/m6-review-snapshot.test.ts:29:205
+ ❯ tests/integration/m6-review-snapshot.test.ts:71:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  12:29:18
+   Duration  891ms (transform 282ms, setup 0ms, collect 530ms, tests 113ms, environment 0ms, prepare 41ms)
+

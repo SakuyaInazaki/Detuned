@@ -1,0 +1,32 @@
+{
+  "status": "C_source_ready_not_product_run",
+  "new_formal_cases": 4,
+  "files": [
+    {
+      "path": "tests/integration/m4-read-cli-independent.test.ts",
+      "sha256": "2c35b83dfae6c68e5e27b14fd974279086cfd8f13964dc88889e00724cac4d99"
+    },
+    {
+      "path": "tests/helpers/m4-read-cli-worker.mjs",
+      "sha256": "074c7bce830eafde7a28c9949e719acbb3315344d4c0cce8bc784911b77d3bce"
+    }
+  ],
+  "source_noemit": {
+    "command": "pnpm exec tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --esModuleInterop --skipLibCheck --strict tests/integration/m4-read-cli-independent.test.ts",
+    "exit_code": 0,
+    "stdout_empty": true,
+    "stderr_empty": true
+  },
+  "helper_node_check": {
+    "exit_code": 0
+  },
+  "CLI_environment": [
+    "PATH",
+    "private fixture DETUNED_TOKEN if needed"
+  ],
+  "explicit_loopback_URL": true,
+  "private_child_deadline_ms": 15000,
+  "private_output_limit_bytes": 1048576,
+  "test_case_timeout_ms": 90000,
+  "baseline_not_replaced": true
+}

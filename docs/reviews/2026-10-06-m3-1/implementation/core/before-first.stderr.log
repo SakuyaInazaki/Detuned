@@ -1,0 +1,33 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-event-core.test.ts > M3.1 event core correctness > E01 private events advance scan without public delivery, including pending projection
+AssertionError: expected [ …(2) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+  [
+    "5d38bdfb-df07-440a-88a8-2afe919c33a0",
++   "316b10d8-e5cd-4591-a12e-66ee1d5984ae",
+  ]
+
+ ❯ tests/integration/m3-event-core.test.ts:14:245
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/integration/m3-event-core.test.ts > M3.1 event core correctness > E02 signing and expiry use injected floor Clock with equality valid and +1 rejected
+TypeError: Cannot read properties of null (reading 'exp')
+ ❯ tests/integration/m3-event-core.test.ts:15:259
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/m3-event-core.test.ts > M3.1 event core correctness > E03 repeat ack still checks persisted through_seq before idempotent success
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m3-event-core.test.ts:16:475
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

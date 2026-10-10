@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m7-check-http-client-independent.test.ts (10 tests | 2 failed | 8 skipped) 298ms
+   ↓ HI01 true ephemeral127.0.0.1 TCP client traverses fixed material/run/log/receipt and latest nullable frozen directory
+   ↓ HI02 inject actual handler ordinary/verify/sealed boundaries reject discovery and wrong fixed material without writes
+   ↓ HI03 issuer no-store/strict key and controlled retry0; receipt/log forbidden logical intent is rejected before file or identity discovery
+   ↓ HI04 true TCP response-loss after actual commit replays immutable receipt with exact key and no getMe request
+   ↓ HI05 true handler credential rotation/expiry and terminal exact replay continue current log redaction
+   ↓ HI06 controlled DTO/canonical response corruption is separate from real material and whole-directory reads
+   ↓ HI07 controlled scoped stream EOF/hash/MIME/cancel/late dispose keep same-origin exact encoded URL
+   ↓ HI08 true TCP ordinary persistent create/invalidate scopes retain request/run targets while verify writes avoid identity preparation
+   × HI09 real TCP successful domain mutations tolerate a legitimate wall-clock rollback; public run and directory follow causal versions 201ms
+     → expected { receipt: 201, getPass: 409, …(4) } to deeply equal { receipt: 201, getPass: 200, …(4) }
+   × HI10 true TCP scoped content401/404/410 responses carry private no-store before successful streaming 97ms
+     → expected [ null, null, null ] to deeply equal [ 'private, no-store', …(2) ]
+ ❯ tests/contracts/m7-check-http.test.ts (6 tests | 2 failed | 4 skipped) 178ms
+   ↓ CH01 real HTTP scoped reads, directory and streamed log/receipt replay preserve frozen identities
+   ↓ CH02 strict inputs and scope deny before new side effects, issuer rotation invalidates old token
+   × CH03 whole DTO guards reject swapped scope, internal audit, inconsistent directory and foreign URL 123ms
+     → expected true to be false // Object.is equality
+   × CH04 OpenAPI contains twelve scoped operations and credential issuance has no key header 55ms
+     → expected { minLength: 1, type: 'string', …(1) } to deeply equal { Object (pattern, type) }
+   ↓ CH05 controlled legal Unicode slash space ID preserves scoped URL and real log replay
+   ↓ CH06 HTTP keyword enforces Unicode codepoint limit without UTF16 truncation
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 12 skipped (16)
+   Start at  01:00:52
+   Duration  1.49s (transform 331ms, setup 0ms, collect 737ms, tests 476ms, environment 0ms, prepare 58ms)
+

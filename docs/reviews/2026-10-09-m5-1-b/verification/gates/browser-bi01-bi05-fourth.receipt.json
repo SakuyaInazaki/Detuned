@@ -1,0 +1,21 @@
+{
+  "stage": "browser-bi01-bi05-fourth",
+  "argv": [
+    "env",
+    "npm_config_userconfig=/dev/null",
+    "npm_config_globalconfig=/dev/null",
+    "CI=1",
+    "/opt/homebrew/bin/pnpm",
+    "test:e2e",
+    "independent.spec.ts",
+    "--grep",
+    "BI01|BI05"
+  ],
+  "exit": 1,
+  "timeout": false,
+  "elapsed_seconds": 9.975,
+  "started_at": "2026-10-08T20:46:24.080651+00:00",
+  "finished_at": "2026-10-08T20:46:34.055582+00:00",
+  "stdout": "browser-bi01-bi05-fourth.stdout",
+  "stderr": "browser-bi01-bi05-fourth.stderr"
+}

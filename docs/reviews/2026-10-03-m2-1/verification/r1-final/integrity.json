@@ -1,0 +1,244 @@
+{
+  "product_source_config_test_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "current_document_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "protected_review_probe_log_evidence_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "frozen_sql_archive_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "tracked_build_artifact_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "untracked_build_artifact_hashes": {
+    "changed": [
+      "packages/server/dist/routes/artifacts.d.ts.map",
+      "packages/server/dist/routes/artifacts.js",
+      "packages/server/dist/routes/artifacts.js.map"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "protected_vs_original_baseline": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "frozen_vs_original_baseline": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "schema_profile_vs_original_baseline": {
+    "packages/storage-sqlite/src/schema.sql": {
+      "before": "7e3f01ada4d5285f62b61c5c9d427a288b1fc3dde7ee4146560ad7a0d22b85be",
+      "after": "7e3f01ada4d5285f62b61c5c9d427a288b1fc3dde7ee4146560ad7a0d22b85be",
+      "unchanged": true
+    },
+    "packages/storage-sqlite/src/schema.ts": {
+      "before": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+      "after": "8ab65e50b5092f183524ef0ffe6b68bf47d0b5d879e70d8ab25624bfc8ddae86",
+      "unchanged": true
+    }
+  },
+  "head_unchanged": true,
+  "test_counts": [
+    {
+      "file": "tests/integration/m1-discussion.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "tests/contracts/m0-m1-adapters-regression.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "tests/integration/m0-m1-r3-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "tests/contracts/cross-interface-contract.test.ts",
+      "tests": 2
+    },
+    {
+      "file": "tests/integration/m2-artifacts-filesystem.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-r2-regression.test.ts",
+      "tests": 12
+    },
+    {
+      "file": "tests/contracts/r4-c-route-contracts.test.ts",
+      "tests": 4
+    },
+    {
+      "file": "tests/integration/m2-artifacts-core.test.ts",
+      "tests": 9
+    },
+    {
+      "file": "packages/storage-sqlite/tests/storage.test.ts",
+      "tests": 7
+    },
+    {
+      "file": "tests/integration/m2-artifacts-cli.test.ts",
+      "tests": 4
+    },
+    {
+      "file": "tests/probes/m0-probes.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "tests/contracts/m0-m1-r2-adapters.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "tests/integration/m2-artifacts-http.test.ts",
+      "tests": 8
+    },
+    {
+      "file": "packages/protocol/tests/schema.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-r4-b-regression.test.ts",
+      "tests": 82
+    },
+    {
+      "file": "tests/contracts/r4-c-contracts.test.ts",
+      "tests": 26
+    }
+  ],
+  "test_total": 210,
+  "probe_summary": {
+    "observed-c-boundaries.json": {
+      "passed": 6,
+      "total": 6
+    },
+    "observed-c-completion.json": {
+      "passed": 4,
+      "total": 5
+    },
+    "observed-c2-boundaries.json": {
+      "passed": 5,
+      "total": 5
+    },
+    "observed-r4.json": {
+      "passed": 8,
+      "total": 8
+    },
+    "observed-ad02-v2.json": {
+      "passed": 5,
+      "total": 5
+    },
+    "observed-real-adversaries.json": {
+      "passed": 6,
+      "total": 6
+    }
+  },
+  "commands": {
+    "passed": 28,
+    "total": 29,
+    "failed": [
+      "node docs/reviews/2026-10-02-m0-m1-r21/check-c-completion.mjs"
+    ]
+  },
+  "nonempty_stderr": {
+    "observed-build.stderr.txt": "$ pnpm -r run build\n",
+    "observed-metadata-encoding.stderr.txt": "Independent teardown: {\"active_requests\":[],\"socket_count\":2}\n",
+    "observed-content-close.stderr.txt": "Independent teardown: {\"active_requests\":[],\"socket_count\":2}\n",
+    "observed-content-close-both.stderr.txt": "Independent teardown: {\"active_requests\":[],\"socket_count\":2}\nIndependent teardown: {\"active_requests\":[],\"socket_count\":2}\n",
+    "observed-ad02-v2.stderr.txt": "unknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\n",
+    "observed-typecheck.stderr.txt": "$ pnpm -r run typecheck\n",
+    "observed-lint.stderr.txt": "$ pnpm -r run lint\n",
+    "observed-real-adversaries.stderr.txt": "Completed P01-trailing-parts-interruption: true\nIndependent teardown: {\"active_requests\":[{\"method\":\"POST\",\"url\":\"/api/v1/spaces/spc_f394f4cf-701a-4144-880b-b0d6fc609136/artifacts\"}],\"socket_count\":1}\nIndependent teardown: {\"active_requests\":[],\"socket_count\":2}\nCompleted P02-restart-replay-and-contract: true\nIndependent teardown: {\"active_requests\":[{\"method\":\"GET\",\"url\":\"/api/v1/spaces/spc_146a7d58-1dcd-44d9-b79b-cef83acce08b/artifacts/art_a877d9ed-d10a-47f0-979a-f66abc8018b3/content\"}],\"socket_count\":2}\nP03 quota start\nP03 quota complete\nP03 waiting paused\nP03 paused\nP03 four staged\nP03 fifth rejected\nCompleted P03-concurrent-quota-slots: true\nIndependent teardown: {\"active_requests\":[{\"method\":\"POST\",\"url\":\"/api/v1/spaces/spc_dcde184d-1fc3-4fb4-8c2b-bb51777ebdf2/artifacts\"},{\"method\":\"POST\",\"url\":\"/api/v1/spaces/spc_dcde184d-1fc3-4fb4-8c2b-bb51777ebdf2/artifacts\"},{\"method\":\"POST\",\"url\":\"/api/v1/spaces/spc_dcde184d-1fc3-4fb4-8c2b-bb51777ebdf2/artifacts\"},{\"method\":\"POST\",\"url\":\"/api/v1/spaces/spc_dcde184d-1fc3-4fb4-8c2b-bb51777ebdf2/artifacts\"}],\"socket_count\":2}\nCompleted P04-revoke-during-upload: true\nIndependent teardown: {\"active_requests\":[],\"socket_count\":3}\nCompleted P05-ownership-symlink-db-failure-gc: true\nIndependent teardown: {\"active_requests\":[],\"socket_count\":2}\nCompleted P06-ready-reference-three-writes: true\nIndependent teardown: {\"active_requests\":[],\"socket_count\":3}\n",
+    "observed-tests.stderr.txt": "$ vitest run\n"
+  },
+  "content_close_both": {
+    "cases": [
+      {
+        "bytes": 8,
+        "trace": [
+          {
+            "phase": "client_consumed",
+            "status": 200,
+            "expected_bytes": "complete",
+            "actual_bytes": "complete",
+            "ms": 22,
+            "active_requests": [
+              {
+                "method": "GET",
+                "url": "/api/v1/spaces/spc_58c1bc67-42e0-45a1-ae05-53cfb7229f48/artifacts/art_14e3ce85-a0f9-4735-acd6-57c0b5d08981/content"
+              }
+            ],
+            "socket_count": 2
+          },
+          {
+            "phase": "server_settled",
+            "ms": 74,
+            "active_requests": [],
+            "socket_count": 2
+          },
+          {
+            "phase": "normal_app_close",
+            "closed": true,
+            "ms": 75,
+            "active_requests": [],
+            "socket_count": 2
+          }
+        ],
+        "passes": true
+      },
+      {
+        "bytes": 0,
+        "trace": [
+          {
+            "phase": "client_consumed",
+            "status": 200,
+            "expected_bytes": "",
+            "actual_bytes": "",
+            "ms": 15,
+            "active_requests": [],
+            "socket_count": 2
+          },
+          {
+            "phase": "server_settled",
+            "ms": 67,
+            "active_requests": [],
+            "socket_count": 2
+          },
+          {
+            "phase": "normal_app_close",
+            "closed": true,
+            "ms": 67,
+            "active_requests": [],
+            "socket_count": 2
+          }
+        ],
+        "passes": true
+      }
+    ],
+    "passes": true
+  }
+}

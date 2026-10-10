@@ -1,0 +1,68 @@
+--- before/scripts/integrations/web/fixtures.ts
++++ after/scripts/integrations/web/fixtures.ts
+@@ -13,7 +13,7 @@
+ type IdentityName = 'contributor' | 'observer';
+ type Identity = {actor: string; credential: string; token: string};
+ type Post = {id: string; title: string; revision: number};
+-type SeedPost = {title: string; body: string; summary?: string; kind?: 'note' | 'failure' | 'question'; tags?: string[]; structured?: Json; threadId?: string};
++type SeedPost = {title: string; body: string; summary?: string; kind?: 'note' | 'failure' | 'question' | 'summary' | 'objection'; refs?: Array<{type: 'challenges' | 'cites'; target_ref: {post_id: string; revision: number}}>; tags?: string[]; structured?: Json; threadId?: string};
+ type Json = Record<string, unknown>;
+ type HttpEvent = {method: string; path: string; status: number; requestKey?: string; query?: Record<string, string>};
+ type Fault = 'lose-after-commit' | 'fail-before' | 'hold-after' | 'hold-before';
+@@ -30,6 +30,8 @@
+   login(page: Page, identity?: IdentityName): Promise<void>;
+   revokeCredential(identity: IdentityName): Promise<void>;
+   withdrawMembership(identity: IdentityName): Promise<void>;
++  patchSpace(input: {spaceId?: string; objective?: string; rules?: string[]; pinnedRefs?: Array<{post_id:string;revision:number}>}): Promise<number>;
++  seedHistoricalLargeRules(spaceId: string): Promise<number>;
+   seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post>;
+   seedPost(input: SeedPost): Promise<Post>;
+   seedThread(input: {title: string; initialPost?: SeedPost}): Promise<{id: string; title: string; initialPost?: Post}>;
+@@ -107,7 +109,7 @@
+     const fault = index < 0 ? undefined : pending.splice(index, 1)[0];
+     const record: HttpEvent = {method, path: pathname, status: 0};
+     if ((pathname.endsWith('/posts') || pathname.endsWith('/threads') || pathname.endsWith('/artifacts')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
+-    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts')) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
++    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts') || pathname.endsWith('/context') || /\/spaces\/[^/]+\/revisions\/\d+$/.test(pathname)) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
+     httpEvents.push(record);
+     if (!upstream || fault?.fault === 'fail-before') {
+       record.status = 503; request.resume(); unavailable(response); fault?.entered.resolve(); return;
+@@ -188,7 +190,7 @@
+       identities[role] = {actor, credential: string(credential.credential_id), token: string(credential.token)};
+     }
+     function postPayload(input: SeedPost): Json {
+-      return {kind: input.kind ?? 'note', title: input.title, summary: input.summary ?? 'Private browser fixture', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.structured ? {structured: input.structured} : {})};
++      return {kind: input.kind ?? 'note', title: input.title, summary: input.summary ?? 'Private browser fixture', body: input.body, ...(input.tags ? {tags: input.tags} : {}), ...(input.refs ? {refs: input.refs} : {}), ...(input.structured ? {structured: input.structured} : {})};
+     }
+     function postResult(response: Json, title: string): Post {
+       return {id: string(json(response.post).id), title, revision: Number(json(response.revision).revision)};
+@@ -203,6 +205,13 @@
+       const hasher = new CryptoHasher();
+       const contentHash = hasher.sha256(`${string(row.title)}\n${string(row.summary)}\n${string(row.body)}\n${hasher.canonicalJson(structured)}`);
+       db.prepare('UPDATE post_revisions SET structured=?,content_hash=? WHERE post_id=? AND revision=1').run(JSON.stringify(structured), contentHash, value.id);
++    }
++    async function patchSpace(input: {spaceId?: string; objective?: string; rules?: string[]; pinnedRefs?: Array<{post_id:string;revision:number}>}): Promise<number> {
++      const id=input.spaceId ?? space.id;
++      if (![space.id,alternate.id].includes(id)) throw new Error('Private space patch scope invalid.');
++      const row=json(db.prepare('SELECT current_revision FROM spaces WHERE id=?').get(id));
++      await seed('PATCH',`/spaces/${id}`,{expected_revision:Number(row.current_revision),...(input.objective===undefined?{}:{objective:input.objective}),...(input.rules===undefined?{}:{rules:input.rules}),...(input.pinnedRefs===undefined?{}:{pinned_refs:input.pinnedRefs})});
++      return Number(json(db.prepare('SELECT current_revision FROM spaces WHERE id=?').get(id)).current_revision);
+     }
+     const post = await seedNote({title: 'Fixture source', body: 'Original fixed research body.'});
+     await app.listen({host: '127.0.0.1', port: 0});
+@@ -221,7 +230,14 @@
+       },
+       async revokeCredential(identity) {await seed('POST', `/admin/credentials/${identities[identity].credential}/revoke`);},
+       async withdrawMembership(identity) {await seed('DELETE', `/spaces/${space.id}/memberships/${identities[identity].actor}`);},
+-      seedNote, seedPost,
++      seedNote, seedPost, patchSpace,
++      async seedHistoricalLargeRules(spaceId) {
++        if (browserAccessed) throw new Error('Historical space fixture must precede browser access.');
++        const revision=await patchSpace({spaceId,objective:'Synthetic historical oversized rules',rules:['Legal initial rule']});
++        const rules=Array.from({length:1200},(_,index)=>`${index} ${'研究🧪'.repeat(100)}`);
++        db.prepare('UPDATE space_revisions SET rules=? WHERE space_id=? AND revision=?').run(JSON.stringify(rules),spaceId,revision);
++        return revision;
++      },
+       async seedThread(input) {
+         const result = await seed('POST', `/spaces/${space.id}/threads`, {title: input.title, ...(input.initialPost ? {initial_post: postPayload(input.initialPost)} : {})});
+         return {id: string(json(result.thread).id), title: input.title, ...(result.initial_post && input.initialPost ? {initialPost: postResult(json(result.initial_post), input.initialPost.title)} : {})};

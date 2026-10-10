@@ -1,0 +1,24 @@
+{
+  "status": "source_frozen_not_run",
+  "files": [
+    {
+      "path": "tests/integration/m7-check-domain-independent.test.ts",
+      "sha256": "9f890bc29f7b3a5ef0b997ab91de71d4181eb6c8634cb4e6281414d805a82a5b",
+      "bytes": 21283
+    },
+    {
+      "path": "tests/integration/m7-schema6-maintenance-independent.test.ts",
+      "sha256": "bb7a9f6ed99261bd6016a4b6ed8bdef9230ad23ccbedf8e40916a90a62d7385b",
+      "bytes": 14274
+    }
+  ],
+  "test_counts": {
+    "MI": 7,
+    "MSI": 3
+  },
+  "static_review": "A API/fixture review and B maintenance review found no explicit blocker; latest logical export/import addition B review pending",
+  "plan_sha256": "8815b21b60897b0bfc13e409a66a1d4d07a621894242fe45d987883a73db9d42",
+  "controlled_corruption": "SQL only explicit damaged-record counterexamples/rollback triggers; all successful formal state via real services/handlers",
+  "capture_protection": "four archived fixture assets immutable; normal regression copy+hydrate only",
+  "runtime": "No build/test/type/lint/noEmit run; only two separately authorized canonical generations."
+}

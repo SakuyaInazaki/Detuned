@@ -1,0 +1,158 @@
+{
+  "kind": "independent-read-only-host-review",
+  "date": "2026-10-09",
+  "host_cli_executed_by_reviewer": false,
+  "core_gates_rerun": false,
+  "schema": {
+    "manifest_count": 337,
+    "actual_count": 337,
+    "total_bytes": 3159797,
+    "json_parsed": 337,
+    "bytes_sha256_mismatches": [],
+    "manifest_sha256": "eebd85cb40364caf1726839109671df0e3d826c38f073477618013a903e19242"
+  },
+  "installed_hash_checks": {
+    "codex": {
+      "files": 4,
+      "mismatches": 0,
+      "native_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff"
+    },
+    "claude": {
+      "resolved_native": "/Users/sakimi/.local/share/claude/versions/2.1.282",
+      "sha256": "fcfd837103965c64de34a6b9b94370d77a347ea71819715a27d5f0ef01775ea4",
+      "matches_static_receipt": true
+    }
+  },
+  "early_freeze_hash_checks": {
+    "codex_stdio_v2": {
+      "entries": 3,
+      "mismatches": 0
+    },
+    "claude_v3_at_initial_check": {
+      "entries": 16,
+      "mismatches": 0,
+      "README_later_changed_for_v4": true
+    },
+    "claude_v5_at_check": {
+      "entries": 25,
+      "mismatches": 0
+    }
+  },
+  "resource_read_checks": {
+    "kill_zero_absent_pids": [
+      69959,
+      70154,
+      70538,
+      70667,
+      70668,
+      71109,
+      71110,
+      71305,
+      71628,
+      71957
+    ],
+    "pgrep_groups": [
+      72180,
+      71957,
+      71110,
+      72928,
+      73600
+    ],
+    "sandbox_first_error": "sysmon request failed with error: sysmond service not found\npgrep: Cannot get process list",
+    "minimal_readonly_escalation_results": [
+      {
+        "pgid": 72180,
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "pgid": 71957,
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "pgid": 71110,
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "pgid": 72928,
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "pgid": 73600,
+        "exit": 1,
+        "stdout": "",
+        "stderr": ""
+      }
+    ],
+    "generator_owned_initially_retained": true,
+    "generator_cleanup_pending_author_receipt": false,
+    "generator_owned_after_author_cleanup_exists": false
+  },
+  "final_freeze_review_pending": false,
+  "claude_v5_static_offsets_exact": {
+    "status-map": true,
+    "raw-tool-names": true,
+    "normalize-drop": true,
+    "fetch-normalize": true,
+    "fully-qualified-call": true,
+    "name-parser": true
+  },
+  "claude_fetch_normalize_drop_independent_offset": 207015148,
+  "static_templates": {
+    "codex_toml_parsed": true,
+    "claude_json_parsed": true,
+    "inline_token_env": false
+  },
+  "claude_final": {
+    "freeze_manifest": "author/claude/freeze-manifest-v6.json",
+    "manifest_sha256": "3b875e9a5a0953b0065194cf4283449fed765efe27471cd848320e6e13d7dab4",
+    "entries": 30,
+    "hash_mismatches": 0,
+    "guard_sha_matches_receipt": true,
+    "allowed_outbound_rules": 1,
+    "mach_lookup_denied": true,
+    "owned_removed": true,
+    "native_exit": 0,
+    "signal": null,
+    "stderr_bytes": 0,
+    "raw_tool_count": 4,
+    "raw_tools": [
+      "forum_context",
+      "forum_search",
+      "forum_poll",
+      "forum_ack"
+    ],
+    "context_success": true,
+    "content_equals_structured": true,
+    "ordinary_actor_session_delta": 1,
+    "invalid_code": "VALIDATION_ERROR",
+    "http_after_context": 4,
+    "http_after_invalid": 4,
+    "inference": false,
+    "original_response_hash_is_full_stdout": false,
+    "final_recipe_redaction_changed_after_run": true
+  },
+  "parent_acceptance_pending": true,
+  "codex_final": {
+    "freeze": "v4",
+    "freeze_sha256": "b9720da360aa4c987dfcb33b8ff5124e33eabf871524b8cc6cc12780399de584",
+    "freeze_entries": 389,
+    "all_matched_before_summary_correction": true,
+    "current_matched": 388,
+    "authorized_delta": "integrations/compatibility.json.summary",
+    "fourth_guard_passed": true,
+    "native_exit": 1,
+    "signal": null,
+    "rpc_responses": 0,
+    "diagnostic": "user config read EPERM; defaults; File exists17",
+    "owned_removed": true,
+    "native_group_absent": true
+  }
+}

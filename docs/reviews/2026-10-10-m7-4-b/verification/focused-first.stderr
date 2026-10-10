@@ -1,0 +1,115 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-shutdown-contract.test.ts > SD B04: built CLI prevalidates shutdown and real serve logs default/optout then signal exits cleanly
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/contracts/m3-shutdown-contract.test.ts:16:170
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent real signals cancel poll/export/multipart/download leases together before DB close and strict lock release
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:22:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent actual file publication held before core transaction keeps DB and lock alive until complete commit settles
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:27:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent late open and metadata exists await stay leased; late never-next real FD is disposed before shutdown
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:33:55
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent expired held lease exits nonzero without DB/lock advance and real built CLI recovers owned stale lock/orphan
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:38:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  tests/integration/m3-shutdown-independent.test.ts > M3.4-B2 independent phase failures and uncertain disposer rejection exit safely without unsafe subsequent stages or unhandled errors
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ fixture tests/integration/m3-shutdown-independent.test.ts:17:369
+
+ ❯ tests/integration/m3-shutdown-independent.test.ts:43:84
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  tests/integration/m7-local-startup.test.ts > LS01 real built CLI private init, readiness, graceful close, token-free reinit and same-database restart
+AssertionError: expected { journeyCompleted: false, …(2) } to deeply equal { journeyCompleted: true, …(2) }
+
+- Expected
++ Received
+
+  {
+    "actualChildrenClosed": true,
+    "cleanupVerified": true,
+-   "journeyCompleted": true,
++   "journeyCompleted": false,
+  }
+
+ ❯ tests/integration/m7-local-startup.test.ts:38:118
+     36|  }
+     37|  // Failure reporting deliberately excludes raw initialization output,…
+     38|  expect({journeyCompleted:!failed,actualChildrenClosed:owned.every(row…
+       |                                                                                                                      ^
+     39| },15000);
+     40| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+

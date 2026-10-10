@@ -1,0 +1,33 @@
+--- a/tests/fixtures/pi-runtime/native-lifecycle.mjs
++++ b/tests/fixtures/pi-runtime/native-lifecycle.mjs
+@@ -269,14 +269,14 @@
+     let cleanupFailure;const attempt=async(label,action,done)=>{stage(label+'-begin');try{await bounded(Promise.resolve().then(action),undefined,2000);done();stage(label+'-done');}catch(error){cleanupFailure??=error;stage(label+'-fail',error);}};
+     if(host)await attempt('host-cleanup',()=>host.dispose(),()=>{evidence.cleanup.host_disposed=true;});
+     if(app)await attempt('app-cleanup',async()=>{
+-      stage('business-drain-begin',undefined,{active_count:app.runtimeResources.activeCount});app.detunedBeginDraining();
++      stage('business-cleanup-drain-begin',undefined,{active_count:app.runtimeResources.activeCount});app.detunedBeginDraining();
+       evidence.cleanup.transport={active_before_drain:app.runtimeResources.activeCount};
+       await app.runtimeResources.waitForIdle();assert.equal(app.runtimeResources.activeCount,0);
+-      evidence.cleanup.transport.active_after_drain=app.runtimeResources.activeCount;stage('business-drain-done',undefined,{active_count:app.runtimeResources.activeCount});
+-      const sockets=[...ownedSockets.entries()];evidence.cleanup.transport.connections_before_close=sockets.length;stage('socket-close-begin',undefined,{connections:sockets.length});
++      evidence.cleanup.transport.active_after_drain=app.runtimeResources.activeCount;stage('business-cleanup-drain-done',undefined,{active_count:app.runtimeResources.activeCount});
++      const sockets=[...ownedSockets.entries()];evidence.cleanup.transport.connections_before_close=sockets.length;stage('socket-cleanup-close-begin',undefined,{connections:sockets.length});
+       for(const[socket]of sockets)socket.destroy();await Promise.all(sockets.map(([,closed])=>closed));assert.equal(ownedSockets.size,0);
+-      evidence.cleanup.transport.connections_after_close=ownedSockets.size;evidence.cleanup.transport.accepted_connections=acceptedSockets;evidence.cleanup.transport.closed_connections=closedSockets;stage('socket-close-done',undefined,{connections:ownedSockets.size});
+-      await app.close();stage('app-actual-close');
++      evidence.cleanup.transport.connections_after_close=ownedSockets.size;evidence.cleanup.transport.accepted_connections=acceptedSockets;evidence.cleanup.transport.closed_connections=closedSockets;stage('socket-cleanup-close-done',undefined,{connections:ownedSockets.size});
++      await app.close();stage('app-cleanup-actual-close');
+     },()=>{evidence.cleanup.app_closed=true;});
+     if(db)await attempt('db-cleanup',()=>{db.close();},()=>{evidence.cleanup.db_closed=true;});
+     await attempt('directory-cleanup',()=>fs.rm(dir,{recursive:true,force:true}),()=>{evidence.cleanup.private_directory_removed=true;});
+--- a/tests/contracts/m4-pi-native-lifecycle.test.ts
++++ b/tests/contracts/m4-pi-native-lifecycle.test.ts
+@@ -50,7 +50,7 @@
+   // The child only emits white-listed evidence; no credentials/raw HTTP are captured.
+   expect({exit,killed,stderr},diagnostic()).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);
+   expect(evidence).toMatchObject({mode:'checks',passed:true,model_calls:0,metadata:{version:'0.87.1'},checks:{invalid_before_prepare_http:0,reason_500:true,scope_denied:true,artifact_metadata_only:true,ack_delta:0,pending_unchanged:true,cancelled:true},cleanup:{host_disposed:true,app_closed:true,private_directory_removed:true}});
+-  expect(counts['business-drain-done']?.active_count,diagnostic()).toBe(0);expect(counts['socket-close-done']?.connections,diagnostic()).toBe(0);
++  expect(counts['business-cleanup-drain-done']?.active_count,diagnostic()).toBe(0);expect(counts['socket-cleanup-close-done']?.connections,diagnostic()).toBe(0);
+   expect(evidence.cleanup.transport.active_after_drain).toBe(0);expect(evidence.cleanup.transport.connections_after_close).toBe(0);for(const key of ['active_before_drain','connections_before_close','accepted_connections','closed_connections'])expect(Number.isSafeInteger(evidence.cleanup.transport[key])&&evidence.cleanup.transport[key]>=0).toBe(true);expect(evidence.cleanup.transport.closed_connections).toBe(evidence.cleanup.transport.accepted_connections);
+   expect(evidence.tools).toHaveLength(9);expect(evidence.checks.reads).toEqual(['check_run','check_snapshot','check_post_revision','check_receipt','check_artifact','required_checks']);
+  },80000);

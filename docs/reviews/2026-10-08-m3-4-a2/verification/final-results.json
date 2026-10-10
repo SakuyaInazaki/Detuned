@@ -1,0 +1,56 @@
+{
+  "status": "parentaccepted",
+  "date": "2026-10-08",
+  "scope": "M3.4-A.2 runtime main SQLite page allocation and registered instance artifact quotas",
+  "formal": {
+    "tests_passed": 485,
+    "tests_total": 485,
+    "files_passed": 60,
+    "files_total": 60,
+    "new_tests_included": 18
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "build/typecheck/lint/fullsuite + 24 original retained probes + accepted A.1 scenario11 adapter",
+    "original_scenario11": "not rerun; original A.1 default-limit failure preserved"
+  },
+  "attempts": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "new_targeted_first": {
+      "passed": 17,
+      "total": 18,
+      "classification": "RSB04 extra user test table rejected by existing schema classifier before quota; fixture error"
+    },
+    "rsb04_corrected_author_directed": {
+      "passed": 1,
+      "skipped": 3
+    },
+    "independent_cases": 4,
+    "independent_case_executions": "each passed once in targeted and once in fullsuite"
+  },
+  "protected_old_review_files": 4139,
+  "source_config_test_files": 211,
+  "tracked_dist_files": 208,
+  "untracked_dist_files": 128,
+  "bounded_export_inherited_runs": 1,
+  "independent_bounds": {
+    "natural_post_requests_at_most": 32,
+    "body_bytes_each": 60000,
+    "missing_rows": 1025,
+    "missing_bytes_each": 9007199254740991,
+    "test_only_after_publish_allocation_bytes": 2097152
+  },
+  "cleanup": "owned fixed workers/private fixture directories0; finite known token literal pattern no hits",
+  "limitations": [
+    "Main page cap does not bound WAL/SHM/temp/log/backups/staging/orphans or full directory",
+    "Registered declaration counts include missing/redacted, not physical byte accounting",
+    "Startup no research/credential mutation assertion uses logical table hashes; no physical file mtime/hash invariance claim",
+    "After-publish cleanup FULL uses explicit private TEMP trigger real allocation, not natural artifact disk exhaustion",
+    "No 600s/model/multi-host or additional material experiment"
+  ],
+  "accepted_date": "2026-10-08"
+}

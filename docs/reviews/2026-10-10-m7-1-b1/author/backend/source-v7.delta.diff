@@ -1,0 +1,36 @@
+--- a/packages/server/src/app.ts
++++ b/packages/server/src/app.ts
+@@ -11,7 +11,7 @@
+ import {WEB_AUTH_PATH} from '@detuned/protocol';
+ import { RuntimeResources } from './runtime-resources.js';
+ import { randomBytes } from 'node:crypto';
+-import Fastify, { FastifyInstance } from 'fastify';
++import Fastify, { FastifyInstance, type FastifyServerOptions } from 'fastify';
+ import cors from '@fastify/cors';
+ import {
+   StoragePort,
+@@ -148,15 +148,19 @@
+     ? new ArtifactService(options.storage, options.artifactBlobs, authService, idempotency, idGen, clock, artifactLimits, resourceLimits)
+     : undefined;
+ 
+-  const codepointKeyword = (validator: {addKeyword(definition: {keyword:'x-max-codepoints';type:'string';schemaType:'number';validate:(maximum:number,value:string)=>boolean}):unknown}) => {
+-    validator.addKeyword({keyword:'x-max-codepoints',type:'string',schemaType:'number',validate:(maximum,value)=>{
+-      let count=0;for(const _codepoint of value)if(++count>maximum)return false;return true;
+-    }});
++  const ajvOptions:NonNullable<FastifyServerOptions['ajv']>={
++    customOptions:{removeAdditional:false,useDefaults:true,coerceTypes:false,allErrors:true},
++    plugins:[validator=>{
++      validator.addKeyword({keyword:'x-max-codepoints',type:'string',schemaType:'number',validate:(maximum:number,value:string)=>{
++        let count=0;for(const _codepoint of value)if(++count>maximum)return false;return true;
++      }});
++      return validator;
++    }],
+   };
+   const common = {
+     logger: false as const,
+     requestIdHeader: false as const,
+-    ajv: { customOptions: { removeAdditional: false, useDefaults: true, coerceTypes: false, allErrors: true }, plugins:[codepointKeyword] },
++    ajv:ajvOptions,
+   };
+   const app: ServerApp = tls
+     ? Fastify({ ...common, https: { ...tls, minVersion: 'TLSv1.2', maxHeaderSize: 65536 } })

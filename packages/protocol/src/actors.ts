@@ -18,11 +18,13 @@ export const ActorSchema = Type.Object({
 
 export type Actor = Static<typeof ActorSchema>;
 
-export const CredentialCapabilitySchema = Type.Union([
+export const OrdinaryCredentialCapabilitySchema = Type.Union([
   Type.Literal('read'),
   Type.Literal('write'),
   Type.Literal('admin'),
 ]);
+
+export const CredentialCapabilitySchema = Type.Union([...OrdinaryCredentialCapabilitySchema.anyOf,Type.Literal('verify')]);
 
 export type CredentialCapability = Static<typeof CredentialCapabilitySchema>;
 

@@ -1,0 +1,73 @@
+--- packages/protocol/tests/schema.test.ts (fresh-matching before)
++++ packages/protocol/tests/schema.test.ts
+@@ -65,7 +65,7 @@
+   });
+ 
+   it('validates forum tools definitions', () => {
+-    expect(DETUNED_TOOLS.length).toBe(8);
++    expect(DETUNED_TOOLS.length).toBe(9);
+     const toolNames = DETUNED_TOOLS.map((t) => t.name);
+     expect(toolNames).toContain('forum_context');
+     expect(toolNames).toContain('forum_search');
+@@ -75,7 +75,7 @@
+     expect(toolNames).toContain('forum_subscribe');
+     expect(toolNames).toContain('forum_poll');
+     expect(toolNames).toContain('forum_ack');
+-    expect(toolNames).not.toContain('forum_review');
++    expect(toolNames).toContain('forum_review');
+   });
+ 
+   it('generates a valid OpenAPI spec object', () => {
+--- tests/contracts/m2-thread-posts-read-contracts.test.ts (fresh-matching before)
++++ tests/contracts/m2-thread-posts-read-contracts.test.ts
+@@ -113,7 +113,7 @@
+     for (const invalid of [{ ...valid, revision: 1 }, { ...valid, limit: 101 }, { ...valid, kind: 'thread' }]) {
+       expect(Value.Check(ToolReadParamsSchema, invalid)).toBe(false); await expect(client.callTool('forum_read', invalid)).rejects.toMatchObject({ statusCode: 400 });
+     }
+-    expect(DETUNED_TOOLS.map(t => t.name)).toEqual(['forum_context', 'forum_search', 'forum_read', 'forum_publish', 'forum_relate', 'forum_subscribe', 'forum_poll', 'forum_ack']);
++    expect(DETUNED_TOOLS.map(t => t.name)).toEqual(['forum_context', 'forum_search', 'forum_read', 'forum_publish', 'forum_relate', 'forum_subscribe', 'forum_poll', 'forum_ack', 'forum_review']);
+   });
+ 
+   it('D07: directory current head leads to fixed stored content without aggregating or drifting', async () => {
+--- tests/integration/m6-review-requests.test.ts (fresh-matching before)
++++ tests/integration/m6-review-requests.test.ts
+@@ -86,7 +86,7 @@
+  }finally{reopened.close();}
+ });
+ 
+-it('RR07 inactive cancel tool derives the strict DTO without placing transport keys in its body',()=>{
++it('RR07 active cancel tool derives the strict DTO without placing transport keys in its body',()=>{
+  const body={expected_version:1,reason:'stop'},tool={space_id:'s',request_key:'k',op:'cancel',request_id:'r',...body};
+  expect(Value.Check(CancelReviewRequestSchema,body)).toBe(true);expect(Value.Check(ToolReviewCancelOpSchema,tool)).toBe(true);
+  const {expected_version:ignored,...missing}=tool;void ignored;expect(Value.Check(ToolReviewCancelOpSchema,missing)).toBe(false);
+@@ -94,5 +94,5 @@
+  expect(Value.Check(CancelReviewRequestSchema,{...body,request_key:'k'})).toBe(false);
+  expect(ToolReviewCancelOpSchema.properties.expected_version).toBe(CancelReviewRequestSchema.properties.expected_version);
+  expect(ToolReviewCancelOpSchema.properties.reason).toBe(CancelReviewRequestSchema.properties.reason);
+- expect(DETUNED_TOOLS.map(t=>t.name)).not.toContain('forum_review');
++ expect(DETUNED_TOOLS.map(t=>t.name)).toContain('forum_review');
+ });
+--- tests/contracts/m2-space-read-contracts.test.ts (fresh-matching before)
++++ tests/contracts/m2-space-read-contracts.test.ts
+@@ -57,7 +57,9 @@
+       const r=await app.inject({method:'GET',url:`/api/v1/spaces/${sid}/revisions/${suffix}`,headers:{authorization:`Bearer ${token}`}});expect(r.statusCode,suffix).toBe(400);expect(r.json().error).toMatchObject({code:'VALIDATION_ERROR',retryable:false});
+     }
+     const client=new DetunedClient({baseUrl:'http://127.0.0.1:1',token,maxRetries:0});
+-    for(const input of [{kind:'space',space_id:sid},{kind:'space',space_id:sid,id:sid,revision:1},{kind:'post',space_id:sid,id:'p',cursor:'ignored'},{kind:'post',space_id:sid,id:'p',max_bytes:4096},{kind:'thread',space_id:sid,id:'t',revision:1},{kind:'artifact',space_id:sid,id:'a'},{kind:'review',space_id:sid,id:'r'}]) {
++    const artifactMetadata={kind:'artifact',space_id:sid,id:'a'};
++    expect(Value.Check(ToolReadParamsSchema,artifactMetadata)).toBe(true);expect(ajv.compile(ToolReadParamsSchema)(artifactMetadata)).toBe(true);
++    for(const input of [{kind:'space',space_id:sid},{kind:'space',space_id:sid,id:sid,revision:1},{kind:'post',space_id:sid,id:'p',cursor:'ignored'},{kind:'post',space_id:sid,id:'p',max_bytes:4096},{kind:'thread',space_id:sid,id:'t',revision:1},{kind:'artifact',space_id:sid,id:'a',revision:1},{kind:'review',space_id:sid,id:'r'}]) {
+       expect(Value.Check(ToolReadParamsSchema,input)).toBe(false);expect(ajv.compile(ToolReadParamsSchema)(input)).toBe(false);
+       await expect(client.callTool('forum_read',input)).rejects.toMatchObject({code:'VALIDATION_ERROR',statusCode:400});
+     }
+--- tests/contracts/m4-pi-runtime.test.ts (fresh-matching before)
++++ tests/contracts/m4-pi-runtime.test.ts
+@@ -15,7 +15,7 @@
+ });
+ it('Pi selected credential failure and conflict are terminal locally; pre-cancel and missing space make no client',async()=>{
+  for(const config of [{environmentToken:'A',environmentTokenFile:'/private/not-read'},{environmentTokenFile:'/private/missing-detuned-pi-token'}]){let made=0;const runtime=createPiRuntime({snapshot:()=>({baseUrl:'http://private',...config}),createClient:()=>{made++;throw Error('secret');}});await expect(runtime.tool('forum_context',{space_id:'space'})).rejects.toBeInstanceOf(DetunedError);await expect(runtime.tool('forum_context',{space_id:'space'})).rejects.toBeInstanceOf(DetunedError);expect(made).toBe(0);await runtime.close();}
+- let made=0;const runtime=createPiRuntime({snapshot:()=>({baseUrl:'http://private'}),createClient:()=>{made++;throw Error('secret');}});const abort=new AbortController();abort.abort();await expect(runtime.tool('forum_context',{space_id:'space'},abort.signal)).rejects.toBeInstanceOf(UserAbortError);await expect(runtime.tool('forum_context',{})).rejects.toThrow('requires a space');expect(made).toBe(0);await runtime.close();
++ let made=0;const runtime=createPiRuntime({snapshot:()=>({baseUrl:'http://private'}),createClient:()=>{made++;throw Error('secret');}});const abort=new AbortController();abort.abort();await expect(runtime.tool('forum_context',{space_id:'space'},abort.signal)).rejects.toBeInstanceOf(UserAbortError);await expect(runtime.tool('forum_context',{})).rejects.toMatchObject({code:'VALIDATION_ERROR',statusCode:400,message:'Invalid forum tool arguments.'});expect(made).toBe(0);await runtime.close();
+ });
+ it('Pi shutdown waits true tool finally and prevents late successful result',async()=>{
+  let entered!:()=>void,release!:()=>void;const barrier=new Promise<void>(r=>entered=r),gate=new Promise<void>(r=>release=r);const counts={cap:0,me:0,session:0,tool:0};let finallyDone=false;

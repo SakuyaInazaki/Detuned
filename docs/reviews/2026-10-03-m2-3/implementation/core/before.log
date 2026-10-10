@@ -1,0 +1,50 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-search.test.ts (2 tests | 2 failed) 17ms
+   × M2.3 product search semantics and bound cursors > S01: tags are exact all-match properties before paging, not FTS text 14ms
+     → expected [ …(2) ] to deeply equal [ Array(1) ]
+   × M2.3 product search semantics and bound cursors > S02: 1/2/3+ Unicode codepoints and literal symbols match product content including tags 3ms
+     → expected [] to include 'pst_1ad3ab60-6f61-4b03-b387-b9b487371…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S01: tags are exact all-match properties before paging, not FTS text
+AssertionError: expected [ …(2) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+  [
+    "pst_3674569d-60bb-4b15-a447-dadd00e345e3",
++   "pst_2bae601f-5576-4c30-94d7-76b975cdcb37",
+  ]
+
+ ❯ tests/integration/m2-search.test.ts:16:94
+     14|     expect(storage.searchPosts(sid,'needle',{tags:['Case','a,b']},1).i…
+     15|     expect(storage.searchPosts(sid,'needle',{tags:[]}).items).toHaveLe…
+     16|     expect(storage.searchPosts(sid,'needle',{tags:['Case','Case']}).it…
+       |                                                                                              ^
+     17|     expect(storage.searchPosts(sid,'needle',{tags:['case']}).items.map…
+     18|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S02: 1/2/3+ Unicode codepoints and literal symbols match product content including tags
+AssertionError: expected [] to include 'pst_1ad3ab60-6f61-4b03-b387-b9b487371…'
+ ❯ tests/integration/m2-search.test.ts:21:156
+     19|   it('S02: 1/2/3+ Unicode codepoints and literal symbols match product…
+     20|     const item=add('图失败零权边 😀图 😀图论 😀😀 % _ \\ " AND a*b',['标签']);
+     21|     for(const q of ['图','失败','零权边','😀','😀图','😀图论','😀😀','%','_','\…
+       |                                                                                                                                                            ^
+     22|     expect(storage.searchPosts(sid,'NOT absent').items).toEqual([]);
+     23|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:08:33
+   Duration  456ms (transform 139ms, setup 0ms, collect 231ms, tests 17ms, environment 0ms, prepare 36ms)
+

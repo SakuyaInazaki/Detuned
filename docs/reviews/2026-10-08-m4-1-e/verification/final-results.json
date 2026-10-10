@@ -1,0 +1,66 @@
+{
+  "status": "accepted_by_parent",
+  "date": "2026-10-08",
+  "new_tests": 16,
+  "new_targeted_first": {
+    "passed": 16,
+    "files": 3,
+    "exit_code": 0
+  },
+  "corrected_targeted": {
+    "passed": 25,
+    "files": 5,
+    "new_unique_tests": 16
+  },
+  "corrected_lock_targeted": {
+    "passed": 2,
+    "skipped": 9,
+    "not_new_tests": true
+  },
+  "fullsuite_attempts": [
+    {
+      "passed": 582,
+      "total": 585,
+      "files_passed": 79,
+      "files_total": 82,
+      "exit_code": 1,
+      "runner_seconds": 40.71
+    },
+    {
+      "passed": 585,
+      "total": 585,
+      "files_passed": 82,
+      "files_total": 82,
+      "exit_code": 0,
+      "runner_seconds": 40.01
+    }
+  ],
+  "gate_runs": {
+    "build": 2,
+    "typecheck": 2,
+    "lint": 2,
+    "fullsuite": 2
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4 latest gates + 24 original probes + approved A.1 scenario11 adapter",
+    "first_full_window": "3 successful gates, fullsuite failed, 25 probes not yet started"
+  },
+  "source_noemit_attempts": [
+    2,
+    0,
+    0
+  ],
+  "fullsuite_inherited_40MiB_executions": 2,
+  "protected_old_review_files": 5009,
+  "changes": "typed safe DirectoryLock error; three parent-approved exact legacy fixture adaptations; no persistent schema/SQL/dependency changes",
+  "limitations": [
+    "local supported scope only",
+    "no 600s/model/host evaluation",
+    "FIFO child and limited FD observations belong to author source test, not C complete CLI certification"
+  ],
+  "owned_resources_remaining": 0,
+  "integrity": "integrity.json",
+  "accepted_at": "2026-10-08"
+}

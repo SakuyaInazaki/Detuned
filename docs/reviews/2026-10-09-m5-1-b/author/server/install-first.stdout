@@ -1,0 +1,14 @@
+Scope: all 11 workspace projects
+[ERR_SQLITE_ERROR] unable to open database file
+
+pnpm: unable to open database file
+    at file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:54418:19
+    at sqliteRetry (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:54328:14)
+    at StoreIndex.openDatabase (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:54417:9)
+    at new StoreIndex (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:54402:14)
+    at createNewStoreController (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:161839:83)
+    at async installDeps (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:195655:17)
+    at async file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:304415:19
+    at async main4 (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:304383:30)
+    at async runPnpm (file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:304656:5)
+    at async file:///opt/homebrew/lib/node_modules/pnpm/dist/pnpm.mjs:304649:3

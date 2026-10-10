@@ -1,0 +1,25 @@
+--- a/tests/contracts/m7-check-http.test.ts
++++ b/tests/contracts/m7-check-http.test.ts
+@@ -8,7 +8,7 @@
+ import {buildApp} from '@detuned/server';
+ import {ArtifactFileStore} from '../../packages/server/src/artifact-files.js';
+ import {CryptoHasher} from '@detuned/core';
+-import {canonicalizeReviewJson,generateOpenApiSpec,isCheckRunView,isCheckSnapshotView,isCheckReceiptView,isRequiredChecksView,isCheckArtifactMetadata,type CheckRunView,type SubmitCheckReceipt} from '@detuned/protocol';
++import {canonicalizeReviewJson,generateOpenApiSpec,CheckPostParamsSchema,isCheckRunView,isCheckSnapshotView,isCheckReceiptView,isRequiredChecksView,isCheckArtifactMetadata,type CheckRunView,type SubmitCheckReceipt} from '@detuned/protocol';
+ let db:Database.Database,storage:SqliteStorage,app:ReturnType<typeof buildApp>,dir:string,url:string,token:string,sid:string,pid:string,request:any,run:CheckRunView,verify:string;
+ const now='2026-10-10T00:00:00.000Z',clock={now:()=>new Date(now),nowIso:()=>now};
+ async function http(method:string,path:string,body?:unknown,key?:string,bearer=token){const response=await fetch(url+'/api/v1'+path,{method,headers:{authorization:'Bearer '+bearer,...(body!==undefined?{'content-type':'application/json'}:{}),...(key!==undefined?{'idempotency-key':key}:{})},...(body!==undefined?{body:JSON.stringify(body)}:{})});return {status:response.status,headers:response.headers,body:await response.json()};}
+@@ -69,6 +69,13 @@
+  const parameters=Reflect.get(post,'parameters');if(!Array.isArray(parameters))throw new Error('Missing credentials parameters');
+  expect(parameters.some(parameter=>typeof parameter==='object'&&parameter!==null&&Reflect.get(parameter,'name')==='Idempotency-Key')).toBe(false);
+  const receipt=Reflect.get(paths,r+'/receipt');if(typeof receipt!=='object'||receipt===null)throw new Error('Missing receipt path');expect(Object.hasOwn(receipt,'post')).toBe(true);expect(Object.hasOwn(receipt,'get')).toBe(true);
++ const fixedPost=Reflect.get(paths,r+'/posts/{post_id}/revisions/{revision}');if(typeof fixedPost!=='object'||fixedPost===null)throw new Error('Missing fixed post path');
++ const fixedGet=Reflect.get(fixedPost,'get');if(typeof fixedGet!=='object'||fixedGet===null)throw new Error('Missing fixed post operation');
++ const fixedParameters=Reflect.get(fixedGet,'parameters');if(!Array.isArray(fixedParameters))throw new Error('Missing fixed post parameters');
++ const revision=fixedParameters.find(parameter=>typeof parameter==='object'&&parameter!==null&&Reflect.get(parameter,'name')==='revision');
++ if(typeof revision!=='object'||revision===null)throw new Error('Missing revision parameter');
++ expect(Reflect.get(revision,'schema')).toEqual(CheckPostParamsSchema.properties.revision);
++
+ });
+ it('CH05 controlled legal Unicode slash space ID preserves scoped URL and real log replay',async()=>{
+  const revision=storage.getSpaceRevision(sid,storage.findSpaceById(sid)!.current_revision)!;const encoded='研究/space with gap';// Only identity is controlled; formal state is created through HTTP.

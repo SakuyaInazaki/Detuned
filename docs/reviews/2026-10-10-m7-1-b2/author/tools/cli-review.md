@@ -1,0 +1,15 @@
+# B2 A CLI独立静审
+
+日期2026-10-10。实际 inspected freeze SHA `e97f81bedca73d983734358e2c270e59a5d1ba15b71baf300e7596469bc499ca`、diff SHA `06e39e49545b9666cd699560a203c02cb06030f64ebc9636cba78bbc703b0f42`。两实际文件SHA匹配：index `0a43dbfbcf618bd420b422030356298c05ced7bf74b38e29636773f66aa2ee6d`、test `0996713f9873fec603b9ec2b39ea13ed7adfbfa5e6bf4a25386da78c8361d7a5`。仅静读，未执行任何gate。
+
+十二命令逐一对应B1 typedmethods；read/required selectors、post正safe revision、JSON strip request_key和scope参数匹配，未复制core权限/状态公式。普通create/invalidate复用getWriteContext与既有持久key pair/显式key互斥及同target重放；未更改namespace/存储/锁。
+
+verify receipt-submit/upload与issuer先rejectCheckPersistent，以!==undefined检查出现，包括空字符串和半pair；位于readAdminInput/readfile/getClient/token/HTTP之前。issuer额外拒显式request-key；body未知key由B1client本地拒，issuerretry0保持。verify仅signal，explicit/percallkey保持，不getMe。现显式option/JSON key优先级沿既有CLI习惯，无新增持久路径。
+
+附件复用readArtifactBlob同FD/bounded读、typedscopedhash/EOF下载、publishArtifactFile O_EXCL0600+hardlink no-clobber，stdout只安全metadata摘要；withArtifactSignal/finally监听沿原helper。credential成功stdout是用户明确授权一次明文，错误走现安全render，未新写token文件/日志。
+
+CC01真TCP十二操作/真实formal链与safe输出、no-clobber/replay；CC02出现空/半pair优先missinginput且零HTTP；CC03真实持久重放/409；CC04revision/input安全；CC05controlled503一次与badbody零HTTP。issuer原stdout只内存，断言shape/boolean，不直接错误打印secret。五作者case未运行，不将静读叫通过；独验及resource cleanup仍待D。
+
+另窄读D CI04/05：bridgeSuccess确为structuredContent.result，typedread直接DTO，decoded.snapshot.check_run_id正确；六read前真实log+receipt已建立，schema选择器匹配。Pi普通runtime保持prepare，不称verify可走普通工具。
+
+结论：未发现可行动源码/夹具阻塞，可交root/D串行门禁。B/A产品冻结保持；新M7.3仅规划。

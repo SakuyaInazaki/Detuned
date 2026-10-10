@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/contracts/r4-c-route-contracts.test.ts",
+    "tests/contracts/m6-review-http-independent.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "-t",
+    "G0[1-4]:|H02 "
+  ],
+  "exit_code": 0,
+  "seconds": 2.16,
+  "stdout": "g01-h02-v4.stdout.txt",
+  "stderr": "g01-h02-v4.stderr.txt",
+  "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+}

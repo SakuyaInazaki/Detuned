@@ -1,0 +1,21 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-web-auth-client.test.ts > WA01: real human login/query/logout uses root cookie transport without default Bearer
+AssertionError: expected DetunedError: Invalid web request. { …(6) } to match object { statusCode: 401 }
+(6 matching properties omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "statusCode": 401,
++ DetunedError {
++   "statusCode": 400,
+  }
+
+ ❯ tests/contracts/m5-web-auth-client.test.ts:23:764
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

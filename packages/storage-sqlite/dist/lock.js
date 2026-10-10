@@ -1,7 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
+export class DirectoryLockUnavailableError extends Error {
+    constructor() {
+        super('数据目录被锁定或无法安全取得目录锁，请确认其他实例状态后重试。');
+        this.name = 'DirectoryLockUnavailableError';
+    }
+}
 export class DirectoryLock {
     lockFd = null;
+    strictUnlinkPending = false;
     lockFilePath;
     constructor(dataDir) {
         this.lockFilePath = path.join(dataDir, 'detuned.lock');
@@ -50,9 +57,32 @@ export class DirectoryLock {
                         // If retry fails, fall through to throw error
                     }
                 }
-                throw new Error(`数据目录已被其他 Detuned 实例锁定 (PID: ${lockPid ?? 'unknown'}): ${this.lockFilePath}。SQLite WAL 仅允许单进程写入。`);
+                throw new DirectoryLockUnavailableError();
             }
             throw err;
+        }
+    }
+    /** Strict runtime shutdown path; legacy best-effort release remains unchanged. */
+    releaseStrict() {
+        if (this.lockFd !== null) {
+            try {
+                fs.closeSync(this.lockFd);
+            }
+            catch {
+                throw new Error('目录锁文件描述符关闭失败，锁未释放。');
+            }
+            this.lockFd = null;
+            this.strictUnlinkPending = true;
+        }
+        if (this.strictUnlinkPending) {
+            try {
+                fs.unlinkSync(this.lockFilePath);
+            }
+            catch (error) {
+                if (error.code !== 'ENOENT')
+                    throw new Error('目录锁材料移除失败，锁释放未完成。');
+            }
+            this.strictUnlinkPending = false;
         }
     }
     release() {

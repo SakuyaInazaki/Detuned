@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m4-session-subscription-client.test.ts (2 tests) 8ms
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ ✓ tests/integration/m4-consumer-lifecycle.test.ts (4 tests) 240ms
+ ✓ tests/integration/m4-write-consume-independent.test.ts (4 tests) 2767ms
+   ✓ WD C01 actual pending and acknowledged consumers terminate atomically; peer research persists, old cursors cannot revive and same key restarts at explicit highwater  383ms
+   ✓ WD C02 URL space and consumer ownership reject without mutation; private parent-delete fault observes child deletion then restores complete transaction  309ms
+   ✓ WD C04 new CLI space/thread and session wires work; actual wait AbortSignal never ACKs and committed session response loss is single attempt  1801ms
+ ✓ tests/contracts/m4-write-consume-cli.test.ts (4 tests) 4044ms
+   ✓ WD B02: space/thread writes preserve body/key/data and existing group reads  1585ms
+   ✓ WD B03: sessions are distinct same-actor records and delivered consumer termination keeps forum data  1067ms
+   ✓ WD B04: repeated filters/checkpoint and poll wait transmit exactly, invalid integers/input do not send HTTP  1390ms
+
+ Test Files  4 passed (4)
+      Tests  14 passed (14)
+   Start at  19:30:11
+   Duration  4.90s (transform 404ms, setup 0ms, collect 1.35s, tests 7.06s, environment 1ms, prepare 393ms)
+

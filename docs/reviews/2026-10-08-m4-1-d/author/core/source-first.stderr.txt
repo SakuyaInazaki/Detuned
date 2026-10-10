@@ -1,0 +1,53 @@
+(node:23307) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 4)
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m4-session-subscription-client.test.ts > M4.1-D session and event client contracts > session is single attempt on transport, body and retryable HTTP errors while retaining the envelope and encoded path
+ClientProtocolError: 不支持的 API 版本: undefined
+ ❯ DetunedClient.requestWithBody packages/client/src/client.ts:444:28
+    442|                   outcome = {
+    443|                     kind: 'error',
+    444|                     error: new ClientProtocolError(`不支持的 API 版本: ${jso…
+       |                            ^
+    445|                   };
+    446|                 } else if (typeof json.request_id !== 'string' || json…
+ ❯ tests/integration/m4-session-subscription-client.test.ts:26:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m4-session-subscription-client.test.ts > M4.1-D session and event client contracts > session timeout/abort does not retry and old poll still retries, with consumer delete preserving its typed envelope
+ClientProtocolError: 不支持的 API 版本: undefined
+ ❯ DetunedClient.requestWithBody packages/client/src/client.ts:444:28
+    442|                   outcome = {
+    443|                     kind: 'error',
+    444|                     error: new ClientProtocolError(`不支持的 API 版本: ${jso…
+       |                            ^
+    445|                   };
+    446|                 } else if (typeof json.request_id !== 'string' || json…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+ClientProtocolError: 不支持的 API 版本: undefined
+ ❯ DetunedClient.requestWithBody packages/client/src/client.ts:444:28
+    442|                   outcome = {
+    443|                     kind: 'error',
+    444|                     error: new ClientProtocolError(`不支持的 API 版本: ${jso…
+       |                            ^
+    445|                   };
+    446|                 } else if (typeof json.request_id !== 'string' || json…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { isProtocolError: true }
+This error originated in "tests/integration/m4-session-subscription-client.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "session timeout/abort does not retry and old poll still retries, with consumer delete preserving its typed envelope". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

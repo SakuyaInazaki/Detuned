@@ -1,0 +1,29 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-post-order-index.test.ts > E2 runtime-only creation sort index > I03 real page-allocation FULL rolls back index and preserves original cap/data
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
++ DetunedError {
++   "message": "存储资源达到运行额度或无法继续分配。",
++   "isDetunedError": true,
++   "isTransportError": false,
+    "code": "QUOTA_EXCEEDED",
+-   "httpStatus": 507,
++   "statusCode": 507,
+    "retryable": false,
++   "details": {
++     "scope": "storage",
++   },
++   "name": "DetunedError",
+  }
+
+ ❯ tests/contracts/m5-post-order-index.test.ts:50:53
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

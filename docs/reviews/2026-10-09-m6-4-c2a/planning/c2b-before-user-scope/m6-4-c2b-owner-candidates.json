@@ -1,0 +1,69 @@
+{
+  "status": "root_chosen_read_time_projection_owner_candidates_only_pending_c2a_seal_new_fresh_and_dispatch",
+  "task": "docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md",
+  "A": {
+    "existing": [
+      "packages/core/src/ports/storage.ts",
+      "packages/core/src/services/search-service.ts",
+      "packages/core/src/index.ts",
+      "modules/review/src/submission-service.ts",
+      "packages/storage-sqlite/src/sqlite-storage.ts",
+      "packages/protocol/src/search.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/protocol/src/tools.ts",
+      "packages/client/src/client.ts",
+      "packages/cli/src/index.ts",
+      "packages/server/src/routes/search.ts"
+    ],
+    "new": [
+      "packages/core/src/services/public-review-submission.ts",
+      "packages/core/src/services/review-submission-search-cursor.ts",
+      "tests/integration/m6-public-review-search.test.ts",
+      "tests/contracts/m6-public-review-search-contracts.test.ts",
+      "tests/contracts/m6-public-review-search-tools-cli.test.ts"
+    ]
+  },
+  "B": {
+    "existing": [
+      "packages/web/src/app.tsx",
+      "packages/web/src/styles.css"
+    ],
+    "new": [
+      "packages/web/src/public-review-search.tsx",
+      "tests/contracts/m6-public-review-search-web-input.test.ts"
+    ]
+  },
+  "D": {
+    "existing": [
+      "scripts/integrations/web/fixtures.ts",
+      "scripts/integrations/web/playwright.config.ts"
+    ],
+    "new": [
+      "tests/integration/m6-public-review-search-independent.test.ts",
+      "scripts/integrations/web/m6-public-review-search.spec.ts"
+    ],
+    "execution": "sole serial window after exact source freeze/cross-review/root release"
+  },
+  "conditional_existing_not_authorized": [
+    "packages/protocol/src/index.ts",
+    "packages/client/src/index.ts",
+    "packages/core/src/services/review-artifact-access.ts",
+    "packages/core/src/services/review-submission-records.ts"
+  ],
+  "conditional_note": "Canonical search/response-guards and client.ts already star-exported; existing privacy helpers can be wrapped by new core helper. Include these only if root-selected error classification/shared-helper implementation proves actual necessity, with exact-before supplement before writes. No implied extension.",
+  "protected": [
+    "SQL/DDL/schema/migrations/profiles/historical fixtures",
+    "bootstrap/offline-upgrade/offline-backup/restore/export/import",
+    "dependencies/lock",
+    "sealed reviews",
+    "packages/web/src/knowledge.tsx",
+    "packages/web/src/review-panel.tsx",
+    "M7 checks/receipts",
+    "new host/model/VM/global configuration"
+  ],
+  "unresolved": [
+    "Root must classify current privacy NOT_FOUND missing/cross-space evidence against legitimate exclusion vs persisted inconsistency RESYNC before dispatch."
+  ],
+  "execution": "planning only; no product placeholders/checks/new fresh"
+}

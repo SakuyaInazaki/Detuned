@@ -1,0 +1,116 @@
+{
+  "status": "green_plan_prepared_not_released_not_run",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "current-28-v3",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-10-m7-1-b1/verification/adapters/check-c-completion-v3.mjs"
+      ]
+    }
+  ],
+  "new_files": [
+    "tests/contracts/m7-check-http.test.ts",
+    "tests/contracts/m7-check-client.test.ts",
+    "tests/contracts/m7-check-http-client-independent.test.ts"
+  ],
+  "new_file_existence": {
+    "tests/contracts/m7-check-http.test.ts": true,
+    "tests/contracts/m7-check-client.test.ts": true,
+    "tests/contracts/m7-check-http-client-independent.test.ts": true
+  },
+  "adjacent_files": [
+    "tests/contracts/m6-review-canonicalization.test.ts",
+    "tests/contracts/m6-review-http.test.ts",
+    "tests/contracts/m6-review-http-independent.test.ts",
+    "tests/contracts/m6-review-client.test.ts",
+    "tests/integration/m4-artifact-client.test.ts",
+    "tests/integration/m4-artifact-client-cli-independent.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/integration/m7-check-domain.test.ts",
+    "tests/integration/m7-check-scope-artifacts.test.ts"
+  ],
+  "rationale": "original JCS goldens/limits via unchanged module export; review HTTP/DTO and generic/private artifact behavior around shared upload/stream; original check domain boundary; author targeted focused then type/lint/schema and one full appropriate after freeze",
+  "current_rationale": "actual OpenAPI operation media/canonical DTO and tool/Pi existing compatibility around protocol changes; root selection pending; no historical full probe matrix",
+  "source_hashes": [
+    {
+      "path": "package.json",
+      "sha256": "fa2ee4b7cccbd28dbd4cc9708d2b62eedf578d1b6e0a425493e0292787486af0"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "d99c716ebed63747eee8f55ec8c198e32b593fd6d431a9d9e07c0d15d7f16b5d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "985410289d868c23bdfdfdcbc3ca7b56b7300741e1fbd9cda5c21991355eb882"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88"
+    },
+    {
+      "path": "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+      "sha256": "0988753dc0a8caf4988944d8f96cac0096d8de41b2492b8773df8abb91b0cea0"
+    },
+    {
+      "path": "tests/contracts/m6-review-canonicalization.test.ts",
+      "sha256": "71258cbcfa8758e09c11e9dc763d35a6ae4a6e522a127539048b61e7a2272232"
+    },
+    {
+      "path": "tests/contracts/m6-review-http.test.ts",
+      "sha256": "0e31a026f0186d7abbeac4d285d836cc05f88922cf602c6bbfd583eeac0694a2"
+    },
+    {
+      "path": "tests/contracts/m6-review-http-independent.test.ts",
+      "sha256": "f6e231f34dfd1b3edfc0a7d587f91e45541e542a6e58e72e57389be998ff2d77"
+    },
+    {
+      "path": "tests/contracts/m6-review-client.test.ts",
+      "sha256": "a47c0be017724df6f3cd695ecc932413b2b6d9b24fdfd4028169d2532bb66a57"
+    },
+    {
+      "path": "tests/integration/m4-artifact-client.test.ts",
+      "sha256": "c17c2b1fb1f01a0a867acff8160f10c750b51e8537c3eb771cafaefa2d46ff41"
+    },
+    {
+      "path": "tests/integration/m4-artifact-client-cli-independent.test.ts",
+      "sha256": "2f0c3031d47acd63500fe8395e1fb4ddae0d54f3cd6aeb80e72b4505c0d8f58d"
+    },
+    {
+      "path": "tests/integration/m6-review-private-artifacts.test.ts",
+      "sha256": "978ba0f894a548eab4937b4eeaf005769d0144230a80bac03dba02da4370ece6"
+    },
+    {
+      "path": "tests/integration/m7-check-domain.test.ts",
+      "sha256": "6bf78b56e3c0a3fa030890d1aa61a76a5b3ecc0ecb40dbcdc6164a5382113551"
+    },
+    {
+      "path": "tests/integration/m7-check-scope-artifacts.test.ts",
+      "sha256": "e66602ebe229c3b6787984625efa1185a8a67799044a407435f5d68787fc8648"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "sha256": "9996e5d4fc3ce1e8e2d35d80bac592827e2ba1ebeb503620ce2bc95a5bd90c5e"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "sha256": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c"
+    }
+  ],
+  "noemit_source": "M7A accepted compiler/path options verbatim; only files replaced by three B1 new contracts",
+  "limits": "rootrelease required; workspace1/worker1/fileserial/originaltimeouts, stopdependent on genuinefailure, no browser/host/model/VM/daemon/install/global/oldtmp",
+  "bindings": "A v8 pending; B originalfreeze and D tenredfreeze unchanged; actual allsource preflight required after freeze",
+  "D_final_ready_sha256": "5e77f7fb624f1866f431dc94ed87f1c49d16ec136b7f3730f81306953c6d9245",
+  "D_ten_source_ready_sha256": "13e4ba28afc416480b37b62af070c69a5fc16d05e4564ba060dc029badbbeb41",
+  "expected_new_cases": {
+    "A_CH": 6,
+    "B_MC": 9,
+    "D_HI": 10,
+    "total": 25,
+    "note": "source count only, actual runtime count must be read from raw; skipped redstage not success"
+  },
+  "build_inventory": "runner automatically saves full immediate dist hashes after every successful build",
+  "red_stage": "red-stage-summary.json original build/boot/4actualred retained; no extra green red-only run, focused includesall"
+}

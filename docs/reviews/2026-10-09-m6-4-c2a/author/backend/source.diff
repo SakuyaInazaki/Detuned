@@ -1,0 +1,509 @@
+--- packages/core/src/services/search-service.ts (C2A before)
++++ packages/core/src/services/search-service.ts
+@@ -1,3 +1,4 @@
++import { readReviewStatusFacts } from './review-status-facts.js';
+ import { SearchCursorDependencies, readSearchCursor, createSearchCursor } from './search-cursor.js';
+ import { projectClaimMaterial, projectFailureMaterial, projectRelation, projectTargetRelations, REPORT_FLAGS } from './knowledge-projection.js';
+ import {
+@@ -9,6 +10,10 @@
+   SEARCH_LIMITS,
+   DetunedError,
+   ErrorCode,
++  isSnapshotReviewPolicy,
++  type ReviewPolicy,
++  type SpaceRevision,
++  type ReviewRoundSummary,
+ } from '@detuned/protocol';
+ import { StoragePort } from '../ports/storage.js';
+ import { AuthService, AuthenticatedContext } from './auth-service.js';
+@@ -49,29 +54,59 @@
+     spaceId: string,
+     name: ViewName
+   ): { view: string; items: ViewResponseData<ViewName> } {
+-    this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer');
++    return this.storage.readSnapshot(() => {
++      this.authService.requireSpaceAccess(this.authService.refreshContext(auth), spaceId, 'observer', 'read');
++      let policy: ReviewPolicy | undefined;
++      if (name === 'findings' || name === 'failures') {
++        const space = this.storage.findSpaceById(spaceId);
++        const unsafePolicy = () => new DetunedError(ErrorCode.RESYNC_REQUIRED, 'Stored space policy cannot be safely read.', 409);
++        if (!space || !Number.isSafeInteger(space.policy_revision) || space.policy_revision < 1) throw unsafePolicy();
++        let revision: SpaceRevision | null;
++        try {
++          revision = this.storage.getSpaceRevision(spaceId, space.policy_revision);
++        } catch (error) {
++          // Only malformed persisted JSON is translated here. ACL and unrelated
++          // storage failures keep their original meaning; no default policy is invented.
++          if (error instanceof SyntaxError) throw unsafePolicy();
++          throw error;
++        }
++        if (!revision || revision.space_id !== spaceId || revision.revision !== space.policy_revision || !isSnapshotReviewPolicy(revision.review_policy)) throw unsafePolicy();
++        policy = revision.review_policy;
++      }
+ 
+-    if (name === 'failures') {
+-      const result = this.storage.searchPosts(spaceId, '', { kind: 'failure' }, 50);
+-      return { view: 'failures', items: result.items.map(item => ({...item,kind:'failure' as const,type:'failure' as const,...REPORT_FLAGS,material:projectFailureMaterial(this.storage.getPostRevision(item.post_id,item.revision)?.structured),relations:projectTargetRelations(this.storage,spaceId,item.post_id)})) };
+-    } else if (name === 'findings') {
+-      const claims = this.storage.searchPosts(spaceId, '', { kind: 'claim' }, 25);
+-      return { view: 'findings', items: claims.items.map(item => ({...item,kind:'claim' as const,type:'claim' as const,...REPORT_FLAGS,material:projectClaimMaterial(this.storage.getPostRevision(item.post_id,item.revision)?.structured),relations:projectTargetRelations(this.storage,spaceId,item.post_id)})) };
+-    } else if (name === 'open-questions') {
+-      const questions = this.storage.searchPosts(spaceId, '', { kind: 'question' }, 25);
+-      const openChallenges = this.storage.listOpenChallenges(spaceId);
+-      return {
+-        view: 'open-questions',
+-        items: [
+-          ...questions.items.map(item => ({...item,kind:'question' as const,type:'question' as const})),
+-          ...openChallenges.flatMap(relation => {
+-            const projected = projectRelation(this.storage,spaceId,relation);
+-            return projected ? [{...projected,type:'open_challenge' as const,relation_type:'challenges' as const,state:'open' as const}] : [];
+-          }),
+-        ],
+-      };
++      if (name === 'failures') {
++        const result = this.storage.searchPosts(spaceId, '', { kind: 'failure' }, 50);
++        return { view: 'failures', items: result.items.map(item => ({...item,kind:'failure' as const,type:'failure' as const,...REPORT_FLAGS,...this.reviewProjection(spaceId,item.post_id,policy!),material:projectFailureMaterial(this.storage.getPostRevision(item.post_id,item.revision)?.structured),relations:projectTargetRelations(this.storage,spaceId,item.post_id)})) };
++      } else if (name === 'findings') {
++        const claims = this.storage.searchPosts(spaceId, '', { kind: 'claim' }, 25);
++        return { view: 'findings', items: claims.items.map(item => ({...item,kind:'claim' as const,type:'claim' as const,...REPORT_FLAGS,...this.reviewProjection(spaceId,item.post_id,policy!),material:projectClaimMaterial(this.storage.getPostRevision(item.post_id,item.revision)?.structured),relations:projectTargetRelations(this.storage,spaceId,item.post_id)})) };
++      } else if (name === 'open-questions') {
++        const questions = this.storage.searchPosts(spaceId, '', { kind: 'question' }, 25);
++        const openChallenges = this.storage.listOpenChallenges(spaceId);
++        return {
++          view: 'open-questions',
++          items: [
++            ...questions.items.map(item => ({...item,kind:'question' as const,type:'question' as const})),
++            ...openChallenges.flatMap(relation => {
++              const projected = projectRelation(this.storage,spaceId,relation);
++              return projected ? [{...projected,type:'open_challenge' as const,relation_type:'challenges' as const,state:'open' as const}] : [];
++            }),
++          ],
++        };
++      }
++
++      throw new DetunedError(ErrorCode.NOT_FOUND, `未知视图 ${name}`, 404);
++    });
++  }
++
++  private reviewProjection(spaceId: string, postId: string, policy: ReviewPolicy) {
++    const latest = this.storage.listPostReviewRequests(spaceId, postId, 1).requests[0];
++    if (!latest) {
++      const status = policy.enabled ? 'not_requested' as const : 'not_enabled' as const;
++      return {formal_review_status: status, formal_check_status: status, formal_review: null};
+     }
+-
+-    throw new DetunedError(ErrorCode.NOT_FOUND, `未知视图 ${name}`, 404);
++    const status = readReviewStatusFacts(this.storage, spaceId, latest.id);
++    const summary: ReviewRoundSummary = {...status, space_id:spaceId, target_post_id:postId, round:latest.round, target_revision:latest.target_ref.revision, created_at:latest.created_at};
++    return {formal_review_status:status.phase, formal_check_status:status.verification_status, formal_review:summary};
+   }
+ }
+--- packages/core/src/services/knowledge-projection.ts (C2A before)
++++ packages/core/src/services/knowledge-projection.ts
+@@ -48,4 +48,4 @@
+ export function projectTargetRelations(storage: StoragePort, spaceId: string, targetId: string): RelationProjection[] {
+   return storage.listRelationsByTarget(spaceId,targetId).flatMap(relation=>{const projected=projectRelation(storage,spaceId,relation);return projected ? [projected] : [];});
+ }
+-export const REPORT_FLAGS = {report_kind:'author_report',formal_review_status:'not_enabled',formal_check_status:'not_enabled'} as const;
++export const REPORT_FLAGS = {report_kind:'author_report'} as const;
+--- packages/core/src/index.ts (C2A before)
++++ packages/core/src/index.ts
+@@ -42,3 +42,5 @@
+ 
+ export * from './services/review-decision-records.js';
+ export * from './services/review-lifecycle.js';
++
++export * from './services/review-status-facts.js';
+--- modules/review/src/status-service.ts (C2A before)
++++ modules/review/src/status-service.ts
+@@ -1,17 +1,12 @@
+-import { DetunedError,ErrorCode,type ReviewStatusView } from '@detuned/protocol';
+-import { AuthService,type AuthenticatedContext,type StoragePort,readIntrinsicReviewRequestRecords,readReviewValidityFacts } from '@detuned/core';
++import { type ReviewStatusView } from '@detuned/protocol';
++import { AuthService, type AuthenticatedContext, type StoragePort, readReviewStatusFacts } from '@detuned/core';
+ /** Internal metadata status: no sealed contents and no physical blob verification. */
+ export class ReviewStatusService {
+   constructor(private readonly storage:StoragePort,private readonly authService:AuthService){}
+   getStatus(auth:AuthenticatedContext,spaceId:string,requestId:string):ReviewStatusView {
+     return this.storage.readSnapshot(()=>{
+       this.authService.requireSpaceAccess(this.authService.refreshContext(auth),spaceId,'observer','read');
+-      const head=this.storage.findReviewRequestById(requestId);
+-      if(!head||head.space_id!==spaceId)throw new DetunedError(ErrorCode.NOT_FOUND,'Review request does not exist or is not accessible.',404);
+-      const {manifest}=readIntrinsicReviewRequestRecords(this.storage,spaceId,requestId);
+-      return {request_id:head.id,snapshot_id:head.snapshot_id,phase:head.phase,
+-        verification_status:manifest.review_policy.required_checks.length===0?'not_required':'pending',
+-        ...readReviewValidityFacts(this.storage,spaceId,requestId)};
++      return readReviewStatusFacts(this.storage, spaceId, requestId);
+     });
+   }
+ }
+--- packages/protocol/src/search.ts (C2A before)
++++ packages/protocol/src/search.ts
+@@ -1,3 +1,4 @@
++import { ReviewPhaseSchema, ReviewStatusViewSchema, ReviewRoundSummarySchema } from './review.js';
+ import { ThreadSchema } from './threads.js';
+ import { SpaceRevisionRefSchema } from './spaces.js';
+ import { CONTEXT_BYTES } from './request-policies.js';
+@@ -144,7 +145,10 @@
+ export type FailureMaterial = Static<typeof FailureMaterialSchema>;
+ 
+ const reportFlags = {
+-  report_kind: Type.Literal('author_report'), formal_review_status: Type.Literal('not_enabled'), formal_check_status: Type.Literal('not_enabled'),
++  report_kind: Type.Literal('author_report'),
++  formal_review_status: Type.Union([Type.Literal('not_enabled'), Type.Literal('not_requested'), ReviewPhaseSchema]),
++  formal_check_status: Type.Union([Type.Literal('not_enabled'), Type.Literal('not_requested'), ReviewStatusViewSchema.properties.verification_status]),
++  formal_review: Type.Union([ReviewRoundSummarySchema, Type.Null()]),
+ };
+ export const FindingViewItemSchema = Type.Object({
+   ...SearchResultItemSchema.properties, type: Type.Literal('claim'), kind: Type.Literal('claim'),
+--- packages/protocol/src/response-guards.ts (C2A before)
++++ packages/protocol/src/response-guards.ts
+@@ -1,3 +1,4 @@
++import { FindingViewItemSchema, FailureViewItemSchema, type FindingViewItem, type FailureViewItem } from './search.js';
+ import {ReviewRoundSummarySchema,type PostReviewRequestsPage} from './review.js';
+ import { isReadableArtifactMetadata, type ReviewArtifactMetadata } from './artifacts.js';
+ import {
+@@ -133,3 +134,23 @@
+  if(value.meta.truncated&&value.meta.next_cursor===null)return false;
+  return value.data.every((row,i)=>validDate(row.created_at)&&(i===0||value.data[i-1]!.round>row.round));
+ }
++
++// Derive only the two date-time paths locally; never mutate global FormatRegistry.
++const knowledgeFormalReviewCheck = Type.Union([reviewRoundCheck, Type.Null()]);
++const findingViewCheck = Type.Array(Type.Object({...FindingViewItemSchema.properties, created_at:Type.String(), formal_review:knowledgeFormalReviewCheck},{additionalProperties:false}),{maxItems:25});
++const failureViewCheck = Type.Array(Type.Object({...FailureViewItemSchema.properties, created_at:Type.String(), formal_review:knowledgeFormalReviewCheck},{additionalProperties:false}),{maxItems:50});
++function consistentKnowledgeItem(item: FindingViewItem | FailureViewItem, spaceId?: string): boolean {
++  if (!validDate(item.created_at)) return false;
++  const review = item.formal_review;
++  if (review === null) return (item.formal_review_status === 'not_enabled' || item.formal_review_status === 'not_requested') && item.formal_check_status === item.formal_review_status;
++  return validDate(review.created_at) && (spaceId === undefined || review.space_id === spaceId)
++    && review.target_post_id === item.post_id && review.target_revision <= item.revision
++    && item.formal_review_status === review.phase && item.formal_check_status === review.verification_status;
++}
++/** Whole typed arrays, including status consistency and optional requested-space binding. */
++export function isFindingsView(value: unknown, spaceId?: string): value is FindingViewItem[] {
++  return Value.Check(findingViewCheck,value) && value.every(item => consistentKnowledgeItem(item,spaceId));
++}
++export function isFailuresView(value: unknown, spaceId?: string): value is FailureViewItem[] {
++  return Value.Check(failureViewCheck,value) && value.every(item => consistentKnowledgeItem(item,spaceId));
++}
+--- packages/protocol/src/openapi.ts (C2A before)
++++ packages/protocol/src/openapi.ts
+@@ -592,7 +592,7 @@
+       '/spaces/{space_id}/views/{name}': {
+         get: {
+           summary: '获取预定义视图列表',
+-          description: 'data保持数组：findings仅claim；failures作者报告；open-questions为question/open_challenge异构数组。历史缺项null+missing_fields，正式review/check为not_enabled，固定引用不漂移。',
++          description: 'data保持数组：findings仅claim；failures作者报告；open-questions为question/open_challenge异构数组。历史缺项null+missing_fields保留；findings/failures带最新all-round formal_review及与其一致的review/check状态。无round按当前有效政策enabled区分not_enabled/not_requested；固定评审target_revision不随当前帖子漂移，current_validity不等于批准或检查通过。',
+           parameters: [
+             { name: 'space_id', in: 'path', required: true, schema: { type: 'string' } },
+             { name: 'name', in: 'path', required: true, schema: { type: 'string', enum: [...VIEW_NAMES] } },
+--- packages/client/src/client.ts (C2A before)
++++ packages/client/src/client.ts
+@@ -1,3 +1,4 @@
++import { isFindingsView, isFailuresView } from '@detuned/protocol';
+ import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
+ import { validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
+ import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeReviewRequest, type CancelReviewRequest,
+@@ -986,12 +987,14 @@
+     return result as SearchPage;
+   }
+ 
+-  getView<N extends ViewName>(spaceId: string, name: N, opts?: { signal?: AbortSignal }) {
+-    return this.request<ViewResponseData<N>>({
++  async getView<N extends ViewName>(spaceId: string, name: N, opts?: { signal?: AbortSignal }) {
++    const result = await this.request<ViewResponseData<N>>({
+       method: 'GET',
+       path: `/spaces/${spaceId}/views/${name}`,
+       signal: opts?.signal,
+     });
++    if ((name === 'findings' && !isFindingsView(result.data,spaceId)) || (name === 'failures' && !isFailuresView(result.data,spaceId))) throw new ClientProtocolError('Invalid knowledge view response.');
++    return result;
+   }
+ 
+   subscribe(spaceId: string, body: CreateSubscriptionRequest, requestKey?: string, opts?: { signal?: AbortSignal }) {
+--- /dev/null
++++ packages/core/src/services/review-status-facts.ts
+@@ -0,0 +1,17 @@
++import { DetunedError, ErrorCode, type ReviewStatusView } from '@detuned/protocol';
++import { type StoragePort } from '../ports/storage.js';
++import { readIntrinsicReviewRequestRecords } from './review-request-records.js';
++import { readReviewValidityFacts } from './review-lifecycle.js';
++
++/** Metadata only. Caller holds one read snapshot and has refreshed current space read ACL.
++ * Safe status is independent of online material-content visibility; no sealed contents/blob IO. */
++export function readReviewStatusFacts(storage: StoragePort, spaceId: string, requestId: string): ReviewStatusView {
++  const head = storage.findReviewRequestById(requestId);
++  if (!head || head.space_id !== spaceId) throw new DetunedError(ErrorCode.NOT_FOUND, 'Review request does not exist or is not accessible.', 404);
++  const { manifest } = readIntrinsicReviewRequestRecords(storage, spaceId, requestId);
++  return {
++    request_id: head.id, snapshot_id: head.snapshot_id, phase: head.phase,
++    verification_status: manifest.review_policy.required_checks.length === 0 ? 'not_required' : 'pending',
++    ...readReviewValidityFacts(storage, spaceId, requestId),
++  };
++}
+--- /dev/null
++++ tests/integration/m6-knowledge-status.test.ts
+@@ -0,0 +1,139 @@
++import { afterEach, beforeEach, expect, it, vi } from 'vitest';
++import Database from 'better-sqlite3';
++import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
++import { buildApp } from '@detuned/server';
++import { AuthService, CryptoHasher, SearchService, type StoragePort } from '@detuned/core';
++import { ReviewStatusService } from '@detuned/module-review';
++import { isFindingsView, isFailuresView, type CreateReviewSubmission, type ReviewRequestView, type ReviewPolicy } from '@detuned/protocol';
++
++let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>;
++let token: string, sid: string, tid: string, pid: string, authService: AuthService, views: SearchService;
++let tick: number;
++const clock = { now: () => new Date(tick), nowIso: () => new Date(tick).toISOString() };
++const claim = { statement: 'claim', assumptions: ['a'], scope: 'scope', falsification_plan: 'test' };
++const failure = { attempt: 'run', category: 'environment_error', assumptions: [], tested_scope: 'run', expected: 'done', observed: 'offline', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'no log', ruled_out: 'this run', not_ruled_out: [], retry_when: ['retry online'] };
++async function call(method: 'GET' | 'POST' | 'PATCH', suffix: string, payload?: object, key?: string, bearer = token, status = method === 'POST' ? 201 : 200) {
++  tick += 1500;
++  const response = await app.inject({ method, url: `/api/v1${suffix}`, headers: { authorization: `Bearer ${bearer}`, ...(key ? { 'idempotency-key': key } : {}) }, ...(payload ? { payload } : {}) });
++  expect(response.statusCode, response.body).toBe(status);
++  return response.json().data;
++}
++const path = (suffix = '') => `/spaces/${sid}${suffix}`;
++function policy(): ReviewPolicy {
++  const space = storage.findSpaceById(sid)!;
++  return storage.getSpaceRevision(sid, space.policy_revision)!.review_policy;
++}
++async function patchPolicy(change: Partial<ReviewPolicy>, key: string) {
++  return call('PATCH', path(), { expected_revision: storage.findSpaceById(sid)!.current_revision, review_policy: { ...policy(), ...change } }, key);
++}
++async function request(key: string): Promise<ReviewRequestView> {
++  return call('POST', path('/review-requests'), { target_ref: { post_id: pid, revision: storage.findPostById(pid)!.current_revision }, dependency_refs: [], artifact_ids: [], code_refs: [], declared_contributors: [], reviewer_actor_ids: ['r1', 'r2'], expected_policy_revision: storage.findSpaceById(sid)!.policy_revision, reproduction_instructions: 'run' }, key);
++}
++function findings() {
++  const items = views.getView(authService.authenticateToken(token), sid, 'findings').items;
++  if (!isFindingsView(items, sid)) throw new Error('invalid fixture findings');
++  return items;
++}
++async function accept(round: ReviewRequestView) {
++  for (const id of ['r1', 'r2']) {
++    const session = await call('POST', path('/sessions'), { client_name: 'knowledge-status', client_version: '1' }, undefined, `owned-${id}`);
++    const body: CreateReviewSubmission = { snapshot_sha256: round.snapshot_sha256, reviewer_session_id: session.id, completion_status: 'complete', verdict: 'accept', coverage: 'scope', checks_performed: 'checked', evidence_refs: [], pending_requirements: [], limitations: [], independence_statement: { participated_in_material: false, exposed_to_other_reviews: false, statement: 'independent' } };
++    await call('POST', path(`/review-requests/${round.id}/submissions`), body, `submit-${round.id}-${id}`, `owned-${id}`);
++  }
++  await call('POST', path(`/review-requests/${round.id}/finalize`), { expected_version: 3 }, `finalize-${round.id}`, token, 200);
++}
++beforeEach(async () => {
++  tick = Date.parse('2026-10-09T00:00:00Z');
++  db = new Database(':memory:'); token = bootstrapDatabase(db).adminToken!; storage = new SqliteStorage(db);
++  app = buildApp({ storage, clock }); await app.ready();
++  sid = (await call('POST', '/spaces', { slug: 'knowledge-status', objective: 'o', rules: [] }, 'space')).space.id;
++  tid = (await call('POST', path('/threads'), { title: 't' }, 'thread')).thread.id;
++  pid = (await call('POST', path(`/threads/${tid}/posts`), { kind: 'claim', title: 'claim', summary: 's', body: 'original', structured: claim }, 'claim')).post.id;
++  const hasher = new CryptoHasher(); authService = new AuthService(storage, hasher, clock); views = new SearchService(storage, authService);
++  for (const id of ['r1', 'r2', 'reader']) {
++    storage.createActor({ id, kind: 'human', display_name: id, created_at: clock.nowIso(), disabled_at: null });
++    storage.upsertMembership({ space_id: sid, actor_id: id, role: 'observer', active: true, reviewer_eligible: id !== 'reader', independence_group: id });
++    storage.createCredential({ id: `credential-${id}`, actor_id: id, token_hash: hasher.sha256(`owned-${id}`), allowed_space_ids: [sid], capabilities: id === 'reader' ? ['read'] : ['read', 'write'], expires_at: null, revoked_at: null, created_at: clock.nowIso() });
++  }
++});
++afterEach(async () => { vi.restoreAllMocks(); await app.close(); db.close(); });
++
++it('KS01 enabled/disabled with no round preserve author reports and failure materials', async () => {
++  await call('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', structured: failure }, 'failure');
++  for (const enabled of [true, false, true]) {
++    await patchPolicy({ enabled }, `enabled-${enabled}-${tick}`);
++    const state = enabled ? 'not_requested' : 'not_enabled';
++    expect(findings()[0]).toMatchObject({ report_kind: 'author_report', formal_review_status: state, formal_check_status: state, formal_review: null, material: { statement: 'claim' } });
++    const items = views.getView(authService.authenticateToken(token), sid, 'failures').items;
++    expect(isFailuresView(items, sid)).toBe(true);
++    expect(items[0]).toMatchObject({ report_kind: 'author_report', formal_review_status: state, formal_check_status: state, formal_review: null, material: { category: 'environment_error', retry_when: ['retry online'] } });
++  }
++});
++it('KS02 latest all-round cancellation replaces accepted history rather than selecting a favourable old round', async () => {
++  await patchPolicy({ required_checks: [] }, 'no-checks');
++  const first = await request('first'); await accept(first);
++  expect(findings()[0]!.formal_review).toMatchObject({ request_id: first.id, phase: 'accepted', verification_status: 'not_required', target_revision: 1, current_validity: 'current' });
++  const second = await request('second');
++  await call('POST', path(`/review-requests/${second.id}/cancel`), { expected_version: 1, reason: 'stop' }, 'cancel', token, 200);
++  expect(findings()[0]).toMatchObject({ formal_review_status: 'cancelled', formal_check_status: 'not_required', formal_review: { request_id: second.id, round: 2, phase: 'cancelled' } });
++});
++it('KS03 accepted historical target remains fixed while current revision and disabled policy change validity', async () => {
++  await patchPolicy({ required_checks: [] }, 'no-checks'); const first = await request('first'); await accept(first);
++  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', structured: claim }, 'revise');
++  await patchPolicy({ enabled: false, required_checks: ['later'] }, 'disable');
++  expect(findings()[0]).toMatchObject({ revision: 2, formal_review_status: 'accepted', formal_check_status: 'not_required', formal_review: { request_id: first.id, target_revision: 1, phase: 'accepted', current_validity: 'superseded', validity_reasons: ['target_superseded', 'policy_superseded'] } });
++});
++it('KS04 real collecting round becomes stale on revision; frozen checks remain pending', async () => {
++  await call('PATCH', path(), { expected_revision: 1, check_profiles: { reproduce: { verifier_actor_ids: [], config_sha256: 'a'.repeat(64), description: 'external' } } }, 'profile');
++  const first = await request('pending');
++  expect(findings()[0]).toMatchObject({ formal_review_status: 'collecting', formal_check_status: 'pending' });
++  await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', structured: claim }, 'revise');
++  await patchPolicy({ required_checks: [] }, 'remove-checks');
++  const item = findings()[0]!;
++  expect(item).toMatchObject({ formal_review_status: 'stale', formal_check_status: 'pending', formal_review: { request_id: first.id, target_revision: 1, current_validity: 'superseded' } });
++  expect(item.formal_review).toEqual({ ...new ReviewStatusService(storage, authService).getStatus(authService.authenticateToken(token), sid, first.id), space_id: sid, target_post_id: pid, round: 1, target_revision: 1, created_at: first.created_at });
++});
++it('KS05 real challenge and dependency redaction preserve historical accepted metadata without sealed contents', async () => {
++  await patchPolicy({ required_checks: [] }, 'no-checks');
++  const dependency = (await call('POST', path(`/threads/${tid}/posts`), { kind: 'note', title: 'dependency', summary: 's', body: 'dependency secret' }, 'dep')).post;
++  const first: ReviewRequestView = await call('POST', path('/review-requests'), { target_ref: { post_id: pid, revision: 1 }, dependency_refs: [{ post_id: dependency.id, revision: 1 }], artifact_ids: [], code_refs: [], declared_contributors: [], reviewer_actor_ids: ['r1', 'r2'], expected_policy_revision: storage.findSpaceById(sid)!.policy_revision, reproduction_instructions: 'run' }, 'request-dep');
++  await accept(first);
++  await call('POST', path('/relations'), { source_ref: { post_id: dependency.id, revision: 1 }, target_ref: { post_id: pid, revision: 1 }, type: 'challenges' }, 'challenge');
++  expect(findings()[0]!.formal_review).toMatchObject({ phase: 'accepted', current_validity: 'challenged', validity_reasons: ['open_challenges'] });
++  await call('POST', path('/redactions'), { target_type: 'post', target_id: dependency.id, reason: 'remove' }, 'redact');
++  expect(findings()[0]!.formal_review).toMatchObject({ phase: 'accepted', current_validity: 'invalidated' });
++  expect(findings()[0]!.formal_review!.validity_reasons).toContain('dependency_redacted');
++  expect(JSON.stringify(findings())).not.toContain('dependency secret');
++});
++it('KS06 one outer snapshot includes refreshed ACL, policy lookup and latest-round read; revoked ACL fails before policy parsing', async () => {
++  const cached = authService.authenticateToken('owned-reader');
++  let depth = 0;
++  const readSnapshot = storage.readSnapshot.bind(storage);
++  vi.spyOn(storage, 'readSnapshot').mockImplementation(<T>(fn: (snapshot: StoragePort) => T): T => readSnapshot(snapshot => { depth++; try { return fn(snapshot); } finally { depth--; } }));
++  const findSpace = storage.findSpaceById.bind(storage);
++  const getRevision = storage.getSpaceRevision.bind(storage);
++  const search = storage.searchPosts.bind(storage);
++  const rounds = storage.listPostReviewRequests.bind(storage);
++  vi.spyOn(storage, 'findSpaceById').mockImplementation((...args) => { expect(depth).toBeGreaterThan(0); return findSpace(...args); });
++  vi.spyOn(storage, 'getSpaceRevision').mockImplementation((...args) => { expect(depth).toBeGreaterThan(0); return getRevision(...args); });
++  vi.spyOn(storage, 'searchPosts').mockImplementation((...args) => { expect(depth).toBeGreaterThan(0); return search(...args); });
++  vi.spyOn(storage, 'listPostReviewRequests').mockImplementation((...args) => { expect(depth).toBeGreaterThan(0); expect(args[2]).toBe(1); return rounds(...args); });
++  views.getView(cached, sid, 'findings');
++  storage.upsertMembership({ ...storage.getMembership(sid, 'reader')!, active: false });
++  // Intentional persisted-policy fault injection; no formal review status is forged.
++  db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=?').run('{broken', sid);
++  expect(() => views.getView(cached, sid, 'findings')).toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
++});
++it('KS07 malformed, missing and extra-field policies safely resync without defaults, unrelated storage errors propagate', () => {
++  const valid = JSON.stringify(policy());
++  for (const value of ['{broken', '{}', JSON.stringify({ ...policy(), unexpected: true })]) {
++    db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=?').run(value, sid);
++    expect(() => findings()).toThrow(expect.objectContaining({ code: 'RESYNC_REQUIRED' }));
++    db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=?').run(valid, sid);
++  }
++  const missing = vi.spyOn(storage, 'getSpaceRevision').mockReturnValue(null);
++  expect(() => findings()).toThrow(expect.objectContaining({ code: 'RESYNC_REQUIRED' })); missing.mockRestore();
++  const unavailable = new Error('storage unavailable');
++  vi.spyOn(storage, 'getSpaceRevision').mockImplementation(() => { throw unavailable; });
++  expect(() => findings()).toThrow(unavailable);
++});
+--- /dev/null
++++ tests/contracts/m6-knowledge-status-contracts.test.ts
+@@ -0,0 +1,120 @@
++import { afterEach, beforeEach, expect, expectTypeOf, it, vi } from 'vitest';
++import Database from 'better-sqlite3';
++import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
++import { buildApp } from '@detuned/server';
++import { CryptoHasher } from '@detuned/core';
++import { ClientProtocolError, DetunedClient } from '@detuned/client';
++import { isFindingsView, isFailuresView, generateOpenApiSpec, FindingViewItemSchema, FailureViewItemSchema, ViewResponseDataSchema, type FindingViewItem, type FailureViewItem, type ViewResponseData, type ReviewRequestView, type CreateReviewSubmission } from '@detuned/protocol';
++
++let db: Database.Database, storage: SqliteStorage, app: ReturnType<typeof buildApp>, url: string;
++let token: string, sid: string, pid: string, client: DetunedClient, tick: number;
++const clock = { now: () => new Date(tick), nowIso: () => new Date(tick).toISOString() };
++const path = (suffix = '') => `/spaces/${sid}${suffix}`;
++async function write(method: 'POST' | 'PATCH', suffix: string, payload: object, key?: string, bearer = token, status = method === 'POST' ? 201 : 200) {
++  tick += 1500;
++  const response = await fetch(`${url}/api/v1${suffix}`, { method, headers: { authorization: `Bearer ${bearer}`, 'content-type': 'application/json', ...(key ? { 'idempotency-key': key } : {}) }, body: JSON.stringify(payload) });
++  expect(response.status, await response.clone().text()).toBe(status);
++  return (await response.json()).data;
++}
++async function acceptedFinding(): Promise<FindingViewItem> {
++  const space = storage.findSpaceById(sid)!;
++  const revision = storage.getSpaceRevision(sid, space.policy_revision)!;
++  await write('PATCH', path(), { expected_revision: space.current_revision, review_policy: { ...revision.review_policy, required_checks: [] } }, 'no-checks');
++  const round: ReviewRequestView = await write('POST', path('/review-requests'), { target_ref: { post_id: pid, revision: 1 }, dependency_refs: [], artifact_ids: [], code_refs: [], declared_contributors: [], reviewer_actor_ids: ['r1', 'r2'], expected_policy_revision: storage.findSpaceById(sid)!.policy_revision, reproduction_instructions: 'run' }, 'request');
++  for (const id of ['r1', 'r2']) {
++    const session = await write('POST', path('/sessions'), { client_name: 'knowledge-contract', client_version: '1' }, undefined, `owned-${id}`);
++    const submission: CreateReviewSubmission = { snapshot_sha256: round.snapshot_sha256, reviewer_session_id: session.id, completion_status: 'complete', verdict: 'accept', coverage: 'scope', checks_performed: 'checked', evidence_refs: [], pending_requirements: [], limitations: [], independence_statement: { participated_in_material: false, exposed_to_other_reviews: false, statement: 'independent' } };
++    await write('POST', path(`/review-requests/${round.id}/submissions`), submission, `submit-${id}`, `owned-${id}`);
++  }
++  await write('POST', path(`/review-requests/${round.id}/finalize`), { expected_version: 3 }, 'finalize', token, 200);
++  return (await client.getView(sid, 'findings')).data[0]!;
++}
++beforeEach(async () => {
++  tick = Date.parse('2026-10-09T00:00:00Z');
++  db = new Database(':memory:'); token = bootstrapDatabase(db).adminToken!; storage = new SqliteStorage(db);
++  app = buildApp({ storage, clock }); await app.listen({ host: '127.0.0.1', port: 0 });
++  const address = app.server.address(); if (!address || typeof address === 'string') throw new Error('fixture listener unavailable');
++  url = `http://127.0.0.1:${address.port}`; client = new DetunedClient({ baseUrl: url, token, maxRetries: 0 });
++  sid = (await write('POST', '/spaces', { slug: 'knowledge-contract', objective: 'o', rules: [] }, 'space')).space.id;
++  const tid = (await write('POST', path('/threads'), { title: 't' }, 'thread')).thread.id;
++  pid = (await write('POST', path(`/threads/${tid}/posts`), { kind: 'claim', title: 'claim', summary: 's', body: 'original', structured: { statement: 'claim', assumptions: [], scope: 'scope', falsification_plan: 'test' } }, 'claim')).post.id;
++  await write('POST', path(`/threads/${tid}/posts`), { kind: 'failure', title: 'failure', summary: 's', structured: { attempt: 'run', category: 'environment_error', assumptions: [], tested_scope: 'run', expected: 'done', observed: 'offline', evidence_refs: [], evidence_state: 'unverified', evidence_missing_reason: 'no log', ruled_out: 'this run', not_ruled_out: [], retry_when: ['online'] } }, 'failure');
++  const hash = new CryptoHasher();
++  for (const id of ['r1', 'r2']) {
++    storage.createActor({ id, kind: 'human', display_name: id, created_at: clock.nowIso(), disabled_at: null });
++    storage.upsertMembership({ space_id: sid, actor_id: id, role: 'observer', active: true, reviewer_eligible: true, independence_group: id });
++    storage.createCredential({ id: `credential-${id}`, actor_id: id, token_hash: hash.sha256(`owned-${id}`), allowed_space_ids: [sid], capabilities: ['read', 'write'], expires_at: null, revoked_at: null, created_at: clock.nowIso() });
++  }
++});
++afterEach(async () => { vi.unstubAllGlobals(); await app.close(); db.close(); });
++
++it('KC01 real HTTP/shared client preserve typed array envelope and canonical OpenAPI, accepted review never means checks passed', async () => {
++  const empty = await client.getView(sid, 'findings');
++  expectTypeOf(empty).toEqualTypeOf<{ data: ViewResponseData<'findings'>; meta?: any }>();
++  expect(empty.data[0]).toMatchObject({ formal_review_status: 'not_requested', formal_check_status: 'not_requested', formal_review: null });
++  const item = await acceptedFinding();
++  expect(isFindingsView([item], sid)).toBe(true);
++  expect(item).toMatchObject({ report_kind: 'author_report', formal_review_status: 'accepted', formal_check_status: 'not_required', formal_review: { space_id: sid, target_post_id: pid, target_revision: 1, phase: 'accepted', verification_status: 'not_required', current_validity: 'current' } });
++  expect(Object.keys(item.formal_review!).sort()).toEqual(['created_at', 'current_validity', 'phase', 'request_id', 'round', 'snapshot_id', 'space_id', 'target_post_id', 'target_revision', 'validity_reasons', 'verification_status']);
++  const failures = await client.getView(sid, 'failures');
++  expect(isFailuresView(failures.data, sid)).toBe(true);
++  expect(failures.data[0]).toMatchObject({ formal_review_status: 'not_requested', formal_review: null });
++  const response = await fetch(`${url}/api/v1${path('/views/findings')}`, { headers: { authorization: `Bearer ${token}` } });
++  expect(response.status).toBe(200); const envelope = await response.json();
++  expect(Array.isArray(envelope.data)).toBe(true); expect(envelope.data).toEqual([item]);
++  expect(envelope).not.toHaveProperty('view');
++  const spec = generateOpenApiSpec();
++  const schemas = (spec.components as { schemas: Record<string, unknown> }).schemas;
++  expect(schemas.FindingViewItem).toEqual(FindingViewItemSchema);
++  expect(schemas.FailureViewItem).toEqual(FailureViewItemSchema);
++  expect(schemas.ViewResponseData).toEqual(ViewResponseDataSchema);
++});
++it('KC02 real HTTP invalid persisted policy returns safe RESYNC_REQUIRED rather than a default, shared client surfaces it', async () => {
++  const valid = storage.getSpaceRevision(sid, 1)!.review_policy;
++  for (const raw of ['{}', '{broken', JSON.stringify({ ...valid, secret: 'stored secret' })]) {
++    // Intentional fault injection is confined to policy; no review decision is forged.
++    db.prepare('UPDATE space_revisions SET review_policy=? WHERE space_id=?').run(raw, sid);
++    const response = await fetch(`${url}/api/v1${path('/views/findings')}`, { headers: { authorization: `Bearer ${token}` } });
++    expect(response.status).toBe(409);
++    const text = await response.text(); expect(text).toContain('RESYNC_REQUIRED'); expect(text).not.toContain('stored secret'); expect(text).not.toContain('{broken');
++    await expect(client.getView(sid, 'failures')).rejects.toMatchObject({ code: 'RESYNC_REQUIRED' });
++  }
++});
++it('KC03 controlled transport rejects every malformed row, scope/date/flags mismatch and over-limit findings arrays', async () => {
++  // The valid base comes from real SQLite lifecycle. Mutated transport is only wire-contract evidence.
++  const item = await acceptedFinding(); const review = item.formal_review!;
++  const invalid: unknown[] = [
++    [{ ...item, secret: 'sealed' }],
++    [{ ...item, created_at: 'not-a-date' }],
++    [{ ...item, formal_review: { ...review, created_at: 'not-a-date' } }],
++    [{ ...item, formal_review: { ...review, space_id: 'other-space' } }],
++    [{ ...item, formal_review: { ...review, target_post_id: 'other-post' } }],
++    [{ ...item, formal_review: { ...review, target_revision: item.revision + 1 } }],
++    [{ ...item, formal_review_status: 'cancelled' }],
++    [{ ...item, formal_check_status: 'pending' }],
++    [{ ...item, formal_review: null }],
++    [{ ...item, formal_review: { ...review, verification_status: 'verified' }, formal_check_status: 'verified' }],
++    [{ ...item, formal_review: { ...review, sealed_reviews: [] } }],
++    [item, { ...item, material: { ...item.material, statement: 4 } }],
++    Array.from({ length: 26 }, () => item),
++    { items: [item] },
++  ];
++  for (const data of invalid) {
++    expect(isFindingsView(data, sid)).toBe(false);
++    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'controlled', data }), { status: 200 })));
++    await expect(client.getView(sid, 'findings')).rejects.toBeInstanceOf(ClientProtocolError);
++  }
++});
++it('KC04 controlled transport preserves null semantics and failure array guard, unrelated view behavior stays unchanged', async () => {
++  const finding = (await client.getView(sid, 'findings')).data[0]!;
++  const failureItem: FailureViewItem = (await client.getView(sid, 'failures')).data[0]!;
++  expect(isFindingsView([{ ...finding, formal_review_status: 'not_enabled', formal_check_status: 'not_enabled' }], sid)).toBe(true);
++  for (const data of [[{ ...failureItem, formal_check_status: 'not_enabled' }], [{ ...failureItem, formal_review_status: 'accepted' }], [{ ...failureItem, created_at: 'bad' }], [failureItem, { ...failureItem, unknown: true }], Array.from({ length: 51 }, () => failureItem)]) {
++    expect(isFailuresView(data, sid)).toBe(false);
++    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'controlled', data }), { status: 200 })));
++    await expect(client.getView(sid, 'failures')).rejects.toBeInstanceOf(ClientProtocolError);
++  }
++  const opaqueOtherView = [{ legacy_shape: 'unchanged transport' }];
++  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'controlled', data: opaqueOtherView }), { status: 200 })));
++  expect((await client.getView(sid, 'open-questions')).data).toEqual(opaqueOtherView);
++});

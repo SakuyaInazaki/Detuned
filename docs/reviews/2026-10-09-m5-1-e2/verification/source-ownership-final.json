@@ -1,0 +1,61 @@
+{
+  "all_26_changed_or_added_paths_authorized": true,
+  "source_count_before": 312,
+  "source_count_after": 317,
+  "owners": [
+    {
+      "owner": "A",
+      "manifest": "author/core/freeze-manifest-v2.json",
+      "manifest_sha256": "cf79d8ce5b5635eb570fe226e37fc9ca1f3948e17d9e3d788d60f29bc11c7513",
+      "files": [
+        "packages/protocol/src/threads.ts",
+        "packages/protocol/src/tools.ts",
+        "packages/protocol/src/openapi.ts",
+        "packages/core/src/ports/storage.ts",
+        "packages/core/src/services/thread-posts-read-service.ts",
+        "packages/storage-sqlite/src/sqlite-storage.ts",
+        "packages/server/src/routes/threads.ts",
+        "packages/client/src/client.ts",
+        "packages/cli/src/index.ts",
+        "tests/contracts/m5-thread-post-order.test.ts",
+        "packages/server/src/app.ts",
+        "packages/storage-sqlite/src/post-created-order-index.ts",
+        "tests/contracts/m5-post-order-index.test.ts"
+      ]
+    },
+    {
+      "owner": "B",
+      "manifest": "author/web/freeze-manifest.json",
+      "manifest_sha256": "8d280e9d6cdb0023ad98e5957761169edadd3525871496a0c97163f73ee9f925",
+      "files": [
+        "packages/web/src/app.tsx",
+        "packages/web/src/styles.css",
+        "packages/web/src/space-overview.tsx",
+        "packages/web/src/safe-markdown.tsx",
+        "packages/web/package.json",
+        "pnpm-lock.yaml"
+      ]
+    },
+    {
+      "owner": "D",
+      "files": [
+        "scripts/integrations/web/playwright.config.ts",
+        "scripts/integrations/web/fixtures.ts",
+        "scripts/integrations/web/independent.spec.ts",
+        "scripts/integrations/web/m5-c.spec.ts",
+        "scripts/integrations/web/m5-d2.spec.ts",
+        "scripts/integrations/web/m5-e1.spec.ts",
+        "scripts/integrations/web/m5-e2.spec.ts"
+      ],
+      "hashes": {
+        "scripts/integrations/web/playwright.config.ts": "b924fcee5f2eddb09881e18e138d443e92aecc2b0f5c0d99386b86383927f60b",
+        "scripts/integrations/web/fixtures.ts": "7b3b0e80bb2fbabf005b557b1893639a7f328b8eaa0a0aed31f9877e47ce10c8",
+        "scripts/integrations/web/independent.spec.ts": "8eee54dc8778931396bff7b3850e88d2192b50df0ee2a78745ba5758992773ee",
+        "scripts/integrations/web/m5-c.spec.ts": "cd36b9164e0d93dd8b5ee43f8abd53a42f2bb628d36e47f857ee6bc6820c7e05",
+        "scripts/integrations/web/m5-d2.spec.ts": "e4fd5067c856938fceac617493a7b781e59d405b224351d6a02cd92857dd3eb0",
+        "scripts/integrations/web/m5-e1.spec.ts": "09974af04e0521343edaed62b9548cc699dab38bd0094948030facfa56c00692",
+        "scripts/integrations/web/m5-e2.spec.ts": "b47eb478fd2d9b80d155b6843a594cb102e8d2d2d88dcb05d2afa0255e528f4f"
+      }
+    }
+  ]
+}

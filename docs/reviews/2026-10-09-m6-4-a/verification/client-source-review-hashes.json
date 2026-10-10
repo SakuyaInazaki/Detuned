@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "packages/client/src/client.ts",
+      "sha256": "e6b029d5afc9333e5e2ac33538d971941018bff6f9eab28654f9525ad5672aac",
+      "matches_B_freeze": true
+    },
+    {
+      "path": "packages/client/src/request-key.ts",
+      "sha256": "acd8fa0f1fbabea8eaa7f643ffed3912dde6be5df36f0cc5dc7eb7ffefa1ead7",
+      "matches_B_freeze": true
+    },
+    {
+      "path": "tests/contracts/m6-review-client.test.ts",
+      "sha256": "c23d3341c2a8ee219d4fc4536ecd749efe0faf73e534667999d0cc840f1860d2",
+      "matches_B_freeze": true
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+      "matches_B_freeze": true
+    }
+  ],
+  "lock_exact_diff": "--- \n+++ \n@@ -144,6 +144,9 @@\n       '@detuned/core':\n         specifier: workspace:*\n         version: link:../core\n+      '@detuned/module-review':\n+        specifier: workspace:*\n+        version: link:../../modules/review\n       '@detuned/protocol':\n         specifier: workspace:*\n         version: link:../protocol\n",
+  "execution": "static_reads_only"
+}

@@ -1,0 +1,45 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-logical-import.test.ts (6 tests | 3 failed) 77ms
+   × imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance 34ms
+     → Logical import failed; retain the input and retry to another new directory.
+   ✓ rejects truncated input and leaves no published directory 9ms
+   ✓ rejects existing target without touching source or target 7ms
+   ✓ cancels after a staged record without publishing 8ms
+   × keeps a failed partial publication behind the readiness gate 10ms
+     → expected [Function] to throw an error
+   × does not describe a fully published instance as partial on a late abort 8ms
+     → Logical import failed; retain the input and retry to another new directory.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > imports stable research with disabled source identity, fresh administrator, local hash/FTS/audit/provenance
+ImportError: Logical import failed; retain the input and retry to another new directory.
+ ❯ importSpace packages/storage-sqlite/src/logical-import.ts:70:850
+
+ ❯ tests/integration/m3-logical-import.test.ts:8:201
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > keeps a failed partial publication behind the readiness gate
+AssertionError: expected [Function] to throw an error
+ ❯ tests/integration/m3-logical-import.test.ts:12:385
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/m3-logical-import.test.ts > does not describe a fully published instance as partial on a late abort
+ImportError: Logical import failed; retain the input and retry to another new directory.
+ ❯ importSpace packages/storage-sqlite/src/logical-import.ts:70:850
+
+ ❯ tests/integration/m3-logical-import.test.ts:13:200
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 3 passed (6)
+   Start at  12:24:32
+   Duration  550ms (transform 166ms, setup 0ms, collect 276ms, tests 77ms, environment 0ms, prepare 35ms)
+

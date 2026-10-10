@@ -1,0 +1,11 @@
+--- tests/integration/m6-public-review-search-independent.test.ts (v1)
++++ tests/integration/m6-public-review-search-independent.test.ts (v2)
+@@ -41,7 +41,7 @@
+  const f=await fixture(),request=await f.create();const first=await f.submit(request,0);expect(await f.client(f.identities[0]!.token).getReviewSubmission(f.sid,first.submission_id)).toMatchObject({coverage:'Ownedneedle 0',revealed_at:null});
+  for(const ownedToken of [f.token,f.identities[0]!.token,f.identities[2]!.token]){const result=await f.search({request_id:request.id},ownedToken);expect(result.status).toBe(200);expect(result.items).toEqual([]);expect(result.meta).toEqual({truncated:false,next_cursor:null});}
+  const body=await f.prepare(request,1),before=f.rows();f.db.exec("CREATE TRIGGER owned_reveal_fault BEFORE INSERT ON events WHEN NEW.type='review.revealed' BEGIN SELECT RAISE(ABORT,'owned reveal barrier'); END;");
+- try{await expect(f.client(f.identities[1]!.token).submitReview(f.sid,request.id,body,'last-owned-retry')).rejects.toBeDefined();expect(f.rows()).toEqual(before);expect((await f.search()).items).toEqual([]);}finally{f.db.exec('DROP TRIGGER owned_reveal_fault');}
++ try{await expect(new DetunedClient({baseUrl:f.url,token:f.identities[1]!.token,timeoutMs:5000,maxRetries:0}).submitReview(f.sid,request.id,body,'last-owned-retry')).rejects.toBeDefined();expect(f.rows()).toEqual(before);expect((await f.search()).items).toEqual([]);}finally{f.db.exec('DROP TRIGGER owned_reveal_fault');}
+  await f.client(f.identities[1]!.token).submitReview(f.sid,request.id,body,'last-owned-retry');const committed=f.rows();await f.client(f.identities[1]!.token).submitReview(f.sid,request.id,body,'last-owned-retry');expect(f.rows()).toEqual(committed);const result=await f.client(f.identities[2]!.token).searchPublicReviewSubmissions(f.sid,{source:'review_submissions',q:'OWNEDNEEDLE',request_id:request.id});expect(result.data).toHaveLength(2);expect(result.data.every(row=>row.type==='review_submission'&&row.revealed_at!==null&&row.request_id===request.id)).toBe(true);expect(f.db.prepare("SELECT count(*) n FROM events WHERE type='review.revealed'").get()).toEqual({n:1});
+ });
+ 

@@ -1,0 +1,16 @@
+--- packages/client/src/client.ts v1
++++ packages/client/src/client.ts v2
+@@ -1190,9 +1190,13 @@
+           const {space_id: _space, op: _op, request_key, request_id, ...body} = review;
+           return this.cancelReviewRequest(spaceId,request_id,body,request_key,opts);
+         }
++        const token = this.token;
+         const assignment = await this.getOwnReviewAssignment(spaceId,review.request_id,opts);
+         if (opts?.signal?.aborted) throw new Error('Operation aborted');
++        if (token !== this.token) throw new RequestKeyError('IDENTITY_CHANGED', 'Credential changed while preparing a persistent write.');
+         const response = await this.createSession(spaceId,{client_name:review.client_name,client_version:review.client_version},opts);
++        if (opts?.signal?.aborted) throw new Error('Operation aborted');
++        if (token !== this.token) throw new RequestKeyError('IDENTITY_CHANGED', 'Credential changed while preparing a persistent write.');
+         if (!isSession(response.data) || response.data.space_id !== spaceId || response.data.actor_id !== assignment.reviewer_actor_id)
+           throw new ClientProtocolError('Invalid review session response.');
+         return response.data;

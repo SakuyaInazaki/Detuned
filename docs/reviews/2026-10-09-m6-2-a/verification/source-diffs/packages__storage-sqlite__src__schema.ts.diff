@@ -1,0 +1,2167 @@
+--- packages/storage-sqlite/src/schema.ts (fresh exact before)
++++ packages/storage-sqlite/src/schema.ts (current)
+@@ -280,6 +280,7 @@
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+   changed_at TEXT NOT NULL,
+   reason TEXT,
++  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+   UNIQUE (space_id, target_post_id, round)
+ );
+ 
+@@ -290,14 +291,29 @@
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+   changed_at TEXT NOT NULL,
+   reason TEXT,
++  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+   PRIMARY KEY (request_id, version)
+ );
+ 
+ CREATE TABLE IF NOT EXISTS review_assignments (
++  id TEXT NOT NULL UNIQUE,
+   request_id TEXT NOT NULL REFERENCES review_requests(id),
+   reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+   group_at_assignment TEXT,
+   PRIMARY KEY (request_id, reviewer_actor_id)
++);
++
++CREATE TABLE IF NOT EXISTS review_submissions (
++  id TEXT PRIMARY KEY NOT NULL,
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  assignment_id TEXT NOT NULL UNIQUE REFERENCES review_assignments(id),
++  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
++  reviewer_session_id TEXT NOT NULL UNIQUE REFERENCES sessions(id),
++  snapshot_sha256 TEXT NOT NULL,
++  payload_json TEXT NOT NULL,
++  request_version INTEGER NOT NULL,
++  submitted_at TEXT NOT NULL,
++  revealed_at TEXT
+ );
+ `;
+ // END SCHEMA_SQL
+@@ -358,6 +374,7 @@
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+   changed_at TEXT NOT NULL,
+   reason TEXT,
++  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+   UNIQUE (space_id, target_post_id, round)
+ );
+ 
+@@ -368,14 +385,29 @@
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+   changed_at TEXT NOT NULL,
+   reason TEXT,
++  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+   PRIMARY KEY (request_id, version)
+ );
+ 
+ CREATE TABLE IF NOT EXISTS review_assignments (
++  id TEXT NOT NULL UNIQUE,
+   request_id TEXT NOT NULL REFERENCES review_requests(id),
+   reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+   group_at_assignment TEXT,
+   PRIMARY KEY (request_id, reviewer_actor_id)
++);
++
++CREATE TABLE IF NOT EXISTS review_submissions (
++  id TEXT PRIMARY KEY NOT NULL,
++  request_id TEXT NOT NULL REFERENCES review_requests(id),
++  assignment_id TEXT NOT NULL UNIQUE REFERENCES review_assignments(id),
++  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
++  reviewer_session_id TEXT NOT NULL UNIQUE REFERENCES sessions(id),
++  snapshot_sha256 TEXT NOT NULL,
++  payload_json TEXT NOT NULL,
++  request_version INTEGER NOT NULL,
++  submitted_at TEXT NOT NULL,
++  revealed_at TEXT
+ );`;
+ // END MIGRATION_DDL
+ 
+@@ -428,6 +460,2076 @@
+   indexes?: IndexRequirement[];
+   fts?: FtsRequirement;
+ }
++
++export const V4_SCHEMA_TABLES: Record<string, TableRequirement> = {
++  "actors": {
++    "name": "actors",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "kind",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "display_name",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "disabled_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "artifacts": {
++    "name": "artifacts",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "owner_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "visibility",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "review_assignment_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "check_run_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "sha256",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "bytes",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "mime",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "storage_key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "owner_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "consumers": {
++    "name": "consumers",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "subscription_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "consumer_key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "ack_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "active_batch_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "acl_epoch",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "subscription_id",
++        "table": "subscriptions",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "subscription_id",
++          "consumer_key"
++        ],
++        "keyTerms": [
++          {
++            "name": "subscription_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "consumer_key",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "credentials": {
++    "name": "credentials",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "token_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "allowed_space_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "capabilities",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "expires_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "revoked_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "token_hash"
++        ],
++        "keyTerms": [
++          {
++            "name": "token_hash",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "delivery_batches": {
++    "name": "delivery_batches",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "consumer_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "from_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "through_seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "event_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "acked_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "consumer_id",
++        "table": "consumers",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "events": {
++    "name": "events",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "seq",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "object_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "visibility",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "seq"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "seq",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ],
++    "indexes": [
++      {
++        "name": "idx_events_space_seq",
++        "unique": false,
++        "columns": [
++          "space_id",
++          "seq"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "seq",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ],
++        "partial": false
++      }
++    ]
++  },
++  "idempotency_records": {
++    "name": "idempotency_records",
++    "columns": [
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "operation",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "key",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 4
++      },
++      {
++        "name": "request_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "result_ref",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "http_status",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "instance_metadata": {
++    "name": "instance_metadata",
++    "columns": [
++      {
++        "name": "key",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "value",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "memberships": {
++    "name": "memberships",
++    "columns": [
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "role",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "active",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reviewer_eligible",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "independence_group",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "post_fts": {
++    "name": "post_fts",
++    "virtual": true,
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "UNINDEXED",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "UNINDEXED",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "summary",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "body",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "tags",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": [],
++    "fts": {
++      "module": "fts5",
++      "columns": [
++        {
++          "name": "post_id",
++          "unindexed": true
++        },
++        {
++          "name": "space_id",
++          "unindexed": true
++        },
++        {
++          "name": "title",
++          "unindexed": false
++        },
++        {
++          "name": "summary",
++          "unindexed": false
++        },
++        {
++          "name": "body",
++          "unindexed": false
++        },
++        {
++          "name": "tags",
++          "unindexed": false
++        }
++      ],
++      "configs": {
++        "tokenize": "trigram"
++      }
++    }
++  },
++  "post_revisions": {
++    "name": "post_revisions",
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "summary",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "body",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "tags",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "structured",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "content_hash",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "editor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "editor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "posts": {
++    "name": "posts",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "thread_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "author_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "kind",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "current_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "lifecycle",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "author_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "thread_id",
++        "table": "threads",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "redactions": {
++    "name": "redactions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "affected_revisions",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "operator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "operator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "relation_resolutions": {
++    "name": "relation_resolutions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "relation_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "resolver_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason_ref",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "action",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "resolver_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "relation_id",
++        "table": "relations",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "relations": {
++    "name": "relations",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "source_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "source_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "creator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "creator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "source_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "source_post_id",
++          "source_revision",
++          "target_post_id",
++          "target_revision",
++          "type"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "source_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "source_revision",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_revision",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "type",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "review_assignments": {
++    "name": "review_assignments",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "request_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "reviewer_actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "group_at_assignment",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "reviewer_actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "request_id",
++        "table": "review_requests",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "id"
++        ],
++        "keyTerms": [
++          {
++            "name": "id",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "review_request_versions": {
++    "name": "review_request_versions",
++    "columns": [
++      {
++        "name": "request_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "phase",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "submitted_count",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "changed_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "request_id",
++        "table": "review_requests",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "review_requests": {
++    "name": "review_requests",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "snapshot_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "round",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "phase",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "requested_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "changed_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reason",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "submitted_count",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "changed_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "requested_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "snapshot_id",
++        "table": "snapshots",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "space_id",
++          "target_post_id",
++          "round"
++        ],
++        "keyTerms": [
++          {
++            "name": "space_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "target_post_id",
++            "coll": "BINARY",
++            "desc": 0
++          },
++          {
++            "name": "round",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "review_submissions": {
++    "name": "review_submissions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "request_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "assignment_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reviewer_actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "reviewer_session_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "snapshot_sha256",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "payload_json",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "request_version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "submitted_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "revealed_at",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "reviewer_session_id",
++        "table": "sessions",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "reviewer_actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "assignment_id",
++        "table": "review_assignments",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "request_id",
++        "table": "review_requests",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "reviewer_session_id"
++        ],
++        "keyTerms": [
++          {
++            "name": "reviewer_session_id",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      },
++      {
++        "columns": [
++          "assignment_id"
++        ],
++        "keyTerms": [
++          {
++            "name": "assignment_id",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "revision_artifacts": {
++    "name": "revision_artifacts",
++    "columns": [
++      {
++        "name": "post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "artifact_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "purpose",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "artifact_id",
++        "table": "artifacts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "schema_migrations": {
++    "name": "schema_migrations",
++    "columns": [
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "applied_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": []
++  },
++  "sessions": {
++    "name": "sessions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "client_name",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "client_version",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "harness_session_id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      },
++      {
++        "name": "metadata",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "snapshot_items": {
++    "name": "snapshot_items",
++    "columns": [
++      {
++        "name": "snapshot_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "item_type",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "item_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 3
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 4
++      },
++      {
++        "name": "sha256",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "snapshot_id",
++        "table": "snapshots",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "snapshots": {
++    "name": "snapshots",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "manifest_json",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "manifest_sha256",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "policy_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "rules_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_post_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "target_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_by",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "created_by",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "target_post_id",
++        "table": "posts",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "space_revisions": {
++    "name": "space_revisions",
++    "columns": [
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "objective",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "rules",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "review_policy",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "check_profiles",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "pinned_refs",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "editor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "editor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "spaces": {
++    "name": "spaces",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "slug",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "current_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "policy_revision",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "acl_epoch",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [],
++    "uniqueConstraints": [
++      {
++        "columns": [
++          "slug"
++        ],
++        "keyTerms": [
++          {
++            "name": "slug",
++            "coll": "BINARY",
++            "desc": 0
++          }
++        ]
++      }
++    ]
++  },
++  "subscriptions": {
++    "name": "subscriptions",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "actor_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "thread_ids",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "event_types",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "actor_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "thread_versions": {
++    "name": "thread_versions",
++    "columns": [
++      {
++        "name": "thread_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 1
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 2
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "thread_id",
++        "table": "threads",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  },
++  "threads": {
++    "name": "threads",
++    "columns": [
++      {
++        "name": "id",
++        "type": "TEXT",
++        "notnull": false,
++        "pk": 1
++      },
++      {
++        "name": "space_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "title",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "state",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "creator_id",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "created_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      },
++      {
++        "name": "updated_at",
++        "type": "TEXT",
++        "notnull": true,
++        "pk": 0
++      }
++    ],
++    "foreignKeys": [
++      {
++        "from": "creator_id",
++        "table": "actors",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      },
++      {
++        "from": "space_id",
++        "table": "spaces",
++        "to": "id",
++        "on_update": "NO ACTION",
++        "on_delete": "NO ACTION"
++      }
++    ],
++    "uniqueConstraints": []
++  }
++};
+ 
+ export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = {
+   "actors": {
+@@ -5671,9 +7773,9 @@
+ 
+ export function verifyDatabaseStructure(
+   db: any,
+-  version: 1 | 2 | 3
++  version: 1 | 2 | 3 | 4
+ ): { valid: boolean; reason?: string } {
+-  const tableMap = version === 3 ? V3_SCHEMA_TABLES : version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
++  const tableMap = version === 4 ? V4_SCHEMA_TABLES : version === 3 ? V3_SCHEMA_TABLES : version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
+   for (const [tbl, req] of Object.entries(tableMap)) {
+     const res = verifyTableStructure(db, tbl, req);
+     if (!res.valid) {

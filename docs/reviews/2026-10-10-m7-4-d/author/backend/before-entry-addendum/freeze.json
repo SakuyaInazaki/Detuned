@@ -1,0 +1,37 @@
+{
+  "task": "M7.4-D A safety implementation",
+  "source": "scripts/integrations/claude-check-probe.mjs",
+  "source_bytes": 44769,
+  "source_sha256": "446d9036a157b7c5f0d036d4e0a90277f958423925a21dcc3427b8d3275591ba",
+  "before_sha256": "333fb39e7f61b67549ce70678e817cba12a701b76ae3c5cc178058e8b8ec6031",
+  "protected_exports": [
+    {
+      "export": "nativeCheckNames",
+      "bytes": 181,
+      "sha256": "fe9ce0d225a3aa37698a66b1c2e8da66b270f315262d0c405201c3a7a105c512",
+      "byte_identical": true
+    },
+    {
+      "export": "prepareOrdinaryCheckFixture",
+      "bytes": 2437,
+      "sha256": "291e5ca286dcc979b3c478b20649090758adc9178578dab3ccb6384acd632a50",
+      "byte_identical": true
+    },
+    {
+      "export": "exerciseOrdinaryCheckBranches",
+      "bytes": 4544,
+      "sha256": "8d69a5eed0e7ec2b91eb9220f6dd2373f25c980d0ad4637367e5531be11fcbaf",
+      "byte_identical": true
+    },
+    {
+      "export": "createNativeInputWriter",
+      "bytes": 736,
+      "sha256": "d31cb7c7a84ff42c2b2589440a4867b67ccb3d2d02e28da3b7f6b7b4cbd554bf",
+      "byte_identical": true
+    }
+  ],
+  "policy_template_byte_identical": true,
+  "native_spawn_args_environment_byte_identical": true,
+  "runtime_checks": "not_run_by_A; D sole runtime window",
+  "known_unfixed_entry_defect": "launcher import does not satisfy built MCP argv[1] main guard; reported to root; outside current release"
+}

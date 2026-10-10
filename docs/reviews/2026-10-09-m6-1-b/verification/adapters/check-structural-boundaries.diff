@@ -1,0 +1,31 @@
+--- docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-structural-boundaries.mjs
+@@ -4,11 +4,15 @@
+ import { join } from 'node:path';
+ import { createRequire } from 'node:module';
+ import { isDeepStrictEqual as equal } from 'node:util';
+-import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase, SqliteStorage } from '../../../packages/storage-sqlite/dist/index.js';
+-import { SCHEMA_SQL } from '../../../packages/storage-sqlite/dist/schema.js';
+-import { buildApp } from '../../../packages/server/dist/index.js';
++import { bootstrapDatabase, classifyDatabase, openAndCoordinateDatabase as currentCoordinate, SqliteStorage } from '../../../../../packages/storage-sqlite/dist/index.js';
++import { SCHEMA_SQL } from '../../../../../packages/storage-sqlite/dist/schema.js';
++import { buildApp } from '../../../../../packages/server/dist/index.js';
+ 
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const directory = mkdtempSync(join(tmpdir(), 'detuned-r15-structure-'));
+ const source = new Database(join(directory, 'source.sqlite'));
+@@ -130,7 +134,7 @@
+     let db = new Database(file);
+     try {
+       if (kind === 'raw_v2_schema') db.exec(SCHEMA_SQL);
+-      if (kind === 'raw_v1_schema' || kind === 'historical_v1_instance') db.exec(readFileSync(new URL('../../../tests/fixtures/historical-v1-schema.sql', import.meta.url), 'utf8'));
++      if (kind === 'raw_v1_schema' || kind === 'historical_v1_instance') db.exec(readFileSync(new URL('../../../../../tests/fixtures/historical-v1-schema.sql', import.meta.url), 'utf8'));
+       if (kind === 'historical_v1_instance') {
+         db.exec("INSERT INTO schema_migrations VALUES(1,'2026-10-01T00:00:00.000Z'); INSERT INTO actors(id,kind,display_name,created_at) VALUES('r15_admin','human','Review admin','2026-10-01T00:00:00.000Z')");
+       }

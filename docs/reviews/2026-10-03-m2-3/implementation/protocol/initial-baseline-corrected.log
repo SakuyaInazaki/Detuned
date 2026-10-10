@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-search-contracts.test.ts (2 tests | 2 failed) 150ms
+   × M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 116ms
+     → expected [ { …(9) } ] to have property "meta.next_cursor"
+   × M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 33ms
+     → HTTP 431 请求失败
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags
+AssertionError: expected [ { …(9) } ] to have property "meta.next_cursor"
+ ❯ tests/contracts/m2-search-contracts.test.ts:23:19
+     21|     await note(client, sid, tid, 'one', [' a,b ']); await note(client,…
+     22|     const first = await client.callTool('forum_search', { space_id: si…
+     23|     expect(first).toHaveProperty('meta.next_cursor'); expect(first.dat…
+       |                   ^
+     24|     const second = await client.callTool('forum_search', { space_id: s…
+     25|     expect(second.data).toHaveLength(1); expect(second.data[0].post_id…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries
+DetunedError: HTTP 431 请求失败
+ ❯ DetunedClient.request packages/client/src/client.ts:469:28
+ ❯ tests/contracts/m2-search-contracts.test.ts:29:20
+     27|   it('S02: actual app/client accepts approved Unicode and encoded long…
+     28|     const tags = ['图'.repeat(2729)]; expect(Buffer.byteLength(JSON.str…
+     29|     const result = await client.search(sid, { q: '😀'.repeat(256), tag…
+       |                    ^
+     30|     expect(result.data).toEqual([]); expect(result.meta).toEqual({ tru…
+     31|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:18:58
+   Duration  660ms (transform 146ms, setup 0ms, collect 295ms, tests 150ms, environment 0ms, prepare 36ms)
+

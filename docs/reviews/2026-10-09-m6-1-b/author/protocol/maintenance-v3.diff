@@ -1,0 +1,23 @@
+--- packages/storage-sqlite/src/bootstrap.ts (v2)
++++ packages/storage-sqlite/src/bootstrap.ts
+@@ -3,6 +3,7 @@
+ import { DetunedError, ErrorCode } from '@detuned/protocol';
+ import {
+   validateResultRef,
++  validateStoredReviewRequestReference,
+   validateResultRefSemantics,
+   hasForbiddenContent,
+   parseOperation,
+@@ -361,6 +362,12 @@
+     throw new Error(`不支持的引用版本或未来版本引用 (op=${operation}, key=${key}, v=${parsed.v})`);
+   }
+ 
++  // Maintenance validates immutable formal references without reconstructing public content.
++  if (operation === 'review.request.create' || operation.startsWith('review.request.cancel:')) {
++    validateStoredReviewRequestReference(new SqliteStorage(db), operation, spaceId, parsed);
++    return resultRefStr;
++  }
++
+   // Already new typed format
+   if (parsed.v === 1) {
+     if (hasForbiddenContent(parsed)) {

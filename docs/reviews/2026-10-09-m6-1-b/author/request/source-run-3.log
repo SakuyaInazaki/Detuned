@@ -1,0 +1,43 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-requests.test.ts (5 tests | 1 failed | 4 skipped) 136ms
+   × RR01 fixed assignment/version and compact replay survive cancellation and later policy changes 135ms
+     → expected error to match asymmetric matcher
+   ↓ RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation
+   ↓ RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous
+   ↓ RR04 historical material reads stay detached but redaction and revoked credential gate replay
+   ↓ RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR01 fixed assignment/version and compact replay survive cancellation and later policy changes
+AssertionError: expected error to match asymmetric matcher
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "code": "VALIDATION_ERROR",
++ DetunedError {
++   "message": "Review policy revision has changed.",
++   "isDetunedError": true,
++   "isTransportError": false,
++   "code": "REVISION_CONFLICT",
++   "statusCode": 409,
++   "retryable": false,
++   "details": undefined,
++   "name": "DetunedError",
+  }
+
+ ❯ tests/integration/m6-review-requests.test.ts:33:95
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  13:12:57
+   Duration  898ms (transform 277ms, setup 0ms, collect 515ms, tests 136ms, environment 0ms, prepare 42ms)
+

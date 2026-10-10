@@ -1,0 +1,30 @@
+{
+  "finding": "F01",
+  "state": "confirmed_first_runtime_failure",
+  "source": "client create_session uses mutable token after awaiting own assignment",
+  "receipt": "dt03-first.json",
+  "stdout": "dt03-first.stdout.txt",
+  "stderr": "dt03-first.stderr.txt",
+  "source_snapshot": "dt03-first-source.ts.txt",
+  "input_hashes": "dt03-first-inputs.json",
+  "checkpoint": "DT03-assignment",
+  "observed": {
+    "session_post_delta": 1,
+    "error_name": "ClientProtocolError",
+    "error_code_observed": false,
+    "returned_session": false
+  },
+  "expected": {
+    "session_post_delta": 0,
+    "error_code": "IDENTITY_CHANGED"
+  },
+  "unexecuted": [
+    "DT03 POST-inflight credential change",
+    "DT03 post-assignment abort",
+    "DT03 legitimate Session control",
+    "remaining five D cases",
+    "official Pi/dsh lanes",
+    "whole core/current25"
+  ],
+  "limits": "First actual failure retained. No automatic rerun or product edits by D. Short-lived app and SQLite removed by original afterEach fixture cleanup; no VM/daemon/model/global actions."
+}

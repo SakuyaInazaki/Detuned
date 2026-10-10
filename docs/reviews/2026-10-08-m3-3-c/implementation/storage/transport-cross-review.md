@@ -1,0 +1,9 @@
+# A→B 只读互审
+
+范围 runtime-fa1b35c entry/generator/manifest/runtime入口、CLI upgradeadapter与对应契约。无具体可达阻断finding，未改B产品/fixture、未重新运行proof。
+
+fixed fullcommit fa1b35c80de02c1d601288847706495062935925，generator从固定Git读取44sources，internal @detuned与相对imports均绑定legacy namespace，normaltests直接bundle不需Git/esbuild。外部依赖通过已安装包且manifest记录版本；不把第三方实现归入oldsource。entry强制显式≥32bytes secret，旧source内default不通过该入口启用；无旧credentials/tokensecret归档。manifest记录source/runtime/entry/generatorhash与工具版本，B proof第四成功及前失败由B保留。
+
+CLI upgrade明确offline/新output/adminname/timeout，仅调用共享本地maintenance；UpgradeError前两exit2其余1，SIGINT/SIGTERM controller/removeListeners，返回一次newadmin敏感结果，不复制SQLite/ACL判断，不执行旧runtime或抓附件URL。旧serve/init协调未改。不把sourcefixture无HTTP附件能力与人工registeredfile补项混成旧原生功能。
+
+此只读审不能代替C独立rawHTTP/CLI/旧cursor/legacy重启/遗留WAL与sourcehash验证。

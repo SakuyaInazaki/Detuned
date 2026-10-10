@@ -1,0 +1,34 @@
+FILE tests/contracts/r4-c-contracts.test.ts
+31: // This fixture captures API-v1 routes with Web disabled. Resolve OpenAPI's
+32: // operation/path/document server inheritance before comparing that same domain.
+33: const openApiHttpMethods = new Set(['get','post','put','patch','delete','head','options','trace']);
+34: function apiV1Operations(spec: { servers?: Array<{url:string}>; paths: Record<string,Record<string,any>> }) {
+35:   return Object.entries(spec.paths).flatMap(([path,item]) => Object.entries(item).flatMap(([method,op]) => {
+36:     if (!openApiHttpMethods.has(method)) return [];
+37:     const servers: Array<{url:string}> = op.servers ?? item.servers ?? spec.servers ?? [];
+38:     if (!servers.some(server => new URL(server.url,'http://openapi-fixture.invalid').pathname.replace(/\/+$/,'') === '/api/v1')) return [];
+39:     return [{path,method,op}];
+40:   }));
+41: }
+42: 
+442:     it('C01-7: API-v1 OpenAPI 3.1 body constraints agree with existing protocol and HTTP (AD02)', async () => {
+445:       const operations = apiV1Operations(spec as {servers?:Array<{url:string}>;paths:Record<string,Record<string,any>>});
+490:     it('C01-8: API-v1 OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)', async () => {
+567:       const specPaths = apiV1Operations(spec as {servers?:Array<{url:string}>;paths:Record<string,Record<string,any>>}).map(({method,path})=>`${method} ${path}`).sort();
+FILE tests/contracts/r4-c-route-contracts.test.ts
+19: // This fixture captures API-v1 routes with Web disabled. Resolve OpenAPI's
+20: // operation/path/document server inheritance before comparing that same domain.
+21: const openApiHttpMethods = new Set(['get','post','put','patch','delete','head','options','trace']);
+22: function apiV1Operations(spec: { servers?: Array<{url:string}>; paths: Record<string,Record<string,any>> }) {
+23:   return Object.entries(spec.paths).flatMap(([path,item]) => Object.entries(item).flatMap(([method,op]) => {
+24:     if (!openApiHttpMethods.has(method)) return [];
+25:     const servers: Array<{url:string}> = op.servers ?? item.servers ?? spec.servers ?? [];
+26:     if (!servers.some(server => new URL(server.url,'http://openapi-fixture.invalid').pathname.replace(/\/+$/,'') === '/api/v1')) return [];
+27:     return [{path,method,op}];
+28:   }));
+29: }
+30: 
+31: describe('C.3-GATE complete API-v1 route contracts', () => {
+37:   const spec = generateOpenApiSpec() as { servers?: Array<{url:string}>; paths: Record<string, Record<string, Operation>> };
+57:   it('G01: compares every actual API-v1 method/path and every body schema, including absence', () => {
+58:     const declared = apiV1Operations(spec);

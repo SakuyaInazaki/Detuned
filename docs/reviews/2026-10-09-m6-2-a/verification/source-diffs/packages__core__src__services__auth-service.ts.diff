@@ -1,0 +1,21 @@
+--- packages/core/src/services/auth-service.ts (fresh exact before)
++++ packages/core/src/services/auth-service.ts (current)
+@@ -108,7 +108,8 @@
+   requireSpaceAccess(
+     auth: AuthenticatedContext,
+     spaceId: string,
+-    minimumRole: SpaceRole = 'observer'
++    minimumRole: SpaceRole = 'observer',
++    operation?: 'read' | 'write'
+   ): SpaceAuthContext {
+     // 1. Verify space exists
+     const space = this.storage.findSpaceById(spaceId);
+@@ -191,7 +192,7 @@
+       );
+     }
+ 
+-    if (minimumRole !== 'observer') {
++    if ((operation ?? (minimumRole === 'observer' ? 'read' : 'write')) === 'write') {
+       const hasWrite = caps.includes('write') || caps.includes('admin');
+       if (!hasWrite) {
+         throw new DetunedError(

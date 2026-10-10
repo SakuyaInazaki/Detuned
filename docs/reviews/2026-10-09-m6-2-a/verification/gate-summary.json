@@ -1,0 +1,76 @@
+{
+  "status": "passed_pending_root_acceptance",
+  "final_receipts": [
+    {
+      "receipt": "build-final.json",
+      "exit_code": 0,
+      "seconds": 10.066
+    },
+    {
+      "receipt": "typecheck-final.json",
+      "exit_code": 0,
+      "seconds": 8.234
+    },
+    {
+      "receipt": "lint-final.json",
+      "exit_code": 0,
+      "seconds": 8.225
+    },
+    {
+      "receipt": "core-final.json",
+      "exit_code": 0,
+      "seconds": 255.278
+    },
+    {
+      "receipt": "new-source-noemit-sd10-fixed.json",
+      "exit_code": 0,
+      "seconds": 1.745
+    },
+    {
+      "receipt": "old-independent-repair-noemit.json",
+      "exit_code": 0,
+      "seconds": 1.261
+    },
+    {
+      "receipt": "maintenance-compatibility-first.json",
+      "exit_code": 0,
+      "seconds": 1.344
+    }
+  ],
+  "core": {
+    "passed": 766,
+    "files": 116,
+    "first": {
+      "passed": 753,
+      "failed": 5,
+      "total": 758,
+      "files": 116
+    },
+    "baseline_accepted_previous_package": 737,
+    "new_M6_cases": 28,
+    "new_M6_files": 5,
+    "D_cases": 12,
+    "author_cases": 16,
+    "existing_schema_generation_V4_parameter_added": 1,
+    "delta": 29,
+    "first_full_to_final_added": 8
+  },
+  "current29": {
+    "gates": 4,
+    "probes": 25,
+    "original_probes": 6,
+    "previous_adapters": 4,
+    "current_schema4_adapters": 15,
+    "all_exit_zero": true,
+    "not_added_to_core_case_count": true
+  },
+  "warnings": [
+    "Known pnpmfiles dependency-state warning; no implicit installation",
+    "Web Vite minified bundle 672.04 kB exceeds advisory 500 kB threshold"
+  ],
+  "limits": [
+    "Internal formal submission services, not public review endpoint/UI or full review decisions",
+    "Original schema2/3 bounded built maintenance closures, not whole historical deployment certification",
+    "No browser, VM, installation, real model or external service in this package"
+  ]
+}

@@ -1,0 +1,29 @@
+--- packages/client/src/artifact-transfer.ts (fresh exact before)
++++ packages/client/src/artifact-transfer.ts (current)
+@@ -1,11 +1,15 @@
+-import { isArtifactMetadata, isCreateArtifactMetadata, DetunedError, ErrorCode, type ArtifactMetadata, type CreateArtifactMetadata } from '@detuned/protocol';
++import { isArtifactMetadata, isReadableArtifactMetadata, isCreateArtifactMetadata, DetunedError, ErrorCode, type ArtifactMetadata, type ReadableArtifactMetadata, type CreateArtifactMetadata } from '@detuned/protocol';
+ import { ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from './client.js';
+ 
+ const MAX_BYTES = 26214400;
+-export interface ArtifactDownload { metadata: ArtifactMetadata; bytes: Uint8Array }
++export interface ArtifactDownload { metadata: ReadableArtifactMetadata; bytes: Uint8Array }
+ const invalid = () => new ClientProtocolError('Invalid artifact metadata or transfer integrity.');
+ export function artifactMetadata(value: unknown, spaceId: string, artifactId?: string): ArtifactMetadata {
+   if (!isArtifactMetadata(value) || value.space_id !== spaceId || (artifactId !== undefined && value.id !== artifactId) || !/^[0-9a-f]{64}$/.test(value.sha256)) throw invalid();
++  return value;
++}
++export function readableArtifactMetadata(value: unknown, spaceId: string, artifactId: string): ReadableArtifactMetadata {
++  if (!isReadableArtifactMetadata(value) || value.space_id !== spaceId || value.id !== artifactId || !/^[0-9a-f]{64}$/.test(value.sha256)) throw invalid();
+   return value;
+ }
+ async function sha256(bytes: Uint8Array): Promise<string> {
+@@ -34,7 +38,7 @@
+   return { blob, metadataJson, bytes: bytes.length, sha256: hash };
+ }
+ 
+-export async function downloadArtifactBytes(baseUrl: string, token: string | undefined, spaceId: string, artifactId: string, timeoutMs: number, external: AbortSignal | undefined, getMetadata: (signal: AbortSignal) => Promise<ArtifactMetadata>, cookieSession = false): Promise<ArtifactDownload> {
++export async function downloadArtifactBytes(baseUrl: string, token: string | undefined, spaceId: string, artifactId: string, timeoutMs: number, external: AbortSignal | undefined, getMetadata: (signal: AbortSignal) => Promise<ReadableArtifactMetadata>, cookieSession = false): Promise<ArtifactDownload> {
+   const controller = new AbortController();
+   let timedOut = false;
+   const error = () => external?.aborted ? new UserAbortError() : timedOut ? new TimeoutError() : new UserAbortError();

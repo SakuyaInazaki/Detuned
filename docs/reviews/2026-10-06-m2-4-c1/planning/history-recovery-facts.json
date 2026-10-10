@@ -1,0 +1,62 @@
+{
+  "read_only": true,
+  "no_import_product_execution_or_install": true,
+  "candidate_git_commit": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "available_git_commits": [
+    "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+    "71aefc1839a59f79ad9b6c48af42e36ff49f781a",
+    "c4f041f899cf3224d42deeb3ecfc19cf379368f7",
+    "fa1b35c80de02c1d601288847706495062935925",
+    "a6c437d0b23c58bbd8da18fe6ae45b99cced6929"
+  ],
+  "original232_vs_candidate_dist": {
+    "matching": 111,
+    "different": 97,
+    "missing": 24
+  },
+  "known_original_db_exists": false,
+  "known_original_credentials_exists": false,
+  "matching_project_temp_prefix_entries": [],
+  "workspace_only_archive_db_candidate": "packages/storage-sqlite/tests/fixtures.db (not claimed original capture)",
+  "public_records_sha256": {
+    "docs/reviews/2026-10-03-m2-2-a/verification/capture-historical-fixture.mjs": "7dba107a1fa55e5b12efbb75a2df0f64bd3ed6c4cbb5009a1b87567e84d77c21",
+    "docs/reviews/2026-10-03-m2-2-a/verification/capture-additional-history.mjs": "c22546cbf505158399c65986f497e61f640244554ab3aa597c61391e1061bc08",
+    "docs/reviews/2026-10-03-m2-2-a/verification/historical-fixture.json": "640222f119e3a5c97a1fee7170d7e8b2ae309cc6e12e8c93e28a2e1dd6ea6b77",
+    "docs/reviews/2026-10-03-m2-2-a/verification/historical-additional-fixtures.json": "5276ad163dc6238ff20ecbc7259115669039645503702228cf7eebbedb30e059",
+    "docs/reviews/2026-10-03-m2-2-a/verification/check-historical-http.mjs": "ad2c3b7bc338edb2ea1acfd0efe5b6b05700c574b5c063d1b1ae6a5442f79e7c"
+  },
+  "public_original_cases": [
+    {
+      "entry": "initial",
+      "status": 201,
+      "request_hash": "3d841433d749e5b76cbdd07632cc9123b19e5667a1fc023415d1b867b4a12dd2",
+      "result_ref": "{\"v\":1,\"kind\":\"thread.create\",\"thread_id\":\"thd_ca30ebf8-6e9d-410e-ae01-b3c2758e7e57\",\"thread_version\":1,\"initial_post_id\":\"pst_222c83c6-d781-4413-b5eb-d53b2560c52d\",\"initial_post_revision\":1}"
+    },
+    {
+      "entry": "newpost",
+      "status": 201,
+      "request_hash": "8c1a1e7c58c76ef86a600bf1d9d21427f8e9954046174b9d031772e3b4b9a349",
+      "result_ref": "{\"v\":1,\"kind\":\"post\",\"post_id\":\"pst_263277af-af9d-44a0-a38f-c924fb6c789d\",\"revision\":1,\"relation_ids\":[]}"
+    },
+    {
+      "entry": "revision",
+      "status": 201,
+      "request_hash": "655c56bd57886bea87ca293eb5f931878af26fbb12bb7b8f0b2429285bf74211",
+      "result_ref": "{\"v\":1,\"kind\":\"post\",\"post_id\":\"pst_263277af-af9d-44a0-a38f-c924fb6c789d\",\"revision\":2,\"relation_ids\":[]}"
+    }
+  ],
+  "candidate_relevant_file_sha256": {
+    "packages/core/dist/services/thread-service.js": "a7b078822fc4591f17f2ca69df5f7f43f086168ce5a6ae98dde11df6fa82e0d4",
+    "packages/core/dist/services/post-service.js": "d26d65a6a180bd005c0d1cc52aaaa56fc60635ede7eeced5fd0b6c99cc28c0a3",
+    "packages/protocol/dist/posts.js": "8ae90c64e64628e2410ed96db0d151329392cd9f95b69afa15695f2d7ad830fd",
+    "packages/server/dist/app.js": "ccdc1ebae54ffc0ffa2e93f0cfce359cc2d194a75ea7b103e2371bc0bd4ce699",
+    "packages/server/dist/routes/threads.js": "1421d7de560edec71bd3a3aff0b2c8c00eb2817617a8a683300d7ae117612c8e",
+    "packages/server/dist/routes/posts.js": "06c278b8e3159ad1157be2ce75ff0b17a90c9a379a909b97020dd465895e5967",
+    "packages/storage-sqlite/dist/bootstrap.js": "47d2428ade48d6806b7f304d2e05dd19005c39c6caa027b83df78943b2ba61b0",
+    "packages/storage-sqlite/src/schema.sql": "7e3f01ada4d5285f62b61c5c9d427a288b1fc3dde7ee4146560ad7a0d22b85be"
+  },
+  "candidate_schema_sql_equal_current": true,
+  "candidate_app_js_count": 52,
+  "candidate_conditions_statically_supported_not_yet_executed": true,
+  "not_original_fixture_recovery": true
+}

@@ -1,0 +1,59 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 5 tests using 1 worker
+
+  ✘  1 scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout (5.4s)
+  ✓  2 scripts/integrations/web/independent.spec.ts:61:1 › BI02 observer write denial, hidden space and immediate membership/credential withdrawal (1.0s)
+  ✓  3 scripts/integrations/web/independent.spec.ts:87:1 › BI03 committed response loss exhausts bounded retries then same intent replays once (8.5s)
+  ✓  4 scripts/integrations/web/independent.spec.ts:108:1 › BI04 logout failure stays unconfirmed and held old response cannot repopulate (515ms)
+  ✘  5 scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation (5.5s)
+
+
+  1) scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+
+    TimeoutError: locator.focus: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for getByLabel('主题状态', { exact: true })
+
+
+      39 |   await space.focus(); await page.keyboard.press('Enter');
+      40 |   const filter = page.getByLabel('主题状态', {exact: true});
+    > 41 |   await filter.focus(); await page.keyboard.press('End'); await page.keyboard.press('Enter');
+         |                ^
+      42 |   await expect(page.getByText('当前页暂无归档主题。', {exact: true})).toBeVisible();
+      43 |   await filter.focus(); await page.keyboard.press('Home'); await page.keyboard.press('Enter');
+      44 |   const thread = page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true});
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:41:16
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI01-real-cook-2518c--keyboard-and-narrow-layout/error-context.md
+
+  2) scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.body-text')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.body-text') with timeout 5000ms
+      - waiting for locator('.body-text')
+
+
+      143 |   await forum.revisePost(legal, {body: 'New revision body.'});
+      144 |   await page.getByRole('button', {name: '继续加载正文', exact: true}).click();
+    > 145 |   await expect(page.locator('.body-text')).toBeVisible();
+          |                                            ^
+      146 |   expect(await page.locator('.body-text').evaluate((element, body) => element.textContent === body, oldBody)).toBe(true);
+      147 |   await expect(page.getByText('已有更新修订；这里仍显示所选固定版本。', {exact: true})).toBeVisible();
+      148 |   await open(page, historical.id);
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts:145:44
+
+    Error Context: docs/reviews/2026-10-09-m5-1-b/verification/browser-output/independent-BI05-UTF-8-fix-d0638-historical-1MiB-degradation/error-context.md
+
+  2 failed
+    scripts/integrations/web/independent.spec.ts:24:1 › BI01 real cookie, restoration, plain research text, keyboard and narrow layout 
+    scripts/integrations/web/independent.spec.ts:126:1 › BI05 UTF-8 fixed pagination, newer revision and historical 1MiB degradation 
+  3 passed (22.9s)
+[ELIFECYCLE] Command failed with exit code 1.

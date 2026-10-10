@@ -1,0 +1,281 @@
+--- a/packages/client/src/client.ts
++++ b/packages/client/src/client.ts
+@@ -1,3 +1,8 @@
++import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt,
++  type CheckRunView, type CheckSnapshotView, type CheckPostRevisionView, type CheckReceiptView,
++  type RequiredChecksView, type IssueCheckRunCredentialRequest, type IssueCheckRunCredentialData,
++  isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView,
++  isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
+ import { validateSearchSourceQuery, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
+ import { isFindingsView, isFailuresView } from '@detuned/protocol';
+ import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
+@@ -63,6 +68,9 @@
+   SearchResultItem,
+   ViewName,
+ } from '@detuned/protocol';
++
++/** Check writes deliberately do not perform persistent-key identity discovery. */
++export interface CheckWriteOptions { signal?: AbortSignal }
+ 
+ export class UserAbortError extends Error {
+   readonly isUserAbort = true;
+@@ -686,6 +694,101 @@
+   getReviewDecision(spaceId: string, requestId: string, options?: {signal?:AbortSignal}): Promise<ReviewDecisionView> {
+     return this.reviewResponse({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/review-requests/${encodeURIComponent(requestId)}/decision`,signal:options?.signal},isReviewDecisionView,v=>v.request_id===requestId);
+   }
++  private checkRunPath(spaceId: string, runId: string): string {
++    return `/spaces/${encodeURIComponent(spaceId)}/check-runs/${encodeURIComponent(runId)}`;
++  }
++  private checkWriteKey(requestKey: string | undefined, opts?: CheckWriteOptions): string {
++    if (opts && 'logicalOperationId' in opts) throw new RequestKeyError('INVALID_OPTIONS', 'Check writes do not support persistent logical operation IDs.');
++    if (requestKey !== undefined && (typeof requestKey !== 'string' || !requestKey.trim())) throw new ClientProtocolError('Invalid check request key.');
++    return requestKey ?? globalThis.crypto.randomUUID();
++  }
++  private async checkResponse<T>(request: RequestOptions, guard: (value: unknown) => value is T): Promise<T> {
++    if (request.signal?.aborted) throw new UserAbortError();
++    const response = await this.requestWithBody<unknown>(request, undefined, true);
++    if (!guard(response.data)) throw new ClientProtocolError('Invalid check response.');
++    return response.data;
++  }
++  createCheckRun(spaceId: string, body: CreateCheckRun, requestKey?: string, opts?: WriteOptions): Promise<CheckRunView> {
++    const key = opts?.logicalOperationId === undefined ? requestKey ?? globalThis.crypto.randomUUID() : requestKey;
++    return this.reviewResponse({method:'POST',path:`/spaces/${encodeURIComponent(spaceId)}/check-runs`,body,requestKey:key,signal:opts?.signal},
++      (value): value is CheckRunView => !!value && typeof value==='object' && 'id' in value && typeof value.id==='string' && isCheckRunView(value,spaceId,value.id) && value.request_id===body.request_id && value.snapshot_id===body.snapshot_id && value.check_name===body.check_name && value.verifier_actor_id===body.verifier_id,()=>true,{spaceId,operation:'check.run.create',target:body.request_id},opts);
++  }
++  getCheckRun(spaceId: string, runId: string, opts?: { signal?: AbortSignal }): Promise<CheckRunView> {
++    return this.checkResponse({method:'GET',path:this.checkRunPath(spaceId,runId),signal:opts?.signal},
++      (value): value is CheckRunView => isCheckRunView(value,spaceId,runId));
++  }
++  async getCheckSnapshot(spaceId: string, runId: string, opts?: { signal?: AbortSignal }): Promise<CheckSnapshotView> {
++    const value = await this.checkResponse({method:'GET',path:`${this.checkRunPath(spaceId,runId)}/snapshot`,signal:opts?.signal},
++      (candidate): candidate is CheckSnapshotView => isCheckSnapshotView(candidate,spaceId,runId));
++    try {
++      const canonical = new TextEncoder().encode(canonicalizeReviewJson(value.manifest));
++      const pending = globalThis.crypto.subtle.digest('SHA-256',canonical);
++      const digest = opts?.signal ? await waitForArtifact(pending,opts.signal,()=>new UserAbortError()) : await pending;
++      const hash = Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
++      if (hash !== value.manifest_sha256) throw new ClientProtocolError('Invalid check snapshot integrity.');
++    } catch (cause) {
++      if (cause instanceof UserAbortError || cause instanceof ClientProtocolError) throw cause;
++      throw new ClientProtocolError('Invalid check snapshot canonical payload.');
++    }
++    return value;
++  }
++  getCheckPostRevision(spaceId: string, runId: string, postId: string, revision: number, opts?: { signal?: AbortSignal }): Promise<CheckPostRevisionView> {
++    return this.checkResponse({method:'GET',path:`${this.checkRunPath(spaceId,runId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}`,signal:opts?.signal},
++      (value): value is CheckPostRevisionView => isCheckPostRevisionView(value,spaceId,runId,postId,revision));
++  }
++  async issueCheckRunCredential(spaceId: string, runId: string, body: IssueCheckRunCredentialRequest = {}, opts?: { signal?: AbortSignal }): Promise<IssueCheckRunCredentialData> {
++    const object = (value: unknown): value is Record<string,unknown> => !!value && typeof value==='object' && !Array.isArray(value);
++    if (!object(body) || (opts !== undefined && !object(opts)) || Object.keys(body).some(key=>key!=='ttl_seconds') ||
++        (opts && ['requestKey','request_key','logicalOperationId'].some(key=>key in opts)) || arguments.length>4)
++      throw new ClientProtocolError('Credential issuance does not accept request keys.');
++    const response = await this.requestWithBody<unknown>({method:'POST',path:`${this.checkRunPath(spaceId,runId)}/credentials`,body,signal:opts?.signal},undefined,true,0);
++    if (!isIssueCheckRunCredentialData(response.data,spaceId,runId)) throw new ClientProtocolError('Invalid check credential response.');
++    return response.data;
++  }
++  submitCheckReceipt(spaceId: string, runId: string, body: SubmitCheckReceipt, requestKey?: string, opts?: CheckWriteOptions): Promise<CheckReceiptView> {
++    const key = this.checkWriteKey(requestKey,opts);
++    return this.checkResponse({method:'POST',path:`${this.checkRunPath(spaceId,runId)}/receipt`,body,requestKey:key,signal:opts?.signal},
++      (value): value is CheckReceiptView => isCheckReceiptView(value,spaceId,runId) && value.receipt_id===body.receipt_id &&
++        value.observed_snapshot_sha256===body.observed_snapshot_sha256 && value.observed_check_config_sha256===body.observed_check_config_sha256 &&
++        value.logs_artifact_id===body.logs_artifact_id && value.result===body.result && value.exit_code===body.exit_code &&
++        value.environment===body.environment && value.execution_steps===body.execution_steps && value.started_at===body.started_at && value.finished_at===body.finished_at &&
++        Object.keys(value.tool_versions).length===Object.keys(body.tool_versions).length && Object.entries(body.tool_versions).every(([name,version])=>value.tool_versions[name]===version));
++  }
++  getCheckReceipt(spaceId: string, runId: string, opts?: { signal?: AbortSignal }): Promise<CheckReceiptView> {
++    return this.checkResponse({method:'GET',path:`${this.checkRunPath(spaceId,runId)}/receipt`,signal:opts?.signal},
++      (value): value is CheckReceiptView => isCheckReceiptView(value,spaceId,runId));
++  }
++  invalidateCheckRun(spaceId: string, runId: string, body: InvalidateCheckRun, requestKey?: string, opts?: WriteOptions): Promise<CheckRunView> {
++    const key = opts?.logicalOperationId === undefined ? requestKey ?? globalThis.crypto.randomUUID() : requestKey;
++    return this.reviewResponse({method:'POST',path:`${this.checkRunPath(spaceId,runId)}/invalidate`,body,requestKey:key,signal:opts?.signal},
++      (value): value is CheckRunView => isCheckRunView(value,spaceId,runId) && value.state==='invalidated' && value.version===body.expected_version+1 && value.invalidation_reason===body.reason,()=>true,{spaceId,operation:'check.run.invalidate',target:runId},opts);
++  }
++  async uploadCheckArtifact(spaceId: string, runId: string, file: Blob, metadata: Record<string,never> = {}, requestKey?: string, opts?: CheckWriteOptions): Promise<ArtifactMetadata> {
++    // Key policy is checked before even slicing/reading the caller's Blob.
++    const key = this.checkWriteKey(requestKey,opts);
++    if (!metadata || typeof metadata!=='object' || Array.isArray(metadata) || Object.keys(metadata).length!==0) throw new ClientProtocolError('Invalid check upload metadata.');
++    const snapshot = await snapshotUpload(file,metadata,opts?.signal);
++    const response = await this.requestWithBody<unknown>({method:'POST',path:`${this.checkRunPath(spaceId,runId)}/artifacts`,requestKey:key,signal:opts?.signal},()=>{
++      const form=new FormData();form.append('metadata',snapshot.metadataJson);form.append('file',snapshot.blob,'upload.bin');return form;
++    });
++    const value=response.data;
++    if (!isCheckArtifactMetadata(value,spaceId,runId) || value.state!=='ready' || value.bytes!==snapshot.bytes || value.sha256!==snapshot.sha256 || value.mime!==normalizeArtifactMime(snapshot.blob.type))
++      throw new ClientProtocolError('Invalid check upload response.');
++    return value;
++  }
++  getCheckArtifact(spaceId: string, runId: string, artifactId: string, opts?: { signal?: AbortSignal }): Promise<ReadableArtifactMetadata> {
++    return this.checkResponse({method:'GET',path:`${this.checkRunPath(spaceId,runId)}/artifacts/${encodeURIComponent(artifactId)}`,signal:opts?.signal},
++      (value): value is ReadableArtifactMetadata => isReadableCheckArtifactMetadata(value,spaceId,runId) && value.id===artifactId);
++  }
++  downloadCheckArtifact(spaceId: string, runId: string, artifactId: string, opts?: { signal?: AbortSignal }): Promise<ArtifactDownload> {
++    return downloadArtifactBytes(this.baseUrl,this.token,spaceId,artifactId,this.timeoutMs,opts?.signal,
++      signal=>this.getCheckArtifact(spaceId,runId,artifactId,{signal}),!!this.browserSession,runId);
++  }
++  getRequiredChecks(spaceId: string, requestId: string, opts?: { signal?: AbortSignal }): Promise<RequiredChecksView> {
++    return this.checkResponse({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/review-requests/${encodeURIComponent(requestId)}/check-runs`,signal:opts?.signal},
++      (value): value is RequiredChecksView => isRequiredChecksView(value,spaceId,requestId));
++  }
++
+   async uploadReviewArtifact(spaceId: string, requestId: string, file: Blob, metadata: Record<string, never> = {}, requestKey?: string, opts?: WriteOptions): Promise<ReviewArtifactMetadata> {
+     if (!metadata || typeof metadata!=='object' || Array.isArray(metadata) || Object.keys(metadata).length!==0) throw new ClientProtocolError('Invalid review upload metadata.');
+     const snapshot = await snapshotUpload(file, metadata, opts?.signal);
+--- a/packages/client/src/artifact-transfer.ts
++++ b/packages/client/src/artifact-transfer.ts
+@@ -1,4 +1,4 @@
+-import { isArtifactMetadata, isReadableArtifactMetadata, isCreateArtifactMetadata, DetunedError, ErrorCode, type ArtifactMetadata, type ReadableArtifactMetadata, type CreateArtifactMetadata } from '@detuned/protocol';
++import { isArtifactMetadata, isReadableArtifactMetadata, isReadableCheckArtifactMetadata, isCreateArtifactMetadata, DetunedError, ErrorCode, type ArtifactMetadata, type ReadableArtifactMetadata, type CreateArtifactMetadata } from '@detuned/protocol';
+ import { ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from './client.js';
+ 
+ const MAX_BYTES = 26214400;
+@@ -38,7 +38,7 @@
+   return { blob, metadataJson, bytes: bytes.length, sha256: hash };
+ }
+ 
+-export async function downloadArtifactBytes(baseUrl: string, token: string | undefined, spaceId: string, artifactId: string, timeoutMs: number, external: AbortSignal | undefined, getMetadata: (signal: AbortSignal) => Promise<ReadableArtifactMetadata>, cookieSession = false): Promise<ArtifactDownload> {
++export async function downloadArtifactBytes(baseUrl: string, token: string | undefined, spaceId: string, artifactId: string, timeoutMs: number, external: AbortSignal | undefined, getMetadata: (signal: AbortSignal) => Promise<ReadableArtifactMetadata>, cookieSession = false, checkRunId?: string): Promise<ArtifactDownload> {
+   const controller = new AbortController();
+   let timedOut = false;
+   const error = () => external?.aborted ? new UserAbortError() : timedOut ? new TimeoutError() : new UserAbortError();
+@@ -51,9 +51,13 @@
+   const cancelBody = (value: Response) => { if (!value.body?.locked) void value.body?.cancel().catch(() => {}); };
+   try {
+     const metadata = await waitForArtifact(getMetadata(controller.signal), controller.signal, error);
++    if (checkRunId !== undefined && (!isReadableCheckArtifactMetadata(metadata,spaceId,checkRunId) || metadata.id!==artifactId)) throw invalid();
++    const contentPath = checkRunId === undefined
++      ? `/api/v1/spaces/${encodeURIComponent(spaceId)}/artifacts/${encodeURIComponent(artifactId)}/content`
++      : `/api/v1/spaces/${encodeURIComponent(spaceId)}/check-runs/${encodeURIComponent(checkRunId)}/artifacts/${encodeURIComponent(artifactId)}/content`;
+     const headers: Record<string, string> = { Accept: 'application/octet-stream' };
+     if (token && !cookieSession) headers.Authorization = `Bearer ${token}`;
+-    const pending = fetch(`${baseUrl}/api/v1/spaces/${encodeURIComponent(spaceId)}/artifacts/${encodeURIComponent(artifactId)}/content`, { headers, signal: controller.signal, redirect: 'error', credentials: cookieSession ? 'same-origin' : undefined });
++    const pending = fetch(`${baseUrl}${contentPath}`, { headers, signal: controller.signal, redirect: 'error', credentials: cookieSession ? 'same-origin' : undefined });
+     pending.then(value => { response = value; if (controller.signal.aborted) cancelBody(value); }, () => {});
+     response = await waitForArtifact(pending, controller.signal, error);
+     if (!response.ok) {
+--- /dev/null
++++ b/tests/contracts/m7-check-client.test.ts
+@@ -0,0 +1,112 @@
++import { afterEach, expect, it, vi } from 'vitest';
++import { DetunedClient, ClientProtocolError, UserAbortError, RequestKeyError } from '@detuned/client';
++import { canonicalizeReviewJson, type SubmitCheckReceipt, type ReviewSnapshotManifestData } from '@detuned/protocol';
++import type { RequestKeyScope } from '../../packages/client/src/request-key.js';
++
++// Controlled transport contracts; real HTTP/SQLite authorization is D's independent suite.
++const date='2026-10-10T00:00:00Z', hash='a'.repeat(64), space='space/ 空', runId='run/ 空', artifactId='log/ 空';
++const root=`http://checks.invalid/api/v1/spaces/${encodeURIComponent(space)}`;
++const runPath=`${root}/check-runs/${encodeURIComponent(runId)}`;
++const run={id:runId,space_id:space,request_id:'request',snapshot_id:'snapshot',snapshot_sha256:hash,check_name:'check',attempt:1,verifier_actor_id:'verifier',check_config_sha256:hash,state:'pending',version:1,created_by:'admin',created_at:date,changed_by:'admin',changed_at:date,invalidation_reason:null};
++const receiptInput:SubmitCheckReceipt={receipt_id:'receipt',observed_snapshot_sha256:hash,observed_check_config_sha256:hash,result:'pass',environment:'local',tool_versions:{checker:'1'},execution_steps:'fixed check',started_at:date,finished_at:date,exit_code:0,logs_artifact_id:artifactId};
++const receipt={...receiptInput,space_id:space,check_run_id:runId,verifier_actor_id:'verifier',received_at:date,run_version:2};
++const post={space_id:space,check_run_id:runId,post_id:'post/ 空',revision:2,title:'title',summary:'summary',body:'body',tags:[],structured:{},content_hash:hash,editor_id:'author',created_at:date};
++const response=(data:unknown)=>new Response(JSON.stringify({api_version:'1',request_id:'transport',data}),{headers:{'content-type':'application/json'}});
++const client=()=>new DetunedClient({baseUrl:'http://checks.invalid',token:'controlled-verify',maxRetries:0});
++async function sha(bytes:Uint8Array){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes as Uint8Array<ArrayBuffer>)),x=>x.toString(16).padStart(2,'0')).join('');}
++const metadata=(digest:string,bytes:number)=>({id:artifactId,space_id:space,owner_id:'verifier',visibility:'space',sha256:digest,bytes,mime:'text/plain',state:'ready',created_at:date,content_url:`/api/v1/spaces/${encodeURIComponent(space)}/check-runs/${encodeURIComponent(runId)}/artifacts/${encodeURIComponent(artifactId)}/content`});
++afterEach(()=>vi.unstubAllGlobals());
++
++it('MC01 run/fixed-post wrappers encode targets and reject whole-object scope, history and revision corruption',async()=>{
++ const seen:string[]=[];vi.stubGlobal('fetch',vi.fn(async(url:unknown)=>{seen.push(String(url));return response(String(url).includes('/posts/')?post:run);}));
++ const c=client();expect(await c.getCheckRun(space,runId)).toEqual(run);expect(await c.getCheckPostRevision(space,runId,post.post_id,2)).toEqual(post);
++ expect(seen).toEqual([runPath,`${runPath}/posts/${encodeURIComponent(post.post_id)}/revisions/2`]);
++ for(const value of [{...run,id:'other'},{...run,space_id:'other'},{...run,created_request_version:1},{...run,changed_at:'2026-02-31T00:00:00Z'},{...run,state:'invalidated'}]){
++  vi.stubGlobal('fetch',vi.fn(async()=>response(value)));await expect(c.getCheckRun(space,runId)).rejects.toBeInstanceOf(ClientProtocolError);
++ }
++ vi.stubGlobal('fetch',vi.fn(async()=>response({...post,revision:1})));await expect(c.getCheckPostRevision(space,runId,post.post_id,2)).rejects.toBeInstanceOf(ClientProtocolError);
++});
++
++it('MC02 snapshot computes actual shared JCS SHA and rejects changed payload, hash, scope and illegal Unicode',async()=>{
++ const manifest:ReviewSnapshotManifestData={manifest_version:1,space_id:space,target:{ref:{post_id:'post',revision:1},content_hash:hash,statement:'claim',assumptions:[],scope:'scope',falsification_plan:'falsify'},dependencies:[],artifacts:[],code_refs:[],rules_revision:1,policy_revision:1,review_policy:{enabled:true,required_reviewers:1,exclude_contributors:true,distinct_actors:true,distinct_independence_groups:false,seal_until_all_submitted:true,invalidate_on_revision:true,required_checks:[],allow_open_objections:false},check_profiles:[],contributors:['author'],reproduction_instructions:'fixed'};
++ const view={snapshot_id:'snapshot',space_id:space,check_run_id:runId,manifest,manifest_sha256:await sha(new TextEncoder().encode(canonicalizeReviewJson(manifest))),created_by:'admin',created_at:date};
++ const c=client();vi.stubGlobal('fetch',vi.fn(async()=>response(view)));expect(await c.getCheckSnapshot(space,runId)).toEqual(view);
++ for(const value of [{...view,manifest_sha256:hash},{...view,manifest:{...manifest,reproduction_instructions:'changed'}},{...view,check_run_id:'other'},{...view,manifest:{...manifest,reproduction_instructions:'\ud800'}},{...view,extra:true}]){
++  vi.stubGlobal('fetch',vi.fn(async()=>response(value)));await expect(c.getCheckSnapshot(space,runId)).rejects.toBeInstanceOf(ClientProtocolError);
++ }
++});
++
++it('MC03 directory preserves nulls and rejects a bad later item, duplicate/order/status and cross-request fields',async()=>{
++ const directory={space_id:space,request_id:'request',snapshot_id:'snapshot',request_version:2,verification_status:'pending',checks:[{check_name:'a',run:null,receipt_id:null},{check_name:'check',run,receipt_id:null}]};
++ const c=client();const fetcher=vi.fn(async(_url:unknown)=>response(directory));vi.stubGlobal('fetch',fetcher);expect(await c.getRequiredChecks(space,'request')).toEqual(directory);expect(String(fetcher.mock.calls[0]?.[0])).toBe(`${root}/review-requests/request/check-runs`);
++ for(const value of [{...directory,checks:[directory.checks[0],{...directory.checks[1],run:{...run,request_id:'other'}}]},{...directory,checks:[directory.checks[0],directory.checks[0]]},{...directory,checks:[directory.checks[1],directory.checks[0]]},{...directory,verification_status:'passed'},{...directory,checks:[{check_name:'a',run:null,receipt_id:'receipt'}]},{...directory,checks:Array(33).fill(directory.checks[0])}]){
++  vi.stubGlobal('fetch',vi.fn(async()=>response(value)));await expect(c.getRequiredChecks(space,'request')).rejects.toBeInstanceOf(ClientProtocolError);
++ }
++});
++
++it('MC04 issuer rejects any key options before HTTP and never retries plaintext issuance',async()=>{
++ const fetcher=vi.fn(async()=>new Response(JSON.stringify({api_version:'1',error:{code:'TEMPORARILY_UNAVAILABLE',message:'retry'}}),{status:503,headers:{'content-type':'application/json','retry-after':'0'}}));vi.stubGlobal('fetch',fetcher);
++ const c=new DetunedClient({baseUrl:'http://checks.invalid',maxRetries:4});
++ for(const opts of [{requestKey:'key'},{request_key:'key'},{logicalOperationId:undefined}])await expect(c.issueCheckRunCredential(space,runId,{},opts as never)).rejects.toBeInstanceOf(ClientProtocolError);
++ await expect(c.issueCheckRunCredential(space,runId,{request_key:'key'} as never)).rejects.toBeInstanceOf(ClientProtocolError);expect(fetcher).not.toHaveBeenCalled();
++ await expect(c.issueCheckRunCredential(space,runId)).rejects.toBeDefined();expect(fetcher).toHaveBeenCalledTimes(1);
++ const issued={credential_id:'cred',token:'once-only-controlled',expires_at:date};vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{expect(String(url)).toBe(`${runPath}/credentials`);expect(new Headers(init.headers).has('idempotency-key')).toBe(false);return response(issued);}));expect(await c.issueCheckRunCredential(space,runId,{ttl_seconds:60})).toEqual(issued);
++});
++
++it('MC05 receipt auto-key is per call, stable across retry, with no identity discovery and response input binding',async()=>{
++ const keys:string[]=[];let attempt=0;vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{expect(String(url)).toBe(`${runPath}/receipt`);keys.push(new Headers(init.headers).get('idempotency-key')!);if(attempt++===0)return new Response(JSON.stringify({api_version:'1',error:{code:'TEMPORARILY_UNAVAILABLE',message:'retry'}}),{status:503,headers:{'content-type':'application/json','retry-after':'0'}});return response(receipt);}));
++ const c=new DetunedClient({baseUrl:'http://checks.invalid',maxRetries:1});expect(await c.submitCheckReceipt(space,runId,receiptInput)).toEqual(receipt);expect(await c.submitCheckReceipt(space,runId,receiptInput)).toEqual(receipt);expect(keys[0]).toBe(keys[1]);expect(keys[2]).not.toBe(keys[1]);
++ for(const value of [{...receipt,check_run_id:'other'},{...receipt,observed_snapshot_sha256:'b'.repeat(64)},{...receipt,environment:'changed'},{...receipt,result:'pass',exit_code:1},{...receipt,private:true}]){
++  vi.stubGlobal('fetch',vi.fn(async()=>response(value)));await expect(c.submitCheckReceipt(space,runId,receiptInput,'explicit')).rejects.toBeInstanceOf(ClientProtocolError);
++ }
++ vi.stubGlobal('fetch',vi.fn(async()=>response(receipt)));expect(await c.getCheckReceipt(space,runId)).toEqual(receipt);
++});
++
++it('MC06 verify logicalOperationId fails before Blob snapshot, HTTP or persistent identity preparation',async()=>{
++ let sliced=0;class ObservedBlob extends Blob {override slice(start?:number,end?:number,contentType?:string){sliced++;return super.slice(start,end,contentType);}}
++ const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);const store={getOrCreate:vi.fn()};const c=new DetunedClient({baseUrl:'http://checks.invalid',requestKeyStore:store});
++ for(const logicalOperationId of ['intent',undefined]){
++  await expect(c.uploadCheckArtifact(space,runId,new ObservedBlob(['data']),{},undefined,{logicalOperationId} as never)).rejects.toBeInstanceOf(RequestKeyError);
++  await expect(Promise.resolve().then(()=>c.submitCheckReceipt(space,runId,receiptInput,undefined,{logicalOperationId} as never))).rejects.toBeInstanceOf(RequestKeyError);
++ }
++ expect(sliced).toBe(0);expect(fetcher).not.toHaveBeenCalled();expect(store.getOrCreate).not.toHaveBeenCalled();
++});
++
++it('MC07 scoped upload and download share immutable retries, exact encoded path and integrity checks',async()=>{
++ const bytes=new TextEncoder().encode('run log'),meta=metadata(await sha(bytes),bytes.length);const forms:FormData[]=[],keys:string[]=[];let upload=0;const paths:string[]=[];
++ vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{paths.push(String(url));if(init.method==='POST'){forms.push(init.body as FormData);keys.push(new Headers(init.headers).get('idempotency-key')!);if(upload++===0)return new Response(JSON.stringify({api_version:'1',error:{code:'TEMPORARILY_UNAVAILABLE',message:'retry'}}),{status:503,headers:{'content-type':'application/json','retry-after':'0'}});return response(meta);}if(String(url).endsWith('/content')){expect(init.redirect).toBe('error');return new Response(bytes,{headers:{'content-length':String(bytes.length),'content-type':'text/plain'}});}return response(meta);}));
++ const c=new DetunedClient({baseUrl:'http://checks.invalid',maxRetries:1});expect(await c.uploadCheckArtifact(space,runId,new Blob([bytes],{type:'text/plain'}),{},'log-key')).toEqual(meta);expect(forms[0]).not.toBe(forms[1]);expect(keys).toEqual(['log-key','log-key']);for(const form of forms)expect(await (form.get('file') as Blob).text()).toBe('run log');
++ expect((await c.downloadCheckArtifact(space,runId,artifactId)).bytes).toEqual(bytes);expect(paths.at(-1)).toBe(`http://checks.invalid${meta.content_url}`);
++ for(const content_url of ['https://hostile.invalid/log',`/api/v1/spaces/${encodeURIComponent(space)}/artifacts/${encodeURIComponent(artifactId)}/content`,meta.content_url.replace('/check-runs/','/wrong/')]){
++  const mocked=vi.fn(async()=>response({...meta,content_url}));vi.stubGlobal('fetch',mocked);await expect(c.downloadCheckArtifact(space,runId,artifactId)).rejects.toBeInstanceOf(ClientProtocolError);expect(mocked).toHaveBeenCalledTimes(1);
++ }
++ vi.stubGlobal('fetch',vi.fn(async(url:unknown)=>String(url).endsWith('/content')?new Response(new TextEncoder().encode('bad log'),{headers:{'content-length':String(bytes.length),'content-type':'text/plain'}}):response(meta)));await expect(c.downloadCheckArtifact(space,runId,artifactId)).rejects.toBeInstanceOf(ClientProtocolError);
++});
++
++it('MC08 download abort disposes late response body and rejects declared size/MIME/EOF mismatches',async()=>{
++ const bytes=new TextEncoder().encode('log'),meta=metadata(await sha(bytes),bytes.length),c=client();
++ for(const result of [()=>new Response(bytes,{headers:{'content-length':'4','content-type':'text/plain'}}),()=>new Response(bytes,{headers:{'content-length':'3','content-type':'application/octet-stream'}}),()=>new Response(bytes.slice(0,2),{headers:{'content-length':'3','content-type':'text/plain'}})]){
++  vi.stubGlobal('fetch',vi.fn(async(url:unknown)=>String(url).endsWith('/content')?result():response(meta)));await expect(c.downloadCheckArtifact(space,runId,artifactId)).rejects.toBeInstanceOf(ClientProtocolError);
++ }
++ let finish!:(value:Response)=>void,cancelled=0,disposed!:()=>void;const disposal=new Promise<void>(resolve=>{disposed=resolve;});const ac=new AbortController();vi.stubGlobal('fetch',vi.fn(async(url:unknown)=>{if(!String(url).endsWith('/content'))return response(meta);ac.abort();return new Promise<Response>(resolve=>{finish=resolve;});}));
++ const pending=c.downloadCheckArtifact(space,runId,artifactId,{signal:ac.signal});await expect(pending).rejects.toBeInstanceOf(UserAbortError);finish(new Response(new ReadableStream({cancel(){cancelled++;disposed();}})));await disposal;expect(cancelled).toBe(1);
++});
++
++it('MC09 ordinary create/invalidate retain persistent target scope and original key on controlled body conflict',async()=>{
++ const scopes:RequestKeyScope[]=[],keyByScope=new Map<string,string>(),bodyByKey=new Map<string,string>(),keys:string[]=[];let me=0;
++ const store={async getOrCreate(scope:RequestKeyScope,intent:string){scopes.push(scope);const id=JSON.stringify([scope,intent]);let key=keyByScope.get(id);if(!key){key=`persistent-${keyByScope.size}`;keyByScope.set(id,key);}return key;}};
++ vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{
++  if(String(url).endsWith('/me')){me++;return response({actor:{id:'admin'}});}
++  const key=new Headers(init.headers).get('idempotency-key')!,body=JSON.parse(String(init.body));keys.push(key);const previous=bodyByKey.get(key);
++  if(previous!==undefined&&previous!==String(init.body))return new Response(JSON.stringify({api_version:'1',request_id:'transport',error:{code:'IDEMPOTENCY_CONFLICT',message:'changed body',retryable:false}}),{status:409,headers:{'content-type':'application/json'}});
++  bodyByKey.set(key,String(init.body));return response(String(url).endsWith('/invalidate')?{...run,state:'invalidated',version:2,invalidation_reason:body.reason}:{...run,request_id:body.request_id});
++ }));
++ const c=new DetunedClient({baseUrl:'http://checks.invalid',maxRetries:0,requestKeyStore:store}),body={request_id:'request',snapshot_id:'snapshot',check_name:'check',verifier_id:'verifier',expected_request_version:1};
++ expect(await c.createCheckRun(space,body,undefined,{logicalOperationId:'create'})).toEqual(run);
++ expect(await c.createCheckRun(space,body,undefined,{logicalOperationId:'create'})).toEqual(run);
++ await expect(c.createCheckRun(space,{...body,expected_request_version:2},undefined,{logicalOperationId:'create'})).rejects.toMatchObject({code:'IDEMPOTENCY_CONFLICT'});
++ expect((await c.createCheckRun(space,{...body,request_id:'other-request'},undefined,{logicalOperationId:'create'})).request_id).toBe('other-request');
++ expect((await c.invalidateCheckRun(space,runId,{expected_version:1,reason:'new issue'},undefined,{logicalOperationId:'invalidate'})).state).toBe('invalidated');
++ expect(keys[0]).toBe(keys[1]);expect(keys[2]).toBe(keys[0]);expect(keys[3]).not.toBe(keys[0]);expect(keys[4]).not.toBe(keys[0]);
++ expect(scopes.map(s=>[s.operation,s.target])).toEqual([['check.run.create','request'],['check.run.create','request'],['check.run.create','request'],['check.run.create','other-request'],['check.run.invalidate',runId]]);expect(me).toBe(5);
++});
+--- a/packages/client/src/request-key.ts
++++ b/packages/client/src/request-key.ts
+@@ -24,7 +24,7 @@
+       !field(scope.serverNamespace, 4096) || !field(scope.actorId, 512) || !field(scope.operation, 128) ||
+       !(scope.spaceId === null || field(scope.spaceId, 512)) || !(scope.target === null || field(scope.target, 512)) ||
+       !field(logicalOperationId, 512)) throw new RequestKeyError('INVALID_OPTIONS', 'Invalid persistent request key scope or logical operation ID.');
+-  const targets: Record<string, boolean> = { 'review.request.create': false, 'review.request.cancel': true, 'review.request.finalize': true, 'review.submission.create': true, 'artifact.review.create': true, 'admin.redaction': false, 'artifact.create': false, 'space.create': false, 'space.patch': true, 'thread.create': false, 'thread.patch': true, 'post.create': true, 'post.revision': true, 'post.withdraw': true, 'relation.create': false, 'relation.resolve': true, 'relation.reopen': true };
++  const targets: Record<string, boolean> = { 'check.run.create': true, 'check.run.invalidate': true, 'review.request.create': false, 'review.request.cancel': true, 'review.request.finalize': true, 'review.submission.create': true, 'artifact.review.create': true, 'admin.redaction': false, 'artifact.create': false, 'space.create': false, 'space.patch': true, 'thread.create': false, 'thread.patch': true, 'post.create': true, 'post.revision': true, 'post.withdraw': true, 'relation.create': false, 'relation.resolve': true, 'relation.reopen': true };
+   if (!Object.hasOwn(targets, scope.operation) || (scope.operation === 'space.create' ? scope.spaceId !== null : scope.spaceId === null) || (targets[scope.operation] ? scope.target === null : scope.target !== null)) {
+     throw new RequestKeyError('INVALID_OPTIONS', 'Invalid persistent operation or target scope.');
+   }

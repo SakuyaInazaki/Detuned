@@ -1,0 +1,233 @@
+{
+  "formal": {
+    "files": 22,
+    "tests": 238,
+    "passed": 238
+  },
+  "current_versioned_commands": {
+    "total": 29,
+    "exit_zero": 29,
+    "commands": [
+      {
+        "command": "pnpm build",
+        "exit_code": 0
+      },
+      {
+        "command": "pnpm typecheck",
+        "exit_code": 0
+      },
+      {
+        "command": "pnpm lint",
+        "exit_code": 0
+      },
+      {
+        "command": "pnpm test:all",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-03-m2-1/verification/check-c-completion-v2.mjs",
+        "exit_code": 0
+      },
+      {
+        "command": "node docs/reviews/2026-10-02-m0-m1-r22/check-c2-boundaries.mjs",
+        "exit_code": 0
+      }
+    ]
+  },
+  "independent_KV": [
+    {
+      "id": "KV01",
+      "pass": true
+    },
+    {
+      "id": "KV02",
+      "pass": true,
+      "three_relation_types": true,
+      "fixed_target_revision": 1
+    },
+    {
+      "id": "KV03",
+      "pass": true,
+      "fixture_origin": "direct storage historical shape; not old HTTP"
+    },
+    {
+      "id": "KV04",
+      "pass": true
+    },
+    {
+      "id": "KV05",
+      "pass": true
+    },
+    {
+      "id": "KV06",
+      "pass": true
+    },
+    {
+      "id": "KV07",
+      "pass": true,
+      "fixture_origin": "explicit storage nonpublic event"
+    },
+    {
+      "id": "KV08",
+      "pass": true,
+      "measurement": "assembled data includes added source status fields",
+      "hard_length_limit_claimed": false
+    }
+  ],
+  "KV09": {
+    "regression": true,
+    "integrity": "integrity.json"
+  },
+  "real_historical_replay": {
+    "passes": true,
+    "cases": [
+      {
+        "entry": "initial",
+        "original_key_status": 201,
+        "new_key_status": 400,
+        "changed_payload_status": 409,
+        "raw_hash_unchanged": true
+      },
+      {
+        "entry": "newpost",
+        "original_key_status": 201,
+        "new_key_status": 400,
+        "changed_payload_status": 409,
+        "raw_hash_unchanged": true
+      },
+      {
+        "entry": "revision",
+        "original_key_status": 201,
+        "new_key_status": 409,
+        "current_revision_validation": {
+          "status": 400,
+          "expected_revision": 2,
+          "only_changed_field": "expected_revision",
+          "structured_unchanged": true
+        },
+        "changed_payload_status": 409,
+        "raw_hash_unchanged": true
+      }
+    ],
+    "restart_replays": 3,
+    "redaction_replay_status": 201,
+    "revoked_replay_status": 401
+  },
+  "focused": {
+    "AC": {
+      "passed": 6,
+      "failed": 0
+    },
+    "ADv2": {
+      "passed": 5,
+      "failed": 0
+    },
+    "AE": {
+      "passed": 5,
+      "failed": 0
+    },
+    "U": {
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "not_claimed": [
+    "original historical R21 29/29",
+    "date-time value format validation",
+    "hard context/envelope budget bound",
+    "formal research verification",
+    "Node22/clean install/real host/model"
+  ]
+}

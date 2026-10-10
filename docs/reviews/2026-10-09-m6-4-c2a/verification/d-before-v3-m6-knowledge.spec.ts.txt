@@ -1,0 +1,32 @@
+import type {Page} from '@playwright/test';
+import {test,expect,type ForumFixture} from './fixtures.js';
+async function findings(page:Page,forum:ForumFixture){
+ await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();
+ await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'研究发现',exact:true})).toBeVisible();
+ return page.locator('.finding-report');
+}
+async function login(page:Page,forum:ForumFixture){await page.goto(forum.baseURL);await forum.loginReview(page,'requester');}
+
+test('KW01 real HTTP accepted round distinguishes current/historical revisions and opens fixed target through existing review panel',async({page,forum})=>{
+ const setup=await forum.setupReview();const round=await forum.completeKnowledgeRound(setup);await login(page,forum);let card=await findings(page,forum);
+ await expect(card).toHaveCount(1);await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('历史裁决：接受');await expect(card).toContainText(round.requestId);await expect(card).toContainText('此轮无需检查（不表示检查通过）');
+ await forum.reviseReviewTarget(setup.target,{body:'Later real claim body.',structured:{statement:'Later claim',assumptions:['Synthetic fixture'],scope:'Local only',falsification_plan:'Read counterexample'}});
+ await page.getByRole('button',{name:'刷新研究发现',exact:true}).click();card=page.locator('.finding-report');await expect(card).toContainText('当前条目修订 2');await expect(card).toContainText('材料或规则已有更新');await expect(card).toContainText('评审对象固定修订 1');await expect(card).toContainText('历史接受不代表当前条目修订获批');await page.screenshot({path:forum.evidencePath('screenshots/c2a-knowledge-desktop.png'),fullPage:true});
+ await card.getByRole('button',{name:'阅读当前条目修订 2',exact:true}).click();await expect(page.locator('.reading')).toContainText('Later real claim body.');await page.getByRole('button',{name:'返回研究发现',exact:true}).click();
+ await page.locator('.finding-report').getByRole('button',{name:'阅读评审对象修订 1',exact:true}).click();await expect(page.locator('.reading')).toContainText('A fixed ordinary claim for browser review.');await expect(page.locator('.reading')).not.toContainText('Later real claim body.');
+ await page.getByRole('button',{name:'正式评审',exact:true}).click();const panel=page.getByRole('region',{name:'正式评审',exact:true});await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toHaveCount(0);await panel.getByRole('button',{name:'加载评审轮次',exact:true}).click();await panel.getByRole('button',{name:'打开第 1 轮',exact:true}).click();await expect(panel.getByRole('region',{name:'固定评审材料',exact:true})).toContainText('Independent local claim');expect(forum.reviewRows().counts.review_decisions).toBe(1);
+});
+
+test('KW02 real pending checks and legacy failure dependency preserve author reports, unknown fields and fixed provenance without inherited approval',async({page,forum})=>{
+ const setup=await forum.setupReview({requiredChecks:true});const dependency=await forum.seedHistoricalFailure('Knowledge historical dependency');await forum.completeKnowledgeRound(setup,{dependency,finalize:false});await login(page,forum);const card=await findings(page,forum);
+ await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('已揭示');await expect(card.getByRole('region',{name:'正式状态',exact:true})).toContainText('待完成');await expect(card).toContainText('评审对象固定修订 1');await expect(card).not.toContainText('历史裁决：接受');
+ await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'失败报告',exact:true}).click();const failure=page.locator('.failure-report').filter({hasText:dependency.title});await expect(failure).toContainText('作者报告');await expect(failure).toContainText('历史报告缺失字段');await expect(failure).toContainText('未提供');await expect(failure).toContainText('已提供空列表');await expect(failure.getByRole('region',{name:'正式状态',exact:true})).toContainText('未发起');await expect(failure).toContainText('其作为依赖材料被评审，不赋予本报告批准');await expect(failure.getByRole('button',{name:'阅读评审对象修订 1',exact:true})).toHaveCount(0);await failure.getByRole('button',{name:'查看报告修订 1',exact:true}).click();await expect(page.locator('.reading')).toContainText('Historical partial research record.');expect(forum.reviewRows().counts.review_decisions).toBe(0);
+});
+
+test('KW03 held real findings never refill after space switch or logout; 390px keyboard action reads fixed claim',async({page,forum})=>{
+ await forum.setupReview();await login(page,forum);await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();
+ const path=`/api/v1/spaces/${forum.space.id}/views/findings`,late=forum.faultNext({method:'GET',path},'hold-after');await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();await late.entered;await page.getByRole('button',{name:new RegExp('^'+forum.alternate.slug)}).first().click();late.release();await expect(page.getByRole('heading',{name:'空间概览',exact:true})).toBeVisible();await expect(page.locator('.finding-report')).toHaveCount(0);
+ const held=forum.faultNext({method:'GET',path},'hold-after');await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();await page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true}).click();await held.entered;await page.getByRole('button',{name:'退出登录',exact:true}).click();await expect(page.getByLabel('访问令牌',{exact:true})).toBeVisible();held.release();await expect(page.locator('.finding-report')).toHaveCount(0);
+ await forum.loginReview(page,'requester');await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:new RegExp('^'+forum.space.slug)}).first().click();const nav=page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'研究发现',exact:true});await nav.focus();await expect(nav).toBeFocused();await page.keyboard.press('Enter');await expect(nav).toHaveAttribute('aria-current','page');await expect(page.locator('.finding-report')).toHaveCount(1);const open=page.locator('.finding-report').getByRole('button',{name:'阅读当前条目修订 1',exact:true});await open.focus();await page.keyboard.press('Enter');await expect(page.locator('.reading')).toContainText('A fixed ordinary claim for browser review.');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await page.screenshot({path:forum.evidencePath('screenshots/c2a-knowledge-narrow.png')});
+});

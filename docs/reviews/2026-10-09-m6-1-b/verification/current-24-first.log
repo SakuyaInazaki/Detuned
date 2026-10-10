@@ -1,0 +1,311 @@
+{
+  "reviewed_date": "2026-10-02",
+  "probes": [
+    {
+      "id": "Z01",
+      "description": "All index key terms, PK collation and named-index sort/collation participate in structure validation",
+      "observed": [
+        {
+          "name": "extra_expression_key_in_unique_index",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "extra_expression_key_in_unique_index",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "extra_expression_key_in_unique_index",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 credentials 缺少完整唯一约束/索引: (token_hash)请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "idempotency_primary_key_collation_changed",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "idempotency_primary_key_collation_changed",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "idempotency_primary_key_collation_changed",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 idempotency_records 主键列 key 校对规则不匹配: 期望 BINARY，实际 NOCASE请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "named_index_sort_and_collation_changed",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "named_index_sort_and_collation_changed",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "named_index_sort_and_collation_changed",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: 表 events 索引 idx_events_space_seq 定义不匹配（列名、排序或校对规则不同）请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Z02",
+      "description": "FTS body must retain its indexed status; required words in DDL are not a semantic comparison",
+      "healthy_search": {
+        "status": 200,
+        "result_count": 1,
+        "error_code": null
+      },
+      "observed": [
+        {
+          "name": "fts_body_marked_unindexed",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "fts_body_marked_unindexed",
+          "mode": "init",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        },
+        {
+          "name": "fts_body_marked_unindexed",
+          "mode": "serve",
+          "classification": {
+            "kind": "corrupt",
+            "reason": "当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true"
+          },
+          "rejected": true,
+          "error_code": "FORBIDDEN",
+          "error_message": "实例持久密钥缺失或损坏。当前版本数据库结构损坏: post_fts 列 body 索引标志不匹配: 期望 unindexed=false，实际 unindexed=true请检查数据库或联系管理员。",
+          "unchanged_after_reopen": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Z03",
+      "description": "Equivalent full unique index, healthy body search and distinct case-sensitive keys remain usable",
+      "observed": [
+        {
+          "name": "full_unique_standalone_equivalent",
+          "mode": "bootstrap",
+          "classification": {
+            "kind": "current_initialized",
+            "maxVersion": 3
+          },
+          "rejected": false,
+          "issued_token": false,
+          "unchanged_after_reopen": true,
+          "consequence": {
+            "search": {
+              "status": 200,
+              "result_count": 1,
+              "error_code": null
+            },
+            "keys": {
+              "first_status": 201,
+              "second_status": 201
+            }
+          },
+          "passes": true
+        },
+        {
+          "name": "full_unique_standalone_equivalent",
+          "mode": "init",
+          "classification": {
+            "kind": "current_initialized",
+            "maxVersion": 3
+          },
+          "rejected": false,
+          "issued_token": false,
+          "unchanged_after_reopen": true,
+          "consequence": {
+            "search": {
+              "status": 200,
+              "result_count": 1,
+              "error_code": null
+            },
+            "keys": {
+              "first_status": 201,
+              "second_status": 201
+            }
+          },
+          "passes": true
+        },
+        {
+          "name": "full_unique_standalone_equivalent",
+          "mode": "serve",
+          "classification": {
+            "kind": "current_initialized",
+            "maxVersion": 3
+          },
+          "rejected": false,
+          "issued_token": false,
+          "unchanged_after_reopen": true,
+          "consequence": {
+            "search": {
+              "status": 200,
+              "result_count": 1,
+              "error_code": null
+            },
+            "keys": {
+              "first_status": 201,
+              "second_status": 201
+            }
+          },
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "id": "Z04",
+      "description": "Actual CLI init/serve reject both Y02/Y03, release lock, emit no success credential and preserve reopened snapshot",
+      "observed": [
+        {
+          "kind": "existing_materials",
+          "mode": "init",
+          "exit_code": 3,
+          "signal": null,
+          "error_code": "FORBIDDEN",
+          "emitted_admin_token": false,
+          "lock_released": true,
+          "unchanged_after_cli_reopen": true,
+          "passes": true
+        },
+        {
+          "kind": "existing_materials",
+          "mode": "serve",
+          "exit_code": 3,
+          "signal": null,
+          "error_code": "FORBIDDEN",
+          "emitted_admin_token": false,
+          "lock_released": true,
+          "unchanged_after_cli_reopen": true,
+          "passes": true
+        },
+        {
+          "kind": "missing_version_2",
+          "mode": "init",
+          "exit_code": 3,
+          "signal": null,
+          "error_code": "FORBIDDEN",
+          "emitted_admin_token": false,
+          "lock_released": true,
+          "unchanged_after_cli_reopen": true,
+          "passes": true
+        },
+        {
+          "kind": "missing_version_2",
+          "mode": "serve",
+          "exit_code": 3,
+          "signal": null,
+          "error_code": "FORBIDDEN",
+          "emitted_admin_token": false,
+          "lock_released": true,
+          "unchanged_after_cli_reopen": true,
+          "passes": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 4
+  }
+}

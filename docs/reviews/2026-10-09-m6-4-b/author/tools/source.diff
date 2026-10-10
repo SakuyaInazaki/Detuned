@@ -1,0 +1,174 @@
+--- packages/protocol/src/tools.ts before
++++ packages/protocol/src/tools.ts after
+@@ -1,13 +1,13 @@
+ import { ThreadPostsReadQuerySchema } from './threads.js';
+ import { Value } from '@sinclair/typebox/value';
+ import { DetunedError, ErrorCode } from './errors.js';
+-import { SpaceRevisionReadQuerySchema } from './spaces.js';
++import { CreateSessionRequestSchema, SpaceRevisionReadQuerySchema } from './spaces.js';
+ import { ContextQuerySchema, SearchQStringSchema, SearchFilterSchema, SearchCursorStringSchema } from './search.js';
+ import { Type, Static, TSchema } from '@sinclair/typebox';
+ import { PostRevisionReadQuerySchema, PostKindSchema, StructuredContentSchema, NEW_TYPED_WRITE_POLICY_DESCRIPTION } from './posts.js';
+ import { PostRefSchema } from './common.js';
+ import { RelationTypeSchema } from './relations.js';
+-import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema } from './events.js';
++import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema, isSubscriptionStartValid } from './events.js';
+ import { CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema } from './review.js';
+ 
+ export const ToolContextParamsSchema = Type.Object({
+@@ -34,13 +34,21 @@
+   Type.Object({ kind: Type.Literal('space'), space_id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...SpaceRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+   Type.Object({ kind: Type.Literal('post_revision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...PostRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+   Type.Object({ kind: Type.Literal('post'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Optional(Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER })) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_request'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_snapshot'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_assignment'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_submission'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_submissions'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_status'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('review_decision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
++  Type.Object({ kind: Type.Literal('artifact'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+   Type.Object({ kind: Type.Literal('thread'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+ ]);
+ // Preserve Union Kind/anyOf for local validators, with the MCP object root.
+ export const ToolReadParamsSchema: TSchema = { ...ToolReadParamsUnion, type: 'object' };
+ export type ToolReadParams = Static<typeof ToolReadParamsUnion>;
+ export function validateToolReadParams(value: unknown): asserts value is ToolReadParams {
+-  if (!Value.Check(ToolReadParamsUnion, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，artifact/review尚未支持。', 400, false);
++  if (!Value.Check(ToolReadParamsUnion, value)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，review/artifact只读metadata，不读取文件路径。', 400, false);
+ }
+ 
+ export const ToolPublishThreadOpSchema = Type.Object({
+@@ -223,11 +231,19 @@
+   ...CancelReviewRequestSchema.properties,
+ }, { additionalProperties: false });
+ 
++export const ToolReviewCreateSessionOpSchema = Type.Object({
++  space_id: Type.String({ minLength: 1 }), request_id: Type.String({ minLength: 1 }),
++  op: Type.Literal('create_session'),
++  client_name: CreateSessionRequestSchema.properties.client_name,
++  client_version: CreateSessionRequestSchema.properties.client_version,
++}, { additionalProperties: false });
++
+ export const ToolReviewParamsUnion = Type.Union([
+   ToolReviewRequestOpSchema,
+   ToolReviewSubmitOpSchema,
+   ToolReviewFinalizeOpSchema,
+   ToolReviewCancelOpSchema,
++  ToolReviewCreateSessionOpSchema,
+ ]);
+ 
+ export const ToolReviewParamsSchema: TSchema = {
+@@ -250,7 +266,7 @@
+   },
+   {
+     name: 'forum_read',
+-    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。artifact/review尚未支持。',
++    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact只读metadata，不读取文件路径。',
+     schema: ToolReadParamsSchema,
+   },
+   {
+@@ -278,4 +294,17 @@
+     description: '原子确认已持久消费的投递批次。',
+     schema: ToolAckParamsSchema,
+   },
++  { name: 'forum_review', description: '申请、提交、裁决或取消正式评审；显式创建本人评审会话。会话不创造独立身份。', schema: ToolReviewParamsSchema },
+ ] as const;
++
++/** Canonical local schema validation plus explicit constraints not evaluated by TypeBox. */
++export function validateToolParams(toolName: string, params: unknown): boolean {
++  try {
++    const tool = DETUNED_TOOLS.find(item => item.name === toolName);
++    if (!tool || !Value.Check(tool.schema, params)) return false;
++    if (toolName === 'forum_subscribe' && !isSubscriptionStartValid(params)) return false;
++    if (toolName === 'forum_context') validateToolContextParams(params);
++    if (toolName === 'forum_read') validateToolReadParams(params);
++    return true;
++  } catch { return false; }
++}
+--- packages/client/src/client.ts before
++++ packages/client/src/client.ts after
+@@ -1,3 +1,4 @@
++import { validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
+ import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeReviewRequest, type CancelReviewRequest,
+   type ReviewRequestView, type ReviewRequestReadView, type ReviewSnapshotView, type OwnReviewAssignmentView,
+   type ReviewSubmissionAcknowledgement, type ReviewSubmissionView, type ReviewSubmissionsView, type ReviewDecisionView, type ReviewStatusView, type ReviewArtifactMetadata,
+@@ -1031,6 +1032,7 @@
+     if (opts?.signal?.aborted) {
+       throw new Error('Operation aborted');
+     }
++    if (!validateToolParams(name, params)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+     const spaceId = params.space_id;
+     if (!spaceId) {
+       throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Tool call missing space_id', 400);
+@@ -1060,6 +1062,14 @@
+         if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor, sort: params.sort }, opts);
+         if (params.kind === 'post_revision') return this.getPostRevisionContent(spaceId, params.id, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+         const { kind, id } = params;
++        if (kind === 'review_request') return this.getReviewRequest(spaceId,id,opts);
++        if (kind === 'review_snapshot') return this.getReviewSnapshot(spaceId,id,opts);
++        if (kind === 'review_assignment') return this.getOwnReviewAssignment(spaceId,id,opts);
++        if (kind === 'review_submission') return this.getReviewSubmission(spaceId,id,opts);
++        if (kind === 'review_submissions') return this.listReviewSubmissions(spaceId,id,opts);
++        if (kind === 'review_status') return this.getReviewStatus(spaceId,id,opts);
++        if (kind === 'review_decision') return this.getReviewDecision(spaceId,id,opts);
++        if (kind === 'artifact') return this.getArtifact(spaceId,id,opts);
+         if (kind === 'post') {
+           return (await this.getPost(spaceId, id, params.revision, opts)).data;
+         } else if (kind === 'thread') {
+@@ -1161,6 +1171,33 @@
+         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `Unknown relate op: ${op}`, 400);
+       }
+ 
++      case 'forum_review': {
++        // The canonical validator above proves this discriminated input boundary.
++        const review = params as ToolReviewParams;
++        if (review.op === 'request') {
++          const {space_id: _space, op: _op, request_key, ...body} = review;
++          return this.createReviewRequest(spaceId,body,request_key,opts);
++        }
++        if (review.op === 'submit') {
++          const {space_id: _space, op: _op, request_key, request_id, ...body} = review;
++          return this.submitReview(spaceId,request_id,body,request_key,opts);
++        }
++        if (review.op === 'finalize') {
++          const {space_id: _space, op: _op, request_key, request_id, ...body} = review;
++          return this.finalizeReviewRequest(spaceId,request_id,body,request_key,opts);
++        }
++        if (review.op === 'cancel') {
++          const {space_id: _space, op: _op, request_key, request_id, ...body} = review;
++          return this.cancelReviewRequest(spaceId,request_id,body,request_key,opts);
++        }
++        const assignment = await this.getOwnReviewAssignment(spaceId,review.request_id,opts);
++        if (opts?.signal?.aborted) throw new Error('Operation aborted');
++        const response = await this.createSession(spaceId,{client_name:review.client_name,client_version:review.client_version},opts);
++        if (!isSession(response.data) || response.data.space_id !== spaceId || response.data.actor_id !== assignment.reviewer_actor_id)
++          throw new ClientProtocolError('Invalid review session response.');
++        return response.data;
++      }
++
+       case 'forum_subscribe':
+         return (await this.subscribe(
+           spaceId,
+--- packages/mcp/src/tool-validation.ts before
++++ packages/mcp/src/tool-validation.ts after
+@@ -1,6 +1,6 @@
+ import {AjvJsonSchemaValidator} from '@modelcontextprotocol/sdk/validation/ajv';
+ import type {JsonSchemaType,JsonSchemaValidator} from '@modelcontextprotocol/sdk/validation';
+-import {DETUNED_TOOLS,DetunedError,ErrorCode,isMeResponse,isSession,type MeResponse,type Session} from '@detuned/protocol';
++import {DETUNED_TOOLS,validateToolParams,DetunedError,ErrorCode,isMeResponse,isSession,type MeResponse,type Session} from '@detuned/protocol';
+ import {ClientProtocolError} from '@detuned/client';
+ 
+ export type McpToolArguments = Record<string,unknown> & {space_id:string};
+@@ -27,9 +27,9 @@
+ /** Validate the advertised single-source schema without rewriting or copying input. */
+ export function validateMcpToolArguments(name:string,args:unknown,mode:McpInputMode='flat'):McpToolArguments {
+   resolveMcpInputMode(mode);
+-  if(mode==='wrapped'){const result=wrappedTools.get(name)?.(args);if(result?.valid)return result.data.input;throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid forum tool arguments.',400);}
++  if(mode==='wrapped'){const result=wrappedTools.get(name)?.(args);if(result?.valid && validateToolParams(name,result.data.input))return result.data.input;throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid forum tool arguments.',400);}
+   const validate = tools.get(name);
+-  if(validate){const result=validate(args);if(result.valid)return result.data;}
++  if(validate){const result=validate(args);if(result.valid && validateToolParams(name,result.data))return result.data;}
+   throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid forum tool arguments.',400);
+ }
+ export function parseMcpMe(data:unknown):MeResponse {

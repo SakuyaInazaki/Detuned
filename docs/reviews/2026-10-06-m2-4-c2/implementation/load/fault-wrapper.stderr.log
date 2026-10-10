@@ -1,0 +1,17 @@
+file:///Users/sakimi/Desktop/Detuned/scripts/scale/run-verified.mjs:19
+function groupAlive(pid){if(!validOwned(pid))return false;try{process.kill(-pid,0);return true;}catch(e){if(e.code==='ESRCH')return false;throw e;}}
+                                                                                                                                          ^
+
+Error: kill EPERM
+    at process.kill (node:internal/process/per_thread:277:13)
+    at groupAlive (file:///Users/sakimi/Desktop/Detuned/scripts/scale/run-verified.mjs:19:71)
+    at ChildProcess.<anonymous> (file:///Users/sakimi/Desktop/Detuned/scripts/scale/run-verified.mjs:41:145)
+    at Object.onceWrapper (node:events:631:12)
+    at ChildProcess.emit (node:events:509:20)
+    at ChildProcess._handle.onexit (node:internal/child_process:294:12) {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'kill'
+}
+
+Node.js v26.3.0

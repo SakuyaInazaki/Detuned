@@ -1,0 +1,38 @@
+--- docs/04-protocol.md (fresh before)
++++ docs/04-protocol.md (metadata v2)
+@@ -278,9 +278,9 @@
+ 
+ ## M3.3-B.1 空间 NDJSON 导出
+ 
+-`GET S/export`使用当前身份与空间权限，format省略默认ndjson，显式空/其它/重复/未知query拒400；首包无附件选项，仅manifest。仅实际journal_mode=WAL的file-backed实例支持；`:memory:`或其它模式返回503 EXPORT_UNAVAILABLE（retryable=false），不在GET改数据库模式。公开研究白名单与脱敏/端点授权由core统一投影，不导凭据、实例secret、session内部材料、消费/幂等记录、actor个人属性或其它空间；正式对象排除：当前wire2/source3的两formal状态为excluded；旧wire1/source2为not_enabled，不导出正式批准。
+-
+-NDJSON每行schema单源见protocol/SpaceExportLineSchema：strict header→seq从1连续的十族record→strict end。header标注format/version/export_id/created_at、source空间schema3/snapshot_event_seq十进制字符串/space_revision、source_actor_ids_only/public_research及两formal excluded；旧wire1严格绑定schema2与not_enabled、sha256-chain-v1。end complete=true、record_count、bytes_before_end、chain_sha256；bytes_before_end含header/record的exact UTF8+LF，不含end；chain初始raw32零bytes，每行SHA256(prevRaw32||exactUtf8LineWithLF)，header/record入链，end不入链。必须末行后EOF且无extra，拒空行/CRLF/invalidUTF8/截断/序号/count/hash错误。checksum不构成真实性签名或导入批准。
++`GET S/export`使用当前身份与空间权限，format省略默认ndjson，显式空/其它/重复/未知query拒400；首包无附件选项，仅manifest。仅实际journal_mode=WAL的file-backed实例支持；`:memory:`或其它模式返回503 EXPORT_UNAVAILABLE（retryable=false），不在GET改数据库模式。公开研究白名单与脱敏/端点授权由core统一投影，不导凭据、实例secret、session内部材料、消费/幂等记录、actor个人属性或其它空间；正式对象排除：当前wire2/source3|4的两formal状态为excluded；旧wire1/source2为not_enabled，不导出正式批准。
++
++NDJSON每行schema单源见protocol/SpaceExportLineSchema：strict header→seq从1连续的十族record→strict end。header标注format/version/export_id/created_at、source空间schema3|4/snapshot_event_seq十进制字符串/space_revision、source_actor_ids_only/public_research及两formal excluded；旧wire1严格绑定schema2与not_enabled、sha256-chain-v1。end complete=true、record_count、bytes_before_end、chain_sha256；bytes_before_end含header/record的exact UTF8+LF，不含end；chain初始raw32零bytes，每行SHA256(prevRaw32||exactUtf8LineWithLF)，header/record入链，end不入链。必须末行后EOF且无extra，拒空行/CRLF/invalidUTF8/截断/序号/count/hash错误。checksum不构成真实性签名或导入批准。
+ 
+ 默认raw候选/编码line各1MiB、wire含end512MiB、200万records、120000ms、active4；构造测试只能下调，无HTTP调高。独立只读snapshot保持内容一致，live授权/空间脱敏guard在输出边界复核；同步主写连接事务不跨await。客户端断开、服务关闭、deadline/取消回收session，即使慢下游暂停也释放。初次授权/准备错误沿现JSON信封；headers之后失败destroy，无成功end、不拼JSON。
+ 
+@@ -448,7 +448,7 @@
+ 
+ 原Auth错误保持；隐藏/不存在404 NOT_FOUND、可见脱敏410 CONTENT_REDACTED、非current/withdrawn/notready409 SNAPSHOT_STALE、policy冲突409 REVISION_CONFLICT、非法材料/重复/配置/hash400 VALIDATION_ERROR、canonical bytes413 PAYLOAD_TOO_LARGE、depth/nodes/贡献扫描422 QUERY_TOO_BROAD。固定安全信息不回显材料。见[验收](reviews/2026-10-09-m6-1-a/README.md)。
+ 
+-## M6.1-B内部请求与公共交换边界
++## M6.1-B阶段的内部请求与公共交换边界
+ 
+ ReviewRequestService仅内部createRequest/getRequest/getSnapshot/cancelRequest。创建DTO沿上述材料字段；取消DTO严格{expected_version:正safeinteger,reason:非空白≤500}，inactive工具cancel复用同属性加原封套，不广告，不把request_key加入未来HTTP body。未来公开写使用Idempotency-Key。
+ 
+@@ -459,3 +459,13 @@
+ 跨空间/隐藏404、材料脱敏410、无权403、expected_version409 REVISION_CONFLICT、fresh非collecting400 VALIDATION_ERROR；坏持久canonical/hash/ref/header/items/名单内在矛盾409 RESYNC_REQUIRED安全拒绝，不修补。启动维护仅校持久内在结构，在线始终当前隐私门禁；合法脱敏不再阻current3重开。public requested/cancelled事件仅requestID/请求版本/实际操作者，thread过滤由target帖子归属匹配。
+ 
+ 公共logical header仅wire1/source2/not_enabled或wire2/source3/excluded两个严格相关分支，保sha256-chain-v1/固定10族。新import目标schema3，正式对象为空；历史source status/format写provenance，不继承批准。物理format1保留五表历史，新backup.schemaVersion3，旧backup2原manifest不变且只新restore stage升级。
++
++## M6.2-A内部提交与读取边界
++
++当前仅内部ReviewSubmissionService，未公开review route或工具。严格提交字段snapshot_sha256、complete=true、verdict、coverage、checks、evidence_refs、pending_items、limitations与independence；接受verdict不得有pending。getOwnAssignment是本人固定名单的当前read入口，不要求后来eligible/write或collecting；新submit/privateupload仍须当前write、真实会员/资格、session归属及fresh材料。读取始终当前ACL和隐私优先。
++
++提交确认仅{submission_id,request_id,assignment_id,reviewer_actor_id,snapshot_sha256,submitted_at}。旧create/cancel确认与replay保持无count原形；独立current ReviewRequestReadView增加submitted_count，并在collecting且count>0时changed_by=null，固定roster保留。getSubmission为严格提交字段加IDs/request_version/submitted_at/revealed_at的平面对象，仅本人或已真正revealed可读，admin不绕sealed。
++
++public upload metadata仍strict visibility=space；仅GET/download读取使用ReadableArtifactMetadata union，private项明确visibility=review_assignment与review_assignment_id。未关联unused私有材料不随揭示公开；只明确evidence可按scope读取，下载仍固定路径校验。review.submitted私有，review.revealed公共仅metadata。artifact.created/redacted公共投影还核当前artifact静态space可见性，新poll及pending重投都过滤误public历史私有事件，ACK不自动发生。
++
++当前维护为schema4；wire2允许source3|4/excluded，wire1/source2/not_enabled兼容。backup format1/current4保六表，restore source2/3/4只新stage升级；历史compact原bytes保留，维护intrinsic与在线privacy分离。

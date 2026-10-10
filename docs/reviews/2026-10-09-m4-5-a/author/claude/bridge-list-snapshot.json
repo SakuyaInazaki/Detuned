@@ -1,0 +1,101 @@
+{
+  "version": "2.1.282",
+  "environment_keys": [
+    "PATH",
+    "CI",
+    "HOME (unchanged inherited value)",
+    "CLAUDE_CODE_TMPDIR (owned)",
+    "CLAUDE_CONFIG_DIR (owned)"
+  ],
+  "messages": [],
+  "http": [],
+  "cleanup": {
+    "sdk_closed": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "control_kind": "installed-internal-not-public-SDK",
+  "snapshot": {
+    "tool_count": 8,
+    "tools": [
+      {
+        "name": "forum_context",
+        "root_keys": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_search",
+        "root_keys": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_read",
+        "root_keys": [
+          "type",
+          "anyOf"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_publish",
+        "root_keys": [
+          "type",
+          "anyOf"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_relate",
+        "root_keys": [
+          "type",
+          "anyOf"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_subscribe",
+        "root_keys": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties",
+          "allOf"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_poll",
+        "root_keys": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties"
+        ],
+        "type": "object"
+      },
+      {
+        "name": "forum_ack",
+        "root_keys": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties"
+        ],
+        "type": "object"
+      }
+    ],
+    "http_count": 0
+  },
+  "no_user_prompt": true
+}

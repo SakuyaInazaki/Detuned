@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict';
+import {StringDecoder} from 'node:string_decoder';
+const bytes=Buffer.from('中文🙂"\\');const chunks=[bytes.subarray(0,1),bytes.subarray(1,5),bytes.subarray(5)];let broken='';for(const x of chunks)broken+=x;const decoder=new StringDecoder('utf8');let fixed='';for(const x of chunks)fixed+=decoder.write(x);fixed+=decoder.end();assert.notEqual(broken,bytes.toString());assert.equal(fixed,bytes.toString());console.log(JSON.stringify({classification:'test stdout decoding fixture',split_bytes:chunks.map(x=>x.length),original:bytes.toString(),per_chunk_implicit_string:broken,stream_decoder:fixed,product_not_executed:true}));

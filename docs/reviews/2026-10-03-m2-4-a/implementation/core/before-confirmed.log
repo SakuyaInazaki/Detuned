@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":2,"delivered":[]}
+
+ ❯ tests/integration/m2-context.test.ts (2 tests | 2 failed) 23ms
+   × M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules 18ms
+     → expected false to be true // Object.is equality
+   × M2.4-A context snapshot and full response budget > C02: oversized mandatory rules fail instead of returning an oversized successful envelope 4ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m2-context.test.ts:38:91
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C02: oversized mandatory rules fail instead of returning an oversized successful envelope
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-context.test.ts:44:104
+     42|   it('C02: oversized mandatory rules fail instead of returning an over…
+     43|     spaces.patchSpace(auth,sid,{expected_revision:1,rules:Array.from({…
+     44|     expect(()=> (context.getContext as Function)(auth,sid,{max_bytes:4…
+       |                                                                                                        ^
+     45|   });
+     46| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:56:03
+   Duration  490ms (transform 145ms, setup 0ms, collect 242ms, tests 23ms, environment 0ms, prepare 33ms)
+

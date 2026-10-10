@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m4-mcp-session.test.ts (5 tests | 5 failed) 4ms
+   × M4.2-B lazy MCP diagnostic sessions > is lazy through SDK discovery and invalid calls; valid calls share initialization/session and isolate spaces 3ms
+     → (0 , createRuntimeSessionBinding) is not a function
+   × M4.2-B lazy MCP diagnostic sessions > one cancelled waiter leaves shared work alive; full global cancellation can retry after true cleanup 0ms
+     → (0 , createRuntimeSessionBinding) is not a function
+   × M4.2-B lazy MCP diagnostic sessions > started session cancellation/response loss is terminal and late success cannot dispatch 0ms
+     → (0 , createRuntimeSessionBinding) is not a function
+   × M4.2-B lazy MCP diagnostic sessions > rejects incompatible capabilities and forged session actor/space without business calls 0ms
+     → (0 , createRuntimeSessionBinding) is not a function
+   × M4.2-B lazy MCP diagnostic sessions > close waits global and session finally; uncooperative initialization hits the shared deadline 0ms
+     → (0 , createRuntimeSessionBinding) is not a function
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  01:24:46
+   Duration  540ms (transform 102ms, setup 0ms, collect 301ms, tests 4ms, environment 0ms, prepare 40ms)
+

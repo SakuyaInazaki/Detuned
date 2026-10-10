@@ -1,0 +1,32 @@
+{
+  "status": "actual_fresh_pending_root_dispatch",
+  "existing": {},
+  "new": {
+    "scripts/demos/d01-reviewed.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "scripts/demos/d01-reviewed-worker.mjs": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-d01-reviewed.test.ts": {
+      "owner": "A",
+      "state": "missing"
+    },
+    "tests/integration/m7-d01-reviewed-independent.test.ts": {
+      "owner": "D",
+      "state": "missing"
+    }
+  },
+  "B": "independent static review only",
+  "protected": [
+    "all existing product sources/tests",
+    "old scale/deployment demos",
+    "sealed review packages",
+    "normal docs",
+    "global configs/dependencies"
+  ],
+  "product_write_authorization": false,
+  "root_scope_addendum": "Bounded demo-owned serve --write-burst 100 only; defaults unchanged; 5000ms tests; observer read-only closures, never actual client."
+}

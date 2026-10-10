@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":200,"code":null,"consumerRemains":false}
+
+ ❯ tests/integration/m4-consumer-lifecycle.test.ts (2 tests | 1 failed | 1 skipped) 104ms
+   ↓ M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+   × M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential 103ms
+     → expected 200 to be 403 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  19:13:38
+   Duration  733ms (transform 221ms, setup 0ms, collect 421ms, tests 104ms, environment 0ms, prepare 33ms)
+

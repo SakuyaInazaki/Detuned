@@ -1,0 +1,39 @@
+--- v1/README.md
++++ v2/README.md
+@@ -12,7 +12,7 @@
+ pnpm build
+ ```
+ 
+-已有当前构建产物可跳过重复安装。本机私有init、健康读取、正常close与同库reinit/restart已有有限验证；以下完整两普通身份配置序列尚未逐字实跑。JSON不是token-file。
++已有当前构建产物可跳过重复安装。本机私有init、健康读取、正常close与同库reinit/restart已有有限验证；下面init/serve/两普通身份配置三个shell块已做一次有限文档smoke：只替换自有私有目录与loopback端口，未执行install/build块，也不证明此HOME路径或原3000端口已实测；见[收据](docs/reviews/2026-10-10-m7-4-b/verification/doc-smoke-first.json)。JSON不是token-file。
+ 
+ ```sh
+ (
+--- v1/examples/local-delivery-checklist.md
++++ v2/examples/local-delivery-checklist.md
+@@ -13,4 +13,4 @@
+ | 分发 | root package private=true/version0.1.0-dev保持；v0.2是本地工程目标，非npm发布/公网部署授权；许可证待维护者决定 |
+ | 研究 | 无模型D01与58固定案例不是AI研究收益或数学证明；M8另评 |
+ 
+-完整quickstart两普通身份序列的文档smoke状态见[本包](../docs/reviews/2026-10-10-m7-4-b/README.md)，不能从LS01局部启动测试推导整段已实跑。新引入的静态COPY修复不能升级旧Linux证据。下一步是可选Codex隔离实验，禁止前端、VM/Colima操作及全局Agent配置修改。用户手动运行前台服务不代表授权Agent启动常驻环境。
++quickstart的init/serve/两普通身份配置三个shell块已有一次有限文档smoke：仅替换自有私有目录/loopback端口，真实两distinct非admin限定同space read/write及me、normalserve close0与登记group/root/control absence已证；未执行install/build块，不证明用户HOME路径或原3000端口实测。见[收据](../docs/reviews/2026-10-10-m7-4-b/verification/doc-smoke-first.json)。新引入的静态COPY修复不能升级旧Linux证据。下一步是可选Codex隔离实验，禁止前端、VM/Colima操作及全局Agent配置修改。用户手动运行前台服务不代表授权Agent启动常驻环境。
+--- v1/docs/reviews/2026-10-10-m7-4-b/README.md
++++ v2/docs/reviews/2026-10-10-m7-4-b/README.md
+@@ -6,6 +6,6 @@
+ 
+ 源静审绑定[A](author/review/backend-review.md)与[D](author/review/d-source-review.md)；D两字段修复实际delta/新pin另存verification，旧review不篡改。runtimeCOPY保相对workspace；negative与positive同checker，dev依赖不进productionclosure。CI只去末archive步，maintained T01–T11/test:all保留。私有startup仅自有ChildProcess、12s watchdog/15s case、实际close再删目录，无rawtoken输出，不全机tmp普查。
+ 
+-用户入口见[快速开始](../../../README.md#本地快速开始)及[交付清单](../../../examples/local-delivery-checklist.md)。README完整两普通身份setup未逐字实跑，doc smoke另待root授权/证据，不预填成功；不额外安装或运行宿主。最低Node22、cleaninstall、remoteCI和当前Docker/Linux未新验；许可证未决/private/version不改、不发布。
++用户入口见[快速开始](../../../README.md#本地快速开始)及[交付清单](../../../examples/local-delivery-checklist.md)。README三个shell块文档smoke一次exit0/3.527s，仅替自有私有目录/port，未执行install/build块：private bootstrap/plaintext tokens、两个distinct非admin限定同space read/write真实me、serve/driver actualclose0及group/root/control absence，watchdog未触发。[收据](verification/doc-smoke-first.json)、[producer](verification/readme-doc-smoke-result.json)、[capture](verification/readme-doc-smoke.capture.json)保实际范围；没有实际用户HOME路径/原3000端口、安装或宿主认证。最低Node22、cleaninstall、remoteCI和当前Docker/Linux未新验；许可证未决/private/version不改、不发布。
+ 
+ 下一步可选M7.4-C，固定隔离/control事实见已封存A规划；原Codex阻塞、Claude新checks未认证保持。须本包末核/封存、新fresh/rootdispatch后另限定实验，不能自动撤guard/读账号/跑模型。M8研究收益另评，前端已取消，禁止VM/Colima及全局配置改动。
+--- v1/docs/reviews/2026-10-10-m7-4-b/next-agent-prompt.md
++++ v2/docs/reviews/2026-10-10-m7-4-b/next-agent-prompt.md
+@@ -1,6 +1,6 @@
+ # 下一任务：可选M7.4-C固定Codex隔离
+ 
+-先读AGENTS/README、docs00/08/11、progress/reviews和[本包实际证据](README.md)。B有限本机startup/staticclosure已接受；metadata末核/封存待完成。不要将Docker静态检查当Linux/container认证，不重跑A core967/155或追加前端。
++先读AGENTS/README、docs00/08/11、progress/reviews和[本包实际证据](README.md)。B有限本机startup/staticclosure已接受；三个shell块doc smoke一次0/3.527s，仅替自有目录/port，未跑install/build或宿主，见[收据](verification/doc-smoke-first.json)。metadata末核/封存待完成。不要将Docker静态检查当Linux/container认证，不重跑A core967/155或追加前端。
+ 
+ C仍只有固定源码事实，不是已可用。读已封存[A隔离事实](../2026-10-10-m7-4-a/planning/m7-4c-codex-isolation-facts.md)与[control facts](../2026-10-10-m7-4-a/planning/m7-4c-control-facts.md)；root须另定task/owner、fresh、dispatch与guard/native两阶段授权。不得凭此prompt启动宿主、改父HOME/CODEX_HOME、读账户/用户全局配置或撤OS拒绝。候选仅向自有child env按官方用途设独立CODEX_HOME，不借系统变量做任务临时变量。账号/turn/model不存在时thread/list/tool链未知仍需真实有限证据，旧denial不改成成功。
+ 

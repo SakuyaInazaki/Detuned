@@ -1,0 +1,9 @@
+# B M3.4-B.2 传输与 CLI 有界关闭
+
+标准app共享RuntimeResources，typed detunedBeginDraining同步标notready/cancelAll；根唯一preClose等待idle，移除poll/export plugin关闭次序依赖。根onRequest拒新业务，health尽力。upload lease覆盖整个finally，abort同时destroy当前file与request parser，已接收core写仍按原commit/cleanup；metadata awaits也覆盖；download从open前到显式dispose完成，晚open与断流都dispose；释放未确认时保留lease，标准CLI预算退出，库宿主需自有预算。
+
+CLI shutdown参数前置验证默认10秒，serve-owned共享promise处理signal/listenfailure，重复signal不延时；顺序begin→appclose含idle→dbclose→strictrelease→writerdispose→exit。budgettimer保持ref直到strictrelease，单调elapsed在同步阶段返回后复核；同步native不可硬抢占。listenfailure在已有signal任务中将最终exit升级1，不新task或延deadline。port0启动诊断报告实际boundport，原stderr格式保持。无任意env/HTTP fault。
+
+作者source-first与source-final各3pass/1built待C；final补了unparsed multipart取消和真实port0输出/正确lockfile夹具。之后核listenfailure与signal竞态，窄修退出码升级，并仅SD B02定向1pass/3skip（source-listen-race.log），不重跑其他作者case。含CLIalias noEmit初版、上述必要补项、最终竞态修正各一次0；三次日志均保留。没有build/fullsuite，SD B04真实builtCLI前置配置/默认及关闭日志/信号由C统一build后运行。
+
+四正式case并非4项全已作者运行：3source测试+1built待验。复杂真实upload/poll/export/download/屏障/超时故障和M3T02/T13组合归C；不把helperseam当真实进程全部验收。

@@ -1,0 +1,40 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m6-review-requests.test.ts (5 tests | 1 failed) 259ms
+   × RR01 fixed assignment/version and compact replay survive cancellation and later policy changes 116ms
+     → Stored review material cannot be safely reconstructed.
+   ✓ RR02 qualification, payload conflict, expected-version and fresh cancelled action reject without mutation 56ms
+   ✓ RR03 every write and typed result roll back when event append fails; next fresh round remains contiguous 31ms
+   ✓ RR04 historical material reads stay detached but redaction and revoked credential gate replay 29ms
+   ✓ RR05 persisted manifest/hash/items and compact references fail safely instead of restoring corrupt material 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-requests.test.ts > RR01 fixed assignment/version and compact replay survive cancellation and later policy changes
+DetunedError: Stored review material cannot be safely reconstructed.
+ ❯ reviewResync packages/core/src/services/review-request-records.ts:10:31
+      8| const positive=(v:number)=>Number.isSafeInteger(v)&&v>0;
+      9| const id=(v:unknown):v is string=>typeof v==='string'&&v.length>0;
+     10| export const reviewResync=()=>new DetunedError(ErrorCode.RESYNC_REQUIR…
+       |                               ^
+     11| const missing=()=>new DetunedError(ErrorCode.NOT_FOUND,'Review materia…
+     12| const redacted=()=>new DetunedError(ErrorCode.CONTENT_REDACTED,'Review…
+ ❯ readReviewSnapshotRecords packages/core/src/services/review-request-records.ts:63:71
+ ❯ reconstructReviewRequestView packages/core/src/services/review-request-records.ts:90:18
+ ❯ validateResultRefSemantics packages/core/src/services/idempotency-service.ts:1284:20
+ ❯ reconstructFromValidRef packages/core/src/services/idempotency-service.ts:2419:3
+ ❯ reconstructResult packages/core/src/services/idempotency-service.ts:2354:12
+ ❯ packages/core/src/services/idempotency-service.ts:2713:31
+ ❯ SqliteStorage.transaction packages/storage-sqlite/src/sqlite-storage.ts:72:14
+ ❯ IdempotencyService.executeIdempotent packages/core/src/services/idempotency-service.ts:2700:25
+ ❯ modules/review/src/request-service.ts:46:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  13:12:40
+   Duration  988ms (transform 264ms, setup 0ms, collect 503ms, tests 259ms, environment 0ms, prepare 39ms)
+

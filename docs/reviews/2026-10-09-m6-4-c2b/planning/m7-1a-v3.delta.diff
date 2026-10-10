@@ -1,0 +1,35 @@
+--- v2/m7-1a-task.md
++++ v3/m7-1a-task.md
+@@ -75,3 +75,9 @@
+ - tests/integration/m3-backup-recovery.test.ts:73 manifest mutation schemaVersion6目前当非法，6变合法需替换unsupported版本，不能删负例。
+ 
+ 根已批准上述11个额外existing路径归B，schema-generation已在B不重复计。授权scope仅当前target/header5→6、current反射常量V6、原非法未来6→7；保历史input/source/合法header5与原case意图，禁止全仓替换所有5。整个包仍待C2B seal/M7 fresh、真实V5 capture与root dispatch；此规划定稿不授予立即产品写入。
++
++## 根批准的 V5 capture 最终前置门禁
++
++采用 [D 的 V5 capture plan](m7-v5-capture-plan.md)。M7 fresh 后由 D 独占先使用当前接受built runtime生成脱敏真实V5归档；root验收capture前，A/B不得写任何产品/schema。归档去全部credentials/token_secret；保actors/sessions/formal与pending consumer必要事实。secret-free归档不冒称直接可启动：回归先复制，再以rawSQLite只插fresh secret水合目标，之后进入coordinator/维护；不SQL伪造formal状态。具体脱密/FK/来源runtime/manifest按已批准capture plan执行。
++
++D另获现有 `.gitignore` 精确所有权，仅追加 `!tests/fixtures/m7-schema5-baseline/database.sqlite` 单一例外；保留 `*.sqlite-*` 忽略及其它规则，不能泛化允许数据库资产。planning此处仅记授权，不修改.gitignore或生成fixture。
+--- v2/m7-1a-owner-candidates.json
++++ v3/m7-1a-owner-candidates.json
+@@ -163,6 +163,11 @@
+       "owner": "B",
+       "state": "existing",
+       "scope": "current target/header5→6; current reflection V6; unsupported future6→7 only; preserve historical inputs/source5/valid header5 and case intent"
++    },
++    ".gitignore": {
++      "owner": "D",
++      "state": "existing",
++      "scope": "append only !tests/fixtures/m7-schema5-baseline/database.sqlite; preserve *.sqlite-* and all other ignore rules"
+     }
+   },
+   "new": {
+@@ -239,6 +244,7 @@
+     "D schema5真实来源必须fresh后且改写前由接受runtime生成；SQL冻结来源B使用，不以schema6生成器伪称V5。",
+     "readReviewStatusFacts变更覆盖knowledge共享事实；无需搜索route/client/tool产品改动。",
+     "review-request-records终态约束保留，run创建仅推进active request版本。",
+-    "root批准11个精确机械测试路径，schema-generation既有B路径不重复；整个包仍需seal/fresh/capture/dispatch。"
++    "root批准11个精确机械测试路径，schema-generation既有B路径不重复；整个包仍需seal/fresh/capture/dispatch。",
++    "D独占fresh后先capture真实脱敏V5；root验收capture前A/B禁止产品/schema写入，采用planning/m7-v5-capture-plan.md。"
+   ]
+ }

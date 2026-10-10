@@ -1,0 +1,16 @@
+--- examples/space-import.md (fresh before)
++++ examples/space-import.md (metadata v2)
+@@ -1,6 +1,6 @@
+ # 本地新实例逻辑导入
+ 
+-导入完整校验的detuned-space-export wire1/source2/not_enabled或wire2/source3/excluded空间研究文件，严格拒混配，不合并现有实例，不迁移身份权限。先使用[空间导出](space-export.md)取得完整私有NDJSON，再执行本地维护命令：
++导入完整校验的detuned-space-export wire1/source2/not_enabled或wire2/source3|4/excluded空间研究文件，严格拒混配，不合并现有实例，不迁移身份权限。先使用[空间导出](space-export.md)取得完整私有NDJSON，再执行本地维护命令：
+ 
+ ```sh
+ detuned --json import --input /path/to/private/space.ndjson --data-dir /path/to/existing-parent/new-instance --admin-name 'Local administrator'
+@@ -24,4 +24,4 @@
+ 
+ 发布采用独占预留、目录锁、数据持久化和readiness门禁。失败或取消不部分成功、不覆盖原文件/目标；保留半目标门禁，不盲删marker启用。若最后同步与重建门禁均失败，可能留下完整但持久性未确认且未交付管理员token的目标；不要启动，保留原文件并换新目录导入。物理备份恢复、逻辑导入与完整迁移不同，完整迁移/M3.4及后续尚未完成。
+ 
+-新导入目标schema3，五formal表为空，provenance保源实际version/schema/status；导入研究材料不继承正式批准。来源身份禁用、ready附件变missing与新human管理员规则保持，missing登记不是当次物理bytes验真。
++新导入目标schema4，六formal表为空，provenance保源实际version/schema/status；导入研究材料不继承正式批准。来源身份禁用、ready附件变missing与新human管理员规则保持，missing登记不是当次物理bytes验真。

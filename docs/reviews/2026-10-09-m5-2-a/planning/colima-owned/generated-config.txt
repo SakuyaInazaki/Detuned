@@ -1,0 +1,45 @@
+vmType: vz
+arch: aarch64
+images:
+    - location: /private/tmp/detuned-colima-owned-608g1enf/cache/caches/b0992ab88f5a3c0c436bbb3065c01466f20dc1dd0eb0a60299d410176f21a1c3
+      arch: aarch64
+cpus: 2
+memory: 4096MiB
+disk: 10GiB
+additionalDisks:
+    - name: colima-detuned-owned
+      format: true
+      fsType: ext4
+ssh:
+    loadDotSSHPubKeys: false
+    forwardAgent: false
+portForwards:
+    - guestPortRange:
+        - 0
+        - 0
+      guestSocket: /var/run/docker.sock
+      hostPortRange:
+        - 0
+        - 0
+      hostSocket: /private/tmp/detuned-colima-owned-608g1enf/colima/detuned-owned/docker.sock
+      proto: tcp
+    - guestPortRange:
+        - 0
+        - 0
+      guestSocket: /var/run/containerd/containerd.sock
+      hostPortRange:
+        - 0
+        - 0
+      hostSocket: /private/tmp/detuned-colima-owned-608g1enf/colima/detuned-owned/containerd.sock
+      proto: tcp
+    - guestIP: 0.0.0.0
+      guestPortRange:
+        - 0
+        - 0
+      hostPortRange:
+        - 0
+        - 0
+      proto: any
+      ignore: true
+networks:
+    - lima: user-v2

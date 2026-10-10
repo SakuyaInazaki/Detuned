@@ -1,0 +1,9 @@
+# Independent probe corrections, preserved failure evidence
+
+Historical fixture was really generated with hashverified M2.1dist before builds; all232distfiles matched baseline before/after. Three201successes recorded original payload, rawrequesthash, resultref and entities/events. Testtoken staysprivate/tmp.
+
+First independent HTTPprobe wrongly compared post.current_revision from creation-time response after a later captured revision advanced the post. Unmodified idempotency-service.ts lines2504–2517 reads current findPostById and fixed getPostRevision(ref.revision), returns{post,revision}; its baseline/final SHA is unchanged. Therefore post.current_revision is currenthead projection. Correction permits exactly thisfield on post/initial_post.post; all otherpostfields and complete fixedrevision/contenthash/createdat/structured/body remain deepcompared. Full DBsnapshots retain strict rawrequesthash/resultref/no newevents/records. First assertion and snapshot remain observed-check-historical-http-first.json.
+
+Secondprobe failed inside light-my-request before HTTPdispatch because its helper emitted an undefined idempotency-keyheader. Fixed only omission handling, not product. Thirdprobe omitted required businesskey on redaction and received established400; added explicit independent-redaction key. Bothfailurelogs preserved. These failures happened after all three historicaloriginalkey/newkey/changedpayload cases passed; they are fixture mistakes, not validator acceptance changes. Finalprobe exit0 in probe-command-final.json, observed-check-historical-http-final.json.
+
+Revision premise remains: oldoriginalkey201; newkey identicalstaleexpected409; only replacing expected_revision withcurrent2 and preserving exactbadstructured yields400. No DBrevision or storedhash edited. Historicalredaction replay is currenttombstone201; newreference redacted410; revokedcredential replay401.

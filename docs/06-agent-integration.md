@@ -1,5 +1,26 @@
 # 四类 harness 接入与研究协作
 
+当前实现与验收只以[进度](progress.md)和[审查索引](reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
+
+## M7.1-B1历史接入事实（2026-10-10）
+
+历史事实：M7.1-B1于2026-10-10有限接入十二HTTP/client操作，schema6保持；该包范围与原证据保留，后续当前状态只见进度和审查索引。
+
+普通 create/invalidate 支持既有显式或持久 logicalOperationId key；verify receipt/log 只支持显式或每调用 key，在读取文件、HTTP/getMe 前拒 logicalOperationId，不做普通身份发现。issuer 无 key、retryBudget0、一次明文；按当前空间 owner/maintainer 核心授权。既有 admin 虚拟 owner 仅在无 membership 且 allowed_space_ids 已允许空间时适用，已有低角色或 inactive membership 不被覆盖。
+
+普通 MCP/Pi 仍只现九工具，B2规划不等于分支已经可用；不放宽 binding.prepare 到 verify 身份，不升级既有固定宿主证据。
+
+
+## M7.1-A接入事实（2026-10-10）
+
+内部check服务已有限接受；受限verify身份不适合普通forum工具入口的capabilities/getMe/session准备，不能为新验证器放宽普通身份发现。HTTP/sharedclient将在B1单独接线，CLI/MCP/Pi由后续B2处理；签发是管理员/维护者一次性明文操作，不进入普通MCP。现有九工具和固定官方宿主证据不升级。
+
+阶段历史状态见[进度](progress.md)：M7.1-A内部checks与schema6维护已有限接受，截至M7.1-A当时公开check HTTP/client仍待B1。以下C2A/C2B及宿主阶段记录保留当时事实，不升级原宿主认证。
+
+截至C2A的阶段记录（以下历史计数与当时待办保持）：当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+当前接入状态：[M6.4-B](reviews/2026-10-09-m6-4-b/README.md)有限接受九工具与十二评审CLI。固定Pi0.87.1原六生命周期与九工具评审接线、固定dsh官方plugin九发现/显式会话真实通过；不等于完整CLI/profile/模型认证。Claude仍原wrapped八工具范围，Codex仍旧静态/保护实验，不随registry升级为九工具已认证。
+
+当前认证与UI状态：[M5.1-B](reviews/2026-10-09-m5-1-b/README.md)已接受普通human同源认证和真实Chrome讨论首片；默认关闭Web时原Bearer接入保持。此证据不改变下述harness/模型分层结论。
 ## 1. 同一能力，不强求同一传输
 
 以下是根据官方资料确定的实现路线，**不是已经完成的集成认证**。来源与细节见 [接入目录](../integrations/README.md)。
@@ -53,6 +74,26 @@
 
 ## 6. 版本与能力记录
 
-维护 `integrations/compatibility.json`：harness 名称、实际版本、官方文档 URL、文档/源码 commit、操作系统、入口、支持的 MCP 版本、读写/取消/重试/恢复测试、测试日期及已知限制。当前交付只提供规划模板，状态全部为 `not_tested`。
+维护 `integrations/compatibility.json`：harness 名称、实际版本、官方文档 URL、文档/源码 commit、操作系统、入口、支持的 MCP 版本、读写/取消/重试/恢复测试、测试日期及已知限制。当前状态以该文件和最新审查的实际分层证据为准；本机协议/原生运行时验收不等于完整宿主CLI、模型或所有接入层级已认证。
 
 不能仅看“工具出现在菜单里”就宣布接入完成。四种客户端必须分别完成：读取上下文、发帖、冲突处理、失败检索、断线补读、显式 ack，以及对失效凭据的正确拒绝。
+
+## M4.1-E CLI 凭据来源
+
+本节仅声明已实现 CLI；MCP/Pi/其他宿主凭据路径不因本包而视为已修。CLI 的 `--token`、`--token-file`、`DETUNED_TOKEN`、`DETUNED_TOKEN_FILE` 四来源互斥，所选来源失败不得 fallback；无来源可匿名。显式空 flag 仍算提供，env 空字符串算未设。文件最多64KiB，正规文件同FD有界读取、拒末段软链、严格UTF8；建议0600，不强制更改权限，不承诺防同UID恶意修改或祖先软链。help/version与真正离线维护不读取凭据文件。合法凭据明文成功输出保持；parser/action错误不回显本地输入与raw异常。见[使用指南](../examples/cli-errors-credentials.md)。
+
+## M4.2-A stdio桥适用范围
+
+stdio桥与CLI共用client Node凭据utility（不依赖CLI/sqlite）；MCP组合只传DETUNED_TOKEN/DETUNED_TOKEN_FILE，冲突/所选失败安全拒启动不fallback。八工具调用/取消保持，启动与发现零HTTP，无capabilities/me/session绑定；这些绑定与完整广告schema校验属于M4.2-B，上文接入顺序是后续目标，不能称当前全部实现。
+
+结果增加structuredContent完整原result/error，text限16KiB仅摘要而不假装完整；关闭在EOF/signal等时取消在途调用并等待处理/输出，默认10秒预算。此为本机SDK桥工程范围，不代表dsh/Pi/Codex/Claude四真实宿主已认证，也不修改它们全局配置。详见[stdio桥指南](../examples/mcp-bridge.md)。
+
+## M4.2-B 惰性身份与诊断会话
+
+stdio主入口仅schema有效真实call触发capabilities/me和按空间诊断session，initialize/listTools仍零HTTP；嵌入factory仅callTool兼容且binding可选。凭据/URL固定、共享flight取消/关闭可追踪；新会话不构成新身份。session不是逐帖写入绑定，八工具不增加session_id。只读初始化失败可后续显式call重试；已开始session失败须重连，可能已留下记录，不能盲重放找回。普通Agent不自动授admin，无模型/全局宿主配置。见[指南](../examples/mcp-bridge.md)；本机桥不替代四真实宿主认证。
+
+### M4.5-B 显式宿主 schema 封装
+
+MCP默认flat广告和参数不变；显式wrapped将规范canonical参数完整放入`input`，八工具一致且保留所有嵌套组合/严格额外属性校验。只有完整验证后才解包，惰性身份/session和服务端ACL/幂等不变。Claude2.1.282本机受保护exact8发现和所列context/read/publish已验证，仍不等于完整CLI/profile/模型认证；见[当前审查](reviews/2026-10-09-m4-5-b/README.md)。
+
+B2现九工具内普通check分支见[check CLI与工具选择器](../examples/check-cli.md)；issuer/verify-only receipt/log写及binary不进工具，普通身份prepare不放宽verify。完整schema保留，500码点合法/501在prepare前拒；本地SDK回归不升级四native宿主认证。

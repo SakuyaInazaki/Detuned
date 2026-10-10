@@ -1,0 +1,28 @@
+--- packages/core/src/services/redaction-service.ts (fresh exact before)
++++ packages/core/src/services/redaction-service.ts (current)
+@@ -75,6 +75,7 @@
+       payload,
+       201,
+       (tx) => {
++        let visibility: 'public' | 'review_assignment' = 'public';
+         // Re-verify in transaction
+         if (input.target_type === 'post') {
+           const post = tx.findPostById(input.target_id);
+@@ -87,6 +88,8 @@
+             throw new DetunedError(ErrorCode.NOT_FOUND, '目标附件不存在或不属于该空间。', 404);
+           }
+         }
++
++        if (input.target_type === 'artifact' && tx.findArtifactById(input.target_id)?.visibility === 'review_assignment') visibility = 'review_assignment';
+ 
+         const redactionId = this.idGen.generateId('red');
+         const now = this.clock.nowIso();
+@@ -108,7 +111,7 @@
+           type: input.target_type === 'post' ? 'post.redacted' : 'artifact.redacted',
+           object_id: input.target_id,
+           revision: 1,
+-          visibility: 'public',
++          visibility,
+           actor_id: auth.actor.id,
+           created_at: now,
+         });

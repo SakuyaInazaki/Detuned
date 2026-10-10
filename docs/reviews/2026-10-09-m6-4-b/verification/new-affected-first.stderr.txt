@@ -1,0 +1,32 @@
+$ vitest run tests/contracts/m6-review-tools.test.ts tests/contracts/m6-review-cli.test.ts tests/contracts/m6-review-tools-independent.test.ts tests/contracts/cross-interface-contract.test.ts tests/contracts/m0-m1-r2-adapters.test.ts tests/contracts/m2-focused-context-contracts.test.ts tests/contracts/m2-post-revision-read-contracts.test.ts tests/contracts/m3-events-contract.test.ts tests/contracts/m4-mcp-runtime.test.ts tests/contracts/m4-runtime-binding-native.test.ts tests/contracts/m4-mcp-lifecycle-independent.test.ts tests/contracts/m4-mcp-binding-independent.test.ts tests/contracts/m4-mcp-wrapped-independent.test.ts tests/contracts/m4-mcp-input-mode.test.ts tests/contracts/m4-pi-native-lifecycle.test.ts --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m6-review-tools-independent.test.ts > DT04 current ACL precedes history and new sessions cannot fill slots; readonly/admin/nonreviewers cannot see others sealed
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/contracts/m6-review-tools-independent.test.ts:131:357
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m6-review-tools-independent.test.ts > DT05 actual CLI processes recover private upload keys and SHA download without overwriting owned files or leaking errors
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/contracts/m6-review-tools-independent.test.ts:143:441
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

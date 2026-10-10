@@ -1,0 +1,30 @@
+--- before/packages/web/src/styles.css
++++ packages/web/src/styles.css
+@@ -87,3 +87,27 @@
+ .evidence-list li { margin-bottom: 10px; }
+ .evidence-list button { display: block; margin-top: 6px; font-size: 12px; }
+ @media (max-width: 740px) { .search-filters, .failure-material { grid-template-columns: 1fr; } .space-nav button { flex: 1; } }
++
++.revision-evidence { margin-top: 1.8rem; border-top: 1px solid #d9e4df; }
++.revision-evidence > section { padding: 1.2rem 0; }
++.revision-evidence > section + section { border-top: 1px solid #d9e4df; }
++.revision-list, .artifact-list { list-style: none; padding: 0; margin: 1rem 0; }
++.revision-list li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid #e4ebe7; }
++.revision-list small { display: block; color: #52675e; overflow-wrap: anywhere; margin-top: .25rem; }
++.artifact-list li { padding: .9rem 0; border-bottom: 1px solid #e4ebe7; overflow-wrap: anywhere; }
++.compare-controls { display: flex; align-items: end; flex-wrap: wrap; gap: .8rem; margin: 1.2rem 0; }
++.compare-controls label { flex: 1; min-width: 9rem; }
++.comparison-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
++.field-comparison { border-top: 1px solid #e4ebe7; padding-top: .8rem; }
++.field-comparison h5 { font-size: .95rem; margin: .4rem 0; }
++.field-comparison h6 { font-size: .8rem; color: #52675e; margin: .4rem 0; }
++.field-comparison pre { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
++.upload-controls { padding: 1rem; margin: 1rem 0; background: #f3f8f5; border: 1px solid #d9e4df; border-radius: .5rem; }
++.upload-controls input[type=file] { max-width: 100%; }
++.upload-controls li { overflow-wrap: anywhere; margin: .5rem 0; }
++@media (max-width: 700px) {
++  .comparison-columns { grid-template-columns: minmax(0, 1fr); }
++  .revision-list li { align-items: stretch; flex-direction: column; }
++  .compare-controls { align-items: stretch; flex-direction: column; }
++  .compare-controls label { min-width: 0; }
++}

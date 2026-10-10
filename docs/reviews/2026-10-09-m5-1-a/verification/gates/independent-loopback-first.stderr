@@ -1,0 +1,35 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent real cookie identity keeps contributor/observer ACL, hidden scope, nonhuman rejection and auth-only state separation
+Error: Private fixture object expected.
+ ❯ object tests/contracts/m5-web-auth-independent.test.ts:16:74
+     14| type HttpResult = {status: number; headers: IncomingHttpHeaders; body:…
+     15| function object(value: unknown): JsonObject {
+     16|   if (!value || typeof value !== 'object' || Array.isArray(value)) thr…
+       |                                                                          ^
+     17|   return value as JsonObject;
+     18| }
+ ❯ errorCode tests/contracts/m5-web-auth-independent.test.ts:21:49
+ ❯ tests/contracts/m5-web-auth-independent.test.ts:97:135
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m5-web-auth-independent.test.ts > M5 independent real duplicate/malformed carriers, hostile Host/Origin and CSRF cannot mutate or log authentication secrets; verified logout reliably revokes
+AssertionError: expected [ 200, 204 ] to deeply equal [ 400, 400 ]
+
+- Expected
++ Received
+
+  [
+-   400,
+-   400,
++   200,
++   204,
+  ]
+
+ ❯ tests/contracts/m5-web-auth-independent.test.ts:171:64
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -1,0 +1,60 @@
+{
+  "status": "awaiting_fifo_fixture_fix_and_final_suite",
+  "review_date": "2026-10-08",
+  "package_started_date": "2026-10-07",
+  "build": {
+    "attempts": 1,
+    "exit_codes": [
+      0
+    ]
+  },
+  "typecheck": {
+    "attempts": 1,
+    "exit_codes": [
+      0
+    ]
+  },
+  "lint": {
+    "attempts": 1,
+    "exit_codes": [
+      0
+    ]
+  },
+  "new_targeted": {
+    "files": 3,
+    "passed": 22,
+    "failed": 0,
+    "unhandled": 0
+  },
+  "fullsuite_attempts": [
+    {
+      "passed": 435,
+      "failed": 1,
+      "files_passed": 50,
+      "files_failed": 1,
+      "exit_code": 1,
+      "attribution": "FIFO test watchdog includes process startup; parent authorized readiness IPC fixture timing repair, product unchanged"
+    }
+  ],
+  "retained_probes": {
+    "commands": 25,
+    "exit_zero": 25
+  },
+  "current29_first": {
+    "passed": 28,
+    "failed": 1
+  },
+  "old_review_evidence": {
+    "count": 3763,
+    "changed": 0
+  },
+  "source_config_tests_count_after_first_gates": 187,
+  "not_run": [
+    "additional 600s load",
+    "model/network inference",
+    "four hosts",
+    "extra large-material probe"
+  ],
+  "inherited_large_export_case_runs_in_this_package": 1,
+  "commands_recorded": 30
+}

@@ -1,0 +1,8 @@
+tests/integration/m6-review-snapshot.test.ts(17,152): error TS2322: Type 'unknown' is not assignable to type 'InjectPayload | undefined'.
+tests/integration/m6-review-snapshot.test.ts(17,171): error TS2339: Property 'statusCode' does not exist on type 'void & Promise<Response> & Chain'.
+tests/integration/m6-review-snapshot.test.ts(17,182): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(actual: any, message?: string | undefined): Assertion<any>', gave the following error.
+    Argument of type '(body: InjectPayload) => Chain' is not assignable to parameter of type 'string'.
+  Overload 2 of 2, '(val: any, message?: string | undefined): Assertion', gave the following error.
+    Argument of type '(body: InjectPayload) => Chain' is not assignable to parameter of type 'string'.
+tests/integration/m6-review-snapshot.test.ts(17,209): error TS2339: Property 'json' does not exist on type 'void & Promise<Response> & Chain'.

@@ -1,0 +1,31 @@
+--- a/packages/server/src/app.ts
++++ b/packages/server/src/app.ts
+@@ -148,10 +148,15 @@
+     ? new ArtifactService(options.storage, options.artifactBlobs, authService, idempotency, idGen, clock, artifactLimits, resourceLimits)
+     : undefined;
+ 
++  const codepointKeyword = (validator: {addKeyword(definition: {keyword:'x-max-codepoints';type:'string';schemaType:'number';validate:(maximum:number,value:string)=>boolean}):unknown}) => {
++    validator.addKeyword({keyword:'x-max-codepoints',type:'string',schemaType:'number',validate:(maximum,value)=>{
++      let count=0;for(const _codepoint of value)if(++count>maximum)return false;return true;
++    }});
++  };
+   const common = {
+     logger: false as const,
+     requestIdHeader: false as const,
+-    ajv: { customOptions: { removeAdditional: false, useDefaults: true, coerceTypes: false, allErrors: true } },
++    ajv: { customOptions: { removeAdditional: false, useDefaults: true, coerceTypes: false, allErrors: true }, plugins:[codepointKeyword] },
+   };
+   const app: ServerApp = tls
+     ? Fastify({ ...common, https: { ...tls, minVersion: 'TLSv1.2', maxHeaderSize: 65536 } })
+--- a/tests/contracts/m7-check-http.test.ts
++++ b/tests/contracts/m7-check-http.test.ts
+@@ -86,3 +86,9 @@
+  run=await write(root+'/check-runs',{request_id:request.id,snapshot_id:request.snapshot_id,check_name:'local',verifier_id:'http-verifier',expected_request_version:request.version},'encoded-run');verify=(await http('POST',base()+'/credentials',{})).body.data.token;
+  const artifact=await log('encoded-log');expect(artifact.content_url).toContain(encodeURIComponent(encoded));expect(isCheckArtifactMetadata(artifact,sid,run.id)).toBe(true);expect(await log('encoded-log')).toEqual(artifact);const response=await fetch(url+artifact.content_url,{headers:{authorization:'Bearer '+verify}});expect(response.status).toBe(200);expect(await response.text()).toBe('real bounded HTTP log');
+ });
++
++it('CH06 HTTP keyword enforces Unicode codepoint limit without UTF16 truncation',async()=>{
++ const second=await write(`/spaces/${sid}/check-runs`,{request_id:request.id,snapshot_id:request.snapshot_id,check_name:'local',verifier_id:'http-verifier',expected_request_version:storage.findReviewRequestById(request.id)!.version},'codepoint-second');
++ const exact=await http('POST',base()+'/invalidate',{expected_version:1,reason:'😀'.repeat(500)},'codepoint-exact');expect(exact.status,JSON.stringify(exact.body)).toBe(200);expect(exact.body.data.invalidation_reason).toBe('😀'.repeat(500));
++ const tooLong=await http('POST',`/spaces/${sid}/check-runs/${second.id}/invalidate`,{expected_version:1,reason:'😀'.repeat(501)},'codepoint-over');expect(tooLong.status).toBe(400);expect(storage.findCheckRunById(second.id)).toMatchObject({state:'pending',version:1});
++});

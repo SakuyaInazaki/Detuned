@@ -1,0 +1,50 @@
+{
+  "extends": "/Users/sakimi/Desktop/Detuned/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "baseUrl": "/Users/sakimi/Desktop/Detuned",
+    "paths": {
+      "@detuned/core": [
+        "/Users/sakimi/Desktop/Detuned/packages/core/src/index.ts"
+      ],
+      "@detuned/server": [
+        "/Users/sakimi/Desktop/Detuned/packages/server/src/index.ts"
+      ],
+      "@detuned/mcp": [
+        "/Users/sakimi/Desktop/Detuned/packages/mcp/src/index.ts"
+      ],
+      "@detuned/protocol": [
+        "/Users/sakimi/Desktop/Detuned/packages/protocol/src/index.ts"
+      ],
+      "@detuned/cli": [
+        "/Users/sakimi/Desktop/Detuned/packages/cli/src/index.ts"
+      ],
+      "@detuned/adapter-pi": [
+        "/Users/sakimi/Desktop/Detuned/packages/adapter-pi/src/index.ts"
+      ],
+      "@detuned/storage-sqlite": [
+        "/Users/sakimi/Desktop/Detuned/packages/storage-sqlite/src/index.ts"
+      ],
+      "@detuned/client": [
+        "/Users/sakimi/Desktop/Detuned/packages/client/src/index.ts"
+      ]
+    },
+    "declaration": false,
+    "declarationMap": false
+  },
+  "files": [
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/playwright.config.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/fixtures.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/independent.spec.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/author.spec.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-c.spec.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-d2.spec.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e1.spec.ts",
+    "/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e2.spec.ts"
+  ]
+}

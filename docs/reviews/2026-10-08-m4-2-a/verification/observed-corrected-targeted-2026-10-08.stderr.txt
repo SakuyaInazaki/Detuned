@@ -1,0 +1,49 @@
+node:internal/modules/package_json_reader:301
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@detuned/client' imported from /Users/sakimi/Desktop/Detuned/[eval1]
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:724:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:762:56)
+    at #resolve (node:internal/modules/esm/loader:686:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:606:35)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:635:32) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v26.3.0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-node-credentials.test.ts > NC03 actual built Node package resolves the new utility while browser entry remains unchanged
+Error: Command failed: /opt/homebrew/Cellar/node/26.3.0/bin/node --input-type=module -e const n=await import('@detuned/client/node');const b=await import('@detuned/client');if(n.resolveLocalToken({environmentToken:' fixture '})!=='fixture'||'resolveLocalToken' in b)process.exitCode=1;else console.log('node-composition-ok')
+node:internal/modules/package_json_reader:301
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@detuned/client' imported from /Users/sakimi/Desktop/Detuned/[eval1]
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:724:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:762:56)
+    at #resolve (node:internal/modules/esm/loader:686:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:606:35)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:635:32) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v26.3.0
+
+ ❯ tests/contracts/m4-node-credentials.test.ts:12:367
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

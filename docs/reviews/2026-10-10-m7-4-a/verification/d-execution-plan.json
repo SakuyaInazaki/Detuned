@@ -1,0 +1,98 @@
+{
+  "status": "source_ready_pending_root_release",
+  "workdir": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "id": "build-first",
+      "command": "pnpm --workspace-concurrency=1 -r run build",
+      "post_success": "immediate complete dist inventory; retain actual count/hash, expected baseline555"
+    },
+    {
+      "id": "source-noemit-first",
+      "command": "pnpm exec tsc -p docs/reviews/2026-10-10-m7-4-a/verification/new-source-tsconfig.json"
+    },
+    {
+      "id": "syntax-pi-first",
+      "command": "node --check tests/fixtures/pi-runtime/native-lifecycle.mjs"
+    },
+    {
+      "id": "syntax-claude-first",
+      "command": "node --check scripts/integrations/claude-check-probe.mjs"
+    },
+    {
+      "id": "focused-first",
+      "command": "pnpm exec vitest run tests/contracts/m4-pi-native-lifecycle.test.ts tests/contracts/m7-pi-native-checks-independent.test.ts tests/contracts/m4-pi-runtime.test.ts tests/contracts/m7-check-tools.test.ts tests/contracts/m7-check-cli-tools-independent.test.ts tests/contracts/m4-runtime-response-validation.test.ts --maxWorkers=1 --no-file-parallelism"
+    },
+    {
+      "id": "type-first",
+      "command": "pnpm --workspace-concurrency=1 -r run typecheck"
+    },
+    {
+      "id": "lint-first",
+      "command": "pnpm --workspace-concurrency=1 -r run lint"
+    },
+    {
+      "id": "schema-first",
+      "command": "node packages/storage-sqlite/scripts/check-schema-sync.mjs"
+    },
+    {
+      "id": "core-once-first",
+      "command": "pnpm exec vitest run --maxWorkers=1 --no-file-parallelism"
+    }
+  ],
+  "focused_files": [
+    {
+      "path": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+      "sha256": "d5113e6b5e86cdf814e37d28b5c8fe6857609bf6585f4e5e43fd4be17b06e0a5",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    },
+    {
+      "path": "tests/contracts/m7-pi-native-checks-independent.test.ts",
+      "sha256": "9737e680b7c1d4e9df6eb056ea5c71679be194a72eb7b8f900814635a7f0cb73",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    },
+    {
+      "path": "tests/contracts/m4-pi-runtime.test.ts",
+      "sha256": "7e09fadc46b9aa1ded7cf5d0373462270f2ddf283a023aaf112cbdd14c8df4c9",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    },
+    {
+      "path": "tests/contracts/m7-check-tools.test.ts",
+      "sha256": "ccbc720aa73ef99e28a7b4e1101702fd5e1601718fa48e01f536f8c151e97e3c",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    },
+    {
+      "path": "tests/contracts/m7-check-cli-tools-independent.test.ts",
+      "sha256": "d829cbba065ca0a00bf0c20d7f658c4c108aedd7383f81d70fb436da1a5102d3",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    },
+    {
+      "path": "tests/contracts/m4-runtime-response-validation.test.ts",
+      "sha256": "48cb7483c74ffe0d82f9353a5251ecbbb27aae812b6c2afb9ed42ec9bfabbb78",
+      "reason": "actual native lifecycle/check changes or directly adjacent tool/runtime contract"
+    }
+  ],
+  "new_source_cases": {
+    "A_checks": 1,
+    "D_independent": 1,
+    "total_expected": 2,
+    "runtime_count": "not run; no pass claimed"
+  },
+  "budgets": {
+    "Pi_child_ms": 70000,
+    "Pi_case_ms": 80000,
+    "unchanged": true
+  },
+  "serial": "Pi/focused/core complete and own child actual close before Claude separate phase; workspace1 worker1 no-file-parallelism",
+  "current_probes": "no new current28/29 proposed; unchanged protocol/HTTP reuse accepted B2 evidence",
+  "failure": "stop dependent gates, preserve receipt/raw safe logs and own cleanup; root assigns fix",
+  "native": "optional Claude requires A final freeze+B review+second root release; not authorized by this plan",
+  "limits": [
+    "no model inference",
+    "no VM/Colima/daemon",
+    "no old tmp/process census",
+    "no install/global config/push",
+    "new secrets only memory/private0600; raw credentials never archived"
+  ],
+  "node": "repository minimum22.19, localNode26 is not minimum guarantee"
+}

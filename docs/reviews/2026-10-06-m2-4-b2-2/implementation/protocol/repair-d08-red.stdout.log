@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts (8 tests | 1 failed | 7 skipped) 123ms
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D01: raw 4K/64K/default envelopes reconstruct exactly the sorted metadata directory
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D02: limit continuation differs from budget truncation and old bare cursor still works
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D03: strict transport rejects ignored parameters and exact full envelope boundary returns 422
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D04: whole schemas enforce all three metadata branches and strict cursor purpose
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D05: client and tool dispatch retain full page, query and signal; old thread stays data-only
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D07: directory current head leads to fixed stored content without aggregating or drifting
+   × M2.4-B.2.2 bounded thread metadata transport > D08: string cursor business validation follows current access and thread ownership with fixed errors 123ms
+     → expected [ …(11) ] to deeply equal []
+   ↓ M2.4-B.2.2 bounded thread metadata transport > D06: OpenAPI merges new GET with unchanged POST and restores exact cursor policy
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 skipped (8)
+   Start at  19:06:57
+   Duration  714ms (transform 196ms, setup 0ms, collect 365ms, tests 123ms, environment 0ms, prepare 37ms)
+

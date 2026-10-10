@@ -1,0 +1,22 @@
+{
+  "status": "diagnostic_source_frozen_pending_B_review_D_single_case",
+  "parent_freeze_sha256": "3b4b9ae1609bc3d8b65fe6a4c3c2290680f656840aae4ad1d183361cb04a6b9b",
+  "files": {
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": {
+      "sha256": "97ec70ac774d4aa436a5addf7090c1bf6b0a5538977b6363a5a4caf6a535c3af",
+      "bytes": 26621
+    },
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": {
+      "sha256": "f4a2b8d07fa710490ef1b4a3aebb1b80f547e74ed84541a3ef36fe4f5f60547b",
+      "bytes": 6818
+    },
+    "scripts/integrations/claude-check-probe.mjs": {
+      "sha256": "e733a5ad1cf5963fa525910364b99c2602480c42855b8c137abaea16c48805b6",
+      "bytes": 21043
+    }
+  },
+  "delta_sha256": "bf112e820fcb7737ef0025cdd1a9058c25e9a95a5fb9e0a459c5b936f9b3890a",
+  "checks_run_by_A": [],
+  "old_six_prefix_and_body_static_byte_equal": true,
+  "repair": "Only Claude native entry canonicalizes own root with realpath then validates directory/non-symlink/0700/current uid before all policy/cwd/config/sentinel derivation."
+}

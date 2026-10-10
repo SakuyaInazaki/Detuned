@@ -1,0 +1,11 @@
+--- tests/contracts/m3-backup-cli.test.ts (fresh exact before)
++++ tests/contracts/m3-backup-cli.test.ts (current)
+@@ -43,7 +43,7 @@
+     const initial = await init(source);
+     const saved = await cli(['backup', '--offline', '--data-dir', source, '--output', backup]);
+     expect(saved.code, saved.stdout + saved.stderr).toBe(0); const summary = JSON.parse(saved.stdout);
+-    expect(summary).toMatchObject({ backup_dir: path.join(await realpath(root), 'backup'), version: 1, schema_version: 3, artifact_count: 0 }); expect(summary).not.toHaveProperty('admin_token');
++    expect(summary).toMatchObject({ backup_dir: path.join(await realpath(root), 'backup'), version: 1, schema_version: 4, artifact_count: 0 }); expect(summary).not.toHaveProperty('admin_token');
+     const manifestBytes = await readFile(path.join(backup, 'backup-manifest.json'));
+     const recovery = await cli(['restore', '--backup', backup, '--data-dir', restored]); expect(recovery.code, recovery.stdout + recovery.stderr).toBe(0);
+     const credentials = JSON.parse(recovery.stdout); expect(Object.keys(credentials).sort()).toEqual(['admin_actor_id', 'admin_token', 'data_dir']);

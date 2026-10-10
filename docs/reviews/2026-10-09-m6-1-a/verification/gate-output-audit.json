@@ -1,0 +1,153 @@
+[
+  {
+    "stage": "root-build-first",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "build"
+    ],
+    "exit_code": 0,
+    "seconds": 9.869,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-root-build-first",
+    "stdout_bytes": 1951,
+    "stderr_bytes": 20,
+    "stdout_sha256": "9a54266aea022517edb7a3ccc4c198bf41bd80797e1f747f9be99e6a857589b9",
+    "stderr_sha256": "87ef89fc66b05699d57e3ebddbffde3a78201a046aaf664157c21cee3842d2df",
+    "complete_outputs_read": true,
+    "warning_lines": [
+      "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.",
+      "packages/web build: (!) Some chunks are larger than 500 kB after minification. Consider:",
+      "packages/web build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit."
+    ],
+    "summary_lines": []
+  },
+  {
+    "stage": "root-typecheck-first",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "typecheck"
+    ],
+    "exit_code": 0,
+    "seconds": 10.154,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-root-typecheck-first",
+    "stdout_bytes": 851,
+    "stderr_bytes": 24,
+    "stdout_sha256": "afc95d36eaa139e6da762d7a9dd9bb5d669c2f684a1eb947b02cc1275c758fc8",
+    "stderr_sha256": "5f4e8cc6357cefc741b3a602e29a1ff25113a452f8eb55da8e072868a898984e",
+    "complete_outputs_read": true,
+    "warning_lines": [
+      "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+    ],
+    "summary_lines": []
+  },
+  {
+    "stage": "root-lint-first",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "lint"
+    ],
+    "exit_code": 0,
+    "seconds": 6.501,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-root-lint-first",
+    "stdout_bytes": 874,
+    "stderr_bytes": 19,
+    "stdout_sha256": "c039e1fe17a3e61a63b79c78665d9a4db1ca1975b9e58e0cb76918f7a1e27d79",
+    "stderr_sha256": "95fcc3d2c562aa37ac96ab4d2d4fe3a705f8c3080ca9c3ad31bf197462e8aa5f",
+    "complete_outputs_read": true,
+    "warning_lines": [
+      "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+    ],
+    "summary_lines": []
+  },
+  {
+    "stage": "root-core-first",
+    "command": [
+      "/usr/bin/caffeinate",
+      "-i",
+      "/opt/homebrew/bin/pnpm",
+      "test"
+    ],
+    "exit_code": 1,
+    "seconds": 89.361,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-root-core-first",
+    "stdout_bytes": 58415,
+    "stderr_bytes": 838,
+    "stdout_sha256": "cc3d9baac272ccf6898027ee44cec447e6fe9e0703fec277c732be02f5231f2a",
+    "stderr_sha256": "b11459c196b2e1a2f0ae1338976cdf788c6eb2cd6d9fdc266e1119203343b28c",
+    "complete_outputs_read": true,
+    "warning_lines": [
+      "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+    ],
+    "summary_lines": [
+      " Test Files  1 failed | 107 passed (108)",
+      "      Tests  1 failed | 716 passed (717)",
+      "   Duration  88.49s (transform 3.03s, setup 0ms, collect 58.64s, tests 686.07s, environment 16ms, prepare 10.65s)"
+    ]
+  },
+  {
+    "stage": "independent-source-first",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test",
+      "tests/integration/m6-review-snapshot-independent.test.ts"
+    ],
+    "exit_code": 0,
+    "seconds": 1.906,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-independent-source-first",
+    "stdout_bytes": 398,
+    "stderr_bytes": 70,
+    "stdout_sha256": "e3ee111767ca6f14736f0c8839f3d6ef408f3393939427977f8fe9f0631ce46d",
+    "stderr_sha256": "197ca8a03b85895b34cca7d15d8f3099b74a488a0bcd8c0fa39bfd246431ae97",
+    "complete_outputs_read": true,
+    "warning_lines": [
+      "[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed."
+    ],
+    "summary_lines": [
+      " Test Files  1 passed (1)",
+      "      Tests  6 passed (6)",
+      "   Duration  938ms (transform 238ms, setup 0ms, collect 395ms, tests 299ms, environment 0ms, prepare 46ms)"
+    ]
+  },
+  {
+    "stage": "independent-noemit-first",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--project",
+      "docs/reviews/2026-10-09-m6-1-a/verification/independent-source-tsconfig.json"
+    ],
+    "exit_code": 0,
+    "seconds": 1.843,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-independent-noemit-first",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "complete_outputs_read": true,
+    "warning_lines": [],
+    "summary_lines": []
+  },
+  {
+    "stage": "backup-one-case-recheck",
+    "command": [
+      "/opt/homebrew/bin/pnpm",
+      "test",
+      "tests/integration/m3-backup-recovery.test.ts",
+      "-t",
+      "rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup"
+    ],
+    "exit_code": 0,
+    "seconds": 3.652,
+    "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-backup-one-case-recheck",
+    "stdout_bytes": 575,
+    "stderr_bytes": 170,
+    "stdout_sha256": "c73fdd036e6d3c74d1fee2e289f5f0c45eeace1a9e4ef2d7c50ff24182c92bb5",
+    "stderr_sha256": "61227ac174963621f82d02a467217b482cf1f67e4834979776176c2eb5af871e",
+    "complete_outputs_read": true,
+    "summary_lines": [
+      " Test Files  1 passed (1)",
+      "      Tests  1 passed | 10 skipped (11)",
+      "   Duration  2.78s (transform 279ms, setup 0ms, collect 501ms, tests 1.94s, environment 0ms, prepare 49ms)"
+    ]
+  }
+]

@@ -1,9 +1,22 @@
+import { POST_CREATED_SORT_KEY_SQL, preparePostCreatedOrderIndex } from './post-created-order-index.js';
+import { checkSqliteReadiness, sampleSqliteStatus } from './operational-status.js';
+import { configureSqliteResourceLimits } from './sqlite-resource-limits.js';
+import { SqliteSpaceExportSnapshot } from './space-export-snapshot.js';
+import { mapStorageFullError, resourceQuotaError, } from '@detuned/core';
+import { DetunedError, resolveResourceLimits, ErrorCode, } from '@detuned/protocol';
 export class SqliteStorage {
     db;
+    operationalOptions;
     inTransaction = false;
-    constructor(db) {
+    constructor(db, operationalOptions = {}) {
         this.db = db;
+        this.operationalOptions = operationalOptions;
         this.initPragmas();
+    }
+    prepareRuntimeReadIndexes() { preparePostCreatedOrderIndex(this.db); }
+    checkReadiness() { return checkSqliteReadiness(this.db, this.operationalOptions); }
+    sampleOperationalStatus() {
+        return sampleSqliteStatus(this.db, this.operationalOptions, this.getArtifactUsage(10000));
     }
     initPragmas() {
         if (this.db.inTransaction) {
@@ -32,7 +45,32 @@ export class SqliteStorage {
                 this.inTransaction = false;
             }
         });
-        return run.immediate();
+        try {
+            return run.immediate();
+        }
+        catch (error) {
+            throw mapStorageFullError(error);
+        }
+    }
+    readSnapshot(fn) {
+        const read = () => {
+            const result = fn(this);
+            if (result !== null && (typeof result === 'object' || typeof result === 'function') && 'then' in result && typeof result.then === 'function') {
+                throw new TypeError('readSnapshot requires a synchronous callback.');
+            }
+            return result;
+        };
+        // This is a calling convention, not SQLite-enforced read-only mode.
+        if (this.db.inTransaction)
+            return read();
+        return this.db.transaction(read).deferred();
+    }
+    openSpaceExportSnapshot(spaceId) { return SqliteSpaceExportSnapshot.open(this.db.name, spaceId); }
+    getExportEventSeq(spaceId) {
+        return this.db.prepare('SELECT CAST(COALESCE(max(seq),0) AS TEXT) AS seq FROM events WHERE space_id=?').get(spaceId).seq;
+    }
+    hasExportRedactionAfter(spaceId, afterSeq, throughSeq) {
+        return Boolean(this.db.prepare("SELECT 1 FROM events WHERE space_id=? AND seq>? AND seq<=? AND type IN ('post.redacted','artifact.redacted') LIMIT 1").get(spaceId, afterSeq, throughSeq));
     }
     // Actors
     findActorById(id) {
@@ -425,6 +463,34 @@ export class SqliteStorage {
             created_at: row.created_at,
         };
     }
+    getPostRevisionMetadata(postId, revision) {
+        return this.db.prepare('SELECT revision,editor_id,created_at,content_hash FROM post_revisions WHERE post_id=? AND revision=?')
+            .get(postId, revision) ?? null;
+    }
+    listPostRevisionMetadata(postId, limit, afterRevision) {
+        const rows = this.db.prepare(`SELECT revision,editor_id,created_at,content_hash FROM post_revisions
+      WHERE post_id=? ${afterRevision === undefined ? '' : 'AND revision<?'} ORDER BY revision DESC LIMIT ?`)
+            .all(...(afterRevision === undefined ? [postId, limit + 1] : [postId, afterRevision, limit + 1]));
+        return { revisions: rows.slice(0, limit), has_more: rows.length > limit };
+    }
+    listRevisionArtifactMetadata(spaceId, postId, revision, limit, afterId) {
+        // Filter before projecting. A tombstone never selects its old material metadata into JS.
+        const rows = this.db.prepare(`SELECT a.id,a.state,
+      CASE WHEN a.state!='redacted' THEN a.owner_id END AS owner_id,
+      CASE WHEN a.state!='redacted' THEN a.sha256 END AS sha256,
+      CASE WHEN a.state!='redacted' THEN a.bytes END AS bytes,
+      CASE WHEN a.state!='redacted' THEN a.mime END AS mime,
+      CASE WHEN a.state!='redacted' THEN a.created_at END AS created_at,
+      CASE WHEN a.state!='redacted' THEN r.purpose END AS purpose
+      FROM revision_artifacts r JOIN artifacts a ON a.id=r.artifact_id
+      WHERE r.post_id=? AND r.revision=? AND a.space_id=? AND a.visibility='space'
+      ${afterId === undefined ? '' : 'AND a.id>?'} ORDER BY a.id ASC LIMIT ?`)
+            .all(...(afterId === undefined ? [postId, revision, spaceId, limit + 1] : [postId, revision, spaceId, afterId, limit + 1]));
+        const artifacts = rows.slice(0, limit).map(row => row.state === 'redacted'
+            ? { id: row.id, state: 'redacted' }
+            : { id: row.id, state: row.state, owner_id: row.owner_id, sha256: row.sha256, bytes: row.bytes, mime: row.mime, created_at: row.created_at, purpose: row.purpose });
+        return { artifacts, has_more: rows.length > limit };
+    }
     getPostRevision(postId, revision) {
         const row = this.db
             .prepare('SELECT * FROM post_revisions WHERE post_id = ? AND revision = ?')
@@ -474,6 +540,25 @@ export class SqliteStorage {
             created_at: r.created_at,
         }));
         return { revisions, next_cursor: nextCursor };
+    }
+    /** Canonical UTC milliseconds first; unknown historical values remain ordered by ID. */
+    listPostsInThreadByCreatedAt(threadId, limit, after) {
+        const key = POST_CREATED_SORT_KEY_SQL;
+        const params = [threadId];
+        let where = '';
+        if (after) {
+            if (after.key === null) {
+                where = ' WHERE sort_key IS NULL AND id > ?';
+                params.push(after.id);
+            }
+            else {
+                where = ' WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?)';
+                params.push(after.key, after.key, after.id);
+            }
+        }
+        params.push(limit + 1);
+        const rows = this.db.prepare(`SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,${key} AS sort_key FROM posts WHERE thread_id = ?)${where} ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?`).all(...params);
+        return { posts: rows.slice(0, limit), has_more: rows.length > limit };
     }
     listPostsInThread(threadId, limit = 50, cursor) {
         let sql = 'SELECT * FROM posts WHERE thread_id = ?';
@@ -554,6 +639,10 @@ export class SqliteStorage {
             created_at: row.created_at,
         };
     }
+    listRelationsByTarget(spaceId, targetPostId) {
+        const rows = this.db.prepare('SELECT id FROM relations WHERE space_id=? AND target_post_id=? ORDER BY created_at ASC,id ASC').all(spaceId, targetPostId);
+        return rows.map(row => this.findRelationById(row.id));
+    }
     listOpenChallenges(spaceId, targetPostId, targetRevision) {
         let sql = "SELECT * FROM relations WHERE space_id = ? AND type = 'challenges' AND state = 'open'";
         const params = [spaceId];
@@ -579,6 +668,17 @@ export class SqliteStorage {
             creator_id: r.creator_id,
             created_at: r.created_at,
         }));
+    }
+    listOpenChallengesForThread(spaceId, threadId, limit) {
+        const rows = this.db.prepare(`SELECT r.id FROM relations r
+      JOIN posts source ON source.id = r.source_post_id
+      JOIN posts target ON target.id = r.target_post_id
+      WHERE r.space_id = ? AND r.type = 'challenges' AND r.state = 'open'
+        AND source.space_id = ? AND target.space_id = ?
+        AND (source.thread_id = ? OR target.thread_id = ?)
+      ORDER BY r.created_at ASC, r.id ASC LIMIT ?`)
+            .all(spaceId, spaceId, spaceId, threadId, threadId, limit);
+        return rows.map(row => this.findRelationById(row.id));
     }
     createRelationResolution(resolution) {
         this.db
@@ -615,7 +715,42 @@ export class SqliteStorage {
             created_at: row.created_at,
         };
     }
+    configureResourceLimits(limits) {
+        const resolved = resolveResourceLimits(limits);
+        configureSqliteResourceLimits(this.db, resolved);
+        const usage = this.getArtifactUsage(resolved.artifact_max_objects);
+        if (usage.objects > resolved.artifact_max_objects || usage.bytes > BigInt(resolved.artifact_max_total_bytes))
+            throw resourceQuotaError('instance_artifacts');
+    }
+    getArtifactUsage(maxObjects) {
+        if (!Number.isSafeInteger(maxObjects) || maxObjects < 1 || maxObjects > 10000)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '登记附件计量范围非法。', 400);
+        let objects = 0, bytes = 0n;
+        const rows = this.db.prepare('SELECT CAST(bytes AS TEXT) AS bytes FROM artifacts ORDER BY id LIMIT ?').iterate(maxObjects + 1);
+        try {
+            for (const row of rows) {
+                if (typeof row.bytes !== 'string' || !/^[0-9]+$/.test(row.bytes))
+                    throw resourceQuotaError('instance_artifacts');
+                objects++;
+                bytes += BigInt(row.bytes);
+            }
+        }
+        finally {
+            rows.return?.();
+        }
+        return { objects, bytes };
+    }
     // Artifacts
+    getArtifactBytesInSpace(spaceId) {
+        const row = this.db.prepare('SELECT COALESCE(SUM(bytes), 0) AS bytes FROM artifacts WHERE space_id = ?').get(spaceId);
+        return row.bytes;
+    }
+    listArtifactStorageKeys() {
+        return this.db.prepare('SELECT storage_key FROM artifacts').all().map(row => row.storage_key);
+    }
+    createRevisionArtifact(postId, revision, artifactId, purpose) {
+        this.db.prepare('INSERT INTO revision_artifacts (post_id, revision, artifact_id, purpose) VALUES (?, ?, ?, ?)').run(postId, revision, artifactId, purpose);
+    }
     createArtifact(artifact) {
         this.db
             .prepare(`INSERT INTO artifacts (
@@ -682,6 +817,25 @@ export class SqliteStorage {
             visibility: r.visibility,
             actor_id: r.actor_id,
             created_at: r.created_at,
+        }));
+    }
+    listPublicEventsForThread(spaceId, threadId, atOrBeforeSeq, limit) {
+        // Match the existing subscription object ownership rules, without polling or writes.
+        const rows = this.db.prepare(`SELECT e.* FROM events e
+      WHERE e.space_id = ? AND e.visibility = 'public' AND e.seq <= ? AND (
+        (e.type LIKE 'thread.%' AND e.object_id = ?) OR
+        (e.type LIKE 'post.%' AND EXISTS (
+          SELECT 1 FROM posts p WHERE p.id = e.object_id AND p.thread_id = ?)) OR
+        (e.type LIKE 'relation.%' AND EXISTS (
+          SELECT 1 FROM relations r
+          LEFT JOIN posts source ON source.id = r.source_post_id
+          LEFT JOIN posts target ON target.id = r.target_post_id
+          WHERE r.id = e.object_id AND (source.thread_id = ? OR target.thread_id = ?)))
+      ) ORDER BY e.seq DESC LIMIT ?`)
+            .all(spaceId, atOrBeforeSeq, threadId, threadId, threadId, threadId, limit);
+        return rows.reverse().map(r => ({
+            id: r.id, space_id: r.space_id, seq: r.seq, type: r.type, object_id: r.object_id,
+            revision: r.revision ?? null, visibility: r.visibility, actor_id: r.actor_id, created_at: r.created_at,
         }));
     }
     findEventById(id) {
@@ -822,7 +976,10 @@ export class SqliteStorage {
             .run(activeBatchId ?? null, version, id);
     }
     deactivateConsumer(id) {
-        this.db.prepare('DELETE FROM consumers WHERE id = ?').run(id);
+        this.transaction(() => {
+            this.db.prepare('DELETE FROM delivery_batches WHERE consumer_id = ?').run(id);
+            this.db.prepare('DELETE FROM consumers WHERE id = ?').run(id);
+        });
     }
     // Delivery Batches
     createDeliveryBatch(batch) {
@@ -852,89 +1009,75 @@ export class SqliteStorage {
             .run(ackedAt, id);
     }
     // Search & Views
-    searchPosts(spaceId, q, filters, limit = 20, cursor) {
-        const trimmed = q.trim();
-        let rows = [];
-        if (trimmed.length >= 3) {
-            // Trigram MATCH search on post_fts
-            // Safe literal phrase wrapping: escape internal quotes
-            const sanitized = `"${trimmed.replace(/"/g, '""')}"`;
-            let sql = `
-        SELECT p.id as post_id, p.thread_id, p.kind, p.current_revision,
-               r.title, r.summary, r.tags, r.created_at,
-               snippet(post_fts, 2, '<b>', '</b>', '...', 16) as snippet
-        FROM post_fts f
-        JOIN posts p ON f.post_id = p.id
-        JOIN post_revisions r ON p.id = r.post_id AND p.current_revision = r.revision
-        WHERE f.space_id = ? AND post_fts MATCH ? AND p.lifecycle = 'active'
-      `;
-            const params = [spaceId, sanitized];
-            if (filters?.kind) {
-                sql += ' AND p.kind = ?';
-                params.push(filters.kind);
-            }
-            if (filters?.thread_id) {
-                sql += ' AND p.thread_id = ?';
-                params.push(filters.thread_id);
-            }
-            if (cursor) {
-                sql += ' AND p.id < ?';
-                params.push(cursor);
-            }
-            sql += ' ORDER BY p.id DESC LIMIT ?';
-            params.push(limit + 1);
-            rows = this.db.prepare(sql).all(...params);
+    listPublicReviewSubmissionCandidateIds(spaceId, filters, maxCandidates) {
+        if (!Number.isSafeInteger(maxCandidates) || maxCandidates < 1 || maxCandidates > 5000)
+            throw new Error('Invalid public review candidate budget');
+        const where = ['r.space_id=?', 's.revealed_at IS NOT NULL'];
+        const args = [spaceId];
+        if (filters.request_id !== undefined) {
+            where.push('s.request_id=?');
+            args.push(filters.request_id);
         }
-        else {
-            // 1-2 chars: fallback to LIKE search on active posts & revisions
-            function escapeLike(str) {
-                return str.replace(/([%_\\])/g, '\\$1');
-            }
-            const escaped = escapeLike(trimmed);
-            let sql = `
-        SELECT p.id as post_id, p.thread_id, p.kind, p.current_revision,
-               r.title, r.summary, r.tags, r.created_at,
-               r.summary as snippet
-        FROM posts p
-        JOIN post_revisions r ON p.id = r.post_id AND p.current_revision = r.revision
-        WHERE p.space_id = ? AND p.lifecycle = 'active'
-      `;
+        if (filters.target_post_id !== undefined) {
+            where.push('r.target_post_id=?');
+            args.push(filters.target_post_id);
+        }
+        return this.db.prepare(`SELECT s.id FROM review_submissions s JOIN review_requests r ON r.id=s.request_id WHERE ${where.join(' AND ')} ORDER BY s.id DESC LIMIT ?`).all(...args, maxCandidates + 1).map(row => row.id);
+    }
+    searchPosts(spaceId, q, filters, limit = 20, cursor, budget) {
+        // One deferred read snapshot for cardinality preflight and the actual page.
+        return this.db.transaction(() => {
+            const trimmed = q.trim();
+            const useFts = [...trimmed].length >= 3;
+            const from = useFts
+                ? 'FROM post_fts f JOIN posts p ON f.post_id=p.id JOIN post_revisions r ON p.id=r.post_id AND p.current_revision=r.revision'
+                : 'FROM posts p JOIN post_revisions r ON p.id=r.post_id AND p.current_revision=r.revision';
+            const where = ["p.space_id=?", "p.lifecycle='active'"];
             const params = [spaceId];
-            if (trimmed.length > 0) {
-                sql += " AND (r.title LIKE ? ESCAPE '\\' OR r.summary LIKE ? ESCAPE '\\' OR r.body LIKE ? ESCAPE '\\')";
-                params.push(`%${escaped}%`, `%${escaped}%`, `%${escaped}%`);
+            if (useFts) {
+                where.push('f.space_id=?', 'post_fts MATCH ?');
+                params.push(spaceId, `"${trimmed.replace(/"/g, '""')}"`);
             }
             if (filters?.kind) {
-                sql += ' AND p.kind = ?';
+                where.push('p.kind=?');
                 params.push(filters.kind);
             }
             if (filters?.thread_id) {
-                sql += ' AND p.thread_id = ?';
+                where.push('p.thread_id=?');
                 params.push(filters.thread_id);
             }
+            for (const tag of new Set(filters?.tags ?? [])) {
+                where.push("EXISTS(SELECT 1 FROM json_each(r.tags) WHERE type='text' AND value COLLATE BINARY=?)");
+                params.push(tag);
+            }
             if (cursor) {
-                sql += ' AND p.id < ?';
+                where.push('p.id<?');
                 params.push(cursor);
             }
-            sql += ' ORDER BY p.id DESC LIMIT ?';
-            params.push(limit + 1);
-            rows = this.db.prepare(sql).all(...params);
-        }
-        const hasMore = rows.length > limit;
-        const items = hasMore ? rows.slice(0, limit) : rows;
-        const nextCursor = hasMore ? items[items.length - 1].post_id : null;
-        const formatted = items.map((r) => ({
-            post_id: r.post_id,
-            revision: r.current_revision,
-            thread_id: r.thread_id,
-            kind: r.kind,
-            title: r.title,
-            summary: r.summary,
-            tags: typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags,
-            snippet: r.snippet ?? r.summary,
-            created_at: r.created_at,
-        }));
-        return { items: formatted, next_cursor: nextCursor };
+            if (budget) {
+                if (!Number.isSafeInteger(budget.max_candidates) || budget.max_candidates < 1)
+                    throw new Error('Invalid search candidate budget');
+                // LIKE counts the complete property-filtered candidate set before text scanning.
+                // FTS counts matching candidates. Neither is a VM instruction/time limit.
+                const candidates = this.db.prepare(`SELECT p.id ${from} WHERE ${where.join(' AND ')} LIMIT ?`).all(...params, budget.max_candidates + 1);
+                if (candidates.length > budget.max_candidates) {
+                    throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, '搜索候选超过限额，请缩小标签、类型或主题条件。', 422);
+                }
+            }
+            if (!useFts && trimmed.length > 0) {
+                const pattern = `%${trimmed.replace(/([%_\\])/g, '\\$1')}%`;
+                where.push("(r.title LIKE ? ESCAPE '\\' OR r.summary LIKE ? ESCAPE '\\' OR r.body LIKE ? ESCAPE '\\' OR EXISTS(SELECT 1 FROM json_each(r.tags) WHERE type='text' AND value LIKE ? ESCAPE '\\'))");
+                params.push(pattern, pattern, pattern, pattern);
+            }
+            const snippet = useFts ? "snippet(post_fts,2,'<b>','</b>','...',16)" : 'r.summary';
+            const rows = this.db.prepare(`SELECT p.id AS post_id,p.thread_id,p.kind,p.current_revision,r.title,r.summary,r.tags,r.created_at,${snippet} AS snippet ${from} WHERE ${where.join(' AND ')} ORDER BY p.id DESC LIMIT ?`).all(...params, limit + 1);
+            const hasMore = rows.length > limit;
+            const page = hasMore ? rows.slice(0, limit) : rows;
+            return {
+                items: page.map(r => ({ post_id: r.post_id, revision: r.current_revision, thread_id: r.thread_id, kind: r.kind, title: r.title, summary: r.summary, tags: typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags, snippet: r.snippet ?? r.summary, created_at: r.created_at })),
+                next_cursor: hasMore ? page[page.length - 1].post_id : null,
+            };
+        })();
     }
     // Redactions
     createRedaction(redaction) {
@@ -1019,6 +1162,100 @@ export class SqliteStorage {
                 .run(redaction.id, redaction.space_id, redaction.target_type, redaction.target_id, JSON.stringify(actualAffectedRevisions), redaction.operator_id, redaction.reason, redaction.created_at);
         });
     }
+    createReviewSnapshot(record, items) {
+        this.transaction(() => {
+            this.db.prepare(`INSERT INTO snapshots (id,space_id,manifest_json,manifest_sha256,policy_revision,rules_revision,target_post_id,target_revision,created_by,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(record.id, record.space_id, record.manifest_json, record.manifest_sha256, record.policy_revision, record.rules_revision, record.target_ref.post_id, record.target_ref.revision, record.created_by, record.created_at);
+            const insert = this.db.prepare('INSERT INTO snapshot_items (snapshot_id,item_type,item_id,revision,sha256) VALUES (?,?,?,?,?)');
+            for (const item of items) {
+                if (item.snapshot_id !== record.id)
+                    throw new Error('Invalid review snapshot item.');
+                insert.run(item.snapshot_id, item.item_type, item.item_id, item.revision, item.sha256);
+            }
+        });
+    }
+    findReviewSnapshotById(id) {
+        const row = this.db.prepare('SELECT * FROM snapshots WHERE id=?').get(id);
+        if (!row)
+            return null;
+        const { target_post_id, target_revision, ...rest } = row;
+        return { ...rest, target_ref: { post_id: target_post_id, revision: target_revision } };
+    }
+    listReviewSnapshotItems(snapshotId) {
+        return this.db.prepare('SELECT snapshot_id,item_type,item_id,revision,sha256 FROM snapshot_items WHERE snapshot_id=? ORDER BY item_type,item_id,revision').all(snapshotId);
+    }
+    getNextReviewRequestRound(spaceId, targetPostId) {
+        const row = this.db.prepare('SELECT COALESCE(MAX(round),0)+1 AS next FROM review_requests WHERE space_id=? AND target_post_id=?').get(spaceId, targetPostId);
+        return row.next;
+    }
+    createReviewRequest(record, version, assignments) {
+        this.transaction(() => {
+            if (version.request_id !== record.id || version.version !== record.version)
+                throw new Error('Invalid review request version.');
+            this.db.prepare(`INSERT INTO review_requests (id,space_id,target_post_id,target_revision,snapshot_id,round,phase,version,submitted_count,requested_by,created_at,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(record.id, record.space_id, record.target_ref.post_id, record.target_ref.revision, record.snapshot_id, record.round, record.phase, record.version, record.submitted_count, record.requested_by, record.created_at, record.changed_by, record.changed_at, record.reason);
+            this.insertReviewRequestVersion(version);
+            const insert = this.db.prepare('INSERT INTO review_assignments (id,request_id,reviewer_actor_id,group_at_assignment) VALUES (?,?,?,?)');
+            for (const assignment of assignments) {
+                if (assignment.request_id !== record.id)
+                    throw new Error('Invalid review assignment.');
+                insert.run(assignment.id, assignment.request_id, assignment.reviewer_actor_id, assignment.group_at_assignment);
+            }
+        });
+    }
+    insertReviewRequestVersion(version) {
+        this.db.prepare('INSERT INTO review_request_versions (request_id,version,phase,submitted_count,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)').run(version.request_id, version.version, version.phase, version.submitted_count, version.changed_by, version.changed_at, version.reason);
+    }
+    findReviewRequestById(id) {
+        const row = this.db.prepare('SELECT * FROM review_requests WHERE id=?').get(id);
+        if (!row)
+            return null;
+        const { target_post_id, target_revision, ...rest } = row;
+        return { ...rest, target_ref: { post_id: target_post_id, revision: target_revision } };
+    }
+    listPostReviewRequests(spaceId, postId, limit, afterRound) {
+        const sql = 'SELECT * FROM review_requests WHERE space_id=? AND target_post_id=?' + (afterRound === undefined ? '' : ' AND round<?') + ' ORDER BY round DESC LIMIT ?';
+        const rows = this.db.prepare(sql).all(...(afterRound === undefined ? [spaceId, postId, limit + 1] : [spaceId, postId, afterRound, limit + 1]));
+        return { requests: rows.slice(0, limit).map(({ target_post_id, target_revision, ...rest }) => ({ ...rest, target_ref: { post_id: target_post_id, revision: target_revision } })), has_more: rows.length > limit };
+    }
+    findReviewRequestVersion(requestId, version) {
+        return this.db.prepare('SELECT request_id,version,phase,submitted_count,changed_by,changed_at,reason FROM review_request_versions WHERE request_id=? AND version=?').get(requestId, version) ?? null;
+    }
+    listReviewAssignments(requestId) {
+        return this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? ORDER BY reviewer_actor_id').all(requestId);
+    }
+    updateReviewRequest(record, version) {
+        this.transaction(() => {
+            if (version.request_id !== record.id || version.version !== record.version)
+                throw new Error('Invalid review request version.');
+            const result = this.db.prepare('UPDATE review_requests SET phase=?,version=?,submitted_count=?,changed_by=?,changed_at=?,reason=? WHERE id=? AND version=?').run(record.phase, record.version, record.submitted_count, record.changed_by, record.changed_at, record.reason, record.id, record.version - 1);
+            if (result.changes !== 1)
+                throw new Error('Invalid review request update.');
+            this.insertReviewRequestVersion(version);
+        });
+    }
+    findReviewAssignmentById(id) {
+        return this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE id=?').get(id) ?? null;
+    }
+    findReviewAssignment(requestId, actorId) {
+        return this.db.prepare('SELECT id,request_id,reviewer_actor_id,group_at_assignment FROM review_assignments WHERE request_id=? AND reviewer_actor_id=?').get(requestId, actorId) ?? null;
+    }
+    createReviewSubmission(record) {
+        this.db.prepare('INSERT INTO review_submissions (id,request_id,assignment_id,reviewer_actor_id,reviewer_session_id,snapshot_sha256,payload_json,request_version,submitted_at,revealed_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(record.id, record.request_id, record.assignment_id, record.reviewer_actor_id, record.reviewer_session_id, record.snapshot_sha256, JSON.stringify(record.payload), record.request_version, record.submitted_at, record.revealed_at);
+    }
+    submissionRow(row) {
+        if (!row)
+            return null;
+        const { payload_json, ...rest } = row;
+        return { ...rest, payload: JSON.parse(payload_json) };
+    }
+    findReviewSubmissionById(id) { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE id=?').get(id)); }
+    findReviewSubmissionByAssignmentId(id) { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE assignment_id=?').get(id)); }
+    findReviewSubmissionBySessionId(id) { return this.submissionRow(this.db.prepare('SELECT * FROM review_submissions WHERE reviewer_session_id=?').get(id)); }
+    listReviewSubmissions(requestId) {
+        return this.db.prepare('SELECT * FROM review_submissions WHERE request_id=? ORDER BY id').all(requestId).map(row => this.submissionRow(row));
+    }
+    revealReviewSubmissions(requestId, revealedAt) {
+        this.db.prepare('UPDATE review_submissions SET revealed_at=? WHERE request_id=? AND revealed_at IS NULL').run(revealedAt, requestId);
+    }
     getInstanceSecret() {
         const row = this.db.prepare("SELECT value FROM instance_metadata WHERE key = 'token_secret'").get();
         if (row?.value && typeof row.value === 'string' && row.value.trim() !== '') {
@@ -1026,5 +1263,64 @@ export class SqliteStorage {
         }
         throw new Error('实例持久密钥缺失或未初始化。请先执行 detuned init 初始化。');
     }
+    findReviewDecisionByRequestId(requestId) {
+        const row = this.db.prepare('SELECT * FROM review_decisions WHERE request_id=?').get(requestId);
+        if (!row)
+            return null;
+        const { review_ids_json, check_receipt_ids_json, ...record } = row;
+        return { ...record, review_ids: JSON.parse(review_ids_json), check_receipt_ids: JSON.parse(check_receipt_ids_json) };
+    }
+    createReviewDecision(record) {
+        this.db.prepare('INSERT INTO review_decisions(id,request_id,actor_id,snapshot_sha256,review_ids_json,check_receipt_ids_json,outcome,rationale,request_version,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)').run(record.id, record.request_id, record.actor_id, record.snapshot_sha256, JSON.stringify(record.review_ids), JSON.stringify(record.check_receipt_ids), record.outcome, record.rationale, record.request_version, record.created_at);
+    }
+    listActiveReviewRequestsForMaterial(spaceId, material) {
+        if (material.kind === 'policy') {
+            if (material.objectId !== spaceId)
+                return [];
+            return this.db.prepare("SELECT id FROM review_requests WHERE space_id=? AND phase IN ('collecting','revealed') ORDER BY id").all(spaceId).map(row => this.findReviewRequestById(row.id));
+        }
+        const types = material.kind === 'post' ? ['target_post', 'dependency_post'] : ['artifact'];
+        return this.db.prepare(`SELECT r.id FROM review_requests r WHERE r.space_id=? AND r.phase IN ('collecting','revealed') AND EXISTS (SELECT 1 FROM snapshot_items i WHERE i.snapshot_id=r.snapshot_id AND i.item_type IN (${types.map(() => '?').join(',')}) AND i.item_id=?) ORDER BY r.id`).all(spaceId, ...types, material.objectId).map(row => this.findReviewRequestById(row.id));
+    }
+    insertCheckRunVersion(v) {
+        this.db.prepare('INSERT INTO check_run_versions(check_run_id,version,observed_request_version,state,receipt_id,changed_by,changed_at,invalidation_reason) VALUES(?,?,?,?,?,?,?,?)').run(v.check_run_id, v.version, v.observed_request_version, v.state, v.receipt_id, v.changed_by, v.changed_at, v.invalidation_reason);
+    }
+    createCheckRun(r, v) {
+        this.transaction(() => {
+            if (v.check_run_id !== r.id || v.version !== r.version)
+                throw new Error('Invalid check run version.');
+            this.db.prepare('INSERT INTO check_runs(id,request_id,snapshot_id,snapshot_sha256,check_name,attempt,verifier_actor_id,check_config_sha256,created_request_version,state,version,created_by,created_at,changed_by,changed_at,invalidation_reason) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(r.id, r.request_id, r.snapshot_id, r.snapshot_sha256, r.check_name, r.attempt, r.verifier_actor_id, r.check_config_sha256, r.created_request_version, r.state, r.version, r.created_by, r.created_at, r.changed_by, r.changed_at, r.invalidation_reason);
+            this.insertCheckRunVersion(v);
+        });
+    }
+    findCheckRunById(id) { return this.db.prepare('SELECT * FROM check_runs WHERE id=?').get(id) ?? null; }
+    getNextCheckRunAttempt(requestId, checkName) { return this.db.prepare('SELECT COALESCE(MAX(attempt),0)+1 AS attempt FROM check_runs WHERE request_id=? AND check_name=?').get(requestId, checkName).attempt; }
+    findLatestCheckRun(requestId, checkName) { return this.db.prepare('SELECT * FROM check_runs WHERE request_id=? AND check_name=? ORDER BY attempt DESC LIMIT 1').get(requestId, checkName) ?? null; }
+    findCheckRunVersion(runId, version) { return this.db.prepare('SELECT * FROM check_run_versions WHERE check_run_id=? AND version=?').get(runId, version) ?? null; }
+    findCheckRunVersionBeforeRequestVersion(runId, requestVersion) { return this.db.prepare('SELECT * FROM check_run_versions WHERE check_run_id=? AND observed_request_version<? ORDER BY version DESC LIMIT 1').get(runId, requestVersion) ?? null; }
+    updateCheckRun(r, v) {
+        this.transaction(() => {
+            if (v.check_run_id !== r.id || v.version !== r.version)
+                throw new Error('Invalid check run version.');
+            const result = this.db.prepare('UPDATE check_runs SET state=?,version=?,changed_by=?,changed_at=?,invalidation_reason=? WHERE id=? AND version=?').run(r.state, r.version, r.changed_by, r.changed_at, r.invalidation_reason, r.id, r.version - 1);
+            if (result.changes !== 1)
+                throw new Error('Invalid check run update.');
+            this.insertCheckRunVersion(v);
+        });
+    }
+    createCheckReceipt(r) {
+        this.db.prepare('INSERT INTO check_receipts(receipt_id,check_run_id,verifier_actor_id,observed_snapshot_sha256,observed_check_config_sha256,result,environment,tool_versions_json,execution_steps,started_at,finished_at,exit_code,logs_artifact_id,received_at,run_version) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(r.receipt_id, r.check_run_id, r.verifier_actor_id, r.observed_snapshot_sha256, r.observed_check_config_sha256, r.result, r.environment, JSON.stringify(r.tool_versions), r.execution_steps, r.started_at, r.finished_at, r.exit_code, r.logs_artifact_id, r.received_at, r.run_version);
+    }
+    checkReceiptRow(row) {
+        if (!row)
+            return null;
+        const { tool_versions_json, ...rest } = row;
+        return { ...rest, tool_versions: JSON.parse(tool_versions_json) };
+    }
+    findCheckReceiptByRunId(runId) { return this.checkReceiptRow(this.db.prepare('SELECT * FROM check_receipts WHERE check_run_id=?').get(runId)); }
+    findCheckReceiptById(receiptId) { return this.checkReceiptRow(this.db.prepare('SELECT * FROM check_receipts WHERE receipt_id=?').get(receiptId)); }
+    createCheckRunCredential(r) { this.db.prepare('INSERT INTO check_run_credentials(credential_id,check_run_id,created_at) VALUES(?,?,?)').run(r.credential_id, r.check_run_id, r.created_at); }
+    findCheckRunCredentialByCredentialId(id) { return this.db.prepare('SELECT * FROM check_run_credentials WHERE credential_id=?').get(id) ?? null; }
+    listCheckRunCredentials(runId) { return this.db.prepare('SELECT * FROM check_run_credentials WHERE check_run_id=? ORDER BY credential_id').all(runId); }
 }
 //# sourceMappingURL=sqlite-storage.js.map

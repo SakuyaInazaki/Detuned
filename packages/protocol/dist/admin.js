@@ -1,5 +1,5 @@
 import { Type } from '@sinclair/typebox';
-import { ActorKindSchema, CredentialCapabilitySchema } from './actors.js';
+import { ActorKindSchema, ActorSchema, OrdinaryCredentialCapabilitySchema } from './actors.js';
 import { SpaceRoleSchema } from './spaces.js';
 export const CreateActorRequestSchema = Type.Object({
     kind: ActorKindSchema,
@@ -8,7 +8,7 @@ export const CreateActorRequestSchema = Type.Object({
 export const CreateCredentialRequestSchema = Type.Object({
     actor_id: Type.String({ minLength: 1 }),
     allowed_space_ids: Type.Optional(Type.Array(Type.String())),
-    capabilities: Type.Optional(Type.Array(CredentialCapabilitySchema)),
+    capabilities: Type.Optional(Type.Array(OrdinaryCredentialCapabilitySchema)),
     expires_at: Type.Optional(Type.Union([Type.String({ format: 'date-time' }), Type.Null()])),
 }, { additionalProperties: false });
 export const CreateMembershipRequestSchema = Type.Object({
@@ -28,4 +28,9 @@ export const CreateRedactionRequestSchema = Type.Object({
     target_id: Type.String({ minLength: 1 }),
     reason: Type.String({ minLength: 1, maxLength: 2000 }),
 }, { additionalProperties: false });
+// Public operation data; credential token is returned only by its creation call.
+export const CreateCredentialDataSchema = Type.Object({ credential_id: ActorSchema.properties.id, actor_id: ActorSchema.properties.id, token: Type.String() }, { additionalProperties: false });
+export const RevokeCredentialDataSchema = Type.Object({ revoked: Type.Literal(true) }, { additionalProperties: false });
+export const DeactivateMembershipDataSchema = Type.Object({ deactivated: Type.Literal(true) }, { additionalProperties: false });
+export const RedactionResultSchema = Type.Object({ redaction_id: ActorSchema.properties.id }, { additionalProperties: false });
 //# sourceMappingURL=admin.js.map

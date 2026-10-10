@@ -1,0 +1,4 @@
+import {spawn} from 'node:child_process';
+const source='/private/tmp/detuned-m43-runtime.MU1a4q';
+const child=spawn('/opt/homebrew/bin/node',['--expose-internals',source+'/node_modules/vitest/vitest.mjs','run','--config',source+'/.detuned-m43/b-independent.config.ts'],{cwd:source,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',DETUNED_EXPERIMENT_SUITE:'loader',DETUNED_EXPERIMENT_REPO:'/Users/sakimi/Desktop/Detuned',DETUNED_EXPERIMENT_SOURCE:source},stdio:'inherit',detached:true});
+let kill;const timeout=setTimeout(()=>{try{process.kill(-child.pid,'SIGTERM')}catch{};kill=setTimeout(()=>{try{process.kill(-child.pid,'SIGKILL')}catch{}},2000)},178000);child.once('exit',(code,signal)=>{clearTimeout(timeout);clearTimeout(kill);console.log(JSON.stringify({runner_exit:code,signal}));process.exitCode=code??1});

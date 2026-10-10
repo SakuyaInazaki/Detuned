@@ -1,0 +1,21 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-resource-limits.test.ts (10 tests | 1 failed) 255ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > reapplies a nonpersistent main page cap per connection and floors using actual page size 14ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > refuses an existing oversized database rather than accepting SQLite silently enlarged cap 10ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > naturally reaches real FULL through at most 32 legal research writes and leaves the failed write atomic 12ms
+   × M3.4-A.2 runtime connection and registered artifact quotas > test injection triggers real allocation FULL at createPostRevision and rolls back the whole business transaction 5ms
+     → expected rejection
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > test injection triggers real allocation FULL at appendEvent and rolls back the whole business transaction 3ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > test injection triggers real allocation FULL at createIdempotencyRecord and rolls back the whole business transaction 3ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > cleans real staged and published files after injected allocation FULL at artifact event commit 20ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > counts ready/redacted/missing and rejects oversized declaration totals with BigInt instead of SQLite SUM overflow 104ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > serializes two real file publications competing for last global bytes allowance, with replay and restart 59ms
+   ✓ M3.4-A.2 runtime connection and registered artifact quotas > serializes two real file publications competing for last global objects allowance, with replay and restart 24ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  15:23:13
+   Duration  896ms (transform 233ms, setup 0ms, collect 415ms, tests 255ms, environment 0ms, prepare 41ms)
+

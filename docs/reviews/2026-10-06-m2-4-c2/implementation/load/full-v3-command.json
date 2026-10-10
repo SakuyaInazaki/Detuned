@@ -1,0 +1,54 @@
+{
+  "command": "node scripts/scale/run.mjs --manifest /private/tmp/detuned-c2-seed-full-20261006-v3-a1/manifest.json --runtime /private/tmp/detuned-c2-load-full-private-v3-a1/runtime.json --out /private/tmp/detuned-c2-load-full-v3-a1 --mode full --gated true",
+  "exit_code": 1,
+  "stdout": "full-v3.stdout.log",
+  "stderr": "full-v3.stderr.log",
+  "execution": "sole_full_run_real_loopback",
+  "result": "600_second_window_and_catchup_completed; postflight_gate_timeout; overall_not_complete",
+  "source_freeze": "freeze-manifest-v2.json",
+  "source_hash_check": "all_6_unchanged",
+  "public_artifacts": [
+    {
+      "path": "server-log.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "consumer-ledger.jsonl",
+      "bytes": 16706361,
+      "sha256": "bd0f4d6f0c8757be60aa75f0528edfe47cb0de8a1952048e42801e237e9050be"
+    },
+    {
+      "path": "write-ledger.jsonl",
+      "bytes": 2139249,
+      "sha256": "baa08b5aaeefbcbf02219d71b000612ae43bbafcff8c887fcefe4f676706aa9c"
+    },
+    {
+      "path": "requests.jsonl",
+      "bytes": 22992367,
+      "sha256": "941b571ec03b10ce9de59d035d7dbaf29a793361b0dad6202fdbf4feff823a76"
+    },
+    {
+      "path": "run-config.jsonl",
+      "bytes": 1387,
+      "sha256": "d5e7c4ff5a1e9f30bae44ffcb13ae241577f1e3c46d8a474b44e3b686b9fe167"
+    },
+    {
+      "path": "operations.jsonl",
+      "bytes": 6641365,
+      "sha256": "6a3dd929115b341d8eca5f2cda224b257fd3bae47d790ee5ad88d333219aad1b"
+    },
+    {
+      "path": "resources.jsonl",
+      "bytes": 518661,
+      "sha256": "48817d05883eb0f275f88dcf8f5039cea6f7dd8f97abf0e1448c4c9e9897c8e6"
+    },
+    {
+      "path": "summary.jsonl",
+      "bytes": 55787,
+      "sha256": "2210bad8ca4f797b80b3c9bfa3a0b3134839c572d02902aed370c8850bb503f3"
+    }
+  ],
+  "private_config_archived": false,
+  "retry": "not_run"
+}

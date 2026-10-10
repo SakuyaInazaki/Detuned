@@ -1,0 +1,25 @@
+--- before-index-stage/packages/storage-sqlite/src/sqlite-storage.ts
++++ packages/storage-sqlite/src/sqlite-storage.ts
+@@ -1,3 +1,4 @@
++import { POST_CREATED_SORT_KEY_SQL, preparePostCreatedOrderIndex } from './post-created-order-index.js';
+ import { checkSqliteReadiness, sampleSqliteStatus, type OperationalOptions } from './operational-status.js';
+ import { configureSqliteResourceLimits } from './sqlite-resource-limits.js';
+ import { SqliteSpaceExportSnapshot } from './space-export-snapshot.js';
+@@ -43,6 +44,8 @@
+     this.initPragmas();
+   }
+ 
++  prepareRuntimeReadIndexes(): void { preparePostCreatedOrderIndex(this.db); }
++
+   checkReadiness(): boolean { return checkSqliteReadiness(this.db, this.operationalOptions); }
+ 
+   sampleOperationalStatus(): StorageOperationalStatus {
+@@ -774,7 +777,7 @@
+ 
+   /** Canonical UTC milliseconds first; unknown historical values remain ordered by ID. */
+   listPostsInThreadByCreatedAt(threadId: string, limit: number, after?: { key: string | null; id: string }): { posts: (Post & { sort_key: string | null })[]; has_more: boolean } {
+-    const key = "CASE WHEN length(created_at) = 24 AND strftime('%Y-%m-%dT%H:%M:%fZ',created_at,'+0 seconds') = created_at THEN created_at ELSE NULL END";
++    const key = POST_CREATED_SORT_KEY_SQL;
+     const params: (string | number)[] = [threadId];
+     let where = '';
+     if (after) {

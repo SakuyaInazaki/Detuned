@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m4-token-source.test.ts (7 tests) 158ms
+ ✓ tests/contracts/m4-cli-errors.test.ts (4 tests) 2205ms
+   ✓ ECLI03 real parser outputs one safe error, preserves native help/version, and respects value/terminator JSON boundaries  1215ms
+   ✓ ECLI04 legacy write JSON and unknown operation errors are safe and retain exit2  986ms
+ ✓ tests/contracts/m3-backup-cli.test.ts (5 tests) 3407ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  907ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config  955ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses  579ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  653ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  312ms
+ ✓ tests/contracts/m4-artifact-cli.test.ts (4 tests) 3172ms
+   ✓ AB B03: real CLI upload metadata download preserves binary/zero bytes, explicit replay and persistent key intent  1600ms
+   ✓ AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output  1369ms
+ ✓ tests/contracts/m4-cli-boundaries-independent.test.ts (5 tests) 14090ms
+   ✓ E independent four single credential sources and anonymous/conflicting sources preserve real authorization  2213ms
+   ✓ E independent selected files fail safely without fallback or any HTTP  1099ms
+   ✓ E independent diagnostic argv consumption and genuine help/version emit once without HTTP  1261ms
+   ✓ E independent action parse/protocol/transport errors never disclose raw local markers  9157ms
+   ✓ E independent real credential success preserves exactly one stdout token and ordinary data output  358ms
+
+ Test Files  5 passed (5)
+      Tests  25 passed (25)
+   Start at  21:28:57
+   Duration  14.79s (transform 366ms, setup 0ms, collect 1.59s, tests 23.03s, environment 0ms, prepare 213ms)
+

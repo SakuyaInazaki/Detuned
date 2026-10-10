@@ -1,0 +1,13 @@
+{
+  "stage": "backup-one-case-recheck",
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m3-backup-recovery.test.ts",
+    "-t",
+    "rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup"
+  ],
+  "exit_code": 0,
+  "seconds": 3.652,
+  "evidence_root": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m6-1-a/verification/browser-backup-one-case-recheck"
+}

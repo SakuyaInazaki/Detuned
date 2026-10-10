@@ -1,0 +1,22 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-artifacts-http.test.ts > M2.1 HTTP artifact transport with real SQLite and FS > normalizes bounded metadata JSON errors to400 for text/plain and application/json with no rejected-upload residue
+AssertionError: expected 406 to be 400 // Object.is equality
+
+- Expected
++ Received
+
+- 400
++ 406
+
+ ❯ tests/integration/m2-artifacts-http.test.ts:116:37
+    114|       for (const value of [atLimit + ' ', '{']) {
+    115|         const rejected = await upload(form(file(), field(value, 'metad…
+    116|         expect(rejected.statusCode).toBe(400);
+       |                                     ^
+    117|         expect(rejected.json().error).toMatchObject({ code: 'VALIDATIO…
+    118|         expect(await committedState()).toEqual(beforeReject);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

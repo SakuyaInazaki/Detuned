@@ -1,0 +1,22 @@
+--- before-files/packages/web/src/styles.css
++++ packages/web/src/styles.css
+@@ -123,3 +123,19 @@
+   .overview .section-heading { align-items: flex-start; flex-direction: column; }
+   .overview-item { min-width: 0; }
+ }
++
++.safe-markdown { margin: .6rem 0 1rem; min-width: 0; }
++.markdown-toggle { padding: 5px 9px; font-size: 12px; margin-bottom: .6rem; }
++.markdown-rendered { overflow-wrap: anywhere; line-height: 1.8; }
++.markdown-rendered h1, .markdown-rendered h2, .markdown-rendered h3, .markdown-rendered h4 { line-height: 1.4; margin: 1.2rem 0 .5rem; }
++.markdown-rendered h1 { font-size: 1.65rem; }
++.markdown-rendered h2 { font-size: 1.35rem; }
++.markdown-rendered h3 { font-size: 1.15rem; }
++.markdown-rendered blockquote { border-left: 3px solid #9ecbbb; margin: 1rem 0; padding: .2rem 1rem; color: #52675e; }
++.markdown-rendered a { color: #126c60; text-decoration: underline; text-underline-offset: 3px; }
++.markdown-rendered code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; white-space: pre-wrap; overflow-wrap: anywhere; }
++.markdown-rendered :not(pre) > code { background: #f0f4f2; padding: .1em .3em; border-radius: 3px; }
++.markdown-rendered pre { max-width: 100%; overflow: auto; }
++.markdown-rendered p { margin: .6rem 0; }
++.markdown-image { display: inline; color: #52675e; font-size: .95em; }
++.markdown-original { white-space: pre-wrap; overflow-wrap: anywhere; }

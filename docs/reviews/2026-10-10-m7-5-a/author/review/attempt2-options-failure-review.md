@@ -1,0 +1,7 @@
+# M7.5-A attempt2 参数首失败独核
+
+真实安装成功与后续失败分开接受：install实际exit0/470.886568958s、stageactualclose/groupabsence；esbuild命令实际exit1/0.436318875s，stdout0、stderr141B。安全stderr SHA `4db06b121d4b35d17efa5053add93f1523bd4c69ede12779123d8aecdf4362b6` 与收据吻合，内容为Unknown options virtual-store-dir/network-concurrency/child-concurrency/ignore-pnpmfile。final仍failed/552.440987584s、原437source555dist不变、fixture保留；SQLite、九包build、158suite未运行。
+
+固定pnpm11.7实际dist/pnpm.mjs:162746–162762 rebuild CLI选取的rcOptions+pending/recursive不含上述四项；304210 unknownOptions处理在getConfig/commandhandler前返回exit1，因此rebuild脚本未执行，不是已证esbuild构建故障。共用install options误用于rebuild是具体runner缺陷；续跑必须按各命令实际类型分离有效options，不能靠未知普通flag。config-dot parser:285295可强制配置项，但只应对真实有效键使用，不把任意unknown当语义生效。
+
+首失败与原attempt2证据保留。root选择本次从空目录成功安装的精确root续跑，是分阶段组合证据，不是一轮pipeline成功；待actualrunner冻结、原pins/root权限/既有stageabsence、1200s含90cleanup门禁独审后root另行放行。当前本审查仅读证据/固定工具代码与写报告，无runtime或进程查询。

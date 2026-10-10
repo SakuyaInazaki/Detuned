@@ -1,0 +1,60 @@
+--- packages/storage-sqlite/src/schema.sql (v1)
++++ packages/storage-sqlite/src/schema.sql
+@@ -354,6 +354,7 @@
+ CREATE TABLE IF NOT EXISTS check_run_versions (
+   check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+   version INTEGER NOT NULL CHECK (version > 0),
++  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+   state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+   receipt_id TEXT,
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+--- packages/storage-sqlite/src/schema.ts (v1)
++++ packages/storage-sqlite/src/schema.ts
+@@ -354,6 +354,7 @@
+ CREATE TABLE IF NOT EXISTS check_run_versions (
+   check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+   version INTEGER NOT NULL CHECK (version > 0),
++  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+   state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+   receipt_id TEXT,
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+@@ -519,6 +520,7 @@
+ CREATE TABLE IF NOT EXISTS check_run_versions (
+   check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+   version INTEGER NOT NULL CHECK (version > 0),
++  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+   state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+   receipt_id TEXT,
+   changed_by TEXT NOT NULL REFERENCES actors(id),
+@@ -3162,6 +3164,12 @@
+         "type": "INTEGER",
+         "notnull": true,
+         "pk": 2
++      },
++      {
++        "name": "observed_request_version",
++        "type": "INTEGER",
++        "notnull": true,
++        "pk": 0
+       },
+       {
+         "name": "state",
+--- packages/storage-sqlite/src/sqlite-storage.ts (v1)
++++ packages/storage-sqlite/src/sqlite-storage.ts
+@@ -1669,7 +1669,7 @@
+   }
+ 
+   private insertCheckRunVersion(v: CheckRunVersionRecord): void {
+-    this.db.prepare('INSERT INTO check_run_versions(check_run_id,version,state,receipt_id,changed_by,changed_at,invalidation_reason) VALUES(?,?,?,?,?,?,?)').run(v.check_run_id,v.version,v.state,v.receipt_id,v.changed_by,v.changed_at,v.invalidation_reason);
++    this.db.prepare('INSERT INTO check_run_versions(check_run_id,version,observed_request_version,state,receipt_id,changed_by,changed_at,invalidation_reason) VALUES(?,?,?,?,?,?,?,?)').run(v.check_run_id,v.version,v.observed_request_version,v.state,v.receipt_id,v.changed_by,v.changed_at,v.invalidation_reason);
+   }
+   createCheckRun(r: CheckRunRecord, v: CheckRunVersionRecord): void {
+     this.transaction(() => {
+@@ -1682,6 +1682,7 @@
+   getNextCheckRunAttempt(requestId: string, checkName: string): number { return (this.db.prepare('SELECT COALESCE(MAX(attempt),0)+1 AS attempt FROM check_runs WHERE request_id=? AND check_name=?').get(requestId,checkName) as {attempt:number}).attempt; }
+   findLatestCheckRun(requestId: string, checkName: string): CheckRunRecord | null { return (this.db.prepare('SELECT * FROM check_runs WHERE request_id=? AND check_name=? ORDER BY attempt DESC LIMIT 1').get(requestId,checkName) as CheckRunRecord | undefined) ?? null; }
+   findCheckRunVersion(runId: string, version: number): CheckRunVersionRecord | null { return (this.db.prepare('SELECT * FROM check_run_versions WHERE check_run_id=? AND version=?').get(runId,version) as CheckRunVersionRecord | undefined) ?? null; }
++  findCheckRunVersionBeforeRequestVersion(runId: string, requestVersion: number): CheckRunVersionRecord | null { return (this.db.prepare('SELECT * FROM check_run_versions WHERE check_run_id=? AND observed_request_version<? ORDER BY version DESC LIMIT 1').get(runId,requestVersion) as CheckRunVersionRecord | undefined) ?? null; }
+   updateCheckRun(r: CheckRunRecord, v: CheckRunVersionRecord): void {
+     this.transaction(() => {
+       if(v.check_run_id!==r.id || v.version!==r.version) throw new Error('Invalid check run version.');

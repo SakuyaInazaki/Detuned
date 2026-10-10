@@ -1,0 +1,29 @@
+--- a721 rejected
++++ continuation static repair
+@@ -3,7 +3,7 @@
+ """
+ from pathlib import Path, PurePosixPath
+ import hashlib, json, os, re, selectors, shutil, signal, stat, subprocess, sys
+-import tarfile, time
++import tarfile, time, urllib.parse
+ 
+ VERIFY = Path(__file__).resolve().parent / 'continuation'
+ PLAN = json.loads((VERIFY / 'execution-plan.json').read_text())
+@@ -151,7 +151,7 @@
+         # Only known own exact group; never process census or unproven group kill.
+         if proof and exists_group(child.pid):
+             os.killpg(child.pid, signal.SIGTERM)
+-            end = min(time.monotonic() + 2, START + 1800)
++            end = min(time.monotonic() + 2, START + PLAN['budget_seconds']['total'])
+             while child.poll() is None and time.monotonic() < end:
+                 time.sleep(0.05)
+             if exists_group(child.pid) and left(True) > 0:
+@@ -170,7 +170,7 @@
+         selector.close()
+         for stream in [child.stdout, child.stderr]:
+             stream.close()
+-        end = min(time.monotonic() + 2, START + 1800)
++        end = min(time.monotonic() + 2, START + PLAN['budget_seconds']['total'])
+         while exists_group(child.pid) and time.monotonic() < end:
+             time.sleep(0.05)
+         row['group_absent'] = not exists_group(child.pid)

@@ -1,0 +1,70 @@
+--- a/m7-1b1-task.md
++++ b/m7-1b1-task.md
+@@ -1,6 +1,6 @@
+ # M7.1-B1 HTTP + shared client task候选
+ 
+-status: root_fixed_scope_pending_current_gate_seal_fresh_dispatch
++status: root_approved_candidates_pending_m7a_acceptance_metadata_seal_b1_fresh_dispatch
+ 
+ 只planning，不实施/运行。当前M7.1-A gate失败优先。B1只HTTP+sharedclient；CLI/MCP/tools/adapter等B2，Web/browser继续保护；无新表/port/allattempt目录。A core/protocol/server+HTTP作者test，B client/transfer+contract作者test，D独验与唯一串行gate。候选existing/missing不等于写入授权。
+ 
+@@ -49,10 +49,13 @@
+ 
+ 真实HTTP/共享client+SQLite/bounded bytes：普通/verify权限矩阵、sealed隔离、wrong space/run/post/revision/hash/body/unknown字段；samekey网络错误重放、terminal合法历史replay/currentredaction、rotation/expiry；一次签发retry0/key零HTTP；logicalOperationId零file/HTTP/getMe；目录完整冻结顺序/null/wholearray拒绝；scopedURL特殊编码IDs与genericartifact仍拒verify；stream限额/EOF/hash/MIME/cancel/late response资源处置。作者HTTP与client受控transport契约分层，D独验；不能将controlled反例称外部宿主认证。不得生成占位接口或宣称未运行通过。
+ 
+-## 精确接点与一个需root裁的技术缺口
++## 精确接点与root批准的JCS共享决定
+ 
+ - core/check-service.ts仅新增普通required目录entry，公式仍readRequiredCheckFacts。
+ - protocol/review.ts、response-guards.ts、openapi.ts负责新DTO/targetedguards/实际spec；server/app.ts注册CheckService与新checks plugin。
+ - routes/artifacts.ts当前bounded上传handler是plugin内部闭包且含multipart注册；需要其owned窄提取/复用而非在新checks route复制较弱版本。
+ - client/client.ts及artifact-transfer.ts为typedcall/key/targetedguard/scoped完整性hooks；index已有exports，不必为候选仪式扩owner。
+-- **snapshot actual SHA验证 portable canonical接点缺口：**现ReviewSnapshotView guard只schema/date；RFC8785+预算的canonicalizeReviewJson在modules/review/src/canonical-json.ts（纯模块，非protocol）。client不能引入core Node crypto或新增module依赖；现artifact-transfer有WebCrypto SHA256但canonical仍缺共享portable入口。若root“hash一致性”要求客户端重算manifest SHA（而非只字段hash交叉绑定），建议root批准迁移纯canonical helper到protocol新review-canonical.ts，module原文件reexport保持旧调用/测试，protocol/review.ts reexport供client；最小额外existing module canonical+new protocol helper，当前owner候选未擅加。root需裁，不复制公式/不降要求。
++- **Root批准实际manifest SHA验证与单实现迁移：**原modules/review/src/canonical-json.ts纯实现逐字移到新packages/protocol/src/review-canonical.ts，算法、262144 UTF8 bytes/64 depth/20000 nodes限制与canonicalizeReviewJson、ReviewCanonicalizationError、ReviewCanonicalizationReason三符号名字全部保持；旧module文件仅re-export，packages/protocol/src/index.ts显式出口。旧request-service.ts和module index.ts两个调用方不改，不复制算法。helper仅标准TextEncoder/Object/Set/JSON，无Node依赖。
++- 新CheckSnapshot client先严格schema及请求space/run绑定，再用既有WebCrypto对manifest的JCS UTF8字节实际重算SHA256并比对manifest_sha256；错误hash或非法canonical payload安全拒绝，不新增Node或浏览器专项。
++- 原JCS黄金与边界测试及旧module入口纳入回归；新client契约包含篡改hash/canonical payload反例，不能只验证摘要格式或对照响应自述。
++- 精确候选为10 existing/5 missing：新增A existing旧module canonical文件与protocol/index.ts，以及A missing protocol/review-canonical.ts。候选不是写入授权；必须先M7.1-A验收/metadata/seal，再B1 fresh与root dispatch，当前不创建helper占位或修改产品。
+--- a/m7-1b1-owner-candidates.json
++++ b/m7-1b1-owner-candidates.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "planning_candidates_pending_hash_helper_decision_gate_seal_fresh_dispatch",
++  "status": "root_approved_candidates_pending_m7a_acceptance_metadata_seal_b1_fresh_dispatch",
+   "existing": {
+     "packages/core/src/services/check-service.ts": {
+       "owner": "A",
+@@ -32,6 +32,14 @@
+     "packages/client/src/artifact-transfer.ts": {
+       "owner": "B",
+       "state": "existing"
++    },
++    "modules/review/src/canonical-json.ts": {
++      "owner": "A",
++      "state": "existing"
++    },
++    "packages/protocol/src/index.ts": {
++      "owner": "A",
++      "state": "existing"
+     }
+   },
+   "new": {
+@@ -50,6 +58,10 @@
+     "tests/contracts/m7-check-http-client-independent.test.ts": {
+       "owner": "D",
+       "state": "missing"
++    },
++    "packages/protocol/src/review-canonical.ts": {
++      "owner": "A",
++      "state": "missing"
+     }
+   },
+   "protected": [
+@@ -63,7 +75,7 @@
+   ],
+   "notes": [
+     "No schema/port changes; no allattempt directory.",
+-    "Optional portable canonical helper move requires root decision before adding ownership.",
++    "Root approved single portable JCS implementation move, unchanged algorithm/limits/three exports; module re-export and explicit protocol index export. No write authorization before fresh dispatch.",
+     "Existing generic client/artifact APIs and domain idempotency projection remain intact."
+   ]
+ }

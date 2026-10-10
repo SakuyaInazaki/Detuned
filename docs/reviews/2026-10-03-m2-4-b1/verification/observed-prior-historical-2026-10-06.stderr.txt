@@ -1,0 +1,15 @@
+node:internal/fs/promises:1287
+  return new FileHandle(await PromisePrototypeThen(
+                        ^
+
+Error: ENOENT: no such file or directory, open '/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-m22a-history-TgEOCm/credentials.json'
+    at async open (node:internal/fs/promises:1287:25)
+    at async readFile (node:internal/fs/promises:1935:14)
+    at async file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-2-b/verification/check-historical-http.mjs:8:24 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/var/folders/s0/zq7fp6pj2z74h4xx81jwqnkw0000gn/T/detuned-m22a-history-TgEOCm/credentials.json'
+}
+
+Node.js v26.3.0

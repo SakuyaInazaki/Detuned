@@ -1,0 +1,25 @@
+{
+  "status": "source_ready_not_run",
+  "helper_node_check": 0,
+  "formal_cases": 4,
+  "files": {
+    "tests/integration/m3-resource-limits-independent.test.ts": "d6ba0d2a2e16b22faa55db68edc0a555828c25ca4cc32d361c6a66ce41e92412",
+    "tests/helpers/m3-resource-limits-worker.mjs": "92b1637c53179b403c66e94754b17561f6772391e5ae4ee67851b19c81fee600"
+  },
+  "material_bounds": {
+    "natural_post_max_requests": 32,
+    "body_bytes_per_post": 60000,
+    "missing_rows": 1025,
+    "missing_bytes_each": 9007199254740991,
+    "registered_missing_total_exceeds_sqlite_int64": true
+  },
+  "fault_boundary": "TEMP trigger before artifact registration allocates real zeroblob2MiB into existing instance_metadata under1MiB cap; backend publish/discard counters independently checked; no official schema claim",
+  "checks_not_run": [
+    "product tests",
+    "build",
+    "typecheck",
+    "lint",
+    "fullsuite",
+    "current29"
+  ]
+}

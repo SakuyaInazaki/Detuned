@@ -1,0 +1,18 @@
+--- before/scripts/integrations/web/independent.spec.ts
++++ after/scripts/integrations/web/independent.spec.ts
+@@ -4,6 +4,7 @@
+ 
+ async function discussion(page: Page, forum: ForumFixture) {
+   await page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true}).click();
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '讨论', exact: true}).click();
+   await page.getByRole('button', {name: `${forum.thread.title} 开放 · 查看帖子 →`, exact: true}).click();
+   await expect(page.getByRole('button', {name: '帖子首页', exact: true})).toBeEnabled();
+ }
+@@ -36,6 +37,7 @@
+   await expect(page.getByRole('status')).toContainText('已恢复登录');
+   const space = page.getByRole('button', {name: `${forum.space.slug} 进入空间 →`, exact: true});
+   await space.focus(); await page.keyboard.press('Enter');
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '讨论', exact: true}).click();
+   const filter = page.getByRole('combobox', {name: '主题状态', exact: true});
+   await filter.selectOption('archived');
+   await expect(page.getByText('当前页暂无归档主题。', {exact: true})).toBeVisible();

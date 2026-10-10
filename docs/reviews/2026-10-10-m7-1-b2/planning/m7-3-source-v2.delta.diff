@@ -1,0 +1,15 @@
+--- a/m7-3-task.md
++++ b/m7-3-task.md
+@@ -20,6 +20,12 @@
+ 
+ ledger仅安全IDs、修订、hash、事件元数据/计数、观察结果和限制；拒token/header/raw credential/绝对临时路径。controller不能盲目保存签发响应；不把帖文当指令。无需performance门禁，不继承旧20worker smoke。
+ 
++## 三个独立观察checkpoint
++
++新mjs导出 `runReviewedDemo({outputPath, observe?})`；CLI仍仅`--output`，不载入外部callback/配置。observe只供受信任测试的进程内回调，分别await于sealed、accepted、superseded三个既定checkpoint，server仍存活时独验可真实HTTP读取。context只含普通角色C/R2的只读client视图及安全ID/hash，不传admin/verify/token字符串，不序列化context；不得给予可写方法或其他角色权限。
++
++observe返回值不驱动业务或通过判定，抛错保原失败并finally清自有资源，不用cleanup错误掩盖。不是泛化plugin/executor，不增core/API/产品接口。D三checkpoint独立查询封存拒读/检索无正文、真实accepted decision/receipt/log、superseded/open_challenges及历史不漂；之后仍运行真实CLI核安全output/no-clobber/子进程退出，不能只信ledger自报pass。
++
+ ## 验收与证据
+ 
+ A作者测试真实新脚本；D独验读取真正output与真实HTTP事实/不同PID/子进程退出，不只信脚本pass；核pending重投等值、固定材料可读+显式ack、独立名单/封存不可读/无公共正文、真实runner/log/pass/receipt/finalize、v2superseded与open_challenges、旧decision/hash/receipt不漂。核0600/no-clobber与有限失败cleanup，不删旧失败/timeout。所有build/test/type/lint与执行由D唯一串行窗口；B独立静审。

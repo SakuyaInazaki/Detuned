@@ -1,0 +1,40 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+$ pnpm -r run build
+Scope: 10 of 11 workspace projects
+packages/protocol build$ tsc
+packages/protocol build: Done
+packages/client build$ tsc
+packages/core build$ tsc
+packages/client build: Done
+packages/core build: Done
+packages/adapter-pi build$ tsc
+packages/storage-sqlite prebuild$ node scripts/generate-schema.mjs
+modules/review build$ tsc
+packages/mcp build$ tsc
+packages/storage-sqlite prebuild: Successfully generated schema.ts from schema.sql
+packages/storage-sqlite prebuild: Done
+packages/storage-sqlite build$ node scripts/generate-schema.mjs && tsc
+packages/storage-sqlite build: Successfully generated schema.ts from schema.sql
+modules/review build: Done
+packages/web build$ tsc --noEmit && vite build
+packages/mcp build: Done
+packages/storage-sqlite build: Done
+packages/web build: vite v7.3.7 building client environment for production...
+packages/web build: transforming...
+packages/adapter-pi build: Done
+packages/web build: ✓ 614 modules transformed.
+packages/web build: rendering chunks...
+packages/web build: computing gzip size...
+packages/web build: dist/index.html                   0.35 kB │ gzip:   0.26 kB
+packages/web build: dist/assets/index-CAbrs-9F.css    9.63 kB │ gzip:   2.81 kB
+packages/web build: dist/assets/index-CO8NaAjy.js   670.62 kB │ gzip: 197.85 kB
+packages/web build: ✓ built in 982ms
+packages/web build: (!) Some chunks are larger than 500 kB after minification. Consider:
+packages/web build: - Using dynamic import() to code-split the application
+packages/web build: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+packages/web build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+packages/web build: Done
+packages/server build$ tsc
+packages/server build: Done
+packages/cli build$ tsc
+packages/cli build: Done

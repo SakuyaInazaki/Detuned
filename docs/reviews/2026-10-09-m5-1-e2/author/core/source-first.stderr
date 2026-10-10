@@ -1,0 +1,18 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m5-thread-post-order.test.ts [ tests/contracts/m5-thread-post-order.test.ts ]
+Error: Cannot find package '@modelcontextprotocol/sdk/validation/ajv.js' imported from '/Users/sakimi/Desktop/Detuned/tests/contracts/m5-thread-post-order.test.ts'
+ ❯ tests/contracts/m5-thread-post-order.test.ts:7:1
+      5| import { DetunedClient } from '@detuned/client';
+      6| import { DETUNED_TOOLS, generateOpenApiSpec } from '@detuned/protocol';
+      7| import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/vali…
+       | ^
+      8| 
+      9| describe('M5 E2 recorded creation time directory', () => {
+
+Caused by: Error: Failed to load url @modelcontextprotocol/sdk/validation/ajv.js (resolved id: @modelcontextprotocol/sdk/validation/ajv.js) in /Users/sakimi/Desktop/Detuned/tests/contracts/m5-thread-post-order.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.3.7_@types+node@22.20.4_jiti@2.7.0_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:22907:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

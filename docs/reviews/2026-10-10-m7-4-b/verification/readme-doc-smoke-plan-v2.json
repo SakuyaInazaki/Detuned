@@ -1,0 +1,34 @@
+{
+  "status": "source only; no runtime authorized",
+  "draft_sha256": "e36ccb133d9684f9f028a92acd85999bc35f54d2934e9f12ebc09fd1a02d772a",
+  "script_sha256": "ace03d7521275407044ba8867ccb35213ccd439b22fdde2d9440ef0da7bbb7a9",
+  "scope": "extract exact 3 draft shell blocks; substitute only directory canonical owned0700/tmp/local and loopback port3000->0/boundport; exec wrapper preserves CLI args; no install/build blocks run",
+  "extra_assertions": "bootstrap/admin plaintext equality privateonly0600; twoordinary tokenfiles0600; actualCLI me distinctnonadmin actors allowedonlyspace readwrite",
+  "argv": [
+    "python3",
+    "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-b/verification/readme-doc-capture.py"
+  ],
+  "sandbox": "require_escalated auto_review for bounded loopback already EPERM-proven; no other capabilities",
+  "budgets": {
+    "work_ms": 20000,
+    "cleanup_ms": 3000,
+    "outer_absolute_ms": 24000
+  },
+  "outer_capture_recipe": "launch smoke driver as detached exact own processgroup; all its shell/CLI children detached:false inherit same group; capture safe stdout/stderr; at23s TERM exactown group then at23.5s KILL ifneeded; waitactualdriverclose only remainingto24s; never globalps; groupabsence check via exactregisteredPGID; failure/unverified retain registeredroot/control evidence, no pretendcleanup",
+  "normal_exit": "actual driverclose0/null; exactgroupabsent and scriptcleanupallchildclosed/rootabsence; safe resultonly, rawcredentials neverpublic",
+  "failure": "fixedstage+whiteerrorname/code only; no rawmessage/token/stdout diff; preservefailure",
+  "not_run": [
+    "all commands",
+    "syntax",
+    "smoke",
+    "runtime capture"
+  ],
+  "capture_sha256": "ad57c645f8d7a3b0af7e16066b786b7215b149d8060f33d7f850221c7f6a2711",
+  "source_argv": "node script output private-registry; all normalCLI children nondetached inherit already-confirmed drivergroup",
+  "private_registration": "canonical0700 ownroot+registry committed before first shell/CLI spawn; no empty registry cleanup proof",
+  "static_check_proposal": [
+    "node --check verification/readme-doc-smoke.mjs",
+    "Python ast.parse source (no execution)"
+  ],
+  "cleanup_update": "registeredroot attempt independently in finally; stdout parse failure never skips it; rootabsence unverified retains control/registry and failed originalerror priority"
+}

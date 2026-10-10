@@ -1,0 +1,25 @@
+{
+  "status": "prepared frozen, no runtime",
+  "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+  "test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+  "capture_sha256": "00d94224b40f88527ad96067a58e7b51bc65d5a016ffa47c2ef99783c5aac143",
+  "plan_sha256": "7d1c9e2aa9c9e223cd2edfb0b480c02a0c37620fb5f2af89a8677781ca27c239",
+  "protected_helper": {
+    "bytes": 1015,
+    "sha256": "0202f11b6071607d6180aa833eeb39c42f82a1a2ba019c3df47ea650b9e2acf1"
+  },
+  "nonowner_drift": [],
+  "source_baseline_count": 436,
+  "source_current_count": 437,
+  "dist_count": 555,
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "lock_sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+  "protected_source_files": {
+    "tests/contracts/m7-codex-owned-group.test.ts": "81fed70fcbb5d5fa7ecf59138c7e05a819a1985eb7d5d68022024b25a6d96a6f",
+    "scripts/integrations/claude-check-probe.mjs": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+    "tests/contracts/m7-claude-probe-ownership.test.ts": "e6341a8c7a7fe3bff61b57fe7705c26c0d49072c638068dff02f66b9504e1d7a"
+  },
+  "capture_delta": "only evidence location and source pin; authority logic unchanged",
+  "test_expected_names": "read-only import protected Claude nativeCheckNames, same production Codex dependency; Codex factory direct",
+  "runtime": "none"
+}

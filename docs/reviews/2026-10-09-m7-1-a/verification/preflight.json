@@ -1,0 +1,138 @@
+{
+  "status": "preflight_pass",
+  "runtime": "No gate executed",
+  "authors": {
+    "A": {
+      "freeze_path": "docs/reviews/2026-10-09-m7-1-a/author/backend/freeze.json",
+      "freeze_sha256": "df0aa550ba3b71906baf237410067a49bfeec428e2cda06d09df9f684c3f96c2",
+      "paths": 23,
+      "mismatches": []
+    },
+    "B": {
+      "freeze_path": "docs/reviews/2026-10-09-m7-1-a/author/storage/freeze-v2.json",
+      "freeze_sha256": "52130706a62113440eda223c05882a401ae2d2fcfd239331f47ab752b8441397",
+      "paths": 25,
+      "mismatches": []
+    },
+    "D": {
+      "freeze_path": "docs/reviews/2026-10-09-m7-1-a/verification/d-source-ready.json",
+      "freeze_sha256": "9f268d2e51a3779ab46f6dfd16fb3b800aa0bc6283680e7e00a9562593d17ebf",
+      "paths": 2,
+      "mismatches": []
+    }
+  },
+  "final_bound_source_hashes": {
+    "packages/protocol/src/actors.ts": "d1fe841a6eef3e152f631fd18276bbb2b48d4360d3b2a04eae948a81f2aca884",
+    "packages/protocol/src/review.ts": "c9596654c7be7d7dfbbe0c0381592a697b473039b0a183fbe2631ae98ff4d63e",
+    "packages/protocol/src/response-guards.ts": "648aa1de19fa0da3c1c9287ebc8c90c21a30981efd1cf14591e345b2f55f9dbf",
+    "packages/core/src/ports/storage.ts": "86c596b00477eeeed38cc8dac7a3f3fb5353aed978953553e4444d9d546b9fda",
+    "packages/core/src/services/auth-service.ts": "3a9391c3b4c0e84c0898792fb6919aea4b73c93bf650d603a98c7bd5e9f63835",
+    "packages/core/src/services/web-session-service.ts": "cb8850b9a44e0508569410bd494dbfdcf9c41b0a9ad15ffb11ef785d8fa8cfcd",
+    "packages/core/src/services/artifact-service.ts": "618847dd686b6e92dfb457dbe24bf0ca4ae0ec458eaf2ff3868586d5ae5c2b72",
+    "packages/core/src/services/review-decision-records.ts": "d5e9a463e3cf2e457ea26e1b635144fed7be64b37ab119fe08f4f4e7b6ec3068",
+    "packages/core/src/services/review-status-facts.ts": "9bc092b8dcaf65c44aa63290004ce13816b9533fd0f5a56b265333361ea2cd7f",
+    "packages/core/src/services/review-lifecycle.ts": "778c6aa2e423a18fadf29146b2c70b82234080f8878026017467541df2c85d03",
+    "packages/core/src/services/idempotency-service.ts": "d1e8c1e604043cd17faa4f38e7448a0d29dbf873066e842e3640dbf92a5de49b",
+    "packages/core/src/index.ts": "ec646d5d78f8ac793373ad44cb95bcc739051f615bb439ce2575c77b5bff5363",
+    "modules/review/src/finalization-service.ts": "2872234c68223397494a19a1ba38083533c9ec0eb79a9ca05f6fa443bc1f75f0",
+    "packages/server/src/routes/spaces.ts": "d69bd20ced1f885cfdea1dd89c26c3539f26661c316850a5eb64e1d977218d16",
+    "packages/protocol/src/admin.ts": "346658e9d0dc36729d57956d505fab75372e7c2dbfd57845b1aca77c340cf9d2",
+    "packages/core/src/services/admin-service.ts": "90adf751ebd03131c34f7987714ed6805de25afe20ac9763d07111baa38c573d",
+    "packages/protocol/src/events.ts": "82894e054882b49e8d2f34ea929a8f80ebfa3d27738d95da6466b288290c0de0",
+    "packages/core/src/services/event-service.ts": "9bf590c926a9a4febe479f6efa449fc8467d3a8a6305c62335f650a2f51f6369",
+    "packages/core/src/services/check-service.ts": "09f1bdc34b98c14e058dfc924dd477a9d35c973e03e516c3c00abe7fe8544e7e",
+    "packages/core/src/services/check-records.ts": "913377830da5c7ad3d6d140ce7a974a350e7b4066a6ed06f13f2da3258f84baa",
+    "packages/core/src/services/check-authorization.ts": "20344904b7d774f580bbde69c74d3925190e14a3b4f3a58f1bbff257bd1337c6",
+    "tests/integration/m7-check-domain.test.ts": "6bf78b56e3c0a3fa030890d1aa61a76a5b3ecc0ecb40dbcdc6164a5382113551",
+    "tests/integration/m7-check-scope-artifacts.test.ts": "92b03a1337f9cd111e6e2e05b347b2219a3c13f86b3aead8fe95e249f1013e61",
+    "packages/storage-sqlite/src/schema.sql": "bdb888f49a55a718ac22b0b80542cb93a32d5193f5129330482d44d8023f0b0b",
+    "packages/storage-sqlite/src/schema.ts": "035a45ffd0cd71848ad2e9533a9c7e3a91e4fde84d67b529dfbaacf326c36f54",
+    "packages/storage-sqlite/src/sqlite-storage.ts": "e782d81a7f9bd52664c57d6ac100eb04bb23e21fc52a2a8f97bd96563ae42db6",
+    "packages/storage-sqlite/src/bootstrap.ts": "e0e71849c8de6c176d60c76de6e5912f53e814841ceee20bfd88d9e6993a92d3",
+    "packages/storage-sqlite/src/offline-backup.ts": "3141c6c0edb03193183e5b01779a93db2496c77ebdd9530a85dd1496759021cc",
+    "packages/storage-sqlite/src/offline-upgrade.ts": "fe4695fe1bc54a8e7f1b3aa3055442efb561c33d9897ed0df9a7877143db0bde",
+    "packages/storage-sqlite/scripts/generate-schema.mjs": "ed1d3e5491e1b487fe19fe7ede2a2bf513c8c27682c12016765ba5bec434b816",
+    "packages/storage-sqlite/scripts/check-schema-sync.mjs": "0988753dc0a8caf4988944d8f96cac0096d8de41b2492b8773df8abb91b0cea0",
+    "packages/storage-sqlite/tests/schema-generation.test.ts": "25cf6b4687b392509978c265df10893cbf6713d1c4db295930ca5f4ef889c733",
+    "packages/protocol/src/export.ts": "074762acb2fd2f3d1a9113ff4dcb4deae76d3740e9ce39220f6eed1e3370d77a",
+    "packages/core/src/services/space-export-service.ts": "a759e8f3e16d297189d528722549e8fc34bed922653df21ba55b668c8e8ffeba",
+    "packages/storage-sqlite/tests/storage.test.ts": "3a376c9520e2f0d9e2f807f1a5173fe1977f577310806e7e98519443f47b5e12",
+    "tests/integration/m3-space-export.test.ts": "f72af38d259d4aa0c693f63646f6cf9bc3ba0c4a750e7abbe16c3fadd347f0e0",
+    "tests/contracts/m3-backup-cli.test.ts": "13dc9f8f4749a38861a9ff5f29a6126aa6c32521dce4f5b9848f43dcaf603280",
+    "tests/contracts/m3-offline-upgrade-contract.test.ts": "6fc467d9773456f8bc35a2d0321d21561d6c6050e45084b087f15d6eb8e79a6e",
+    "tests/integration/m3-upgrade-independent.test.ts": "14f8c196696cafc53a5ec44a14cb773fc2023b1d6d9c28acc91919f97d15f5a8",
+    "tests/integration/m6-schema3-maintenance.test.ts": "185bf9fd5dfcdb7b85332b5ffbf68a4fc12b493c37ee905dd2f089586169e18a",
+    "tests/integration/m6-schema4-maintenance.test.ts": "390f5bd90fd33462ab605ea1761af6bf2669181c325d6aae18b89b572d1aa149",
+    "tests/integration/m6-schema4-maintenance-independent.test.ts": "946c65ade0ca6a506048d1a35a406b64a4c7f649de28c60b757787d3d7f69fc0",
+    "tests/integration/m6-schema5-maintenance.test.ts": "9660694789c669baf4b97c74ce79148738d84b7cd0e33a8046acbdb131d5eae2",
+    "tests/integration/m6-schema5-maintenance-independent.test.ts": "0a1913fdcdd39aacbe56dc1c02a4941ea13963cb1808a27402a8e910f4d1c1d4",
+    "tests/integration/m3-backup-recovery.test.ts": "d028c6ed8927e660e10a8c207e76d3449c096b0e529e7d45ce40df111d429d68",
+    "tests/fixtures/historical-v5-schema.sql": "cde0048952c6a38041e3909b0fe68d099eeacad58e0daf1f5b3ddb086e082de1",
+    "tests/fixtures/historical-v5-schema.README.md": "e2eef991010708591f9cba63a0a94f8c4353be89bddf0061a2b0818cf33b52d8",
+    "tests/integration/m7-schema6-maintenance.test.ts": "cbdace586cde47f7662d67724568086dae7fdee24cd74d695d1db7a7f7d1e920",
+    "tests/integration/m7-check-domain-independent.test.ts": "9f890bc29f7b3a5ef0b997ab91de71d4181eb6c8634cb4e6281414d805a82a5b",
+    "tests/integration/m7-schema6-maintenance-independent.test.ts": "bb7a9f6ed99261bd6016a4b6ed8bdef9230ad23ccbedf8e40916a90a62d7385b"
+  },
+  "capture_assets": {
+    "tests/fixtures/m7-schema5-baseline/README.md": {
+      "sha256": "ea3c803aac9dc1e1d3704ef341acf07e6932c4592bbcac6f227b6a488a55404f",
+      "bytes": 2284
+    },
+    "tests/fixtures/m7-schema5-baseline/database.sqlite": {
+      "sha256": "d784753dd1e8e5dc63518147158efa2ac160e81d28ecbb1966656da4cb0d5752",
+      "bytes": 331776
+    },
+    "tests/fixtures/m7-schema5-baseline/generate-v5.mjs": {
+      "sha256": "bf3bdb4ac8cab722493c7e10ec3b5a6f6d404f9a3e612398902251856030aeb5",
+      "bytes": 12440
+    },
+    "tests/fixtures/m7-schema5-baseline/manifest.json": {
+      "sha256": "ec7d875276dc0b51c3aa7d9dbd74416675dcdf2b3b7675b13e3302e0eae9ac58",
+      "bytes": 10521
+    }
+  },
+  "capture_mismatches": [],
+  "protection_checks": {
+    "product_source_config_test_hashes": {
+      "count": 393,
+      "unauthorized_drift": []
+    },
+    "dist_hashes": {
+      "count": 535,
+      "unauthorized_drift": []
+    },
+    "current_document_hashes": {
+      "count": 64,
+      "unauthorized_drift": []
+    },
+    "mutable_status_document_hashes": {
+      "count": 5,
+      "unauthorized_drift": []
+    },
+    "sql_archive_before_hashes": {
+      "count": 7,
+      "unauthorized_drift": []
+    },
+    "integration_protection_hashes": {
+      "count": 7,
+      "unauthorized_drift": []
+    }
+  },
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "head_matches": true,
+  "old_evidence": {
+    "count": 11026,
+    "basis": "accepted fresh inventory reused; not recursively rescanned",
+    "baseline_sha256": "c5e7554d6ac337146ef9b30bf57c6b2ffe3ef3886520df55c80e2a9693219777"
+  },
+  "new_test_source_counts": {
+    "tests/integration/m7-check-domain.test.ts": 6,
+    "tests/integration/m7-check-scope-artifacts.test.ts": 4,
+    "tests/integration/m7-schema6-maintenance.test.ts": 3,
+    "tests/integration/m7-check-domain-independent.test.ts": 7,
+    "tests/integration/m7-schema6-maintenance-independent.test.ts": 3
+  },
+  "new_total": 23,
+  "failures": [],
+  "pending": "B final SHA binding/logical review and root execution release"
+}

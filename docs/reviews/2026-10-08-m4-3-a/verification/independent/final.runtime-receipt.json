@@ -1,0 +1,55 @@
+[
+  {
+    "exact_names": [
+      "mcp__detuned__forum_ack",
+      "mcp__detuned__forum_context",
+      "mcp__detuned__forum_poll",
+      "mcp__detuned__forum_publish",
+      "mcp__detuned__forum_read",
+      "mcp__detuned__forum_relate",
+      "mcp__detuned__forum_search",
+      "mcp__detuned__forum_subscribe"
+    ]
+  },
+  {
+    "case": "acl",
+    "existing_denied_space": true,
+    "counts_unchanged": true,
+    "session_count": 1
+  },
+  {
+    "scope": "independent-acl",
+    "owned_pids": [
+      50399,
+      50400
+    ],
+    "all_exited": true
+  },
+  {
+    "scope": "independent-first",
+    "owned_pids": [
+      50401,
+      50402
+    ],
+    "all_exited": true
+  },
+  {
+    "case": "replacement",
+    "event_count": 1,
+    "batch_id": "bat_845fcc2c-b8c8-43ab-91eb-c3875611e7c5",
+    "from_seq": 2,
+    "through_seq": 3,
+    "ack_seq": 2,
+    "sessions": 2,
+    "ack_requests": 0,
+    "pending_replayed": true
+  },
+  {
+    "scope": "independent-second",
+    "owned_pids": [
+      50403,
+      50404
+    ],
+    "all_exited": true
+  }
+]

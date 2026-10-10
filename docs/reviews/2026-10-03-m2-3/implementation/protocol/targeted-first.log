@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-search-contracts.test.ts (5 tests | 1 failed) 547ms
+   ✓ M2.3 actual search transport and tool pagination > S01: shared tool call retains real pagination meta and lossless exact tags 125ms
+   ✓ M2.3 actual search transport and tool pagination > S02: actual app/client accepts approved Unicode and encoded long URL boundaries 35ms
+   ✓ M2.3 actual search transport and tool pagination > S03: HTTP JSON tags preserve all exact strings, with strict carrier/CSV/query rejection 40ms
+   × M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta 304ms
+     → expected { …(3) } to deeply equal { …(3), …(1) }
+   ✓ M2.3 shared logical query contracts > S05: Unicode boundaries agree across TypeBox and both installed AJV RegExp flags 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-search-contracts.test.ts > M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta
+AssertionError: expected { …(3) } to deeply equal { …(3), …(1) }
+
+- Expected
++ Received
+
+  {
+    "description": "Trim outer whitespace; 1–256 Unicode code points. No NFC/case normalization.",
+    "pattern": "^\\s*(?=\\S)(?:[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])|[^\\uD800-\\uDBFF]){1,256}\\s*$",
+    "type": "string",
+-   Symbol(TypeBox.Kind): "String",
+  }
+
+ ❯ tests/contracts/m2-search-contracts.test.ts:84:122
+     82|       try {
+     83|         await mcp.connect(transport);
+     84|         const list=await mcp.listTools(); expect(list.tools.find(t=>t.…
+       |                                                                                                                          ^
+     85|         const result=await mcp.callTool({name:'forum_search',arguments…
+     86|         const page=JSON.parse((result.content as any[])[0].text); expe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:21:11
+   Duration  1.25s (transform 199ms, setup 0ms, collect 463ms, tests 547ms, environment 0ms, prepare 41ms)
+

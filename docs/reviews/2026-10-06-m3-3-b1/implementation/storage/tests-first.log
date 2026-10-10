@@ -1,0 +1,84 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-space-export.test.ts (8 tests | 4 failed) 89ms
+   × M3.3-B.1 independent snapshot export > delivers strict white records and an exact hash-chain completion while excluding internals 18ms
+     → Stored material cannot be represented by the export protocol.
+   × M3.3-B.1 independent snapshot export > holds one reader snapshot while a different live WAL writer commits a newer revision 5ms
+     → Stored material cannot be represented by the export protocol.
+   × M3.3-B.1 independent snapshot export > invalidates after an already-delivered post is redacted and never issues an end 4ms
+     → Stored material cannot be represented by the export protocol.
+   ✓ M3.3-B.1 independent snapshot export > checks live credentials, actor disablement and ACL epoch at every line 11ms
+   × M3.3-B.1 independent snapshot export > projects preexisting redaction tombstones, known references and private artifact links without old content 6ms
+     → Stored material cannot be represented by the export protocol.
+   ✓ M3.3-B.1 independent snapshot export > enforces raw, encoded line, total wire and record limits without a completion footer 17ms
+   ✓ M3.3-B.1 independent snapshot export > limits active readers and releases a stalled reader on deadline without needing another next call 25ms
+   ✓ M3.3-B.1 independent snapshot export > leaves in-memory constructor and ordinary reads available but refuses only new export 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m3-space-export.test.ts > M3.3-B.1 independent snapshot export > delivers strict white records and an exact hash-chain completion while excluding internals
+DetunedError: Stored material cannot be represented by the export protocol.
+ ❯ SpaceExportSession.encode packages/core/src/services/space-export-service.ts:137:48
+    135|   }
+    136|   private encode(value: unknown, chained: boolean): string {
+    137|     if (!validateSpaceExportLine(value)) throw new DetunedError('EXPOR…
+       |                                                ^
+    138|     const line = JSON.stringify(value) + '\n'; const size = Buffer.byt…
+    139|     if (size > this.limits.max_line_bytes || this.bytes + size > this.…
+ ❯ SpaceExportSession.nextLine packages/core/src/services/space-export-service.ts:165:41
+ ❯ lines tests/integration/m3-space-export.test.ts:30:35
+ ❯ tests/integration/m3-space-export.test.ts:35:51
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/integration/m3-space-export.test.ts > M3.3-B.1 independent snapshot export > holds one reader snapshot while a different live WAL writer commits a newer revision
+DetunedError: Stored material cannot be represented by the export protocol.
+ ❯ SpaceExportSession.encode packages/core/src/services/space-export-service.ts:137:48
+    135|   }
+    136|   private encode(value: unknown, chained: boolean): string {
+    137|     if (!validateSpaceExportLine(value)) throw new DetunedError('EXPOR…
+       |                                                ^
+    138|     const line = JSON.stringify(value) + '\n'; const size = Buffer.byt…
+    139|     if (size > this.limits.max_line_bytes || this.bytes + size > this.…
+ ❯ SpaceExportSession.nextLine packages/core/src/services/space-export-service.ts:165:41
+ ❯ lines tests/integration/m3-space-export.test.ts:30:35
+ ❯ tests/integration/m3-space-export.test.ts:53:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/integration/m3-space-export.test.ts > M3.3-B.1 independent snapshot export > invalidates after an already-delivered post is redacted and never issues an end
+DetunedError: Stored material cannot be represented by the export protocol.
+ ❯ SpaceExportSession.encode packages/core/src/services/space-export-service.ts:137:48
+    135|   }
+    136|   private encode(value: unknown, chained: boolean): string {
+    137|     if (!validateSpaceExportLine(value)) throw new DetunedError('EXPOR…
+       |                                                ^
+    138|     const line = JSON.stringify(value) + '\n'; const size = Buffer.byt…
+    139|     if (size > this.limits.max_line_bytes || this.bytes + size > this.…
+ ❯ SpaceExportSession.nextLine packages/core/src/services/space-export-service.ts:165:41
+ ❯ tests/integration/m3-space-export.test.ts:61:45
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/integration/m3-space-export.test.ts > M3.3-B.1 independent snapshot export > projects preexisting redaction tombstones, known references and private artifact links without old content
+DetunedError: Stored material cannot be represented by the export protocol.
+ ❯ SpaceExportSession.encode packages/core/src/services/space-export-service.ts:137:48
+    135|   }
+    136|   private encode(value: unknown, chained: boolean): string {
+    137|     if (!validateSpaceExportLine(value)) throw new DetunedError('EXPOR…
+       |                                                ^
+    138|     const line = JSON.stringify(value) + '\n'; const size = Buffer.byt…
+    139|     if (size > this.limits.max_line_bytes || this.bytes + size > this.…
+ ❯ SpaceExportSession.nextLine packages/core/src/services/space-export-service.ts:165:41
+ ❯ lines tests/integration/m3-space-export.test.ts:30:35
+ ❯ tests/integration/m3-space-export.test.ts:86:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 4 passed (8)
+   Start at  23:44:10
+   Duration  602ms (transform 179ms, setup 0ms, collect 294ms, tests 89ms, environment 0ms, prepare 47ms)
+

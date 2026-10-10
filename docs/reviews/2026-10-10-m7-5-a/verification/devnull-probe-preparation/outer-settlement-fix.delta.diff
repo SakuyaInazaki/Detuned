@@ -1,0 +1,70 @@
+--- 36804 rejected outer
++++ outer finally receipt settlement
+@@ -30,31 +30,47 @@
+  for name,policy,args,budget in [('generated-controller-syntax','current-policy.sb',['--check',str(RUNTIME/'controller.cjs')],3),('red','current-policy.sb',['-e',JS.decode(),'red',str(RUNTIME),P['sentinel']],5),('green','candidate-devnull-policy.sb',['-e',JS.decode(),'green',str(RUNTIME),P['sentinel']],5)]:
+   begun=time.monotonic();limit=min(budget,30-(begun-START));assert limit>0
+   argv=['/usr/bin/sandbox-exec','-f',str(RUNTIME/policy),str(NODE)]+args
+-  child=subprocess.Popen(argv,cwd=ROOT/'work',env=ENV,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True);proof=None
+-  q=subprocess.run(['/bin/ps','-p',str(child.pid),'-o','pid=,uid=,ppid=,pgid='],env={'PATH':'/usr/bin:/bin'},capture_output=True,text=True,timeout=min(1,limit));a=q.stdout.split()
+-  if q.returncode==0 and len(a)==4 and all(x.isdigit() for x in a):
+-   values=list(map(int,a));assert values==[child.pid,os.getuid(),os.getpid(),child.pid];proof=dict(zip(['pid','uid','ppid','pgid'],values))
+-  elif child.poll() is None:raise RuntimeError('STAGE_PROOF_UNKNOWN')
+-  timedout=False
+-  try:out,err=child.communicate(timeout=max(.01,limit-(time.monotonic()-begun)))
+-  except subprocess.TimeoutExpired:
+-   timedout=True
+-   if proof:os.killpg(child.pid,signal.SIGTERM)
+-   else:child.terminate()
+-   try:out,err=child.communicate(timeout=min(1,max(.01,30-(time.monotonic()-START))))
+-   except subprocess.TimeoutExpired:
+-    if proof:os.killpg(child.pid,signal.SIGKILL)
+-    else:child.kill()
+-    out,err=child.communicate(timeout=min(1,max(.01,30-(time.monotonic()-START))))
+-  row={'stage':name,'creator_pid':child.pid,'stage_proof':proof,'actual_close':True,'code':child.returncode if child.returncode>=0 else None,'signal':signal.Signals(-child.returncode).name if child.returncode<0 else None,'pid_absent':absent(child.pid),'group_absent':absent(child.pid,True),'elapsed_seconds':time.monotonic()-begun,'timeout':timedout,'stdout_bytes':len(out),'stderr_bytes':len(err),'stdout_sha256':hashlib.sha256(out).hexdigest(),'stderr_sha256':hashlib.sha256(err).hexdigest(),'result_parse_attempted_at_receipt':False}
+-  wx(V/(name+'.stdout'),out);wx(V/(name+'.stderr'),err)
+-  save(name+'.receipt.json',row);rows.append(row)
++  child=None;proof=None;out=b'';err=b'';timedout=False;stage_failure=None
++  try:
++   child=subprocess.Popen(argv,cwd=ROOT/'work',env=ENV,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
++   try:
++    q=subprocess.run(['/bin/ps','-p',str(child.pid),'-o','pid=,uid=,ppid=,pgid='],env={'PATH':'/usr/bin:/bin'},capture_output=True,text=True,timeout=min(1,limit));a=q.stdout.split()
++    if q.returncode==0 and len(a)==4 and all(x.isdigit() for x in a):
++     values=list(map(int,a))
++     if values==[child.pid,os.getuid(),os.getpid(),child.pid]:proof=dict(zip(['pid','uid','ppid','pgid'],values))
++     else:stage_failure='STAGE_PROOF_MISMATCH'
++   except (subprocess.TimeoutExpired,OSError):
++    stage_failure='STAGE_PROOF_UNAVAILABLE'
++   try:out,err=child.communicate(timeout=max(.01,min(limit-(time.monotonic()-begun),30-(time.monotonic()-START))))
++   except subprocess.TimeoutExpired as e:
++    timedout=True;out=e.output or b'';err=e.stderr or b'';stage_failure='STAGE_TIMEOUT'
++    if proof:
++     os.killpg(child.pid,signal.SIGTERM)
++     try:out,err=child.communicate(timeout=min(1,max(.01,30-(time.monotonic()-START))))
++     except subprocess.TimeoutExpired as e:
++      out=e.output or b'';err=e.stderr or b''
++      if 30-(time.monotonic()-START)>0:
++       os.killpg(child.pid,signal.SIGKILL)
++       try:out,err=child.communicate(timeout=min(1,max(.01,30-(time.monotonic()-START))))
++       except subprocess.TimeoutExpired:stage_failure='STAGE_SETTLEMENT_UNKNOWN'
++    else:stage_failure='UNPROVEN_STAGE_SETTLEMENT_UNKNOWN'
++  except Exception as e:
++   stage_failure=type(e).__name__
++   if child is not None and child.poll() is None:
++    try:out,err=child.communicate(timeout=max(.01,min(limit-(time.monotonic()-begun),30-(time.monotonic()-START))))
++    except subprocess.TimeoutExpired:stage_failure='UNPROVEN_STAGE_SETTLEMENT_UNKNOWN'
++  finally:
++   code=child.poll() if child is not None else None
++   row={'stage':name,'creator_pid':child.pid if child is not None else None,'stage_proof':proof,'actual_close':child is not None and code is not None,'code':code if code is not None and code>=0 else None,'signal':signal.Signals(-code).name if code is not None and code<0 else None,'pid_absent':absent(child.pid) if child is not None else None,'group_absent':absent(child.pid,True) if child is not None else None,'elapsed_seconds':time.monotonic()-begun,'timeout':timedout,'stdout_bytes':len(out),'stderr_bytes':len(err),'stdout_sha256':hashlib.sha256(out).hexdigest(),'stderr_sha256':hashlib.sha256(err).hexdigest(),'result_parse_attempted_at_receipt':False,'failure_enum':stage_failure,'unproven_stage_never_signalled':proof is None}
++   wx(V/(name+'.stdout'),out);wx(V/(name+'.stderr'),err)
++   save(name+'.receipt.json',row);rows.append(row)
++  if stage_failure or not row['actual_close']:raise RuntimeError(stage_failure or 'STAGE_SETTLEMENT_UNKNOWN')
+   if name!='generated-controller-syntax':
+    try:result=json.loads(out)
+    except (json.JSONDecodeError,UnicodeDecodeError):
+     save(name+'.parse-failure.receipt.json',{'failure_enum':'PROBE_JSON_PARSE_FAILURE','stage_receipt_persisted_before_parse':True});raise RuntimeError('PROBE_JSON_PARSE_FAILURE')
+    save(name+'.result.json',result)
+-  if child.returncode or timedout or not row['group_absent'] or not row['pid_absent'] or len(out)>16384 or len(err)>8192:raise RuntimeError('UNEXPECTED_PROBE_RESULT')
++  if row['code'] != 0 or timedout or not row['group_absent'] or not row['pid_absent'] or len(out)>16384 or len(err)>8192:raise RuntimeError('UNEXPECTED_PROBE_RESULT')
+ except Exception as e:failure=str(e) if isinstance(e,RuntimeError) else type(e).__name__
+ now=os.lstat('/dev/null');same=[now.st_dev,now.st_ino,now.st_rdev,now.st_mode]==[ns.st_dev,ns.st_ino,ns.st_rdev,ns.st_mode]
+ final={'passed':failure is None and len(rows)==3 and same and not os.path.lexists(P['sentinel']),'failure_enum':failure,'elapsed_seconds':time.monotonic()-START,'stages':rows,'devnull_device_unchanged':same,'exact_sentinel_absent':not os.path.lexists(P['sentinel']),'original_policy_unchanged':digest(ROOT/'policy.sb')==P['source_policy_sha256'],'root_not_cleaned':True,'first_missing_red_PID_receipt_not_reconstructed':True}

@@ -1,0 +1,40 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 398ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 712ms
+   ✓ M1: Two Identities Discussion Closed Loop & Verification (T01, T02, T03, T04, T09) > T01 & M1.4: Vertical scenario - A proposes, B challenges revision 1, A publishes revision 2 without drift  316ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 179ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 1247ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A05: Actual stdio bridge completes official SDK tool discovery  467ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  775ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 23ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1212ms
+   ✓ M0-R / M1-R Behavioral Regressions (R01 - R11) > R01: Read-only capability cannot create a thread  334ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1364ms
+   ✓ M0-R3 / M1-R3 Behavioral Regressions (T01 - T11) > T01: An immediate resolve retry preserves its immutable resolution result  329ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 4ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 7ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1782ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > S01: Redacted initial_post cannot reappear through thread.create replay  311ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  709ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 5671ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  1204ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1351ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  351ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  561ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  569ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1617ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 5890ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  596ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  499ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (22 tests) 6201ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C01: Route Schema Validation & Query Integer Parsing > C01-1: Route rejects undeclared body properties (additionalProperties: false)  381ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3460ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1173ms
+
+ Test Files  13 passed (13)
+      Tests  175 passed (175)
+   Start at  23:22:19
+   Duration  6.97s (transform 643ms, setup 0ms, collect 4.38s, tests 24.69s, environment 1ms, prepare 816ms)
+

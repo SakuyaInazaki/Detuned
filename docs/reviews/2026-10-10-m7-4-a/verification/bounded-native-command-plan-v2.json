@@ -1,0 +1,115 @@
+{
+  "status": "frozen source preparation; not executed",
+  "source_sha256": "a6f3a8069342647f326520d711198e4e30a0f380f95ac7b3c2c6fcd66ac4962c",
+  "author_freeze_sha256": "c3cd4dbaa9408899cfd67a729386bacac574c95f752b863defcb8d1e382e7d8d",
+  "runner_sha256": "40dc41800dde91cd940961a49ecd6060df7b6ea0605cfc8ca1228a1670136bf5",
+  "budgets": {
+    "normal_wait_ms": 70000,
+    "emergency_only_ms": 5000,
+    "absolute_ms": 75000
+  },
+  "workspace": "/Users/sakimi/Desktop/Detuned",
+  "source_no_repeat": "core967/build555 retained; no core rebuild or test repeated",
+  "sensitive": "registry only private0700 control; public report no root/PIDs/token",
+  "sequence": [
+    {
+      "mode": "reject-worker",
+      "argv": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-reject-worker-v11-result.json",
+        "--mode",
+        "reject-worker"
+      ],
+      "producer_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-reject-worker-v11-result.json",
+      "capture_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-reject-worker-v11-result.json.capture.json",
+      "expected_exit": 1,
+      "expected_producer_status": "failed",
+      "required": [
+        "actual driver close",
+        "registered worker group absent",
+        "registered private root absent",
+        "control directory absent",
+        "controlled_expected_failure_verified true",
+        "worker_registered only; native/mcp false",
+        "source initializer settles without bootstrap/native"
+      ],
+      "release": "normal only after root reads three controlled receipts; each runtime separately serial/root authorized"
+    },
+    {
+      "mode": "hold-worker",
+      "argv": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-hold-worker-v11-result.json",
+        "--mode",
+        "hold-worker"
+      ],
+      "producer_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-hold-worker-v11-result.json",
+      "capture_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-hold-worker-v11-result.json.capture.json",
+      "expected_exit": 1,
+      "expected_producer_status": "failed",
+      "required": [
+        "actual driver close",
+        "registered worker group absent",
+        "registered private root absent",
+        "control directory absent",
+        "controlled_expected_failure_verified true",
+        "worker_registered only; native/mcp false",
+        "source initializer settles without bootstrap/native"
+      ],
+      "release": "normal only after root reads three controlled receipts; each runtime separately serial/root authorized"
+    },
+    {
+      "mode": "signal-worker",
+      "argv": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-signal-worker-v11-result.json",
+        "--mode",
+        "signal-worker"
+      ],
+      "producer_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-signal-worker-v11-result.json",
+      "capture_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-signal-worker-v11-result.json.capture.json",
+      "expected_exit": 1,
+      "expected_producer_status": "failed",
+      "required": [
+        "actual driver close",
+        "registered worker group absent",
+        "registered private root absent",
+        "control directory absent",
+        "controlled_expected_failure_verified true",
+        "worker_registered only; native/mcp false",
+        "source initializer settles without bootstrap/native"
+      ],
+      "release": "normal only after root reads three controlled receipts; each runtime separately serial/root authorized"
+    },
+    {
+      "mode": "normal",
+      "argv": [
+        "node",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-bounded-capture.mjs",
+        "--output",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-normal-v11-result.json",
+        "--mode",
+        "normal"
+      ],
+      "producer_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-normal-v11-result.json",
+      "capture_output": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-a/verification/claude-normal-v11-result.json.capture.json",
+      "expected_exit": 0,
+      "expected_producer_status": "passed",
+      "required": [
+        "actual driver close",
+        "registered worker group absent",
+        "registered private root absent",
+        "control directory absent",
+        "all three ownership stages; combined actual guard passes"
+      ],
+      "release": "normal only after root reads three controlled receipts; each runtime separately serial/root authorized"
+    }
+  ],
+  "signal_point": "trusted worker_registered callback: parent ownership ACK then private registry atomic commit; driver sends itself SIGTERM synchronously then never resolves callback; no random delay or bootstrap ACK"
+}

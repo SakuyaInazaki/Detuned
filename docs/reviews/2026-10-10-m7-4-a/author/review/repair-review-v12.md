@@ -1,0 +1,9 @@
+# M7.4-A v12 ownership/signal review
+
+Static only. Actual source ee7adce10c6eccd927153a12527e5e714a247f064024a161e7eed9eecdd17c54, freeze651644e4bb3f0ff819b199af6f1a1d6145f469d49aa86b451b8e48cf11d774b1, deltadc020fce546b91d5581de0bddbd84e20b98111c8b5b2dad7624d7e69de44c101 recomputed and matched.
+
+Parent now registers root before fork; validated positive candidate PID before query; only successful UID/PGID equality query assigns confirmed group. Group helpers assert safe integer >1 before negative probe/signal, so invalid -1 cannot become kill(1). Fork error listener immediately retains original error, makes supervisor terminal and interrupts waiting; initialization gates prevent later bootstrap. Candidate-only cleanup uses the actual child handle guarded by positive PID. Final group probe failure is caught and reported unknown/false/failed. Root removal before bootstrap plus actual child close follows root's explicitly accepted limited rule and does not claim group absence.
+
+Residual actionable omission: line87 guard stdout-over4096 callback and three-second timer invoke guard.kill(SIGKILL) without positive-safe-integer >1 validation. Other direct child close/cancel calls at76/77 now have that validation. These two calls do not negate a PID, but fail the explicit all-signal-target requirement. Narrow fix: apply the same positive-PID condition to these two calls; keep expired flag, timeout and all guard assertions unchanged.
+
+D provisional runner9a5df409…c1cb8 filters only confirmed stages for negative groups and validates >1 before all group loops; candidates use positive direct PID. Its empty registry flag explicitly says no global proof and controlled oracle requires exact three prebootstrap ownership stages. Final A source binding is still pending and no runtime release conclusion is given. Prior early failed reject is not controlled acceptance.

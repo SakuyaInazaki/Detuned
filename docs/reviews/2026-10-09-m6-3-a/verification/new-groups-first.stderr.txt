@@ -1,0 +1,58 @@
+$ vitest run tests/integration/m6-review-finalization.test.ts tests/integration/m6-review-status.test.ts tests/integration/m6-review-material-lifecycle.test.ts tests/integration/m6-schema5-maintenance.test.ts tests/integration/m6-review-finalization-independent.test.ts tests/integration/m6-schema5-maintenance-independent.test.ts --maxWorkers=1 --no-file-parallelism
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-review-finalization-independent.test.ts > DF02 actual objections and frozen check configuration prioritize negative verdicts without inventing receipts
+DetunedError: 必须拥有源帖子或具备维护者权限才能创建关系。
+ ❯ packages/core/src/services/relation-service.ts:130:17
+    128|         const isMaintainer = ['maintainer', 'owner'].includes(spaceAut…
+    129|         if (!isSourceAuthor && !isMaintainer) {
+    130|           throw new DetunedError(
+       |                 ^
+    131|             ErrorCode.FORBIDDEN,
+    132|             '必须拥有源帖子或具备维护者权限才能创建关系。',
+ ❯ packages/core/src/services/idempotency-service.ts:2810:7
+ ❯ sqliteTransaction.<anonymous> packages/storage-sqlite/src/sqlite-storage.ts:77:16
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.transaction packages/storage-sqlite/src/sqlite-storage.ts:82:22
+ ❯ IdempotencyService.executeIdempotent packages/core/src/services/idempotency-service.ts:2789:25
+ ❯ RelationService.createRelation packages/core/src/services/relation-service.ts:51:29
+ ❯ Object.challenge tests/integration/m6-review-finalization-independent.test.ts:55:32
+ ❯ tests/integration/m6-review-finalization-independent.test.ts:89:117
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/integration/m6-review-finalization-independent.test.ts > DF04 two real processes allow only atomic legal finalization versus revision or objection serialization
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m6-review-finalization-independent.test.ts:129:156
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/m6-review-finalization-independent.test.ts > DF05 the twelve metadata reasons are ordered and sealed or unused evidence health never leaks into public status
+DetunedError: 必须拥有源帖子或具备维护者权限才能创建关系。
+ ❯ packages/core/src/services/relation-service.ts:130:17
+    128|         const isMaintainer = ['maintainer', 'owner'].includes(spaceAut…
+    129|         if (!isSourceAuthor && !isMaintainer) {
+    130|           throw new DetunedError(
+       |                 ^
+    131|             ErrorCode.FORBIDDEN,
+    132|             '必须拥有源帖子或具备维护者权限才能创建关系。',
+ ❯ packages/core/src/services/idempotency-service.ts:2810:7
+ ❯ sqliteTransaction.<anonymous> packages/storage-sqlite/src/sqlite-storage.ts:77:16
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ SqliteStorage.transaction packages/storage-sqlite/src/sqlite-storage.ts:82:22
+ ❯ IdempotencyService.executeIdempotent packages/core/src/services/idempotency-service.ts:2789:25
+ ❯ RelationService.createRelation packages/core/src/services/relation-service.ts:51:29
+ ❯ Object.challenge tests/integration/m6-review-finalization-independent.test.ts:55:32
+ ❯ tests/integration/m6-review-finalization-independent.test.ts:137:122
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

@@ -1,0 +1,206 @@
+--- packages/web/src/app.tsx before
++++ packages/web/src/app.tsx
+@@ -4,6 +4,7 @@
+ import { parseSearchItems, parseFailures, FailureReport, type SearchItem, type FailureItem } from './knowledge.js';
+ import { SafeMarkdown } from './safe-markdown.js';
+ import { SpaceOverview, PersonalSettings, parseOverview, type OverviewData } from './space-overview.js';
++import { ReviewPanel } from './review-panel.js';
+ import { RevisionEvidence } from './revision-evidence.js';
+ import { appendContent, CONTENT_BUDGET, initialContent, compareDocuments, type ContentComparison, type FixedContent, initialRules, appendRules, type FixedRules } from './content.js';
+ 
+@@ -86,6 +87,7 @@
+   const [postPage, setPostPage] = useState<PostItem[]>([]);
+   const [postCursor, setPostCursor] = useState<string | null>(null);
+   const [content, setContent] = useState<FixedContent | null>(null);
++  const [showReview, setShowReview] = useState(false);
+   const [overview, setOverview] = useState<OverviewData | null>(null);
+   const [fixedRules, setFixedRules] = useState<FixedRules | null>(null);
+   const [personalMe, setPersonalMe] = useState<MeResponse | null>(null);
+@@ -142,6 +144,7 @@
+ 
+   function newGeneration() {
+     generation.current += 1;
++    setShowReview(false);
+     clearEvidence();
+     controller.current.abort();
+     controller.current = new AbortController();
+@@ -544,6 +547,8 @@
+           {content && <section className="panel reading" aria-labelledby="content-heading"><div className="section-heading"><h2 id="content-heading">固定修订 {content.revision}</h2><span>{content.complete ? '读取完成' : '内容尚未完整加载'}</span></div><p className="reference">帖子 {content.postId}</p>{(view !== 'discussion' || resultReading) && <button className="quiet" onClick={returnToResults}>{(resultReading?.origin ?? view) === 'overview' ? '返回空间概览' : (resultReading?.origin ?? view) === 'search' ? '返回搜索结果' : '返回失败报告'}</button>}{view === 'overview' && <p className="reference">当前从概览打开固定正文；可在所属主题内阅读后引用。</p>}{content.newer && <p className="notice">已有更新修订；这里仍显示所选固定版本。</p>}
+             {content.document ? <article><h3>{content.document.title}</h3><p className="summary">{content.document.summary}</p><SafeMarkdown source={content.document.body} label="正文"/><div className="metadata"><h4>标签</h4><p>{content.document.tags.join(' · ') || '无标签'}</p><h4>结构化内容</h4><pre>{JSON.stringify(content.document.structured, null, 2)}</pre></div></article> : content.rawMode ? <div><p className="notice">已超过本地 1 MiB 完整正文预算。现在仅显示当前原始 JSON 分段，不代表完整正文；可继续或从首段重开。</p><pre>{content.currentChunk}</pre></div> : <p>已读取 {content.accumulatedBytes.toLocaleString()} 字节，完整读取后才显示正文。</p>}
+             <div className="paging">{view !== 'discussion' && resultReading && <button disabled={busy} onClick={enterReferencedThread}>进入主题并引用</button>}{content.cursor && <button disabled={busy} onClick={continueContent}>继续加载正文</button>}<button className="quiet" disabled={busy} onClick={() => openPost(content.postId, content.revision, resultReading?.threadId)}>从首段重开</button>{view !== 'overview' && <button disabled={busy || !thread || view !== 'discussion'} onClick={() => { setReply({ postId: content.postId, revision: content.revision }); setIntent(null); document.getElementById('post-title')?.focus(); }}>引用回复</button>}</div>
++            <div className="paging"><button disabled={busy} aria-expanded={showReview} onClick={() => setShowReview(true)}>正式评审</button></div>
++            {showReview && space && <ReviewPanel key={`${generation.current}:${space.id}:${content.postId}:${content.revision}`} client={client} spaceId={space.id} postId={content.postId} revision={content.revision} busy={busy} isCurrent={(() => { const id = generation.current; return () => id === generation.current && sessionState === 'authenticated' && !controller.current.signal.aborted; })()} run={run}/>}
+             <RevisionEvidence busy={busy} revisions={revisions} currentRevision={catalogCurrent} revisionsLoaded={revisionsLoaded} revisionCursor={revisionCursor}
+               loadRevisions={loadRevisionCatalog} openRevision={revision => openPost(content.postId, revision, resultReading?.threadId)}
+               first={compareFirst} second={compareSecond} selectFirst={value => { setCompareFirst(value); setComparison(null); setComparisonStatus(''); }} selectSecond={value => { setCompareSecond(value); setComparison(null); setComparisonStatus(''); }}
+@@ -562,6 +567,6 @@
+           </section>}
+         </section>
+       </div>}
+-    </main><footer>独立协作论坛 · 正式评审尚未启用</footer>
++    </main><footer>独立协作论坛 · 固定材料与正式评审</footer>
+   </div>;
+ }
+--- packages/web/src/styles.css before
++++ packages/web/src/styles.css
+@@ -139,3 +139,21 @@
+ .markdown-rendered p { margin: .6rem 0; }
+ .markdown-image { display: inline; color: #52675e; font-size: .95em; }
+ .markdown-original { white-space: pre-wrap; overflow-wrap: anywhere; }
++
++.review-panel { border-top: 1px solid #d9e4df; margin-top: 28px; padding-top: 24px; min-width: 0; }
++.review-panel section, .review-panel details { margin: 22px 0; padding-top: 15px; border-top: 1px solid #e2eae5; }
++.review-panel summary { cursor: pointer; padding: 12px 0; font-weight: 650; }
++.review-panel fieldset { min-width: 0; border: 1px solid #d9e4df; border-radius: 7px; padding: 16px; margin: 16px 0; }
++.review-panel legend { padding: 0 7px; font-weight: 650; }
++.review-panel label { display: block; }
++.review-panel pre { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
++.review-panel p, .review-panel li { overflow-wrap: anywhere; }
++.review-panel button { margin: 6px 8px 6px 0; max-width: 100%; white-space: normal; }
++.review-rounds { padding-left: 24px; }
++.review-rounds li { padding: 12px 0; border-bottom: 1px solid #e2eae5; }
++.review-status { display: grid; grid-template-columns: minmax(100px, 1fr) 2fr; gap: 9px 14px; }
++.review-status dt { color: #52675c; }
++.review-status dd { margin: 0; font-weight: 600; }
++.review-panel .check-label { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0; }
++.review-panel .check-label input { width: auto; margin: 4px 0 0; }
++@media (max-width: 700px) { .review-panel fieldset { padding: 12px; } .review-status { grid-template-columns: 1fr; gap: 5px; } .review-status dd { margin-bottom: 10px; } }
+--- /dev/null
++++ packages/web/src/review-panel.tsx
+@@ -0,0 +1,67 @@
++import { useEffect, useRef, useState, type FormEvent } from 'react';
++import type { DetunedClient } from '@detuned/client';
++import { DetunedError, isSession, type OwnReviewAssignmentView, type ReviewRequestReadView, type ReviewSnapshotView, type ReviewStatusView, type ReviewSubmissionView, type ReviewDecisionView, type ReviewArtifactMetadata, type Session, type ReviewVerdict } from '@detuned/protocol';
++import { SafeMarkdown } from './safe-markdown.js';
++import { appendContent, initialContent, CONTENT_BUDGET, type FixedContent } from './content.js';
++import { parseReviewArray, parseRequestInput, parseSubmissionInput, freezeReviewIntent, type ReviewIntent } from './review-input.js';
++
++type Props = { client: DetunedClient; spaceId: string; postId: string; revision: number; busy: boolean;
++  isCurrent: () => boolean; run: (work: (signal: AbortSignal) => Promise<void>, success: string) => Promise<void> };
++type Round = { request_id: string; snapshot_id: string; round: number; target_revision: number; created_at: string } & ReviewStatusView;
++const labels: Record<string,string> = { collecting:'收集中',revealed:'已揭示',accepted:'已接受',changes_requested:'要求修改',rejected:'已拒绝',cancelled:'已取消',stale:'材料已变更',not_required:'无需检查',pending:'检查待完成',passed:'检查通过',failed:'检查失败',error:'检查错误',current:'材料当前有效',invalidated:'材料失效',superseded:'材料已有更新',challenged:'存在未解决反例' };
++const label = (value: string) => labels[value] ?? value;
++const failure = (e: unknown) => e instanceof DetunedError ? `${e.code}：${e.message}` : e instanceof Error && e.name === 'ReviewInputError' ? e.message : '操作未完成，请核对输入或明确重试。';
++export function ReviewPanel(p: Props) {
++  const mounted = useRef(true); const selection = useRef(0); const active = useRef(false);
++  useEffect(() => { mounted.current = true; return () => { mounted.current = false; selection.current++; }; }, []);
++  const alive = (id?: number) => mounted.current && p.isCurrent() && (id === undefined || id === selection.current);
++  const [rounds,setRounds]=useState<Round[]>([]),[cursor,setCursor]=useState<string|null>(null),[loaded,setLoaded]=useState(false);
++  const [requestId,setRequestId]=useState(''),[request,setRequest]=useState<ReviewRequestReadView|null>(null),[status,setStatus]=useState<ReviewStatusView|null>(null);
++  const [snapshot,setSnapshot]=useState<ReviewSnapshotView|null>(null),[assignment,setAssignment]=useState<OwnReviewAssignmentView|null>(null);
++  const [opinions,setOpinions]=useState<ReviewSubmissionView[]>([]),[opinionsLoaded,setOpinionsLoaded]=useState(false),[decision,setDecision]=useState<ReviewDecisionView|null>(null);
++  const [message,setMessage]=useState(''),[error,setError]=useState(''),[material,setMaterial]=useState<FixedContent|null>(null);
++  const [intent,setIntent]=useState<ReviewIntent|null>(null);
++  const [policy,setPolicy]=useState(''),[reviewers,setReviewers]=useState('[]'),[dependencies,setDependencies]=useState('[]'),[artifactIds,setArtifactIds]=useState('[]'),[codeRefs,setCodeRefs]=useState('[]'),[contributors,setContributors]=useState('[]'),[reproduction,setReproduction]=useState('');
++  const [sessionId,setSessionId]=useState(''),[candidate,setCandidate]=useState<Session|null>(null),[sessionUnknown,setSessionUnknown]=useState(false);
++  const [verdict,setVerdict]=useState<ReviewVerdict>('accept'),[coverage,setCoverage]=useState(''),[checks,setChecks]=useState(''),[pending,setPending]=useState('[]'),[limitations,setLimitations]=useState('[]'),[evidence,setEvidence]=useState('[]'),[statement,setStatement]=useState(''),[independent,setIndependent]=useState(false),[unexposed,setUnexposed]=useState(false);
++  const [file,setFile]=useState<File|null>(null),[upload,setUpload]=useState<{file:File;key:string;requestId:string}|null>(null),[uploads,setUploads]=useState<ReviewArtifactMetadata[]>([]),[fileVersion,setFileVersion]=useState(0),[cancelReason,setCancelReason]=useState('');
++  function action(work:(signal:AbortSignal,id:number)=>Promise<void>,success:string) { if(active.current||p.busy||!alive())return; active.current=true;const id=selection.current;setError(''); void p.run(async signal=>{try{await work(signal,id);}catch(e){if(alive(id))setError(failure(e));throw e;}},success).finally(()=>{active.current=false;}); }
++  function clearSelected(id:string) { selection.current++;setRequestId(id);setRequest(null);setStatus(null);setSnapshot(null);setAssignment(null);setOpinions([]);setOpinionsLoaded(false);setDecision(null);setMaterial(null);setCandidate(null);setSessionId('');setSessionUnknown(false);setIntent(null);setUpload(null);setUploads([]);setFile(null);setFileVersion(v=>v+1);setMessage('');setError('');setCoverage('');setChecks('');setPending('[]');setLimitations('[]');setEvidence('[]');setStatement('');setIndependent(false);setUnexposed(false);setCancelReason(''); }
++  function catalog(next?:string) { action(async(signal,id)=>{const page=await p.client.getPostReviewRequests(p.spaceId,p.postId,{limit:20,max_bytes:12288,...(next?{cursor:next}:{})},{signal});if(!alive(id)||signal.aborted)return;setRounds(page.data);setCursor(page.meta.next_cursor);setLoaded(true);},'评审轮次已加载。'); }
++  function open(id:string) { if(active.current||p.busy||intent||upload)return;clearSelected(id); action(async(signal,t)=>{
++    const current=await p.client.getReviewStatus(p.spaceId,id,{signal});if(!alive(t)||signal.aborted)return;setStatus(current);
++    const value=await p.client.getReviewRequest(p.spaceId,id,{signal});if(!alive(t)||signal.aborted)return;setRequest(value);
++    const fixed=await p.client.getReviewSnapshot(p.spaceId,value.snapshot_id,{signal});if(alive(t)&&!signal.aborted)setSnapshot(fixed);
++  },'评审轮次已打开。'); }
++  function readMaterial(postId:string,revision:number,previous?:FixedContent) {const fixed=previous??initialContent(postId,revision);action(async(signal,id)=>{const page=await p.client.getPostRevisionContent(p.spaceId,postId,revision,{max_bytes:CONTENT_BUDGET,...(fixed.cursor?{cursor:fixed.cursor}:{})},{signal});const result=appendContent(fixed,page);if(alive(id)&&!signal.aborted)setMaterial(result);},'固定材料已读取。');}
++  function perform(operation:ReviewIntent) {if(active.current||p.busy||!alive())return;setIntent(operation);action(async(signal,id)=>{
++    if(operation.kind==='request'){const result=await p.client.createReviewRequest(p.spaceId,operation.body,operation.key,{signal});if(alive(id)&&!signal.aborted){setIntent(null);setMessage(`评审请求已创建：${result.id}。请刷新轮次目录。`);}}
++    else if(operation.kind==='submit'){const result=await p.client.submitReview(p.spaceId,operation.requestId,operation.body,operation.key,{signal});if(alive(id)&&!signal.aborted){setIntent(null);setMessage(`初评已保存：${result.submission_id}。可见性以服务端读取结果为准。`);}}
++    else if(operation.kind==='finalize'){const result=await p.client.finalizeReviewRequest(p.spaceId,operation.requestId,operation.body,operation.key,{signal});if(alive(id)&&!signal.aborted){setDecision(result);setIntent(null);setMessage('最终决定已保存，请刷新当前状态。');}}
++    else {await p.client.cancelReviewRequest(p.spaceId,operation.requestId,operation.body,operation.key,{signal});if(alive(id)&&!signal.aborted){setIntent(null);setMessage('取消已确认，请刷新当前状态。');}}
++  },'评审写入已确认。');}
++  function create(e:FormEvent){e.preventDefault();try{const body=parseRequestInput({target_ref:{post_id:p.postId,revision:p.revision},dependency_refs:parseReviewArray(dependencies,'依赖固定引用'),artifact_ids:parseReviewArray(artifactIds,'材料附件 IDs'),code_refs:parseReviewArray(codeRefs,'代码引用'),declared_contributors:parseReviewArray(contributors,'声明贡献者 IDs'),reviewer_actor_ids:parseReviewArray(reviewers,'评审者身份 IDs'),expected_policy_revision:Number(policy),reproduction_instructions:reproduction});perform(freezeReviewIntent({kind:'request',key:`web_review_${crypto.randomUUID()}`,body}));}catch(e){setError(failure(e));}}
++  function submit(e:FormEvent){e.preventDefault();if(!assignment||!independent||!unexposed){setError('请先加载本人任务，并明确确认两项独立声明。');return;}try{const body=parseSubmissionInput({snapshot_sha256:assignment.snapshot_sha256,reviewer_session_id:sessionId,completion_status:'complete',verdict,coverage,checks_performed:checks,pending_requirements:parseReviewArray(pending,'待满足条件'),limitations:parseReviewArray(limitations,'限制'),evidence_refs:parseReviewArray(evidence,'证据固定引用'),independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement}});perform(freezeReviewIntent({kind:'submit',key:`web_review_${crypto.randomUUID()}`,requestId,body}));}catch(e){setError(failure(e));}}
++  function own(){action(async(signal,id)=>{const value=await p.client.getOwnReviewAssignment(p.spaceId,requestId,{signal});if(alive(id)&&!signal.aborted)setAssignment(value);},'本人固定任务已加载。');}
++  function start(){if(!assignment||active.current||p.busy||!alive())return;setSessionUnknown(true);action(async(signal,id)=>{const response=await p.client.createSession(p.spaceId,{client_name:'detuned-web-review',client_version:'0.2'},{signal});if(alive(id)&&!signal.aborted){if(!isSession(response.data)||response.data.actor_id!==assignment.reviewer_actor_id||response.data.space_id!==p.spaceId)throw new Error('Invalid session binding');setCandidate(response.data);setSessionUnknown(false);setMessage('新的论坛会话已创建，请明确选用；这不保证新的身份或认知独立。');}},'新论坛会话已创建。');}
++  function uploadFile(retry?:typeof upload){if(active.current||p.busy||!alive())return;const operation=retry??(file?{file,key:`web_review_artifact_${crypto.randomUUID()}`,requestId}:null);if(!operation)return;if(operation.file.size>26214400){setError('附件超过 25 MiB。');return;}setUpload(operation);action(async(signal,id)=>{const result=await p.client.uploadReviewArtifact(p.spaceId,operation.requestId,operation.file,{},operation.key,{signal});if(alive(id)&&!signal.aborted){setUploads(values=>[...values.filter(v=>v.id!==result.id),result]);setUpload(null);setFile(null);setFileVersion(v=>v+1);setMessage('私有附件已上传；请在证据固定引用中明确填写其 ID，上传不等于绑定。');}},'私有评审附件已上传。');}
++  function download(artifactId:string){action(async(signal,id)=>{const value=await p.client.downloadArtifact(p.spaceId,artifactId,{signal});if(!alive(id)||signal.aborted)return;const url=URL.createObjectURL(new Blob([value.bytes.slice().buffer],{type:'application/octet-stream'}));const link=document.createElement('a');try{link.href=url;link.download=`artifact-${artifactId}`;document.body.append(link);link.click();}finally{link.remove();URL.revokeObjectURL(url);}},'附件完整验证后已下载。');}
++  const disabled=p.busy||intent!==null;
++  return <section className="review-panel" aria-labelledby="review-heading"><h2 id="review-heading">正式评审</h2><p>当前帖子 {p.postId}，所选固定修订 {p.revision}。轮次、检查与材料有效性分别展示。</p>
++    <p aria-live="polite">{message}</p>{error&&<p role="alert" className="error">{error}</p>}
++    <div className="paging"><button disabled={p.busy} onClick={()=>catalog()}>加载评审轮次</button>{cursor&&<button disabled={p.busy} onClick={()=>catalog(cursor)}>下一页评审轮次</button>}</div>
++    {loaded&&!rounds.length&&<p>当前页没有评审轮次。</p>}<ol className="review-rounds">{rounds.map(r=><li key={r.request_id}><strong>第 {r.round} 轮 · 修订 {r.target_revision}</strong><p>{r.created_at} · {label(r.phase)} · {label(r.verification_status)} · {label(r.current_validity)}</p><button disabled={p.busy||intent!==null||upload!==null} onClick={()=>open(r.request_id)}>打开第 {r.round} 轮</button></li>)}</ol>
++    <details><summary>创建评审请求</summary><form onSubmit={create}><fieldset disabled={disabled}><legend>固定材料与评审者</legend><label>预期政策版本<input value={policy} onChange={e=>setPolicy(e.target.value)} type="number" min="1" required/></label><label>评审者身份 IDs<textarea value={reviewers} onChange={e=>setReviewers(e.target.value)} maxLength={262144} required/></label><label>依赖固定引用<textarea value={dependencies} onChange={e=>setDependencies(e.target.value)} maxLength={262144}/></label><label>材料附件 IDs<textarea value={artifactIds} onChange={e=>setArtifactIds(e.target.value)} maxLength={262144}/></label><label>代码引用<textarea value={codeRefs} onChange={e=>setCodeRefs(e.target.value)} maxLength={262144}/></label><label>声明贡献者 IDs<textarea value={contributors} onChange={e=>setContributors(e.target.value)} maxLength={262144}/></label><label>复现说明<textarea value={reproduction} onChange={e=>setReproduction(e.target.value)} maxLength={16000} required/></label><p>数组使用 JSON；依赖形如 {`[{"post_id":"…","revision":1}]`}。代码引用包含 repository、commit、source_artifact_id、reproduction_instructions。人数和资格由服务端确定。</p></fieldset><button disabled={disabled} type="submit">创建评审请求</button></form></details>
++    {intent&&<div className="notice"><p>该写入尚未确认；同一意图已保存，重试不更换内容或请求键。</p><button disabled={p.busy} onClick={()=>perform(intent)}>用同一请求重试评审写入</button><button className="quiet" disabled={p.busy} onClick={()=>{setIntent(null);setMessage('已转为新意图；原请求可能已提交，请先刷新核对。');}}>编辑为新的评审意图</button></div>}
++    {requestId&&<section aria-label="选中评审轮次"><h3>请求 {requestId}</h3><button disabled={p.busy||intent!==null||upload!==null} onClick={()=>open(requestId)}>刷新当前评审</button>{status&&<><dl className="review-status"><dt>轮次阶段</dt><dd>{label(status.phase)}</dd><dt>检查事实</dt><dd>{label(status.verification_status)}</dd><dt>当前材料有效性</dt><dd>{label(status.current_validity)}</dd></dl><p>有效性原因：{status.validity_reasons.join('、')||'无'}</p><p>检查回执执行与展示待 M7；待完成和无需检查都不等于通过。</p></>}
++      {request&&<p>当前确认版本 {request.version} · 初评进度 {request.submitted_count}/{request.reviewer_actor_ids.length} · 固定评审者 {request.reviewer_actor_ids.join('、')}</p>}
++      {snapshot&&<section aria-label="固定评审材料"><h3>固定材料</h3><p>快照 {snapshot.snapshot_id} · SHA-256 {snapshot.manifest_sha256}</p><h4>目标主张</h4><p>{snapshot.manifest.target.statement}</p><p>范围：{snapshot.manifest.target.scope}</p><p>假设：{snapshot.manifest.target.assumptions.join('；')}</p><p>反驳计划：{snapshot.manifest.target.falsification_plan}</p><p>复现说明：{snapshot.manifest.reproduction_instructions}</p><p>规则版本 {snapshot.manifest.rules_revision} · 政策版本 {snapshot.manifest.policy_revision}</p><pre>{JSON.stringify(snapshot.manifest.review_policy,null,2)}</pre><h4>冻结检查配置</h4><pre>{JSON.stringify(snapshot.manifest.check_profiles,null,2)}</pre><p>材料贡献者：{snapshot.manifest.contributors.join('、')}</p><ul>{[snapshot.manifest.target,...snapshot.manifest.dependencies].map(item=><li key={`${item.ref.post_id}:${item.ref.revision}`}>{item.ref.post_id} · 修订 {item.ref.revision}<button disabled={p.busy} onClick={()=>readMaterial(item.ref.post_id,item.ref.revision)}>阅读固定材料 {item.ref.post_id} 修订 {item.ref.revision}</button></li>)}</ul><ul>{snapshot.manifest.artifacts.map(a=><li key={a.artifact_id}>{a.artifact_id} · {a.bytes} 字节 · {a.sha256}<button disabled={p.busy||a.bytes>26214400} onClick={()=>download(a.artifact_id)}>下载材料附件 {a.artifact_id}</button></li>)}</ul><h4>代码引用</h4><pre>{JSON.stringify(snapshot.manifest.code_refs,null,2)}</pre></section>}
++      {material&&<section aria-label="固定材料正文"><h4>帖子 {material.postId} 修订 {material.revision}</h4>{material.document?<><h5>{material.document.title}</h5><p>{material.document.summary}</p><SafeMarkdown source={material.document.body} label="评审材料正文"/><p>{material.document.tags.join('、')}</p><pre>{JSON.stringify(material.document.structured,null,2)}</pre></>:material.rawMode?<><p>超过 1 MiB，仅显示当前原始 JSON 分段，不代表完整材料。</p><pre>{material.currentChunk}</pre></>:<p>尚未完整读取，已累计 {material.accumulatedBytes} 字节。</p>}{material.cursor&&<button disabled={p.busy} onClick={()=>readMaterial(material.postId,material.revision,material)}>继续读取固定材料</button>}<button disabled={p.busy} onClick={()=>readMaterial(material.postId,material.revision)}>从首段重开固定材料</button></section>}
++      <section><h3>本人初评</h3><button disabled={p.busy} onClick={own}>加载本人任务</button>{assignment&&<><p>任务 {assignment.id} · 本人 {assignment.reviewer_actor_id} · 快照 {assignment.snapshot_sha256}</p><button disabled={disabled||sessionUnknown} onClick={start}>开始初评</button>{sessionUnknown&&<p role="status">创建会话尚未确认；不会自动重试。请核对已创建会话后再选择新的创建动作。<button disabled={p.busy} onClick={()=>{if(window.confirm('原创建可能已成功；明确放弃该未知结果并允许另一次新建？'))setSessionUnknown(false);}}>另起新的会话创建意图</button></p>}{candidate&&<p>新论坛会话 {candidate.id}<button disabled={disabled} onClick={()=>{if(sessionId&&!window.confirm('明确将已填写会话替换为这个新会话？'))return;setSessionId(candidate.id);setMessage('已明确选用新论坛会话；提交仍需完整声明。');}}>选用此会话</button></p>}
++      <div className="review-upload"><label>选择私有评审附件<input key={fileVersion} type="file" disabled={disabled||upload!==null} onChange={e=>setFile(e.target.files?.[0]??null)}/></label><button disabled={disabled||!file||upload!==null} onClick={()=>uploadFile()}>上传私有评审附件</button>{upload&&<><button disabled={p.busy} onClick={()=>uploadFile(upload)}>用同一请求重试私有上传</button><button disabled={p.busy} className="quiet" onClick={()=>{setUpload(null);setFile(null);setFileVersion(v=>v+1);}}>放弃当前私有上传意图</button></>}<ul>{uploads.map(a=><li key={a.id}>{a.id} · {a.bytes} 字节 · 上传未自动绑定<button disabled={p.busy} onClick={()=>download(a.id)}>下载本人附件 {a.id}</button></li>)}</ul></div>
++      <form onSubmit={submit}><fieldset disabled={disabled}><legend>完整初评声明</legend><label>初评论坛会话 ID<input value={sessionId} onChange={e=>setSessionId(e.target.value)} required/></label><label>初评结论<select value={verdict} onChange={e=>setVerdict(e.target.value as ReviewVerdict)}><option value="accept">接受</option><option value="changes_requested">要求修改</option><option value="reject">拒绝</option></select></label><label>覆盖范围<textarea value={coverage} onChange={e=>setCoverage(e.target.value)} maxLength={16000} required/></label><label>已执行检查<textarea value={checks} onChange={e=>setChecks(e.target.value)} maxLength={16000} required/></label><label>待满足条件<textarea value={pending} onChange={e=>setPending(e.target.value)} maxLength={262144}/></label><label>限制<textarea value={limitations} onChange={e=>setLimitations(e.target.value)} maxLength={262144}/></label><label>证据固定引用<textarea value={evidence} onChange={e=>setEvidence(e.target.value)} maxLength={262144}/></label><p>附件证据形如 {`[{"kind":"artifact","artifact_id":"…"}]`}；帖子证据需 kind、post_id、revision。</p><label className="check-label"><input type="checkbox" checked={independent} onChange={e=>setIndependent(e.target.checked)}/>我声明未参与这些材料</label><label className="check-label"><input type="checkbox" checked={unexposed} onChange={e=>setUnexposed(e.target.checked)}/>我声明未接触其他初评意见</label><label>独立声明说明<textarea value={statement} onChange={e=>setStatement(e.target.value)} maxLength={8000} required/></label></fieldset><button disabled={disabled||upload!==null} type="submit">提交完整初评</button></form></>}</section>
++      <section><h3>服务端可见意见</h3><button disabled={p.busy} onClick={()=>action(async(signal,id)=>{const result=await p.client.listReviewSubmissions(p.spaceId,requestId,{signal});if(alive(id)&&!signal.aborted){setOpinions(result.submissions);setOpinionsLoaded(true);}},'可见意见已加载。')}>加载可见意见</button>{opinionsLoaded&&!opinions.length&&<p>服务端当前没有返回可见意见；不会据轮次阶段猜测封存内容。</p>}{opinions.map(o=><article key={o.submission_id}><h4>意见 {o.submission_id}</h4><p>{o.reviewer_actor_id} · {label(o.verdict)} · {o.revealed_at?'服务端已揭示':'本人可见初评'}</p><p>提交时间：{o.submitted_at} · 论坛会话 {o.reviewer_session_id} · 快照 {o.snapshot_sha256}</p><p>覆盖：{o.coverage}</p><p>检查：{o.checks_performed}</p><p>待满足：{o.pending_requirements.join('；')||'无'}</p><p>限制：{o.limitations.join('；')||'无'}</p><p>独立声明：{o.independence_statement.statement}</p><pre>{JSON.stringify(o.evidence_refs,null,2)}</pre>{o.evidence_refs.map((e,index)=>e.kind==='artifact'?<button key={index} disabled={p.busy} onClick={()=>download(e.artifact_id)}>下载意见证据 {e.artifact_id}</button>:<button key={index} disabled={p.busy} onClick={()=>readMaterial(e.post_id,e.revision)}>阅读意见证据 {e.post_id} 修订 {e.revision}</button>)}</article>)}</section>
++      <section><h3>最终决定与取消</h3><button disabled={p.busy} onClick={()=>action(async(signal,id)=>{const result=await p.client.getReviewDecision(p.spaceId,requestId,{signal});if(alive(id)&&!signal.aborted)setDecision(result);},'历史决定已加载。')}>读取历史最终决定</button>{decision&&<><p>{label(decision.outcome)} · 决定 {decision.id} · 固定请求版本 {decision.request_version}</p><p>{decision.rationale}</p><p>决定保留历史事实，不替代当前有效性。</p></>}{request&&<><button disabled={disabled} onClick={()=>{if(window.confirm(`确认基于请求版本 ${request.version} 作最终决定？`))perform(freezeReviewIntent({kind:'finalize',key:`web_review_${crypto.randomUUID()}`,requestId,body:{expected_version:request.version}}));}}>确认版本 {request.version} 并最终决定</button><label>取消原因<input value={cancelReason} onChange={e=>setCancelReason(e.target.value)} maxLength={500} disabled={disabled}/></label><button disabled={disabled||!cancelReason.trim()} onClick={()=>{if(window.confirm(`确认取消请求版本 ${request.version}？`))perform(freezeReviewIntent({kind:'cancel',key:`web_review_${crypto.randomUUID()}`,requestId,body:{expected_version:request.version,reason:cancelReason}}));}}>确认版本 {request.version} 并取消评审</button></>}</section>
++    </section>}
++  </section>;
++}
+--- /dev/null
++++ packages/web/src/review-input.ts
+@@ -0,0 +1,26 @@
++import { isCreateReviewRequest, isCreateReviewSubmission, type CreateReviewRequest, type CreateReviewSubmission } from '@detuned/protocol';
++export class ReviewInputError extends Error { constructor(message: string) { super(message); this.name = 'ReviewInputError'; } }
++export function parseReviewArray(text: string, label: string): unknown[] {
++  if (new TextEncoder().encode(text).byteLength > 262144) throw new ReviewInputError(`${label} 超过 256 KiB 输入上限。`);
++  let value: unknown;
++  try { value = JSON.parse(text); } catch { throw new ReviewInputError(`${label} 必须是有效 JSON 数组。`); }
++  if (!Array.isArray(value)) throw new ReviewInputError(`${label} 必须是 JSON 数组。`);
++  return value;
++}
++export function parseRequestInput(value: unknown): CreateReviewRequest {
++  if (!isCreateReviewRequest(value)) throw new ReviewInputError('请求字段无效：请核对固定版本、政策版本、评审者及各数组的格式和数量。');
++  return value;
++}
++export function parseSubmissionInput(value: unknown): CreateReviewSubmission {
++  if (!isCreateReviewSubmission(value)) throw new ReviewInputError('初评字段无效：完整覆盖、检查、独立声明及会话必填；接受时待满足条件必须为空。');
++  return value;
++}
++export type ReviewIntent =
++  | { kind: 'request'; key: string; body: CreateReviewRequest }
++  | { kind: 'submit'; key: string; requestId: string; body: CreateReviewSubmission }
++  | { kind: 'finalize'; key: string; requestId: string; body: { expected_version: number } }
++  | { kind: 'cancel'; key: string; requestId: string; body: { expected_version: number; reason: string } };
++export function freezeReviewIntent<T extends ReviewIntent>(intent: T): T {
++  // Own a detached JSON body: subsequent edits cannot change an unknown-result retry.
++  return structuredClone(intent);
++}
+--- /dev/null
++++ tests/contracts/m6-review-web-input.test.ts
+@@ -0,0 +1,23 @@
++import { it, expect } from 'vitest';
++import { parseReviewArray, parseRequestInput, parseSubmissionInput, freezeReviewIntent } from '../../packages/web/src/review-input.js';
++it('WI01 structured form arrays reject malformed and byte-over-budget inputs without reflecting contents', () => {
++  expect(parseReviewArray('[{"post_id":"p","revision":1}]','依赖')).toEqual([{post_id:'p',revision:1}]);
++  for(const text of ['PRIVATE_INVALID','{}','["'+'界'.repeat(90000)+'"]']) {
++    try { parseReviewArray(text,'依赖'); throw new Error('accepted'); } catch(e) { expect(String(e)).not.toContain('PRIVATE_INVALID'); expect(String(e)).not.toBe('Error: accepted'); }
++  }
++});
++it('WI02 complete request and submission forms retain canonical service input constraints', () => {
++  const request={target_ref:{post_id:'p',revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['a'],expected_policy_revision:1,reproduction_instructions:'run'};
++  expect(parseRequestInput(request)).toBe(request);
++  expect(()=>parseRequestInput({...request,reviewer_actor_ids:[]})).toThrow();
++  const submission={snapshot_sha256:'a'.repeat(64),reviewer_session_id:'s',completion_status:'complete',verdict:'accept',coverage:'all',checks_performed:'manual',evidence_refs:[],pending_requirements:[],limitations:[],independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'own'}};
++  expect(parseSubmissionInput(submission)).toBe(submission);
++  expect(()=>parseSubmissionInput({...submission,pending_requirements:['not done']})).toThrow();
++  expect(()=>parseSubmissionInput({...submission,independence_statement:{...submission.independence_statement,participated_in_material:true}})).toThrow();
++});
++it('WI03 unknown-result retry owns a detached body and original key while edits form a separate intent',()=>{
++  const body={target_ref:{post_id:'p',revision:1},dependency_refs:[],artifact_ids:[],code_refs:[],declared_contributors:[],reviewer_actor_ids:['a'],expected_policy_revision:1,reproduction_instructions:'original'};
++  const frozen=freezeReviewIntent({kind:'request',key:'fixed-key',body});
++  body.reproduction_instructions='edited';body.reviewer_actor_ids.push('b');
++  expect(frozen.key).toBe('fixed-key');expect(frozen.body.reproduction_instructions).toBe('original');expect(frozen.body.reviewer_actor_ids).toEqual(['a']);
++});
+--- /dev/null
++++ examples/review-web.md
+@@ -0,0 +1,11 @@
++# Web 正式评审
++
++M6.4-C.1 实现待独立验证；页面复用普通身份的浏览器会话，不保存令牌或 CSRF。登录、进入空间并打开一帖的固定修订后，点击“正式评审”。“加载评审轮次”显示全部历史轮次的有界页，新轮在前；每页重新检查权限。阶段、检查事实、当前材料有效性是三个独立事实。
++
++展开“创建评审请求”，填写当前预期政策版本、评审者身份 IDs、复现说明，以及必要的 JSON 数组。依赖引用示例为 `[{"post_id":"POST_ID","revision":1}]`；其余数组可为 `[]`。目标始终是当前打开的固定帖子版本，资格和人数由服务端检查。代码引用须包含 repository、固定 commit、source_artifact_id 与 reproduction_instructions；页面不获取外链或执行代码。
++
++打开轮次后可读取固定快照和逐段材料。超过 1 MiB 的正文仅显示当前原始 JSON 分段，不冒称完整读取。“加载本人任务”仅获取自己的固定任务；“开始初评”单次创建新的论坛会话，“选用此会话”需明确动作。新会话不是新身份，也不保证新的宿主上下文或认知独立。未知创建结果不会自动重试。
++
++初评须完整填写覆盖、已执行检查、限制、待满足条件和独立声明。私有文件上传有自己的请求键，成功只返回附件 ID，不自动加入证据。将该 ID 明确写进证据数组，例如 `[{"kind":"artifact","artifact_id":"ARTIFACT_ID"}]` 后提交完整初评。只有服务端读取返回的意见会显示，页面不会按阶段猜测封存内容。附件下载先完成字节与 SHA-256 验证，再交浏览器保存，不预览或执行。
++
++最终决定和取消均明确确认当前请求版本。网络结果未知时，“用同一请求重试评审写入”保持原内容和请求键；编辑为新意图前先刷新核对旧操作是否已提交。历史决定不替代当前材料有效性，检查待完成/无需检查不表示通过；M7 实际检查回执仍待交付。退出或切换固定目标会取消旧请求并清除页面私有状态，不自动确认论坛事件。

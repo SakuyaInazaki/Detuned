@@ -1,4 +1,24 @@
-import { DetunedError, ErrorCode, } from '@detuned/protocol';
+import { isSubscriptionStartValid, DetunedError, ErrorCode, } from '@detuned/protocol';
+function checkAbort(signal) {
+    if (signal?.aborted)
+        throw new DOMException('Polling cancelled.', 'AbortError');
+}
+const defaultWaitScheduler = {
+    nowMs: () => performance.now(),
+    sleep(ms, signal) {
+        return new Promise((resolve, reject) => {
+            let timer;
+            const cleanup = () => { clearTimeout(timer); signal?.removeEventListener('abort', abort); };
+            const abort = () => { cleanup(); reject(new DOMException('Polling cancelled.', 'AbortError')); };
+            if (signal?.aborted) {
+                abort();
+                return;
+            }
+            timer = setTimeout(() => { cleanup(); resolve(); }, ms);
+            signal?.addEventListener('abort', abort, { once: true });
+        });
+    },
+};
 export class EventService {
     storage;
     idGen;
@@ -6,15 +26,36 @@ export class EventService {
     tokenSigner;
     authService;
     tokenSecret;
-    constructor(storage, idGen, clock, tokenSigner, authService, tokenSecret) {
+    waitScheduler;
+    writeRateLimiter;
+    constructor(storage, idGen, clock, tokenSigner, authService, tokenSecret, waitScheduler = defaultWaitScheduler, writeRateLimiter = authService.writeRateLimiter) {
         this.storage = storage;
         this.idGen = idGen;
         this.clock = clock;
         this.tokenSigner = tokenSigner;
         this.authService = authService;
         this.tokenSecret = tokenSecret;
+        this.waitScheduler = waitScheduler;
+        this.writeRateLimiter = writeRateLimiter;
+    }
+    waitingPolls = 0;
+    publicEvent(storage, spaceId, event) {
+        if (event.space_id !== spaceId || event.visibility !== 'public')
+            return false;
+        if (event.type === 'check.created' || event.type === 'check.completed' || event.type === 'check.invalidated') {
+            const run = storage.findCheckRunById(event.object_id), request = run ? storage.findReviewRequestById(run.request_id) : null;
+            return !!request && request.space_id === spaceId;
+        }
+        if (event.type === 'artifact.created' || event.type === 'artifact.redacted') {
+            const artifact = storage.findArtifactById(event.object_id);
+            return !!artifact && artifact.space_id === spaceId && artifact.visibility === 'space';
+        }
+        return true;
     }
     subscribe(auth, spaceId, req) {
+        if (!isSubscriptionStartValid(req)) {
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '无效的订阅起点与 checkpoint_token 组合。', 400);
+        }
         const spaceAuth = this.authService.requireSpaceAccess(auth, spaceId, 'observer');
         const space = this.storage.findSpaceById(spaceId);
         let startSeq = 0;
@@ -22,7 +63,7 @@ export class EventService {
             startSeq = this.storage.getLatestEventSeq(spaceId);
         }
         else if (req.start === 'context_checkpoint' && req.checkpoint_token) {
-            const verified = this.tokenSigner.verify(req.checkpoint_token, this.tokenSecret);
+            const verified = this.tokenSigner.verify(req.checkpoint_token, this.tokenSecret, Math.floor(this.clock.now().getTime() / 1000));
             if (!verified ||
                 verified['purpose'] !== 'checkpoint' ||
                 verified['space_id'] !== spaceId ||
@@ -49,7 +90,10 @@ export class EventService {
             const reqThreadIds = req.thread_ids ?? [];
             const reqEventTypes = req.event_types ?? [];
             let sub = existingSubs.find((s) => arraysEqual(s.thread_ids, reqThreadIds) && arraysEqual(s.event_types, reqEventTypes));
+            let admitted = false;
             if (!sub) {
+                this.writeRateLimiter.admit(auth.actor.id);
+                admitted = true;
                 const subId = this.idGen.generateId('sub');
                 sub = {
                     id: subId,
@@ -63,6 +107,8 @@ export class EventService {
             }
             let consumer = tx.findConsumerByKey(sub.id, req.consumer_key);
             if (!consumer) {
+                if (!admitted)
+                    this.writeRateLimiter.admit(auth.actor.id);
                 const consumerId = this.idGen.generateId('csr');
                 consumer = {
                     id: consumerId,
@@ -78,201 +124,179 @@ export class EventService {
             return { subscription: sub, consumer };
         });
     }
-    poll(auth, spaceId, consumerId, req) {
-        this.authService.requireSpaceAccess(auth, spaceId, 'observer');
+    currentConsumer(auth, spaceId, consumerId) {
+        const current = this.authService.refreshContext(auth);
+        this.authService.requireSpaceAccess(current, spaceId, 'observer');
         const space = this.storage.findSpaceById(spaceId);
         const consumer = this.storage.findConsumerById(consumerId);
-        if (!consumer) {
+        if (!consumer)
             throw new DetunedError(ErrorCode.NOT_FOUND, '消费者不存在。', 404);
-        }
         const sub = this.storage.findSubscriptionById(consumer.subscription_id);
-        if (!sub || sub.actor_id !== auth.actor.id || sub.space_id !== spaceId) {
+        if (!sub || sub.actor_id !== current.actor.id || sub.space_id !== spaceId) {
             throw new DetunedError(ErrorCode.FORBIDDEN, '无权访问该消费者。', 403);
         }
-        if (consumer.acl_epoch < space.acl_epoch) {
+        if (consumer.acl_epoch !== space.acl_epoch) {
             throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '成员权限已变更，消费者需要重新建立同步游标。', 409);
         }
-        const limit = Math.min(Math.max(req.limit ?? 20, 1), 100);
+        return { current, consumer, sub };
+    }
+    cursor(auth, spaceId, consumerId, batch) {
+        return this.tokenSigner.sign({
+            v: 1, purpose: 'event_ack', actor_id: auth.actor.id, space_id: spaceId,
+            consumer_id: consumerId, batch_id: batch.id, through_seq: batch.through_seq,
+            exp: Math.floor(this.clock.now().getTime() / 1000) + 86400,
+        }, this.tokenSecret);
+    }
+    poll(auth, spaceId, consumerId, req) {
         return this.storage.transaction((tx) => {
-            // 1. If consumer has an active unacknowledged batch, redeliver the exact same batch!
+            const { current, consumer, sub } = this.currentConsumer(auth, spaceId, consumerId);
+            const limit = Math.min(Math.max(req.limit ?? 20, 1), 100);
             if (consumer.active_batch_id) {
                 const batch = tx.findDeliveryBatchById(consumer.active_batch_id);
-                if (batch) {
-                    const events = [];
-                    for (const evId of batch.event_ids) {
-                        const ev = tx.findEventById(evId);
-                        if (ev)
-                            events.push(ev);
-                    }
-                    const nextCursor = this.tokenSigner.sign({
-                        consumer_id: consumer.id,
-                        batch_id: batch.id,
-                        through_seq: batch.through_seq,
-                        exp: Math.floor(Date.now() / 1000) + 86400,
-                    }, this.tokenSecret);
-                    return {
-                        batch_id: batch.id,
-                        events,
-                        next_cursor: nextCursor,
-                        has_more: true,
-                    };
+                if (!batch || batch.consumer_id !== consumer.id) {
+                    throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '消费者待确认批次不可恢复。', 409);
                 }
+                const events = [];
+                for (const id of batch.event_ids) {
+                    const ev = tx.findEventById(id);
+                    if (ev && this.publicEvent(tx, spaceId, ev))
+                        events.push(ev);
+                }
+                return { batch_id: batch.id, events, next_cursor: this.cursor(current, spaceId, consumer.id, batch), has_more: true };
             }
-            // 2. Scan events after ack_seq
-            const rawEvents = tx.listEventsAfter(spaceId, consumer.ack_seq, 500);
-            if (rawEvents.length === 0) {
-                return {
-                    batch_id: null,
-                    events: [],
-                    next_cursor: null,
-                    has_more: false,
-                };
-            }
-            // 3. Filter events matching subscription
-            const matchedEvents = [];
-            let throughSeq = consumer.ack_seq;
-            for (const ev of rawEvents) {
-                throughSeq = Math.max(throughSeq, ev.seq);
-                // Filter by event types if configured
-                if (sub.event_types.length > 0 && !sub.event_types.includes(ev.type)) {
+            const raw = tx.listEventsAfter(spaceId, consumer.ack_seq, 500);
+            if (!raw.length)
+                return { batch_id: null, events: [], next_cursor: null, has_more: false };
+            const events = [];
+            let through = consumer.ack_seq;
+            for (const ev of raw) {
+                through = ev.seq;
+                if (!this.publicEvent(tx, spaceId, ev))
                     continue;
-                }
-                // Filter by thread_ids if configured
-                if (sub.thread_ids.length > 0) {
+                if (sub.event_types.length && !sub.event_types.includes(ev.type))
+                    continue;
+                if (sub.thread_ids.length) {
                     if (ev.type.startsWith('thread.')) {
-                        if (!sub.thread_ids.includes(ev.object_id)) {
+                        if (!sub.thread_ids.includes(ev.object_id))
                             continue;
-                        }
                     }
                     else if (ev.type.startsWith('post.')) {
                         const post = tx.findPostById(ev.object_id);
-                        if (!post || !sub.thread_ids.includes(post.thread_id)) {
+                        if (!post || post.space_id !== spaceId || !sub.thread_ids.includes(post.thread_id))
                             continue;
-                        }
                     }
                     else if (ev.type.startsWith('relation.')) {
                         const rel = tx.findRelationById(ev.object_id);
-                        if (!rel) {
+                        if (!rel || rel.space_id !== spaceId)
                             continue;
-                        }
-                        const sourcePost = tx.findPostById(rel.source_post_id);
-                        const targetPost = tx.findPostById(rel.target_post_id);
-                        const sourceMatches = sourcePost && sub.thread_ids.includes(sourcePost.thread_id);
-                        const targetMatches = targetPost && sub.thread_ids.includes(targetPost.thread_id);
-                        if (!sourceMatches && !targetMatches) {
+                        const source = tx.findPostById(rel.source_post_id), target = tx.findPostById(rel.target_post_id);
+                        if (!(source?.space_id === spaceId && sub.thread_ids.includes(source.thread_id)) &&
+                            !(target?.space_id === spaceId && sub.thread_ids.includes(target.thread_id)))
                             continue;
-                        }
                     }
-                    else {
+                    else if (ev.type === 'check.created' || ev.type === 'check.completed' || ev.type === 'check.invalidated') {
+                        const run = tx.findCheckRunById(ev.object_id), request = run ? tx.findReviewRequestById(run.request_id) : null, target = request?.space_id === spaceId ? tx.findPostById(request.target_ref.post_id) : null;
+                        if (!target || target.space_id !== spaceId || !sub.thread_ids.includes(target.thread_id))
+                            continue;
+                    }
+                    else if (ev.type === 'review.requested' || ev.type === 'review.cancelled' || ev.type === 'review.revealed' || ev.type === 'review.stale' || ev.type === 'review.finalized') {
+                        const request = tx.findReviewRequestById(ev.object_id);
+                        const target = request?.space_id === spaceId ? tx.findPostById(request.target_ref.post_id) : null;
+                        if (!target || target.space_id !== spaceId || !sub.thread_ids.includes(target.thread_id))
+                            continue;
+                    }
+                    else
                         continue;
-                    }
                 }
-                matchedEvents.push(ev);
-                if (matchedEvents.length >= limit) {
+                events.push(ev);
+                if (events.length >= limit)
                     break;
-                }
             }
-            const batchId = this.idGen.generateId('bat');
-            const batchRecord = {
-                id: batchId,
-                consumer_id: consumer.id,
-                from_seq: consumer.ack_seq,
-                through_seq: throughSeq,
-                event_ids: matchedEvents.map((e) => e.id),
-                acked_at: null,
-                created_at: this.clock.nowIso(),
-            };
-            tx.createDeliveryBatch(batchRecord);
-            tx.updateConsumerBatch(consumer.id, batchId, consumer.version + 1);
-            const nextCursor = this.tokenSigner.sign({
-                consumer_id: consumer.id,
-                batch_id: batchId,
-                through_seq: throughSeq,
-                exp: Math.floor(Date.now() / 1000) + 86400,
-            }, this.tokenSecret);
-            const hasMore = throughSeq < tx.getLatestEventSeq(spaceId);
-            return {
-                batch_id: batchId,
-                events: matchedEvents,
-                next_cursor: nextCursor,
-                has_more: hasMore,
-            };
+            const batch = { id: this.idGen.generateId('bat'), consumer_id: consumer.id,
+                from_seq: consumer.ack_seq, through_seq: through, event_ids: events.map(e => e.id), acked_at: null, created_at: this.clock.nowIso() };
+            tx.createDeliveryBatch(batch);
+            tx.updateConsumerBatch(consumer.id, batch.id, consumer.version + 1);
+            return { batch_id: batch.id, events, next_cursor: this.cursor(current, spaceId, consumer.id, batch), has_more: through < tx.getLatestEventSeq(spaceId) };
         });
     }
+    async pollWithWait(auth, spaceId, consumerId, req, options = {}) {
+        const signal = options.signal;
+        checkAbort(signal);
+        const wait = req.wait_ms ?? 0;
+        if (!Number.isInteger(wait) || wait < 0 || wait > 25000) {
+            this.currentConsumer(auth, spaceId, consumerId);
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'wait_ms必须是0..25000整数。', 400);
+        }
+        let result = this.poll(auth, spaceId, consumerId, req);
+        checkAbort(signal);
+        if (result.batch_id || wait === 0)
+            return result;
+        if (this.waitingPolls >= 128)
+            throw new DetunedError(ErrorCode.RATE_LIMITED, '等待中的poll已达服务上限。', 429, true);
+        this.waitingPolls++;
+        const deadline = this.waitScheduler.nowMs() + wait;
+        try {
+            while (true) {
+                const remaining = deadline - this.waitScheduler.nowMs();
+                if (remaining <= 0) {
+                    result = this.poll(auth, spaceId, consumerId, req);
+                    checkAbort(signal);
+                    return result;
+                }
+                await this.waitScheduler.sleep(Math.min(100, remaining), signal);
+                checkAbort(signal);
+                result = this.poll(auth, spaceId, consumerId, req);
+                checkAbort(signal);
+                if (result.batch_id || this.waitScheduler.nowMs() >= deadline)
+                    return result;
+            }
+        }
+        finally {
+            this.waitingPolls--;
+        }
+    }
     ack(auth, spaceId, consumerId, req) {
-        this.authService.requireSpaceAccess(auth, spaceId, 'observer');
-        const space = this.storage.findSpaceById(spaceId);
-        if (!space) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, '空间不存在。', 404);
-        }
-        const consumer = this.storage.findConsumerById(consumerId);
-        if (!consumer) {
-            throw new DetunedError(ErrorCode.NOT_FOUND, '消费者不存在。', 404);
-        }
-        const sub = this.storage.findSubscriptionById(consumer.subscription_id);
-        if (!sub || sub.actor_id !== auth.actor.id || sub.space_id !== spaceId) {
-            throw new DetunedError(ErrorCode.FORBIDDEN, '无权访问该消费者。', 403);
-        }
-        if (consumer.acl_epoch < space.acl_epoch) {
-            throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '成员权限已变更，消费者需要重新建立同步游标。', 409);
-        }
-        const verified = this.tokenSigner.verify(req.next_cursor, this.tokenSecret);
-        if (!verified ||
-            verified['consumer_id'] !== consumerId ||
-            verified['batch_id'] !== req.batch_id ||
-            typeof verified['through_seq'] !== 'number') {
-            throw new DetunedError(ErrorCode.ACK_INVALID, '无效的确认游标或批次 ID。', 409);
-        }
-        const throughSeq = verified['through_seq'];
         return this.storage.transaction((tx) => {
-            const currentSpace = tx.findSpaceById(spaceId);
-            const currentConsumer = tx.findConsumerById(consumerId);
-            if (!currentSpace || !currentConsumer || currentConsumer.acl_epoch < currentSpace.acl_epoch) {
-                throw new DetunedError(ErrorCode.RESYNC_REQUIRED, '成员权限已变更，消费者需要重新建立同步游标。', 409);
-            }
+            const { current, consumer } = this.currentConsumer(auth, spaceId, consumerId);
+            const invalid = () => new DetunedError(ErrorCode.ACK_INVALID, '无效的确认游标或批次 ID。', 409);
+            const verified = this.tokenSigner.verify(req.next_cursor, this.tokenSecret, Math.floor(this.clock.now().getTime() / 1000));
+            if (!verified)
+                throw invalid();
+            const keys = Object.keys(verified).sort().join(',');
+            const legacy = keys === 'batch_id,consumer_id,exp,through_seq';
+            const modern = keys === 'actor_id,batch_id,consumer_id,exp,purpose,space_id,through_seq,v';
+            if ((!legacy && !modern) || (modern && (verified.v !== 1 || verified.purpose !== 'event_ack' || verified.actor_id !== current.actor.id || verified.space_id !== spaceId)) ||
+                verified.consumer_id !== consumer.id || verified.batch_id !== req.batch_id ||
+                !Number.isSafeInteger(verified.through_seq) || verified.through_seq < 0 || !Number.isSafeInteger(verified.exp))
+                throw invalid();
+            const through = verified.through_seq;
             const batch = tx.findDeliveryBatchById(req.batch_id);
-            if (!batch || batch.consumer_id !== consumer.id) {
-                throw new DetunedError(ErrorCode.ACK_INVALID, '批次不存在或不属于该消费者。', 409);
-            }
-            // Idempotent retry of identical batch ack
-            if (batch.acked_at && consumer.ack_seq >= throughSeq) {
-                return {
-                    confirmed: true,
-                    acknowledged_batch_id: req.batch_id,
-                };
-            }
-            if (consumer.active_batch_id !== req.batch_id) {
-                throw new DetunedError(ErrorCode.ACK_INVALID, '当前活跃批次与确认批次不一致。', 409);
-            }
-            // Cursor through_seq must match server persisted delivery batch
-            if (throughSeq !== batch.through_seq) {
-                throw new DetunedError(ErrorCode.ACK_INVALID, '确认游标中的序列号与批次实际持久序列号不匹配。', 409);
-            }
-            const latestSeq = tx.getLatestEventSeq(spaceId);
-            if (throughSeq > latestSeq) {
-                throw new DetunedError(ErrorCode.ACK_INVALID, '确认游标序列号超出当前已持久事件最大序列号。', 409);
-            }
-            const now = this.clock.nowIso();
-            tx.ackDeliveryBatch(req.batch_id, now);
-            tx.updateConsumerAck(consumer.id, throughSeq, consumer.version + 1);
+            if (!batch || batch.consumer_id !== consumer.id || batch.through_seq !== through || through > tx.getLatestEventSeq(spaceId))
+                throw invalid();
+            if (batch.acked_at && consumer.ack_seq >= through)
+                return { confirmed: true, acknowledged_batch_id: batch.id };
+            if (consumer.active_batch_id !== batch.id || through < consumer.ack_seq)
+                throw invalid();
+            tx.ackDeliveryBatch(batch.id, this.clock.nowIso());
+            tx.updateConsumerAck(consumer.id, through, consumer.version + 1);
             tx.updateConsumerBatch(consumer.id, null, consumer.version + 2);
-            return {
-                confirmed: true,
-                acknowledged_batch_id: req.batch_id,
-            };
+            return { confirmed: true, acknowledged_batch_id: batch.id };
         });
     }
     deactivateConsumer(auth, spaceId, consumerId) {
-        this.authService.requireSpaceAccess(auth, spaceId, 'observer');
-        const consumer = this.storage.findConsumerById(consumerId);
-        if (!consumer) {
-            return; // Idempotent
-        }
-        const sub = this.storage.findSubscriptionById(consumer.subscription_id);
-        if (!sub || sub.actor_id !== auth.actor.id) {
-            throw new DetunedError(ErrorCode.FORBIDDEN, '无权停用该消费者。', 403);
-        }
-        this.storage.deactivateConsumer(consumerId);
+        this.storage.transaction((tx) => {
+            const current = this.authService.refreshContext(auth);
+            this.authService.requireSpaceAccess(current, spaceId, 'observer');
+            const consumer = tx.findConsumerById(consumerId);
+            if (!consumer)
+                return; // Idempotent, without fresh admission.
+            const sub = tx.findSubscriptionById(consumer.subscription_id);
+            if (!sub || sub.actor_id !== current.actor.id || sub.space_id !== spaceId) {
+                throw new DetunedError(ErrorCode.FORBIDDEN, '无权停用该消费者。', 403);
+            }
+            this.writeRateLimiter.admit(current.actor.id);
+            tx.deactivateConsumer(consumerId);
+        });
     }
 }
 //# sourceMappingURL=event-service.js.map

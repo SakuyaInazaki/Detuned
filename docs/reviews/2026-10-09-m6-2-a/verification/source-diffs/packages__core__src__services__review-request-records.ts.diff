@@ -1,0 +1,53 @@
+--- packages/core/src/services/review-request-records.ts (fresh exact before)
++++ packages/core/src/services/review-request-records.ts (current)
+@@ -91,16 +91,25 @@
+   const storedVersion=storage.findReviewRequestVersion(requestId,version??head.version);
+   const snapshot=readSnapshotRecords(storage,spaceId,head.snapshot_id,online);
+   if(!storedVersion||storedVersion.request_id!==requestId||!positive(storedVersion.version)||storedVersion.version>(head.version)||
+-    !id(storedVersion.changed_by)||!id(storedVersion.changed_at)||!['collecting','cancelled'].includes(storedVersion.phase)||
+-    (storedVersion.phase==='collecting'?(storedVersion.version!==1||storedVersion.reason!==null||storedVersion.changed_by!==head.requested_by||storedVersion.changed_at!==head.created_at):(storedVersion.version!==2||typeof storedVersion.reason!=='string'||!/\S/.test(storedVersion.reason)||storedVersion.reason.length>500))||
++    !id(storedVersion.changed_by)||!id(storedVersion.changed_at)||!['collecting','cancelled','revealed'].includes(storedVersion.phase)||
++    !Number.isSafeInteger(storedVersion.submitted_count)||storedVersion.submitted_count<0||storedVersion.submitted_count>5||
++    (storedVersion.phase==='cancelled'?(storedVersion.version<2||typeof storedVersion.reason!=='string'||!/\S/.test(storedVersion.reason)||storedVersion.reason.length>500):storedVersion.reason!==null)||
++    (storedVersion.version===1&&(storedVersion.phase!=='collecting'||storedVersion.submitted_count!==0||storedVersion.changed_by!==head.requested_by||storedVersion.changed_at!==head.created_at))||
+     !isDeepStrictEqual(snapshot.record.target_ref,head.target_ref))throw reviewResync();
+   if((version===undefined||version===head.version)&&!isDeepStrictEqual(
+-    {request_id:head.id,version:head.version,phase:head.phase,changed_by:head.changed_by,changed_at:head.changed_at,reason:head.reason},storedVersion))throw reviewResync();
++    {request_id:head.id,version:head.version,phase:head.phase,changed_by:head.changed_by,changed_at:head.changed_at,reason:head.reason,submitted_count:head.submitted_count},storedVersion))throw reviewResync();
++  const submissions=storage.listReviewSubmissions(requestId);
++  if(!Number.isSafeInteger(head.submitted_count)||head.submitted_count<0||head.submitted_count>5||submissions.length!==head.submitted_count||
++    submissions.filter(s=>s.request_version<=storedVersion.version).length!==storedVersion.submitted_count||
++    new Set(submissions.map(s=>s.assignment_id)).size!==submissions.length||
++    new Set(submissions.map(s=>s.request_version)).size!==submissions.length||
++    (storedVersion.phase==='revealed'&&(storedVersion.submitted_count===0||submissions.some(s=>s.revealed_at===null))))throw reviewResync();
+   const assignments=storage.listReviewAssignments(requestId);
+   const reviewers=assignments.map(a=>a.reviewer_actor_id).sort(cmp);
+-  if(assignments.some(a=>a.request_id!==requestId||!id(a.reviewer_actor_id)||(a.group_at_assignment!==null&&typeof a.group_at_assignment!=='string'))||
++  if(assignments.some(a=>!id(a.id)||a.request_id!==requestId||!id(a.reviewer_actor_id)||(a.group_at_assignment!==null&&typeof a.group_at_assignment!=='string'))||
+     reviewers.length!==snapshot.manifest.review_policy.required_reviewers||new Set(reviewers).size!==reviewers.length||
+     reviewers.some(actorId=>snapshot.manifest.contributors.includes(actorId)))throw reviewResync();
++  if(head.submitted_count>assignments.length||(storedVersion.phase==='revealed'&&storedVersion.submitted_count!==assignments.length))throw reviewResync();
+   if(snapshot.manifest.review_policy.distinct_independence_groups){
+     const groups=assignments.map(a=>a.group_at_assignment);
+     if(groups.some(group=>typeof group!=='string'||!/\S/.test(group))||new Set(groups).size!==groups.length)throw reviewResync();
+@@ -121,7 +130,19 @@
+ /** Maintenance only: validates intrinsic frozen records and returns no material/body.
+  * Redaction preserves original narrow hashes; never read or restore sanitized historical bodies. */
+ export function validatePersistedReviewRequestBinding(storage:StoragePort,spaceId:string,requestId:string,version:number,
+-  snapshotId:string,manifestSha256:string,phase:'collecting'|'cancelled'):void{
++  snapshotId:string,manifestSha256:string,phase:'collecting'|'cancelled'|'revealed'):void{
+   const view=reconstructRequestView(storage,spaceId,requestId,version,false);
+   if(view.snapshot_id!==snapshotId||view.snapshot_sha256!==manifestSha256||view.phase!==phase)throw reviewResync();
+ }
++
++/** Fresh actions only. Caller first applies current authentication and online material privacy. */
++export function assertReviewSnapshotCurrent(storage:StoragePort,records:{record:ReviewSnapshotRecord;manifest:ReviewSnapshotManifestData}):void {
++  const {record,manifest}=records,space=storage.findSpaceById(record.space_id);
++  const stale=()=>new DetunedError(ErrorCode.SNAPSHOT_STALE,'Review material is no longer current and available.',409);
++  if(!space||space.policy_revision!==record.policy_revision)throw stale();
++  for(const entry of [manifest.target,...manifest.dependencies]){
++    const post=storage.findPostById(entry.ref.post_id);
++    if(!post||post.lifecycle!=='active'||post.current_revision!==entry.ref.revision)throw stale();
++  }
++  for(const entry of manifest.artifacts)if(storage.findArtifactById(entry.artifact_id)?.state!=='ready')throw stale();
++}

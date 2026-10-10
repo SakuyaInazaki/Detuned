@@ -1,0 +1,57 @@
+{
+  "status": "failed",
+  "failure_enum": "STAGE_NONZERO",
+  "elapsed_seconds": 2.629261875001248,
+  "fixture_removed": false,
+  "fixture_retained": true,
+  "root": "/private/tmp/detuned-m75-clean-gq6h90m6",
+  "stages": [
+    {
+      "stage": "effective-config",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/policy.sb",
+        "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+        "-e",
+        "const {spawnSync}=require('node:child_process');\nconst [entry,optionsJSON,keysJSON]=process.argv.slice(1);const options=JSON.parse(optionsJSON),keys=JSON.parse(keysJSON);\nconst end=Date.now()+9000,rows=[];\nfor(const key of keys){const remaining=end-Date.now();if(remaining<=0)throw Error('CONFIG_PROBE_DEADLINE');\nconst r=spawnSync(process.execPath,[entry,...options,'config','--location=project','get','--json',key],{env:process.env,cwd:process.cwd(),encoding:'utf8',timeout:remaining,maxBuffer:65536,detached:false});\nif(r.error||r.status!==0||r.signal!==null)throw Error('CONFIG_PROBE_CHILD_FAILURE');\nlet value,type;if((key==='pnpmfile'||key==='global-pnpmfile')&&r.stdout.trim()===''){value=null;type='undefined'}\nelse{try{value=JSON.parse(r.stdout)}catch{throw Error('CONFIG_PROBE_JSON_FAILURE')}type=typeof value}\nrows.push({key,type,value,pid:r.pid,closeCode:r.status,closeSignal:r.signal,actualClose:true});}\nprocess.stdout.write(JSON.stringify({rows})+'\n');",
+        "/opt/homebrew/lib/node_modules/pnpm/bin/pnpm.mjs",
+        "[\"--pm-on-fail=error\", \"--config.store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/store\", \"--config.cache-dir=/private/tmp/detuned-m75-clean-gq6h90m6/cache\", \"--config.state-dir=/private/tmp/detuned-m75-clean-gq6h90m6/state\", \"--config.virtual-store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/work/node_modules/.pnpm\"]",
+        "[\"enable-global-virtual-store\", \"side-effects-cache\", \"network-concurrency\", \"child-concurrency\", \"pm-on-fail\", \"store-dir\", \"cache-dir\", \"state-dir\", \"virtual-store-dir\", \"globalconfig\", \"pnpmfile\", \"global-pnpmfile\"]"
+      ],
+      "budget_seconds": 10,
+      "close_code": 1,
+      "close_signal": null,
+      "actual_close": true,
+      "group_absent": true,
+      "stdout_bytes": 0,
+      "stderr_bytes": 429,
+      "leader_peak_rss_kib": 3888,
+      "pid": 95812,
+      "uid": 501,
+      "ppid": 95807,
+      "pgid": 95812,
+      "leader_rss_kib": 3888,
+      "elapsed_seconds": 0.5420688329904806,
+      "output_hashes": [
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "6c9e4016f61f39ec8805006dd413cfbe27559cfbee2e6655e126ab2e379d74db"
+      ],
+      "failure_enum": "STAGE_NONZERO"
+    }
+  ],
+  "size_peak": {
+    "logical_bytes": 800448634,
+    "allocated_bytes": 930590720
+  },
+  "internal_children_evidence": "root-approved existing tests actualclose/absence/awaitedteardown, not outerindependentcensus; no spawn injection",
+  "outer_process_census": false,
+  "original_sources_locks_dist_verified_unchanged": true,
+  "network_domain_scope": [
+    "nodejs.org",
+    "registry.npmjs.org"
+  ],
+  "evidence_combination": "attempt-2 verified empty-fixture install plus this dedicated continuation; no new download/install/version run",
+  "prior_install_receipt_sha256": "cded48e3b7fb1f418754a67944ad1fda441daaff3ea186064a81cd5b4d6cb01a",
+  "network_enforcement": "fixedNodeURL redirect guard; pnpm configured registry/integrity only, no harddomain firewall or requestcensus"
+}

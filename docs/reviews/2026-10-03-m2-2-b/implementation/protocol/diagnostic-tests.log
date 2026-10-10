@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests | 1 failed) 275ms
+   ✓ M2.2-B typed knowledge projection contracts > B01: source and flat relation schemas make unavailable/redacted version knowledge null 46ms
+   ✓ M2.2-B typed knowledge projection contracts > B02: material requires explicit nullable fields/missing lists without fake defaults 6ms
+   ✓ M2.2-B typed knowledge projection contracts > B03: view mapping and OpenAPI preserve arrays and publish exact current response schemas 110ms
+   × M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer 112ms
+     → [{"post_id":"pst_40404595-da1e-41c5-8165-7a4035f2add4","revision":1,"thread_id":"thd_25962ce1-d83a-4221-a0a3-9be9a675ec46","kind":"claim","title":"claim","summary":"s","tags":[],"snippet":"s","created_at":"2026-10-03T07:31:10.327Z","type":"claim","report_kind":"author_report","formal_review_status":"not_enabled","formal_check_status":"not_enabled","material":{"statement":"claim","assumptions":[],"scope":"scope","falsification_plan":"test","missing_fields":[]},"relations":[{"relation_id":"rel_498fefc6-fc3e-49f5-8502-b0b9cd4f2c7a","relation_type":"challenges","source_ref":{"post_id":"pst_ecaf0814-a795-4067-9598-4b728b18fe79","revision":1},"target_ref":{"post_id":"pst_40404595-da1e-41c5-8165-7a4035f2add4","revision":1},"creator_id":"act_admin_8aab772f52da","source_author_id":"act_admin_8aab772f52da","target_author_id":"act_admin_8aab772f52da","state":"open","version":1,"source_status":"active","target_status":"active","source_has_newer_revision":false,"target_has_newer_revision":false}]}]: expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-knowledge-view-contracts.test.ts > M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer
+AssertionError: [{"post_id":"pst_40404595-da1e-41c5-8165-7a4035f2add4","revision":1,"thread_id":"thd_25962ce1-d83a-4221-a0a3-9be9a675ec46","kind":"claim","title":"claim","summary":"s","tags":[],"snippet":"s","created_at":"2026-10-03T07:31:10.327Z","type":"claim","report_kind":"author_report","formal_review_status":"not_enabled","formal_check_status":"not_enabled","material":{"statement":"claim","assumptions":[],"scope":"scope","falsification_plan":"test","missing_fields":[]},"relations":[{"relation_id":"rel_498fefc6-fc3e-49f5-8502-b0b9cd4f2c7a","relation_type":"challenges","source_ref":{"post_id":"pst_ecaf0814-a795-4067-9598-4b728b18fe79","revision":1},"target_ref":{"post_id":"pst_40404595-da1e-41c5-8165-7a4035f2add4","revision":1},"creator_id":"act_admin_8aab772f52da","source_author_id":"act_admin_8aab772f52da","target_author_id":"act_admin_8aab772f52da","state":"open","version":1,"source_status":"active","target_status":"active","source_has_newer_revision":false,"target_has_newer_revision":false}]}]: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ agrees tests/contracts/m2-knowledge-view-contracts.test.ts:19:61
+     17| function agrees(schema: any, value: unknown, expected: boolean) {
+     18|   const before = JSON.stringify(value);
+     19|   expect(Value.Check(schema, value), JSON.stringify(value)).toBe(expec…
+       |                                                             ^
+     20|   expect(ajv.compile(schema)(value)).toBe(expected);
+     21|   expect(JSON.stringify(value)).toBe(before);
+ ❯ tests/contracts/m2-knowledge-view-contracts.test.ts:114:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  15:31:09
+   Duration  850ms (transform 168ms, setup 0ms, collect 356ms, tests 275ms, environment 0ms, prepare 34ms)
+

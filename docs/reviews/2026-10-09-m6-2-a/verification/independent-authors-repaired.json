@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/opt/homebrew/bin/pnpm",
+    "test",
+    "tests/integration/m6-review-submissions-independent.test.ts",
+    "tests/integration/m6-schema4-maintenance-independent.test.ts",
+    "tests/integration/m6-review-submissions.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/integration/m6-schema4-maintenance.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exit_code": 0,
+  "seconds": 4.327,
+  "stdout": "independent-authors-repaired.stdout.txt",
+  "stderr": "independent-authors-repaired.stderr.txt",
+  "concurrency": "single global execution window; workspace=1 / test worker=1 when applicable"
+}

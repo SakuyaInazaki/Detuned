@@ -1,0 +1,80 @@
+{
+  "cases": [
+    {
+      "mime": "text/plain",
+      "raw_bytes": 4096,
+      "status": 201,
+      "body": {
+        "api_version": "1",
+        "request_id": "req-2",
+        "data": {
+          "id": "art_91671ecd-db16-474b-a7eb-14fb9c3e50ca",
+          "space_id": "spc_fd4ea945-47f1-43e5-93ae-e1f992a54131",
+          "owner_id": "act_admin_d4806a1c578c",
+          "visibility": "space",
+          "sha256": "e8424ea5339b85a750ab5f4c63bde5d5c62975792a3bed6ccb37c045207c6771",
+          "bytes": 8,
+          "mime": "application/octet-stream",
+          "state": "ready",
+          "created_at": "2026-10-03T06:22:45.119Z",
+          "content_url": "/api/v1/spaces/spc_fd4ea945-47f1-43e5-93ae-e1f992a54131/artifacts/art_91671ecd-db16-474b-a7eb-14fb9c3e50ca/content"
+        }
+      }
+    },
+    {
+      "mime": "text/plain",
+      "raw_bytes": 4097,
+      "status": 400,
+      "body": {
+        "api_version": "1",
+        "request_id": "req-3",
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "metadata必须为不超过4096字节的JSON。",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "mime": "application/json",
+      "raw_bytes": 4096,
+      "status": 201,
+      "body": {
+        "api_version": "1",
+        "request_id": "req-4",
+        "data": {
+          "id": "art_04e8f8d4-ae56-436a-86cd-8e02aa8b6b5c",
+          "space_id": "spc_fd4ea945-47f1-43e5-93ae-e1f992a54131",
+          "owner_id": "act_admin_d4806a1c578c",
+          "visibility": "space",
+          "sha256": "e8424ea5339b85a750ab5f4c63bde5d5c62975792a3bed6ccb37c045207c6771",
+          "bytes": 8,
+          "mime": "application/octet-stream",
+          "state": "ready",
+          "created_at": "2026-10-03T06:22:45.135Z",
+          "content_url": "/api/v1/spaces/spc_fd4ea945-47f1-43e5-93ae-e1f992a54131/artifacts/art_04e8f8d4-ae56-436a-86cd-8e02aa8b6b5c/content"
+        }
+      }
+    },
+    {
+      "mime": "application/json",
+      "raw_bytes": 4097,
+      "status": 406,
+      "body": {
+        "api_version": "1",
+        "request_id": "req-5",
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "a request field is not a valid JSON as declared by its Content-Type",
+          "retryable": false
+        }
+      }
+    }
+  ],
+  "passes": false,
+  "error": {
+    "name": "AssertionError",
+    "message": "Expected values to be strictly equal:\n\n406 !== 400\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n406 !== 400\n\n    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-1/verification/check-metadata-encoding.mjs:8:92\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+  }
+}

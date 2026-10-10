@@ -1,0 +1,41 @@
+--- before-files/scripts/integrations/web/fixtures.ts
++++ scripts/integrations/web/fixtures.ts
+@@ -32,6 +32,8 @@
+   withdrawMembership(identity: IdentityName): Promise<void>;
+   patchSpace(input: {spaceId?: string; objective?: string; rules?: string[]; pinnedRefs?: Array<{post_id:string;revision:number}>}): Promise<number>;
+   seedHistoricalLargeRules(spaceId: string): Promise<number>;
++  seedHistoricalBody(title: string, body: string): Promise<Post>;
++  setHistoricalPostTimes(entries: Array<{id: string; createdAt: string}>): void;
+   seedNote(input: {title: string; body: string; structured?: Json}): Promise<Post>;
+   seedPost(input: SeedPost): Promise<Post>;
+   seedThread(input: {title: string; initialPost?: SeedPost}): Promise<{id: string; title: string; initialPost?: Post}>;
+@@ -109,7 +111,7 @@
+     const fault = index < 0 ? undefined : pending.splice(index, 1)[0];
+     const record: HttpEvent = {method, path: pathname, status: 0};
+     if ((pathname.endsWith('/posts') || pathname.endsWith('/threads') || pathname.endsWith('/artifacts')) && typeof request.headers['idempotency-key'] === 'string') record.requestKey = request.headers['idempotency-key'];
+-    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts') || pathname.endsWith('/context') || /\/spaces\/[^/]+\/revisions\/\d+$/.test(pathname)) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
++    if (pathname.endsWith('/search') || pathname.endsWith('/catalog') || pathname.endsWith('/artifacts') || pathname.endsWith('/context') || /\/threads\/[^/]+\/posts$/.test(pathname) || /\/spaces\/[^/]+\/revisions\/\d+$/.test(pathname)) record.query = Object.fromEntries(new URL(request.url ?? '/', 'http://fixture.invalid').searchParams);
+     httpEvents.push(record);
+     if (!upstream || fault?.fault === 'fail-before') {
+       record.status = 503; request.resume(); unavailable(response); fault?.entered.resolve(); return;
+@@ -231,6 +233,20 @@
+       async revokeCredential(identity) {await seed('POST', `/admin/credentials/${identities[identity].credential}/revoke`);},
+       async withdrawMembership(identity) {await seed('DELETE', `/spaces/${space.id}/memberships/${identities[identity].actor}`);},
+       seedNote, seedPost, patchSpace,
++      async seedHistoricalBody(title,body) {
++        if(browserAccessed) throw new Error('Historical body must precede browser access.');
++        const value=await seedNote({title,body:'Legal small HTTP seed before owned historical replacement.'});
++        const row=json(db.prepare('SELECT title,summary,structured FROM post_revisions WHERE post_id=? AND revision=1').get(value.id));
++        const hasher=new CryptoHasher();const structured=json(JSON.parse(string(row.structured)));
++        const hash=hasher.sha256(`${string(row.title)}\n${string(row.summary)}\n${body}\n${hasher.canonicalJson(structured)}`);
++        db.prepare('UPDATE post_revisions SET body=?,content_hash=? WHERE post_id=? AND revision=1').run(body,hash,value.id);
++        return value;
++      },
++      setHistoricalPostTimes(entries) {
++        if (browserAccessed) throw new Error('Historical timestamps must precede browser access.');
++        const update=db.prepare('UPDATE posts SET created_at=? WHERE id=? AND space_id=?');
++        db.transaction(()=>{for(const entry of entries) {if(update.run(entry.createdAt,entry.id,space.id).changes!==1) throw new Error('Private historical post scope invalid.');}})();
++      },
+       async seedHistoricalLargeRules(spaceId) {
+         if (browserAccessed) throw new Error('Historical space fixture must precede browser access.');
+         const revision=await patchSpace({spaceId,objective:'Synthetic historical oversized rules',rules:['Legal initial rule']});

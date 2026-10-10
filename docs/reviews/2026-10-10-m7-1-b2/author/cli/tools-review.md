@@ -1,0 +1,9 @@
+# A independent static review of B tools source
+
+Bound freeze d4a7079806c1742b0df02f16df6a32d4fa95fc2fba6a3cef197fc3ceea5227ab and source.diff d713deccc0f5bf6a7b019f67920336a0a8689c0156365f18cec65d9de404ab1e. Independently recomputed all three actual source SHA256 values and matched manifest. Read full delta and five author contracts; no runtime performed.
+
+No actionable blocker found. Six forum_read branches have exact selectors and additionalProperties:false; positive safe-integer revision bounded. Two forum_review branches reuse every canonical CreateCheckRun/InvalidateCheckRun property and preserve Union/anyOf plus root object shape. The reason field retains the canonical x-max-codepoints advertisement; real for-of enforcement reads that canonical maximum after schema validation. No UTF16 maxLength substitution or adapter validator loosening.
+
+Existing MCP flat/wrapped validation invokes canonical validateToolParams before bridge binding.prepare; Pi runtime invokes it before client/binding acquisition. Client.callTool validates before dispatch and the only client delta is eight thin typed-method branches with transport selectors stripped from write bodies. Existing B1 typed methods remain outside delta. No issuer/verify-only writes/binary/tool names exposed; no weakening of ordinary binding.getMe/session authorization. CT01 covers complete catalogs/projections, CT02 selectors/forbidden branches, CT03 codepoint and prepare/factory boundary, CT04 controlled typed dispatcher identity, CT05 zero-HTTP invalid input. These controlled/SDK static contracts do not claim installed-host certification; D supplies real TCP and local MCP/Pi regressions.
+
+D independent test source was also read for CLI selector/stdin/output compatibility: CI01–03 and CI07 match actual namespace and method behavior. Runtime timing and SDK execution remain D verification responsibility; no timeout changes proposed.

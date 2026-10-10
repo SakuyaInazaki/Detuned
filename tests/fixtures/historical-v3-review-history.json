@@ -1,0 +1,531 @@
+{
+  "fixture_version": 1,
+  "source_schema_version": 3,
+  "source_runtime": "frozen original M6B built service, not schema4 relabelled",
+  "source_manifest_sha256": "fdb23f492fddc09944525fb3b6b277f0064a505346d704b17b020dc3f861f50c",
+  "source_sql_sha256": "cf14b7cbe4c8b99e0f7c880ba9a45bd7c63a53d740f76b09d017b22ed21a5cd0",
+  "recipe": {
+    "kind": "private trusted actor/space/thread seed; original PostService and ReviewRequestService operations",
+    "clock_start": "2026-10-09T00:00:00.000Z",
+    "space_id": "spc-old3-review-fixture",
+    "thread_id": "thd-old3-review-fixture",
+    "actors": {
+      "author": "act-old3-author",
+      "one": "act-old3-one",
+      "two": "act-old3-two",
+      "observer": "act-old3-observer"
+    },
+    "credentials": "excluded; tests mint independent private credentials",
+    "instance_secret": "excluded; new owned databases create their own"
+  },
+  "rows": {
+    "schema_migrations": [
+      {
+        "version": 1,
+        "applied_at": "2026-10-09T06:36:04.983Z"
+      },
+      {
+        "version": 2,
+        "applied_at": "2026-10-09T06:36:04.990Z"
+      },
+      {
+        "version": 3,
+        "applied_at": "2026-10-09T06:36:04.990Z"
+      }
+    ],
+    "actors": [
+      {
+        "id": "act_admin_0b2ffc49cc02",
+        "kind": "human",
+        "display_name": "Administrator",
+        "created_at": "2026-10-09T06:36:04.990Z",
+        "disabled_at": null
+      },
+      {
+        "id": "act-old3-author",
+        "kind": "human",
+        "display_name": "synthetic author",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "disabled_at": null
+      },
+      {
+        "id": "act-old3-one",
+        "kind": "human",
+        "display_name": "synthetic one",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "disabled_at": null
+      },
+      {
+        "id": "act-old3-two",
+        "kind": "human",
+        "display_name": "synthetic two",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "disabled_at": null
+      },
+      {
+        "id": "act-old3-observer",
+        "kind": "human",
+        "display_name": "synthetic observer",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "disabled_at": null
+      }
+    ],
+    "spaces": [
+      {
+        "id": "spc-old3-review-fixture",
+        "slug": "old3-review-fixture",
+        "current_revision": 1,
+        "policy_revision": 1,
+        "acl_epoch": 5,
+        "created_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "space_revisions": [
+      {
+        "space_id": "spc-old3-review-fixture",
+        "revision": 1,
+        "objective": "Synthetic original schema3 response oracle",
+        "rules": "[\"Immutable historical rule\"]",
+        "review_policy": "{\"enabled\":true,\"required_reviewers\":2,\"exclude_contributors\":true,\"distinct_actors\":true,\"distinct_independence_groups\":true,\"seal_until_all_submitted\":true,\"invalidate_on_revision\":true,\"required_checks\":[],\"allow_open_objections\":false}",
+        "check_profiles": "{}",
+        "pinned_refs": "[]",
+        "editor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "memberships": [
+      {
+        "space_id": "spc-old3-review-fixture",
+        "actor_id": "act-old3-author",
+        "role": "owner",
+        "active": 1,
+        "reviewer_eligible": 0,
+        "independence_group": "old3-other"
+      },
+      {
+        "space_id": "spc-old3-review-fixture",
+        "actor_id": "act-old3-one",
+        "role": "observer",
+        "active": 1,
+        "reviewer_eligible": 1,
+        "independence_group": "old3-one"
+      },
+      {
+        "space_id": "spc-old3-review-fixture",
+        "actor_id": "act-old3-two",
+        "role": "observer",
+        "active": 1,
+        "reviewer_eligible": 1,
+        "independence_group": "old3-two"
+      },
+      {
+        "space_id": "spc-old3-review-fixture",
+        "actor_id": "act-old3-observer",
+        "role": "observer",
+        "active": 1,
+        "reviewer_eligible": 0,
+        "independence_group": "old3-other"
+      }
+    ],
+    "threads": [
+      {
+        "id": "thd-old3-review-fixture",
+        "space_id": "spc-old3-review-fixture",
+        "title": "Synthetic original schema3 study",
+        "version": 1,
+        "state": "open",
+        "creator_id": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "updated_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "thread_versions": [
+      {
+        "thread_id": "thd-old3-review-fixture",
+        "version": 1,
+        "title": "Synthetic original schema3 study",
+        "state": "open",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "posts": [
+      {
+        "id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "space_id": "spc-old3-review-fixture",
+        "thread_id": "thd-old3-review-fixture",
+        "author_id": "act-old3-author",
+        "kind": "claim",
+        "current_revision": 1,
+        "lifecycle": "active",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "post_revisions": [
+      {
+        "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "revision": 1,
+        "title": "Original schema3 fixture claim",
+        "summary": "Synthetic research seed; no user material",
+        "body": "This body is a public synthetic regression recipe.",
+        "tags": "[\"old3-oracle\"]",
+        "structured": "{\"statement\":\"A repeatable synthetic claim\",\"assumptions\":[\"Controlled fixture\"],\"scope\":\"Original schema3 extraction\",\"falsification_plan\":\"Compare exact response and compact reference\"}",
+        "content_hash": "5bc08d8aba7b2dbcbbab614c4100faa1523a9b266978a7cfe91545148b96bf86",
+        "editor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      }
+    ],
+    "snapshots": [
+      {
+        "id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "space_id": "spc-old3-review-fixture",
+        "manifest_json": "{\"artifacts\":[],\"check_profiles\":[],\"code_refs\":[],\"contributors\":[\"act-old3-author\"],\"dependencies\":[],\"manifest_version\":1,\"policy_revision\":1,\"reproduction_instructions\":\"Replay exact original schema3 service output\",\"review_policy\":{\"allow_open_objections\":false,\"distinct_actors\":true,\"distinct_independence_groups\":true,\"enabled\":true,\"exclude_contributors\":true,\"invalidate_on_revision\":true,\"required_checks\":[],\"required_reviewers\":2,\"seal_until_all_submitted\":true},\"rules_revision\":1,\"space_id\":\"spc-old3-review-fixture\",\"target\":{\"assumptions\":[\"Controlled fixture\"],\"content_hash\":\"5bc08d8aba7b2dbcbbab614c4100faa1523a9b266978a7cfe91545148b96bf86\",\"falsification_plan\":\"Compare exact response and compact reference\",\"ref\":{\"post_id\":\"pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522\",\"revision\":1},\"scope\":\"Original schema3 extraction\",\"statement\":\"A repeatable synthetic claim\"}}",
+        "manifest_sha256": "efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9",
+        "policy_revision": 1,
+        "rules_revision": 1,
+        "target_post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "target_revision": 1,
+        "created_by": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      },
+      {
+        "id": "snp_1b48f249-f6ad-48c1-85a5-59ef1d710181",
+        "space_id": "spc-old3-review-fixture",
+        "manifest_json": "{\"artifacts\":[],\"check_profiles\":[],\"code_refs\":[],\"contributors\":[\"act-old3-author\"],\"dependencies\":[],\"manifest_version\":1,\"policy_revision\":1,\"reproduction_instructions\":\"Replay exact original schema3 service output\",\"review_policy\":{\"allow_open_objections\":false,\"distinct_actors\":true,\"distinct_independence_groups\":true,\"enabled\":true,\"exclude_contributors\":true,\"invalidate_on_revision\":true,\"required_checks\":[],\"required_reviewers\":2,\"seal_until_all_submitted\":true},\"rules_revision\":1,\"space_id\":\"spc-old3-review-fixture\",\"target\":{\"assumptions\":[\"Controlled fixture\"],\"content_hash\":\"5bc08d8aba7b2dbcbbab614c4100faa1523a9b266978a7cfe91545148b96bf86\",\"falsification_plan\":\"Compare exact response and compact reference\",\"ref\":{\"post_id\":\"pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522\",\"revision\":1},\"scope\":\"Original schema3 extraction\",\"statement\":\"A repeatable synthetic claim\"}}",
+        "manifest_sha256": "efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9",
+        "policy_revision": 1,
+        "rules_revision": 1,
+        "target_post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "target_revision": 1,
+        "created_by": "act-old3-author",
+        "created_at": "2026-10-09T00:01:00.000Z"
+      }
+    ],
+    "snapshot_items": [
+      {
+        "snapshot_id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "item_type": "target_post",
+        "item_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "revision": 1,
+        "sha256": "5bc08d8aba7b2dbcbbab614c4100faa1523a9b266978a7cfe91545148b96bf86"
+      },
+      {
+        "snapshot_id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "item_type": "space_rules",
+        "item_id": "spc-old3-review-fixture",
+        "revision": 1,
+        "sha256": null
+      },
+      {
+        "snapshot_id": "snp_1b48f249-f6ad-48c1-85a5-59ef1d710181",
+        "item_type": "target_post",
+        "item_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "revision": 1,
+        "sha256": "5bc08d8aba7b2dbcbbab614c4100faa1523a9b266978a7cfe91545148b96bf86"
+      },
+      {
+        "snapshot_id": "snp_1b48f249-f6ad-48c1-85a5-59ef1d710181",
+        "item_type": "space_rules",
+        "item_id": "spc-old3-review-fixture",
+        "revision": 1,
+        "sha256": null
+      }
+    ],
+    "review_requests": [
+      {
+        "id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "space_id": "spc-old3-review-fixture",
+        "target_post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "target_revision": 1,
+        "snapshot_id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "round": 1,
+        "phase": "cancelled",
+        "version": 2,
+        "requested_by": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": "Synthetic original cancellation"
+      },
+      {
+        "id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "space_id": "spc-old3-review-fixture",
+        "target_post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "target_revision": 1,
+        "snapshot_id": "snp_1b48f249-f6ad-48c1-85a5-59ef1d710181",
+        "round": 2,
+        "phase": "collecting",
+        "version": 1,
+        "requested_by": "act-old3-author",
+        "created_at": "2026-10-09T00:01:00.000Z",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": null
+      }
+    ],
+    "review_request_versions": [
+      {
+        "request_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "version": 1,
+        "phase": "collecting",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:00:00.000Z",
+        "reason": null
+      },
+      {
+        "request_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "version": 2,
+        "phase": "cancelled",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": "Synthetic original cancellation"
+      },
+      {
+        "request_id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "version": 1,
+        "phase": "collecting",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": null
+      }
+    ],
+    "review_assignments": [
+      {
+        "request_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "reviewer_actor_id": "act-old3-one",
+        "group_at_assignment": "old3-one"
+      },
+      {
+        "request_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "reviewer_actor_id": "act-old3-two",
+        "group_at_assignment": "old3-two"
+      },
+      {
+        "request_id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "reviewer_actor_id": "act-old3-one",
+        "group_at_assignment": "old3-one"
+      },
+      {
+        "request_id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "reviewer_actor_id": "act-old3-two",
+        "group_at_assignment": "old3-two"
+      }
+    ],
+    "idempotency_records": [
+      {
+        "actor_id": "act-old3-author",
+        "space_id": "spc-old3-review-fixture",
+        "operation": "post.create:thd-old3-review-fixture",
+        "key": "old3-owned-post",
+        "request_hash": "a6428b80ce8d9c65f6384e7ff12c3ce28d9a03698e1b72c3c8fb3b0d69b8a17f",
+        "result_ref": "{\"v\":1,\"kind\":\"post\",\"post_id\":\"pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522\",\"revision\":1,\"relation_ids\":[]}",
+        "http_status": 201,
+        "created_at": "2026-10-09T00:00:00.000Z"
+      },
+      {
+        "actor_id": "act-old3-author",
+        "space_id": "spc-old3-review-fixture",
+        "operation": "review.request.create",
+        "key": "old3-owned-create",
+        "request_hash": "de6ecefee2480224e38e16a3218d14947b5539457eb800053cc665ae47d26119",
+        "result_ref": "{\"v\":1,\"kind\":\"review.request.create\",\"request_id\":\"rrq_85ae88af-362c-46d7-851b-f98cd4629e93\",\"request_version\":1,\"snapshot_id\":\"snp_dc2c458a-e975-4591-9be7-bcd98bfb0433\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}",
+        "http_status": 201,
+        "created_at": "2026-10-09T00:00:00.000Z"
+      },
+      {
+        "actor_id": "act-old3-author",
+        "space_id": "spc-old3-review-fixture",
+        "operation": "review.request.cancel:rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "key": "old3-owned-cancel",
+        "request_hash": "d05359277ffe5f93b2ab35e6a87ac50d821a0539271914a86cda536a8c4dd429",
+        "result_ref": "{\"v\":1,\"kind\":\"review.request.cancel\",\"request_id\":\"rrq_85ae88af-362c-46d7-851b-f98cd4629e93\",\"request_version\":2,\"snapshot_id\":\"snp_dc2c458a-e975-4591-9be7-bcd98bfb0433\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}",
+        "http_status": 200,
+        "created_at": "2026-10-09T00:01:00.000Z"
+      },
+      {
+        "actor_id": "act-old3-author",
+        "space_id": "spc-old3-review-fixture",
+        "operation": "review.request.create",
+        "key": "old3-owned-collecting",
+        "request_hash": "de6ecefee2480224e38e16a3218d14947b5539457eb800053cc665ae47d26119",
+        "result_ref": "{\"v\":1,\"kind\":\"review.request.create\",\"request_id\":\"rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8\",\"request_version\":1,\"snapshot_id\":\"snp_1b48f249-f6ad-48c1-85a5-59ef1d710181\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}",
+        "http_status": 201,
+        "created_at": "2026-10-09T00:01:00.000Z"
+      }
+    ],
+    "events": [
+      {
+        "id": "evt_20059b86-3c60-4c5e-9065-db6972eeab30",
+        "space_id": "spc-old3-review-fixture",
+        "seq": 1,
+        "type": "post.created",
+        "object_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+        "revision": 1,
+        "visibility": "public",
+        "actor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      },
+      {
+        "id": "evt_f70cf262-b137-436d-b818-8cac53e69315",
+        "space_id": "spc-old3-review-fixture",
+        "seq": 2,
+        "type": "review.requested",
+        "object_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "revision": 1,
+        "visibility": "public",
+        "actor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z"
+      },
+      {
+        "id": "evt_22cfff71-2824-43b2-ba79-f6de5c5c47f9",
+        "space_id": "spc-old3-review-fixture",
+        "seq": 3,
+        "type": "review.cancelled",
+        "object_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "revision": 2,
+        "visibility": "public",
+        "actor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:01:00.000Z"
+      },
+      {
+        "id": "evt_7e9c8a22-dbb7-4fbb-ba85-8cb878d93a39",
+        "space_id": "spc-old3-review-fixture",
+        "seq": 4,
+        "type": "review.requested",
+        "object_id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "revision": 1,
+        "visibility": "public",
+        "actor_id": "act-old3-author",
+        "created_at": "2026-10-09T00:01:00.000Z"
+      }
+    ]
+  },
+  "oracle": {
+    "create": {
+      "actor_id": "act-old3-author",
+      "space_id": "spc-old3-review-fixture",
+      "key": "old3-owned-create",
+      "payload": {
+        "target_ref": {
+          "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+          "revision": 1
+        },
+        "dependency_refs": [],
+        "artifact_ids": [],
+        "code_refs": [],
+        "declared_contributors": [],
+        "reviewer_actor_ids": [
+          "act-old3-one",
+          "act-old3-two"
+        ],
+        "expected_policy_revision": 1,
+        "reproduction_instructions": "Replay exact original schema3 service output"
+      },
+      "response": {
+        "id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "space_id": "spc-old3-review-fixture",
+        "target_ref": {
+          "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+          "revision": 1
+        },
+        "snapshot_id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "snapshot_sha256": "efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9",
+        "rules_revision": 1,
+        "policy_revision": 1,
+        "round": 1,
+        "phase": "collecting",
+        "version": 1,
+        "requested_by": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:00:00.000Z",
+        "reason": null,
+        "reviewer_actor_ids": [
+          "act-old3-one",
+          "act-old3-two"
+        ]
+      },
+      "result_ref": "{\"v\":1,\"kind\":\"review.request.create\",\"request_id\":\"rrq_85ae88af-362c-46d7-851b-f98cd4629e93\",\"request_version\":1,\"snapshot_id\":\"snp_dc2c458a-e975-4591-9be7-bcd98bfb0433\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}"
+    },
+    "cancel": {
+      "actor_id": "act-old3-author",
+      "space_id": "spc-old3-review-fixture",
+      "request_id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+      "key": "old3-owned-cancel",
+      "payload": {
+        "expected_version": 1,
+        "reason": "Synthetic original cancellation"
+      },
+      "response": {
+        "id": "rrq_85ae88af-362c-46d7-851b-f98cd4629e93",
+        "space_id": "spc-old3-review-fixture",
+        "target_ref": {
+          "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+          "revision": 1
+        },
+        "snapshot_id": "snp_dc2c458a-e975-4591-9be7-bcd98bfb0433",
+        "snapshot_sha256": "efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9",
+        "rules_revision": 1,
+        "policy_revision": 1,
+        "round": 1,
+        "phase": "cancelled",
+        "version": 2,
+        "requested_by": "act-old3-author",
+        "created_at": "2026-10-09T00:00:00.000Z",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": "Synthetic original cancellation",
+        "reviewer_actor_ids": [
+          "act-old3-one",
+          "act-old3-two"
+        ]
+      },
+      "result_ref": "{\"v\":1,\"kind\":\"review.request.cancel\",\"request_id\":\"rrq_85ae88af-362c-46d7-851b-f98cd4629e93\",\"request_version\":2,\"snapshot_id\":\"snp_dc2c458a-e975-4591-9be7-bcd98bfb0433\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}"
+    },
+    "collecting": {
+      "actor_id": "act-old3-author",
+      "space_id": "spc-old3-review-fixture",
+      "key": "old3-owned-collecting",
+      "payload": {
+        "target_ref": {
+          "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+          "revision": 1
+        },
+        "dependency_refs": [],
+        "artifact_ids": [],
+        "code_refs": [],
+        "declared_contributors": [],
+        "reviewer_actor_ids": [
+          "act-old3-one",
+          "act-old3-two"
+        ],
+        "expected_policy_revision": 1,
+        "reproduction_instructions": "Replay exact original schema3 service output"
+      },
+      "response": {
+        "id": "rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8",
+        "space_id": "spc-old3-review-fixture",
+        "target_ref": {
+          "post_id": "pst_466b3185-47a8-4633-8a1e-7d4d5bdf4522",
+          "revision": 1
+        },
+        "snapshot_id": "snp_1b48f249-f6ad-48c1-85a5-59ef1d710181",
+        "snapshot_sha256": "efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9",
+        "rules_revision": 1,
+        "policy_revision": 1,
+        "round": 2,
+        "phase": "collecting",
+        "version": 1,
+        "requested_by": "act-old3-author",
+        "created_at": "2026-10-09T00:01:00.000Z",
+        "changed_by": "act-old3-author",
+        "changed_at": "2026-10-09T00:01:00.000Z",
+        "reason": null,
+        "reviewer_actor_ids": [
+          "act-old3-one",
+          "act-old3-two"
+        ]
+      },
+      "result_ref": "{\"v\":1,\"kind\":\"review.request.create\",\"request_id\":\"rrq_d215d42d-6ba7-46c2-b216-9d9f5a9d86a8\",\"request_version\":1,\"snapshot_id\":\"snp_1b48f249-f6ad-48c1-85a5-59ef1d710181\",\"manifest_sha256\":\"efe8cf701bea1f2729cd0f67a6a50c315936b50bdbd4011f624c2a9ea29f1be9\"}"
+    }
+  }
+}

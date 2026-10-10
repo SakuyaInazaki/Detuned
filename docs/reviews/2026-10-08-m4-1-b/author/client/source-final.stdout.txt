@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m4-artifact-client.test.ts (8 tests | 1 failed) 201ms
+   ✓ M4.1-B bounded artifact shared client > real HTTP multipart binary/zero, replay, changed content409 and verified download 190ms
+   ✓ M4.1-B bounded artifact shared client > persistent artifact scope reuses logicalID while separating actor/space, and observes token/store cancellation 3ms
+   ✓ M4.1-B bounded artifact shared client > retries using fresh FormData with immutable bytes/same key, never retries complete507 2ms
+   ✓ M4.1-B bounded artifact shared client > rejects malformed schema/headers, extra or truncated EOF and wrong hash without partial bytes 1ms
+   ✓ M4.1-B bounded artifact shared client > download cancellation releases pending reader and totaldeadline begins before metadata 2ms
+   ✓ M4.1-B bounded artifact shared client > late content response and upload fetch abort/timeout are observed and cleaned 1ms
+   ✓ M4.1-B bounded artifact shared client > validates full RFC3339 using the locked validator while retaining every schema field 0ms
+   × M4.1-B bounded artifact shared client > cancels real pending artifact JSON readers and rejects response-cap violations safely 1ms
+     → expected "spy" to be called 1 times, but got 0 times
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  18:21:58
+   Duration  1.06s (transform 271ms, setup 0ms, collect 503ms, tests 201ms, environment 0ms, prepare 47ms)
+

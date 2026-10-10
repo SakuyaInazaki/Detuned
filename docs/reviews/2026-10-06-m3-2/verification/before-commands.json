@@ -1,0 +1,17 @@
+[
+  {
+    "command": "node docs/reviews/2026-10-06-m3-2/verification/before-explicit.mjs",
+    "exit_code": 1,
+    "stdout": "before-explicit.stdout",
+    "stderr": "before-explicit.stderr",
+    "classification": "environment sandbox loopback EPERM caused bounded IPC timeout; product not reached"
+  },
+  {
+    "command": "node docs/reviews/2026-10-06-m3-2/verification/before-explicit.mjs",
+    "sandbox": "require_escalated local loopback",
+    "exit_code": 0,
+    "stdout": "before-explicit-unsandboxed.stdout",
+    "stderr": "before-explicit-unsandboxed.stderr",
+    "classification": "actual old-built explicit key cross-process positive and no-key rejection"
+  }
+]

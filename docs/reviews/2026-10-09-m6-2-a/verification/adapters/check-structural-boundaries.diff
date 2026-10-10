@@ -1,0 +1,11 @@
+--- docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-structural-boundaries.mjs
++++ docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-structural-boundaries.mjs
+@@ -8,7 +8,7 @@
+ import { SCHEMA_SQL } from '../../../../../packages/storage-sqlite/dist/schema.js';
+ import { buildApp } from '../../../../../packages/server/dist/index.js';
+ 
+-// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++// M6.2-A: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
+ import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
+ function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
+ 

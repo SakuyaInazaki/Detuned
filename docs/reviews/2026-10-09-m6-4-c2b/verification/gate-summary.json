@@ -1,0 +1,161 @@
+{
+  "status": "bounded_functional_gates_passed_after_authorized_corrections",
+  "first_targeted": {
+    "tests": 67,
+    "passed": 64,
+    "failed": 3,
+    "files": 11
+  },
+  "corrected_targeted": {
+    "tests": 21,
+    "passed": 21,
+    "files": 4
+  },
+  "new_unique_cases": 22,
+  "new_breakdown": {
+    "A_integration": 6,
+    "A_contracts": 4,
+    "B_tools_cli": 5,
+    "D_independent": 7
+  },
+  "full_core": {
+    "tests": 867,
+    "passed": 867,
+    "files": 139,
+    "runs": 1,
+    "new22_included_not_added": true
+  },
+  "current": {
+    "executed_once": [
+      6,
+      23,
+      24,
+      25,
+      27,
+      28,
+      29
+    ],
+    "count": 7,
+    "seconds": 6.656,
+    "other18": "accepted old evidence reused, not rerun"
+  },
+  "browser": "none this package; user excludes further Web/browser development",
+  "first_failures": [
+    "D PSI01 controlled 500 hits normal retry budget -> timeout; only injected call maxRetries0, original5000/assertions retained.",
+    "A PC03 unexpected envelope property confused page-level negative; corrected test-layer distinction, no new envelope contract.",
+    "Old S04 revealed real canonical MCP schema common-property compatibility regression; product tools common properties restored without weakening anyOf/Kind; old assertion unchanged."
+  ],
+  "gates": [
+    {
+      "receipt": "build-first.json",
+      "sha256": "8748bd1ecbed38d8ecf75c423b44362a828f0640222a4448fa8e3eab85b1378b",
+      "exit_code": 0,
+      "seconds": 11.067
+    },
+    {
+      "receipt": "build-v2-first.json",
+      "sha256": "1708959108c77af997b0623b01a93390f72cacf2641286a06826976a230f27e1",
+      "exit_code": 0,
+      "seconds": 10.705
+    },
+    {
+      "receipt": "core-first.json",
+      "sha256": "f7f223fc955b87671fefbae498ca13da8e602c0a44bf481ae215e4513204bf05",
+      "exit_code": 0,
+      "seconds": 282.898
+    },
+    {
+      "receipt": "current-23-first.json",
+      "sha256": "e8240f6722722a1f6e0c1ae0a3e814dda92adff7220059a85740be1474fab3fc",
+      "exit_code": 0,
+      "seconds": 0.562
+    },
+    {
+      "receipt": "current-24-first.json",
+      "sha256": "67469e92e43dd43d99e7d3c361635c6cba91f863e8d2853aa63820b308fd9f4f",
+      "exit_code": 0,
+      "seconds": 1.372
+    },
+    {
+      "receipt": "current-25-first.json",
+      "sha256": "71a4e4ec77105dfb25e7e111e81914ac15f697de68054cddbc5389123573208e",
+      "exit_code": 0,
+      "seconds": 2.784
+    },
+    {
+      "receipt": "current-27-first.json",
+      "sha256": "534fa8b6ec41f1c3b49ca6d47459ca56faca84e990f2b0865585ffb2dcc3ea02",
+      "exit_code": 0,
+      "seconds": 0.348
+    },
+    {
+      "receipt": "current-28-first.json",
+      "sha256": "1a66cf058c98059422998af2d666bb107c11bf26bbf63963cc26fb4d0fcb8c00",
+      "exit_code": 0,
+      "seconds": 0.561
+    },
+    {
+      "receipt": "current-29-first.json",
+      "sha256": "9acb784823b33e7724e23153e6c172074fc63bae5eeb14cc3cdbf978174464f4",
+      "exit_code": 0,
+      "seconds": 0.517
+    },
+    {
+      "receipt": "current-6-first.json",
+      "sha256": "22f3e11943dd361447108b0eaae60ac395d071a7751085c46c490f43b57d5b5e",
+      "exit_code": 0,
+      "seconds": 0.512
+    },
+    {
+      "receipt": "lint-first.json",
+      "sha256": "509dc04b23cdd3dcf0431b7a76de816f30fc3a64dc2a3e58cc3973126b815ec1",
+      "exit_code": 0,
+      "seconds": 8.267
+    },
+    {
+      "receipt": "node-targeted-first.json",
+      "sha256": "26d4a0c9a3a277fdebda0572e965c1711b3dfea45dae629fa7be24159dc8caec",
+      "exit_code": 1,
+      "seconds": 15.944
+    },
+    {
+      "receipt": "node-targeted-v2-first.json",
+      "sha256": "bead38e407fc95a1eddf6053f6ff0126203861bbd09a9dd919abe76a90808b7d",
+      "exit_code": 0,
+      "seconds": 6.411
+    },
+    {
+      "receipt": "schema-first.json",
+      "sha256": "035f843c781a345805ea54e159382fdf353323f591f1fcd3d128f14fa49c1fed",
+      "exit_code": 0,
+      "seconds": 0.077
+    },
+    {
+      "receipt": "source-noemit-first.json",
+      "sha256": "ac0878c6e40cf65ce269a91f63a0f182326f272578834988beb726fc87060272",
+      "exit_code": 0,
+      "seconds": 3.431
+    },
+    {
+      "receipt": "source-noemit-v2-first.json",
+      "sha256": "ced61073fa812bc58baf57ce12dc96899f58db2f3d3a678b4f13d2f7079e21d4",
+      "exit_code": 0,
+      "seconds": 3.065
+    },
+    {
+      "receipt": "typecheck-first.json",
+      "sha256": "e12f82eb05c4899f0d7daabcb22d366181c667e225e889d53dc2d8e858c23544",
+      "exit_code": 0,
+      "seconds": 8.929
+    }
+  ],
+  "integrity": {
+    "path": "final-integrity.json",
+    "sha256": "95cc0e4be4bdb9e308f96323cc4b86d5418126f6d9de770a962e89fa2c0ff77a"
+  },
+  "cleanup": {
+    "path": "cleanup.json",
+    "sha256": "5ce2a6481deab1e738a38eab3a3caca3c255534db4e93697ab4b8e826fa50598"
+  },
+  "limitations": "Functional local/controlled fixtures only; no real-model/performance/whole-database health/external host/browser claim. Current7 does not mean current25 rerun."
+}

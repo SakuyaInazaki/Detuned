@@ -1,0 +1,31 @@
+--- packages/storage-sqlite/tests/storage.test.ts (fresh exact before)
++++ packages/storage-sqlite/tests/storage.test.ts (current)
+@@ -12,6 +12,7 @@
+   SCHEMA_SQL,
+   V2_SCHEMA_TABLES,
+   V3_SCHEMA_TABLES,
++  V4_SCHEMA_TABLES,
+   V1_SCHEMA_TABLES,
+   parseFts5Ddl,
+ } from '../src/index.js';
+@@ -243,8 +244,11 @@
+     const expectedV2 = extractDatabaseRequirements(v2Db);
+     expect(V2_SCHEMA_TABLES).toEqual(expectedV2);
+     const v3Db = new Database(':memory:');
+-    v3Db.exec(SCHEMA_SQL);
++    v3Db.exec(fs.readFileSync(path.resolve(__dirname, '../../../tests/fixtures/historical-v3-schema.sql'), 'utf8'));
+     expect(V3_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v3Db));
++    const v4Db = new Database(':memory:');
++    v4Db.exec(SCHEMA_SQL);
++    expect(V4_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v4Db));
+ 
+     // 2. V1 Profile Parity against frozen historical fixture
+     const v1Db = new Database(':memory:');
+@@ -271,6 +275,7 @@
+     const checkResult = spawnSync(process.execPath, [checkScriptPath], { encoding: 'utf8' });
+     expect(checkResult.status).toBe(0);
+ 
++    v4Db.close();
+     v3Db.close();
+     v2Db.close();
+     v1Db.close();

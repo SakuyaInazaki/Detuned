@@ -1,0 +1,22 @@
+{
+  "first_actual": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "files": 2,
+    "exit_code": 1
+  },
+  "B_3_failures": {
+    "stage": "fixture createSpace before CLI assertions",
+    "cause": "controlled Clock lacks mandatory nowIso; AuthService calls ClockPort.nowIso",
+    "category": "new test fixture incomplete interface"
+  },
+  "C_1_failure": {
+    "stage": "view material assertion after successful CLI response",
+    "cause": "expected core internal view/items wrapper but existing HTTP data is result.items array",
+    "category": "new C wire oracle mismatch"
+  },
+  "product_change_indicated": false,
+  "next": "Await parent-owned narrow fixture corrections, keep first outputs; no build or fullsuite repeat yet",
+  "output_cap_clarification": "C child checks 1048576 UTF16 code units; this is bounded fixture output, not a strict 1MiB UTF8 byte cap"
+}

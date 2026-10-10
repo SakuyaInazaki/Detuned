@@ -1,0 +1,17 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-request-key-cli.test.ts:68:3
+     66|     expect(thread).not.toHaveProperty('api_version');
+     67|   }, 30_000);
+     68|   it('KCLI03: pairs, size and every explicit key conflict reject with …
+       |   ^
+     69|     const cases = [
+     70|       [{ title: 't' }, ['--request-key-dir', path.join(directory, 'key…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,25 @@
+{
+  "status": "root_selected_planning_only_pending_m7_4a_seal_fresh_dispatch",
+  "existing": {},
+  "new": {
+    "scripts/integrations/codex-check-probe.mjs": {
+      "owner": "A",
+      "state": "missing",
+      "scope": "optional fixed guarded native probe only; not core CI host dependency"
+    }
+  },
+  "counts": {
+    "existing": 0,
+    "missing": 1
+  },
+  "B": "static review only",
+  "D": "verification/guard/runtime evidence only after separate release",
+  "protected": [
+    "all existing sources/tests/packages/hosts/protocol",
+    "Claude probe and accepted helper implementation",
+    "normal docs/dependencies/global config/accounts",
+    "old probes/denial evidence/temporary directories"
+  ],
+  "implementation_authorized": false,
+  "runtime_authorized": false
+}

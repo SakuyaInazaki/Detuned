@@ -1,0 +1,31 @@
+{
+  "command": "node scripts/scale/run-verified.mjs --manifest /private/tmp/detuned-c2-seed-smoke-20261006-v3-a1/manifest.json --runtime /private/tmp/detuned-c2-load-auto-private-v3-a1/runtime.json --out /private/tmp/detuned-c2-load-auto-v3-a1 --mode smoke",
+  "exit_code": 0,
+  "stdout": "automatic-smoke.stdout.log",
+  "stderr": "automatic-smoke.stderr.log",
+  "mode": "smoke",
+  "measure_elapsed_ms": 10000.667291,
+  "wrapper_elapsed_ms": 13716.541666,
+  "logical": 400,
+  "HTTP": 591,
+  "HTTP_success": 586,
+  "pre_revision409": 5,
+  "unexpected_errors": 0,
+  "checks": [
+    {
+      "command": "node --check scripts/scale/run-verified.mjs",
+      "exit_code": 0,
+      "stdout": "automatic-check-final.stdout.log",
+      "stderr": "automatic-check-final.stderr.log"
+    },
+    {
+      "command": "ps -p 41379,41380,41381,41391 -o pid=,ppid=,comm=",
+      "exit_code": 1,
+      "stdout": "",
+      "meaning": "no matching owned runner/server/verifier processes"
+    }
+  ],
+  "full600_retest": false,
+  "private_original_verifier_artifacts": "/private/tmp/detuned-c2-load-auto-private-v3-a1/automatic-gates",
+  "public_archive": "automatic-smoke-v3"
+}

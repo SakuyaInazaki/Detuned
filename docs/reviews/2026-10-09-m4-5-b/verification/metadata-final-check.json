@@ -1,0 +1,65 @@
+{
+  "kind": "documentation finalization only; no repeated code/native gates",
+  "author_freezes": [
+    {
+      "path": "docs/reviews/2026-10-09-m4-5-b/author/implementation/freeze-manifest.json",
+      "manifest_sha256": "d4766eee886ae4d5e5e74769e4a4b541d75e42f3fc271b48ec5bce451717e980",
+      "files": 4,
+      "mismatches": []
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m4-5-b/author/implementation/doc-freeze-manifest.json",
+      "manifest_sha256": "5f95640b31fddd004fa8081ab14a709709958532ba74ad4f181738ceb0c7ddef",
+      "files": 13,
+      "mismatches": []
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m4-5-b/author/claude/freeze-manifest.json",
+      "manifest_sha256": "d5b6a8623a5a32f465c8e4cf5ed81576e5ee7811fbb23a28e488f9f43d2fd5ec",
+      "files": 9,
+      "mismatches": []
+    }
+  ],
+  "protected": {
+    "protected_review_probe_log_evidence_hashes": {
+      "baseline_count": 6342,
+      "mismatches": []
+    },
+    "frozen_sql_archive_hashes": {
+      "baseline_count": 4,
+      "mismatches": []
+    },
+    "schema_profile_hashes": {
+      "baseline_count": 2,
+      "mismatches": []
+    }
+  },
+  "source_changed": [
+    "packages/mcp/src/bridge.ts",
+    "packages/mcp/src/index.ts",
+    "packages/mcp/src/tool-validation.ts"
+  ],
+  "source_added": [
+    "tests/contracts/m4-mcp-input-mode.test.ts",
+    "tests/contracts/m4-mcp-wrapped-independent.test.ts"
+  ],
+  "source_count": 280,
+  "independent_final_test_sha256": "84b9c723ae3007cfad1f88c700ab084a47fdff7e3ea9a047ed9e2581074f07b2",
+  "docs05_unchanged": true,
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "local_link_check": {
+    "files": 19,
+    "links": 343,
+    "unresolved": [],
+    "scope": "local file targets; external URLs and anchors not fetched"
+  },
+  "json_check": {
+    "files": 52,
+    "failures": []
+  },
+  "diff_check": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

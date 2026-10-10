@@ -1,0 +1,31 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m6-review-http-independent.test.ts (6 tests | 5 failed) 487ms
+   × H01 real HTTP/shared-client twelve entrances preserve independent sessions, sealed rows, reveal and immutable exact replay 203ms
+     → no such table: review_snapshots
+   × H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store 83ms
+     → no such table: review_snapshots
+   × H03 revealed cancellation preserves only explicitly cited private evidence and redaction remains private to ordinary reads 83ms
+     → expected undefined to be 404 // Object.is equality
+   × H04 real stale/incomplete/version/check-required failures and revoked authority preserve historical response boundaries 38ms
+     → no such table: review_snapshots
+   × H05 actual multipart stream races revalidate current membership/material, abort cleanly and drain without committing 37ms
+     → no such table: review_snapshots
+   ✓ H06 controlled bad HTTP responses cannot substitute ID/parent/date/unknown fields or exceed bounded JSON; abort stays explicit 42ms
+ ❯ tests/contracts/m6-review-http.test.ts (3 tests | 3 failed) 243ms
+   × RH01 real HTTP complete vertical and exact immutable confirmations 120ms
+     → {"api_version":"1","request_id":"req-9","error":{"code":"VALIDATION_ERROR","message":"Formal review submission requirements are not satisfied.","retryable":false}}: expected 400 to be 201 // Object.is equality
+   × RH02 sealed list, private multipart owner scope and real file bytes/cache 80ms
+     → {"api_version":"1","request_id":"req-b","error":{"code":"VALIDATION_ERROR","message":"Formal review submission requirements are not satisfied.","retryable":false}}: expected 400 to be 201 // Object.is equality
+   × RH03 strict schema/query/key rejection and response guards do not relax old shapes 43ms
+     → {"api_version":"1","request_id":"req-a","error":{"code":"RESYNC_REQUIRED","message":"Stored review material cannot be safely reconstructed.","retryable":false}}: expected 409 to be 201 // Object.is equality
+ ✓ tests/contracts/m6-review-client.test.ts (4 tests) 15ms
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  8 failed | 5 passed (13)
+   Start at  17:21:51
+   Duration  2.05s (transform 381ms, setup 0ms, collect 892ms, tests 744ms, environment 0ms, prepare 87ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

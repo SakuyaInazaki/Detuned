@@ -1,0 +1,189 @@
+--- packages/cli/src/index.ts (C2B before)
++++ packages/cli/src/index.ts
+@@ -16,7 +16,7 @@
+ import Database from 'better-sqlite3';
+ import { DetunedClient, RequestKeyError, type RequestKeyStore } from '@detuned/client';
+ import { FileRequestKeyStore } from '@detuned/client/node';
+-import { DetunedError, ErrorCode, resolveArtifactLimits, resolveWriteRateLimits, resolveResourceLimits } from '@detuned/protocol';
++import { DetunedError, ErrorCode, resolveArtifactLimits, resolveWriteRateLimits, resolveResourceLimits, validateSearchSourceQuery } from '@detuned/protocol';
+ import { SqliteStorage, bootstrapDatabase, isDatabaseInitialized, openAndCoordinateDatabase, DirectoryLock, backupOffline, restoreBackup, importSpace, assertDataDirReady, MaintenanceError, ImportError, upgradeOffline, UpgradeError } from '@detuned/storage-sqlite';
+ import { buildApp, resolveWebAuthConfig, resolveWebAssetsDir, ArtifactFileStore, loadServerTlsOptions } from '@detuned/server';
+ 
+@@ -739,6 +739,9 @@
+   .description('在空间可见内容中搜索')
+   .requiredOption('--space <space_id>', '空间 ID')
+   .requiredOption('--query <q>', '搜索关键词')
++  .option('--source <source>', '搜索源 posts 或 review_submissions（默认 posts）')
++  .option('--request <request_id>', '公开意见源的评审请求 ID')
++  .option('--target <post_id>', '公开意见源的固定评审对象帖子 ID')
+   .option('--kind <kind>', '过滤帖子类型')
+   .option('--tags <tags>', '过滤标签（逗号分隔）')
+   .option('--limit <limit>', '限制返回条数', '20')
+@@ -748,13 +751,25 @@
+   .action(async (options) => {
+     try {
+       const limit = parsePageLimit(options.limit);
++      const query: unknown = {
++        q: options.query, limit,
++        ...(options.source !== undefined ? { source: options.source } : {}),
++        ...(options.request !== undefined ? { request_id: options.request } : {}),
++        ...(options.target !== undefined ? { target_post_id: options.target } : {}),
++        ...(options.kind !== undefined ? { kind: options.kind } : {}),
++        ...(options.tags !== undefined ? { tags: options.tags ? options.tags.split(',') : [] } : {}),
++        ...(options.thread !== undefined ? { thread_id: options.thread } : {}),
++        ...(options.cursor !== undefined ? { cursor: options.cursor } : {}),
++      };
++      validateSearchSourceQuery(query);
+       const client = getClient(program.opts());
+-      const res = await client.search(options.space, {
+-        q: options.query,
+-        kind: options.kind,
+-        tags: options.tags ? options.tags.split(',') : undefined,
+-        limit, cursor: options.cursor, thread_id: options.thread,
+-      });
++      const res = query.source === 'review_submissions'
++        ? await client.searchPublicReviewSubmissions(options.space, query)
++        : await client.search(options.space, {
++          q: query.q, kind: query.kind,
++          tags: options.tags ? query.tags : undefined,
++          limit: query.limit, cursor: query.cursor, thread_id: query.thread_id,
++        });
+       printOutput(options.page || options.cursor !== undefined ? res : res.data, program.opts().json);
+     } catch (err: any) {
+       handleError(err, program.opts().json);
+--- /dev/null
++++ tests/contracts/m6-public-review-search-tools-cli.test.ts
+@@ -0,0 +1,133 @@
++import { afterEach, expect, it, vi } from 'vitest';
++import { spawn } from 'node:child_process';
++import { createServer } from 'node:http';
++import { DETUNED_TOOLS, validateToolParams } from '@detuned/protocol';
++import { DetunedClient } from '@detuned/client';
++import { getMcpTools, validateMcpToolArguments } from '../../packages/mcp/src/tool-validation.js';
++import { adaptToolSchema } from '../../packages/adapter-pi/src/index.js';
++
++// Adapter/transport contracts only. Actual SQLite reveal, ACL and privacy are verified separately.
++const built = it.skipIf(process.env.DETUNED_SOURCE_ONLY === '1');
++const reviewInput = { space_id: 'space', source: 'review_submissions', q: 'Needle',
++  filters: { request_id: 'request', target_post_id: 'claim' }, limit: 1 };
++const row = { type: 'review_submission', submission_id: 'rsb_2', space_id: 'space', request_id: 'request',
++  snapshot_id: 'snapshot', target_ref: { post_id: 'claim', revision: 1 }, round: 1,
++  reviewer_actor_id: 'reviewer', verdict: 'accept', submitted_at: '2026-10-09T00:00:00Z',
++  revealed_at: '2026-10-09T00:00:01Z', snippet: 'Needle original text' };
++const page = { data: [row], meta: { truncated: false, next_cursor: 'opaque-next' } };
++afterEach(() => vi.unstubAllGlobals());
++
++it('PSB01 canonical nine-tool object root is preserved in flat/wrapped and Pi schema adaptation', () => {
++  const tool = DETUNED_TOOLS.find(item => item.name === 'forum_search')!;
++  expect(DETUNED_TOOLS).toHaveLength(9);
++  expect(tool.schema.type).toBe('object'); expect(tool.schema).toHaveProperty('anyOf');
++  expect(getMcpTools().find(item => item.name === 'forum_search')?.inputSchema).toBe(tool.schema);
++  expect(getMcpTools('wrapped').find(item => item.name === 'forum_search')?.inputSchema).toEqual({
++    type: 'object', properties: { input: tool.schema }, required: ['input'], additionalProperties: false,
++  });
++  expect(adaptToolSchema(tool.schema)).toBe(tool.schema);
++  for (const input of [reviewInput, { space_id: 'space', q: 'needle' },
++    { space_id: 'space', source: 'posts', q: 'needle', filters: { kind: 'claim', tags: ['tag'], thread_id: 'thread' } }]) {
++    const bytes = JSON.stringify(input);
++    expect(validateToolParams('forum_search', input)).toBe(true);
++    expect(validateMcpToolArguments('forum_search', input)).toBe(input);
++    expect(validateMcpToolArguments('forum_search', { input }, 'wrapped')).toBe(input);
++    expect(JSON.stringify(input)).toBe(bytes);
++  }
++});
++it('PSB02 canonical source/filter errors are rejected by both MCP modes and client before any HTTP', async () => {
++  const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
++  const client = new DetunedClient({ baseUrl: 'http://127.0.0.1:1', maxRetries: 0 });
++  const invalid = [
++    { ...reviewInput, source: 'unknown' }, { ...reviewInput, unknown: true },
++    { ...reviewInput, filters: { kind: 'claim' } }, { ...reviewInput, filters: { tags: [] } },
++    { ...reviewInput, filters: { thread_id: 'thread' } },
++    { space_id: 'space', q: 'needle', filters: { request_id: 'request' } },
++    { space_id: 'space', source: 'posts', q: 'needle', filters: { target_post_id: 'claim' } },
++    { ...reviewInput, request_id: 'request' }, { ...reviewInput, q: '' },
++  ];
++  for (const input of invalid) {
++    expect(validateToolParams('forum_search', input)).toBe(false);
++    expect(() => validateMcpToolArguments('forum_search', input)).toThrow();
++    expect(() => validateMcpToolArguments('forum_search', { input }, 'wrapped')).toThrow();
++    await expect(client.callTool('forum_search', input)).rejects.toMatchObject({ code: 'VALIDATION_ERROR' });
++  }
++  expect(fetch).not.toHaveBeenCalled();
++});
++it('PSB03 controlled forum_search forwards review filters and fixed identity while old posts omit explicit source', async () => {
++  const seen: URL[] = [];
++  vi.stubGlobal('fetch', vi.fn(async (url: string | URL | Request) => {
++    const value = new URL(String(url)); seen.push(value);
++    return new Response(JSON.stringify({ api_version: '1', request_id: 'transport',
++      ...(value.searchParams.get('source') === 'review_submissions' ? page : { data: [], meta: { truncated: false, next_cursor: null } }) }), { status: 200 });
++  }));
++  const client = new DetunedClient({ baseUrl: 'http://127.0.0.1:1', maxRetries: 0 });
++  expect(await client.callTool('forum_search', reviewInput)).toEqual(page);
++  expect(seen[0]?.pathname).toBe('/api/v1/spaces/space/search');
++  expect(Object.fromEntries(seen[0]!.searchParams)).toEqual({ source: 'review_submissions', q: 'Needle', request_id: 'request', target_post_id: 'claim', limit: '1' });
++  for (const input of [{ space_id: 'space', q: 'needle' }, { space_id: 'space', source: 'posts', q: 'needle' }]) {
++    await client.callTool('forum_search', input); expect(seen.at(-1)!.searchParams.has('source')).toBe(false);
++  }
++});
++
++function cli(url: string, args: string[]) {
++  return new Promise<{ code: number | null; out: string; err: string }>((resolve, reject) => {
++    const child = spawn(process.execPath, ['packages/cli/dist/index.js', '--url', url, '--json', ...args],
++      { env: { PATH: process.env.PATH, CI: '1' }, stdio: ['ignore', 'pipe', 'pipe'] });
++    let out = '', err = '';
++    const timer = setTimeout(() => { child.kill('SIGKILL'); reject(new Error('Owned search CLI watchdog exceeded')); }, 10000);
++    child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8');
++    child.stdout.on('data', value => out += value); child.stderr.on('data', value => err += value);
++    child.once('error', error => { clearTimeout(timer); reject(error); });
++    child.once('close', code => { clearTimeout(timer); resolve({ code, out, err }); });
++  });
++}
++async function fixture() {
++  const seen: URL[] = [];
++  const server = createServer((req, res) => {
++    const url = new URL(req.url!, 'http://fixture'); seen.push(url);
++    const data = url.searchParams.get('source') === 'review_submissions' ? [{ ...row,
++      submission_id: url.searchParams.has('cursor') ? 'rsb_1' : 'rsb_2' }] : [];
++    res.setHeader('content-type', 'application/json');
++    res.end(JSON.stringify({ api_version: '1', request_id: 'controlled-cli', data,
++      meta: { truncated: false, next_cursor: url.searchParams.has('cursor') ? null : 'opaque-next' } }));
++  });
++  await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
++  const address = server.address(); if (!address || typeof address === 'string') throw new Error('Owned CLI listener unavailable');
++  return { url: `http://127.0.0.1:${address.port}`, seen,
++    close: () => new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve())) };
++}
++built('PSB04 built CLI controlled transport forwards review source/filters and preserves data/page/cursor output', async () => {
++  const f = await fixture();
++  try {
++    const args = ['search', '--space', 'space', '--query', 'Needle', '--source', 'review_submissions', '--request', 'request', '--target', 'claim', '--limit', '1'];
++    const first = await cli(f.url, args); expect(first.code).toBe(0); expect(JSON.parse(first.out)).toEqual([row]);
++    const complete = await cli(f.url, [...args, '--page']); expect(complete.code).toBe(0); expect(JSON.parse(complete.out)).toEqual(page);
++    const next = await cli(f.url, [...args, '--cursor', 'opaque-next']); expect(next.code).toBe(0);
++    expect(JSON.parse(next.out)).toEqual({ data: [{ ...row, submission_id: 'rsb_1' }], meta: { truncated: false, next_cursor: null } });
++    const last = f.seen.at(-1)!;
++    expect(Object.fromEntries(last.searchParams)).toEqual({ source: 'review_submissions', q: 'Needle', request_id: 'request', target_post_id: 'claim', limit: '1', cursor: 'opaque-next' });
++    for (const extra of [[], ['--source', 'posts']]) {
++      const result = await cli(f.url, ['search', '--space', 'space', '--query', 'needle', '--kind', 'claim', '--tags', 'one,two', '--thread', 'thread', ...extra]);
++      expect(result.code).toBe(0); expect(JSON.parse(result.out)).toEqual([]);
++      expect(f.seen.at(-1)!.searchParams.has('source')).toBe(false);
++      expect(f.seen.at(-1)!.searchParams.get('kind')).toBe('claim'); expect(f.seen.at(-1)!.searchParams.get('thread_id')).toBe('thread');
++    }
++  } finally { await f.close(); }
++}, 70000);
++built('PSB05 built CLI rejects invalid source/filter combinations locally with safe error and zero HTTP', async () => {
++  const f = await fixture();
++  try {
++    const base = ['search', '--space', 'space', '--query', 'needle'];
++    const bad = [['--source', 'PRIVATE_RAW'], ['--request', 'request'], ['--source', 'posts', '--target', 'claim'],
++      ['--source', 'review_submissions', '--kind', 'claim'], ['--source', 'review_submissions', '--tags', ''],
++      ['--source', 'review_submissions', '--thread', 'thread'], ['--source', 'review_submissions', '--request', ''],
++      ['--source', 'review_submissions', '--limit', '101']];
++    for (const flags of bad) {
++      const result = await cli(f.url, [...base, ...flags]);
++      expect(result.code).toBe(2); expect(JSON.parse(result.out).error.code).toBe('VALIDATION_ERROR');
++      expect(result.out + result.err).not.toContain('PRIVATE_RAW');
++    }
++    expect(f.seen).toHaveLength(0);
++  } finally { await f.close(); }
++}, 100000);

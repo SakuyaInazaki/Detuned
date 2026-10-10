@@ -1,0 +1,9 @@
+# C2A documentation author self-review
+
+Exact authorized21 existing paths copied before first edit; all match baseline current/mutable document hashes. Two authorized new files were absent and recorded missing without placeholders. Final documentation.diff binds these21+2 only; actual source SHA in freeze.json. No Web source/test/guide, compatibility.json, sealed prior review or product file modified in this task.
+
+Current entry/knowledge contract and examples updated: effective exact policy/no defaults; latest all-round; distinct phase/check/current validity; fixed target revision; findings25/failure50; strict entire-array/required summary upgrade with server/client together. Historical wire1/not_enabled and wire2/excluded maintained, original historical-stage statements not globally replaced. Adapter/native tool/version status remains unchanged; dsh/Pi only clarify past/current scope.
+
+AGENTS adds user2026-10-09 no-front-end scope; docs00/08/11/current progress and next prompt reflect it. README leads Agent forum/interface/integration, mentions existing Web only as retained history; no future Web/visual/browser development. ADR maximum070 preserved; new071/072 capture knowledge contract and user scope correction. Next task links actual C2B planning, schema5/no persistent FTS/Agent-only; no fabricated interface or validation success.
+
+Evidence counts are copied from actual accepted D report: one845/135full, new19included, current25=6original+19existing0new, body/sandbox first failures retained. Existing browser evidence is historical functionality only, not design acceptance or a future task. Metadata final check/seal remains pending explicitly in new README; no new runtime acceptance asserted. Read-only link inspection found no missing local Markdown targets among23 edited paths. No build/test/runtime executed by author. Freeze and stop for root/D final check.

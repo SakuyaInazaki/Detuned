@@ -1,0 +1,326 @@
+import Database from 'better-sqlite3';
+import { constants } from 'node:fs';
+import { open, lstat, realpath, chmod, rm } from 'node:fs/promises';
+import path from 'node:path';
+import { randomBytes, createHash } from 'node:crypto';
+import { setImmediate as yieldTurn } from 'node:timers/promises';
+import { decodeSpaceExport, ExportDecodeError } from '@detuned/protocol';
+import { canonicalJsonStringify } from '@detuned/core';
+import { bootstrapDatabase } from './bootstrap.js';
+import { SqliteStorage } from './sqlite-storage.js';
+import { maintenanceTarget, MaintenanceError } from './directory-state.js';
+import { prepareMaintenanceStage, publishMaintenanceDirectory } from './offline-backup.js';
+export class ImportError extends Error {
+    code;
+    constructor(code, message) {
+        super(message);
+        this.code = code;
+        this.name = 'ImportError';
+    }
+}
+const digest = (s) => createHash('sha256').update(s).digest('hex');
+const hash = (r) => digest(`${r.title}\n${r.summary}\n${r.body}\n${canonicalJsonStringify(r.structured)}`);
+const bad = () => { throw new ImportError('INVALID_INPUT', 'The logical export contains inconsistent research records.'); };
+export async function importSpace(options) {
+    const timeout = options.timeoutMs ?? 120000, adminName = typeof options.adminName === 'string' ? options.adminName.trim() : '';
+    if (!Number.isSafeInteger(timeout) || timeout < 1 || timeout > 120000 || !adminName || [...adminName].length > 128 || typeof options.inputPath !== 'string' || !options.inputPath.trim() || typeof options.dataDir !== 'string' || !options.dataDir.trim())
+        throw new ImportError('INVALID_OPTIONS', 'Import requires an input file, a new directory, an administrator name and timeout in 1–120000ms.');
+    const controller = new AbortController();
+    let timedOut = false;
+    const stop = () => controller.abort();
+    options.signal?.addEventListener('abort', stop, { once: true });
+    if (options.signal?.aborted)
+        stop();
+    const started = performance.now(), timer = setTimeout(() => { timedOut = true; stop(); }, timeout);
+    const check = () => { if (performance.now() - started >= timeout)
+        timedOut = true; if (timedOut && !readinessUnlinked)
+        throw new ImportError('IMPORT_TIMEOUT', 'Logical import timed out.'); if (controller.signal.aborted)
+        throw new ImportError('IMPORT_CANCELLED', 'Logical import was cancelled.'); };
+    let readinessUnlinked = false;
+    const hook = (stage) => { if (stage === 'readiness-unlinked')
+        readinessUnlinked = true; if (!readinessUnlinked)
+        check(); options.hooks?.atStage?.(stage); if (!readinessUnlinked)
+        check(); };
+    let stage, db, input;
+    try {
+        check();
+        const target = maintenanceTarget(options.dataDir);
+        for (const [file, code] of [[target.directory, 'DESTINATION_EXISTS'], [target.marker, 'INCOMPLETE_DIRECTORY']]) {
+            try {
+                await lstat(file);
+                throw new ImportError(code, 'Import destination already exists or is incomplete; nothing was replaced.');
+            }
+            catch (e) {
+                if (e.code !== 'ENOENT')
+                    throw e;
+            }
+        }
+        const requested = path.resolve(options.inputPath), inputParent = await realpath(path.dirname(requested)), inputPath = path.join(inputParent, path.basename(requested));
+        if (inputPath === target.directory || inputPath.startsWith(target.directory + path.sep))
+            throw new ImportError('INVALID_OPTIONS', 'Import source and destination must be separate.');
+        input = await open(inputPath, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+        const stat = await input.stat();
+        if (!stat.isFile() || stat.size > 536870912)
+            throw new ImportError('INVALID_INPUT', 'Import input must be a bounded regular file.');
+        hook('input-opened');
+        stage = await prepareMaintenanceStage(target.parent);
+        const database = path.join(stage, 'detuned.sqlite');
+        db = new Database(database);
+        await chmod(database, 0o600);
+        const boot = bootstrapDatabase(db, adminName);
+        if (!boot.adminToken || !boot.adminActorId)
+            throw new ImportError('IMPORT_FAILED', 'Cannot initialize a private import instance.');
+        const storage = new SqliteStorage(db), now = new Date().toISOString(), importId = 'imp_' + randomBytes(16).toString('hex'), synthetic = 'act_import_' + randomBytes(16).toString('hex');
+        storage.createActor({ id: synthetic, kind: 'agent', display_name: 'Synthetic imported tombstone identity', created_at: now, disabled_at: now });
+        let header, records = 0, readyMissing = 0, postTombs = 0, artifactTombs = 0;
+        db.exec('BEGIN; PRAGMA defer_foreign_keys=ON; CREATE TEMP TABLE import_resolution_versions(relation_id TEXT,version INTEGER,action TEXT,PRIMARY KEY(relation_id,version)); CREATE TEMP TABLE import_tombstones(post_id TEXT,revision INTEGER,tombstone INTEGER,PRIMARY KEY(post_id,revision));');
+        const metadata = (kind, id, revision, projected = false, sourceHash = null, syntheticFields = [], historyComplete = null) => {
+            const value = JSON.stringify({ version: 1, kind, object_id: id, revision, projected, source_content_hash: sourceHash, synthetic_fields: syntheticFields, history_complete: historyComplete });
+            if (Buffer.byteLength(value) > 16384)
+                bad();
+            db.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('space_import.v1.provenance.' + digest(JSON.stringify([kind, id, revision])), value);
+        };
+        const actor = (id) => { if (typeof id !== 'string' || !id || id === boot.adminActorId || id === synthetic)
+            bad(); db.prepare('INSERT INTO actors(id,kind,display_name,created_at,disabled_at) VALUES(?,?,?,?,?) ON CONFLICT(id) DO NOTHING').run(id, 'agent', 'Imported source identity', now, now); };
+        const insert = (table, row) => { const keys = Object.keys(row); db.prepare(`INSERT INTO ${table}(${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`).run(...keys.map(k => typeof row[k] === 'object' && row[k] !== null ? JSON.stringify(row[k]) : row[k])); };
+        async function onLine(line) {
+            check();
+            if (line.type === 'header') {
+                header = line;
+                return;
+            }
+            if (line.type === 'end')
+                return;
+            const currentHeader = header ?? bad();
+            const r = line.data;
+            records++;
+            switch (line.kind) {
+                case 'space':
+                    if (r.id !== currentHeader.source.space_id || r.current_revision !== currentHeader.source.space_revision)
+                        bad();
+                    insert('spaces', { id: r.id, slug: r.slug, current_revision: r.current_revision, policy_revision: r.policy_revision, acl_epoch: 1, created_at: r.created_at });
+                    break;
+                case 'space_revision':
+                    actor(r.editor_id);
+                    insert('space_revisions', { space_id: r.space_id, revision: r.revision, objective: r.objective, rules: r.rules, review_policy: r.review_policy, check_profiles: r.check_profiles, pinned_refs: r.pinned_refs, editor_id: r.editor_id, created_at: r.created_at });
+                    metadata('space_revision', String(r.space_id), Number(r.revision), r.projected === true);
+                    break;
+                case 'thread':
+                    actor(r.creator_id);
+                    insert('threads', { id: r.id, space_id: r.space_id, title: r.title, version: r.version, state: r.state, creator_id: r.creator_id, created_at: r.created_at, updated_at: r.updated_at });
+                    break;
+                case 'thread_version':
+                    insert('thread_versions', { thread_id: r.thread_id, version: r.version, title: r.title, state: r.state, created_at: r.created_at });
+                    break;
+                case 'post':
+                    if (r.tombstone) {
+                        postTombs++;
+                        insert('posts', { id: r.id, space_id: r.space_id, thread_id: r.thread_id, author_id: synthetic, kind: 'note', current_revision: r.current_revision, lifecycle: 'redacted', created_at: now });
+                        metadata('post', String(r.id), null, false, null, ['author_id', 'kind', 'created_at']);
+                    }
+                    else {
+                        actor(r.author_id);
+                        insert('posts', { id: r.id, space_id: r.space_id, thread_id: r.thread_id, author_id: r.author_id, kind: r.kind, current_revision: r.current_revision, lifecycle: r.lifecycle, created_at: r.created_at });
+                    }
+                    break;
+                case 'post_revision': {
+                    db.prepare('INSERT INTO import_tombstones VALUES(?,?,?)').run(r.post_id, r.revision, r.tombstone ? 1 : 0);
+                    const fields = r.tombstone ? { title: '', summary: '', body: '', tags: [], structured: {}, editor_id: synthetic, created_at: now } : { title: r.title, summary: r.summary, body: r.body, tags: r.tags, structured: r.structured, editor_id: r.editor_id, created_at: r.created_at };
+                    if (!r.tombstone)
+                        actor(r.editor_id);
+                    insert('post_revisions', { post_id: r.post_id, revision: r.revision, ...fields, content_hash: hash(fields) });
+                    metadata('post_revision', String(r.post_id), Number(r.revision), r.projected === true, typeof r.source_content_hash === 'string' ? r.source_content_hash : null, r.tombstone ? ['title', 'summary', 'body', 'tags', 'structured', 'editor_id', 'created_at', 'content_hash'] : []);
+                    break;
+                }
+                case 'relation':
+                    actor(r.creator_id);
+                    insert('relations', { id: r.id, space_id: r.space_id, source_post_id: r.source_post_id, source_revision: r.source_revision, target_post_id: r.target_post_id, target_revision: r.target_revision, type: r.type, state: r.state, version: r.version, creator_id: r.creator_id, created_at: r.created_at });
+                    break;
+                case 'relation_resolution':
+                    db.prepare('INSERT INTO import_resolution_versions VALUES(?,?,?)').run(r.relation_id, r.version, r.action);
+                    actor(r.resolver_id);
+                    insert('relation_resolutions', { id: r.id, relation_id: r.relation_id, version: r.version, resolver_id: r.resolver_id, reason_ref: r.reason_ref, action: r.action, created_at: r.created_at });
+                    break;
+                case 'revision_artifact':
+                    insert('revision_artifacts', { post_id: r.post_id, revision: r.revision, artifact_id: r.artifact_id, purpose: r.purpose });
+                    break;
+                case 'artifact': {
+                    const tomb = r.tombstone === true;
+                    if (tomb)
+                        artifactTombs++;
+                    else {
+                        readyMissing++;
+                        actor(r.owner_id);
+                    }
+                    insert('artifacts', { id: r.id, space_id: r.space_id, owner_id: tomb ? synthetic : r.owner_id, visibility: 'space', review_assignment_id: null, check_run_id: null, sha256: tomb ? '0'.repeat(64) : r.sha256, bytes: tomb ? 0 : r.bytes, mime: tomb ? 'application/octet-stream' : r.mime, storage_key: 'import_' + randomBytes(16).toString('hex'), state: tomb ? r.state : 'missing', created_at: tomb ? now : r.created_at });
+                    if (tomb)
+                        metadata('artifact', String(r.id), null, false, null, ['owner_id', 'sha256', 'bytes', 'mime', 'storage_key', 'created_at']);
+                    break;
+                }
+            }
+            hook('record');
+            if (records % 128 === 0) {
+                await yieldTurn();
+                check();
+            }
+        }
+        async function* chunks() { const buffer = Buffer.alloc(65536); for (;;) {
+            check();
+            const result = await input.read(buffer, 0, buffer.length, null);
+            if (!result.bytesRead)
+                return;
+            yield Uint8Array.from(buffer.subarray(0, result.bytesRead));
+        } }
+        const complete = await decodeSpaceExport(chunks(), { signal: controller.signal, onLine });
+        hook('validation');
+        const sourceHeader = complete.header;
+        await validateImported(db, sourceHeader.source.space_id, check, metadata);
+        const summary = JSON.stringify({ version: 1, import_id: importId, imported_at: now, source: sourceHeader.source, export_id: sourceHeader.export_id, chain_sha256: complete.end.chain_sha256, record_count: records, ready_to_missing: readyMissing, post_tombstones: postTombs, artifact_tombstones: artifactTombs, formal_review_status: sourceHeader.formal_review_status, formal_check_status: sourceHeader.formal_check_status, source_format_version: sourceHeader.version, new_local_event: true });
+        if (Buffer.byteLength(summary) > 16384)
+            bad();
+        db.prepare('INSERT INTO instance_metadata(key,value) VALUES(?,?)').run('space_import.v1', summary);
+        storage.appendEvent(sourceHeader.source.space_id, { id: 'evt_' + randomBytes(16).toString('hex'), space_id: sourceHeader.source.space_id, type: 'space.revised', object_id: sourceHeader.source.space_id, revision: sourceHeader.source.space_revision, visibility: 'public', actor_id: boot.adminActorId, created_at: now });
+        hook('import-transaction');
+        db.exec('COMMIT');
+        const checkpoint = db.pragma('wal_checkpoint(TRUNCATE)');
+        if (checkpoint[0]?.busy !== 0)
+            throw new ImportError('IMPORT_FAILED', 'Import staging checkpoint did not complete.');
+        db.close();
+        db = undefined;
+        await publishMaintenanceDirectory(stage, target, ['detuned.sqlite'], { atStage: hook });
+        return { data_dir: target.directory, space_id: sourceHeader.source.space_id, admin_actor_id: boot.adminActorId, admin_token: boot.adminToken, import_id: importId, record_count: records };
+    }
+    catch (e) {
+        if (e instanceof ImportError)
+            throw e;
+        if (timedOut && !readinessUnlinked)
+            throw new ImportError('IMPORT_TIMEOUT', 'Logical import timed out.');
+        if (controller.signal.aborted && !readinessUnlinked)
+            throw new ImportError('IMPORT_CANCELLED', 'Logical import was cancelled.');
+        if (e instanceof ExportDecodeError)
+            throw new ImportError('INVALID_INPUT', 'Logical export integrity validation failed.');
+        if (e instanceof MaintenanceError) {
+            const code = e.code === 'DESTINATION_EXISTS' ? 'DESTINATION_EXISTS' : e.code === 'INCOMPLETE_DIRECTORY' ? 'INCOMPLETE_DIRECTORY' : 'IMPORT_FAILED';
+            throw new ImportError(code, e.message.replace('Retain the original backup and restore it', 'Retain the original logical export and import it'));
+        }
+        if (e.code === 'SQLITE_CONSTRAINT_FOREIGNKEY' || e.code?.startsWith('SQLITE_CONSTRAINT'))
+            bad();
+        throw new ImportError('IMPORT_FAILED', 'Logical import failed; retain the input and retry to another new directory.');
+    }
+    finally {
+        clearTimeout(timer);
+        options.signal?.removeEventListener('abort', stop);
+        if (db) {
+            try {
+                if (db.inTransaction)
+                    db.exec('ROLLBACK');
+            }
+            finally {
+                db.close();
+            }
+        }
+        await input?.close().catch(() => { });
+        if (stage)
+            await rm(stage, { recursive: true, force: true }).catch(() => { });
+    }
+}
+async function validateImported(db, spaceId, check, metadata) {
+    let steps = 0;
+    function* rows(sql) { let last = 0; for (;;) {
+        const row = db.prepare(`SELECT * FROM (${sql}) WHERE scan_id>? ORDER BY scan_id LIMIT 1`).get(last);
+        if (!row)
+            return;
+        last = Number(row.scan_id);
+        yield row;
+    } }
+    const invalid = (sql, ...args) => { if (db.prepare(sql).get(...args))
+        bad(); };
+    invalid('SELECT 1 FROM spaces WHERE id<>? LIMIT 1', spaceId);
+    if (db.prepare('SELECT count(*) AS n FROM spaces').get().n !== 1)
+        bad();
+    for (const table of ['threads', 'posts', 'relations', 'artifacts', 'space_revisions'])
+        invalid(`SELECT 1 FROM ${table} WHERE space_id<>? LIMIT 1`, spaceId);
+    invalid('SELECT 1 FROM posts p JOIN threads t ON t.id=p.thread_id WHERE p.space_id<>t.space_id LIMIT 1');
+    for (const [table, key, current, history, parent] of [['spaces', 'id', 'current_revision', 'space_revisions', 'space_id'], ['threads', 'id', 'version', 'thread_versions', 'thread_id'], ['posts', 'id', 'current_revision', 'post_revisions', 'post_id']]) {
+        const version = history === 'thread_versions' ? 'version' : 'revision';
+        for (const entity of rows(`SELECT rowid AS scan_id,${key} AS id,${current} AS current FROM ${table}`)) {
+            if (++steps % 128 === 0)
+                await yieldTurn();
+            check();
+            const row = db.prepare(`SELECT count(*) AS n,min(${version}) AS lo,max(${version}) AS hi FROM ${history} WHERE ${parent}=?`).get(String(entity.id));
+            if (history === 'thread_versions') {
+                if (row.n < 1 || row.lo < 1 || row.hi !== entity.current)
+                    bad();
+                metadata('thread', String(entity.id), null, false, null, [], row.n === entity.current && row.lo === 1);
+            }
+            else if (row.n !== entity.current || row.lo !== 1 || row.hi !== entity.current)
+                bad();
+        }
+    }
+    invalid("SELECT 1 FROM import_tombstones t JOIN posts p ON p.id=t.post_id WHERE t.tombstone<>(p.lifecycle='redacted') LIMIT 1");
+    invalid('SELECT 1 FROM threads t JOIN thread_versions v ON v.thread_id=t.id AND v.version=t.version WHERE t.title<>v.title OR t.state<>v.state LIMIT 1');
+    const postRef = (value, evidence = false) => { if (!value || typeof value !== 'object' || Array.isArray(value))
+        bad(); const r = value; if (Object.keys(r).sort().join(',') !== (evidence ? 'kind,post_id,revision' : 'post_id,revision') || typeof r.post_id !== 'string' || !Number.isSafeInteger(r.revision) || Number(r.revision) < 1 || (evidence && r.kind !== 'post'))
+        bad(); if (!db.prepare('SELECT 1 FROM posts p JOIN post_revisions r ON r.post_id=p.id WHERE p.id=? AND p.space_id=? AND r.revision=?').get(r.post_id, spaceId, r.revision))
+        bad(); };
+    for (const row of rows('SELECT rowid AS scan_id,pinned_refs FROM space_revisions')) {
+        if (++steps % 128 === 0)
+            await yieldTurn();
+        check();
+        const refs = JSON.parse(String(row.pinned_refs));
+        if (!Array.isArray(refs))
+            return bad();
+        for (const ref of refs)
+            postRef(ref);
+    }
+    for (const row of rows('SELECT r.rowid AS scan_id,r.*,p.lifecycle FROM post_revisions r JOIN posts p ON p.id=r.post_id')) {
+        if (++steps % 128 === 0)
+            await yieldTurn();
+        check();
+        const structured = JSON.parse(String(row.structured));
+        for (const key of ['source_refs', 'subject_refs', 'evidence_refs'])
+            if (Object.hasOwn(structured, key)) {
+                const refs = structured[key];
+                if (!Array.isArray(refs))
+                    return bad();
+                for (const ref of refs) {
+                    if (key === 'evidence_refs' && ref?.kind === 'artifact') {
+                        if (Object.keys(ref).sort().join(',') !== 'artifact_id,kind' || typeof ref.artifact_id !== 'string' || !db.prepare('SELECT 1 FROM artifacts WHERE id=? AND space_id=?').get(ref.artifact_id, spaceId))
+                            bad();
+                    }
+                    else
+                        postRef(ref, key === 'evidence_refs');
+                }
+            }
+        if (Object.hasOwn(structured, 'target_ref'))
+            postRef(structured.target_ref);
+        if (row.lifecycle !== 'redacted' && Number(row.revision) === db.prepare('SELECT current_revision FROM posts WHERE id=?').get(String(row.post_id)).current_revision)
+            db.prepare('INSERT INTO post_fts(post_id,space_id,title,summary,body,tags) VALUES(?,?,?,?,?,?)').run(row.post_id, spaceId, row.title, row.summary, row.body, row.tags);
+    }
+    for (const row of rows('SELECT rowid AS scan_id,* FROM relations')) {
+        if (++steps % 128 === 0)
+            await yieldTurn();
+        check();
+        postRef({ post_id: row.source_post_id, revision: row.source_revision });
+        postRef({ post_id: row.target_post_id, revision: row.target_revision });
+        const stats = db.prepare('SELECT count(*) AS n,max(version) AS hi FROM import_resolution_versions WHERE relation_id=?').get(row.id);
+        const terminal = db.prepare('SELECT action FROM import_resolution_versions WHERE relation_id=? AND version=?').get(row.id, row.version);
+        if (terminal && (terminal.action === 'resolve' ? 'resolved' : 'open') !== row.state)
+            bad();
+        metadata('relation', String(row.id), null, false, null, [], stats.n === Number(row.version) - 1);
+    }
+    for (const row of rows('SELECT r.rowid AS scan_id,r.*,l.version AS current FROM relation_resolutions r JOIN relations l ON l.id=r.relation_id')) {
+        if (++steps % 128 === 0)
+            await yieldTurn();
+        check();
+        if (Number(row.version) < 2 || Number(row.version) > Number(row.current))
+            bad();
+        postRef(JSON.parse(String(row.reason_ref)));
+    }
+    invalid('SELECT 1 FROM revision_artifacts a LEFT JOIN post_revisions r ON r.post_id=a.post_id AND r.revision=a.revision LEFT JOIN posts p ON p.id=a.post_id WHERE p.id IS NULL OR r.post_id IS NULL OR p.lifecycle=\'redacted\' LIMIT 1');
+    if (db.prepare('PRAGMA foreign_key_check').get())
+        bad();
+    if (db.pragma('integrity_check').some(r => r.integrity_check !== 'ok'))
+        bad();
+}
+//# sourceMappingURL=logical-import.js.map

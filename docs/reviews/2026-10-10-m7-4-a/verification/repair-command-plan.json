@@ -1,0 +1,38 @@
+{
+  "status": "prepared_not_runtime_authorized",
+  "A_freeze": "5d216b4f6ee0869cdd9f73eb61343ec53f6d9ebca3920b3d72696f93dea83017",
+  "D_ready": "71d81f4e2126d7d9d3cd2b2cfaa5ebe6ff62dcd6eae09e44470b5e4bb6524d1b",
+  "source_bind": {
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": "e0d814390c583128b7d9981f85c7cd65c7be0aa00721fef277766e9cffaca235",
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": "9f9bfdfdb77b0f01a4e0b3c6f415dfdfe8973b4020e5fba13c9c3adec4b87887",
+    "scripts/integrations/claude-check-probe.mjs": "67b5f357b115a191f53a01f494bb4e73f970e87e9b2a20cb50b68e359e77bfd1"
+  },
+  "D_test_sha256": "e143662ea1b61ac43fd8379b18baa23ccbba805b72219790ce48e04b0d58a46f",
+  "build_reused": "build-first exit0/immediate555dist; no packages changed; no rebuild",
+  "commands": [
+    {
+      "id": "source-noemit-repair",
+      "command": "pnpm exec tsc -p docs/reviews/2026-10-10-m7-4-a/verification/new-source-tsconfig.json"
+    },
+    {
+      "id": "syntax-pi-repair",
+      "command": "node --check tests/fixtures/pi-runtime/native-lifecycle.mjs"
+    },
+    {
+      "id": "syntax-claude-repair",
+      "command": "node --check scripts/integrations/claude-check-probe.mjs"
+    },
+    {
+      "id": "focused-checks-repair",
+      "command": "pnpm exec vitest run tests/contracts/m4-pi-native-lifecycle.test.ts --maxWorkers=1 --no-file-parallelism -t 'native checks prepares no invalid input and performs real two-write/six-read calls$'"
+    }
+  ],
+  "count_expected": 1,
+  "old_six": "filtered skipped, do not claim rerun",
+  "D_two": "first focused passed, not repeated",
+  "observation": "A safe stageIPC,lastStage assertion; parent owns0700root, awaits actualclose then rm/existence assertion. Diagnostic observability is not rootcause repair claim.",
+  "timeout": "original70schild80scase unchanged; diagnosticbody60s boundedHTTP2s/cleanup2s",
+  "first_failure": "focused-first28/29/86.86s and timeoutcleanup receipts preserved",
+  "next_gates": "type/lint/schema/oncefull remain unrun until rootrelease after onecase result",
+  "Claude": "guard/native remain unauthorized"
+}

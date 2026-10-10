@@ -1,0 +1,23 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m7-d01-reviewed-independent.test.ts > DI01 independently reads all three live ordinary HTTP checkpoints; sealed privacy and immutable accepted history survive supersession
+Error: Original challenge missing
+ ❯ Object.getOriginalChallenge scripts/demos/d01-reviewed.mjs:36:1315
+
+ ❯ observe tests/integration/m7-d01-reviewed-independent.test.ts:55:12
+ ❯ runReviewedDemo scripts/demos/d01-reviewed.mjs:57:469
+ ❯ tests/integration/m7-d01-reviewed-independent.test.ts:46:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m7-d01-reviewed.test.ts > M7.3 real reviewed D01 journey > DJ01 preserves pending recovery and immutable accepted history through a later challenge
+Error: Original challenge missing
+ ❯ Object.getOriginalChallenge scripts/demos/d01-reviewed.mjs:36:1315
+
+ ❯ observe tests/integration/m7-d01-reviewed.test.ts:15:40
+ ❯ runReviewedDemo scripts/demos/d01-reviewed.mjs:57:469
+ ❯ tests/integration/m7-d01-reviewed.test.ts:12:57
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

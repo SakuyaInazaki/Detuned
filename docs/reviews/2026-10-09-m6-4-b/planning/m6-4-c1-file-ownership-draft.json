@@ -1,0 +1,47 @@
+{
+  "status": "candidate; root final contract pending; no implementation",
+  "previous_task_sha256": "8a702b37563a159e131523c8ad0b821f3ca4b044bcd926307da91dbe5156f53b",
+  "A_existing": [
+    "packages/protocol/src/review.ts",
+    "packages/protocol/src/response-guards.ts",
+    "packages/protocol/src/index.ts",
+    "packages/protocol/src/openapi.ts",
+    "packages/protocol/src/tools.ts",
+    "packages/core/src/ports/storage.ts",
+    "packages/storage-sqlite/src/sqlite-storage.ts",
+    "modules/review/src/index.ts",
+    "packages/server/src/app.ts",
+    "packages/server/src/routes/reviews.ts",
+    "packages/client/src/client.ts"
+  ],
+  "A_new": [
+    "modules/review/src/post-catalog-service.ts",
+    "tests/contracts/m6-review-catalog.test.ts"
+  ],
+  "A_conditional_existing": [
+    "modules/review/src/status-service.ts"
+  ],
+  "B_existing": [
+    "packages/web/src/app.tsx",
+    "packages/web/src/styles.css",
+    "packages/cli/src/index.ts"
+  ],
+  "B_new": [
+    "packages/web/src/review-panel.tsx"
+  ],
+  "D_existing": [
+    "scripts/integrations/web/fixtures.ts"
+  ],
+  "D_new": [
+    "scripts/integrations/web/m6-review.spec.ts",
+    "tests/contracts/m6-review-catalog-independent.test.ts"
+  ],
+  "not_authorized": [
+    "schema.sql or migration/index DDL",
+    "trusted search filters",
+    "C2 projection",
+    "new tool name",
+    "new dependencies"
+  ],
+  "before_required": "all selected existing paths; capture missing state for selected new paths before fresh"
+}

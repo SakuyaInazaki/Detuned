@@ -1,0 +1,11 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-context-session-chain.test.ts > C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision
+AssertionError: {"api_version":"1","request_id":"req-1","error":{"code":"VALIDATION_ERROR","message":"body/rules/0 must NOT have more than 500 characters","retryable":false,"details":{"issues":[{"instancePath":"/rules/0","schemaPath":"#/properties/rules/items/maxLength","keyword":"maxLength","params":{"limit":500},"message":"must NOT have more than 500 characters"}]}}}: expected 400 to be less than 300
+ ❯ call tests/integration/m2-context-session-chain.test.ts:10:278
+
+ ❯ tests/integration/m2-context-session-chain.test.ts:12:50
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

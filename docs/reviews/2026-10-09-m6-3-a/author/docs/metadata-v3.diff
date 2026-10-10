@@ -1,0 +1,22 @@
+--- docs/03-data-model.md v2
++++ docs/03-data-model.md v3
+@@ -259,7 +259,7 @@
+ 
+ schema4在既有五formal表上增加review_submissions；assignment有稳定ID，请求head/不可变版本记录submitted_count。提交保存完整严格payload、本人session与固定snapshot绑定；每assignment/session唯一。最终一位提交在同一事务核全部已有证据当前隐私和ready状态，更新所有revealed_at、phase/count/version、metadata事件和typed幂等结果；不经公共posts/FTS存意见。
+ 
+-普通init仅blank/current4、serve仅current4，legacy1/2/3须显式offline复制到新stage4。物理format1接受真实source2/3/4并按原profile验证，源manifest不改；current4备份保六表。逻辑wire1/source2/not_enabled与wire2/source3|4/excluded严格相关，十族public材料排除formal/private对象，导入目标4正式表为空。历史schema3描述是其交付阶段事实，当前以本节为准。
++当前普通init仅blank/current5、serve仅current5，legacy1/2/3/4须显式offline复制到新stage5。物理format1接受真实source2/3/4/5并按原profile验证，源manifest不改；current5备份保七表。逻辑wire1/source2/not_enabled与wire2/source3|4|5/excluded严格相关，十族public材料排除formal/private对象，导入目标5正式表为空。前述schema3/4对象与来源描述是其交付阶段事实，当前维护以此段及M6.3节为准。
+ 
+ ## M6.3-A已接受的内部裁决与有效性
+ 
+--- docs/reviews/2026-10-09-m6-3-a/README.md v2
++++ docs/reviews/2026-10-09-m6-3-a/README.md v3
+@@ -6,7 +6,7 @@
+ 
+ 最终完整 **790/122**：新增23/6files及既有代际生成V5参数1包含在总数中。build10.483/type8.207/lint8.289秒均0；current25为6原+4既有adapter+15本包组合，各首次0。真实原4backup→5restore通过，不是任意旧库或容器认证。完整[独验报告](verification/independent-report.md) SHA256 `13b39e1f2966530ecb74d5815ed12988988743ca0bafa0023225a8f740e7d215`；[门禁](verification/gate-summary.json)。
+ 
+-首次新23中D三challenge夹具失败，修后只复验三例；DF04首记录只有mutation.ok=false，未捕原生错误码。DF03真实fresh submit stale先报400，A2窄修后code断言通过，409映射由源码确认，未另跑HTTP响应。checker六表预期一行修正；首次full788+2旧D当前目标失败，经窄fixture修复后最终790。重跑不累加。#28 ignored date-time不是严格日期验证证据；真实两子进程竞态允许两合法序，不声称观察两种赢家。首输出/差分均保留。
++首次新23中D三challenge夹具失败，修后只复验三例；DF04首记录只有mutation.ok=false，未捕原生错误码。DF03真实fresh submit stale先报400，A2窄修后code断言通过，409映射由源码确认，未另跑HTTP响应。checker修为严格比较完整七表与两索引；首次full788+2旧D当前目标失败，经窄fixture修复后最终790。重跑不累加。#28 ignored date-time不是严格日期验证证据；真实两子进程竞态允许两合法序，不声称观察两种赢家。首输出/差分均保留。
+ 
+ 保护9305旧材料（旧M6.2包513+既有8792），源码/SQL/旧hash与证据按D报告保护；本机串行、无VM/Colima/模型/新环境。
+ 

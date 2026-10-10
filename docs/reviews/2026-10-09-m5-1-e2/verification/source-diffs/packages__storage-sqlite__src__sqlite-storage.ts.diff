@@ -1,0 +1,37 @@
+--- before-files/packages/storage-sqlite/src/sqlite-storage.ts
++++ packages/storage-sqlite/src/sqlite-storage.ts
+@@ -1,3 +1,4 @@
++import { POST_CREATED_SORT_KEY_SQL, preparePostCreatedOrderIndex } from './post-created-order-index.js';
+ import { checkSqliteReadiness, sampleSqliteStatus, type OperationalOptions } from './operational-status.js';
+ import { configureSqliteResourceLimits } from './sqlite-resource-limits.js';
+ import { SqliteSpaceExportSnapshot } from './space-export-snapshot.js';
+@@ -43,6 +44,8 @@
+     this.initPragmas();
+   }
+ 
++  prepareRuntimeReadIndexes(): void { preparePostCreatedOrderIndex(this.db); }
++
+   checkReadiness(): boolean { return checkSqliteReadiness(this.db, this.operationalOptions); }
+ 
+   sampleOperationalStatus(): StorageOperationalStatus {
+@@ -770,6 +773,20 @@
+     }));
+ 
+     return { revisions, next_cursor: nextCursor };
++  }
++
++  /** Canonical UTC milliseconds first; unknown historical values remain ordered by ID. */
++  listPostsInThreadByCreatedAt(threadId: string, limit: number, after?: { key: string | null; id: string }): { posts: (Post & { sort_key: string | null })[]; has_more: boolean } {
++    const key = POST_CREATED_SORT_KEY_SQL;
++    const params: (string | number)[] = [threadId];
++    let where = '';
++    if (after) {
++      if (after.key === null) { where = ' WHERE sort_key IS NULL AND id > ?'; params.push(after.id); }
++      else { where = ' WHERE sort_key IS NULL OR sort_key > ? OR (sort_key = ? AND id > ?)'; params.push(after.key, after.key, after.id); }
++    }
++    params.push(limit + 1);
++    const rows = this.db.prepare(`SELECT * FROM (SELECT id,space_id,thread_id,author_id,kind,current_revision,lifecycle,created_at,${key} AS sort_key FROM posts WHERE thread_id = ?)${where} ORDER BY sort_key IS NULL ASC, sort_key ASC, id ASC LIMIT ?`).all(...params) as (Post & { sort_key: string | null })[];
++    return { posts: rows.slice(0, limit), has_more: rows.length > limit };
+   }
+ 
+   listPostsInThread(

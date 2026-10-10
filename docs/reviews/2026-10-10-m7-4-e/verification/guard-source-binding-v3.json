@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "status": "R1 v3 frozen preparation; runtime not released",
+  "source_sha256": "b6c6b1d195357d25fc8c983f8e9e2a0ece675099b71363073cc658f6f8d4047e",
+  "policy_source_literal": "export function codexSandboxPolicy({home,owned,port,sentinel}) {\n assert.equal(typeof home,'string');assert.ok(Number.isSafeInteger(port)&&port>0&&port<=65535);\n for(const value of [home,owned,sentinel])assert.ok(typeof value==='string'&&path.isAbsolute(value)&&!/[\"\\\\\\n\\r]/.test(value));\n return `(version 1)\\n(allow default)\\n(deny network*)\\n(allow network-outbound (remote ip \"localhost:${port}\"))\\n(deny mach-lookup)\\n(deny file-read* file-write* (subpath \"${home}/.codex\") (subpath \"${home}/.claude\") (literal \"${home}/.claude.json\") (subpath \"${home}/.agents\") (subpath \"${home}/.pi\") (subpath \"${home}/.dsh\") (subpath \"${home}/.config\") (subpath \"${home}/Library/Keychains\") (subpath \"/Library/Keychains\") (subpath \"${home}/Library/Application Support/Codex\") (subpath \"${home}/Library/Application Support/Claude\"))\\n(deny file-write*)\\n(allow file-write* (subpath \"${owned}\"))\\n(deny file-read* file-write* (literal \"${sentinel}\"))\\n`;\n}",
+  "policy_raw": "(version 1)\\n(allow default)\\n(deny network*)\\n(allow network-outbound (remote ip \"localhost:${port}\"))\\n(deny mach-lookup)\\n(deny file-read* file-write* (subpath \"${home}/.codex\") (subpath \"${home}/.claude\") (literal \"${home}/.claude.json\") (subpath \"${home}/.agents\") (subpath \"${home}/.pi\") (subpath \"${home}/.dsh\") (subpath \"${home}/.config\") (subpath \"${home}/Library/Keychains\") (subpath \"/Library/Keychains\") (subpath \"${home}/Library/Application Support/Codex\") (subpath \"${home}/Library/Application Support/Claude\"))\\n(deny file-write*)\\n(allow file-write* (subpath \"${owned}\"))\\n(deny file-read* file-write* (literal \"${sentinel}\"))\\n",
+  "policy_template_sha256": "b6264fa0af668b5d1941d93fac25673ac2eda289fc7e4ab1ef3b0ccf0f049119",
+  "native_env_source_literal": "env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',HOME:home,CODEX_HOME:codexProbeStateDir}",
+  "native_env": {
+    "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+    "CI": "true",
+    "HOME": "${home}",
+    "CODEX_HOME": "${codexProbeStateDir}"
+  },
+  "native_env_keys": [
+    "PATH",
+    "CI",
+    "HOME",
+    "CODEX_HOME"
+  ],
+  "binary": "/opt/homebrew/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/bin/codex",
+  "binary_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff",
+  "author_freeze_sha256": "840ce3b2df6cadc29f0eda178d40c0e5c665a708725c6fd485056e809692d42c",
+  "protected_helper_sha256": "0202f11b6071607d6180aa833eeb39c42f82a1a2ba019c3df47ea650b9e2acf1",
+  "independent_guard_sha256": "6808b6b6af1d67d6e61b4599a4d9d804acc494fd0d52b76fe55277fce2a3a256",
+  "ordinary_file_positive": "same sandbox child own canonical0700 root: wx0600 fixed nonsecret bytes, exact readback and mode; safe booleans, unchanged actual policy/environment",
+  "guard_reuse": "sealed C independent actual guard pass; actual policy export and minimalenv literals byte-identical; no new guard run",
+  "protected_files_verified": true,
+  "capture_reuse_sha256": "c80d3e26709e4af2a1085d0582c1ab4550cd2129c0b518860cb5fc829868a2d7"
+}

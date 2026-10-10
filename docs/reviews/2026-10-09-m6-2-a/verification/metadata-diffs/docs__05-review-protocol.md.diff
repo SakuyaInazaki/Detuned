@@ -1,0 +1,22 @@
+--- docs/05-review-protocol.md (fresh before)
++++ docs/05-review-protocol.md (metadata v2)
+@@ -1,6 +1,6 @@
+ # 正式评审、证据快照与外部检查
+ 
+-当前实现：M6.1-A材料/JCS及M6.1-B内部持久请求、固定名单、取消和历史重放已限定接受；没有公开review HTTP/tool入口。下列封存提交、揭示、决定/当前有效性与外部检查仍为后续契约，不能据此发起完整正式评审。
++当前实现：M6.1材料/JCS与持久固定请求、M6.2内部封存完整意见/私有证据及全员原子揭示已有限接受。没有公开review HTTP/tool/UI入口；决定、持续失效、当前有效性与外部检查仍待M6.3/M7，不能据此发起完整正式评审。
+ 
+ ## 1. 必须分开的事实
+ 
+@@ -120,4 +120,10 @@
+ 
+ ### 已实现内部请求的权限与重放
+ 
+-新鲜create要求目标作者或当前maintainer/owner并具当前写权限，硬独立性flags与真实active eligible固定名单在同事务校验；取消仅requester或当前maintainer/owner，并使用required expected_version。返回平面固定版本元信息，不含封存意见或group；请求快照独立保存。旧key按不可变版本重放，后来的policy/资格不偷换历史，当前ACL/脱敏始终优先。此包尚无提交记录、全员揭示或批准。名单group只冻结申报事实，不证明认知独立。
++新鲜create要求目标作者或当前maintainer/owner并具当前写权限，硬独立性flags与真实active eligible固定名单在同事务校验；取消仅requester或当前maintainer/owner，并使用required expected_version。返回平面固定版本元信息，不含封存意见或group；请求快照独立保存。旧key按不可变版本重放，后来的policy/资格不偷换历史，当前ACL/脱敏始终优先。M6.2已实现内部提交记录与全员揭示，尚无最终批准。名单group只冻结申报事实，不证明认知独立。
++
++### M6.2-A封存提交已实现的有限范围
++
++每固定assignment只一份完整意见，真实同actor/space session不能凑多票。封存前只有本人可读，不通过changed_by、公共事件、搜索、上下文、导出或unused私有附件泄漏。最后submit同事务核全部证据当前scope/红删/ready后原子揭示；失败回滚，不部分公开。private附件静态存储scope不改space，公开通知是review.revealed。
++
++当前只有collecting→revealed及既有cancel；揭示不等于决定/批准。M6.3拟从本request冻结manifest读取required_checks/verdict policy，当前policy变化独立表示policy_superseded/stale，不用新policy重解释历史decision。材料metadata登记不等于本次文件实hash；正式外部操作、决定/validity与检查回执尚未实现。

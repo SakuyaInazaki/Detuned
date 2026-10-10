@@ -1,0 +1,11 @@
+--- before-index-stage/packages/core/src/ports/storage.ts
++++ packages/core/src/ports/storage.ts
+@@ -55,6 +55,8 @@
+ }
+ 
+ export interface StoragePort {
++  /** Optional writable runtime-only performance preparation, after quota and before requests. */
++  prepareRuntimeReadIndexes?(): void;
+   checkReadiness(): boolean;
+   sampleOperationalStatus(): StorageOperationalStatus;
+   /** Runtime connection configuration; unsupported implementations must reject, never silently skip. */

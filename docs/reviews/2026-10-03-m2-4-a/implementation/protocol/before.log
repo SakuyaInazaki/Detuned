@@ -1,0 +1,55 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m2-context-contracts.test.ts (2 tests | 2 failed) 163ms
+   × M2.4-A actual context body and tool contracts > C01: mandatory UTF8 material beyond the actual compact HTTP body budget rejects explicitly 116ms
+     → actual status=200, body UTF8 bytes=5058, max=4096: expected 200 to be 422 // Object.is equality
+   × M2.4-A actual context body and tool contracts > C02: shared forum_context retains real truncation meta after optional source material exceeds budget 47ms
+     → expected { …(10) } to have property "meta.truncated" with value true
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C01: mandatory UTF8 material beyond the actual compact HTTP body budget rejects explicitly
+AssertionError: actual status=200, body UTF8 bytes=5058, max=4096: expected 200 to be 422 // Object.is equality
+
+- Expected
++ Received
+
+- 422
++ 200
+
+ ❯ tests/contracts/m2-context-contracts.test.ts:22:118
+     20|     const response = await fetch(`${baseUrl}/api/v1/spaces/${sid}/cont…
+     21|     const raw = await response.text();
+     22|     expect(response.status, `actual status=${response.status}, body UT…
+       |                                                                                                                      ^
+     23|     expect(JSON.parse(raw).error).toMatchObject({ code: 'QUERY_TOO_BRO…
+     24|     const larger = await fetch(`${baseUrl}/api/v1/spaces/${sid}/contex…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m2-context-contracts.test.ts > M2.4-A actual context body and tool contracts > C02: shared forum_context retains real truncation meta after optional source material exceeds budget
+AssertionError: expected { …(10) } to have property "meta.truncated" with value true
+
+- Expected: 
+true
+
++ Received: 
+undefined
+
+ ❯ tests/contracts/m2-context-contracts.test.ts:37:18
+     35|     await client.patchSpace(sid, { expected_revision: 1, pinned_refs: …
+     36|     const page = await client.callTool('forum_context', { space_id: si…
+     37|     expect(page).toHaveProperty('meta.truncated', true);
+       |                  ^
+     38|     expect(page.meta.next_cursor).toBeNull(); expect(page.data.space_i…
+     39|     const full = await client.callTool('forum_context', { space_id: si…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:56:57
+   Duration  775ms (transform 187ms, setup 0ms, collect 354ms, tests 163ms, environment 0ms, prepare 49ms)
+

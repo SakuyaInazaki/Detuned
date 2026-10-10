@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-context-focus.test.ts (8 tests | 1 failed | 7 skipped) 16ms
+   × M2.4-C.1 focused context current snapshot > F01: valid archived own-thread focus adds current metadata; no-focus retains original shape 16ms
+     → 本阶段不支持 focus_thread_id，请去掉该参数读取空间上下文。
+   ↓ M2.4-C.1 focused context current snapshot > F02: failures are filtered before id DESC five-candidate window; pin ordering and cross-thread source projection survive
+   ↓ M2.4-C.1 focused context current snapshot > F03: challenge SQL filters both endpoint spaces before deterministic LIMIT and deduplicates both-focus matches
+   ↓ M2.4-C.1 focused context current snapshot > F04: public activity filters thread/post/relation before latest-five LIMIT and space checkpoint includes later unrelated events
+   ↓ M2.4-C.1 focused context current snapshot > F05: candidate projection does not scan to fill inaccessible refs, and redacted challenge material stays null
+   ↓ M2.4-C.1 focused context current snapshot > F06: current authorization precedes unknown/foreign and malformed focus; accepted reads and errors never write
+   ↓ M2.4-C.1 focused context current snapshot > F07: mandatory focus metadata obeys actual whole-envelope budget, rules omission preserves optional material
+   ↓ M2.4-C.1 focused context current snapshot > F08: WAL metadata/material/high-water remain one snapshot while next read sees new state
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 skipped (8)
+   Start at  19:42:16
+   Duration  472ms (transform 154ms, setup 0ms, collect 251ms, tests 16ms, environment 0ms, prepare 40ms)
+

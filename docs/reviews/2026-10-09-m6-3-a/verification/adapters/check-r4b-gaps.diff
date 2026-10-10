@@ -1,0 +1,11 @@
+--- docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-r4b-gaps.mjs
++++ docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-r4b-gaps.mjs
+@@ -53,7 +53,7 @@
+   const path = join(directory, `${name}.sqlite`);
+   writeFileSync(path, db.serialize());
+   const database = new Database(path);
+-  database.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++  database.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+   return { path, database };
+ }
+ async function onUpgradedApp(database, action) {

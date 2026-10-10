@@ -1,0 +1,30 @@
+--- docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs
++++ docs/reviews/2026-10-09-m6-1-b/verification/adapters/check-b4-1-acceptance.mjs
+@@ -5,10 +5,14 @@
+ import { join } from 'node:path';
+ import { createRequire } from 'node:module';
+ import { isDeepStrictEqual as equal } from 'node:util';
+-import { buildApp } from '../../../packages/server/dist/index.js';
+-import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '../../../packages/storage-sqlite/dist/index.js';
+-
+-const require = createRequire(new URL('../../../package.json', import.meta.url));
++import { buildApp } from '../../../../../packages/server/dist/index.js';
++import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase as currentCoordinate } from '../../../../../packages/storage-sqlite/dist/index.js';
++
++// M6.1-B: old migration positives execute in an explicitly owned stage. Ordinary serve/init rejection is independently tested with real CLI.
++import {classifyDatabase as stageClassify} from '../../../../../packages/storage-sqlite/dist/index.js';
++function openAndCoordinateDatabase(database, mode){ if(stageClassify(database).kind==='supported_legacy'){const migrated=bootstrapDatabase(database);currentCoordinate(database,mode);return migrated;}return currentCoordinate(database,mode);}
++
++const require = createRequire(new URL('../../../../../package.json', import.meta.url));
+ const Database = require('better-sqlite3');
+ const dir = mkdtempSync(join(tmpdir(), 'detuned-r9-review-'));
+ const sourcePath = join(dir, 'source.sqlite');
+@@ -147,7 +151,7 @@
+       const fixture = fixtureClone(label); let database = fixture.database;
+       try {
+         // Require a real schema upgrade so rollback is more than a pure validator check.
+-        database.exec('DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++        database.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+         setRef(database, 'thread-patch', ref);
+         const before = snapshot(database);
+         const outcome = attempt(() => openAndCoordinateDatabase(database, 'serve'));

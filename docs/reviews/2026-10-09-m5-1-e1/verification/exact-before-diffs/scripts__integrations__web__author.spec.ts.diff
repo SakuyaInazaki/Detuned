@@ -1,0 +1,10 @@
+--- before/scripts/integrations/web/author.spec.ts
++++ after/scripts/integrations/web/author.spec.ts
+@@ -4,6 +4,7 @@
+   await page.goto(forum.baseURL);
+   await forum.login(page);
+   await page.getByRole('button', { name: new RegExp(forum.space.slug) }).click();
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '讨论', exact: true}).click();
+   await page.getByRole('button', { name: new RegExp(forum.thread.title) }).click();
+   const source = page.locator('.post-directory li').filter({ hasText: forum.post.id });
+   await source.getByRole('button', { name: '查看修订 1' }).click();

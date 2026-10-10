@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts (4 tests | 1 failed) 5030ms
+   ✓ M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip  1616ms
+   ✓ M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime  843ms
+   × M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes 845ms
+     → expected { …(3) } to deeply equal { …(2) }
+   ✓ M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets  1726ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  06:47:17
+   Duration  5.25s (transform 20ms, setup 0ms, collect 22ms, tests 5.03s, environment 0ms, prepare 33ms)
+

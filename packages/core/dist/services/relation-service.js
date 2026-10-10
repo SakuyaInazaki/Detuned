@@ -44,12 +44,6 @@ export class RelationService {
             if (!targetRev) {
                 throw new DetunedError(ErrorCode.NOT_FOUND, '目标帖子修订版本不存在。', 404);
             }
-            // Permission: source owner or maintainer
-            const isSourceAuthor = sourcePost.author_id === auth.actor.id;
-            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
-            if (!isSourceAuthor && !isMaintainer) {
-                throw new DetunedError(ErrorCode.FORBIDDEN, '必须拥有源帖子或具备维护者权限才能创建关系。', 403);
-            }
             // Endpoint uniqueness
             const existing = tx.findRelationByEndpoints(spaceId, req.source_ref.post_id, req.source_ref.revision, req.target_ref.post_id, req.target_ref.revision, req.type);
             if (existing) {
@@ -82,6 +76,16 @@ export class RelationService {
                 created_at: now,
             });
             return relation;
+        }, (tx) => {
+            const sourcePost = tx.findPostById(req.source_ref.post_id);
+            if (!sourcePost || sourcePost.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '源帖子不存在。', 404);
+            // Permission: source owner or maintainer
+            const isSourceAuthor = sourcePost.author_id === auth.actor.id;
+            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
+            if (!isSourceAuthor && !isMaintainer) {
+                throw new DetunedError(ErrorCode.FORBIDDEN, '必须拥有源帖子或具备维护者权限才能创建关系。', 403);
+            }
         }).data;
     }
     resolveChallenge(auth, spaceId, relationId, req, requestKey) {
@@ -108,17 +112,6 @@ export class RelationService {
             const reasonRev = tx.getPostRevision(req.reason_ref.post_id, req.reason_ref.revision);
             if (!reasonRev) {
                 throw new DetunedError(ErrorCode.NOT_FOUND, '解决理由帖子修订版本不存在。', 404);
-            }
-            // Authorization check:
-            // Original objection author OR non-involved maintainer
-            const isObjectionAuthor = relation.creator_id === auth.actor.id;
-            const targetPost = tx.findPostById(relation.target_post_id);
-            const isChallengedTargetAuthor = targetPost?.author_id === auth.actor.id;
-            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
-            if (!isObjectionAuthor) {
-                if (!isMaintainer || isChallengedTargetAuthor) {
-                    throw new DetunedError(ErrorCode.FORBIDDEN, '被挑战材料作者不能单方面关闭异议；需要原异议作者或未参与该材料的维护者解决。', 403);
-                }
             }
             const now = this.clock.nowIso();
             const nextVersion = relation.version + 1;
@@ -149,6 +142,21 @@ export class RelationService {
                 created_at: now,
             });
             return { relation: updatedRel, resolution };
+        }, (tx) => {
+            const relation = tx.findRelationById(relationId);
+            if (!relation || relation.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '关系不存在。', 404);
+            // Authorization check:
+            // Original objection author OR non-involved maintainer
+            const isObjectionAuthor = relation.creator_id === auth.actor.id;
+            const targetPost = tx.findPostById(relation.target_post_id);
+            const isChallengedTargetAuthor = targetPost?.author_id === auth.actor.id;
+            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
+            if (!isObjectionAuthor) {
+                if (!isMaintainer || isChallengedTargetAuthor) {
+                    throw new DetunedError(ErrorCode.FORBIDDEN, '被挑战材料作者不能单方面关闭异议；需要原异议作者或未参与该材料的维护者解决。', 403);
+                }
+            }
         }).data;
     }
     reopenChallenge(auth, spaceId, relationId, req, requestKey) {
@@ -166,11 +174,6 @@ export class RelationService {
             }
             if (relation.version !== req.expected_version) {
                 throw new DetunedError(ErrorCode.REVISION_CONFLICT, '关系版本冲突，请获取最新状态。', 409, false, { current_version: relation.version });
-            }
-            const isObjectionAuthor = relation.creator_id === auth.actor.id;
-            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
-            if (!isObjectionAuthor && !isMaintainer) {
-                throw new DetunedError(ErrorCode.FORBIDDEN, '仅原异议作者或维护者可以重开异议。', 403);
             }
             const now = this.clock.nowIso();
             const nextVersion = relation.version + 1;
@@ -201,6 +204,15 @@ export class RelationService {
                 created_at: now,
             });
             return { relation: updatedRel, resolution };
+        }, (tx) => {
+            const relation = tx.findRelationById(relationId);
+            if (!relation || relation.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '关系不存在。', 404);
+            const isObjectionAuthor = relation.creator_id === auth.actor.id;
+            const isMaintainer = ['maintainer', 'owner'].includes(spaceAuth.spaceRole);
+            if (!isObjectionAuthor && !isMaintainer) {
+                throw new DetunedError(ErrorCode.FORBIDDEN, '仅原异议作者或维护者可以重开异议。', 403);
+            }
         }).data;
     }
 }

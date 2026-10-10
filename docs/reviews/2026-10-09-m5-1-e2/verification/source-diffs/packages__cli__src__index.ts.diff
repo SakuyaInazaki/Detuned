@@ -1,0 +1,17 @@
+--- before-files/packages/cli/src/index.ts
++++ packages/cli/src/index.ts
+@@ -632,12 +632,13 @@
+   .description('有界帖子元数据目录；整页data/meta，不含正文；旧read thread仅默认首批')
+   .option('--limit <count>', '每页最多帖子数1..100（默认50）')
+   .option('--max-bytes <bytes>', 'compact envelope预算4096..65536（默认12288）')
++  .option('--sort <sort>', 'id_asc（默认）或created_at_asc（记录创建时间，未知历史时间末尾）')
+   .option('--cursor <token>', '上一页签名next_cursor；跨页目录动态变化')
+   .action(async (spaceId, threadId, options) => {
+     try {
+       const page = await getClient(program.opts()).getThreadPosts(spaceId, threadId, {
+         limit: options.limit === undefined ? undefined : parseReadPositiveInteger(options.limit, 'limit'),
+-        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor,
++        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort,
+       });
+       printOutput(page, program.opts().json);
+     } catch (err: any) { handleError(err, program.opts().json); }

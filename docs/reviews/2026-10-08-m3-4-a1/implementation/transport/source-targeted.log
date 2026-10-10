@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/m3-write-limits-contract.test.ts (5 tests | 2 failed) 265ms
+   ✓ WR B01: strict defaults, overrides and fixed diagnostics reject unsafe/unknown/disabled configuration 1ms
+   ✓ WR B02: app invalid config fails before touching storage or constructing business services 0ms
+   × WR B03: one app shares actor budget across space/admin/thread, while idempotent replay and reads remain available 94ms
+     → expected 404 to be 200 // Object.is equality
+   ✓ WR B04: Retry-After is set only for matching rate code/status and valid bounded scope details 29ms
+   × WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input 140ms
+     → expected 1 to be 2 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-write-limits-contract.test.ts > WR B03: one app shares actor budget across space/admin/thread, while idempotent replay and reads remain available
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ tests/contracts/m3-write-limits-contract.test.ts:11:1029
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m3-write-limits-contract.test.ts > WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/contracts/m3-write-limits-contract.test.ts:13:1015
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  07:08:44
+   Duration  764ms (transform 185ms, setup 0ms, collect 314ms, tests 265ms, environment 0ms, prepare 38ms)
+

@@ -1,0 +1,372 @@
+{
+  "package": "M6.3-A",
+  "state": "planning_only_wait_M6.2_acceptance_and_fresh",
+  "existing": [
+    {
+      "path": "packages/protocol/src/review.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "f4e0347386585059faea6e70ffbfe7645e47dc4b1351dc4e7b43af71f37b77fb",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/protocol/src/tools.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "59cd3fd4a1735c3ade52cafb771e1addc2a0af62acebfead78769a3fca91f190",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/protocol/src/events.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "b690a64b7543516f8983a490add0837b596ad446a33bc1df3a1088d8818bff23",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/ports/storage.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "6db0fd065d5804ed6ef473fd5424506d561b61ffbaab2460f8e5b8fec86b1151",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/idempotency-service.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "976644bd70406369883a3eb45430aa28c541a4e0c7845de9c3ce69fec1b4faf4",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/review-request-records.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "48e1efdbd346f8d8ebcd69959d310f9d22e4dd28abe2f494c5c4809de8f29584",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/review-submission-records.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "27db7bdd318b73030f7c968e34c198afa9add0bf53ea42f9ed19581473d830e9",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "c4b2c4ea74a4b42c808f501b81cd4072a87d3168938a39927e5f10cb134b670a",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "modules/review/src/request-service.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "dccb70a0b67f5dc0d833ffb6567d0eaffcf0e46eb741db2c08e6f6b554d9d1e0",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "modules/review/src/index.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "67436517d24eec2907711c83bfefa14671e0471183e9dc1d99b3bd1fe28aa3f8",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-review-requests.test.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "f3d1475a430926577085257bd2177b435e30dcbe8a0e638b8ab13b7ff7bec187",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-review-submissions.test.ts",
+      "owner": "A",
+      "exists": true,
+      "pre_fresh_observed_sha256": "770a8a7c298d322db3c93b21d2aa89efb7a39cf9beb59c949f76b3f56be0702f",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/schema.sql",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "2cde4c6df6a231f0eb0a5281df8c90b4013588ee50f7e2603815476405510ae2",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/schema.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "ccaaf6db6bb285e197f0a034833a3998b3f8813f9fcc7f51fb0256b2b48e5145",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/sqlite-storage.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "630c5abc0ca37d9ad2d1cc24caeda57dbe91901a8363df3c77926a40377b110a",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/bootstrap.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "fd8e486377079e12497dd06571a3202ff4e39064caae9d1c3926fe950a981788",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/offline-upgrade.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "5118eae7ce9311c07fef369e9cc891d0fc04b83e659b9563571cc034f40cdbed",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/offline-backup.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "3bba9ab3768a8045b67337ea656d5bb30241affe00464b55c58492d51a1104cd",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/logical-import.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "a4e1d901cd8d463669f0a8050c847c91aa3bb5073fe781e8f58ed7832dfd49fe",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/src/index.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "772d1e4f178cb99b64f4b005a95b76e58a3e98b628025ddf06c85daeca3a006b",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/scripts/generate-schema.mjs",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "06b0f42caee23347523f40547da6735ffceec9fe654a307732fa46dc5efa28f8",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/scripts/check-schema-sync.mjs",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "22106eb14dc67f5af8e1c8eae7d4791234ebadd89f6bd1bb63203713d976512a",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/protocol/src/export.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "76e93c9c9b8aa84d0ac09be14f624e9120d097994d689408dcdf902f0efee776",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/space-export-service.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "d09e75ffdff2fe9f25fcdcd6d61d6ded44c6002b8acdf3bf9d4f9bc3d6ee5d3a",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/post-service.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "922437ac0dbb7b2973ac4b9ed95cd224fa9dc38c74b7b145c4ff5e684010a49d",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/space-service.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "87a5b1341e07b3f69f705a61f2535f1788675842d19820079cda71e95e379c64",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/core/src/services/redaction-service.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "cfa7be5b2df4c3083618513e159e020a3893542630c689db8659a850c84a8967",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/cli/src/index.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "7263b3306f16bc9c57ab71403cdd3fdca833d80e2683023a75290849b0e1612c",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/client/src/export-stream.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "7134a9653dd26ff775bfaeb17bf330a0aade53ddba45b80dbce12a2aeb6feaea",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "65a5e0073764aee0966df47d1c0ae6514ab88a42f54753cf37447cd2ad6f9843",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "packages/storage-sqlite/tests/storage.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "bdf1b11e744cf457b9b75287a30b6bd30e8fa2681f1359d29935f05103e52c2e",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m0-m1-r4-b-regression.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "f23c1a8599df4a152b4c48bc9c02e81531511fb38f392bd62b3912ba47701d00",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m3-upgrade-independent.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "105252028cd066662e3c8f9f5419353218bfb49b5564a9c1525f93cc1101b706",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m3-backup-recovery.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "a697553366c7c90339628f61da7fd59a5b1c458ca2fcd9efb6c1c98942c2a7b8",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m3-space-export.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "e4bcd9daad502e9cb2a4aa73f2211326d0d0e0f25a5531bf168a7ec615209cee",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-schema3-maintenance.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "e9195c9f701ab00d2c9a54e5ddfe2fc0adda001ee195c3d5ad3f9f97bcfbdd20",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-schema4-maintenance.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "55d30a708b6f57ddf37d07febf920420402b28ad386e825a0dc56cf0b3b61c18",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/contracts/m3-backup-cli.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "787fc30d5327eb864935d32621cd39c76f6916bcf4ac7c81673402858cc52ea4",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/contracts/m3-offline-upgrade-contract.test.ts",
+      "owner": "B",
+      "exists": true,
+      "pre_fresh_observed_sha256": "bd6512a130f277fb26066ef6be14ea652c8ec91ad592cdfd59cb5b5b360a4706",
+      "capture": "candidate only; D next fresh must bind final closed package"
+    }
+  ],
+  "new": [
+    {
+      "path": "packages/core/src/services/review-lifecycle.ts",
+      "owner": "A",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "modules/review/src/finalization-service.ts",
+      "owner": "A",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "modules/review/src/status-service.ts",
+      "owner": "A",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-review-finalization.test.ts",
+      "owner": "A",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-review-status.test.ts",
+      "owner": "A",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/fixtures/historical-v4-schema.sql",
+      "owner": "B",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/fixtures/historical-v4-schema.README.md",
+      "owner": "B",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-schema5-maintenance.test.ts",
+      "owner": "B",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    },
+    {
+      "path": "tests/integration/m6-review-material-lifecycle.test.ts",
+      "owner": "B",
+      "exists": false,
+      "pre_fresh_observed_sha256": null,
+      "capture": "candidate only; D next fresh must bind final closed package"
+    }
+  ],
+  "shared_boundaries": [
+    "A owns core StoragePort/index and review protocol/tools/events; B owns storage index and export protocol. B mutation services call A lifecycle helper only; core never imports module.",
+    "B CLI/export-stream edits only actual schema version type/help needs, no new transport or public review commands.",
+    "New filenames selected for root approval; no empty products created."
+  ],
+  "current_test_sites": {
+    "packages/storage-sqlite/tests/schema-generation.test.ts": "109/147/178 current profile V4 extraction;239 keep frozenV4 and addV5; historical sources bytes unchanged",
+    "packages/storage-sqlite/tests/storage.test.ts": "15/251 currentV4 parity; preserve historical1/2/3/4 and add current5",
+    "tests/integration/m3-space-export.test.ts": "37 current exported source4→5; old wire/source branches preserve",
+    "tests/integration/m3-backup-recovery.test.ts": "73 future schema5 rejection must move beyond current5, do not delete rejection",
+    "tests/contracts/m3-backup-cli.test.ts": "46 current backup4→5",
+    "tests/contracts/m3-offline-upgrade-contract.test.ts": "14 current upgrade target4→5, source1 preserved",
+    "tests/integration/m3-upgrade-independent.test.ts": "25 current upgrade summary/MAX migration target4→5;45 inspect current target only",
+    "tests/integration/m6-schema3-maintenance.test.ts": "36/37 current upgraded target/backup4→5; old source2/3 unchanged",
+    "tests/integration/m6-schema4-maintenance.test.ts": "54 old3→current target5;63 current backup target5;69 finitewire cases preserve explicit old4, add5",
+    "tests/integration/m0-m1-r4-b-regression.test.ts": "current max/unsupported marker and historical table exclusions only after true newDDL; no business revision number replacement"
+  },
+  "helper_proposals": [
+    "core markReviewRequestsStale(storage:StoragePort,spaceId:string,change:{kind:\"post\"|\"artifact\"|\"policy\";objectId:string;actorId:string;changedAt:string}):void; caller already in original mutation tx; metadata/event only, query collecting/revealed via reverse index",
+    "core readReviewValidityFacts(storage:StoragePort,spaceId:string,requestId:string):{current_validity:\"invalidated\"|\"superseded\"|\"challenged\"|\"current\";validity_reasons:string[]}; strict intrinsic/currentmetadata only, caller currentACL; root decides final exact signature and onlineprivacy separation",
+    "StoragePort findReviewDecisionByRequestId(requestId:string):ReviewDecisionRecord|null; createReviewDecision(record:ReviewDecisionRecord):void; listReviewRequestsBySnapshotItem(spaceId:string,itemType:string,itemId:string):ReviewRequestRecord[] (exact types root/A/B freeze before implementation)"
+  ],
+  "D": [
+    "true original4 runtime/oracle and full SQL profile hashes",
+    "independent finalize/stale/status/maintenance test files names D/root select before fresh",
+    "one serial execution owner; B does not run checks"
+  ],
+  "checks": "none; static paths/line lookup and metadata hashes only"
+}

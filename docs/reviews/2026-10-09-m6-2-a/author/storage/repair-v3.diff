@@ -1,0 +1,11 @@
+--- tests/integration/m6-schema4-maintenance.test.ts
++++ tests/integration/m6-schema4-maintenance.test.ts
+@@ -51,7 +51,7 @@
+ }
+ it('SM401 exact source3 profiles and original compact bytes migrate to4 with IDs/count0',async()=>{
+  const root=await mkdtemp(path.join(os.tmpdir(),'detuned-schema4-'));try{const source=path.join(root,'old3');await mkdir(source);const file=path.join(source,'detuned.sqlite'),history=source3FromActualRequest(file),before=createHash('sha256').update(await readFile(file)).digest('hex');
+- const output=path.join(root,'new4');expect(await upgradeOffline({dataDir:source,outputDir:output,offline:true})).toMatchObject({source_schema_version:3,schema_version:4});expect(createHash('sha256').update(await readFile(file)).digest('hex')).toBe(before);
++ const output=path.join(root,'new4');expect(await upgradeOffline({dataDir:source,outputDir:output,offline:true,adminName:'Owned schema4 fixture admin'})).toMatchObject({source_schema_version:3,schema_version:4});expect(createHash('sha256').update(await readFile(file)).digest('hex')).toBe(before);
+  const upgraded=new Database(path.join(output,'detuned.sqlite'));try{const store=new SqliteStorage(upgraded);expect(classifyDatabase(upgraded)).toMatchObject({kind:'current_initialized',maxVersion:4});expect(upgraded.prepare("SELECT operation,key,result_ref FROM idempotency_records WHERE operation LIKE 'review.request.%' ORDER BY operation,key").all()).toEqual(history.refs);const assignments=store.listReviewAssignments(history.original.id);expect(new Set(assignments.map(x=>x.id)).size).toBe(2);expect(assignments.every(x=>typeof x.id==='string'&&x.id.length>0)).toBe(true);expect(store.findReviewRequestById(history.original.id)?.submitted_count).toBe(0);
+  // Identity reset is expected; privileged private fixture auth for exact history reconstruction only.
+  const {reconstructReviewRequestView}=await import('@detuned/core');expect(reconstructReviewRequestView(store,history.spaceId,history.original.id,1)).toEqual(history.original);expect(reconstructReviewRequestView(store,history.spaceId,history.original.id,2)).toEqual(history.cancelled);expect(reconstructReviewRequestView(store,history.spaceId,history.collecting.id,1)).toEqual(history.collecting);

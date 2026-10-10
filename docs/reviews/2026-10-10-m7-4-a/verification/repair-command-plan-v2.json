@@ -1,0 +1,38 @@
+{
+  "status": "root_released_diagnostic_v5",
+  "A_freeze": "278e729cd1e0ff631cb89bf4654d8b64589fc54925252d1d66913486a1ed89f5",
+  "D_ready": "71d81f4e2126d7d9d3cd2b2cfaa5ebe6ff62dcd6eae09e44470b5e4bb6524d1b",
+  "source_bind": {
+    "tests/fixtures/pi-runtime/native-lifecycle.mjs": "e0d814390c583128b7d9981f85c7cd65c7be0aa00721fef277766e9cffaca235",
+    "tests/contracts/m4-pi-native-lifecycle.test.ts": "b398af28fccc313bbb348f4bd81540ad8c51106c948bc5031873a433c7e379eb",
+    "scripts/integrations/claude-check-probe.mjs": "67b5f357b115a191f53a01f494bb4e73f970e87e9b2a20cb50b68e359e77bfd1"
+  },
+  "D_test_sha256": "e143662ea1b61ac43fd8379b18baa23ccbba805b72219790ce48e04b0d58a46f",
+  "build_reused": "build-first exit0/immediate555dist; no packages changed; no rebuild",
+  "commands": [
+    {
+      "id": "source-noemit-repair2",
+      "command": "pnpm exec tsc -p docs/reviews/2026-10-10-m7-4-a/verification/new-source-tsconfig.json"
+    },
+    {
+      "id": "syntax-pi-repair",
+      "command": "node --check tests/fixtures/pi-runtime/native-lifecycle.mjs"
+    },
+    {
+      "id": "syntax-claude-repair",
+      "command": "node --check scripts/integrations/claude-check-probe.mjs"
+    },
+    {
+      "id": "focused-checks-repair",
+      "command": "pnpm exec vitest run tests/contracts/m4-pi-native-lifecycle.test.ts --maxWorkers=1 --no-file-parallelism -t 'native checks prepares no invalid input and performs real two-write/six-read calls$'"
+    }
+  ],
+  "count_expected": 1,
+  "old_six": "filtered skipped, do not claim rerun",
+  "D_two": "first focused passed, not repeated",
+  "observation": "Safe stages up to64 and independent caught name/code; actualclose followed precise parent0700root removal; diagnostic only not claimed rootcausefix",
+  "timeout": "original70schild80scase unchanged; diagnosticbody60s boundedHTTP2s/cleanup2s",
+  "first_failure": "focused-first28/29/86.86s and timeoutcleanup receipts preserved",
+  "next_gates": "type/lint/schema/oncefull remain unrun until rootrelease after onecase result",
+  "Claude": "guard/native remain unauthorized"
+}

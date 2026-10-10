@@ -1,3 +1,4 @@
+import { markReviewRequestsStale } from './review-lifecycle.js';
 import { DetunedError, ErrorCode } from '@detuned/protocol';
 import { StoragePort } from '../ports/storage.js';
 import { IdGeneratorPort } from '../ports/id-generator.js';
@@ -75,6 +76,7 @@ export class RedactionService {
       payload,
       201,
       (tx) => {
+        let visibility: 'public' | 'review_assignment' = 'public';
         // Re-verify in transaction
         if (input.target_type === 'post') {
           const post = tx.findPostById(input.target_id);
@@ -87,6 +89,8 @@ export class RedactionService {
             throw new DetunedError(ErrorCode.NOT_FOUND, '目标附件不存在或不属于该空间。', 404);
           }
         }
+
+        if (input.target_type === 'artifact' && tx.findArtifactById(input.target_id)?.visibility === 'review_assignment') visibility = 'review_assignment';
 
         const redactionId = this.idGen.generateId('red');
         const now = this.clock.nowIso();
@@ -102,13 +106,15 @@ export class RedactionService {
           created_at: now,
         });
 
+        if (input.target_type === 'post' || visibility === 'public') markReviewRequestsStale(tx,spaceId,{kind:input.target_type,objectId:input.target_id,actorId:auth.actor.id,changedAt:now});
+
         tx.appendEvent(spaceId, {
           id: this.idGen.generateId('evt'),
           space_id: spaceId,
           type: input.target_type === 'post' ? 'post.redacted' : 'artifact.redacted',
           object_id: input.target_id,
           revision: 1,
-          visibility: 'public',
+          visibility,
           actor_id: auth.actor.id,
           created_at: now,
         });

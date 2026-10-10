@@ -1,0 +1,11 @@
+--- tests/contracts/m3-events-contract.test.ts before
++++ tests/contracts/m3-events-contract.test.ts after
+@@ -91,7 +91,7 @@
+       req.resume(); req.on('end', () => { started.resolve(); }); reply.on('close', () => { if (!reply.writableFinished) disconnected = true; });
+     });
+     await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); }); const address = server.address() as { port: number };
+-    const transport = new StdioClientTransport({ command: process.execPath, args: ['--experimental-strip-types', 'packages/mcp/src/index.ts'], env: { PATH: process.env.PATH ?? '', DETUNED_BASE_URL: `http://127.0.0.1:${address.port}`, DETUNED_TOKEN: 'isolated-test-only' }, stderr: 'pipe' });
++    const transport = new StdioClientTransport({ command: process.execPath, args: ['packages/mcp/dist/index.js'], env: { PATH: process.env.PATH ?? '', DETUNED_BASE_URL: `http://127.0.0.1:${address.port}`, DETUNED_TOKEN: 'isolated-test-only' }, stderr: 'pipe' });
+     const mcp = new Client({ name: 'm3-contract', version: '1' });
+     try {
+       await mcp.connect(transport); expect((await mcp.listTools()).tools).toHaveLength(8);

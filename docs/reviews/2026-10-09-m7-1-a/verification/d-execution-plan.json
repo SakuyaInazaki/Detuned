@@ -1,0 +1,202 @@
+{
+  "status": "root_selected_commands_not_runtime_released",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "source-noemit",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+        "--noEmit",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m7-1-a/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "gate": "new-and-adjacent",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/integration/m7-check-domain.test.ts",
+        "tests/integration/m7-check-scope-artifacts.test.ts",
+        "tests/integration/m7-schema6-maintenance.test.ts",
+        "tests/integration/m7-check-domain-independent.test.ts",
+        "tests/integration/m7-schema6-maintenance-independent.test.ts",
+        "tests/integration/m6-review-finalization.test.ts",
+        "tests/integration/m6-review-finalization-independent.test.ts",
+        "tests/integration/m6-review-status.test.ts",
+        "tests/integration/m6-review-private-artifacts.test.ts",
+        "tests/integration/m4-session-subscription-client.test.ts",
+        "tests/integration/m6-schema5-maintenance-independent.test.ts",
+        "tests/integration/m3-space-export.test.ts",
+        "tests/integration/m3-logical-import.test.ts",
+        "tests/contracts/m3-space-export-contract.test.ts",
+        "tests/contracts/m3-logical-import-contract.test.ts",
+        "packages/storage-sqlite/tests/schema-generation.test.ts",
+        "packages/storage-sqlite/tests/storage.test.ts"
+      ]
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "gate": "lint",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "gate": "schema",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+      ]
+    },
+    {
+      "gate": "core-once",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    },
+    {
+      "gate": "current-28",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs"
+      ]
+    },
+    {
+      "gate": "current-29",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs"
+      ]
+    }
+  ],
+  "new_files": [
+    "tests/integration/m7-check-domain.test.ts",
+    "tests/integration/m7-check-scope-artifacts.test.ts",
+    "tests/integration/m7-schema6-maintenance.test.ts",
+    "tests/integration/m7-check-domain-independent.test.ts",
+    "tests/integration/m7-schema6-maintenance-independent.test.ts"
+  ],
+  "adjacent_files": [
+    "tests/integration/m6-review-finalization.test.ts",
+    "tests/integration/m6-review-finalization-independent.test.ts",
+    "tests/integration/m6-review-status.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/integration/m4-session-subscription-client.test.ts",
+    "tests/integration/m6-schema5-maintenance-independent.test.ts",
+    "tests/integration/m3-space-export.test.ts",
+    "tests/integration/m3-logical-import.test.ts",
+    "tests/contracts/m3-space-export-contract.test.ts",
+    "tests/contracts/m3-logical-import-contract.test.ts"
+  ],
+  "current_note": "Root approved current28/29 each once; other probes reuse prior accepted evidence; current25 not run.",
+  "pre_run_sources": [
+    {
+      "path": "package.json",
+      "sha256": "fa2ee4b7cccbd28dbd4cc9708d2b62eedf578d1b6e0a425493e0292787486af0"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "d99c716ebed63747eee8f55ec8c198e32b593fd6d431a9d9e07c0d15d7f16b5d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "985410289d868c23bdfdfdcbc3ca7b56b7300741e1fbd9cda5c21991355eb882"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88"
+    },
+    {
+      "path": "tests/integration/m6-review-finalization.test.ts",
+      "sha256": "0afb60a49eacbb515ce94b6c62dd385d973d53dab1f7ce7b03b811050854ceae"
+    },
+    {
+      "path": "tests/integration/m6-review-finalization-independent.test.ts",
+      "sha256": "057fac65292b56614ce0e483aadc028eea60289ddecc4e6c2de5498e9d09d1d7"
+    },
+    {
+      "path": "tests/integration/m6-review-status.test.ts",
+      "sha256": "abbb594967a1cf492c48106512fc69186f773a70059cce7e343c29f49d9f7bdc"
+    },
+    {
+      "path": "tests/integration/m6-review-private-artifacts.test.ts",
+      "sha256": "978ba0f894a548eab4937b4eeaf005769d0144230a80bac03dba02da4370ece6"
+    },
+    {
+      "path": "tests/integration/m4-session-subscription-client.test.ts",
+      "sha256": "299f6e9c3685707de560c3e628136ce1ad45cf8dd55547c25290f3ee51646757"
+    },
+    {
+      "path": "tests/integration/m6-schema5-maintenance-independent.test.ts",
+      "sha256": "0a1913fdcdd39aacbe56dc1c02a4941ea13963cb1808a27402a8e910f4d1c1d4"
+    },
+    {
+      "path": "tests/integration/m3-space-export.test.ts",
+      "sha256": "f72af38d259d4aa0c693f63646f6cf9bc3ba0c4a750e7abbe16c3fadd347f0e0"
+    },
+    {
+      "path": "tests/integration/m3-logical-import.test.ts",
+      "sha256": "e99308dbbc8e53c182d41ad709554c5ff1b6282ecb32e89883fb254a54dd9185"
+    },
+    {
+      "path": "tests/contracts/m3-space-export-contract.test.ts",
+      "sha256": "d65415dab7f1d625bacd7be436b3bb3957e724b8efa8062af8edd040b2e866a7"
+    },
+    {
+      "path": "tests/contracts/m3-logical-import-contract.test.ts",
+      "sha256": "627f56ea01240bfdfa61a6f15694c5e9b1d09fdaeaed8e20bd336d7b51140985"
+    },
+    {
+      "path": "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "sha256": "25cf6b4687b392509978c265df10893cbf6713d1c4db295930ca5f4ef889c733"
+    },
+    {
+      "path": "packages/storage-sqlite/tests/storage.test.ts",
+      "sha256": "3a376c9520e2f0d9e2f807f1a5173fe1977f577310806e7e98519443f47b5e12"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs",
+      "sha256": "9996e5d4fc3ce1e8e2d35d80bac592827e2ba1ebeb503620ce2bc95a5bd90c5e"
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c2-boundaries.mjs",
+      "sha256": "ce723c91a0015d8e19cc13ccb476819dba9264e909ee6e30fe151faaf7d8307c"
+    }
+  ],
+  "noemit_configuration_source": "accepted C2B compiler options unchanged; only five new file list replaced",
+  "binding": "A/B final hashes still to bind before runtime; all paths exist, no execution claim",
+  "limits": "workspace1; core worker1/files serial; original assertions/timeouts; no browser/VM/daemon/model; stop dependent gates on genuine failure",
+  "structural_files": [
+    "packages/storage-sqlite/tests/schema-generation.test.ts",
+    "packages/storage-sqlite/tests/storage.test.ts"
+  ]
+}

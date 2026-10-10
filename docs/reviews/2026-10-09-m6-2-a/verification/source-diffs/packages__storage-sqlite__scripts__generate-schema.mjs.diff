@@ -1,0 +1,65 @@
+--- packages/storage-sqlite/scripts/generate-schema.mjs (fresh exact before)
++++ packages/storage-sqlite/scripts/generate-schema.mjs (current)
+@@ -5,6 +5,7 @@
+ 
+ const __dirname = path.dirname(fileURLToPath(import.meta.url));
+ const sqlPath = path.resolve(__dirname, '../src/schema.sql');
++const v3SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v3-schema.sql');
+ const v2SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql');
+ const v1SqlPath = path.resolve(__dirname, '../../../tests/fixtures/historical-v1-schema.sql');
+ const tsPath = path.resolve(__dirname, '../src/schema.ts');
+@@ -36,6 +37,7 @@
+ }
+ 
+ const sqlContent = readFileSync(sqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
++const v3SqlContent = readFileSync(v3SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const v2SqlContent = readFileSync(v2SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const v1SqlContent = readFileSync(v1SqlPath, 'utf8').replace(/^--.*$/gm, '').trim();
+ const tsContent = readFileSync(tsPath, 'utf8');
+@@ -47,18 +49,23 @@
+   return m[0].trim();
+ }
+ 
+-// 1. Extract current V3 Table Requirements
+-const dbV3 = new Database(':memory:');
+-dbV3.exec(sqlContent);
+-let v3Tables;
++// 1. Extract current V4 Table Requirements
++const dbV4 = new Database(':memory:');
++dbV4.exec(sqlContent);
++let v4Tables;
+ try {
+-  v3Tables = extractDatabaseRequirements(dbV3);
++  v4Tables = extractDatabaseRequirements(dbV4);
+ } catch (err) {
+   console.error(`Error extracting requirements from schema.sql: ${err.message}`);
+   process.exit(1);
+ } finally {
+-  dbV3.close();
++  dbV4.close();
+ }
++
++const dbV3 = new Database(':memory:');
++dbV3.exec(v3SqlContent);
++const v3Tables = extractDatabaseRequirements(dbV3);
++dbV3.close();
+ 
+ const dbV2 = new Database(':memory:');
+ dbV2.exec(v2SqlContent);
+@@ -119,11 +126,15 @@
+ 
+ export const THREAD_VERSIONS_DDL = \`${extractTableDdl(sqlContent, 'thread_versions')}\`;
+ 
+-export const REVIEW_TABLES_DDL = \`${['snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments'].map(name => extractTableDdl(sqlContent, name)).join('\n\n')}\`;
++export const REVIEW_TABLES_DDL = \`${['snapshots', 'snapshot_items', 'review_requests', 'review_request_versions', 'review_assignments', 'review_submissions'].map(name => extractTableDdl(sqlContent, name)).join('\n\n')}\`;
+ // END MIGRATION_DDL`;
+ 
+ updatedTs = updatedTs.replace(migRegex, newMigBlock);
+ 
++// Current V4 profile is separately generated; frozen V3 remains sourced from its fixture.
++const v4Block = `export const V4_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v4Tables, null, 2)};`;
++const v4Regex = /export const V4_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;
++updatedTs = v4Regex.test(updatedTs) ? updatedTs.replace(v4Regex, v4Block) : updatedTs.replace('export const V3_SCHEMA_TABLES:', `${v4Block}\n\nexport const V3_SCHEMA_TABLES:`);
+ // 5. Update V3 and historical V2 profiles
+ const v3Block = `export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = ${JSON.stringify(v3Tables, null, 2)};`;
+ const v3Regex = /export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = \{[\s\S]*?\n\};/;

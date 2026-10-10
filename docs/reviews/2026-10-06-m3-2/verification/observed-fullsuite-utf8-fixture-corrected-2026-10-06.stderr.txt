@@ -1,0 +1,17 @@
+$ vitest run
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-request-key-cli.test.ts > M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/contracts/m3-request-key-cli.test.ts:47:3
+     45|     expect((await ok('publish', 'thread', { title: 'same content' }, p…
+     46|   });
+     47|   it('KCLI02: all publish and relate branches use persistent keys with…
+       |   ^
+     48|     const thread = await ok('publish', 'thread', { title: 'thread' }, …
+     49|     const input = { thread_id: thread.thread.id, kind: 'note', title: …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -17,3 +17,9 @@ data/
 *.log
 artifacts-local/
 reports/local/
+
+# Only the sanitized, credential-free persistent historical test archive.
+!tests/fixtures/history-b8dacd5/legacy.db
+
+# Only the sanitized, credential-free genuine V5 baseline archive.
+!tests/fixtures/m7-schema5-baseline/database.sqlite

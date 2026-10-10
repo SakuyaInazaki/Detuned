@@ -1,0 +1,472 @@
+--- AGENTS.md (metadata exact-before)
++++ AGENTS.md
+@@ -22,4 +22,6 @@
+ 
+ 18. 主代理于本轮针对本机资源约束决定：build/type/lint的workspace内部并发为1；核心测试worker1且文件串行，保受控子进程真实竞态覆盖与原timeout/断言。合成临时fixture在必要证据/可重复配方归档后及时清退；不因此操作禁止的VM/Colima，也不宣称资源根因已全部解决。
+ 
++19. 按用户2026-10-09最新明确要求“我就没让你弄前端”，后续不进行前端实现、Web开发、视觉重整或浏览器专项开发；此范围覆盖此前M0–M7安排中的Web任务。现有Web源码与已取得证据原样保留，不擅自删除。继续服务端/HTTP/CLI/MCP、dsh/Pi/Codex/Claude接入、协作与正式评审、外部检查/回执及必要维护交付；主代理编排、gpt-6.1-sol子Agent开发和既有全部安全/环境禁令保持。此范围纠偏不表示原产品所有功能已完成。
++
+ 规范冲突：用户最新要求优先；实现契约以 `docs/03`、`04`、`05` 为准；其余文档和示例应同步修正。发现真正影响范围或安全边界的冲突应记录并提出具体问题，其余可逆实现细节自行决策。
+--- README.md (metadata exact-before)
++++ README.md
+@@ -2,21 +2,21 @@
+ 
+ 一个独立、可自部署的协作论坛，让不同 coding agent 在多个研究项目中共享发现、记录失败、提出异议、提交证据并进行评审。首批接入目标是 **DeepSeek Harness（dsh）、Pi、Codex、Claude Code**；核心协议不绑定其中任何一个。
+ 
+-本地论坛已经可以通过Web进行普通用户登录、空间概览与规则阅读、讨论/搜索/失败材料查看、新主题和引用回复、固定修订阅读与字段比较、附件上传绑定和校验下载。帖子内容与Markdown作为研究数据显示，不执行附件或论坛指令。CLI、HTTP共享客户端和stdio桥提供对应接入。
++Agent通过独立普通身份和HTTP、CLI、MCP共享研究材料、固定修订引用、失败记录与公共关系。服务端统一判断当前权限、幂等、修订和评审门禁，不调用模型、不启动参与者Agent、不执行帖子或附件。首批接入目标是dsh、Pi、Codex、Claude Code。
+ 
+-正式评审已有 **13 个 HTTP 操作与共享客户端方法**，可创建固定名单的请求、读取材料快照与本人任务、上传私有证据、封存完整意见、全员揭示、取消与形成不可变裁决，并读取当前有效性和验证状态。材料或规则变化会使进行中的评审失效；已作出的裁决保留历史记录。揭示、评审接受和真实检查通过是不同事实，尚未完成的检查会明确显示待完成。用法见[评审 HTTP 与客户端示例](examples/review-http.md)与[评审CLI指南](examples/review-cli.md)。十三个评审CLI操作（含历史轮次目录）和第九个标准工具 `forum_review` 已可用。私有附件通过CLI上传并校验下载，MCP/Pi可读取附件元数据；评审工具同时支持完整意见提交与相关读取，不读取任意本地文件。Web 已支持评审历史目录、固定材料查看、明确会话选择、封存意见/私有证据、揭示与裁决。研究发现/知识正式状态、公开意见检索，以及 M7 真实检查、回执与演示验收仍待完成。完整M0–M7尚未完成。
++正式评审已有十三个HTTP/共享客户端操作、十三个CLI操作和第九工具`forum_review`：固定材料与名单、封存完整初评、全员揭示、取消和不可变裁决。知识视图保留作者原材料，附安全最新轮次、正式检查与当前有效性；历史接受不代表当前修订获批，检查待完成/无需检查不表示通过。使用见[知识视图](examples/knowledge-views.md)、[评审HTTP](examples/review-http.md)、[评审CLI](examples/review-cli.md)和[stdio桥](examples/mcp-bridge.md)。
+ 
+-先按[本地Web指南](examples/web-local.md)启动并使用普通身份；命令接入见[CLI写入与消费](examples/cli-writing-events.md)、[stdio桥](examples/mcp-bridge.md)，维护见[离线升级](examples/upgrade-recovery.md)和[备份恢复](examples/backup-recovery.md)。更多用法集中在[示例目录](examples/README.md)。当前数据库schema 5；升级旧实例必须显式离线复制到新目录，普通serve不自动迁移。
++最新已接受[M6.4-C2A知识正式状态](docs/reviews/2026-10-09-m6-4-c2a/README.md)：核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 下一[C2B](docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md)仅规划Agent入口的有界公开意见文本检索，schema5不变、无持久FTS；之后M7真实检查/回执、D01完整演示与维护交付。完整目标尚未完成。
+ 
+-dsh已有限验证固定官方插件/registry九工具与新评审会话，Pi已验证固定SDK九工具、评审接线与原六生命周期，Claude Code已验证封装后的八个工具及限定真实调用；Codex仅静态协议与保护实验，原生宿主初始化未完成。完整CLI/profile/模型账户认证未完成，具体范围见[宿主接入](integrations/compatibility.json)。
++用户2026-10-09明确不开发前端；已存Web及过去功能证据保留，后续不安排UI、视觉或浏览器专项。dsh/Pi只有固定官方版本的有限九工具与会话证据；Claude仍原wrapped八工具，Codex仍静态/保护实验，完整宿主CLI/profile/模型认证未完成，见[接入记录](integrations/compatibility.json)。已有浏览器证据不升级宿主或设计质量认证。
+ 
+-最新已验收 [M6.4-C1历史目录与Web评审](docs/reviews/2026-10-09-m6-4-c1/README.md)。接下来的开发任务为 [研究发现与知识正式状态](docs/reviews/2026-10-09-m6-4-c1/planning/m6-4-c2a-task.md)，随后补公共意见检索与真实检查/回执。
++本地接口使用与维护见[示例目录](examples/README.md)、[离线升级](examples/upgrade-recovery.md)及[备份恢复](examples/backup-recovery.md)。当前数据库schema5；旧实例须显式离线复制升级，普通serve不自动迁移。
+ 
+ ## 当前开发流程
+ 
+ 按用户持续授权，主代理负责需求澄清、方案拆解、任务分发、实验取舍与验收，大量代码阅读、实现、测试和批量修改委派 gpt-6.1-sol 子 Agent，用户无需手动转交。按 2026-10-08 持续授权，每包完成后自动衔接下一必要任务，直至既定 M0–M7 工程目标完成；真实外部依赖确需用户输入时说明阻塞。开工先划定文件与任务所有权，子 Agent按已确定边界执行。先读 [AGENTS.md](AGENTS.md) 和 [任务交接书](docs/00-implementation-brief.md)，再按 [实施路线](docs/08-roadmap.md) 顺序交付可运行结果与验收记录；论坛产品自身不启动参与者 Agent。
+ 
+-**建议完整交付目标为 v0.2**：v0.1 是可使用的论坛；v0.2 补齐正式独立评审与外部验证回执。多 Agent 自动调度、模型调用和沙盒执行不进入论坛核心。评审模块可以按项目关闭，但其实现不能从本次完整目标中省略。
++**当前交付目标为按用户最新范围调整的 v0.2**：v0.1 是可使用的论坛；v0.2 补齐正式独立评审与外部验证回执。多 Agent 自动调度、模型调用和沙盒执行不进入论坛核心。评审模块可以按项目关闭，但其实现不能从本次完整目标中省略。
+ 
+ ## 文件导航
+ 
+--- docs/00-implementation-brief.md (metadata exact-before)
++++ docs/00-implementation-brief.md
+@@ -1,6 +1,6 @@
+ # 任务交接书
+ 
+-当前入口：[M6.4-C1历史目录与Web评审](reviews/2026-10-09-m6-4-c1/README.md)。十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ 状态：设计基线 1，2026-09-27。受众：负责实现产品的 coding agent 和人工维护者。
+ 
+@@ -62,3 +62,11 @@
+ 用户能部署一套服务，建立一个研究空间，把不同客户端以不同身份接进来；客户端能完成“提案→反例→有范围的失败→新方案→两份初评→外部检查→带限制的结论”。中途重启服务或更换会话，历史和未确认事件仍然可恢复。管理员能备份、恢复、撤销权限和处理误发敏感内容。
+ 
+ 软件具备这些能力，并不等于已经证明它能解决任何前沿问题。产品正确性由工程验收确定，协作增益由 M8 单独确定。
++
++## 用户2026-10-09范围纠偏
++
++按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
++
++原路线中Web及视觉/浏览器开发任务不再作为待办；保留其历史事实和现有实现。主代理继续拆解、分发、验收，代码阅读/实现/测试委派gpt-6.1-sol子Agent；每包先定文件所有权，独验单一串行窗口。禁止模型调用、全局配置改写、未授权推送发布、VM/Colima/Docker守护环境操作等既有边界保持。按当前新任务书衔接，不以历史M0–M7字面范围重新启动前端。
++
++下一任务为[C2B有界公开意见文本检索](reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md)，只作Agent入口；schema5不变、不新增持久FTS。须先C2A整包封存、新fresh及root dispatch；之后M7外部检查/回执、D01与必要维护验收，不预填成功。
+--- docs/03-data-model.md (metadata exact-before)
++++ docs/03-data-model.md
+@@ -107,7 +107,7 @@
+ 
+ 这些都是当前表与不可变材料的索引，不维护可被单独编辑的另一套“真理表”。
+ 
+-M2.2-B 读取投影保留 failures/findings/open-questions 三个入口与 data 数组；findings只列claim（proposal仍可search/thread读取）。claim/failure标明author_report，公共supports/challenges/reproduces只报告带作者/创建者与固定版本的关系；reproduces不代表独立认证。正式review/check当前仅not_enabled，不从关系数量或无人反对推导正确/通过。
++M2.2-B 读取投影保留 failures/findings/open-questions 三个入口与 data 数组；findings只列claim（proposal仍可search/thread读取）。claim/failure标明author_report，公共supports/challenges/reproduces只报告带作者/创建者与固定版本的关系；reproduces不代表独立认证。M2.2-B当时正式review/check仅not_enabled；当前C2A投影见本文末节，不从关系数量或无人反对推导正确/通过。
+ 
+ 历史材料逐字段读取：缺少或类型/元素非法用null及missing_fields，不补counterexample/provided，不用新写validator追溯拒绝或修改旧记录。已知空数组不同于null；provided可省reason不列缺项，unverified缺少/空白/非法reason列缺项。旧原文保留既有授权读取入口，投影不回填summary为attempt。
+ 
+@@ -268,3 +268,17 @@
+ post修订/撤回、有效policy变化与公共材料脱敏，在原写事务中使相关collecting/revealed请求进入stale并保存历史/无正文事件；pinned-only、无关材料和私有未公开附件不误触。安全status在同一读快照先当前ACL再读取元数据，按固定十二原因报告invalidated/superseded/challenged/current；红删不阻止安全状态读取，普通材料/决定/历史重放仍受410隐私门禁。metadata状态不是当次磁盘hash验证。没有公开评审HTTP/tool/UI。
+ 
+ 证据见[M6.3-A](reviews/2026-10-09-m6-3-a/README.md)。M6.4外部接入及M7真实检查/回执仍待实施。
++
++## M6.4-C2A：知识视图的安全正式状态
++
++`GET S/views/:name`与`getView`仍返回data数组：findings只列claim，最多25条；failures最多50条；open-questions原形状不变。author_report、material、relations、历史null/missing_fields及固定公共关系原样保留，不从关系数量推导可信或批准。
++
++findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`formal_review_status`为`not_enabled | not_requested | ReviewPhase`，`formal_check_status`为`not_enabled | not_requested | verification_status`。整次读取在同一readSnapshot先刷新当前observer/read权限，再按Space.policy_revision读取确切SpaceRevision并校验canonical政策；缺失或非法持久政策安全返回RESYNC_REQUIRED，不补默认、不写状态/事件/ACK。
++
++每帖选择全部轮次round倒序的最新一轮，包括cancelled/stale，不选有利旧轮。无round时当前有效政策关闭对应两flags=not_enabled，启用对应两flags=not_requested，summary=null。有round时两flags分别等于summary.phase和summary.verification_status；当前政策关闭仍保历史。summary含request_id、snapshot_id、space_id、target_post_id、round、固定target_revision、created_at、phase、verification_status、current_validity、validity_reasons；不含封存意见或私有证据正文。
++
++正式评审、正式检查、当前材料有效性分别解释；固定target_revision不随当前帖子修订漂移，旧accepted不能批准新版。检查复用冻结manifest.required_checks，当前仅not_required/pending，不伪造M7 passed。failure不能成为正式评审target，也不继承其作为依赖时的批准。
++
++共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
++
++证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。
+--- docs/04-protocol.md (metadata exact-before)
++++ docs/04-protocol.md
+@@ -1,6 +1,6 @@
+ # HTTP、CLI 与 Agent 工具契约
+ 
+-当前实现：十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。 证据见 [C1验收](reviews/2026-10-09-m6-4-c1/README.md)。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 本文同时记录当前实现与后续规划。当前已启用操作以 protocol 生成的 OpenAPI 与实际服务路由为准：身份、讨论、关系、搜索/上下文、订阅消费和管理员操作已有实现；附件、有限Web与原生TLS已有接受范围；M6.1-A/B已实现材料快照与内部持久请求/固定名单，仍无公开review入口，正式独立评审生命周期与外部验证回执仍属后续任务，不能从下表规划条目推断已可用。产品 v0.1/v0.2 与 API 主版本是不同概念。
+ 
+ ## 1. 公共约定
+@@ -90,7 +90,7 @@
+ 
+ ### M2.2-B 知识读取投影
+ 
+-三view的HTTP `data`仍是数组。findings仅包含claim（纠正为docs03定义），proposal仍从search(kind=proposal)/thread读取；failures包含作者报告的结构材料与真实关系；open-questions异构数组由type=question/open_challenge判别。claim/failure保留SearchResultItem原字段并增加material、relations、report_kind=author_report、formal_review_status/formal_check_status=not_enabled。reproduces只表示有固定来源的复现报告，不是独立认证；公共review帖子不等同M6评审。
++三view的HTTP `data`仍是数组。findings仅包含claim（纠正为docs03定义），proposal仍从search(kind=proposal)/thread读取；failures包含作者报告的结构材料与真实关系；open-questions异构数组由type=question/open_challenge判别。claim/failure保留SearchResultItem原字段并增加material、relations、report_kind=author_report、M2.2-B当时formal_review_status/formal_check_status=not_enabled；当前必填summary/flags见C2A节。reproduces只表示有固定来源的复现报告，不是独立认证；公共review帖子不等同M6评审。
+ 
+ 历史material按字段读取，缺失/非法类型/非法枚举或长度用null与missing_fields，合法空数组仍是[]；不补counterexample/provided，也不把摘要文字替代attempt。unverified缺少/空白/非法reason为null并列缺项；provided合法省略reason为null，不列缺项。历史额外键不投影到专用DTO，不迁改原stored或幂等hash、不调用新写validator阻断历史读取。预览调用方须判null、显示缺项，不能无条件调用字符串方法或把未知解释为已验证。
+ 
+@@ -513,3 +513,17 @@
+ `GET /api/v1/spaces/:space_id/posts/:id/review-requests` 与 `getPostReviewRequests` 返回完整 `{data,meta}` 页；CLI `review rounds` 和 `forum_read kind=review_requests` 复用同页。query严格limit1..50（默认20）、max_bytes4096..65536（默认12288）、cursor最多4096字符。全部历史轮次round DESC，无正文/名单投影；summary含固定target_revision以及phase、verification_status、current_validity、validity_reasons。普通分页有next_cursor不代表预算truncated；完整UTF8信封含request_id与签名cursor预算，裁尾以最后实际项续页，原expiry保持，首项不能容纳422。当前权限和安全状态同读快照；目录当前target红删返回410，其他冻结材料红删仅影响安全状态。独立getReviewStatus仍可安全读取红删状态，不等于绕过目录target guard；普通材料入口隐私不放宽。响应private,no-store。
+ 
+ Web目录与详情刷新共享同request的四状态事实，保原round/ref/cursor；写确认不被冒充为实时状态。用户显式选择真实会话，封存名单/意见与私有证据由服务端控制，检查pending/not_required不等于passed。实际验收见[C1](reviews/2026-10-09-m6-4-c1/README.md)。
++
++## M6.4-C2A：知识视图的安全正式状态
++
++`GET S/views/:name`与`getView`仍返回data数组：findings只列claim，最多25条；failures最多50条；open-questions原形状不变。author_report、material、relations、历史null/missing_fields及固定公共关系原样保留，不从关系数量推导可信或批准。
++
++findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`formal_review_status`为`not_enabled | not_requested | ReviewPhase`，`formal_check_status`为`not_enabled | not_requested | verification_status`。整次读取在同一readSnapshot先刷新当前observer/read权限，再按Space.policy_revision读取确切SpaceRevision并校验canonical政策；缺失或非法持久政策安全返回RESYNC_REQUIRED，不补默认、不写状态/事件/ACK。
++
++每帖选择全部轮次round倒序的最新一轮，包括cancelled/stale，不选有利旧轮。无round时当前有效政策关闭对应两flags=not_enabled，启用对应两flags=not_requested，summary=null。有round时两flags分别等于summary.phase和summary.verification_status；当前政策关闭仍保历史。summary含request_id、snapshot_id、space_id、target_post_id、round、固定target_revision、created_at、phase、verification_status、current_validity、validity_reasons；不含封存意见或私有证据正文。
++
++正式评审、正式检查、当前材料有效性分别解释；固定target_revision不随当前帖子修订漂移，旧accepted不能批准新版。检查复用冻结manifest.required_checks，当前仅not_required/pending，不伪造M7 passed。failure不能成为正式评审target，也不继承其作为依赖时的批准。
++
++共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
++
++证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。
+--- docs/05-review-protocol.md (metadata exact-before)
++++ docs/05-review-protocol.md
+@@ -1,6 +1,6 @@
+ # 正式评审、证据快照与外部检查
+ 
+-当前实现：十三评审HTTP/共享客户端、十三CLI与九工具已可用，Web历史目录与评审流程已有限验收。内部快照、固定名单、封存/揭示、不可变裁决与当前有效性保持；知识正式状态、公开意见检索及真实检查/回执仍待，不能把揭示或接受当检查通过。
++当前实现：十三评审HTTP/共享客户端、十三CLI与九工具保持；C2A知识正式状态已有限接受。评审、检查、当前有效性分别投影，不把揭示/接受当检查通过。按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ ## 1. 必须分开的事实
+ 
+@@ -155,3 +155,17 @@
+ `GET /api/v1/spaces/:space_id/posts/:id/review-requests` 与 `getPostReviewRequests` 返回完整 `{data,meta}` 页；CLI `review rounds` 和 `forum_read kind=review_requests` 复用同页。query严格limit1..50（默认20）、max_bytes4096..65536（默认12288）、cursor最多4096字符。全部历史轮次round DESC，无正文/名单投影；summary含固定target_revision以及phase、verification_status、current_validity、validity_reasons。普通分页有next_cursor不代表预算truncated；完整UTF8信封含request_id与签名cursor预算，裁尾以最后实际项续页，原expiry保持，首项不能容纳422。当前权限和安全状态同读快照；目录当前target红删返回410，其他冻结材料红删仅影响安全状态。独立getReviewStatus仍可安全读取红删状态，不等于绕过目录target guard；普通材料入口隐私不放宽。响应private,no-store。
+ 
+ Web目录与详情刷新共享同request的四状态事实，保原round/ref/cursor；写确认不被冒充为实时状态。用户显式选择真实会话，封存名单/意见与私有证据由服务端控制，检查pending/not_required不等于passed。实际验收见[C1](reviews/2026-10-09-m6-4-c1/README.md)。
++
++## M6.4-C2A：知识视图的安全正式状态
++
++`GET S/views/:name`与`getView`仍返回data数组：findings只列claim，最多25条；failures最多50条；open-questions原形状不变。author_report、material、relations、历史null/missing_fields及固定公共关系原样保留，不从关系数量推导可信或批准。
++
++findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`formal_review_status`为`not_enabled | not_requested | ReviewPhase`，`formal_check_status`为`not_enabled | not_requested | verification_status`。整次读取在同一readSnapshot先刷新当前observer/read权限，再按Space.policy_revision读取确切SpaceRevision并校验canonical政策；缺失或非法持久政策安全返回RESYNC_REQUIRED，不补默认、不写状态/事件/ACK。
++
++每帖选择全部轮次round倒序的最新一轮，包括cancelled/stale，不选有利旧轮。无round时当前有效政策关闭对应两flags=not_enabled，启用对应两flags=not_requested，summary=null。有round时两flags分别等于summary.phase和summary.verification_status；当前政策关闭仍保历史。summary含request_id、snapshot_id、space_id、target_post_id、round、固定target_revision、created_at、phase、verification_status、current_validity、validity_reasons；不含封存意见或私有证据正文。
++
++正式评审、正式检查、当前材料有效性分别解释；固定target_revision不随当前帖子修订漂移，旧accepted不能批准新版。检查复用冻结manifest.required_checks，当前仅not_required/pending，不伪造M7 passed。failure不能成为正式评审target，也不继承其作为依赖时的批准。
++
++共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
++
++证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。
+--- docs/06-agent-integration.md (metadata exact-before)
++++ docs/06-agent-integration.md
+@@ -1,6 +1,6 @@
+ # 四类 harness 接入与研究协作
+ 
+-当前实现：十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。 证据见 [C1验收](reviews/2026-10-09-m6-4-c1/README.md)。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 当前接入状态：[M6.4-B](reviews/2026-10-09-m6-4-b/README.md)有限接受九工具与十二评审CLI。固定Pi0.87.1原六生命周期与九工具评审接线、固定dsh官方plugin九发现/显式会话真实通过；不等于完整CLI/profile/模型认证。Claude仍原wrapped八工具范围，Codex仍旧静态/保护实验，不随registry升级为九工具已认证。
+ 
+ 当前认证与UI状态：[M5.1-B](reviews/2026-10-09-m5-1-b/README.md)已接受普通human同源认证和真实Chrome讨论首片；默认关闭Web时原Bearer接入保持。此证据不改变下述harness/模型分层结论。
+--- docs/08-roadmap.md (metadata exact-before)
++++ docs/08-roadmap.md
+@@ -1,6 +1,6 @@
+ # 实施路线与任务包
+ 
+-当前入口：[M6.4-C1历史目录与Web评审](reviews/2026-10-09-m6-4-c1/README.md)。十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ 所有包按编号顺序推进。可以在阶段内处理无依赖任务，但并行 Agent 需用户授权，并先划定文件所有权。每包结束更新真实进度记录，不提前勾选后续验收。
+ 
+@@ -109,3 +109,11 @@
+ ## 每包统一 Definition of Done
+ 
+ 行为符合当前 schema；权限和错误路径已测；迁移可复现；相关示例不漂移；未引入秘密或未经授权的外部调用；记录测试命令及结果；本包能由另一位开发者在干净环境复跑。必要时先修复再进入下一包。
++
++## 用户2026-10-09范围纠偏
++
++按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
++
++原路线中Web及视觉/浏览器开发任务不再作为待办；保留其历史事实和现有实现。主代理继续拆解、分发、验收，代码阅读/实现/测试委派gpt-6.1-sol子Agent；每包先定文件所有权，独验单一串行窗口。禁止模型调用、全局配置改写、未授权推送发布、VM/Colima/Docker守护环境操作等既有边界保持。按当前新任务书衔接，不以历史M0–M7字面范围重新启动前端。
++
++下一任务为[C2B有界公开意见文本检索](reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md)，只作Agent入口；schema5不变、不新增持久FTS。须先C2A整包封存、新fresh及root dispatch；之后M7外部检查/回执、D01与必要维护验收，不预填成功。
+--- docs/09-validation.md (metadata exact-before)
++++ docs/09-validation.md
+@@ -2,7 +2,7 @@
+ 
+ 核心测试全部使用模拟参与者和真实 SQLite/临时文件，不调用模型。下面的场景是验收规格；实际已实现范围和运行状态以[当前进度](progress.md)及最新独立审查为准，不将整份规格视为已运行。
+ 
+-当前入口：[M6.4-C1历史目录与Web评审](reviews/2026-10-09-m6-4-c1/README.md)。十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ ## 1. 自动化验收目录
+ 
+@@ -99,3 +99,9 @@
+ 
+ 
+ M3.1当前本机覆盖T08与D01步骤4，真实新进程重投、ack响应丢失、过滤空批次、并发/当前权限、有效wait_ms与取消不ack；执行口径见[独验](reviews/2026-10-06-m3-1/verification/verification.md)及[覆盖](reviews/2026-10-06-m3-1/coverage-audit.md)。复跑正式场景为 tests/integration/m3-event-core.test.ts、tests/integration/m3-event-recovery.test.ts、tests/contracts/m3-events-contract.test.ts；示例见[事件消费](../examples/events.md)。此状态不将T12离线备份或四宿主认证列为完成。
++
++## C2A本机功能验收与范围
++
++核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 [独验v2](reviews/2026-10-09-m6-4-c2a/verification/independent-report-v2.md)区分真实HTTP/SQLite政策指针、最新all-round、固定target/current修订、冻结检查、封存隐私、撤权和file-WAL双连接快照，与controlled坏transport及纯Web输入测试。新19已计入完整core，不另加。首Node33项22pass/11fail的8个sandbox EPERM及3个缺body失败保留；根准四处同源fixture body补项，正确窗口15项通过，不放宽断言/timeout。
++
++既往浏览器首12/12（新3+旧9）、补KW03截图1/1只是实际功能证据，unique12/attempts13，不计入core，不代表视觉设计或宿主认证。用户范围已排除后续前端/视觉/浏览器专项。没有重跑宿主、性能、旧库全矩阵、容器/跨平台或模型评估。C2B/M7未来验收另定，不以此证明完成。
+--- docs/11-development-standards.md (metadata exact-before)
++++ docs/11-development-standards.md
+@@ -85,3 +85,11 @@
+ ## 本机有界串行执行（主代理2026-10-09决定）
+ 
+ workspace build/type/lint内部并发1；核心测试worker1、文件串行，真实竞态case仍使用受控自有子进程，不减少coverage或改timeout来过门禁。测试执行由独验单一窗口协调；合成tmp在必要证据与复跑配方归档后及时清退。此为本机执行约束，不表示资源根因全部解决；用户VM/Colima/常驻环境禁令始终保持，现有相关环境不操作。
++
++## 用户2026-10-09范围纠偏
++
++按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
++
++原路线中Web及视觉/浏览器开发任务不再作为待办；保留其历史事实和现有实现。主代理继续拆解、分发、验收，代码阅读/实现/测试委派gpt-6.1-sol子Agent；每包先定文件所有权，独验单一串行窗口。禁止模型调用、全局配置改写、未授权推送发布、VM/Colima/Docker守护环境操作等既有边界保持。按当前新任务书衔接，不以历史M0–M7字面范围重新启动前端。
++
++下一任务为[C2B有界公开意见文本检索](reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md)，只作Agent入口；schema5不变、不新增持久FTS。须先C2A整包封存、新fresh及root dispatch；之后M7外部检查/回执、D01与必要维护验收，不预填成功。
+--- docs/12-decisions.md (metadata exact-before)
++++ docs/12-decisions.md
+@@ -315,3 +315,13 @@
+ Web显示服务器目录/详情的三类事实，显式选择会话、固定材料和完整提交，不把诊断会话算独立身份。B3在原safeStatus/alive/abort成功后同步同request目录四状态，round/ref/cursor不改，写ACK不能推断live状态。封存/揭示由服务端裁，未知意图保body/key与独立File/key。
+ 
+ 有限接受本轮完整826/131一次0，新10已包含；新四浏览器B3同次通过、原七spec24另列，current25=6原+19既有adapter无新。首次夹具与浏览器错误保留；超长request_id导致422的反例是服务层真实SQLite DI，非端到端HTTP。schema5/DDL/deps/lock保持，旧native宿主未重验。下一C2A知识正式状态、C2B公共意见检索、M7检查/回执未实现。[证据](reviews/2026-10-09-m6-4-c1/verification/independent-report.md)。
++
++## ADR071：知识视图安全正式状态与协同响应升级（2026-10-09）
++
++core薄汇聚intrinsic records、既有validity与冻结required_checks；module复用，不反向依赖review module或复制批准公式。知识读取在同一snapshot先当前ACL，再确切policy_revision政策校验，不补默认；按最新all-round投影安全summary而不挑有利历史，固定target revision、三事实与原author_report/null/missing/relations保持。findings25、failures50，不把失败依赖批准给failure。
++
++必填formal_review:null|ReviewRoundSummary和扩展flags需server/client协调升级，严格whole-array拒旧缺字段/未知字段/错日期或scope，数组签名不变。当前checks仅not_required/pending，不提前M7通过；schema5/DDL/依赖锁不变。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 [证据](reviews/2026-10-09-m6-4-c2a/verification/independent-report-v2.md)。C2B公开意见检索另包，选读时有界源而非持久FTS。
++
++## ADR072：按用户要求停止前端工作（2026-10-09）
++
++用户明确“我就没让你弄前端”。此前Web实现与证据原样保留，后续取消前端、视觉重整及浏览器专项开发，覆盖旧路线中相应任务。继续Agent论坛服务端/HTTP/CLI/MCP、dsh/Pi/Codex/Claude接入、协作与正式评审、外部checks/receipts、D01及维护交付；此纠偏不表示原产品全部功能完成。主代理/gpt-6.1-sol分工、串行独验及全部环境/权限禁令保持。既往浏览器功能结果保留为历史，不作新目标或设计质量通过。重新评估须用户新明确授权。
+--- docs/progress.md (metadata exact-before)
++++ docs/progress.md
+@@ -3,7 +3,7 @@
+ 更新时间：2026-10-09
+ 状态遵循 [实施路线 (docs/08-roadmap.md)](08-roadmap.md) 与 [开发规范 (docs/11-development-standards.md)](11-development-standards.md)。
+ 
+-当前入口：[M6.4-C1历史目录与Web评审](reviews/2026-10-09-m6-4-c1/README.md)。十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。
++当前入口：[M6.4-C2A知识正式状态](reviews/2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ 运行提示：根本机执行约束为workspace构建/type/lint并发1、核心worker1/文件串行；原coverage与timeout保持。资源暂停、首次失败及清退事实详见本包独验报告，禁止VM/Colima相关操作。
+ 
+@@ -11,7 +11,7 @@
+ 
+ ## 当前功能状态与未完成能力
+ 
+-“已有基础”不等于整个里程碑验收完成。下表反映当前已接受 M6.4-C1 历史目录/Web评审及既有有限宿主证据状态；M8是独立研究验证，不是缺失的产品功能。
++“已有基础”不等于整个里程碑验收完成。下表反映当前已接受C2A知识正式状态及既有历史/有限宿主证据状态；M8是独立研究验证，不是缺失的产品功能。
+ 
+ | 阶段 | 已实现并有本机证据的基础 | 仍未实现或未完成验收 |
+ |---|---|---|
+@@ -19,7 +19,7 @@
+ | **M3 可靠消费与运维** | **M3.1可靠消费/恢复与有效wait_ms已通过**：subscription/consumer/batch、持久单待确认poll/ack、当前public投影、Clock/strict与legacy凭据、重投与ACL epoch、checkpoint起点；100ms复核/最长25秒等待、128实际等待槽与取消不ack；共享client取消/超时/有界重试；**M3.2可选持久request_key已通过**，10业务write wrapper及CLI publish/relate七分支、当前actor域、真实私有文件原子发布与新进程恢复；**M3.3-A离线物理备份/新目录恢复已通过**，current schema2/format1、无覆盖、撤旧凭据/换secret/新human管理员、同原actor新token独立证明旧cursor失效及pending恢复；**M3.3-B.1权限过滤NDJSON导出已通过**，file-WAL独立T0快照、当前ACL/脱敏guard、历史/引用/墓碑/附件manifest、client完整EOF验证及CLI私有新文件发布；**M3.3-B.2 本地新实例逻辑导入已通过**，完整流与业务历史校验、新目录无覆盖发布、禁用来源身份、新本地管理员、ready 附件转 missing 与有界来源元数据；**M3.3-C 离线复制升级与匹配旧 runtime 回退已通过**，受支持 schema1 源保持原材料、新副本迁移 schema2/身份隔离；**M3.4-A.1 统一写入限流/显式配置已通过**，标准服务共享 actor 默认 60/20 预算、权限/幂等优先、CLI 配置；**M3.4-A.2 主库页数与登记附件配额已通过**，默认 1 GiB/全状态 4 GiB/10000，每连接重新 apply，可配置而非全目录硬 cap；**M3.4-B.1 安全日志/健康/管理员统计已通过**，匿名最小健康、管理员只读精确字节采样与可信日志/有界可drop队列；**M3.4-B.2 有界退出已通过**，默认10秒、配置1–120秒，统一取消后等待整个 finally/显式 FD 关闭再关DB/严格放锁，重复信号与 listen 失败共享清理；T02/T08/T12/T13 受支持本机工程出口已接受。 | 跨平台、任意旧库、断电灾难与真实宿主/模型认证未覆盖；非 WAL/全目录硬配额，库宿主需自有关闭预算，native 同步调用不能硬抢占。 |
+ | **M4 CLI与宿主接入** | CLI init/serve/backup/restore/export/import/migrate/context/search/read/publish/relate/subscribe/poll/ack、space read与post read/thread posts；**M4.1-A 已通过**：me/capabilities/diagnostics、health live/ready、space/thread list、post revisions/view与search显式page/cursor/thread，保旧默认输出；**M4.1-B 已通过**：附件sharedclient/CLI上传、metadata、SHA/bytes/EOF完整下载与私有无覆盖发布、持久key恢复；25MiB缓存/1MiB JSON响应；**M4.1-C 已通过**：七身份/凭据/成员/redact命令、一次明文stdout、六非幂等singleattempt与脱敏持久key；**M4.1-D 已通过**：空间/主题写、会话单attempt、订阅过滤/checkpoint/poll等待与同事务scope停用；**M4.1-E 已通过**：安全parser/action错误、显式token-file与四来源互斥、锁安全诊断；**M4.2-A 已通过**：Node凭据共享、完整structuredContent与16KiB文字边界、统一取消/关闭与不ACK重投；**M4.2-B 已通过**：完整八schema预校验、惰性身份与诊断session绑定、取消/失败重连边界；**M4.3-A 已通过**：固定官方dsh plugin+registry无模型链、跨空间拒权与pending重连；**M4.3-B 已通过**：官方patch/Loader/Include加载、真实配置watch重装与坏YAML恢复边界；**M4.4-A 已通过**：共享browser身份/session协调、严格targeted Me/Session响应guard、MCP实际thinwrapper消费；stdio MCP真实通信、**M4.4-B 已通过**：Pi0.87.1真实SDK扩展身份、分代取消和new/switch/fork/reload/shutdown本机路径。 | 完整八工具广告校验与capabilities/me、惰性诊断session绑定已通过M4.2-B；dsh/Pi/Codex/Claude四真实宿主会话未完成实测，Pi固定版SDK生命周期路径已通过，完整CLI/profile/RPC与模型等T20未完成。通用MCP任意本机上传不列为首版必需。 |
+ | **M5 Web与完整v0.1** | M5.1-A同源human认证与sharedclient、M5.1-B真实React/Chrome讨论首片已接受：登录恢复、空间/主题、固定修订续读、note/cites、同key恢复、可靠退出；纯文本、按钮键盘与窄屏本机证据。 | 新主题/搜索/失败作者报告已验；D.1目录API与D.2 Web证据/附件/修订字段对比、E.1概览/规则/本人权限及E.2排序/Markdown已验；Linuxarm64容器/冷构建及有限20进程争用/恢复已验；完整无障碍/其他浏览器、跨平台与公网生产TLS未认证。原生select键盘受测限制见独验；M6部分已验，M7检查/回执待实施。 |
+-| **M6 正式评审** | 内部材料、固定请求/名单、封存提交/私有证据与全员揭示已有限接受，当前schema5。 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；CLI/MCP/Pi九工具与Web评审已有限接入；知识正式状态、公开意见检索及M7检查/回执尚未完成。 |
++| **M6 正式评审** | 内部材料、固定请求/名单、封存提交/私有证据与全员揭示已有限接受，当前schema5。 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；CLI/MCP/Pi九工具与Web评审已有限接入；知识正式状态C2A已验；公开意见检索及M7检查/回执尚未完成，后续前端任务已按用户要求取消。 |
+ | **M7 外部验证与完整v0.2** | 协议有未来检查回执字段/契约。 | 受限verifier、材料/配置hash绑定回执业务和公开route、重放/重跑、外部无模型验证器、D01正式评审+检查+最终决定、完整v0.2升级/导出/恢复与四宿主验收。 |
+ | **M8 协作效果研究** | 文档已有等预算对照/消融设计。 | 真实研究任务、独立外部评分、预算/成本/置信区间与协作增益实验未做；这是研究验证，工程通过不代表已证明收益。 |
+ 
+@@ -102,7 +102,8 @@
+ | **M4.2-B** | 完整工具校验与惰性身份会话 | 有限本机验收通过（2026-10-08） | [最终验收](reviews/2026-10-08-m4-2-b/README.md)，615项、88文件、新增15含总数、current29通过；下一 M4.3-A |
+ | **M4** | 四类客户端接入 | 本机适配基础；完整未验收 | CLI (`detuned`)、stdio MCP 桥 (`packages/mcp`)、Pi 扩展 (`packages/adapter-pi`) 已验证本机适配层契约与调用；Pi固定SDK与dsh固定官方plugin九工具有限实测，Claude原八工具/Codex旧静态边界保持；完整四宿主CLI/profile/model仍待 (T10/T20/D02) |
+ | **M5** | Web 与 v0.1 | M5.1-A认证与M5.1-B有限真实Web讨论片段已验 | M5.1-C新主题/搜索/失败已验；D.1两个有界目录已验；D.2 Web接线已验；E.1概览/规则/本人权限已验；E.2创建时间排序/安全Markdown已验；M5.2-A原生TLS已有限接受；M5.3-A有限容器/D01步骤1–4与来源汇总/恢复已接受；M6.4-B评审CLI/九工具已有限接受，Web评审C1已有限验收；D.2有限证据/修订目录与五字段比较已验；其余平台/CI完整验证及M6/M7、D01正式评审步骤5–7尚未完成 |
+-| **M6** | 正式评审 | 材料/JCS、内部请求/固定名单、封存提交/私有证据与全员揭示已有限接受 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；十三CLI（含rounds）与MCP/Pi九工具已有限接入；正式Web C1已有限验收；C2知识投影/公开检索及M7检查/回执仍未实现。 |
++| **M6** | 正式评审 | 材料/JCS、内部请求/固定名单、封存提交/私有证据与全员揭示已有限接受 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；十三CLI（含rounds）与MCP/Pi九工具已有限接入；正式Web C1已有限验收；C2A知识投影已验；C2B公开检索及M7检查/回执仍未实现，后续不开发前端。 |
++| **M6.4-C2A** | 知识正式状态 | 本机有限功能接受 | [独验](reviews/2026-10-09-m6-4-c2a/verification/independent-report-v2.md)；845/135一次full、新19已含，current25=6原19既有0新；历史Web保留，后续不开发前端；下一C2B/M7 |
+ | **M7** | 外部检查与 v0.2 | 待开始 | 外部验证回执、D01 完整流程贯通、v0.2 交付验收 |
+ | **M8** | 真实协作评估 | 待开始 | 对照实验设计与评估报告 |
+ 
+@@ -707,3 +708,7 @@
+ [独立报告](reviews/2026-10-08-m3-3-c/verification/verification.md)记录 449 项、54 文件、新增 13 项含总数及当前 29 项全通过。build/typecheck/lint/fullsuite 和 25 个旧探针各一次；新专项首 8/13 及随后夹具修正/空 WAL 协调边界澄清保留，不称所有首次通过。
+ 
+ `migrate --offline` 复制受支持 schema1 到新 schema2 目录、身份隔离及保源匹配旧 runtime/原 secret 回退已验。真实残留非空 WAL、同原 actor 新凭据/旧 cursor 失效/pending恢复及原实例旧 cursor ACK/新写覆盖；旧附件仅明确 directSQL/profile 来源，不称旧 HTTP 上传。完整旧成功缓存回填主题 [1,2]；明确人工删 creation cache 的边界 [2] 可再导入，不假称自然过期。允许 SQLite lock/SHM 与新空 WAL 协调副作用，不允许原材料改变或新非空 WAL。通用降级、任意旧版本/跨介质认证与完整 M3 尚未实现；下一 [M3.4-A](reviews/2026-10-08-m3-3-c/next-task.md)自动推进。本轮仅文档同步，无新增产品验证。
++
++## 2026-10-09：C2A功能接受与用户范围纠偏
++
++核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。 详见[根接受](reviews/2026-10-09-m6-4-c2a/verification/acceptance.md)；本次metadata作者没有新增build/test/runtime。
+--- docs/reviews/README.md (metadata exact-before)
++++ docs/reviews/README.md
+@@ -1,12 +1,13 @@
+ # Detuned 审查记录
+ 
+-当前入口：[M6.4-C1历史目录与Web评审](2026-10-09-m6-4-c1/README.md)。十三评审HTTP/共享客户端与十三CLI（含 rounds）已可用；九个工具名保持，forum_read 新增 review_requests。Web 已提供历史轮次目录和真实评审流程。核心826/131本轮一次完整exit0，新10已计入；build/type/lint及source检查0。浏览器B3新4与原七spec24另列，current25=6原+19既有adapter、无新adapter。schema5/DDL/依赖/lock不变。下一C2A研究发现/知识状态、C2B公开意见检索及M7真实checks/receipts未完成。
++当前入口：[M6.4-C2A知识正式状态](2026-10-09-m6-4-c2a/README.md)。findings/failures已投影安全最新评审轮次与检查/当前有效性事实；十三评审HTTP/共享客户端、十三CLI及九工具保持。核心一次845/845、135文件，新增19已含总数；current25为6原+19既有adapter各一次通过，零新adapter。build/typecheck/lint/schema与最终source noEmit通过；首Node sandbox EPERM及四处必填body夹具修正保留。schema5、DDL与依赖锁不变。 按用户2026-10-09最新范围，不再开发前端或安排Web、视觉、浏览器专项；现有Web源码与已取得历史证据保留。后续聚焦服务端、HTTP、CLI、MCP及dsh/Pi/Codex/Claude接入、协作、正式评审与外部检查。C2B公开意见检索和M7 checks/receipts、D01完整演示与维护交付仍待，完整目标尚未完成。
+ 
+ 运行提示：根本机执行约束为workspace构建/type/lint并发1、核心worker1/文件串行；原coverage与timeout保持。资源暂停、首次失败及清退事实详见本包独验报告，禁止VM/Colima相关操作。
+ 
+ 
+ | 审查目录 | 被审查源码 | 用途 |
+ |---|---|---|
++| [M6.4-C2A](2026-10-09-m6-4-c2a/README.md) | 知识正式状态 | 845/135一次完整0，新19已含；[独验v2](2026-10-09-m6-4-c2a/verification/independent-report-v2.md)；current25=6原19既有0新，首失败保留；后续不开发前端，C2B/M7待 |
+ | [M6.4-C1](2026-10-09-m6-4-c1/README.md) | 历史轮次目录与Web评审 | 826/131一次完整0；[独验](2026-10-09-m6-4-c1/verification/independent-report.md)，新4+旧24浏览器，C2/M7待实现 |
+ | [M6.4-B](2026-10-09-m6-4-b/README.md) | 十二CLI/九工具及固定Pi/dsh有限接入 | 816/128组合；[独验](2026-10-09-m6-4-b/verification/independent-report.md)，正式Web与M7待接 |
+ | [M6.4-A](2026-10-09-m6-4-a/README.md) | 十二评审HTTP/共享客户端 | 有限接受803/125组合；[独验](2026-10-09-m6-4-a/verification/independent-report.md)，CLI/宿主/Web评审待接 |
+--- examples/knowledge-views.md (metadata exact-before)
++++ examples/knowledge-views.md
+@@ -15,10 +15,36 @@
+ 
+ 三个view的data保持数组，不接受query筛选；findings仅claim，不表示所有候选方案或无人反对即正确。proposal继续从`/api/v1/spaces/$SPACE_ID/search?q=YOUR_QUERY&kind=proposal`或thread读取。open-questions每项按type判别question/open_challenge，不假定关系项有title。
+ 
+-failure.material.category、attempt、tested_scope、evidence_state等可能为null；查看missing_fields显示旧材料缺项，不补counterexample/provided或拿summary当attempt。[]表示已知空数组，null表示未知/无法解读。report_kind=author_report和formal_review_status/formal_check_status=not_enabled明确区分作者报告与尚未实现的正式评审/检查。provided也不证明结论已独立验证；[类型化新写](typed-posts.md)记录证据与适用条件。
++failure.material.category、attempt、tested_scope、evidence_state等可能为null；查看missing_fields显示旧材料缺项，不补counterexample/provided或拿summary当attempt。[]表示已知空数组，null表示未知/无法解读。report_kind=author_report仍明确作者报告。当前正式review/check与必填formal_review按下文解释；不能仅凭作者材料宣称独立通过。provided也不证明结论已独立验证；[类型化新写](typed-posts.md)记录证据与适用条件。
+ 
+ relation source_ref/target_ref是原固定revision，source_author_id/target_author_id为帖子作者，creator_id为关系创建者；state/version是当前关系状态。target_has_newer_revision=true提示这条关系仍针对旧版，不能自动当新版本批准。reproduces是有来源的复现报告，不是独立认证，withdrawn也不自动关闭异议。
+ 
+ context.pinned_summaries只显示有效active summary pin。每项has_newer_revision仍指摘要自身；source_refs中的各ref/status/has_newer_revision另行表示固定来源。status active/withdrawn时新版标识为Boolean；redacted或unavailable时为null，不能显示成“没有新版”。缺失/跨空间/不可读均unavailable且无目标标题/current_revision；source_refs整体null配missing_fields表示历史来源声明缺少/无法解读。若blocking任一端点redacted，issue/impact均null，不恢复旧正文。
+ 
+-truncated沿用现有上下文预算提示；本包未保证完整envelope硬限长或完成M2.4。HTTP wire、新写与原key历史重放合同继续保持。详见 [接口契约](../docs/04-protocol.md)；这里的说明不是实际模型研究输出。
++M2.2-B当时truncated沿用上下文预算提示；当前完整context预算与续读见接口契约，C2A不改变context预算。HTTP wire、新写与原key历史重放合同继续保持。详见 [接口契约](../docs/04-protocol.md)；这里的说明不是实际模型研究输出。
++
++## 当前C2A正式状态读取
++
++findings最多25条当前claim，failures最多50条当前failure；不是全量知识索引。data仍是数组，原材料、null/missing_fields和公共关系保留。每项必含`formal_review`：无轮为null；有轮为安全最新全部轮次summary（包括cancelled/stale），不挑曾接受的旧轮。
++
++无轮且当前有效政策关闭时两flags为`not_enabled`；启用但未请求为`not_requested`。有轮时formal_review_status等于summary.phase，formal_check_status等于summary.verification_status；当前政策关闭仍保历史。下例仅是字段说明，不是实测输出：
++
++```json
++{
++  "formal_review_status": "accepted",
++  "formal_check_status": "pending",
++  "formal_review": {
++    "request_id": "REQUEST_ID", "snapshot_id": "SNAPSHOT_ID",
++    "space_id": "SPACE_ID", "target_post_id": "POST_ID",
++    "round": 1, "target_revision": 1, "created_at": "2026-10-09T00:00:00Z",
++    "phase": "accepted", "verification_status": "pending",
++    "current_validity": "superseded", "validity_reasons": ["target_superseded"]
++  }
++}
++```
++
++历史accepted针对固定target_revision；当前条目可能已是修订2，不能沿用批准。评审、检查、current_validity分别读；pending与not_required不表示passed。当前检查只复用冻结required_checks产生not_required/pending，M7真实checks/receipts仍待。failure不能成为正式target，也不继承作为依赖的批准。
++
++服务端同一读快照刷新当前ACL、按policy_revision读取有效政策与最新轮；缺失/非法政策安全RESYNC_REQUIRED，不补默认。共享getView对整数组严格检查未知/坏项、日期、flags一致性及space/post范围；一坏项整页拒绝。新增必填summary与flags须server/client一起升级，旧server缺字段被新client拒绝；方法/data数组签名不变、无需DB迁移。CLI `view`与既有Agent工具复用客户端，不复制权限/批准规则。
++
++[C2A证据](../docs/reviews/2026-10-09-m6-4-c2a/README.md)仅接受本机有限功能。用户已明确不继续前端开发；已存Web与历史证据保留。下一C2B公开意见读时有界检索、M7外部检查仍待，未重跑native宿主或模型评估。
+--- examples/README.md (metadata exact-before)
++++ examples/README.md
+@@ -24,7 +24,7 @@
+ 
+ - [附件HTTP](artifacts-http.md)：当前上传、下载与帖子引用流程。
+ - [类型化帖子](typed-posts.md)：四类新写规则、provided/unverified与固定来源示例。
+-- [知识视图](knowledge-views.md)：作者报告、历史缺项、固定关系与摘要来源状态。
++- [知识视图](knowledge-views.md)：作者报告、历史缺项、固定关系、最新安全评审轮次/检查/当前有效性与摘要来源状态。
+ - [搜索与分页](search.md)：精确标签、签名cursor与HTTP/client/MCP/Pi的data/meta；CLI暂无分页选项。
+ - [限长上下文](context.md)：成功compact HTTPbody限额、固定ref/预算省略与checkpoint；CLI整page保留meta；同空间focus筛材料并保必需焦点metadata，省略保持原响应。
+ - [固定空间规则续读](space-rules-read.md)：按固定revision读取目标/规则JSON片并精确重组。
+@@ -61,6 +61,6 @@
+ 
+ - [正式评审CLI](review-cli.md)：十三操作（含 rounds）、显式会话与私有证据上传/校验下载；九工具metadata接入见[MCP](mcp-bridge.md)/[Pi](pi-extension.md)，固定宿主有限范围见[本包](../docs/reviews/2026-10-09-m6-4-b/README.md)。
+ 
+-## 当前 C1 接入范围
++## C1历史接入与当前C2A范围
+ 
+-历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。本轮仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。知识正式状态与公开意见检索、M7真实检查仍待。
++历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+--- examples/review-http.md (metadata exact-before)
++++ examples/review-http.md
+@@ -101,6 +101,6 @@
+ 
+ M6.4-A当时的有限真实HTTP证据见[M6.4-A](../docs/reviews/2026-10-09-m6-4-a/README.md)。该包当时没有review浏览器认证；当前C1浏览器范围见下节，仍无四宿主完整认证、模型收益或M7检查执行承诺。
+ 
+-## 当前 C1 接入范围
++## C1历史接入与当前C2A范围
+ 
+-历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。本轮仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。知识正式状态与公开意见检索、M7真实检查仍待。
++历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+--- examples/review-cli.md (metadata exact-before)
++++ examples/review-cli.md
+@@ -23,10 +23,10 @@
+ 
+ 四写入 input 支持既有 `request_key` 字段，客户端提取后不送入业务正文；显式 key flags 沿既有规则。持久目录与 `--logical-operation-id` 必须成对，同一意图恢复保同 key，改变意图用新 logical ID。附件上传有独立 key，metadata 不接受 scope/actor/assignment；上传不等于提交证据，提交中显式列 evidence_refs。上传缓存最大25MiB，下载完整 SHA/bytes/EOF 验证后以0600新文件无覆盖发布；不向 stdout 输出二进制。
+ 
+-封存期间只能读本人意见；管理员不会越过封存。全部揭示后明确 evidence 附件才可能可读，闲置附件不会整轮公开。状态 current 不表示 accepted；required checks 仍等待真实检查记录，不能假定通过。Web正式评审已在C1有限验收，正式检索/知识状态投影仍属于后续包。
++封存期间只能读本人意见；管理员不会越过封存。全部揭示后明确 evidence 附件才可能可读，闲置附件不会整轮公开。状态 current 不表示 accepted；required checks 仍等待真实检查记录，不能假定通过。Web正式评审已在C1有限验收，知识状态投影已在C2A有限接受；正式公开意见检索仍为下一C2B，M7真实检查/回执仍待。
+ 
+-M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；当前C1范围见下节，C2公开投影/M7仍待。
++M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；该包后C1已接历史目录，C2A已接知识状态；当前范围见下节，C2B公开意见检索/M7仍待。
+ 
+-## 当前 C1 接入范围
++## C1历史接入与当前C2A范围
+ 
+-历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。本轮仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。知识正式状态与公开意见检索、M7真实检查仍待。
++历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+--- examples/mcp-bridge.md (metadata exact-before)
++++ examples/mcp-bridge.md
+@@ -38,8 +38,8 @@
+ 
+ 导入/注册/发现零HTTP与取消/关闭/noACK原则不变。新增九目录及评审路径已取得本包固定版本真实无模型有限验收；不把广告数量当成四宿主完整CLI/profile/模型认证。CLI操作见 [评审CLI指南](../examples/review-cli.md)。
+ 
+-M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；当前C1范围见下节，C2公开投影/M7仍待。
++M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；该包后C1已接历史目录，C2A已接知识状态；当前范围见下节，C2B公开意见检索/M7仍待。
+ 
+-## 当前 C1 接入范围
++## C1历史接入与当前C2A范围
+ 
+-历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。本轮仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。知识正式状态与公开意见检索、M7真实检查仍待。
++历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+--- examples/pi-extension.md (metadata exact-before)
++++ examples/pi-extension.md
+@@ -22,8 +22,8 @@
+ 
+ 导入/注册/发现零HTTP与取消/关闭/noACK原则不变。新增九目录及评审路径已取得本包固定版本真实无模型有限验收；不把广告数量当成四宿主完整CLI/profile/模型认证。CLI操作见 [评审CLI指南](../examples/review-cli.md)。
+ 
+-M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；当前C1范围见下节，C2公开投影/M7仍待。
++M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web仍待；该包后C1已接历史目录，C2A已接知识状态；当前范围见下节，C2B公开意见检索/M7仍待。
+ 
+-## 当前 C1 接入范围
++## C1历史接入与当前C2A范围
+ 
+-历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。本轮仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。知识正式状态与公开意见检索、M7真实检查仍待。
++历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+--- integrations/dsh.md (metadata exact-before)
++++ integrations/dsh.md
+@@ -43,4 +43,4 @@
+ 
+ 导入/注册/发现零HTTP与取消/关闭/noACK原则不变。新增九目录及评审路径已取得本包固定版本真实无模型有限验收；不把广告数量当成四宿主完整CLI/profile/模型认证。CLI操作见 [评审CLI指南](../examples/review-cli.md)。
+ 
+-当前限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；正式Web/C2公开投影/M7仍待。
++M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web/C2公开投影/M7仍待。当前[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)只接受本地服务端/共享客户端知识状态功能，C1和C2A既往Web证据保留，用户已要求停止后续前端/视觉/浏览器专项；C2B公开意见检索及M7仍待。此同步不增加SDK能力或重跑/升级本宿主认证，compatibility.json原证据保持。
+--- integrations/pi.md (metadata exact-before)
++++ integrations/pi.md
+@@ -71,4 +71,4 @@
+ 
+ 导入/注册/发现零HTTP与取消/关闭/noACK原则不变。新增九目录及评审路径已取得本包固定版本真实无模型有限验收；不把广告数量当成四宿主完整CLI/profile/模型认证。CLI操作见 [评审CLI指南](../examples/review-cli.md)。
+ 
+-当前限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；正式Web/C2公开投影/M7仍待。
++M6.4-B当时限定结果：[M6.4-B独验](../docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md)记录九工具、完整字段错误零HTTP及DT03身份变化先红后绿。CLI作者三组仅受控transport，不替代独立真实SQLite/HTTP私有上传/重放/校验下载。Pi固定0.87.1六生命周期计入core，dsh固定官方plugin外部3另列，不是完整宿主CLI/profile/模型认证。原会话不增加独立身份；该包当时正式Web/C2公开投影/M7仍待。当前[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)只接受本地服务端/共享客户端知识状态功能，C1和C2A既往Web证据保留，用户已要求停止后续前端/视觉/浏览器专项；C2B公开意见检索及M7仍待。此同步不增加SDK能力或重跑/升级本宿主认证，compatibility.json原证据保持。
+--- /dev/null
++++ docs/reviews/2026-10-09-m6-4-c2a/README.md
+@@ -0,0 +1,18 @@
++# M6.4-C2A：知识正式状态
++
++根已接受此次本机有限功能结果；metadata末核与整包封存仍待，不把此页视为下一包fresh/实施放行。
++
++findings/failures在同一读快照刷新当前权限、读取policy_revision对应有效政策，拒缺失/非法配置，投影最新全部轮次安全summary。作者原材料、公共关系、null/missing_fields保留；评审、冻结检查状态、当前有效性分别解释，旧accepted不批准新修订。findings25/failures50，必填formal_review及严格whole-array客户端须server/client一起升级，不需DB迁移。
++
++[独验v2](verification/independent-report-v2.md)、[gate摘要](verification/gate-summary.json)与[根功能接受](verification/acceptance.md)记录实际结果：
++
++- 完整core一次845/845、135文件、exit0；新增19已含总数，不另加。
++- build、最终source noEmit、typecheck、lint、schema exact通过。新Node19组合、旧邻接14；首次33项22pass/11fail的sandbox localhost EPERM及缺body夹具失败保留，根准四处body补项后15项通过。
++- current25为6原+19既有adapter，各一次exit0，零新adapter，不能与core相加。
++- 既往浏览器首12/12（新3+旧9）、补KW03卡截图1/1，unique12/attempts13；只属实际功能证据，不接受视觉设计质量，也不构成后续浏览器目标。
++
++[保护核查](verification/final-integrity.json)与[清退](verification/cleanup.json)保留实际证据：schema5/DDL/锁/受核旧源码与封存C1保持；dist有真实build变化，不能说dist不变。37个已记录runner PID消失，13次浏览器fixture按自有finally关闭清退；不声称全机资源根因全部解决或扫描/清理旧环境。首失败与修正版本记录未覆盖。
++
++用户2026-10-09明确“我就没让你弄前端”。现有Web源码与历史证据保留，后续不开发前端、视觉重整或浏览器专项；继续Agent论坛服务端/HTTP/CLI/MCP、四类Agent接入、协作与正式评审、外部检查/回执及维护交付。未重跑native宿主、性能、旧库全矩阵、容器/跨平台或模型评估，不升格宿主SDK/CLI/profile认证。C2B/M7与完整目标尚未完成。
++
++下一[C2B规划](planning/m6-4-c2b-task.md)只面向Agent入口公开意见的有界读时文本检索：schema5不变，不新增持久FTS，不让sealed进入搜索，既有posts合同保持。须本包整封、新fresh、确切owner和root dispatch后实施。交接见[next-agent-prompt.md](next-agent-prompt.md)。本次metadata作者未新增build/test/runtime，末核由root/D完成。
+--- /dev/null
++++ docs/reviews/2026-10-09-m6-4-c2a/next-agent-prompt.md
+@@ -0,0 +1,13 @@
++# 下一代理：C2B Agent入口公开意见检索
++
++先读AGENTS.md、README.md、docs/00、08、11、progress与reviews当前入口，再读[C2B根已定任务](planning/m6-4-c2b-task.md)、[事实接点](planning/c2b-facts.md)及[精确owner候选](planning/m6-4-c2b-owner-candidates.json)。本提示不另造接口、参数或验收场景，以该任务及最终dispatch为准。
++
++C2A本机功能已接受：845/135一次完整core，新19已含；current25六原十九既有零新，首sandbox EPERM/四处body夹具修正真实保留。当前metadata末核/整封尚待；先核本包最终封存记录，完成新包actual fresh与owner确认，等待root正式dispatch，不把planning当改产品授权。
++
++用户2026-10-09明确不开发前端，覆盖旧M0–M7中的Web任务。现有Web源码、tests与既往证据保留；不新增前端/视觉/浏览器专项。后续仅服务端/HTTP/CLI/MCP及dsh/Pi/Codex/Claude接入、协作、正式评审、外部checks/receipts、D01与必要维护交付。主代理需求澄清/拆解/验收，gpt-6.1-sol子Agent执行已定边界；先划文件所有权，不能自行扩大路线。
++
++C2B采用同读快照的公开意见有界读时投影，schema5不变、无持久FTS/表/索引；sealed不得进入候选、匹配或结果，当前ACL和材料/证据privacy重新裁定。不往posts伪造意见身份，不扩现posts默认行为；字面匹配与限额/游标按任务书。HTTP、共享客户端、CLI/MCP严格canonical合同同步；真正宿主新增能力先核官方和安装版，不凭本地合同升级native认证。
++
++所有检查由独验唯一串行窗口：workspace-concurrency1、核心worker1/文件串行，保原timeout/断言和真实竞态覆盖。不能调用模型、修改全局Agent配置、安装/改依赖锁、推送/发布，不能创建/启用/使用/管理/清理VM、Colima、Docker daemon或旧宿主/临时环境。论坛内容不获得系统权限，不执行帖子/附件、抓任意外链或持模型Key；禁用deepseek-brainstorm保持。
++
++完成后报告实际行为、证据、首次失败、限制与下一M7检查/回执、D01和维护交付；未运行不得写成功，阶段完成不是完整目标完成。

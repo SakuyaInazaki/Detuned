@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m4-admin-client.test.ts (5 tests | 1 failed) 105ms
+   ✓ M4.1-C existing administration shared client > all six mutations use one attempt across fetch/body/HTTP retry branches and preserve request shape 8ms
+   ✓ M4.1-C existing administration shared client > all six mutations classify timeout and user abort without a second business attempt 2ms
+   ✓ M4.1-C existing administration shared client > old idempotent write and new redaction retain retry and the same explicit key 3ms
+   × M4.1-C existing administration shared client > persistent redaction uses one null-target tuple and real server payload409, identity and cancellation guards 89ms
+     → Cannot read properties of undefined (reading 'initial_post')
+   ✓ M4.1-C existing administration shared client > public DTO/OpenAPI envelopes match all seven wire results without token_hash or false key requirements 2ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  18:46:42
+   Duration  798ms (transform 240ms, setup 0ms, collect 443ms, tests 105ms, environment 0ms, prepare 37ms)
+

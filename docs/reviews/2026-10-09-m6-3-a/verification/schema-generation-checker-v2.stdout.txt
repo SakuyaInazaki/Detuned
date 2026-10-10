@@ -1,0 +1,20 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (9 tests) 6868ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V5 updates and frozen V1/V2/V3/V4 remain unchanged  637ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1104ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  365ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V4' profile in sync check and successfully repairs it via generate-schema (AB03)  609ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V5' profile in sync check and successfully repairs it via generate-schema (AB03)  614ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V3' profile in sync check and successfully repairs it via generate-schema (AB03)  623ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  603ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  605ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1679ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  16:31:27
+   Duration  7.05s (transform 226ms, setup 0ms, collect 25ms, tests 6.87s, environment 0ms, prepare 39ms)
+

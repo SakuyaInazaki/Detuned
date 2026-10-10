@@ -1,0 +1,148 @@
+{
+  "phase": "core-targeted",
+  "image_id": "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+  "container": "detuned-m53-d-linux-core-targeted-a7845e889a",
+  "actual_gate_uid": 1000,
+  "cold_install_or_build_repeated": false,
+  "commands": [
+    {
+      "argv": [
+        "create",
+        "--name",
+        "detuned-m53-d-linux-core-targeted-a7845e889a",
+        "--network",
+        "none",
+        "--entrypoint",
+        "node",
+        "sha256:c085ace64bf18dead58e77bdfdf6046bfe3b1897d53b356dd6da653d47f313ef",
+        "-e",
+        "setInterval(()=>{},1000)"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 197,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "start",
+        "detuned-m53-d-linux-core-targeted-a7845e889a"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 80,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/tests/contracts/m5-web-auth-independent.test.ts",
+        "detuned-m53-d-linux-core-targeted-a7845e889a:/app/tests/contracts/m5-web-auth-independent.test.ts"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 22,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/tests/contracts/m4-mcp-wrapped-independent.test.ts",
+        "detuned-m53-d-linux-core-targeted-a7845e889a:/app/tests/contracts/m4-mcp-wrapped-independent.test.ts"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 16,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cp",
+        "/Users/sakimi/Desktop/Detuned/tests/contracts/r4-c-contracts.test.ts",
+        "detuned-m53-d-linux-core-targeted-a7845e889a:/app/tests/contracts/r4-c-contracts.test.ts"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 13,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "0:0",
+        "detuned-m53-d-linux-core-targeted-a7845e889a",
+        "chown",
+        "-R",
+        "1000:1000",
+        "/app"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 10615,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "exec",
+        "--user",
+        "1000:1000",
+        "-e",
+        "HOME=/tmp",
+        "-e",
+        "CI=1",
+        "detuned-m53-d-linux-core-targeted-a7845e889a",
+        "pnpm",
+        "test",
+        "tests/contracts/m5-web-auth-independent.test.ts",
+        "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+        "tests/contracts/r4-c-contracts.test.ts"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 13003,
+      "stderr_sha256": "1e85b276936e2593b9c3ba5154f63aea50c3da5793bb42e50971c4dfed815b86"
+    },
+    {
+      "argv": [
+        "rm",
+        "-f",
+        "detuned-m53-d-linux-core-targeted-a7845e889a"
+      ],
+      "exit": 0,
+      "signal": null,
+      "timeout": false,
+      "elapsed_ms": 417,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "tests/contracts/m5-web-auth-independent.test.ts",
+      "sha256": "0a85c3d5a652887323c8dd90e32d08debe83afaae28d902bec1f62ff51591f31"
+    },
+    {
+      "path": "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+      "sha256": "96c3a6f52954f754715ca49bd689940e258fca136502a8d036b2fdc2d0416c85"
+    },
+    {
+      "path": "tests/contracts/r4-c-contracts.test.ts",
+      "sha256": "7abd2a30be023215eb01b78dd73ec5606db27b889e2caba542d6660667266b3b"
+    }
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "status": "passed",
+  "cleanup": {
+    "created": true,
+    "owned_container_removed": true,
+    "owned_VM_retained": true
+  }
+}

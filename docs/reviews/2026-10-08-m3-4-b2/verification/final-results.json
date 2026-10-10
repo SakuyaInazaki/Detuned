@@ -1,0 +1,134 @@
+{
+  "status": "parentaccepted",
+  "date": "2026-10-08",
+  "scope": "M3.4-B.2 standard serve overall shutdown budget, buildApp resource tracking and waiting, real FD disposal and strict lock release; M3 T02/T13 independent HTTP gates",
+  "formal": {
+    "tests_passed": 517,
+    "tests_total": 517,
+    "files_passed": 67,
+    "files_total": 67,
+    "new_tests_included": 17,
+    "new_composition": {
+      "A": 6,
+      "B": 4,
+      "C_shutdown": 5,
+      "C_M3_gate": 2
+    }
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4gate + 24 original retained probes + approved A.1 scenario11 adapter",
+    "original_scenario11": "not rerun; old failed default-seed output unchanged",
+    "suite_command": "pnpm test (same vitest run as test:all)"
+  },
+  "attempts": {
+    "workspace_build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1,
+    "new_targeted_first": {
+      "passed": 15,
+      "failed": 2,
+      "total": 17,
+      "classification": "C fixture preconditions: wait_ms30000 over protocol25000; unpinned note absent from context"
+    },
+    "corrected_failed_cases": {
+      "passed": 2,
+      "skipped": 5,
+      "exit_code": 0,
+      "no_product_change_or_rebuild": true
+    },
+    "retained_probes": 25,
+    "inherited_40MiB_export_case": 1
+  },
+  "runtime_observations": {
+    "all_four_active_routes": {
+      "poll_export_multipart_download": 4,
+      "exit_code": 0,
+      "cancel_before_app_closed_before_db_closed_before_lock_released": true,
+      "real_FD_closed": 1,
+      "active_final": 0,
+      "repeat_signal_begin_count": 1
+    },
+    "publication_barrier": {
+      "signal_while_db_open_lock_present": true,
+      "outcome": "complete commit",
+      "artifact_event_idempotency_deltas": [
+        1,
+        1,
+        1
+      ],
+      "objects": 1,
+      "staging": 0
+    },
+    "late_open_never_next": {
+      "opened": 1,
+      "disposed": 1,
+      "real_closed": 1,
+      "first_next": 0
+    },
+    "metadata_exists": {
+      "lease_held_until_actual_await_settles": true
+    },
+    "expired_lease": {
+      "budget_ms": 1000,
+      "exit_code": 1,
+      "built_cli_restart_stale_lock_orphan_recovery": true,
+      "no_early_database_close_or_strict_lock_release": true,
+      "OS_exit_reclaims_FDs": true,
+      "no_early_db_close_call": true,
+      "no_early_strict_lock_release_call": true
+    },
+    "failure_variants": [
+      "app-close failure",
+      "DB-close failure",
+      "strict lock-release failure",
+      "uncertain rejecting backend disposer retains lease"
+    ],
+    "observed_unhandled_rejections": 0,
+    "failure_diagnostics_args": 0
+  },
+  "M3": {
+    "T02": {
+      "real_HTTP_requests_at_barrier": 10,
+      "identical_201_responses": 10,
+      "post_revision_event_idempotency_unique": true,
+      "changed_body_409": true
+    },
+    "T13": {
+      "same_marker_positive_read_paths": 9,
+      "legal_summary_pinned_via_HTTP": true,
+      "non_sensitive_source": true,
+      "redacted_no_marker_read_export_context_FTS_LIKE_attachment": true,
+      "post_replay": "201 sanitized",
+      "artifact_replay": 410,
+      "audit_post_affected_revisions": [
+        1,
+        2
+      ],
+      "distinct_artifact_audit_target": true,
+      "request_logs_no_marker": true
+    }
+  },
+  "protection": {
+    "old_review_files": 4374,
+    "HEAD_SQL_schema_mutable_unchanged": true,
+    "A12_B9_freeze_match": true,
+    "source_files": 228,
+    "tracked_dist_files": 208,
+    "untracked_dist_files": 160,
+    "owned_PID_or_private_dir_residue": 0
+  },
+  "limits": [
+    "Controlled private worker seams and real HTTP/FD/CLI on local macOS; not all naturally slow filesystem variants",
+    "Backend dispose rejection retains lease; standard CLI exits nonzero on its budget; custom app.close host needs its own deadline",
+    "Synchronous native operations cannot be forcibly preempted; monotonic budget checked when phases return",
+    "In-flight writes may commit completely after signal; no added business rollback rules",
+    "No multi-platform/media crash/600s/model/harness tests",
+    "Finite known token pattern scan is not universal content sanitization",
+    "One inherited40MiB fullsuite execution; sampled heaps do not establish hard RSS limits"
+  ],
+  "parent_acceptance_date": "2026-10-08",
+  "parent_acceptance_scope": "Supported local standard serve bounded shutdown and M3 independent T02/T13 gates; not all hosts/media/platforms"
+}

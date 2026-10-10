@@ -1,0 +1,30 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "SR01/A-CX03-v2",
+      "fixed_ref": true,
+      "oversize_becomes_ref": true,
+      "optional_survives_downgrade": true
+    },
+    {
+      "id": "SR02-03",
+      "fixed_old_reconstructed": true,
+      "pages": 3,
+      "bytes": 16856,
+      "budget_can_change": true
+    },
+    {
+      "id": "SR05-06",
+      "expiration_equal_pass": true,
+      "expiration_plus_one_400": true,
+      "reads_no_write": true
+    }
+  ],
+  "separate": [
+    "minimalmetadata/request_id boundary",
+    "optional retention/source audit",
+    "WALsnapshot/checkpoint",
+    "tools/CLI/schema and fullregression"
+  ]
+}

@@ -1,0 +1,11 @@
+--- 0ab7-before
++++ raw-literal-after
+@@ -378,7 +378,7 @@
+                 '--config.store-dir=' + str(ROOT / 'store'), '--config.cache-dir=' + str(ROOT / 'cache'),
+                 '--config.state-dir=' + str(ROOT / 'state'), '--config.virtual-store-dir=' + str(WORK / 'node_modules/.pnpm')]
+         keys = PLAN['continuation']['effective_config_gate']['keys']
+-        probe = """const {spawnSync}=require('node:child_process');
++        probe = r"""const {spawnSync}=require('node:child_process');
+ const [entry,optionsJSON,keysJSON]=process.argv.slice(1);const options=JSON.parse(optionsJSON),keys=JSON.parse(keysJSON);
+ const end=Date.now()+9000,rows=[];
+ for(const key of keys){const remaining=end-Date.now();if(remaining<=0)throw Error('CONFIG_PROBE_DEADLINE');

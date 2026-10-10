@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/contracts/server-tls.test.ts (4 tests | 2 failed) 320ms
+   ✓ server native TLS > TLS01 same-FD PEM loader accepts pair and safely rejects special/oversize/invalid/mismatch files 24ms
+   × server native TLS > TLS02 real HTTPS trusts only private CA/hostname, limits TLS and headers, snapshots caller bytes 83ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × server native TLS > TLS03 unhandshaken raw TCP drains naturally after business finalization on app.close 31ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   ✓ server native TLS > TLS04 TLS+Web requires https, redundant loopback flag preserves Secure and HTTP compatibility 83ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  08:04:49
+   Duration  1.04s (transform 257ms, setup 0ms, collect 500ms, tests 320ms, environment 0ms, prepare 46ms)
+

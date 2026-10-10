@@ -1,0 +1,86 @@
+--- docs/reviews/2026-10-09-m6-4-c2a/planning/c2b-before-final-narrow/m6-4-c2b-task.md
++++ docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md
+@@ -1,6 +1,6 @@
+ # M6.4-C.2B — 有界公开评审意见文本检索
+ 
+-状态：根已选择以下路线；依用户最新“我就没让你弄前端”范围，仅服务端/HTTP/CLI/共享工具与既有dsh/Pi/Codex/Claude接入；不规划Web/浏览器实现。本文件与owner候选仅planning。C2A尚未封存，本包未fresh、未放行、未实施、未验证。只有根确认精确owner、C2A整包封存、新fresh与正式dispatch后可改产品。事实依据为同目录`c2b-facts.md`，不重复运行历史证据。
++状态：根已选择以下路线；依用户最新“我就没让你弄前端”范围，仅服务端/HTTP/CLI/共享工具与既有dsh/Pi/Codex/Claude接入；不规划Web/浏览器实现。本文件与owner候选状态为`root_approved_pending_c2a_seal_new_fresh_dispatch`，仍仅planning。C2A尚未封存，本包未fresh、未放行、未实施、未验证。只有根确认精确owner、C2A整包封存、新fresh与正式dispatch后可改产品。事实依据为同目录`c2b-facts.md`，不重复运行历史证据。
+ 
+ ## 根已决定的行为与边界
+ 
+@@ -13,7 +13,7 @@
+ - q仍trim后1–256 Unicode code points；limit1–100/default20；cursor沿<=4096。
+ - review源仅允许q/source/limit/cursor及可选request_id/target_post_id精确filter；两filter可交集。unknown对象不额外查存在。
+ - review源拒绝kind/tags/tags_json/thread_id；posts拒绝request_id/target_post_id。未知字段或未知source明确拒绝，不静默丢弃。
+-- 新cursor独立purpose=`review_submission_search`，hash显式绑定source、归一q、filters；actor/space/sort=`submission_id_desc`/before_submission_id及原24h expiry。不得复用/改变旧posts hash。每页重新核当前ACL，同页readSnapshot；不承诺跨页全集冻结。
++- review源归一q为trim后ASCII A–Z折小写，匹配与hash共用该值，snippet展示原文字；不Unicode normalization。新cursor独立purpose=`review_submission_search`，hash显式绑定source、归一q、filters；actor/space/sort=`submission_id_desc`/before_submission_id及原24h expiry。continuation保留首次cursor原exp，不能随翻页刷新24h。不得复用/改变旧posts hash。每页重新核当前ACL，同页readSnapshot；不承诺跨页全集冻结。
+ 
+ ### 有界候选与隐私
+ 
+@@ -21,7 +21,7 @@
+ 
+ 复用/提取core intrinsic记录、snapshot在线privacy、post/artifact evidence privacy链，不core→module反依赖，不复制资格/隐私公式。search公开门禁revealed-only；module原own-or-public getter授权和历史读取语义保留。先完成intrinsic request/snapshot/assignment/session/submission/all-reveal一致性验证；缺/坏这些结构必须安全RESYNC_REQUIRED，不能吞成空列表。成功后才调用现online snapshot/post/artifact evidence privacy；现CONTENT_REDACTED（410/GONE）和NOT_FOUND不可见候选跳过，不返回原因/计数，其它错误propagate。捕获仅围绕online阶段，绝不能catch整个调用的所有NOT_FOUND。现online NOT_FOUND对缺失/跨space证据的不可见语义保持；这不声明数据库完整，不新增全局完整性分类。withdraw/revision/policy/cancel/stale本身不擦掉原可见历史。ACL先于详细对象/错误信息。
+ 
+-多取一个真正可见且匹配的结果决定has-more；cursor锚最后实际返回submission ID。不得以跳过的私密候选越过尚未返回结果，不输出sealed计数。items编码预算沿262144 bytes；client既有1MiB取消/错误边界保持。
++多取一个真正可见且匹配的结果决定has-more；cursor锚最后实际返回submission ID。不得以跳过的私密候选越过尚未返回结果，不输出sealed计数。review page meta沿`{truncated:false,next_cursor}`；items编码预算沿262144 bytes，超过即QUERY_TOO_BROAD，不静默截断。client既有1MiB取消/错误边界保持。
+ 
+ ### 搜索白名单与snippet
+ 
+@@ -36,13 +36,13 @@
+ | limitations[] | 至多32个非空字符串，每个2000字符 |
+ | independence_statement.statement | 非空字符串，8000字符上限 |
+ 
+-不搜索completion_status、独立性两布尔、内部session/assignment/hash、证据IDs；不JSON.stringify全payload；不加载附件正文或外链。每个白名单值做字面contains；ASCII A–Z折小写，其它字符原样，不Unicode normalization，不解释FTS/SQL通配符。snippet在第一个match周围，纯文本<=320 code points且必要省略符计入；不得在内部metadata或跨字段拼接上产生隐藏匹配。实现须记录稳定白名单遍历顺序，字段分隔不能制造跨字段命中；根尚未指定多命中时snippet窗口分配，按可审阅有界实现落实。
++不搜索completion_status、独立性两布尔、内部session/assignment/hash、证据IDs；不JSON.stringify全payload；不加载附件正文或外链。遍历顺序严格按表中六条路径，数组保原顺序，每个字段/数组元素独立字面contains；ASCII A–Z折小写，其它字符原样，不Unicode normalization，不解释FTS/SQL通配符。snippet取第一命中字段中的首match，显示原文字；纯文本最多320 Unicode code points（必要省略符计入），优先给首match前32 code points，保证最大256 code points查询的整个match可见，窗口受字段首尾边界约束。不得搜索内部metadata、跨字段/数组元素拼接或制造分隔符命中。
+ 
+ ### DTO与共享入口
+ 
+-新严格DTO真实identity：`type:'review_submission'`、submission_id、space_id、request_id、snapshot_id、target_ref{post_id,revision}、round、reviewer_actor_id、verdict、submitted_at、revealed_at（非null）、snippet。post row不加字段。严格page guard校验整页/schema/日期/space/filters/sort与metadata，不能修正坏响应。
++新严格DTO真实identity：`type:'review_submission'`、submission_id、space_id、request_id、snapshot_id、target_ref{post_id,revision}、round、reviewer_actor_id、verdict、submitted_at、revealed_at（非null）、snippet。post row不加字段。严格page guard校验整页/schema/日期/space/filters/sort与metadata，不能修正坏响应。ID DESC的guard比较须与SQLite相同：现reviewId canonical schema仅非空字符串（未限ASCII），正式CryptoIdGenerator创建`rsb_<UUID>`ASCII IDs，但不能把该生成器事实当schema约束。SQLite review_submissions.id默认TEXT/BINARY排序；实现可用Node/client均可用的UTF-8字节序比较或等价共享语义，对非法Unicode/编码歧义安全拒绝，不使用localeCompare或仅依赖区域排序。
+ 
+-保client.search既有posts类型；新增typed `searchPublicReviewSubmissions`与严格page guard。同一forum_search新增source及对应filters分支，callTool派发共享client，工具仍9个。CLI search增加--source/--request/--target，旧选项/默认/--page/--cursor行为保持；禁止直接SQL或额外业务判断。
++保client.search既有posts类型；新增typed `searchPublicReviewSubmissions`与严格page guard；新方法先用canonical新query guard拒未知字段/非法组合再转发。旧client.search不改旧类型/行为。同一forum_search新增source及对应filters分支，callTool派发共享client，工具仍9个。CLI search增加--source/--request/--target，旧选项/默认/--page/--cursor行为保持；CLI/tool非法source/filter组合须经canonical预校验拒绝，禁止直接SQL或额外业务判断。
+ 
+ 现有dsh/Pi/MCP/Codex/Claude工具接入沿canonical九工具与shared client传播显式source；不启用新宿主、不运行模型、不改全局配置。当前各宿主已认证/未认证边界保持，静态或受控接入检查不得虚报完整真实宿主认证。用户已明确不做前端：现Web与固定reader文件保留且保护，本包不增改Web搜索/展示/意见reader，不运行浏览器验收。
+ 
+@@ -55,7 +55,7 @@
+ 5. HTTP/sharedclient/forum_search/CLI与旧post语义、默认posts返回类型/游标兼容；既有dsh/Pi/MCP/Codex/Claude工具/schema/sharedclient接线仅按已允许的受控/static入口验证，不启用新host或模型。坏transport证据与真实SQLite权限证据分开。不做Web/浏览器验收。
+ 6. 必要旧posts search、review read/submission/privacy、C2A知识视图回归；D统一唯一串行窗口，首次失败保留。新fresh前不得预填命令或成功数量。
+ 
+-## 最小接点事实与待根定稿问题
++## 最小接点事实与根定稿分类
+ 
+ 现canonical字段支持全部上述白名单。现privacy/intrinsic helpers、同readSnapshot和metadata IDs SQL可支撑既定路线，但空间级bounded revealed候选port、独立cursor与DTO目前不存在。
+ 
+--- docs/reviews/2026-10-09-m6-4-c2a/planning/c2b-before-final-narrow/m6-4-c2b-owner-candidates.json
++++ docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-owner-candidates.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "root_selected_user_scope_revised_backend_only_owner_candidates_pending_c2a_seal_new_fresh_dispatch",
++  "status": "root_approved_pending_c2a_seal_new_fresh_dispatch",
+   "task": "docs/reviews/2026-10-09-m6-4-c2a/planning/m6-4-c2b-task.md",
+   "A": {
+     "existing": [
+@@ -66,5 +66,21 @@
+     "limitations[]",
+     "independence_statement.statement"
+   ],
+-  "history": "Original Web-inclusive planning preserved under planning/c2b-before-user-scope; latest-user-scope.delta.diff records revision, no existing frontend files removed."
++  "history": "Original Web-inclusive planning preserved under planning/c2b-before-user-scope; latest-user-scope.delta.diff records revision, no existing frontend files removed. Final narrow revision before copies under planning/c2b-before-final-narrow; c2b-final-narrow.delta.diff preserves exact final revision.",
++  "final_narrow_rules": {
++    "field_order": [
++      "verdict",
++      "coverage",
++      "checks_performed",
++      "pending_requirements[]",
++      "limitations[]",
++      "independence_statement.statement"
++    ],
++    "arrays": "preserve original order; each value independently contains",
++    "query_normalization": "trim plus ASCII A-Z lowercase for review matching and hash only; original text snippet; no Unicode normalization",
++    "snippet": "first match of first matching field; <=320 Unicode codepoints including ellipses; prefer32 preceding; full <=256cp query match visible; clamp to field bounds",
++    "page_meta": "truncated:false,next_cursor; items >262144 bytes => QUERY_TOO_BROAD; continuation retains original exp",
++    "prevalidation": "new typed review client, CLI and tool use canonical query/source-filter guard before forwarding; old client.search type/behavior unchanged",
++    "id_order": "shared SQLite TEXT/BINARY-compatible ID DESC comparison in Node/client; canonical IDs are nonempty strings, not ASCII-constrained; no localeCompare"
++  }
+ }

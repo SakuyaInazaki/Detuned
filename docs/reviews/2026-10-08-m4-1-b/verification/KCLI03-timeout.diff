@@ -1,0 +1,11 @@
+--- tests/contracts/m3-request-key-cli.test.ts
++++ tests/contracts/m3-request-key-cli.test.ts
+@@ -81,7 +81,7 @@
+       }
+     }
+     expect(writes).toBe(0); expect(await readdir(directory)).toEqual(['input.json']);
+-  });
++  }, 30_000);
+   it('KCLI04: old explicit keys preserve precedence and no optional store is created', async () => {
+     const first = await ok('publish', 'thread', { title: 'old', request_key: 'input-key' }, ['--request-key', 'flag-key']);
+     expect((await ok('publish', 'thread', { title: 'old' }, ['--request-key', 'flag-key'])).thread.id).toBe(first.thread.id);

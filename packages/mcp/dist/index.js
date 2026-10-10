@@ -1,88 +1,34 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema, } from '@modelcontextprotocol/sdk/types.js';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { DetunedClient } from '@detuned/client';
-import { DETUNED_TOOLS } from '@detuned/protocol';
-function resolveToken() {
-    if (process.env.DETUNED_TOKEN) {
-        return process.env.DETUNED_TOKEN.trim();
-    }
-    if (process.env.DETUNED_TOKEN_FILE) {
-        try {
-            return fs.readFileSync(process.env.DETUNED_TOKEN_FILE, 'utf8').trim();
-        }
-        catch (err) {
-            process.stderr.write(`[MCP] Failed to read token file: ${err.message}\n`);
-        }
-    }
-    return undefined;
-}
-const baseUrl = process.env.DETUNED_BASE_URL ?? 'http://127.0.0.1:3000';
-const token = resolveToken();
-const client = new DetunedClient({
-    baseUrl,
-    token,
-    timeoutMs: 60000,
-});
-const server = new Server({
-    name: 'detuned',
-    version: '0.1.0',
-}, {
-    capabilities: {
-        tools: {},
-    },
-});
-// Clean stdout: No console.log allowed! All diagnostics go to stderr.
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-        tools: DETUNED_TOOLS.map((tool) => ({
-            name: tool.name,
-            description: tool.description,
-            inputSchema: tool.schema,
-        })),
-    };
-});
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
-    try {
-        const result = await client.callTool(name, args ?? {});
-        return {
-            content: [
-                {
-                    type: 'text',
-                    text: JSON.stringify(result, null, 2),
-                },
-            ],
-        };
-    }
-    catch (err) {
-        process.stderr.write(`[MCP Error in ${name}]: ${err.message}\n`);
-        return {
-            isError: true,
-            content: [
-                {
-                    type: 'text',
-                    text: JSON.stringify({
-                        error: {
-                            code: err.code ?? 'TOOL_EXECUTION_ERROR',
-                            message: err.message,
-                            details: err.details,
-                        },
-                    }, null, 2),
-                },
-            ],
-        };
-    }
-});
+import { resolveLocalToken } from '@detuned/client/node';
+import { resolveMcpInputMode } from './tool-validation.js';
+import { createMcpBridge } from './bridge.js';
+export { createMcpBridge, BridgeShutdownError } from './bridge.js';
 async function main() {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
-    process.stderr.write('Detuned MCP Stdio server connected\n');
+    const inputMode = resolveMcpInputMode(process.env.DETUNED_MCP_INPUT_MODE);
+    const token = resolveLocalToken({ environmentToken: process.env.DETUNED_TOKEN, environmentTokenFile: process.env.DETUNED_TOKEN_FILE });
+    const client = new DetunedClient({ baseUrl: process.env.DETUNED_BASE_URL ?? 'http://127.0.0.1:3000', token, timeoutMs: 60000 });
+    const bridge = createMcpBridge({ client, inputMode, sessionBinding: { client, clientName: 'detuned-mcp', clientVersion: '0.1.0' } });
+    const signal = () => { void bridge.close().catch(() => { }); };
+    process.on('SIGINT', signal);
+    process.on('SIGTERM', signal);
+    try {
+        await bridge.start();
+        await bridge.closed;
+        process.exitCode = 0;
+    }
+    catch {
+        process.stderr.write('Detuned MCP bridge failed to start or close safely.\n');
+        process.exit(1);
+    }
+    finally {
+        process.off('SIGINT', signal);
+        process.off('SIGTERM', signal);
+    }
 }
-main().catch((err) => {
-    process.stderr.write(`MCP server fatal error: ${err.message}\n`);
-    process.exit(1);
-});
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
+    void main().catch(() => { process.stderr.write('Detuned MCP bridge failed to start or close safely.\n'); process.exit(1); });
+}
 //# sourceMappingURL=index.js.map

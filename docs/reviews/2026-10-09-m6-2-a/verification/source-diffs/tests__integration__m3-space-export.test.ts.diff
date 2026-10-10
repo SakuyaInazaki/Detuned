@@ -1,0 +1,11 @@
+--- tests/integration/m3-space-export.test.ts (fresh exact before)
++++ tests/integration/m3-space-export.test.ts (current)
+@@ -34,7 +34,7 @@
+   it('delivers strict white records and an exact hash-chain completion while excluding internals', async () => {
+     const f = await fixture(); const wire = await lines(f.service.open(f.auth, f.sid)); const output = parsed(wire);
+     expect(output.every(validateSpaceExportLine)).toBe(true);
+-    expect(output[0]).toMatchObject({ type: 'header', source: { space_id: f.sid, schema_version: 3 }, formal_review_status: 'excluded' });
++    expect(output[0]).toMatchObject({ type: 'header', source: { space_id: f.sid, schema_version: 4 }, formal_review_status: 'excluded' });
+     const end = output.at(-1); expect(end.type).toBe('end');
+     let chain = Buffer.alloc(32); let bytes = 0;
+     for (const line of wire.slice(0, -1)) { chain = createHash('sha256').update(chain).update(line).digest(); bytes += Buffer.byteLength(line); }

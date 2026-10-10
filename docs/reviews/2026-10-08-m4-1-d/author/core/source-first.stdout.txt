@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m4-session-subscription-client.test.ts (2 tests | 2 failed) 12ms
+   × M4.1-D session and event client contracts > session is single attempt on transport, body and retryable HTTP errors while retaining the envelope and encoded path 8ms
+     → 不支持的 API 版本: undefined
+   × M4.1-D session and event client contracts > session timeout/abort does not retry and old poll still retries, with consumer delete preserving its typed envelope 3ms
+     → 不支持的 API 版本: undefined
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > atomically clears pending or acknowledged delivery history on explicit deactivation, preserving research and subscriptions
+consumer-lifecycle same-space observed {"before":{"consumers":2,"delivery_batches":2,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":0,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"statuses":[200,200],"codes":[null,null]}
+
+stdout | tests/integration/m4-consumer-lifecycle.test.ts > M4.1-D consumer lifecycle regressions > cannot deactivate another-space consumer through an allowed-space URL with the same actor restricted credential
+consumer-lifecycle cross-space observed {"before":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"after":{"consumers":1,"delivery_batches":0,"events":2,"subscriptions":1,"posts":0},"status":403,"code":"FORBIDDEN","consumerRemains":true}
+
+ ✓ tests/integration/m4-consumer-lifecycle.test.ts (4 tests) 217ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 4 passed (6)
+     Errors  1 error
+   Start at  19:25:38
+   Duration  927ms (transform 288ms, setup 0ms, collect 690ms, tests 228ms, environment 0ms, prepare 78ms)
+

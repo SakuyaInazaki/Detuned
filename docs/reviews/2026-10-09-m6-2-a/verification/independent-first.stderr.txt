@@ -1,0 +1,48 @@
+$ vitest run tests/integration/m6-review-submissions-independent.test.ts tests/integration/m6-schema4-maintenance-independent.test.ts --maxWorkers=1 --no-file-parallelism -t 'SD0[1-6]|MD0'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m6-schema4-maintenance-independent.test.ts > MD01 genuine original schema3 history upgrades only a new stage, backfills assignment IDs/count zero, and exactly replays original create/cancel bytes without count
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:41:118
+     39|  try{
+     40|   const insert=db.transaction(()=>{for(const [table,rows] of Object.en…
+     41|    expect(/^[a-z_]+$/.test(table)).toBe(true);const keys=Object.keys(r…
+       |                                                                                                                      ^
+     42|    db.prepare(`INSERT INTO ${table}(${keys.join(',')}) VALUES(${keys.m…
+     43|   }});insert();
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ source3 tests/integration/m6-schema4-maintenance-independent.test.ts:43:7
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:64:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m6-schema4-maintenance-independent.test.ts > MD02 schema4 physical backup and restore preserve sealed/revealed submissions, sessions, immutable versions and unused private blobs, with fresh identity isolation
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:41:118
+     39|  try{
+     40|   const insert=db.transaction(()=>{for(const [table,rows] of Object.en…
+     41|    expect(/^[a-z_]+$/.test(table)).toBe(true);const keys=Object.keys(r…
+       |                                                                                                                      ^
+     42|    db.prepare(`INSERT INTO ${table}(${keys.join(',')}) VALUES(${keys.m…
+     43|   }});insert();
+ ❯ sqliteTransaction node_modules/.pnpm/better-sqlite3@13.0.3/node_modules/better-sqlite3/lib/methods/transaction.js:65:24
+ ❯ source3 tests/integration/m6-schema4-maintenance-independent.test.ts:43:7
+ ❯ tests/integration/m6-schema4-maintenance-independent.test.ts:84:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

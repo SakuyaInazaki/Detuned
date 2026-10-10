@@ -1,0 +1,22 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/contracts/m6-review-http-independent.test.ts > H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store
+{"checkpoint":"H02-cookie-origin-rejection","status":403,"code":"FORBIDDEN","cache_control":"no-store"}
+
+ ❯ tests/contracts/m6-review-http-independent.test.ts (6 tests | 1 failed | 5 skipped) 207ms
+   ↓ H01 real HTTP/shared-client twelve entrances preserve independent sessions, sealed rows, reveal and immutable exact replay
+   × H02 real authorization, strict carriers and cookie CSRF reject mutations while private reads and failures stay no-store 206ms
+     → expected 'no-store' to be 'private, no-store' // Object.is equality
+   ↓ H03 revealed cancellation preserves only explicitly cited private evidence and redaction remains private to ordinary reads
+   ↓ H04 real stale/incomplete/version/check-required failures and revoked authority preserve historical response boundaries
+   ↓ H05 actual multipart stream races revalidate current membership/material, abort cleanly and drain without committing
+   ↓ H06 controlled bad HTTP responses cannot substitute ID/parent/date/unknown fields or exceed bounded JSON; abort stays explicit
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  17:32:53
+   Duration  1.07s (transform 381ms, setup 0ms, collect 694ms, tests 207ms, environment 0ms, prepare 43ms)
+
+[ELIFECYCLE] Test failed. See above for more details.

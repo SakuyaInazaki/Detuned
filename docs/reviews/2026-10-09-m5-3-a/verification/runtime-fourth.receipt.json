@@ -1,0 +1,198 @@
+{
+  "scope": "Independent final Linux runtime image/container restart/HTTPS/offline restore, no browser/capacity certification",
+  "image_id": "sha256:2190f6a9739816322aee3164691acc2ec53d70da7dd7f7801ce2892fa43fcbc2",
+  "source_binding": {
+    "A_manifest_sha256": "346ad78562cc44fb7e0e008a0dd8af9927cba82e2f6846859a277495bd338bc6",
+    "B_manifest_sha256": "4b93dbdf350c867ee7de18aae1146739fdc9f8471db15394c17716315fe86004",
+    "build_third_inputs_sha256": "483c768add72b1904feb4cf2361c6669ab75cf5923c01217ff53f4df367a021f",
+    "health_helper_sha256": "603d2501b18af3325692e8b60324e3b2bb1f4432f6644b1470b1e9b96040a8d7",
+    "runtime_worker_sha256": "0718760d31d89a7235661e6895e54cba91489808957ba525abe763dd7cfddc19",
+    "runtime_orchestrator_sha256": "c71cd8d9e8df48a1914354ce46cf665dc5c16ae59463730668a27fceb54fcd48"
+  },
+  "stages": [
+    "owned-volumes-certificate-material",
+    "explicit-init-final-runtime",
+    "actual-docker-stop-start-persistence",
+    "compose-default-authority-actual-health",
+    "offline-backup-new-volume-restore"
+  ],
+  "resource_ledger": [
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-ae77c35075-source",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-ae77c35075-backup",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-ae77c35075-restored",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "volume",
+      "name": "detuned-m53-d-ae77c35075-tls",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-fixture-material",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-init",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-runtime",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-authority-runtime",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-disabled-fixture",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-backup",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-restore",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    },
+    {
+      "kind": "container",
+      "name": "detuned-m53-d-ae77c35075-restored-runtime",
+      "created": true,
+      "removed": true,
+      "cleanup_exit": 0
+    }
+  ],
+  "status": "passed",
+  "runtime_seed": {
+    "ordinary_identities": 1,
+    "concurrency": 1,
+    "unique_write_requests": 1,
+    "replay_intent_requests": 1,
+    "unique_side_effects": 2,
+    "independent_pending_batches": 1,
+    "implicit_ack": false,
+    "elapsed_ms": 4.835541000000006,
+    "sample_count": 2,
+    "p95_method": "nearest-rank ceil(.95*n)-1",
+    "p95_ms": 2.641707999999994,
+    "max_ms": 2.641707999999994,
+    "downloaded_SHA_and_bytes_match": true
+  },
+  "transport": {
+    "reused_prior_success": "runtime-third.receipt.json",
+    "not_rerun": true
+  },
+  "container_restart": {
+    "same_container_id": true,
+    "old_started_at": "2026-10-09T03:51:54.505545447Z",
+    "new_started_at": "2026-10-09T03:51:55.280280114Z",
+    "natural_stop_exit": 0,
+    "stop_ms": 73,
+    "direct_exec_nonroot": true,
+    "read_only_TLS_volume": true,
+    "no_host_mounts": true
+  },
+  "persisted": {
+    "pending_preserved": true,
+    "original_and_new_cursor_verify_current_private_secret": true,
+    "same_cursor_binding": true,
+    "expiry_changed": false,
+    "same_key_replay_single_post": true,
+    "side_effect_counts_unchanged": true,
+    "artifact_SHA_bytes_persisted": true,
+    "implicit_ack": false
+  },
+  "default_compose_authority": {
+    "actual_origin": "https://localhost:8443",
+    "loopback_connect": "https://127.0.0.1:3000",
+    "strict_CA_health": 200,
+    "wrong_HTTP_Host": 403,
+    "wrong_CA_code": "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+    "wrong_hostname_code": "ERR_TLS_CERT_ALTNAME_INVALID",
+    "TLS_servername_distinct_from_HTTP_authority": true
+  },
+  "authority_statuses": [
+    {
+      "checkpoint": "compose-origin-strict-health",
+      "expected": 200,
+      "observed": 200
+    },
+    {
+      "checkpoint": "compose-origin-wrong-HTTP-Host",
+      "expected": 403,
+      "observed": 403
+    }
+  ],
+  "disabled_history_seed": {
+    "owned_offline_historical_disabled_actor_seed": true,
+    "no_schema_change": true
+  },
+  "restored": {
+    "old_token_status": 401,
+    "same_actor_scoped_credential": true,
+    "old_cursor_status": 409,
+    "original_pending_new_signature": true,
+    "no_business_recreation": true,
+    "artifact_SHA_bytes_restored": true,
+    "only_explicit_ack": true,
+    "disabled_history_actor_not_activated": true
+  },
+  "restore_statuses": [
+    {
+      "checkpoint": "restored-old-credential",
+      "expected": 401,
+      "observed": 401
+    },
+    {
+      "checkpoint": "restored-old-signed-ACK",
+      "expected": 409,
+      "observed": 409
+    }
+  ],
+  "cleanup": {
+    "registered_resources": 12,
+    "all_registered_removed": true,
+    "certificate_temp_absent": true,
+    "owned_VM_retained": true
+  }
+}

@@ -1,0 +1,80 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S01: large mandatory rules return an explicit fixed reference instead of having no bounded context path
+S01 observed {"error":{"message":"目标、规则与检查点超过上下文预算，请增大 max_bytes。","isDetunedError":true,"isTransportError":false,"code":"QUERY_TOO_BROAD","statusCode":422,"retryable":false,"name":"DetunedError"}}
+
+stdout | tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S02: normal context includes its actual content revision reference, distinct from policy_revision
+S02 observed {"policy_revision":1,"rules":["first rule"]}
+
+ ❯ tests/integration/m2-space-revision-read.test.ts (2 tests | 2 failed) 17ms
+   × M2.4-B.1 fixed space revision references and rules continuation > S01: large mandatory rules return an explicit fixed reference instead of having no bounded context path 13ms
+     → expected DetunedError: 目标、规则与检查点超过上下文预算，请增大 max_by… { …(6) } to be undefined
+   × M2.4-B.1 fixed space revision references and rules continuation > S02: normal context includes its actual content revision reference, distinct from policy_revision 3ms
+     → expected { …(10) } to match object { space_revision_ref: { …(2) }, …(2) }
+(9 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S01: large mandatory rules return an explicit fixed reference instead of having no bounded context path
+AssertionError: expected DetunedError: 目标、规则与检查点超过上下文预算，请增大 max_by… { …(6) } to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+DetunedError {
+  "message": "目标、规则与检查点超过上下文预算，请增大 max_bytes。",
+  "isDetunedError": true,
+  "isTransportError": false,
+  "code": "QUERY_TOO_BROAD",
+  "statusCode": 422,
+  "retryable": false,
+  "details": undefined,
+  "name": "DetunedError",
+}
+
+ ❯ tests/integration/m2-space-revision-read.test.ts:21:19
+     19|     try{page=context.getContext(auth,sid,{max_bytes:4096},{request_id:…
+     20|     console.log('S01 observed',JSON.stringify({page,error:error instan…
+     21|     expect(error).toBeUndefined();
+       |                   ^
+     22|     expect(page).toMatchObject({data:{space_revision_ref:{space_id:sid…
+     23|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-space-revision-read.test.ts > M2.4-B.1 fixed space revision references and rules continuation > S02: normal context includes its actual content revision reference, distinct from policy_revision
+AssertionError: expected { …(10) } to match object { space_revision_ref: { …(2) }, …(2) }
+(9 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "rules": [
+      "first rule",
+    ],
+-   "space_content_status": "included",
+-   "space_revision_ref": {
+-     "revision": 1,
+-     "space_id": "spc_5ae02585-307f-490e-a2c0-701e38c11024",
+-   },
+  }
+
+ ❯ tests/integration/m2-space-revision-read.test.ts:28:23
+     26|     const page=context.getContext(auth,sid,{}, {request_id:'ref-before…
+     27|     console.log('S02 observed',JSON.stringify({ref:(page.data as unkno…
+     28|     expect(page.data).toMatchObject({space_revision_ref:{space_id:sid,…
+       |                       ^
+     29|   });
+     30| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  20:17:24
+   Duration  473ms (transform 156ms, setup 0ms, collect 245ms, tests 17ms, environment 0ms, prepare 37ms)
+

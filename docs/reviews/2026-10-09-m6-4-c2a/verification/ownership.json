@@ -1,0 +1,62 @@
+{
+  "status": "root_approved_pending_c1_seal_new_fresh_and_dispatch",
+  "protected": [
+    "SQL/schema/migrations",
+    "dependency manifests/lock",
+    "public submission search/FTS",
+    "M7 checks/receipts",
+    "sealed old reviews",
+    "packages/web/src/review-panel.tsx",
+    "MCP/Pi/CLI/new host activation"
+  ],
+  "A": {
+    "existing": [
+      "packages/core/src/services/search-service.ts",
+      "packages/core/src/services/knowledge-projection.ts",
+      "packages/core/src/index.ts",
+      "modules/review/src/status-service.ts",
+      "packages/protocol/src/search.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/client/src/client.ts",
+      "packages/protocol/src/index.ts",
+      "packages/server/src/routes/search.ts"
+    ],
+    "new": [
+      "packages/core/src/services/review-status-facts.ts",
+      "tests/integration/m6-knowledge-status.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts"
+    ]
+  },
+  "B": {
+    "existing": [
+      "packages/web/src/app.tsx",
+      "packages/web/src/knowledge.tsx",
+      "packages/web/src/styles.css"
+    ],
+    "new": [
+      "tests/contracts/m6-knowledge-web-input.test.ts"
+    ]
+  },
+  "D": {
+    "new": [
+      "tests/integration/m6-knowledge-status-independent.test.ts",
+      "scripts/integrations/web/m6-knowledge.spec.ts"
+    ],
+    "browser": "real HTTP/SQLite claim-target journey; no fake formal status",
+    "execution": "sole serial check window",
+    "existing": [
+      "scripts/integrations/web/fixtures.ts",
+      "scripts/integrations/web/playwright.config.ts",
+      "tests/integration/m2-knowledge-views.test.ts"
+    ]
+  },
+  "current_planning_boundary": "All C1 source stays frozen now; after new fresh only dispatched C2A owner paths may change.",
+  "source_ownership_path": "docs/reviews/2026-10-09-m6-4-c1/planning/m6-4-c2a-owner-candidates.json",
+  "source_ownership_sha256": "5c165eddb4d3890a3a17ab5302dfd43f11c8d7f76a0f70338c5db9091eaeed46",
+  "root_supplement": {
+    "D_existing": "tests/integration/m2-knowledge-views.test.ts",
+    "scope": "Only V01 default enabled/no round: formal flags not_enabled -> not_requested and formal_review:null. Preserve claim count/author_report/fixed relation provenance/all other assertions. Apply only after formal dispatch.",
+    "source_planning_unchanged": true
+  }
+}

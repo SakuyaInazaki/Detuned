@@ -1,0 +1,240 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+stdout | tests/integration/m3-export-independent.test.ts > B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink
+B1 bounded material samples {"rows":640,"bodyBytes":41943040,"wireBytes":42399852,"receiverMaxHeap":31621928,"receiverSamples":45,"serverMaxHeap":43555128,"serverSamples":3,"serverHeapBefore":34166552}
+
+ ✓ tests/integration/m3-request-key-recovery.test.ts (6 tests) 7637ms
+   ✓ M3.2 actual committed response loss recovers one write in a new client process, changed body conflicts, separate IDs allow separate writes  1529ms
+   ✓ M3.2 independent processes converge atomically on one key and isolate all scope fields and logical IDs without persisted secrets  1220ms
+   ✓ M3.2 corrupt store, non-directory storage, and pre-send cancellation refuse business POST and preserve existing material  775ms
+   ✓ M3.2 authenticated actor token rotation recovers the same operation and current revocation prevents replay  1141ms
+   ✓ M3.2 built CLI publish and relate restore across processes, retain explicit keys, and reject conflicting options before POST  2578ms
+   ✓ M3.2 controlled preparation barriers stop token changes during getMe/store and promptly cancel pending store without POST  392ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 8073ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  827ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  2157ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  528ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  983ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  1006ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  2549ms
+ ✓ tests/integration/m3-backup-recovery.test.ts (11 tests) 7855ms
+   ✓ M3.3-A offline physical maintenance > backs up exact registered material and restores with isolated recovery credentials  649ms
+   ✓ M3.3-A offline physical maintenance > rejects manifest shape, traversal, duplicates, wrong versions and hidden inventory without changing backup  3685ms
+   ✓ M3.3-A offline physical maintenance > rejects links, extra paths and checksum tampering  360ms
+   ✓ M3.3-A offline physical maintenance > preserves incomplete reservations and rejects runtime entry at publication faults  711ms
+   ✓ M3.3-A offline physical maintenance > rejects non-current, corrupt and foreign-key-invalid source databases without publishing  1274ms
+   ✓ M3.3-A offline physical maintenance > reports complete but uncertain delivery when post-unlink sync and startup-gate rebuilding both fail  454ms
+ ✓ tests/integration/m3-export-independent.test.ts (4 tests) 8172ms
+   ✓ B1 independent real HTTP/client/CLI exports fixed history and public tombstones without private or system records  1671ms
+   ✓ B1 independent snapshot barrier permits concurrent writer but excludes its revision; live revoke and redaction terminate without end  1626ms
+   ✓ B1 independent raw HTTP framing rejects malformed header, UTF8, sequence, hashes, counts, truncation and trailing bytes; CLI never publishes partial  948ms
+   ✓ B1 independent finite large export streams small rows, samples real process heaps, and settles cancellation/timeout during hanging sink  3926ms
+ ✓ tests/integration/m3-backup-recovery-independent.test.ts (4 tests) 10381ms
+   ✓ M3.3-A independent real process backup/restore preserves business and artifacts, invalidates old credentials and cursors independently, resumes pending batch  3992ms
+   ✓ M3.3-A independent damaged manifests, FK-invalid database, symlink bytes and preexisting destination are refused without changing backup  1600ms
+   ✓ M3.3-A independent management faults preserve source/backup and refuse initialization or serving incomplete published targets  2831ms
+   ✓ M3.3-A independent physical nonready artifact policy retains bytes or tombstones and never repairs missing or corrupt ready bytes  1957ms
+ ❯ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests | 1 failed) 10483ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  441ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B02: Thread, post, and relation replays preserve original version/state across object changes and database reopen 136ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B03: Upgraded resolve references preserve the original operation version after subsequent reopen 83ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B03 (Symmetric Reopen): Reopen database and replay legacy $ref for both resolve and reopen preserving historical results 253ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B04: Unknown idempotency reference kind or future version rejected with 422 RESYNC_REQUIRED 91ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B05: Historical full-JSON idempotency records and direct entities are migrated cleanly to versioned refs 54ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B06: Migration failure rolls back entire transaction leaving database unchanged 46ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B07: Revoking all credentials preserves initialization and does not create new admin credentials 55ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B08: Atomic initialization retries cleanly; legacy db upgrade never issues new tokens 107ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B09: openAndCoordinateDatabase rejects future schema versions and unknown databases before DDL mutation 60ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B10: getInstanceSecret throws when secret is missing, preventing ephemeral random secret fallback 80ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B11: Modified payload with same key returns 409 IDEMPOTENCY_CONFLICT, while concurrent identical requests succeed 60ms
+   × M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B12: Redaction audit covers multi-page revisions and rolls back atomically on failure 88ms
+     → expected 18 to be 25 // Object.is equality
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H01: Upgrading old relation.create references preserves initial state or refuses upgrade 148ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H02: Replayed thread retains original updated_at and nested relations retain original version/state 96ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H03: Current v2 database with lost metadata is classified as corrupt and rejected 73ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H04: Missing post_revisions or version 2 without version 1 fails before mutation 189ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H05: Future v:99 ref and post result in thread operation abort upgrade 163ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H06: validateResultRef rejects unregistered operations, invalid optional fields and cached body 50ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H07: Replay rejects mismatched target and missing relations with 422 76ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H08: Conflicting history for the same immutable key rejects migration 77ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > H09: Migration diagnostics never print raw body marker 274ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J01: Migration of relation.create lacking version/state safely refuses unprovable replay 71ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J02: Current instance material loss is refused consistently across bootstrap, init and serve without mutating secrets 296ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J03: Current schema with missing required column is classified as corrupt and rejected 57ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J04: Migration preserves historical timestamps and detects state conflicts 69ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J05: Reconstruction validates space ownership and resolution-to-relation binding 59ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R6 Boundary Regressions (H01 - H09) > J06: Strict validation on nested relations, unreplayable op/reason and encoder 42ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-1: POST /spaces initial 201, immediate same-key retry 201 with identical business data and zero extra writes 61ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-2: Reopening file database and running openAndCoordinateDatabase serve allows space.create same-key replay with 201 68ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-3: Transaction committed on disk but response not delivered: onSend 500 fault, 2nd connection check, and 201 replay across restarts 192ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-4: space.patch normal same-key retry succeeds, wrong space binding rejected with 422, modified payload rejected with 409 57ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L01-5: Space isolation (N05) - space.patch cross-space rejected with 422 and migration rejected 54ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-1: Unreplayable marker generated for unrecoverable thread.patch survives repeated restarts without self-locking 67ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-2: Replaying valid unreplayable thread marker returns controlled 422 RESYNC_REQUIRED without extra writes 91ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3a: Pure validator checks: invalid op, target mismatch, unregistered reason, and cached body rejected 42ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3b: Migrated relation.create unreplayable marker remains valid across three starts and replays with 422 133ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3c: Invalid marker migration refuses atomically without modifying database 76ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-3d: Full target markers and legacy family markers survive repeated starts and replay safely (N02) 80ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L02-4: Recoverable full legacy thread and normal thread retry replay accurately across restarts (positive control) 78ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L04: Old nested relation results with unprovable version are converted to unreplayable and refused with 422 RESYNC_REQUIRED 92ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L05: Historical conflicts include operation timestamps, not only title and state, causing atomic rollback 59ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L06: Same-space initial-post and resolution/version mismatches are rejected by migration and replay 154ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R8 Boundary Regressions (L01, L02, L08) > L07: Encoder, partial legacy conversion and paired fields have no validation bypass 51ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P01: Nested refs must bind to the result source and to a provable historical version 165ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P02: Every migration early return validates the original operation, shape and known entity bindings 177ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P03: Supported legacy online replay must pass the same checks/projection as migration 206ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P04: Missing historical timestamps must never be synthesized from migration wall time 102ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > P05: Validating a manufactured valid ref must not hide malformed new business results 44ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > Q01: Damaged typed refs are rejected before converting to markers and database remains unchanged after reopen 123ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > Q02: Legacy normalizers reject malformed supplied values before defaulting or coercing them 137ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > Q03: Missing historical patch updated_at is rejected atomically and cannot borrow thread created_at 92ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > Q04: Invalid action output is rejected before persistence, with business, events, and results rolled back 41ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R10 boundary regressions (P01 - P06) > Q05: Positive controls confirm valid fresh actions, replay idempotency, and relation reuse v2 succeed 48ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V01: Typed ID-only references cannot hide missing post revision or nonexistent nested relations without precheck failure 188ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V02: Legacy normalizer rejects malformed arrays and wrong thread bindings with 422 before generating markers 165ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V03: Explicit null relations output triggers validation error and rolls back business, events, and results 41ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V04: Explicit v1 updated_at conflicting with the historical snapshot is refused atomically 39ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > V05: Positive controls confirm legal old inputs, complete history and empty relation arrays replay correctly 80ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > W01: Legacy initial_post malformed envelopes, explicit invalid revisions and orphan pairs must not disappear or default to v1 225ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > W02: Explicit null legacy fields fail before alias/default selection and never degrade to unreplayable 240ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R12 review regression (V01-V05) > W03: Full initial response, omission, and ID-only handling preserve exact shapes without injected relations 193ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X01: Explicit invalid/conflicting aliases reject in HTTP and migration without writes  412ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X02: Legal empty/full relation arrays and equivalent aliases preserve complete output across restart 263ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > X03: Known future version contradictions reject before legal missing-state fallback; valid partial history remains controlled  333ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-1 / L03: Missing idempotency primary key rejects before mutation in init and serve, leaving database unchanged 36ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-2: Missing table or damaged required column rejects before mutation and preserves database 45ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-3: Damaged foreign key or missing unique constraint rejects with paired controls 60ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-4: Explicit index with wrong column order or uniqueness definition rejects with paired controls 55ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-5: Migration table missing columns, non-continuous version rows, or negative versions reject before mutation 70ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-6: Partial Detuned tables without migrations rejected as corrupt, not blank 52ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-7: CLI serve rejects corrupt database before listening on socket and releases directory lock  344ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B2 Database Structural Precheck Matrix (L03 & Full Inspection) > B2-8: Complete unpopulated Detuned schema, truly blank DB, supported legacy v1, and healthy v2 start according to contract 78ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y01: Semantic structure changes (partial unique index, partial named index, foreign key action, ordinary table replacing FTS) reject as corrupt 72ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y02: Existing initialization materials without migrations or actors reject as corrupt in all modes and CLI 255ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y03: Complete v2 database with missing version 2 migration row rejects as corrupt before repair 25ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R / Y01-Y04 Database Structure & Migration Parity Regression > Y04: True blank, supported raw schemas, real historical fixture and current instance retain healthy startup 110ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z01: Expression key in unique index, PK NOCASE collation, and named index sort/collation changes reject as corrupt 59ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z02: FTS body column marked UNINDEXED rejects as corrupt 69ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z03: Equivalent full unique index on credentials(token_hash COLLATE BINARY ASC) accepted as healthy 65ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  1014ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > AA01: Unsupported FTS configuration options (detail=none, content=...) are rejected as corrupt 108ms
+ ✓ tests/integration/m3-upgrade-independent.test.ts (4 tests) 11277ms
+   ✓ M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip  3438ms
+   ✓ M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime  1749ms
+   ✓ M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes  2728ms
+   ✓ M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets  3362ms
+ ✓ tests/integration/m3-event-core.test.ts (11 tests) 2483ms
+   ✓ M3.1 event core correctness > E03 repeat ack still checks persisted through_seq before idempotent success  380ms
+   ✓ M3.1 event core correctness > E04 strict binding and exact legacy shape reject mixed/extra/wrong scope without writes  1740ms
+ ✓ tests/integration/m3-event-recovery.test.ts (2 tests) 2974ms
+   ✓ T08 real server/client restart preserves the pending batch; committed ACK lost at proxy retries exactly and signed altered repeat is rejected  2255ms
+   ✓ T08 legal stored visibility and 500/100 scan boundaries reconnect without omissions, reproject private pending IDs, and explicitly acknowledge empty scans  719ms
+ ✓ tests/integration/m3-import-independent.test.ts (4 tests) 11456ms
+   ✓ B2 independent real source export and CLI import preserve history while disabling source identities and converting artifacts to missing  1874ms
+   ✓ B2 independent semantic corruption with a recomputed valid chain is rejected without changing source or publishing a target  3865ms
+   ✓ B2 independent projected provenance, filtered resolution history and untrusted content URL never regain source authority or fetch bytes  1987ms
+   ✓ B2 independent cancellation and publication faults leave no normal partial instance; post-unlink double failure reports complete but uncertain target  3729ms
+ ✓ tests/contracts/m3-request-key-cli.test.ts (5 tests) 12062ms
+   ✓ M3.2 CLI persistent request keys > KCLI01: new processes replay a thread, retain keys on success and permit identical intentional writes  2190ms
+   ✓ M3.2 CLI persistent request keys > KCLI02: all publish and relate branches use persistent keys with data-only compatible output  4774ms
+   ✓ M3.2 CLI persistent request keys > KCLI03: pairs, size and every explicit key conflict reject with exit 2 before business requests  3728ms
+   ✓ M3.2 CLI persistent request keys > KCLI04: old explicit keys preserve precedence and no optional store is created  1083ms
+ ✓ tests/contracts/m3-backup-cli.test.ts (5 tests) 4887ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI01: explicit offline, empty paths and Commander required/unknown options preserve bounded errors  1237ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI02: offline backup and fresh restore output one human recovery credential without network config  1316ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI03: active real serve holds the source lock and backup refuses  802ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI04: backup manifest marker refuses init/serve before opening or creating a database  915ms
+   ✓ M3.3-A local backup and recovery CLI > BKCLI05: a canonical parent reservation rejects both init and serve without creating the target  616ms
+ ✓ tests/contracts/m3-offline-upgrade-contract.test.ts (3 tests) 1996ms
+   ✓ UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator  1374ms
+   ✓ UP B03: built local migrate maps offline/options failures without network or tokenfile reads  615ms
+stdout | tests/integration/m3-logical-import.test.ts > rejects a FIFO with no writer in a watchdog-bounded child without publishing
+{"fifo_ready":true,"fifo_operation_done":true,"fifo_operation_ms":4.366833999999926,"fifo_watchdog_killed":false}
+
+ ✓ tests/integration/m2-artifacts-cli.test.ts (4 tests) 2229ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > cleans crash-window orphans after locked DB coordination, preserves referenced blobs and prints actual limits  444ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > never cleans when database coordination fails and releases its acquired lock  395ms
+   ✓ M2.1 CLI locked startup artifact lifecycle > rejects invalid configuration before initializing artifact directories or starting listen  1144ms
+ ✓ tests/integration/m3-logical-import.test.ts (12 tests) 2644ms
+   ✓ rejects a FIFO with no writer in a watchdog-bounded child without publishing  2028ms
+ ✓ tests/contracts/m3-logical-import-contract.test.ts (6 tests) 1920ms
+   ✓ M3.3-B.2 shared decoder and local import contract > IMP B06: built local CLI imports complete source without tokenfile/network, preserves input and rejects invalid/existing/symlink  1872ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 1722ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  827ms
+ ✓ tests/integration/m3-offline-upgrade.test.ts (6 tests) 1166ms
+   ✓ copies real schema1 history with preserved source DB/WAL and permits sparse migrated thread history through export/import  330ms
+   ✓ rejects missing-current and future thread versions even in otherwise complete valid export streams  317ms
+ ✓ tests/contracts/m3-events-contract.test.ts (7 tests) 1034ms
+   ✓ M3.1 event HTTP and adapter cancellation contracts > E07: real MCP stdio cancellation propagates through SDK extra.signal to the HTTP fetch  402ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (26 tests) 6641ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3736ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1115ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C03: Pi Adapter Headless Output & Compatibility > C03-5: Pi write tools union schemas preserve validation constraints and accept all 7 valid write operations (AE04)  385ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1113ms
+ ✓ tests/contracts/m2-knowledge-view-contracts.test.ts (4 tests) 1047ms
+   ✓ M2.2-B real HTTP payload/schema agreement > B04: actual three view arrays and context satisfy TypeBox/AJV/OpenAPI without a serializer  632ms
+ ✓ tests/integration/m2-context-session-chain.test.ts (1 test) 1075ms
+   ✓ C2 new HTTP-only process discovers bounded rules, failure conditions and fixed sources, then checkpoint consumption sees a later source revision  1074ms
+ ✓ tests/integration/m2-artifacts-http.test.ts (8 tests) 1105ms
+ ❯ tests/contracts/m2-thread-posts-read-contracts.test.ts (8 tests | 2 failed) 799ms
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D01: raw 4K/64K/default envelopes reconstruct exactly the sorted metadata directory 203ms
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D02: limit continuation differs from budget truncation and old bare cursor still works 77ms
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D03: strict transport rejects ignored parameters and exact full envelope boundary returns 422 74ms
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D04: whole schemas enforce all three metadata branches and strict cursor purpose 71ms
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D05: client and tool dispatch retain full page, query and signal; old thread stays data-only 70ms
+   × M2.4-B.2.2 bounded thread metadata transport > D07: directory current head leads to fixed stored content without aggregating or drifting 122ms
+     → expected 429 to be 201 // Object.is equality
+   × M2.4-B.2.2 bounded thread metadata transport > D08: string cursor business validation follows current access and thread ownership with fixed errors 106ms
+     → expected 429 to be 201 // Object.is equality
+   ✓ M2.4-B.2.2 bounded thread metadata transport > D06: OpenAPI merges new GET with unchanged POST and restores exact cursor policy 76ms
+ ✓ tests/contracts/m2-search-contracts.test.ts (5 tests) 1115ms
+   ✓ M2.3 actual search transport and tool pagination > S04: installed Pi validator + registered executor and MCP stdio retain search meta  664ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 669ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 804ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  573ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 444ms
+ ✓ tests/integration/m3-write-limits-independent.test.ts (4 tests) 5585ms
+   ✓ M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps  1056ms
+   ✓ M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent  910ms
+   ✓ M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records  912ms
+   ✓ M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget  2705ms
+ ✓ tests/contracts/m2-context-contracts.test.ts (4 tests) 624ms
+ ✓ tests/contracts/m2-post-revision-read-contracts.test.ts (7 tests) 665ms
+ ✓ tests/integration/historical-http-replay.test.ts (7 tests) 545ms
+ ✓ tests/contracts/m3-space-export-contract.test.ts (6 tests) 747ms
+   ✓ M3.3-B.1 strict NDJSON export transport > EXB06: real file-backed HTTP and built CLI export complete private file; invalid query and existing targets reject  689ms
+ ✓ tests/contracts/m2-focused-context-contracts.test.ts (6 tests) 502ms
+ ✓ tests/contracts/m3-write-limits-contract.test.ts (5 tests) 960ms
+   ✓ WR B05: built serve rejects bad write flags before creating a directory and never echoes pasted sensitive input  711ms
+ ✓ tests/integration/m2-post-revision-read.test.ts (10 tests) 187ms
+ ✓ tests/integration/m3-request-key-store.test.ts (8 tests) 332ms
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 239ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 308ms
+ ✓ tests/integration/m2-artifacts-filesystem.test.ts (6 tests) 397ms
+ ✓ tests/integration/m3-space-export.test.ts (11 tests) 429ms
+ ✓ tests/contracts/m2-space-read-contracts.test.ts (5 tests) 435ms
+ ✓ tests/contracts/m2-typed-write-contracts.test.ts (5 tests) 146ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 145ms
+ ✓ tests/integration/m2-thread-posts-read.test.ts (10 tests) 353ms
+stdout | tests/integration/m2-context.test.ts > M2.4-A context snapshot and full response budget > C01: a controlled second-connection commit cannot move checkpoint past unread rules
+C01 observed {"old_seq":1,"current_seq":2,"rules":["old rule"],"checkpoint_seq":1,"delivered":[{"seq":2,"type":"space.revised"}]}
+
+ ✓ tests/integration/m2-typed-writes.test.ts (12 tests) 114ms
+ ✓ tests/integration/m2-space-revision-read.test.ts (8 tests) 79ms
+ ✓ tests/integration/m2-context-focus.test.ts (9 tests) 125ms
+ ✓ tests/integration/m2-context.test.ts (7 tests) 126ms
+ ✓ tests/integration/m2-artifacts-core.test.ts (9 tests) 75ms
+ ✓ tests/integration/m2-knowledge-views.test.ts (7 tests) 79ms
+ ✓ tests/integration/m2-search.test.ts (9 tests) 52ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 10ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 6ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 4ms
+ ✓ tests/integration/m3-write-rate-limit.test.ts (9 tests) 30ms
+
+ Test Files  2 failed | 55 passed (57)
+      Tests  3 failed | 464 passed (467)
+   Start at  07:16:16
+   Duration  18.47s (transform 1.29s, setup 0ms, collect 13.45s, tests 138.57s, environment 6ms, prepare 2.51s)
+
+[ELIFECYCLE] Test failed. See above for more details.

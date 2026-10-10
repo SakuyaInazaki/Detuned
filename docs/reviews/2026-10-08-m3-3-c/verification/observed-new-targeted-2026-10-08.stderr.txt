@@ -1,0 +1,72 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m3-offline-upgrade-contract.test.ts > UP B02: built migrate preserves old source, real legacy thread patch and returns fresh one-time administrator
+AssertionError: expected [ { version: 1 }, { version: 2 } ] to deeply equal [ { version: 2 } ]
+
+- Expected
++ Received
+
+  [
+    {
++     "version": 1,
++   },
++   {
+      "version": 2,
+    },
+  ]
+
+ ❯ tests/contracts/m3-offline-upgrade-contract.test.ts:15:290
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent real legacy HTTP history survives copy upgrade, fresh identity/cursor generation and sparse-thread logical roundtrip
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:23:128
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent rollback uses preserved schema1 source and original external secret under exact legacy runtime
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:32:116
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent source validation, active cooperative lock, symlink and nooverwrite failures preserve source bytes
+SqliteError: UNIQUE constraint failed: memberships.space_id, memberships.actor_id
+ ❯ tests/integration/m3-upgrade-independent.test.ts:37:1017
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/integration/m3-upgrade-independent.test.ts > M3C independent bounded cancellation and upgrade/publication faults never mutate old source or enable ordinary partial targets
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tests/integration/m3-upgrade-independent.test.ts:43:741
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

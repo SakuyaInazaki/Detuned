@@ -1,0 +1,40 @@
+import { it,expect } from 'vitest';
+import { Context } from '@deepseek-ai/cordis';
+import SystemPrompt from '@deepseek-ai/dsh-system-prompt';
+import ToolRuntime from '@deepseek-ai/dsh-tools';
+import { createScope } from '@deepseek-ai/dsh-scope';
+import { ToolCallId } from '@deepseek-ai/dsh-llm';
+import * as MCP from '@deepseek-ai/dsh-mcp-client';
+import { createRequire } from 'node:module';
+import { mkdtempSync,writeFileSync,readFileSync,rmSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
+const repo=process.env.DETUNED_EXPERIMENT_REPO!;const source=process.env.DETUNED_EXPERIMENT_SOURCE!;
+const require=createRequire(repo+'/package.json');const Database=require('better-sqlite3');
+const {bootstrapDatabase,SqliteStorage}=await import(pathToFileURL(repo+'/packages/storage-sqlite/dist/index.js').href);
+const {buildApp}=await import(pathToFileURL(repo+'/packages/server/dist/index.js').href);
+const {DetunedClient}=await import(pathToFileURL(repo+'/packages/client/dist/index.js').href);
+async function fixture(){const dir=mkdtempSync('/private/tmp/detuned-m43-chain.');const db=new Database(dir+'/detuned.sqlite');const token=bootstrapDatabase(db).adminToken;const app=buildApp({storage:new SqliteStorage(db),writeRateLimits:{per_minute:60000,burst:10000}});let requests=0,acks=0;app.addHook('onRequest',async(req:any)=>{requests++;if(req.routeOptions.url?.endsWith('/ack'))acks++});await app.listen({host:'127.0.0.1',port:0});const url='http://127.0.0.1:'+app.server.address().port;const admin=new DetunedClient({baseUrl:url,token});const space=(await admin.createSpace({slug:'official-chain',objective:'private',rules:[]},'space')).data.space.id;const thread=(await admin.createThread(space,{title:'private'},'thread')).data.thread.id;return{dir,db,app,url,admin,space,thread,requests:()=>requests,acks:()=>acks,async close(){await app.close();db.close();rmSync(dir,{recursive:true,force:true})}}}
+async function mount(f:any,label:string,existing:any=null){const actor=existing?.actor??await f.admin.createActor({kind:'agent',display_name:label});if(!existing)await f.admin.createMembership(f.space,{actor_id:actor.id,role:'contributor'});const credential=existing?.credential??await f.admin.createCredential({actor_id:actor.id,allowed_space_ids:[f.space],capabilities:['read','write']});const tokenFile=f.dir+'/'+label+'.token';writeFileSync(tokenFile,credential.token,{mode:0o600});const pidLog=f.dir+'/'+label+'.pids';writeFileSync(pidLog,'',{mode:0o600});const ctx=new Context();await ctx.plugin(SystemPrompt,{});await ctx.plugin(ToolRuntime);const key:any={id:label};let scope:any;await ctx.plugin(Object.assign((inner:Context)=>{scope=createScope(inner,key)},{inject:['tools','systemPrompt']}));const before=f.requests();await scope.ctx.plugin(MCP,{transport:'stdio',serverName:'detuned',command:process.execPath,args:[repo+'/packages/mcp/dist/index.js'],env:{DETUNED_BASE_URL:f.url,DETUNED_TOKEN_FILE:tokenFile,NODE_OPTIONS:'--require='+source+'/.detuned-m43/pid-preload.cjs',DETUNED_EXPERIMENT_PID_LOG:pidLog},cwd:f.dir,toolCallTimeoutMs:30000,failOnStartupError:true,reconnect:{enabled:false}});let n=0;return{ctx,scope,key,actor,credential,before,names:()=>ctx.tools.schemas(key).map((t:any)=>t.name).sort(),run:(name:string,args:any,signal=new AbortController().signal)=>ctx.tools.execute({name:'mcp__detuned__'+name,arguments:args,agent:key,signal,callId:ToolCallId(label+String(++n))}),async close(){await scope.dispose();expect(ctx.tools.schemas(key)).toHaveLength(0);await ctx.fiber.dispose();const entries=readFileSync(pidLog,'utf8').trim().split('\n').filter(Boolean).map(s=>JSON.parse(s));const pids=entries.filter(x=>x.event==='start').map(x=>x.pid);expect(pids.length).toBeGreaterThan(0);for(const pid of pids){expect(entries.some(x=>x.event==='exit'&&x.pid===pid)).toBe(true);expect(()=>process.kill(pid,0)).toThrow();}record({scope:label,owned_pids:pids,all_exited:true});}}}
+
+const {DETUNED_TOOLS}=await import(pathToFileURL(repo+'/packages/protocol/dist/index.js').href);
+const records:any[]=[];function record(v:any){records.push(v);writeFileSync(repo+'/docs/reviews/2026-10-08-m4-3-a/verification/independent/runtime-receipt.json',JSON.stringify(records,null,2));console.log(JSON.stringify(v))}
+const payload=(r:any)=>r.structuredContent?.result??JSON.parse(r.content.find((x:any)=>x.type==='text').text);
+function sessions(f:any,actor:string,n:number){const rows=f.db.prepare('SELECT actor_id,space_id FROM sessions').all();expect(rows).toHaveLength(n);for(const row of rows){expect(row.actor_id).toBe(actor);expect(row.space_id).toBe(f.space)}}
+it('independent exact discovery and existing denied space',async()=>{const f=await fixture();let m:any;try{
+const b=(await f.admin.createSpace({slug:'denied',objective:'secret-marker-independent',rules:[]},'b-space')).data.space.id;
+const t=(await f.admin.createThread(b,{title:'secret-marker-independent'},'b-thread')).data.thread.id;
+await f.admin.createPost(b,t,{kind:'note',title:'marker',summary:'marker',body:'secret-marker-independent'},'b-post');
+const counts=()=>Object.fromEntries(['posts','events','idempotency_records'].map(table=>[table,f.db.prepare('SELECT COUNT(*) n FROM '+table+' WHERE space_id=?').get(b).n]));const before=counts();expect(before.posts).toBeGreaterThan(0);expect(before.events).toBeGreaterThan(0);expect(before.idempotency_records).toBeGreaterThan(0);
+m=await mount(f,'independent-acl');const names=m.names();expect(names).toEqual(DETUNED_TOOLS.map((t:any)=>'mcp__detuned__'+t.name).sort());record({exact_names:names});
+expect((await m.run('forum_context',{space_id:f.space})).isError).not.toBe(true);
+for(const [name,args] of [['forum_context',{space_id:b}],['forum_publish',{space_id:b,thread_id:t,op:'post',kind:'note',title:'valid',summary:'valid',body:'valid',request_key:'denied-valid'}]] as any){const r=await m.run(name,args);expect(r.isError).toBe(true);expect(JSON.stringify(r)).toContain('NOT_FOUND');expect(JSON.stringify(r)).not.toContain('secret-marker-independent');expect(counts()).toEqual(before)}
+sessions(f,m.actor.id,1);record({case:'acl',existing_denied_space:true,counts_unchanged:true,session_count:1});
+}finally{if(m)await m.close();await f.close()}});
+it('independent nonempty pending batch survives real scope replacement',async()=>{const f=await fixture();let m:any;try{m=await mount(f,'independent-first');const identity={actor:m.actor,credential:m.credential};
+const sub=payload(await m.run('forum_subscribe',{space_id:f.space,consumer_key:'independent',start:'now',request_key:'subscription'}));const consumer=sub.consumer.id;
+expect((await m.run('forum_publish',{space_id:f.space,thread_id:f.thread,op:'post',kind:'note',title:'pending',summary:'pending',body:'private',request_key:'pending'})).isError).not.toBe(true);
+const r=await m.run('forum_poll',{space_id:f.space,consumer_id:consumer,limit:10});expect(r.isError).not.toBe(true);const first=payload(r);expect(first.events.length).toBeGreaterThan(0);expect(first.batch_id).toBeTruthy();
+const state=()=>f.db.prepare('SELECT ack_seq,active_batch_id FROM consumers WHERE id=?').get(consumer);const batch=()=>f.db.prepare('SELECT id,from_seq,through_seq,event_ids,acked_at FROM delivery_batches WHERE id=?').get(first.batch_id);const before=state();const boundaries=batch();expect(boundaries.acked_at).toBeNull();sessions(f,m.actor.id,1);const acks=f.acks();await m.close();m=null;expect(state()).toEqual(before);expect(batch()).toEqual(boundaries);
+m=await mount(f,'independent-second',identity);const second=payload(await m.run('forum_poll',{space_id:f.space,consumer_id:consumer,limit:10}));expect(second.batch_id).toBe(first.batch_id);expect(second.events).toEqual(first.events);expect(state()).toEqual(before);expect(batch()).toEqual(boundaries);expect(f.acks()).toBe(acks);sessions(f,m.actor.id,2);
+record({case:'replacement',event_count:first.events.length,batch_id:first.batch_id,from_seq:boundaries.from_seq,through_seq:boundaries.through_seq,ack_seq:before.ack_seq,sessions:2,ack_requests:acks,pending_replayed:true});
+}finally{if(m)await m.close();await f.close()}});

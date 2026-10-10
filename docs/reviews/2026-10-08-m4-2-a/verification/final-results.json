@@ -1,0 +1,74 @@
+{
+  "status": "accepted_by_parent",
+  "date": "2026-10-08",
+  "new_tests": 15,
+  "new_groups": {
+    "A": 6,
+    "B": 3,
+    "C": 6
+  },
+  "fullsuite": {
+    "passed": 600,
+    "total": 600,
+    "files": 85,
+    "exit_code": 0,
+    "runner_seconds": 41.57
+  },
+  "gate_runs": {
+    "build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 1
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4 gates + 24 original probes + approved A.1 scenario11 adapter",
+    "probe_execution_before_final_suite": true
+  },
+  "first_new_targeted": {
+    "C_passed": 6,
+    "A_B_collection_failed_files": 2,
+    "A_B_executed_cases": 0,
+    "exit_code": 1
+  },
+  "corrected_A_B_E_targeted": {
+    "passed": 15,
+    "failed": 1,
+    "total": 16,
+    "NC03_cwd_fixture_failed": true
+  },
+  "NC03_corrected": {
+    "passed": 1,
+    "skipped": 2
+  },
+  "retained_stdio_first": {
+    "passed": 2,
+    "failed": 1,
+    "skipped": 10,
+    "E07_native_source_entry_failed_before_connect": true
+  },
+  "E07_corrected": {
+    "passed": 1,
+    "skipped": 6
+  },
+  "complete_E_token_source_regression": {
+    "passed": 7,
+    "total": 7
+  },
+  "source_noemit_attempts": [
+    2,
+    0
+  ],
+  "fullsuite_inherited_40MiB_executions": 1,
+  "protected_old_review_files": 5154,
+  "owned_resources_remaining": 0,
+  "integrity": "integrity.json",
+  "limitations": [
+    "supported local SDK/native HTTP only, not real model hosts",
+    "factory negative streams are controlled author conditions",
+    "no discovery handshake/session by design; complete schema/identity/session belongs to M4.2-B",
+    "no 600s/model/extra large payload experiments"
+  ],
+  "accepted_at": "2026-10-08"
+}

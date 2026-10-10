@@ -1,0 +1,21 @@
+{
+  "status": "prepared expected-red only; pending B static",
+  "source_sha256": "aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430",
+  "test_sha256": "7a5f4b467bcafd708118d880c756a237893d99b34b02d925d9bc58e9b9ac83f6",
+  "original_test_sha256": "6f1cc890096a2d891bad21502e5eadfaddfdb5b0eebc232a2f849080d349d014",
+  "original_prefix_unchanged": true,
+  "argv": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "tests/contracts/m7-codex-launcher.test.ts",
+    "-t",
+    "^CL02 ",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "timeout_ms": 5000,
+  "watchdog_ms": 4000,
+  "scope": "two actual production factory children; each exact UID/directPPID/PGID, distinct PID registration and ACK, ACK1 cannot unlock2; real initialize/exact9 and EOFclose0/null; finally actual closes and positive absence"
+}

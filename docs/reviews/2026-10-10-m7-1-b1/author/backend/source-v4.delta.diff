@@ -1,0 +1,22 @@
+--- a/packages/protocol/src/response-guards.ts
++++ b/packages/protocol/src/response-guards.ts
+@@ -179,11 +179,15 @@
+ import { isArtifactMetadata,type ArtifactMetadata,type ReadableArtifactMetadata } from './artifacts.js';
+ import { canonicalizeReviewJson } from './review-canonical.js';
+ import type { TSchema } from '@sinclair/typebox';
++type MutableCheckWireSchema=TSchema & {
++ properties?:Record<string,TSchema>;items?:TSchema;
++ anyOf?:TSchema[];allOf?:TSchema[];oneOf?:TSchema[];
++};
+ function checkWireSchema<T extends TSchema>(schema:T):T {
+- const clone={...schema};delete clone.format;
+- if(schema.properties)clone.properties=Object.fromEntries(Object.entries(schema.properties).map(([k,v])=>[k,checkWireSchema(v as TSchema)]));
+- if(schema.items)clone.items=checkWireSchema(schema.items as TSchema);
+- for(const key of ['anyOf','allOf','oneOf'])if(Array.isArray(schema[key]))clone[key]=schema[key].map(checkWireSchema);
++ const clone:MutableCheckWireSchema={...schema};delete clone.format;
++ if(clone.properties)clone.properties=Object.fromEntries(Object.entries(clone.properties).map(([k,v])=>[k,checkWireSchema(v)]));
++ if(clone.items)clone.items=checkWireSchema(clone.items);
++ for(const key of ['anyOf','allOf','oneOf'] as const)if(Array.isArray(clone[key]))clone[key]=clone[key].map(checkWireSchema);
+  return clone as T;
+ }
+ const checkRunWire=checkWireSchema(CheckRunViewSchema),checkReceiptWire=checkWireSchema(CheckReceiptViewSchema),checkSnapshotWire=checkWireSchema(CheckSnapshotViewSchema),checkPostWire=checkWireSchema(CheckPostRevisionViewSchema),checkIssueWire=checkWireSchema(IssueCheckRunCredentialDataSchema),checkDirectoryWire=checkWireSchema(RequiredChecksViewSchema);

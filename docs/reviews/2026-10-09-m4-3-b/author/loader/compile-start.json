@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/opt/homebrew/bin/node",
+    "/private/tmp/detuned-m43-runtime.MU1a4q/node_modules/typescript/bin/tsc",
+    "-b",
+    "vendor/loader",
+    "packages/boot/hmr",
+    "packages/core/tools",
+    "packages/core/system-prompt",
+    "packages/core/scope",
+    "packages/mcp/mcp-client",
+    "packages/boot/app-boot",
+    "packages/typert/generator"
+  ],
+  "env": {
+    "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+    "CI": "true"
+  },
+  "pid": 52001,
+  "before_allocated": 2259267584
+}

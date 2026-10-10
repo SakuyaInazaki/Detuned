@@ -1,0 +1,78 @@
+[
+  {
+    "command": "node scripts/scale/run-prepare.mjs /private/tmp/detuned-c2-seed-smoke-20261006-a1/manifest.json /private/tmp/detuned-c2-load-smoke-private-a1",
+    "exit_code": 0,
+    "kind": "fixture_initialization",
+    "stdout": "prepare-first.stdout.log",
+    "stderr": "prepare-first.stderr.log"
+  },
+  {
+    "command": "node scripts/scale/run-prepare.mjs /private/tmp/detuned-c2-seed-smoke-20261006-v2-a1/manifest.json /private/tmp/detuned-c2-load-smoke-private-v2-a1",
+    "exit_code": 0,
+    "kind": "fixture_initialization",
+    "stdout": "prepare-v2.stdout.log",
+    "stderr": "prepare-v2.stderr.log"
+  },
+  {
+    "command": "node scripts/scale/run-prepare.mjs /private/tmp/detuned-c2-seed-full-20261006-v3-a1/manifest.json /private/tmp/detuned-c2-load-full-private-v3-a1",
+    "exit_code": 0,
+    "kind": "fixture_initialization",
+    "stdout": "prepare-full.stdout.log",
+    "stderr": "prepare-full.stderr.log"
+  },
+  {
+    "command": "node --check scripts/scale/run.mjs",
+    "exit_code": 0,
+    "kind": "syntax_final",
+    "stdout": "syntax-final-run-v2.stdout.log",
+    "stderr": "syntax-final-run-v2.stderr.log"
+  },
+  {
+    "command": "node --check scripts/scale/run-support.mjs",
+    "exit_code": 0,
+    "kind": "syntax_final",
+    "stdout": "syntax-final-run-support.stdout.log",
+    "stderr": "syntax-final-run-support.stderr.log"
+  },
+  {
+    "command": "node --check scripts/scale/run-server.mjs",
+    "exit_code": 0,
+    "kind": "syntax_final",
+    "stdout": "syntax-final-run-server.stdout.log",
+    "stderr": "syntax-final-run-server.stderr.log"
+  },
+  {
+    "command": "node --check scripts/scale/run-prepare.mjs",
+    "exit_code": 0,
+    "kind": "syntax_final",
+    "stdout": "syntax-final-run-prepare.stdout.log",
+    "stderr": "syntax-final-run-prepare.stderr.log"
+  },
+  {
+    "command": "node scripts/scale/run.mjs --manifest /private/tmp/detuned-c2-seed-smoke-20261006-a1/manifest.json --runtime /private/tmp/detuned-c2-load-smoke-private-a1/runtime.json --out /private/tmp/detuned-c2-load-smoke-a1 --mode smoke",
+    "exit_code": 1,
+    "kind": "smoke",
+    "stdout": "smoke-first.stdout.log",
+    "stderr": "smoke-first.stderr.log",
+    "scope": "1k_posts_10k_events_10seconds",
+    "reason": "sandbox loopback EPERM"
+  },
+  {
+    "command": "node scripts/scale/run.mjs --manifest /private/tmp/detuned-c2-seed-smoke-20261006-a1/manifest.json --runtime /private/tmp/detuned-c2-load-smoke-private-a1/runtime.json --out /private/tmp/detuned-c2-load-smoke-a2 --mode smoke",
+    "exit_code": 0,
+    "kind": "smoke",
+    "stdout": "smoke-loopback.stdout.log",
+    "stderr": "smoke-loopback.stderr.log",
+    "scope": "1k_posts_10k_events_10seconds",
+    "reason": "real loopback; not formal600"
+  },
+  {
+    "command": "node scripts/scale/run.mjs --manifest /private/tmp/detuned-c2-seed-smoke-20261006-v2-a1/manifest.json --runtime /private/tmp/detuned-c2-load-smoke-private-v2-a1/runtime.json --out /private/tmp/detuned-c2-load-smoke-v2-a1 --mode smoke --gated true",
+    "exit_code": 0,
+    "kind": "smoke",
+    "stdout": "smoke-v2.stdout.log",
+    "stderr": "smoke-v2.stderr.log",
+    "scope": "1k_posts_10k_events_10seconds",
+    "reason": "real loopback; not formal600"
+  }
+]

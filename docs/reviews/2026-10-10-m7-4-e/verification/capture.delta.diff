@@ -1,0 +1,13 @@
+--- sealed-C1-capture
++++ E-capture
+@@ -7,8 +7,8 @@
+ import {tmpdir} from 'node:os';
+ import path from 'node:path';
+ import assert from 'node:assert/strict';
+-const repo='/Users/sakimi/Desktop/Detuned',verification=path.join(repo,'docs/reviews/2026-10-10-m7-4-c1/verification');
+-const source=path.join(repo,'scripts/integrations/codex-check-probe.mjs'),SOURCE_SHA='2edd11e6150b92f3e05cec1b87f010b5b5a94aa99a411f07c7b07f93573918e0';
++const repo='/Users/sakimi/Desktop/Detuned',verification=path.join(repo,'docs/reviews/2026-10-10-m7-4-e/verification');
++const source=path.join(repo,'scripts/integrations/codex-check-probe.mjs'),SOURCE_SHA='aee7ec48fb050f8aaa6ba70307bba2164497579d0e676a459fab2470808a0430';
+ const binding=JSON.parse(await fs.readFile(path.join(verification,'guard-source-binding.json'),'utf8'));assert.equal(binding.complete,true);assert.equal(SOURCE_SHA,binding.source_sha256);const binary=binding.binary;
+ const args=process.argv.slice(2);assert.ok(args.length===2||args.length===4);assert.equal(args[0],'--output');if(args.length===4)assert.equal(args[2],'--mode');const mode=args.length===4?args[3]:'normal';assert.ok(['normal','reject-worker','reject-mcp'].includes(mode));const output=path.resolve(args[1]);assert.equal(path.dirname(output),verification);
+ const hash=b=>createHash('sha256').update(b).digest('hex'),pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));

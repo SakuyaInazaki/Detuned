@@ -1,0 +1,33 @@
+{
+  "parent_approved": true,
+  "changes": [
+    "poll wait_ms30000 to protocol25000",
+    "T13 summary with non-sensitive legal source and HTTP pin revision1; all positive/negative assertions kept",
+    "positive fixed path index diagnostics without raw body/token"
+  ],
+  "files": [
+    {
+      "path": "tests/integration/m3-shutdown-independent.test.ts",
+      "sha256": "9bb7e07c9c28852285ed0b5138f15436a4f47f7881462c44e5d4e201f42bc7da"
+    },
+    {
+      "path": "tests/integration/m3-milestone-gate.test.ts",
+      "sha256": "1e98e0105da35a5e07038c53987b1c3f09991df240fd4ec02cbc907544415da9"
+    },
+    {
+      "path": "tests/helpers/m3-shutdown-worker.mjs",
+      "sha256": "54532d8110c99a1c7ce26845899e4152dbce744ebbe8ac281fa79970b2a74ccc"
+    }
+  ],
+  "corrected_directed": {
+    "passed": 2,
+    "skipped": 5,
+    "exit_code": 0
+  },
+  "original_targeted": {
+    "passed": 15,
+    "failed": 2,
+    "exit_code": 1
+  },
+  "no_product_change_or_rebuild": true
+}

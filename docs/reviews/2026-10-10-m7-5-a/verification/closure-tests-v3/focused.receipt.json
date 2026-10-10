@@ -1,0 +1,42 @@
+{
+  "stage": "focused",
+  "argv": [
+    "/private/tmp/detuned-m75-clean-gq6h90m6/node/node-v22.19.0-darwin-arm64/bin/node",
+    "/opt/homebrew/lib/node_modules/pnpm/bin/pnpm.mjs",
+    "--pm-on-fail=error",
+    "--config.store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/store",
+    "--config.cache-dir=/private/tmp/detuned-m75-clean-gq6h90m6/cache",
+    "--config.state-dir=/private/tmp/detuned-m75-clean-gq6h90m6/state",
+    "--config.virtual-store-dir=/private/tmp/detuned-m75-clean-gq6h90m6/work/node_modules/.pnpm",
+    "--workspace-concurrency=1",
+    "exec",
+    "vitest",
+    "run",
+    "tests/integration/m3-backup-recovery-independent.test.ts",
+    "tests/integration/m4-read-cli-independent.test.ts",
+    "tests/integration/m3-logical-import.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=json",
+    "--outputFile=/private/tmp/detuned-m75-clean-gq6h90m6/closure-tests-v3-output/focused-results.json"
+  ],
+  "budget_seconds": 180,
+  "close_code": 0,
+  "close_signal": null,
+  "actual_close": true,
+  "group_absent": true,
+  "stdout_bytes": 200,
+  "stderr_bytes": 0,
+  "leader_peak_rss_kib": 151120,
+  "pid": 5145,
+  "uid": 501,
+  "ppid": 5133,
+  "pgid": 5145,
+  "leader_rss_kib": 272,
+  "elapsed_seconds": 41.29965854200418,
+  "output_hashes": [
+    "54b21b2ce24352e9ef439d9e28bb3462af670548da713cc0b82d480af88778f4",
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  ],
+  "failure_enum": null
+}

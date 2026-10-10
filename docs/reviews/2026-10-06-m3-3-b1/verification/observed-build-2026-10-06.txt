@@ -1,0 +1,23 @@
+Scope: 9 of 10 workspace projects
+packages/protocol build$ tsc
+packages/protocol build: Done
+packages/client build$ tsc
+packages/core build$ tsc
+packages/client build: Done
+packages/core build: Done
+packages/adapter-pi build$ tsc
+modules/review build$ tsc
+packages/storage-sqlite prebuild$ node scripts/generate-schema.mjs
+packages/mcp build$ tsc
+packages/storage-sqlite prebuild: Successfully generated schema.ts from schema.sql
+packages/storage-sqlite prebuild: Done
+packages/storage-sqlite build$ node scripts/generate-schema.mjs && tsc
+packages/storage-sqlite build: Successfully generated schema.ts from schema.sql
+modules/review build: Done
+packages/mcp build: Done
+packages/storage-sqlite build: Done
+packages/adapter-pi build: Done
+packages/server build$ tsc
+packages/server build: Done
+packages/cli build$ tsc
+packages/cli build: Done

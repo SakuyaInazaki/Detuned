@@ -1,0 +1,17 @@
+Delete and teardown Colima and all settings.
+
+Use with caution. This deletes everything and a startup afterwards is like the
+initial startup of Colima.
+
+Usage:
+  colima delete [profile] [flags]
+
+Flags:
+  -d, --data    delete container runtime data
+  -f, --force   do not prompt for yes/no
+  -h, --help    help for delete
+
+Global Flags:
+  -p, --profile string   profile name, for multiple instances (default "default")
+  -v, --verbose          enable verbose log
+      --very-verbose     enable more verbose log

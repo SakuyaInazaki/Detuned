@@ -1,0 +1,21 @@
+--- docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs
++++ docs/reviews/2026-10-10-m7-1-b1/verification/adapters/check-c-completion-v3.mjs
+@@ -133,7 +133,8 @@
+         ajv.compile(content.schema);
+         if (media !== 'application/json') {
+           const publicMultipart = route.path === '/spaces/{space_id}/artifacts';
+-          const privateMultipart = route.path === '/spaces/{space_id}/review-requests/{requestId}/artifacts';
++          const checkMultipart = route.path === '/spaces/{space_id}/check-runs/{run_id}/artifacts' && route.method === 'post';
++          const privateMultipart = route.path === '/spaces/{space_id}/review-requests/{requestId}/artifacts' || checkMultipart;
+           if (media !== 'multipart/form-data' || (!publicMultipart && !privateMultipart)) throw Error('Unexpected media type');
+           if (JSON.stringify(content.schema.required) !== '["file"]' || content.schema.additionalProperties !== false || content.schema.properties.file.format !== 'binary') throw Error('Multipart schema shape mismatch');
+           if (publicMultipart && content.schema.properties.metadata.type !== 'string') throw Error('Multipart schema shape mismatch');
+@@ -144,7 +145,7 @@
+       for (const [status, response] of Object.entries(op.responses ?? {})) {
+         for (const [media, content] of Object.entries(response.content ?? {})) {
+           ajv.compile(content.schema);
+-          if (media === 'application/octet-stream' && (route.path !== '/spaces/{space_id}/artifacts/{id}/content' || content.schema.format !== 'binary')) throw Error('Binary response contract mismatch');
++          if (media === 'application/octet-stream' && ((route.path !== '/spaces/{space_id}/artifacts/{id}/content' && !(route.path === '/spaces/{space_id}/check-runs/{run_id}/artifacts/{id}/content' && route.method === 'get')) || content.schema.format !== 'binary')) throw Error('Binary response contract mismatch');
+           mediaSchemas.push({method: route.method, path: route.path, media, status, direction: 'response'});
+         }
+       }

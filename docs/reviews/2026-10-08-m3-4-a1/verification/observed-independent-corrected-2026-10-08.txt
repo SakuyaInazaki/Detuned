@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m3-write-limits-independent.test.ts (4 tests) 3100ms
+   ✓ M3.4-A1 independent default20 burst and sustained60/min use controlled clock, reject rollback and cap large jumps  433ms
+   ✓ M3.4-A1 independent concurrent tokens/spaces share one actor budget while unrelated actor and authentication/owner checks remain independent  392ms
+   ✓ M3.4-A1 independent admission failures cost once, replay/conflict do not, explicit mutation costs and poll/ACK/read exempt leave no partial records  401ms
+   ✓ M3.4-A1 independent built CLI rejects secret-like invalid flags before directories and real sharedclient retries same key within existing budget  1873ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  07:14:53
+   Duration  3.34s (transform 19ms, setup 0ms, collect 17ms, tests 3.10s, environment 0ms, prepare 39ms)
+

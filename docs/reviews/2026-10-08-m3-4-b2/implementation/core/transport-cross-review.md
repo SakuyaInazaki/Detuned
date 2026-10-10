@@ -1,0 +1,11 @@
+# A→B 只读停机资源顺序互审
+
+范围仅本包冻结代码，未改B产品、未运行额外测试。A final source alias noEmit一次exit0；此前A source-first21/21。B源码freeze后核 app/routes/serve-shutdown 与CLI接线，没有发现需修复的可达产品偏差。
+
+- app统一 detunedBeginDraining先operations状态+resources.beginClosing（同步全部cancel），preClose随后waitForIdle；旧poll/export分散preClose已移除，避免一个plugin先等待而阻断其余取消。closing preHandler拒新业务，health仅状态。服务资源registry并非公开统计扩展。
+- upload lease在解析前，覆盖stage/全部multipart/core.create及routefinally discard；finish在内层finally末尾，不以socket断开替代。create已经进入publish后继续短事务/cleanup并被完整await；metadata exists用整个await lease。
+- download在getContent await前持lease；cancel标志覆盖尚未兑现open，回来后先await dispose，拒交付。正常streamclose触发handle.dispose，成功才finish；dispose拒保lease，等待宿主预算（标准CLI超时非零），不误称FD成功释放。内部dispose Promise late rejection有观察，无公开FS操作规则复制。事件poll finally卸监听并finish；exportdestroy同步session.close后才streamclose finish，首次header或open失败也释放lease，不自动ACK。
+- CLI serve-shutdown单task与ref timeout：first signal一次beginDraining/closeApp，重复signal返回原task，不重置总deadline。performance deadline复核在各phase之间，app结束后才DB，DB后才strictlock；close/strictlock/日志phase错固定失败，timer过期设置expired后即使late closeApp完成也不继续DB/锁。真实process.exit在CLI，A能力模块没有exit。同步native不可硬抢占。
+- listen失败走同shutdown(1)，将requestedExitCode升级为1，避免已开始signal任务稍后误exit0；信号尚未注册的startup失败分支只允许无active请求的顺序cleanup。error输出固定无cause。
+
+限制：失败dispose保lease而非无限库层自动超时；非CLI宿主需自建有界预算。标准CLI强制退出后走既有stale-lock/staging恢复，不声称故障时总能清目录或达到介质durability保证。没有新增实验、schema/旧fixture修改或B2范围外审查。

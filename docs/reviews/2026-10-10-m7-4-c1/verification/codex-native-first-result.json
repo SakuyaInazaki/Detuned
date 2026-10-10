@@ -1,0 +1,103 @@
+{
+  "status": "failed",
+  "fixed_version": "0.144.6",
+  "binary_sha256": "80a3933d11a9d13ef806aa24f7bb8afc9169cfe4e9b09d6da6a92922cbde9cff",
+  "tools": [],
+  "checks": {},
+  "cleanup": {
+    "flights_settled": true,
+    "children_closed": true,
+    "forbidden_closed": true,
+    "app_closed": true,
+    "db_closed": true,
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "mcp_candidates_absent": true,
+    "confirmed_mcp_groups_absent": true,
+    "private_directory_removed": true
+  },
+  "diagnostics": {
+    "stages": [
+      "setup-begin",
+      "setup-done",
+      "guard-begin",
+      "guard-close",
+      "guard-pass",
+      "native-spawn-begin",
+      "native-actual-spawn",
+      "initialize-response",
+      "initialized-sent",
+      "thread-response",
+      "catch",
+      "cleanup-begin",
+      "children-cleanup-done",
+      "business-cleanup-drain-begin",
+      "business-cleanup-drain-done",
+      "socket-cleanup-close-done",
+      "app-cleanup-done",
+      "db-cleanup-done",
+      "cleanup-done"
+    ],
+    "methods": {
+      "initialize": 1,
+      "initialized": 1,
+      "thread/start": 1,
+      "mcpServerStatus/list": 40
+    },
+    "guard": {
+      "allowed_hits": 1,
+      "forbidden_hits": 0,
+      "actual_close": {
+        "code": 0,
+        "signal": null,
+        "expired": false,
+        "spawn_error": false
+      },
+      "allowed": "allowed",
+      "forbidden": "EPERM",
+      "sentinel": "EPERM"
+    },
+    "native": {
+      "actual_spawn": true,
+      "actual_close": {
+        "code": null,
+        "signal": "SIGTERM",
+        "spawn_error": false
+      }
+    },
+    "error": {
+      "name": "AssertionError",
+      "code": "ERR_ASSERTION"
+    },
+    "active_count": 0,
+    "open_connections": 0,
+    "supervision": {
+      "work_budget_ms": 75000,
+      "total_budget_ms": 90000,
+      "initializer_settled": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": true,
+      "group_probe": "absent",
+      "worker_registered": true,
+      "native_registered": true,
+      "mcp_candidate_received": true,
+      "mcp_candidate_observed": true,
+      "mcp_registered": true,
+      "mcp_acknowledged": true,
+      "mcp_same_worker_group": false,
+      "mcp_parent_verified": true,
+      "mcp_placement": "independent",
+      "confirmed_mcp_group_count": 1,
+      "mcp_group_probe": "absent",
+      "mcp_phase": "acknowledged",
+      "mcp_candidate_probe": "absent"
+    },
+    "supervisor_failed": true,
+    "deadline_exceeded": false,
+    "supervisor_error_name": "AssertionError",
+    "supervisor_error_code": "ERR_ASSERTION"
+  },
+  "profile_sha256": "ae6bb386ea29a8bcd2e330587c8211b56773019a682518c42322d68fbb0602ea",
+  "code": "NATIVE_PROBE_FAILED"
+}

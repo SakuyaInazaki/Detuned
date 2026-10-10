@@ -1,0 +1,11 @@
+# B → A：附件 client/protocol/key 只读交叉审查
+
+2026-10-08。读取最终 client.ts、artifact-transfer.ts、request-key.ts、protocol artifacts.ts/package.json 与冻结契约；未运行测试、未改产品/正式测试/source。结论：未发现冻结范围内的具体可达阻断；以下依据实际控制流，不以作者日志代替阅读。
+
+- **不可变体与重试。** artifact-transfer.ts:24–34先校验Blob<=25MiB/metadata，再slice保不可变数据/type、序列化metadata并计算bytes/hash。client.ts:572–586每attempt新建FormData、固定upload.bin和同一snapshot；Idempotency-Key headers在requestWithBody重试循环外捕获，业务POST始终同key/内容。multipart Content-Type由fetch生成，无人工固定boundary。成功response必须schema/space/hash/bytes匹配。
+- **旧写兼容与身份。** client.ts:208–212 public request只委托原JSON路径；bodyFactory缺省不启artifact reader，JSON.stringify/Content-Type及原retry/error分支保留。write:533后旧十wrapper仍沿原scope/prepare；request-key.ts:27仅多artifact.create targetnull/space必填。prepareWriteKey getMe→验证scope→await store→token/Abort复核；upload:573–577在prepare前后捕获检查，发业务POST前无额外await窗口。headers在一次request重试期间固定，不因setToken变成另一actor。没有client ACL复制或正文入store。
+- **JSON有界生命周期。** artifact-transfer.ts:90–109只用于新upload/get：1MiB固定buffer，逐chunk拒超限，必须EOF，再fatal UTF8与JSON；finally观察cancel拒绝并releaseLock。client.ts:293–294同时观察fetch迟到Response，aborted后取消body；request finally:507释放未锁body/timeout/外部signal listener。中途cancel或timeout通过waitForArtifact及时settle，pending晚拒绝有then处理，未把晚成功转成已取消请求成功。超cap/坏JSON是安全protocol错误，不退回无限res.json。标准fetch/WHATWG reader的取消/释放语义为适用前提，不承诺恶意同步自定义回调硬抢占。
+- **下载全程完整性。** artifact-transfer.ts:37–85总controller/timer在metadata之前建立；metadata callback用同signal覆盖其重试预算，外部signal转发。content只构造同base固定encoded路径，忽略content_url且redirect:error。捕获调用开始的token；metadata请求同步启动时原token相同，后setToken不会让content静默换身份。精确Content-Length及trim/lowercase MIME，按已验证metadata.bytes<=25MiB分配，逐chunk拒extra，完整EOF+SHA一致才返回。content/body/hash均waitForArtifact；不跨partial重试。late fetch response取消、reader cancel/release、外部listener及timer均在finally清理。原生hash不能JS硬抢占，但异步等候取消被观察。
+- **日期与单源schema。** protocol artifacts.ts末尾保原公开ArtifactMetadataSchema，仅本地派生created_at字符串shape后以公开ajv-formats get(date-time,full)校验；不自写日期解析、不改FormatRegistry。对象strict形状、bytes上限和lowercase SHA校验分别在schema/helper，MIT已锁3.0.1增加直接依赖准确记录。此审查未安装或执行validator。
+
+边界：JSON upload/metadata沿旧request的默认redirect策略；本包明确拒redirect的是固定content fetch，不将其泛称旧JSON策略已全改。metadata与content并非原子快照，服务端每次授权/脱敏仍负责；完整性校验不是来源签名。未独立运行网络/fault矩阵、内存/断电/多平台或真实宿主认证。正式built及其5组独验由C负责。

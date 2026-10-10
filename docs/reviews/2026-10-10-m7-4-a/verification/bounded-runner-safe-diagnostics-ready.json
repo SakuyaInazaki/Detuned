@@ -1,0 +1,14 @@
+{
+  "status": "static source only; no runtime",
+  "runner_sha256": "fb8081f6a84d5962aa78244ae1633e81ad0608dbea8895ca1ee3d6bc4a7f961d",
+  "call_binding": {
+    "spawn_argv": "node driver source binary output registry mode",
+    "driver_decode": "process.argv.slice(2): source,binary,output,registry,mode",
+    "public_call": "runClaudeCheckProbe({binary,output,onOwnership})",
+    "public_signature": "runClaudeCheckProbe({binary,output,onOwnership})",
+    "consistent": true
+  },
+  "finding": "no missing binary/output argument identified statically; earliest runtime cause unresolved",
+  "first_failure_retained": true,
+  "changes": "safe fixed enum stages and standard-name/prelisted-code diagnostic only; no message/stack/path; controlled expectations and cleanup unchanged"
+}

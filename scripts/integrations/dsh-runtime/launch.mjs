@@ -1,0 +1,16 @@
+import { mkdirSync,readFileSync,copyFileSync } from 'node:fs';
+import { resolve,dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawn,execFileSync } from 'node:child_process';
+const args=process.argv.slice(2);const source=resolve(args[args.indexOf('--source')+1]||'');const repo=resolve(args[args.indexOf('--repo')+1]||'');
+if(!args.includes('--source')||!args.includes('--repo'))throw Error('Explicit source and repo required');
+const suite=args.includes('--suite')?args[args.indexOf('--suite')+1]:'plugin';if(!['plugin','loader'].includes(suite))throw Error('Invalid suite');
+const gitEnv={PATH:'/opt/homebrew/bin:/usr/bin:/bin',GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'/dev/null',GIT_TERMINAL_PROMPT:'0'};
+if(execFileSync('/usr/bin/git',['-C',source,'rev-parse','HEAD'],{env:gitEnv,encoding:'utf8'}).trim()!=='5badb15009ae1756c3afe0ae0cef1faafc290ccc')throw Error('Official source revision mismatch');
+if(JSON.parse(readFileSync(source+'/node_modules/vitest/package.json','utf8')).version!=='4.1.8')throw Error('Runner version mismatch');
+const here=dirname(fileURLToPath(import.meta.url));const dir=source+'/.detuned-m43';mkdirSync(dir,{mode:0o700,recursive:true});
+for(const name of ['experiment.config.ts',suite==='loader'?'loader.spec.ts':'runtime.spec.ts','pid-preload.cjs'])copyFileSync(here+'/'+name,dir+'/'+name);
+const env={PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',DETUNED_EXPERIMENT_SUITE:suite,DETUNED_EXPERIMENT_REPO:repo,DETUNED_EXPERIMENT_SOURCE:source};
+const child=spawn(process.execPath,[...(suite==='loader'?['--expose-internals']:[]),source+'/node_modules/vitest/vitest.mjs','run','--config',dir+'/experiment.config.ts',...(args.includes('--probe-only')?['-t','construction probe']:args.includes('--patch-only')?['-t','complete patch']:args.includes('--watch-only')?['-t','real Hmr watch']:args.includes('--discovery-only')?['-t','discovery']:args.includes('--remaining-only')?['-t','isolated scopes|poll cancellation']:[])],{cwd:source,env,stdio:'inherit',detached:true});
+let killTimer;const timer=setTimeout(()=>{try{process.kill(-child.pid,'SIGTERM')}catch{};killTimer=setTimeout(()=>{try{process.kill(-child.pid,'SIGKILL')}catch{}},2000)},180000);
+child.once('exit',(code,signal)=>{clearTimeout(timer);clearTimeout(killTimer);console.log(JSON.stringify({runner_exit:code,signal}));process.exitCode=code??1});

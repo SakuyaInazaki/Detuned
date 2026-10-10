@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/integration/m4-admin-client.test.ts (5 tests) 126ms
+ ✓ tests/contracts/m4-admin-cli.test.ts (4 tests) 3142ms
+   ✓ AC B02: actual CLI actor credential membership flow returns data once and identity/revoke/deactivate take effect  1221ms
+   ✓ AC B03: local malformed JSON/unreadable input and unsupported key option are safe and send no HTTP  796ms
+   ✓ AC B04: redact strips input key, preserves explicit priority and persistent intent conflicts without storing body  1123ms
+ ✓ tests/integration/m4-admin-cli-independent.test.ts (4 tests) 7318ms
+   ✓ AC C01 real new CLI stdin management lifecycle creates scoped nonadmin credentials and changes actual write authority  1683ms
+   ✓ AC C02 ordinary seven management operations cannot mutate nonempty state; space owner can manage members and redact but cannot mint credentials  2167ms
+   ✓ AC C03 real CLI persistent post/artifact redaction recovers records, conflicts on changed body and rechecks current owner permission  1758ms
+   ✓ AC C04 real upstream commit followed by proxy response loss never retries actor/credential and full retryable errors remain single attempt  1710ms
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  18:52:00
+   Duration  7.89s (transform 381ms, setup 0ms, collect 1.39s, tests 10.59s, environment 0ms, prepare 199ms)
+

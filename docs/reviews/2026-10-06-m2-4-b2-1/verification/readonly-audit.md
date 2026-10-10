@@ -1,0 +1,13 @@
+# B.2.1只读合同审计
+
+2026-10-06，稳定源码只读审计；独验不代改产品或正式测试。
+
+新PostRevisionReadService的readSnapshot内先refresh身份/observer read、核post同空间与redacted410，再校revision/query/cursor，取固定stored revision与当前post metadata。document只复制title/summary/body/tags/structured并按固定顺序JSON编码，没有调用新写validator/trim/默认或暴露附件/私密review；content_hash没有进入投影文档或假称投影hash。withdrawn保留，has_newer按当前head>固定revision，可跨页变化；同snapshot metadata/材料由独立WAL与正式实际RedactionService竞态各自提供证据。
+
+cursor严格v1/purpose post_revision_read/actor/space/post/revision/byte_offset/exp，无extra；时钟注入且首24h后继承原期限、不绑定budget，合法正offset小于末尾/UTF8边界，过长4096chars拒绝。读取后编码一次整个固定文档，O(doc)，不宣称CPU/常数内存硬限。末页先测，非末hi受start+maxBytes约束，UTF8边界二分；每candidate真实signed cursor+request_id+双层转义按完整compact envelope计量，至少推进或422。独立rawbody逐字节等共享serializer，metadata临界实测，非仅helper断言。
+
+protocol唯一共享query/cursor/ref/page/envelope与complete/meta相关union；post_revision工具分支必id/revision，rootobject+anyOf，其余旧合法分支结构未扩；direct callTool纯结构校验复用，没有把权限移客户端。新GET只query max_bytes/cursor，path严格safeinteger，route送真实req.id并共享compactsend。旧GET post/revision目录及PostService合法输出不改；共享client新静态typed fullpage/no新响应validator，旧post工具仍完整data。CLI加post read整page/严格数值，旧read post正例同形，context/space/search既有范围不扩。thread描述明确默认首批元数据，并不宣称全主题全文。
+
+baseline→stable-before只变获准8源码并新增service/两formal文件，旧formal未改；docs03/04/12+新example。2344旧证据（含全部B1）、4SQLarchive、2schema、5mutable状态文档在开工/冻结前无变化；dist build正常变化与验证source/doc稳定在最终integrity另列。
+
+PR补充probe使用独立stored fixture与writer transition，明确synthetic，不是真历史HTTP201。孤立surrogate TEXT替换在写入前已发生，读取精确stored值不声称还原丢字符。旧丢失三真fixture保持not_run，不重复ENOENT，不以新probe替代原key重放。Node22/清洁安装/远程CI/真实四宿主模型/100k未测；SDK实际路径不是宿主认证。

@@ -1,0 +1,379 @@
+{
+  "lock_sha256": "49c72b4c1b0a127c9715e96d4eef06b99d645440e2aaf3de13b3fd86be4fa006",
+  "lockfile_version": "9.0",
+  "overrides": {
+    "vite": "7.3.7"
+  },
+  "pins": [
+    {
+      "importer": ".",
+      "name": "@playwright/test",
+      "expected": "1.64.0",
+      "specifier": "1.64.0",
+      "version": "1.64.0",
+      "exact": true
+    },
+    {
+      "importer": "packages/web",
+      "name": "react",
+      "expected": "19.3.0",
+      "specifier": "19.3.0",
+      "version": "19.3.0",
+      "exact": true
+    },
+    {
+      "importer": "packages/web",
+      "name": "react-dom",
+      "expected": "19.3.0",
+      "specifier": "19.3.0",
+      "version": "19.3.0(react@19.3.0)",
+      "exact": false
+    },
+    {
+      "importer": "packages/web",
+      "name": "@types/react",
+      "expected": "19.3.0",
+      "specifier": "19.3.0",
+      "version": "19.3.0",
+      "exact": true
+    },
+    {
+      "importer": "packages/web",
+      "name": "@types/react-dom",
+      "expected": "19.3.0",
+      "specifier": "19.3.0",
+      "version": "19.3.0(@types/react@19.3.0)",
+      "exact": false
+    },
+    {
+      "importer": "packages/web",
+      "name": "vite",
+      "expected": "7.3.7",
+      "specifier": "7.3.7",
+      "version": "7.3.7(@types/node@22.20.4)(jiti@2.7.0)(yaml@2.9.0)",
+      "exact": false
+    }
+  ],
+  "installed": [
+    {
+      "name": "@playwright/test",
+      "version": "1.64.0",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "react",
+      "version": "19.3.0",
+      "license": "MIT"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@types/react",
+      "version": "19.3.0",
+      "license": "MIT"
+    },
+    {
+      "name": "@types/react-dom",
+      "version": "19.3.0",
+      "license": "MIT"
+    },
+    {
+      "name": "vite",
+      "version": "7.3.7",
+      "license": "MIT"
+    }
+  ],
+  "importers": {
+    ".": {
+      "devDependencies": {
+        "@modelcontextprotocol/sdk": {
+          "specifier": "^1.30.1",
+          "version": "1.30.1(zod@4.6.5)"
+        },
+        "@playwright/test": {
+          "specifier": "1.64.0",
+          "version": "1.64.0"
+        },
+        "@sinclair/typebox": {
+          "specifier": "^0.34.28",
+          "version": "0.34.52"
+        },
+        "@types/better-sqlite3": {
+          "specifier": "^7.6.12",
+          "version": "7.6.13"
+        },
+        "@types/node": {
+          "specifier": "^22.13.9",
+          "version": "22.20.4"
+        },
+        "better-sqlite3": {
+          "specifier": "^13.0.3",
+          "version": "13.0.3"
+        },
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        },
+        "vitest": {
+          "specifier": "^3.0.7",
+          "version": "3.2.7(@types/node@22.20.4)(jiti@2.7.0)(yaml@2.9.0)"
+        }
+      }
+    },
+    "modules/review": {
+      "dependencies": {
+        "@detuned/core": {
+          "specifier": "workspace:*",
+          "version": "link:../../packages/core"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../../packages/protocol"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/adapter-pi": {
+      "dependencies": {
+        "@detuned/client": {
+          "specifier": "workspace:*",
+          "version": "link:../client"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        }
+      },
+      "devDependencies": {
+        "@earendil-works/pi-coding-agent": {
+          "specifier": "0.87.1",
+          "version": "0.87.1(@modelcontextprotocol/sdk@1.30.1(zod@4.6.5))(ws@8.22.0)(zod@4.6.5)"
+        },
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/cli": {
+      "dependencies": {
+        "@detuned/client": {
+          "specifier": "workspace:*",
+          "version": "link:../client"
+        },
+        "@detuned/core": {
+          "specifier": "workspace:*",
+          "version": "link:../core"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        },
+        "@detuned/server": {
+          "specifier": "workspace:*",
+          "version": "link:../server"
+        },
+        "@detuned/storage-sqlite": {
+          "specifier": "workspace:*",
+          "version": "link:../storage-sqlite"
+        },
+        "commander": {
+          "specifier": "^13.1.0",
+          "version": "13.1.0"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/client": {
+      "dependencies": {
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/core": {
+      "dependencies": {
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/mcp": {
+      "dependencies": {
+        "@detuned/client": {
+          "specifier": "workspace:*",
+          "version": "link:../client"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        },
+        "@modelcontextprotocol/sdk": {
+          "specifier": "^1.6.0",
+          "version": "1.30.1(zod@4.6.5)"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/protocol": {
+      "dependencies": {
+        "@sinclair/typebox": {
+          "specifier": "^0.34.28",
+          "version": "0.34.52"
+        },
+        "ajv-formats": {
+          "specifier": "3.0.1",
+          "version": "3.0.1(ajv@8.20.0)"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/server": {
+      "dependencies": {
+        "@detuned/core": {
+          "specifier": "workspace:*",
+          "version": "link:../core"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        },
+        "@detuned/storage-sqlite": {
+          "specifier": "workspace:*",
+          "version": "link:../storage-sqlite"
+        },
+        "@fastify/cookie": {
+          "specifier": "^11.0.2",
+          "version": "11.1.2"
+        },
+        "@fastify/cors": {
+          "specifier": "^10.1.0",
+          "version": "10.1.0"
+        },
+        "@fastify/multipart": {
+          "specifier": "^9.0.3",
+          "version": "9.4.0"
+        },
+        "@fastify/static": {
+          "specifier": "^8.1.1",
+          "version": "8.3.0"
+        },
+        "fastify": {
+          "specifier": "^5.2.1",
+          "version": "5.12.5"
+        }
+      },
+      "devDependencies": {
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/storage-sqlite": {
+      "dependencies": {
+        "@detuned/core": {
+          "specifier": "workspace:*",
+          "version": "link:../core"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        },
+        "better-sqlite3": {
+          "specifier": "^13.0.3",
+          "version": "13.0.3"
+        }
+      },
+      "devDependencies": {
+        "@types/better-sqlite3": {
+          "specifier": "^7.6.12",
+          "version": "7.6.13"
+        },
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        }
+      }
+    },
+    "packages/web": {
+      "dependencies": {
+        "@detuned/client": {
+          "specifier": "workspace:*",
+          "version": "link:../client"
+        },
+        "@detuned/protocol": {
+          "specifier": "workspace:*",
+          "version": "link:../protocol"
+        },
+        "react": {
+          "specifier": "19.3.0",
+          "version": "19.3.0"
+        },
+        "react-dom": {
+          "specifier": "19.3.0",
+          "version": "19.3.0(react@19.3.0)"
+        }
+      },
+      "devDependencies": {
+        "@types/react": {
+          "specifier": "19.3.0",
+          "version": "19.3.0"
+        },
+        "@types/react-dom": {
+          "specifier": "19.3.0",
+          "version": "19.3.0(@types/react@19.3.0)"
+        },
+        "typescript": {
+          "specifier": "^5.8.2",
+          "version": "5.9.3"
+        },
+        "vite": {
+          "specifier": "7.3.7",
+          "version": "7.3.7(@types/node@22.20.4)(jiti@2.7.0)(yaml@2.9.0)"
+        }
+      }
+    }
+  },
+  "package_count": 380,
+  "snapshot_count": 380,
+  "vite_7_3_6_keys": [],
+  "scope": "Current graph/importers/exact installed pins only. HEAD and Git index hashes do not equal fresh baseline; no exact pre-install lock byte copy exists here, so no complete historical semantic delta is claimed."
+}

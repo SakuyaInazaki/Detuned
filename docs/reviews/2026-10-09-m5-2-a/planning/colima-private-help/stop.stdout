@@ -1,0 +1,16 @@
+Stop Colima to free up resources.
+
+The state of the VM is persisted at stop. A start afterwards
+should return it back to its previous state.
+
+Usage:
+  colima stop [profile] [flags]
+
+Flags:
+  -f, --force   stop without graceful shutdown
+  -h, --help    help for stop
+
+Global Flags:
+  -p, --profile string   profile name, for multiple instances (default "default")
+  -v, --verbose          enable verbose log
+      --very-verbose     enable more verbose log

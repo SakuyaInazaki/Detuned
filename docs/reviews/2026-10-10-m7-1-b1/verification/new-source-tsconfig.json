@@ -1,0 +1,51 @@
+{
+  "extends": "/Users/sakimi/Desktop/Detuned/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "/Users/sakimi/Desktop/Detuned",
+    "baseUrl": "/Users/sakimi/Desktop/Detuned",
+    "paths": {
+      "@detuned/protocol": [
+        "packages/protocol/src/index.ts"
+      ],
+      "@detuned/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@detuned/storage-sqlite": [
+        "packages/storage-sqlite/src/index.ts"
+      ],
+      "@detuned/server": [
+        "packages/server/src/index.ts"
+      ],
+      "@detuned/client": [
+        "packages/client/src/index.ts"
+      ],
+      "@detuned/client/node": [
+        "packages/client/src/node.ts"
+      ],
+      "@detuned/module-review": [
+        "modules/review/src/index.ts"
+      ],
+      "@detuned/adapter-pi": [
+        "packages/adapter-pi/src/index.ts"
+      ],
+      "@detuned/mcp": [
+        "packages/mcp/src/index.ts"
+      ]
+    },
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "declaration": false,
+    "declarationMap": false
+  },
+  "files": [
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m7-check-http.test.ts",
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m7-check-client.test.ts",
+    "/Users/sakimi/Desktop/Detuned/tests/contracts/m7-check-http-client-independent.test.ts"
+  ],
+  "include": []
+}

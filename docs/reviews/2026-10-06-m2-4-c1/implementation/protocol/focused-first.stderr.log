@@ -1,0 +1,22 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m2-focused-context-contracts.test.ts > M2.4-C.1 focused context transport > F01: valid same-space focus adds mandatory full metadata and omission preserves the old shape
+AssertionError: {"api_version":"1","request_id":"焦点\"\\🙂","error":{"code":"VALIDATION_ERROR","message":"本阶段不支持 focus_thread_id，请去掉该参数读取空间上下文。","retryable":false}}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ tests/contracts/m2-focused-context-contracts.test.ts:28:47
+     26|  it('F01: valid same-space focus adds mandatory full metadata and omis…
+     27|   const focused = await app.inject({ method: 'GET', url: route(tid), h…
+     28|   expect(focused.statusCode, focused.payload).toBe(200);
+       |                                               ^
+     29|   const envelope = focused.json(); expect(envelope.data.focus_thread).…
+     30|   expect(Value.Check(ContextEnvelopeSchema, envelope)).toBe(true); exp…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

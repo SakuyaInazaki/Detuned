@@ -1,0 +1,56 @@
+{
+  "status": "actual_fresh_v2_ready_pending_root_capture_dispatch",
+  "captured_at": "2026-10-09T15:30:38.584658+00:00",
+  "source_count": 393,
+  "dist_count": 535,
+  "existing_count": 41,
+  "missing_count": 14,
+  "source_task": {
+    "path": "docs/reviews/2026-10-09-m6-4-c2b/planning/m7-1a-task.md",
+    "sha256": "2192dd43f4ca83cf44e613155ae18fb34a1e39719f620a926377f30fcae9112f"
+  },
+  "source_owner": {
+    "path": "docs/reviews/2026-10-09-m6-4-c2b/planning/m7-1a-owner-candidates.json",
+    "sha256": "c63c108fe06fd6a62bf17acdf3f41d8d21c6f5ba7180eeb4ba1f40c1b2bcb028"
+  },
+  "C2B_seal": {
+    "finalization": "docs/reviews/2026-10-09-m6-4-c2b/verification/finalization.md",
+    "finalization_sha256": "058eaa3428151618b357bcc7c823f47f87e6a6848f4539e705198268eebf7369",
+    "manifest": "docs/reviews/2026-10-09-m6-4-c2b/verification/finalization-manifest.json",
+    "manifest_sha256": "8202bc4c47cc86dfe8e64ffa2d789ffe8d3565edbb98b973f983f34fd9a9917d",
+    "whole_files": 161
+  },
+  "baseline": {
+    "path": "docs/reviews/2026-10-09-m7-1-a/verification/baseline.json",
+    "sha256": "c5e7554d6ac337146ef9b30bf57c6b2ffe3ef3886520df55c80e2a9693219777"
+  },
+  "ownership": {
+    "path": "docs/reviews/2026-10-09-m7-1-a/verification/ownership-v2.json",
+    "sha256": "3cdace23e21eff1b6787130d8d4b336b2ba0cc99f13132bc55b69eae42720ce7"
+  },
+  "before": {
+    "path": "docs/reviews/2026-10-09-m7-1-a/verification/before-manifest-v2.json",
+    "sha256": "4c5a86d9cc5c78b45dc5ed966ecbb16ba78b59633e69eb5e1d5fa88c431959ea"
+  },
+  "execution": "No gate/capture/product/fixture generated; stop for root review and D capture authorization.",
+  "root_scope_addendum": [
+    {
+      "path": "packages/protocol/src/events.ts",
+      "sha256": "6e89d8c83605a507bf796c97b6b7583ce5699bc63648d00d52b6c0740e1e4b99",
+      "scope": "Add check.created; reuse existing check.completed/check.invalidated."
+    },
+    {
+      "path": "packages/core/src/services/event-service.ts",
+      "sha256": "bfb91959b08bc56279127f6d485ccc02c1af358e0201aee1f71798a3bad65342",
+      "scope": "check.* resolves run\u2192request\u2192target for thread subscriptions and retains current visibility."
+    }
+  ],
+  "v1_preserved": {
+    "path": "docs/reviews/2026-10-09-m7-1-a/verification/fresh-ready.json",
+    "sha256": "e5049d1187999013717a1eb3263f534b1bcdcbaef3ce078c16f7140802d7a81e"
+  },
+  "boundary": {
+    "path": "docs/reviews/2026-10-09-m7-1-a/verification/task-boundary-v2.md",
+    "sha256": "8014b396f08bc2d459b7196b45e614c341b9204847140bb040beb0de7be99a8e"
+  }
+}

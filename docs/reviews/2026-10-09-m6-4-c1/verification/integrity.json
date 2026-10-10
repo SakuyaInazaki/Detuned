@@ -1,0 +1,298 @@
+{
+  "author_and_independent_freezes": [
+    {
+      "manifest": "docs/reviews/2026-10-09-m6-4-c1/author/catalog/freeze-manifest.json",
+      "sha256": "e55c74f89a91e3ed7e826e3eca0e5b3cccffed14a7074f7594b47e1b20c903a0",
+      "files": [
+        {
+          "path": "packages/protocol/src/review.ts",
+          "sha256": "4ab851444d97b72bc653c0d0db48c4655716e6eb84c0d9c0dc72162f2bd96394",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/protocol/src/response-guards.ts",
+          "sha256": "cc8d746beff702238bedd54c83675e2f930f99ab20ba8c65a6d9d8d8b02241cc",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/protocol/src/openapi.ts",
+          "sha256": "a7da05bce2883e4d87ad2a0ba6673d1adcbbcd25fb59620d37de623b71254663",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/protocol/src/tools.ts",
+          "sha256": "673b4cd8f78b65ae7426bdc43120aefae1731d8e9e49b771dd961fe3aef4d876",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/core/src/ports/storage.ts",
+          "sha256": "2ab93862f80c0d77626955df67b865652c6f00f2a2dd1865c3b00fe3b2b26e16",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/storage-sqlite/src/sqlite-storage.ts",
+          "sha256": "461d604305c3976c68ca1c9cc5f5b6d7b287f14939af91b2d52c0aaaa481bb20",
+          "matches_freeze": true
+        },
+        {
+          "path": "modules/review/src/index.ts",
+          "sha256": "973f51cb5fba1127d9510cae76a7f3269dcc6bac34410b81c381a7f645a06a27",
+          "matches_freeze": true
+        },
+        {
+          "path": "modules/review/src/post-catalog-service.ts",
+          "sha256": "9bc2633d179fb17f90a67450279677869c6f3ad1f7194a6128e13ccd2bc06d8d",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/server/src/app.ts",
+          "sha256": "522b098c8ae97478ce43cbef5b88b8320b180511dbf4a6da514a92a391093b14",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/server/src/routes/reviews.ts",
+          "sha256": "3e207f0ee649887530dbe3fcad0aee11ae51eae12d7735abf091f579b26e7036",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/client/src/client.ts",
+          "sha256": "1dc56a9ad03732f6d25ce5b7969d7b32a7615500dde29a130bf702638087202f",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/cli/src/index.ts",
+          "sha256": "b5d2e7769c22a6862f1f1fcb238e09dc15f73481f70b7697d74309e9cd780733",
+          "matches_freeze": true
+        },
+        {
+          "path": "tests/contracts/m6-review-catalog.test.ts",
+          "sha256": "4c8ccbf697d7f27d51154ee00b355d1c306451ba57aee4d4ad1c006cd325f7a7",
+          "matches_freeze": true
+        }
+      ],
+      "all_match": true
+    },
+    {
+      "manifest": "docs/reviews/2026-10-09-m6-4-c1/author/web/freeze-manifest-v3.json",
+      "sha256": "c6ff753f4eaf277cb29a20b5dac7e287b2fdb579541d2c1e725eac4db606c38a",
+      "files": [
+        {
+          "path": "packages/web/src/app.tsx",
+          "sha256": "39ffa0a285277a79d5fb320454fdb5debf42b98fdce2729b21df5272164bb129",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/web/src/styles.css",
+          "sha256": "52480d0894f56847405524ffc3a4d73877cc6eb7b1a6fbd55b6b7f675056a320",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/web/src/review-panel.tsx",
+          "sha256": "20eaef2377c3c45c8a0ed1dd09cbe5b780470d704f554cacc501df43ea13b05e",
+          "matches_freeze": true
+        },
+        {
+          "path": "packages/web/src/review-input.ts",
+          "sha256": "b85a7ef67b356cb36c2eae16029244555402f462b03abe4b598bc7d8b3ac7f18",
+          "matches_freeze": true
+        },
+        {
+          "path": "tests/contracts/m6-review-web-input.test.ts",
+          "sha256": "0886dfc2e131258be2d1cd3321bb4f80b81d200afeb53d98f08a53f3c3d49612",
+          "matches_freeze": true
+        },
+        {
+          "path": "examples/review-web.md",
+          "sha256": "29d4b56cbef3fc58d92abb82a929bcb4415f91af1d98d8acb97698a0b8e4a3f3",
+          "matches_freeze": true
+        }
+      ],
+      "all_match": true
+    },
+    {
+      "manifest": "docs/reviews/2026-10-09-m6-4-c1/verification/independent-source-freeze-v5.json",
+      "sha256": "bfd55950a7f8c67248d1906d2f07e677263175de385a22de6c4d3f93bf0e92b4",
+      "files": [
+        {
+          "path": "tests/contracts/m6-review-catalog-independent.test.ts",
+          "sha256": "1e88ad8435911b37a4907839632df064aa1e3342acfd434ebd68d1297d313878",
+          "matches_freeze": true
+        },
+        {
+          "path": "scripts/integrations/web/fixtures.ts",
+          "sha256": "80f06fef834ba53e630e6e59bb583d493594be31dc5e05d61f090b7b032f313c",
+          "matches_freeze": true
+        },
+        {
+          "path": "scripts/integrations/web/playwright.config.ts",
+          "sha256": "bfd29063857e5fe8bcaf075c7a95267f14a31cefb899f5a58863e6e1e2a3fbad",
+          "matches_freeze": true
+        },
+        {
+          "path": "scripts/integrations/web/m6-review.spec.ts",
+          "sha256": "1dbc9b37362ec903f564a00c801bcf4add1af980467a07dda321880496959540",
+          "matches_freeze": true
+        }
+      ],
+      "all_match": true
+    }
+  ],
+  "source_inventory": {
+    "before_count": 374,
+    "current_count": 381,
+    "changed_existing": [
+      {
+        "path": "modules/review/src/index.ts",
+        "before_sha256": "e6da24cd3d4dff7dd338c809425d61e3d22889a4adab344bef26447013c8d922",
+        "current_sha256": "973f51cb5fba1127d9510cae76a7f3269dcc6bac34410b81c381a7f645a06a27"
+      },
+      {
+        "path": "packages/cli/src/index.ts",
+        "before_sha256": "c250196bf493ada13fc8fcf56519f83b41e35db8bcbb932308c41db1a9cfe1a8",
+        "current_sha256": "b5d2e7769c22a6862f1f1fcb238e09dc15f73481f70b7697d74309e9cd780733"
+      },
+      {
+        "path": "packages/client/src/client.ts",
+        "before_sha256": "b44ac17eed2ab1b996c05f1bcb111ec62e9978d3dba7e674ae48a18a4e86fd84",
+        "current_sha256": "1dc56a9ad03732f6d25ce5b7969d7b32a7615500dde29a130bf702638087202f"
+      },
+      {
+        "path": "packages/core/src/ports/storage.ts",
+        "before_sha256": "6fd1a4d0693bf67d68e00cabd7f31dffa68c70290f99d2b8d8dc40c7d8a5f127",
+        "current_sha256": "2ab93862f80c0d77626955df67b865652c6f00f2a2dd1865c3b00fe3b2b26e16"
+      },
+      {
+        "path": "packages/protocol/src/openapi.ts",
+        "before_sha256": "9571798e96a867a30e117f762d0fae6beb910e0d3b3222d4828a1eb6b6477d28",
+        "current_sha256": "a7da05bce2883e4d87ad2a0ba6673d1adcbbcd25fb59620d37de623b71254663"
+      },
+      {
+        "path": "packages/protocol/src/response-guards.ts",
+        "before_sha256": "fb379a8979137da5e2bf675d3f629d1471d110e899a22b64e684dae385738494",
+        "current_sha256": "cc8d746beff702238bedd54c83675e2f930f99ab20ba8c65a6d9d8d8b02241cc"
+      },
+      {
+        "path": "packages/protocol/src/review.ts",
+        "before_sha256": "f9bb3ee76ef78e756b76462f6575dc7539f002d11b2b65d1ae4da68f3a916a18",
+        "current_sha256": "4ab851444d97b72bc653c0d0db48c4655716e6eb84c0d9c0dc72162f2bd96394"
+      },
+      {
+        "path": "packages/protocol/src/tools.ts",
+        "before_sha256": "a12a329cf5a694572880ebae5de484358655aedd8e7c832957059827ff3b4cb9",
+        "current_sha256": "673b4cd8f78b65ae7426bdc43120aefae1731d8e9e49b771dd961fe3aef4d876"
+      },
+      {
+        "path": "packages/server/src/app.ts",
+        "before_sha256": "acd6c446b846c0cc08aec2686b487e6fb2e06c04cad552f9eb66449075d60984",
+        "current_sha256": "522b098c8ae97478ce43cbef5b88b8320b180511dbf4a6da514a92a391093b14"
+      },
+      {
+        "path": "packages/server/src/routes/reviews.ts",
+        "before_sha256": "f921402f4bf75aba2c6610d887b656f3c073f98c2e93c9089fd4609ca9880c0c",
+        "current_sha256": "3e207f0ee649887530dbe3fcad0aee11ae51eae12d7735abf091f579b26e7036"
+      },
+      {
+        "path": "packages/storage-sqlite/src/sqlite-storage.ts",
+        "before_sha256": "1eb985ab0542228894384209a420d0706e792ea399c3c91e4fc151ee00aefe9f",
+        "current_sha256": "461d604305c3976c68ca1c9cc5f5b6d7b287f14939af91b2d52c0aaaa481bb20"
+      },
+      {
+        "path": "packages/web/src/app.tsx",
+        "before_sha256": "b1d7bc57121132b66119ee2e0a79dd33249018e87f2a18567db0db3aba426da9",
+        "current_sha256": "39ffa0a285277a79d5fb320454fdb5debf42b98fdce2729b21df5272164bb129"
+      },
+      {
+        "path": "packages/web/src/styles.css",
+        "before_sha256": "94f6063a7371b9a840301974524c89f5d03b78714aefec9ee5ccd3acbba8c994",
+        "current_sha256": "52480d0894f56847405524ffc3a4d73877cc6eb7b1a6fbd55b6b7f675056a320"
+      },
+      {
+        "path": "scripts/integrations/web/fixtures.ts",
+        "before_sha256": "85f7687180f3a24dabe117af69a73b399bb3e3b9c625713f2dbae35790ca663b",
+        "current_sha256": "80f06fef834ba53e630e6e59bb583d493594be31dc5e05d61f090b7b032f313c"
+      },
+      {
+        "path": "scripts/integrations/web/playwright.config.ts",
+        "before_sha256": "6e2922e2fae573874336576a68b59127fac576e4d77dea17f0f7945a19b13b07",
+        "current_sha256": "bfd29063857e5fe8bcaf075c7a95267f14a31cefb899f5a58863e6e1e2a3fbad"
+      }
+    ],
+    "new": [
+      {
+        "path": "packages/web/src/review-input.ts",
+        "sha256": "b85a7ef67b356cb36c2eae16029244555402f462b03abe4b598bc7d8b3ac7f18"
+      },
+      {
+        "path": "packages/web/src/review-panel.tsx",
+        "sha256": "20eaef2377c3c45c8a0ed1dd09cbe5b780470d704f554cacc501df43ea13b05e"
+      },
+      {
+        "path": "modules/review/src/post-catalog-service.ts",
+        "sha256": "9bc2633d179fb17f90a67450279677869c6f3ad1f7194a6128e13ccd2bc06d8d"
+      },
+      {
+        "path": "tests/contracts/m6-review-web-input.test.ts",
+        "sha256": "0886dfc2e131258be2d1cd3321bb4f80b81d200afeb53d98f08a53f3c3d49612"
+      },
+      {
+        "path": "tests/contracts/m6-review-catalog.test.ts",
+        "sha256": "4c8ccbf697d7f27d51154ee00b355d1c306451ba57aee4d4ad1c006cd325f7a7"
+      },
+      {
+        "path": "tests/contracts/m6-review-catalog-independent.test.ts",
+        "sha256": "1e88ad8435911b37a4907839632df064aa1e3342acfd434ebd68d1297d313878"
+      },
+      {
+        "path": "scripts/integrations/web/m6-review.spec.ts",
+        "sha256": "1dbc9b37362ec903f564a00c801bcf4add1af980467a07dda321880496959540"
+      }
+    ],
+    "unapproved": []
+  },
+  "protected": {
+    "protected_review_probe_log_evidence_hashes": {
+      "count": 10296,
+      "mismatches": []
+    },
+    "sql_archive_before_hashes": {
+      "count": 7,
+      "mismatches": []
+    },
+    "schema_profile_before_hashes": {
+      "count": 2,
+      "mismatches": []
+    },
+    "current_document_hashes": {
+      "count": 63,
+      "mismatches": []
+    },
+    "mutable_status_document_hashes": {
+      "count": 5,
+      "mismatches": []
+    }
+  },
+  "head": {
+    "before": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+    "current": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+    "unchanged": true
+  },
+  "lock": {
+    "before": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+    "current": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+    "unchanged": true
+  },
+  "dist": {
+    "inventory": "final-dist-inventory.json",
+    "before_count": 519,
+    "current_count": 523,
+    "changed_existing": 41,
+    "new": 6,
+    "removed": [
+      "packages/web/dist/assets/index-BJwlsgFO.js",
+      "packages/web/dist/assets/index-CAbrs-9F.css"
+    ],
+    "disposition": "actual approved build changes, not protected as source"
+  },
+  "note": "Functional gate-time inventory. Metadata has not been updated or accepted here. Read-only historical review hashes are checked against baseline; no copying or mutation.",
+  "passed": true
+}

@@ -1,0 +1,203 @@
+{
+  "head_unchanged": true,
+  "baseline_head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "protected": {
+    "protected_review_probe_log_evidence_hashes": {
+      "count": 3623,
+      "unchanged": true,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      }
+    },
+    "frozen_sql_archive_hashes": {
+      "count": 4,
+      "unchanged": true,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      }
+    },
+    "schema_profile_hashes": {
+      "count": 2,
+      "unchanged": true,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      }
+    }
+  },
+  "final_execution_window": {
+    "product_source_config_test_hashes": {
+      "count": 181,
+      "unchanged": true,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      }
+    },
+    "current_document_hashes": {
+      "count": 40,
+      "unchanged": false,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": [
+          "examples/space-export.md"
+        ]
+      },
+      "authorized_example_delta_only": true
+    },
+    "mutable_status_document_hashes": {
+      "count": 5,
+      "unchanged": true,
+      "delta": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      }
+    }
+  },
+  "author_freezes": {
+    "storage": {
+      "count": 12,
+      "hashes_match": true
+    },
+    "transport": {
+      "count": 13,
+      "hashes_match": true
+    }
+  },
+  "baseline_to_final_scope_changes": {
+    "product_source_config_test_hashes": {
+      "added": [
+        "packages/client/src/export-stream.ts",
+        "packages/core/src/ports/space-export-snapshot.ts",
+        "packages/core/src/services/space-export-service.ts",
+        "packages/protocol/src/export.ts",
+        "packages/server/src/routes/export.ts",
+        "packages/storage-sqlite/src/space-export-snapshot.ts",
+        "tests/contracts/m3-space-export-contract.test.ts",
+        "tests/helpers/m3-export-worker.mjs",
+        "tests/integration/m3-export-independent.test.ts",
+        "tests/integration/m3-space-export.test.ts"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/cli/src/index.ts",
+        "packages/client/src/client.ts",
+        "packages/core/src/index.ts",
+        "packages/core/src/ports/storage.ts",
+        "packages/protocol/src/errors.ts",
+        "packages/protocol/src/index.ts",
+        "packages/protocol/src/openapi.ts",
+        "packages/protocol/src/request-policies.ts",
+        "packages/server/src/app.ts",
+        "packages/storage-sqlite/src/index.ts",
+        "packages/storage-sqlite/src/sqlite-storage.ts"
+      ]
+    },
+    "current_document_hashes": {
+      "added": [
+        "examples/space-export.md"
+      ],
+      "removed": [],
+      "changed": [
+        "docs/03-data-model.md",
+        "docs/04-protocol.md",
+        "docs/07-security-operations.md",
+        "docs/12-decisions.md"
+      ]
+    },
+    "mutable_status_document_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "unowned_source_delta": [],
+  "normal_build_changes": {
+    "tracked_build_artifact_hashes": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "packages/cli/dist/index.js",
+        "packages/cli/dist/index.js.map",
+        "packages/client/dist/client.d.ts",
+        "packages/client/dist/client.d.ts.map",
+        "packages/client/dist/client.js",
+        "packages/client/dist/client.js.map",
+        "packages/core/dist/index.d.ts",
+        "packages/core/dist/index.d.ts.map",
+        "packages/core/dist/index.js",
+        "packages/core/dist/index.js.map",
+        "packages/core/dist/ports/storage.d.ts",
+        "packages/core/dist/ports/storage.d.ts.map",
+        "packages/protocol/dist/errors.d.ts",
+        "packages/protocol/dist/errors.d.ts.map",
+        "packages/protocol/dist/errors.js",
+        "packages/protocol/dist/errors.js.map",
+        "packages/protocol/dist/index.d.ts",
+        "packages/protocol/dist/index.d.ts.map",
+        "packages/protocol/dist/index.js",
+        "packages/protocol/dist/index.js.map",
+        "packages/protocol/dist/openapi.d.ts.map",
+        "packages/protocol/dist/openapi.js",
+        "packages/protocol/dist/openapi.js.map",
+        "packages/server/dist/app.d.ts",
+        "packages/server/dist/app.d.ts.map",
+        "packages/server/dist/app.js",
+        "packages/server/dist/app.js.map",
+        "packages/storage-sqlite/dist/index.d.ts",
+        "packages/storage-sqlite/dist/index.d.ts.map",
+        "packages/storage-sqlite/dist/index.js",
+        "packages/storage-sqlite/dist/index.js.map",
+        "packages/storage-sqlite/dist/sqlite-storage.d.ts",
+        "packages/storage-sqlite/dist/sqlite-storage.d.ts.map",
+        "packages/storage-sqlite/dist/sqlite-storage.js",
+        "packages/storage-sqlite/dist/sqlite-storage.js.map"
+      ]
+    },
+    "untracked_build_artifact_hashes": {
+      "added": [
+        "packages/client/dist/export-stream.d.ts",
+        "packages/client/dist/export-stream.d.ts.map",
+        "packages/client/dist/export-stream.js",
+        "packages/client/dist/export-stream.js.map",
+        "packages/core/dist/ports/space-export-snapshot.d.ts",
+        "packages/core/dist/ports/space-export-snapshot.d.ts.map",
+        "packages/core/dist/ports/space-export-snapshot.js",
+        "packages/core/dist/ports/space-export-snapshot.js.map",
+        "packages/core/dist/services/space-export-service.d.ts",
+        "packages/core/dist/services/space-export-service.d.ts.map",
+        "packages/core/dist/services/space-export-service.js",
+        "packages/core/dist/services/space-export-service.js.map",
+        "packages/protocol/dist/export.d.ts",
+        "packages/protocol/dist/export.d.ts.map",
+        "packages/protocol/dist/export.js",
+        "packages/protocol/dist/export.js.map",
+        "packages/server/dist/routes/export.d.ts",
+        "packages/server/dist/routes/export.d.ts.map",
+        "packages/server/dist/routes/export.js",
+        "packages/server/dist/routes/export.js.map",
+        "packages/storage-sqlite/dist/space-export-snapshot.d.ts",
+        "packages/storage-sqlite/dist/space-export-snapshot.d.ts.map",
+        "packages/storage-sqlite/dist/space-export-snapshot.js",
+        "packages/storage-sqlite/dist/space-export-snapshot.js.map"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/protocol/dist/request-policies.d.ts",
+        "packages/protocol/dist/request-policies.d.ts.map",
+        "packages/protocol/dist/request-policies.js",
+        "packages/protocol/dist/request-policies.js.map"
+      ]
+    }
+  },
+  "historical_fixture_assets_unchanged": true,
+  "notes": "Initial source window changed only by documented C fixture repairs and parent-approved resolution PK keyset fix; final gates source window is stable. Current example delta is separately authorized; no claim of whole task snapshot immutability."
+}

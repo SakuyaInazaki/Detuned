@@ -1,0 +1,160 @@
+{
+  "status": "prepared_not_released_not_run",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "source-noemit",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/tsc",
+        "--noEmit",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-2/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "gate": "syntax-1",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "examples/d01-fixed/candidate-first-discovery.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-2",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "examples/d01-fixed/candidate-relaxation.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-3",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "examples/d01-fixed/reference.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-4",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "examples/d01-fixed/checker.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-5",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "examples/d01-fixed/catalog.mjs"
+      ]
+    },
+    {
+      "gate": "syntax-6",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "--check",
+        "scripts/checks/d01-fixed-verifier.mjs"
+      ]
+    },
+    {
+      "gate": "new-and-adjacent",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/integration/m7-fixed-verifier.test.ts",
+        "tests/integration/m7-fixed-verifier-independent.test.ts",
+        "tests/contracts/m7-check-http-client-independent.test.ts",
+        "tests/contracts/m7-check-client.test.ts",
+        "tests/contracts/m6-review-canonicalization.test.ts",
+        "tests/integration/m4-artifact-client.test.ts",
+        "tests/integration/m6-review-private-artifacts.test.ts",
+        "tests/integration/m7-check-domain-independent.test.ts",
+        "tests/integration/m7-check-scope-artifacts.test.ts"
+      ]
+    },
+    {
+      "gate": "typecheck",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "typecheck"
+      ]
+    },
+    {
+      "gate": "lint",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "lint"
+      ]
+    },
+    {
+      "gate": "schema",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "packages/storage-sqlite/scripts/check-schema-sync.mjs"
+      ]
+    },
+    {
+      "gate": "core-once",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ]
+    }
+  ],
+  "new_files": [
+    "tests/integration/m7-fixed-verifier.test.ts",
+    "tests/integration/m7-fixed-verifier-independent.test.ts"
+  ],
+  "adjacent_files": [
+    "tests/contracts/m7-check-http-client-independent.test.ts",
+    "tests/contracts/m7-check-client.test.ts",
+    "tests/contracts/m6-review-canonicalization.test.ts",
+    "tests/integration/m4-artifact-client.test.ts",
+    "tests/integration/m6-review-private-artifacts.test.ts",
+    "tests/integration/m7-check-domain-independent.test.ts",
+    "tests/integration/m7-check-scope-artifacts.test.ts"
+  ],
+  "js_syntax_files": [
+    "examples/d01-fixed/candidate-first-discovery.mjs",
+    "examples/d01-fixed/candidate-relaxation.mjs",
+    "examples/d01-fixed/reference.mjs",
+    "examples/d01-fixed/checker.mjs",
+    "examples/d01-fixed/catalog.mjs",
+    "scripts/checks/d01-fixed-verifier.mjs"
+  ],
+  "rationale": "actual B1 scope/JCS/download/receipt clients plus generic/private material and checkdomain boundaries; no modifiedexisting product requires fulltool/CLI/host matrix",
+  "current_proposal": "zero newprobe runs: M7.2 only fixedexample/runner/tests, no protocol/HTTP/tools changes; reuse B2 accepted current28/29 unless root selects otherwise",
+  "source_hashes": {
+    "tests/contracts/m7-check-http-client-independent.test.ts": "f3fcbb6e782940a4c992967cfb5a59a001a9902e56272b9dc18ed1c46b625637",
+    "tests/contracts/m7-check-client.test.ts": "f6cd780d4f8088ec7f53a54b8338e23541801d87821a8d9ea4e8f8701e1ec95f",
+    "tests/contracts/m6-review-canonicalization.test.ts": "71258cbcfa8758e09c11e9dc763d35a6ae4a6e522a127539048b61e7a2272232",
+    "tests/integration/m4-artifact-client.test.ts": "c17c2b1fb1f01a0a867acff8160f10c750b51e8537c3eb771cafaefa2d46ff41",
+    "tests/integration/m6-review-private-artifacts.test.ts": "978ba0f894a548eab4937b4eeaf005769d0144230a80bac03dba02da4370ece6",
+    "tests/integration/m7-check-domain-independent.test.ts": "45a51d0c95d0fc88397e5395ca5bc88571d5decc42100e8b4bab176a25e64af0",
+    "tests/integration/m7-check-scope-artifacts.test.ts": "e66602ebe229c3b6787984625efa1185a8a67799044a407435f5d68787fc8648"
+  },
+  "limits": "root runtime release required; workspace1worker1fileserial original5000ms; successfulbuild immediate all dist; sensitiveissuer/verify tokens never rawdiff/log"
+}

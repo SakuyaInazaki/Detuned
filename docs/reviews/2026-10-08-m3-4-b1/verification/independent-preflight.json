@@ -1,0 +1,16 @@
+{
+  "formal_cases": 5,
+  "status": "ready_not_product_run",
+  "helper_node_check": 0,
+  "files": {
+    "tests/integration/m3-operations-independent.test.ts": "8f1188976008c36bd57f1ea1de3b14ceecd2b319303b6daed5e7eb0891c922ac",
+    "tests/helpers/m3-operations-worker.mjs": "bf8d9854d0c7e9b066250923459c07112c50888795fe3e13b8654eaf78045e33"
+  },
+  "controlled_conditions": [
+    "onRequest + terminal IPC barriers around real partial HTTP socket destroy",
+    "private schema marker update/restore and directory rename/restore",
+    "actual readonly second SQLite BEGIN reader + accepted HTTP writes, WAL NOOP + physical SHA/frame invariance",
+    "real Writable highWaterMark1 held write callbacks; release on setImmediate, bounded1000entries",
+    "throwing request sink test-only"
+  ]
+}

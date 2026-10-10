@@ -1,0 +1,7 @@
+# M6.4-A B client source delivery
+
+Twelve review wrappers return strict DTO data directly. New review JSON alone uses the existing 1MiB bounded EOF/fatal-UTF8/abort/timeout/retry executor. Request, snapshot, submission and list parent IDs are checked only where the input proves them; no local actor/assignment inference, ACL or eligibility rules. Five persistent local key families use existing store v1 and credential-change/abort preparation. Private upload preserves immutable Blob snapshot and constructs fresh FormData each retry, verifies returned private scope/space/hash/bytes; metadata is strictly empty. Existing download uses fixed content path and SHA/bytes/EOF unchanged.
+
+Changed files: client.ts, request-key.ts, new m6-review-client.test.ts, lock server importer only. artifact-transfer.ts remains unchanged. Lock adds only @detuned/module-review workspace:* → ../../modules/review after A server manifest; no external pin, installation, node_modules or store format change.
+
+Four author groups written: strict read/correlation/date; persistent key scopes; bounded body and reader cancellation; immutable private upload retries/nonempty metadata zero HTTP. Tests are controlled transport contracts, not real server or browser evidence. B has run no test/type/build/lint/generator/install; D owns all serial execution and source validation. A DTO/guard implementation remains separately owned. Source frozen pending D; no execution success claimed.

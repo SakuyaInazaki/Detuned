@@ -1,0 +1,29 @@
+{
+  "status": "root_accepted_V5_capture_protected",
+  "root_read": [
+    "fresh-ready-v2.json",
+    "capture/capture-ready.json",
+    "fixture README/manifest",
+    "capture/generate-final.json"
+  ],
+  "assets": {
+    "tests/fixtures/m7-schema5-baseline/README.md": {
+      "sha256": "ea3c803aac9dc1e1d3704ef341acf07e6932c4592bbcac6f227b6a488a55404f",
+      "bytes": 2284
+    },
+    "tests/fixtures/m7-schema5-baseline/database.sqlite": {
+      "sha256": "d784753dd1e8e5dc63518147158efa2ac160e81d28ecbb1966656da4cb0d5752",
+      "bytes": 331776
+    },
+    "tests/fixtures/m7-schema5-baseline/generate-v5.mjs": {
+      "sha256": "bf3bdb4ac8cab722493c7e10ec3b5a6f6d404f9a3e612398902251856030aeb5",
+      "bytes": 12440
+    },
+    "tests/fixtures/m7-schema5-baseline/manifest.json": {
+      "sha256": "ec7d875276dc0b51c3aa7d9dbd74416675dcdf2b3b7675b13e3302e0eae9ac58",
+      "bytes": 10521
+    }
+  },
+  "rule": "These four archived assets remain immutable through M7 product changes/tests; normal tests copy archive and hydrate copy only.",
+  "dispatch": "A/B product authorized by root; D independent sources only, no test/build gates yet."
+}

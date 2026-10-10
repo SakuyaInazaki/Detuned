@@ -1,0 +1,35 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/cross-interface-contract.test.ts (2 tests) 402ms
+ ✓ tests/integration/m1-discussion.test.ts (5 tests) 680ms
+ ✓ tests/contracts/m0-m1-adapters-regression.test.ts (6 tests) 995ms
+   ✓ M0-R Adapter Regressions (A01 - A05) > A06: MCP stdio server executes valid and invalid tool calls  721ms
+ ✓ packages/storage-sqlite/tests/storage.test.ts (7 tests) 188ms
+ ✓ tests/integration/m0-m1-regression.test.ts (11 tests) 1195ms
+ ✓ packages/protocol/tests/schema.test.ts (5 tests) 6ms
+ ✓ tests/probes/m0-probes.test.ts (3 tests) 10ms
+ ✓ tests/integration/m0-m1-r3-regression.test.ts (11 tests) 1376ms
+ ✓ tests/contracts/m0-m1-r2-adapters.test.ts (3 tests) 9ms
+ ✓ tests/contracts/r4-c-route-contracts.test.ts (4 tests) 429ms
+ ✓ tests/integration/m0-m1-r2-regression.test.ts (12 tests) 2022ms
+   ✓ M0-R2 / M1-R2 Behavioral Regressions (S01 - S11 & CLI) > CLI: post, revision, withdraw commands succeed without schema errors  868ms
+ ✓ packages/storage-sqlite/tests/schema-generation.test.ts (6 tests) 6088ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged  1123ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > tracks real named index and FTS source changes into runtime profile without dropping attributes  1590ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > rejects unsupported primary key collation or direction at build and check time (AB01)  384ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V2' profile in sync check and successfully repairs it via generate-schema (AB03)  600ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > detects corrupt 'V1' profile in sync check and successfully repairs it via generate-schema (AB03)  621ms
+   ✓ Schema Generation & Sync Pipeline Formal Regressions > fails atomically without modifying schema.ts when inputs or markers are missing, and recovers upon restoration (AB02 & AB04)  1752ms
+ ✓ tests/integration/m0-m1-r4-b-regression.test.ts (82 tests) 6521ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > B01: All 11 implemented operation families encode, replay identically, and reconstruct after reopen without fallback  595ms
+   ✓ M0/M1-R4-B Data and Upgrade Reliability Regressions (B01 - B12) > R14 review regression (X01-X03) > B.4-3R2 / Z01-Z04 Index Key & FTS Schema Semantics Regression > Z04: CLI init/serve reject Y02 existing materials and Y03 missing version 2 with FORBIDDEN and release lock  545ms
+ ✓ tests/contracts/r4-c-contracts.test.ts (26 tests) 6665ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-6: Bounded retries maintain original requestKey and terminate at maxRetries  3507ms
+   ✓ R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter > C02: Client Response Envelope, Error Classification, and Lifecycle > C02-8: Network and Retry-After retry policies  1094ms
+
+ Test Files  14 passed (14)
+      Tests  183 passed (183)
+   Start at  13:43:54
+   Duration  7.44s (transform 789ms, setup 0ms, collect 4.48s, tests 26.59s, environment 3ms, prepare 955ms)
+

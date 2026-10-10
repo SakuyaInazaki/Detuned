@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "name": "first",
+      "exit": 1,
+      "tests": 0,
+      "failure": "fixture outside official source cannot resolve @deepseek-ai/cordis"
+    },
+    {
+      "name": "second",
+      "exit": 1,
+      "passed": 1,
+      "failed": 1,
+      "failure": "fixture interpreted already-unwrapped subscribe data as HTTP envelope"
+    },
+    {
+      "name": "third",
+      "exit": 0,
+      "passed": 1,
+      "skipped": 1
+    },
+    {
+      "name": "final",
+      "exit": 0,
+      "passed": 2
+    },
+    {
+      "name": "isolated",
+      "exit": 0,
+      "passed": 2,
+      "duration_seconds": 2.24,
+      "environment": "env -i; PATH + DETUNED_EXPERIMENT_REPO + DETUNED_EXPERIMENT_SOURCE + CI; no user env inherited",
+      "command_file": "isolated-run.sh"
+    }
+  ],
+  "fixture_sha256": "ae648dc5b701361d233957df7c84aaf8a1308c42290b6395093d7561d606aede",
+  "runtime_receipt": "runtime-receipt.json",
+  "owned_runtime_files": [
+    "/private/tmp/detuned-m43-runtime.MU1a4q/.detuned-m43/independent.config.ts",
+    "/private/tmp/detuned-m43-runtime.MU1a4q/.detuned-m43/independent.spec.ts",
+    "/private/tmp/make-independent.py"
+  ],
+  "fixtures_cleanup": "HTTP closed; SQLite closed; fixture dirs removed by finally; all bridge probe/serving PIDs exit-record and kill(pid,0) asserted; official source/deps retained",
+  "previous_final_runtime_receipt": "final.runtime-receipt.json"
+}

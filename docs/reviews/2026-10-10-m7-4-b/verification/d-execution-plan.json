@@ -1,0 +1,25 @@
+{
+  "status": "source ready, pending static reviews/root runtime release",
+  "scope": "A Docker/workflow/static layout only; D one real builtCLI journey",
+  "preflight": "source ownership/baseline/HEADlock plus actual555dist hashes and builtCLI existence; existing accepted dist reuse, no build because package source unchanged",
+  "commands": [
+    {
+      "id": "source-noemit-first",
+      "command": "pnpm exec tsc -p docs/reviews/2026-10-10-m7-4-b/verification/new-source-tsconfig.json"
+    },
+    {
+      "id": "focused-first",
+      "command": "pnpm exec vitest run tests/contracts/m7-delivery-layout.test.ts tests/integration/m7-local-startup.test.ts tests/integration/m0-m1-r3-regression.test.ts tests/contracts/m3-shutdown-contract.test.ts tests/integration/m3-shutdown-independent.test.ts --maxWorkers=1 --no-file-parallelism",
+      "reason": "2new + maintained R3 T01\u2013T11 archive replacement + direct shutdown lifecycle adjacent"
+    }
+  ],
+  "proposed_not_run": "No new full/type/lint/schema/current/host runtime required by this narrow delivery recipe/test-only task; root selects if needed. Accepted M7.4A967/155 reused with unchanged package source boundary, never count as B newrun. Docker static only; no container or clean/minNode install certification.",
+  "resource_limits": {
+    "case_ms": 15000,
+    "own_watchdog_ms": 12000,
+    "cleanup_max_ms": 2000,
+    "old_budgets": "unchanged"
+  },
+  "secret": "init rawstdout memory/private0600wx only; all assertions safe booleans; no originalerror/rawoutput included in failed assertion",
+  "counts": "A2new +D1new source cases expected, actualruntime not run"
+}

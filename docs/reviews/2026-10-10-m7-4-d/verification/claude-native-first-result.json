@@ -1,0 +1,159 @@
+{
+  "status": "passed",
+  "version_path": "2.1.282",
+  "binary_sha256": "fcfd837103965c64de34a6b9b94370d77a347ea71819715a27d5f0ef01775ea4",
+  "prompt_sent": false,
+  "model_request_sent": false,
+  "input_mode": "wrapped",
+  "tools": [
+    "forum_ack",
+    "forum_context",
+    "forum_poll",
+    "forum_publish",
+    "forum_read",
+    "forum_relate",
+    "forum_review",
+    "forum_search",
+    "forum_subscribe"
+  ],
+  "guard": {
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "checks": {
+    "invalid_before_prepare_http": 0,
+    "actor_id": "act_df9f71ab-2930-41d2-9d66-b7e3a28d86d7",
+    "space_id": "spc_730c0721-c414-4906-889b-3124366c893e",
+    "request_id": "rrq_d67b891a-6317-4c49-be4a-77e124500684",
+    "snapshot_id": "snp_f24e1784-0f41-444f-9a73-abbc2721e563",
+    "created_run_id": "chk_8f8a4c9f-8521-46b7-88c4-89c3b5fc70d5",
+    "reads": [
+      "check_run",
+      "check_snapshot",
+      "check_post_revision",
+      "check_receipt",
+      "check_artifact",
+      "required_checks"
+    ],
+    "reason_500": true,
+    "scope_denied": true,
+    "artifact_metadata_only": true,
+    "receipt_id": "native.receipt",
+    "ack_delta": 0,
+    "pending_unchanged": true,
+    "cancelled": true
+  },
+  "cleanup": {
+    "flights_settled": true,
+    "children_closed": true,
+    "forbidden_closed": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_directory_removed": true,
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "mcp_candidates_absent": true
+  },
+  "profile_sha256": "fe1e9feb660d424bce17443182a0868d3de47cd8d875f78e7e1c548b0922a1e4",
+  "initialize": true,
+  "catalogue_exact": true,
+  "native_close": {
+    "code": 143,
+    "signal": null
+  },
+  "diagnostics": {
+    "stages": [
+      "setup-begin",
+      "setup-done",
+      "guard-begin",
+      "guard-close",
+      "guard-result",
+      "guard-pass",
+      "native-spawn-begin",
+      "native-actual-spawn",
+      "initialize-response",
+      "catalogue",
+      "matrix-invalid",
+      "matrix-create",
+      "matrix-log-receipt",
+      "matrix-reads",
+      "matrix-scope",
+      "matrix-invalidate",
+      "matrix-done",
+      "poll-begin",
+      "poll-close",
+      "cleanup-begin",
+      "children-cleanup-begin",
+      "children-cleanup-done",
+      "forbidden-cleanup-begin",
+      "forbidden-cleanup-done",
+      "app-cleanup-begin",
+      "business-cleanup-drain-begin",
+      "business-cleanup-drain-done",
+      "socket-cleanup-close-done",
+      "app-cleanup-done",
+      "db-cleanup-begin",
+      "db-cleanup-done",
+      "cleanup-done"
+    ],
+    "issued_controls": {
+      "initialize": 1,
+      "mcp_status": 4,
+      "mcp_call": 19
+    },
+    "prompt_sent": false,
+    "model_request_sent": false,
+    "guard": {
+      "allowed_hits": 1,
+      "forbidden_hits": 0,
+      "child_close": {
+        "code": 0,
+        "signal": null,
+        "expired": false,
+        "error": false
+      },
+      "parsed": true,
+      "allowed": "allowed",
+      "forbidden": "EPERM",
+      "sentinel": "EPERM"
+    },
+    "native": {
+      "actual_spawn": true,
+      "actual_close": {
+        "code": 143,
+        "signal": null
+      },
+      "spawn_error": false
+    },
+    "initialize_success": true,
+    "catalogue_connected": true,
+    "active_count": 0,
+    "open_connections": 0,
+    "supervision": {
+      "work_budget_ms": 50000,
+      "total_budget_ms": 60000,
+      "worker_budget_ms": 60000,
+      "emergency_budget_ms": 65000,
+      "initializer_settled": true,
+      "registrations_settled": true,
+      "mcp_watch_settled": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": true,
+      "group_probe": "absent",
+      "worker_registered": true,
+      "worker_group_confirmed": true,
+      "worker_observer_completed": true,
+      "native_registered": true,
+      "mcp_candidate_received": true,
+      "mcp_candidate_observed": true,
+      "mcp_registered": true,
+      "mcp_acknowledged": true,
+      "mcp_parent_verified": true,
+      "mcp_same_worker_group": true,
+      "mcp_phase": "acknowledged",
+      "mcp_candidate_probe": "absent"
+    }
+  }
+}

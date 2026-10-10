@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ✓ tests/contracts/m4-mcp-schema.test.ts (4 tests) 11ms
+ ✓ tests/contracts/m4-mcp-session.test.ts (5 tests) 15ms
+ ✓ tests/contracts/m4-mcp-binding-independent.test.ts (6 tests) 2092ms
+   ✓ MCP binding independent concurrent real posts share one preflight/session, spaces and actor processes stay isolated  473ms
+   ✓ MCP binding independent actual committed session response loss is one attempt and terminal until reconnect  439ms
+   ✓ MCP binding independent EOF and repeated signal during cap/session initialization settle native HTTP without late business or ACK  417ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  23:02:39
+   Duration  2.80s (transform 332ms, setup 0ms, collect 1.02s, tests 2.12s, environment 0ms, prepare 142ms)
+

@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-knowledge-views.test.ts (4 tests | 4 failed) 20ms
+   × M2.2-B knowledge reading projections > V01: findings contain only claims, reports and fixed relation provenance, never certification 16ms
+     → CryptoTokenSigner is not a constructor
+   × M2.2-B knowledge reading projections > V02: historical invalid fields become null/missing without inventing failure facts 1ms
+     → CryptoTokenSigner is not a constructor
+   × M2.2-B knowledge reading projections > V03: pins require summary, keep fixed sources and distinguish summary vs source updates 1ms
+     → CryptoTokenSigner is not a constructor
+   × M2.2-B knowledge reading projections > V04: relation redaction preserves only tombstone facts, withdrawal stays open, nonpublic events are excluded 1ms
+     → CryptoTokenSigner is not a constructor
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V01: findings contain only claims, reports and fixed relation provenance, never certification
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V02: historical invalid fields become null/missing without inventing failure facts
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V03: pins require summary, keep fixed sources and distinguish summary vs source updates
+ FAIL  tests/integration/m2-knowledge-views.test.ts > M2.2-B knowledge reading projections > V04: relation redaction preserves only tombstone facts, withdrawal stays open, nonpublic events are excluded
+TypeError: CryptoTokenSigner is not a constructor
+ ❯ tests/integration/m2-knowledge-views.test.ts:13:609
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  15:23:39
+   Duration  509ms (transform 156ms, setup 0ms, collect 254ms, tests 20ms, environment 0ms, prepare 38ms)
+

@@ -1,0 +1,17 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-artifact-cli.test.ts > AB B04: local file/key/MIME errors send no HTTP and target/permission failures preserve output
+DetunedError: 缺少Idempotency-Key。
+ ❯ DetunedClient.requestWithBody packages/client/src/client.ts:499:28
+    497|                   outcome = {
+    498|                     kind: 'error',
+    499|                     error: new DetunedError(code, message, res.status,…
+       |                            ^
+    500|                   };
+    501|                 }
+ ❯ DetunedClient.uploadArtifact packages/client/src/client.ts:578:20
+ ❯ tests/contracts/m4-artifact-cli.test.ts:26:266
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

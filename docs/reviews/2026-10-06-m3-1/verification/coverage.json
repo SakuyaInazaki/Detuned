@@ -1,0 +1,166 @@
+{
+  "task": "M3.1 independent unitC",
+  "formal": {
+    "tests": 354,
+    "files": 39,
+    "new_core": 11,
+    "new_contract": 7,
+    "new_combination": 2,
+    "fullsuite_runs": 1,
+    "target_recovery_after": {
+      "tests": 2,
+      "exit": 0
+    },
+    "target_recovery_before": {
+      "tests": 2,
+      "failed": 2,
+      "exit": 1,
+      "version": "baseline old dist"
+    }
+  },
+  "quality": {
+    "build_runs": 1,
+    "typecheck_runs": 1,
+    "lint_runs": 1,
+    "current29": {
+      "total": 29,
+      "passed": 29,
+      "build_reference": "commands.json build-first"
+    }
+  },
+  "after_commands": {
+    "total": 36,
+    "exit0": 34,
+    "exit1": 2,
+    "scope": "commands.json actual after commands, phase1 commands separately recorded",
+    "failures": [
+      "tools-real-first ERR_MODULE_NOT_FOUND fixture relative path",
+      "tools-real-v2 expected raw AbortError but sharedclient actual UserAbortError"
+    ],
+    "retry": "tools-real-v3 passed; first outputs/code all retained"
+  },
+  "catalog": {
+    "operation_count": 38,
+    "body_operation_count": 20,
+    "actual_business_route_count": 38,
+    "date_time_ignored_warnings": 44,
+    "warning_limit": "not date value-format certification"
+  },
+  "independent_cases": {
+    "process_recovery": "real different server/client PIDs, same persisted batch/event order and D01 fixed proposal/failure content",
+    "D01_step4": "A ordinary wrong proposal/B provided failure/C four-input HTTP-only new client discovers fixed refs and publishes cites correction, then C+server restart pendingbatch/mats recovered",
+    "ACK_lost_response": "proxy observes server committed200 then destroys client response; readonly DB ack committed; newclient exact retry200; signed wrong persisted range repeat409/no state delta",
+    "scanning": "650 legal stored revision events with public/private mix; limit100 stops after400 scan positions, pending private projection99, reconstructed public IDs exact; extra520private scan yields empty confirmable500range without autoack",
+    "wait20": "20ordinary distinct actors/client PIDs/consumers; 3 true default-timer rounds via unsettled-promise IPCready barrier; eventwake+explicitack,800msdeadline,10abort+10connected503preClose,newPIDall20new events recover",
+    "current_ACL": "readcap403/disabledactor401/revokedmembership404/epoch409 poll+ack, consumer/batch snapshots unchanged; author11 additionally revokedcredential during scheduler wake",
+    "object_space": "actual foreign thread/post/relation entities plus explicit inconsistent stored event fixture, mainthread-filter emptybatch, ack-only scan progression; not normal HTTP exploit claim",
+    "Pi": "installed0.87.1 actual validator+executor/client/realcorewait cancel UserAbortError; zero batch/ack",
+    "MCP": "built-dist realSDKstdio extra.signal/client/realcorewait cancellation; McpError, zero batch/ack"
+  },
+  "limits": [
+    "No second600s; no load/throughput certification from single read/write samples",
+    "20waiting duration includes client IPC/HTTP, not internal wait latency",
+    "128+1 tested author injected scheduler formal; no independent129realclient run",
+    "privatevisibility stored fixtures do not imply sealed review product implemented",
+    "object-space probe uses explicitly defensive inconsistent-event rows",
+    "Node26 only; no Node22/clean install/remote CI/host model certification",
+    "T08 controlled process restart/response loss, not powerloss/media/backup/T12 certification"
+  ],
+  "integrity": {
+    "product_source_config_test_hashes": {
+      "before": 154,
+      "after": 158,
+      "changed": [
+        "packages/core/src/services/event-service.ts",
+        "packages/mcp/src/index.ts",
+        "packages/server/src/routes/events.ts"
+      ],
+      "missing": [],
+      "added": [
+        "tests/integration/m3-event-recovery.test.ts",
+        "tests/integration/m3-event-core.test.ts",
+        "tests/helpers/m3-event-worker.mjs",
+        "tests/contracts/m3-events-contract.test.ts"
+      ]
+    },
+    "current_document_hashes": {
+      "before": 36,
+      "after": 37,
+      "changed": [
+        "docs/03-data-model.md",
+        "docs/04-protocol.md",
+        "docs/12-decisions.md"
+      ],
+      "missing": [],
+      "added": [
+        "examples/events.md"
+      ]
+    },
+    "mutable_status_document_hashes": {
+      "before": 5,
+      "after": 5,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "before": 3190,
+      "after": 3190,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "frozen_sql_archive_hashes": {
+      "before": 4,
+      "after": 4,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "schema_profile_hashes": {
+      "before": 2,
+      "after": 2,
+      "changed": [],
+      "missing": [],
+      "added": []
+    },
+    "tracked_build_artifact_hashes": {
+      "before": 208,
+      "after": 208,
+      "changed": [
+        "packages/core/dist/services/event-service.d.ts",
+        "packages/core/dist/services/event-service.d.ts.map",
+        "packages/core/dist/services/event-service.js",
+        "packages/core/dist/services/event-service.js.map",
+        "packages/mcp/dist/index.js",
+        "packages/mcp/dist/index.js.map",
+        "packages/server/dist/routes/events.d.ts.map",
+        "packages/server/dist/routes/events.js",
+        "packages/server/dist/routes/events.js.map"
+      ],
+      "missing": [],
+      "added": []
+    },
+    "untracked_build_artifact_hashes": {
+      "before": 48,
+      "after": 48,
+      "changed": [],
+      "missing": [],
+      "added": []
+    }
+  },
+  "process_cleanup": {
+    "wait20_owned_pids": 22,
+    "all_exited": true,
+    "wait_round_pending_final": 0,
+    "wait_round_resource_Timeout": 0,
+    "original_listener_closed": true,
+    "latest_readonly_ps": "only own query shell/rg matched, no m3-worker/MCPdist leftovers"
+  },
+  "assets": {
+    "runtime_databases": "own formal and wait20 mkdtemp directories removed in finally; toolfixture in-memory closed",
+    "tokens": "ordinary/admin in private IPC/process memory only; no raw credential/token emitted in new public records",
+    "historical_HR1_C2": "covered by baseline existing154 source and3190immutable evidence, no unexpected deltas"
+  },
+  "parent_acceptance": "M3.1 limited local engineering accepted; M3.2 B taskbook chosen, not started"
+}

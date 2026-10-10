@@ -1,0 +1,117 @@
+{
+  "head_unchanged": true,
+  "stable_final_window": {
+    "product_source_config_test_hashes": true,
+    "current_document_hashes": true,
+    "mutable_status_document_hashes": true,
+    "protected_review_probe_log_evidence_hashes": true,
+    "frozen_sql_archive_hashes": true,
+    "schema_profile_hashes": true,
+    "tracked_build_artifact_hashes": true,
+    "untracked_build_artifact_hashes": true
+  },
+  "delta_from_fresh_baseline": {
+    "product_source_config_test_hashes": {
+      "before": 187,
+      "after": 197,
+      "added": [
+        "packages/storage-sqlite/src/offline-upgrade.ts",
+        "tests/contracts/m3-offline-upgrade-contract.test.ts",
+        "tests/fixtures/runtime-fa1b35c/README.md",
+        "tests/fixtures/runtime-fa1b35c/entry.ts",
+        "tests/fixtures/runtime-fa1b35c/generator.mjs",
+        "tests/fixtures/runtime-fa1b35c/manifest.json",
+        "tests/fixtures/runtime-fa1b35c/runtime.mjs",
+        "tests/helpers/m3-upgrade-worker.mjs",
+        "tests/integration/m3-offline-upgrade.test.ts",
+        "tests/integration/m3-upgrade-independent.test.ts"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/cli/src/index.ts",
+        "packages/storage-sqlite/src/index.ts",
+        "packages/storage-sqlite/src/logical-import.ts",
+        "packages/storage-sqlite/src/offline-backup.ts"
+      ]
+    },
+    "current_document_hashes": {
+      "before": 41,
+      "after": 42,
+      "added": [
+        "examples/upgrade-recovery.md"
+      ],
+      "removed": [],
+      "changed": [
+        "docs/03-data-model.md",
+        "docs/04-protocol.md",
+        "docs/07-security-operations.md",
+        "docs/12-decisions.md"
+      ]
+    },
+    "mutable_status_document_hashes": {
+      "before": 5,
+      "after": 5,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "protected_review_probe_log_evidence_hashes": {
+      "before": 3887,
+      "after": 3887,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "frozen_sql_archive_hashes": {
+      "before": 4,
+      "after": 4,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "schema_profile_hashes": {
+      "before": 2,
+      "after": 2,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "tracked_build_artifact_hashes": {
+      "before": 208,
+      "after": 208,
+      "added": [],
+      "removed": [],
+      "changed": [
+        "packages/cli/dist/index.js",
+        "packages/cli/dist/index.js.map",
+        "packages/storage-sqlite/dist/index.d.ts",
+        "packages/storage-sqlite/dist/index.d.ts.map",
+        "packages/storage-sqlite/dist/index.js",
+        "packages/storage-sqlite/dist/index.js.map"
+      ]
+    },
+    "untracked_build_artifact_hashes": {
+      "before": 100,
+      "after": 104,
+      "added": [
+        "packages/storage-sqlite/dist/offline-upgrade.d.ts",
+        "packages/storage-sqlite/dist/offline-upgrade.d.ts.map",
+        "packages/storage-sqlite/dist/offline-upgrade.js",
+        "packages/storage-sqlite/dist/offline-upgrade.js.map"
+      ],
+      "removed": [],
+      "changed": [
+        "packages/storage-sqlite/dist/logical-import.js",
+        "packages/storage-sqlite/dist/logical-import.js.map",
+        "packages/storage-sqlite/dist/offline-backup.d.ts",
+        "packages/storage-sqlite/dist/offline-backup.d.ts.map",
+        "packages/storage-sqlite/dist/offline-backup.js",
+        "packages/storage-sqlite/dist/offline-backup.js.map"
+      ]
+    }
+  },
+  "author_freeze_matches": {
+    "storage": true,
+    "transport": true
+  }
+}

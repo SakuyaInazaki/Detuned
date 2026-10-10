@@ -1,0 +1,32 @@
+{
+  "name": "detuned-workspace",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@11.7.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "pnpm -r run lint",
+    "test": "vitest run",
+    "test:integration": "vitest run tests/integration",
+    "test:contracts": "vitest run tests/contracts",
+    "test:all": "vitest run",
+    "clean": "pnpm -r run clean",
+    "test:e2e": "playwright test --config scripts/integrations/web/playwright.config.ts"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.13.9",
+    "better-sqlite3": "^13.0.3",
+    "@sinclair/typebox": "^0.34.28",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7",
+    "@playwright/test": "1.64.0"
+  }
+}

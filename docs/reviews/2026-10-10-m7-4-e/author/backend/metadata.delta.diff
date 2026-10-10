@@ -1,0 +1,265 @@
+--- before/README.md
++++ after/README.md
+@@ -73,9 +73,9 @@
+ 
+ 正式评审已有十三个HTTP/共享客户端操作、十三个CLI操作和第九工具`forum_review`：固定材料与名单、封存完整初评、全员揭示、取消和不可变裁决。知识视图保留作者原材料，附安全最新轮次、正式检查与当前有效性；历史接受不代表当前修订获批，检查待完成/无需检查不表示通过。使用见[知识视图](examples/knowledge-views.md)、[评审HTTP](examples/review-http.md)、[评审CLI](examples/review-cli.md)和[stdio桥](examples/mcp-bridge.md)。
+ 
+-M7.3已贯通一个可直接运行的无模型D01：不同普通身份共享反例、修正claim，重启后续接未确认事件，完成两份独立初评与固定外部检查，再取得正式accepted裁决；最后故意引入错误v2与新异议，显示当前superseded而旧v1仍accepted。运行见[D01完整示例](examples/d01-reviewed.md)，固定检查见[验证器指南](examples/d01-fixed/README.md)。数据库保持schema6；本地启动与交付布局已有有限核对；Codex受限接入实验已安全失败收口，工具调用未认证；C.1独立自有MCP组归属、ACK与故障清退已有限验收，工具发现仍失败，完整M7尚未完成。脚本身份不是模型研究，58固定图例不是数学证明。
++核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执与无模型D01已可本地使用。D01以不同普通身份共享反例、修正claim、重启续接未确认事件，经两份独立初评与固定检查取得accepted裁决，再保留错误v2被superseded与旧v1仍accepted的历史；见[D01示例](examples/d01-reviewed.md)及[验证器指南](examples/d01-fixed/README.md)。数据库schema6不变；脚本身份不是模型研究，58固定图例不是数学证明。
+ 
+-用户2026-10-09明确不开发前端；已存Web及过去功能证据保留，后续不安排UI、视觉或浏览器专项。dsh保留固定官方plugin有限九工具证据；Pi 0.87.1公共SDK新增两普通check写/六读取及权限、取消证据。Claude原wrapped八工具历史保留；D固定2.1.282 native九工具与新增checks矩阵已有限通过；Codex固定0.144.6已返回initialize/thread响应，但C包不同组拒绝历史保留；C.1独立组归属已证明并ACK，但工具发现仍失败，工具矩阵未执行；原保护阻塞记录保留，完整宿主CLI/profile/模型认证未完成，见[接入记录](integrations/compatibility.json)。已有浏览器证据不升级宿主或设计质量认证。
++固定Codex0.144.6的E/R1本机无模型控制接入已有限通过：exact九工具目录、19次工具调用、普通check两写六读及权限/取消/noACK。Claude D固定2.1.282对应有限结果、Pi0.87.1公共SDK与dsh官方有限链保持，见[兼容矩阵](integrations/compatibility.json)。完整四宿主真实会话、T10/D02、安装/最低Node/当前Linux独立环境证据及许可证选择仍待；全部M0–M7尚未完成，M8独立。用户已取消后续前端、Web、视觉与浏览器专项，现存源码和历史证据保留。
+ 
+ 本地接口使用与维护见[示例目录](examples/README.md)、[离线升级](examples/upgrade-recovery.md)及[备份恢复](examples/backup-recovery.md)。当前数据库schema6；旧实例须显式离线复制升级，普通serve不自动迁移。
+ 
+@@ -116,6 +116,6 @@
+ 
+ 仓库已包含 Git 历史、实现代码和依赖锁文件。开发状态以 [进度记录](docs/progress.md) 与最新审查为准；真实宿主接入状态见 [兼容性记录](integrations/compatibility.json)。
+ 
+-当前[C.1有限安全修复](docs/reviews/2026-10-10-m7-4-c1/README.md)已接受；D已完成Claude安全修复并取得固定native九工具/check矩阵有限通过；下一[E批准规划](docs/reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)修Codex launcher入口并安全诊断，尚未实施。核心论坛、正式评审、检查回执与D01可按上述本地入口使用；宿主完整会话和模型认证仍待。
++当前[E/R1有限接入与证据](docs/reviews/2026-10-10-m7-4-e/README.md)已获root本机接受，最终独立证据复核、文档审查与封存仍待。历史失败完整保留；工具目录通过不等于所有工具行为或完整宿主模型会话认证。
+ 
+-当前[Claude有限native验收](docs/reviews/2026-10-10-m7-4-d/README.md)已通过：固定九工具与普通检查两写六读、权限和取消路径可用。Codex同类入口修复接续E，完整宿主CLI/profile/模型会话仍待。
++
+--- before/docs/progress.md
++++ after/docs/progress.md
+@@ -1,6 +1,10 @@
+ # Detuned 实施进度追踪
+ 
+-当前入口：[M7.4-D有限native兼容](reviews/2026-10-10-m7-4-d/README.md)。M7.4-D安全生命周期与launcher入口修复已获root有限接受：固定Claude2.1.282原生initialize、exact九工具及普通check两写六读/权限/取消/noACK矩阵通过，自有资源清退已证。核心论坛、正式评审、检查回执与D01可本地使用，schema6不变。Codex C.1归属/ACK/清退修复保持接受，工具发现仍未认证；下一E修同一launcher入口遗漏并增加白名单诊断，尚未实施。Pi固定SDK/dsh有限官方链保持；完整四宿主CLI/profile/model、clean install/最低Node/当前Linux和许可决定仍未齐，前端取消，M8独立。 下一[E批准规划](reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)须D封存、新fresh及root dispatch。
++当前入口：[M7.4-E/R1有限Codex接入](reviews/2026-10-10-m7-4-e/README.md)。核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。 本包最终独立证据复核与metadata审查/封存待完成。
++
++## M7.4-E/R1有限Codex原生控制接入（2026-10-10）
++
++固定0.144.6首次E normal8.267639s失败（40目录空、startup ready）与CL02旧协议red2.227561s完整保留；官方snapshot新stdio根因、source真实沉降/逐候选检查、capture短路及v3计数类型三处静审窄修均留证。R1 syntax/source局部noEmit通过，focused2/2；rejectsecond4.267850s两候选独立proof、只首observer/authority/ACK通过；normal2.067569s initialize/exact9、statuslist1/toolcall19、ordinary两写六读/invalid0HTTP/500/scope/metadata/noACKpending/cancel通过。native null/SIGTERM为清退，driver0/null；两候选/两组及root/control absence与实际taskssettled/coveragecomplete已独验。437source/555dist；历史full967/155仅引用，无本包新full/build/workspace type/lint/schema/current。schema6保持，cap64/格式异常等静态边界非全部实跑。见[E独验](reviews/2026-10-10-m7-4-e/verification/independent-report.md)。
+ 
+ ## M7.4-D安全修复与有限native兼容（2026-10-10）
+ 
+@@ -53,7 +57,7 @@
+ | **M4 CLI与宿主接入** | CLI init/serve/backup/restore/export/import/migrate/context/search/read/publish/relate/subscribe/poll/ack、space read与post read/thread posts；**M4.1-A 已通过**：me/capabilities/diagnostics、health live/ready、space/thread list、post revisions/view与search显式page/cursor/thread，保旧默认输出；**M4.1-B 已通过**：附件sharedclient/CLI上传、metadata、SHA/bytes/EOF完整下载与私有无覆盖发布、持久key恢复；25MiB缓存/1MiB JSON响应；**M4.1-C 已通过**：七身份/凭据/成员/redact命令、一次明文stdout、六非幂等singleattempt与脱敏持久key；**M4.1-D 已通过**：空间/主题写、会话单attempt、订阅过滤/checkpoint/poll等待与同事务scope停用；**M4.1-E 已通过**：安全parser/action错误、显式token-file与四来源互斥、锁安全诊断；**M4.2-A 已通过**：Node凭据共享、完整structuredContent与16KiB文字边界、统一取消/关闭与不ACK重投；**M4.2-B 已通过**：完整八schema预校验、惰性身份与诊断session绑定、取消/失败重连边界；**M4.3-A 已通过**：固定官方dsh plugin+registry无模型链、跨空间拒权与pending重连；**M4.3-B 已通过**：官方patch/Loader/Include加载、真实配置watch重装与坏YAML恢复边界；**M4.4-A 已通过**：共享browser身份/session协调、严格targeted Me/Session响应guard、MCP实际thinwrapper消费；stdio MCP真实通信、**M4.4-B 已通过**：Pi0.87.1真实SDK扩展身份、分代取消和new/switch/fork/reload/shutdown本机路径。 | 完整八工具广告校验与capabilities/me、惰性诊断session绑定已通过M4.2-B；dsh/Pi/Codex/Claude四真实宿主会话未完成实测，Pi固定版SDK生命周期路径已通过，完整CLI/profile/RPC与模型等T20未完成。通用MCP任意本机上传不列为首版必需。 |
+ | **M5 Web与完整v0.1** | M5.1-A同源human认证与sharedclient、M5.1-B真实React/Chrome讨论首片已接受：登录恢复、空间/主题、固定修订续读、note/cites、同key恢复、可靠退出；纯文本、按钮键盘与窄屏本机证据。 | 新主题/搜索/失败作者报告已验；D.1目录API与D.2 Web证据/附件/修订字段对比、E.1概览/规则/本人权限及E.2排序/Markdown已验；Linuxarm64容器/冷构建及有限20进程争用/恢复已验；完整无障碍/其他浏览器、跨平台与公网生产TLS未认证。原生select键盘受测限制见独验；M6部分已验，M7.1-A内部检查已有限接受，公开check HTTP/client已有限接受，CLI/普通工具B2已有限接受，完整M7交付/兼容核对仍待。 |
+ | **M6 正式评审** | 内部材料、固定请求/名单、封存提交/私有证据与全员揭示已有限接受，当前schema6（M7.1-A新增四check表）。 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；CLI/MCP/Pi九工具与Web评审已有限接入；知识正式状态C2A已验；C2B公开意见检索已有限接受；M7.1-A内部检查已有限接受，完整M7尚未完成，后续前端任务已按用户要求取消。 |
+-| **M7 外部验证与完整v0.2** | M7.1-A内部run/receipt、受限verify、日志/最新门禁、因果历史与schema6维护已有限接受。 | 公开HTTP/sharedclient B1、CLI/普通工具B2、M7.2固定无模型验证器及M7.3完整D01旅程已有限接受；M7.4-B本地交付与A/C有限兼容/安全记录已接受；四宿主全链认证仍未齐；C.1有限安全修复已接受，D有限native矩阵已接受，E批准规划待D封存/fresh/dispatch。 |
++| **M7 外部验证与完整v0.2** | M7.1-A内部run/receipt、受限verify、日志/最新门禁、因果历史与schema6维护已有限接受。 | 公开HTTP/sharedclient B1、CLI/普通工具B2、M7.2固定无模型验证器及M7.3完整D01旅程已有限接受；M7.4-B本地交付与A/C有限兼容/安全记录已接受；四宿主全链认证仍未齐；C.1有限安全修复已接受，D有限native矩阵已接受，E/R1有限native控制接入已接受，完整会话及外部交付条件仍待。 |
+ | **M8 协作效果研究** | 文档已有等预算对照/消融设计。 | 真实研究任务、独立外部评分、预算/成本/置信区间与协作增益实验未做；这是研究验证，工程通过不代表已证明收益。 |
+ 
+ H-R1已归档真实旧b8样本、来源hash和生成配方，三类历史兼容覆盖经独立新进程验证闭合；旧失落原DB与新来源不同的说明留在验收来源区，不再列为当前工作阻碍。其余未完成功能依据[剩余能力清单](reviews/2026-10-06-m2-4-b2-1/planning/remaining-features.md)并按当前 M4.4-B 状态更新，环境/适用范围见[本包验收](reviews/2026-10-09-m4-4-b/README.md)。
+--- before/docs/reviews/README.md
++++ after/docs/reviews/README.md
+@@ -1,6 +1,6 @@
+ # Detuned 审查记录
+ 
+-当前入口：[M7.4-D有限native兼容](2026-10-10-m7-4-d/README.md)。M7.4-D安全生命周期与launcher入口修复已获root有限接受：固定Claude2.1.282原生initialize、exact九工具及普通check两写六读/权限/取消/noACK矩阵通过，自有资源清退已证。核心论坛、正式评审、检查回执与D01可本地使用，schema6不变。Codex C.1归属/ACK/清退修复保持接受，工具发现仍未认证；下一E修同一launcher入口遗漏并增加白名单诊断，尚未实施。Pi固定SDK/dsh有限官方链保持；完整四宿主CLI/profile/model、clean install/最低Node/当前Linux和许可决定仍未齐，前端取消，M8独立。 下一[E批准规划](2026-10-10-m7-4-d/planning/m7-4-e-task.md)须D封存、新fresh及root dispatch。
++当前入口：[M7.4-E/R1有限Codex接入](2026-10-10-m7-4-e/README.md)。核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。 本包最终独立证据复核与metadata审查/封存待完成。
+ 
+ 
+ ## M7.1-B1历史接入事实（2026-10-10）
+@@ -15,7 +15,8 @@
+ 
+ | 审查目录 | 被审查源码 | 用途 |
+ |---|---|---|
+-| [M7.4-D](2026-10-10-m7-4-d/README.md) | Claude lifecycle/launcher入口与native九工具/check矩阵 | 本地8组合、reject通过、唯一normal通过；有限固定native认证，E批准规划待封存/fresh |
++| [M7.4-E/R1](2026-10-10-m7-4-e/README.md) | Codex逐PID安全握手与固定native矩阵 | focused2/2、rejectsecond、唯一R1normal通过；历史失败保留，有限接受待metadata审查/封存 |
++| [M7.4-D](2026-10-10-m7-4-d/README.md) | Claude lifecycle/launcher入口与native九工具/check矩阵 | 本地8组合、reject通过、唯一normal通过；有限固定native认证；当时E规划已由后续E/R1实施 |
+ | [M7.4-C.1](2026-10-10-m7-4-c1/README.md) | Codex独立自有组证明/ACK门禁/清退 | focused4/4、受控reject通过，normal工具发现失败；有限安全修复接受，D批准规划待封存/fresh |
+ | [M7.4-C](2026-10-10-m7-4-c/README.md) | 固定Codex隔离/control与候选安全清退 | 两normal失败保留；v2不同worker组安全拒绝，候选absence接受，工具未认证；无新full |
+ | [M7.4-B](2026-10-10-m7-4-b/README.md) | Docker runtime闭包/CI与真实本地CLI启动 | 有限focused23/23，非Docker/Linux认证；首失败保留 |
+--- before/docs/08-roadmap.md
++++ after/docs/08-roadmap.md
+@@ -1,6 +1,6 @@
+ # 实施路线与任务包
+ 
+-当前入口：[M7.4-D有限native兼容](reviews/2026-10-10-m7-4-d/README.md)。M7.4-D安全生命周期与launcher入口修复已获root有限接受：固定Claude2.1.282原生initialize、exact九工具及普通check两写六读/权限/取消/noACK矩阵通过，自有资源清退已证。核心论坛、正式评审、检查回执与D01可本地使用，schema6不变。Codex C.1归属/ACK/清退修复保持接受，工具发现仍未认证；下一E修同一launcher入口遗漏并增加白名单诊断，尚未实施。Pi固定SDK/dsh有限官方链保持；完整四宿主CLI/profile/model、clean install/最低Node/当前Linux和许可决定仍未齐，前端取消，M8独立。 下一[E批准规划](reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)须D封存、新fresh及root dispatch。
++当前入口：[M7.4-E/R1有限Codex接入](reviews/2026-10-10-m7-4-e/README.md)。核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。 本包最终独立证据复核与metadata审查/封存待完成。
+ 
+ 
+ ## M7.1-B1历史接入事实（2026-10-10）
+--- before/docs/09-validation.md
++++ after/docs/09-validation.md
+@@ -2,7 +2,11 @@
+ 
+ 当前实现与验收只以[进度](progress.md)和[审查索引](reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
+ 
+-## M7.4-D当前有限证据
++## M7.4-E/R1当前有限证据
++
++核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。 新focused2/2、rejectsecond4.267850s与normal2.067569s通过；first失败/red与三处静审修复保留，实际native null/SIGTERM为清退、driver0/null。无新full/build/workspace type/lint/schema/current；详见[E独验](reviews/2026-10-10-m7-4-e/verification/independent-report.md)。
++
++## M7.4-D有限证据
+ 
+ 本地新8项组合为首7通过+修后CP08相关1通过，原focused7/8与tokenrelated失败保留，非新8/8full。source/capture syntax与最初noEmit0，cap修后newnoEmit0；前7prefix保持，CP08真正production factory ACK前无stdio、ACK后initialize/tools-list exact9、EOFactualclose0/null与absence通过。受控reject0/.380s证明prebootstrap exact3和observer拒绝后的独立清退；唯一normal0/2.043s fixedClaude2.1.282 native九工具/普通check两写六读/invalid0HTTP/500/scope/metadata/noACKpending/cancel通过。native实际143/null为TERM清退，capturedriver0/null、独立sameworker proof与全部candidate/group/root/control absence已证。旧失败不回填，历史full967/155不叠加，完整CLI/profile/model/Linux/安装未新认证。见[D](reviews/2026-10-10-m7-4-d/README.md)。E仅批准规划待D封存/fresh/dispatch。
+ 
+@@ -24,7 +28,7 @@
+ 
+ 固定Pi 0.87.1公共SDK与真实HTTP验证普通check两写/六读、500/501码点prepare前拒绝、scope/角色/私有材料及redaction、取消与noACK；独立真实Node关闭fd0检验异步写失败。该SDK证据不认证完整宿主CLI/profile/RPC/模型。唯一core967/155与相关Pi v7补测的先后及所有首失败见[本包](reviews/2026-10-10-m7-4-a/README.md)。
+ 
+-Claude独立guard第二次通过只证明该保护前置；新增checks native未认证。v13未到worker_registered或bootstrap，实际direct-child清退不能由空confirmed组升级为完整进程组认证。Codex旧阻塞历史保留，当前D固定native与C.1安全结果见上；dsh有限链保持，不把上游全部能力列为本产品验收要求。
++A历史：Claude独立guard第二次通过只证明该保护前置；当时新增checks native未认证。v13未到worker_registered或bootstrap，实际direct-child清退不能由空confirmed组升级为完整进程组认证。Codex旧阻塞历史保留，当前D/E固定native与C.1安全结果见上；dsh有限链保持，不把上游全部能力列为本产品验收要求。
+ 
+ ## M7.1-B1历史接入事实（2026-10-10）
+ 
+--- before/docs/12-decisions.md
++++ after/docs/12-decisions.md
+@@ -410,3 +410,11 @@
+ ACK后的launcher仅设置自身argv[1]为固定built MCP绝对路径再dynamic import，以满足既有main guard；不改product入口/其它argv/env，不额外spawn。preACK最早<=3秒referenced timer保持，postACK共享绝对workEnd timer unref允许真实stdio EOF关闭。实际production factory供真实回归；CP08合法fake token及1MiB UTF8 cap修复保原断言/默认5秒，首7prefix字节保持，越界callback静审拒绝已恢复，失败证据保留。
+ 
+ D本地8组合、受控reject及唯一fixedClaude2.1.282 native九工具/check矩阵有限接受；native143/null是TERM清退，不称自然0，driver0/null与资源absence独验齐全。不认证完整CLI/profile/model/四宿主整体或研究收益，不叠历史full967/155。下一E批准修Codex相同入口遗漏并有界白名单诊断，新exact launcher测试；原helper/C.1test/policy/40polls/预算不改，D封存→新fresh→root dispatch→静审/本地gate→root单独一次normal，不自动retry。
++
++## ADR084：固定Codex snapshot与逐PID安全握手（2026-10-10）
++
++固定官方rust-v0.144.6 snapshot目录收集每次新建stdio manager/transport，不复用ready线程连接；旧单登记文件协议不兼容，first空目录和CL02 red保留，不声称实测原始EEXIST。launcher逐PID wx0600 stage写/sync/close后hardlink无覆盖发布，独立PID专属ACK；原exactUID/directnative父/allowedPGID证明1015字节保持。候选先留presence-only账本，各observer完成及取消最终gate后才权限/ACK，不借旧ACK、不覆盖旧登记。
++
++流式发现每轮256entry、最多64候选，严格文件名/内容/UID0600/regular/nofollow/有界读取；未知或越界coveragefalse保root/账本，不增加signal权限。真实callback、initializer/registration/watch及final discovery必须settled/completed，包装race/超时不能当真实沉降；每候选独立presence检查后聚合，首unknown不跳过后续，全部candidate/group absence与coverage齐全才删除root。原5方法/40poll/75work85worker90supervisor95capture、fixedbinary/policy/minenv/九工具断言保持。
++
++R1本地2/2、rejectsecond和唯一normal已有限接受，native null/SIGTERM为清退而driver0/null；不升级完整四宿主模型会话/安装/Linux或研究收益。历史full967/155不算本包新full，schema6不变。剩余T10/D02、独立环境交付证据和维护者许可选择，M8独立，后续前端取消。
+--- before/integrations/README.md
++++ after/integrations/README.md
+@@ -11,10 +11,12 @@
+ 
+ 当前上游文档是滚动页面或主分支。实现前必须冻结实际 harness 版本、SDK 版本和引用源码 commit，测试通过后才将 `not_tested` 改为 `passed`。dsh 明示处于快速变化的 developer preview，更需要这一步。
+ 
+-本地builtCLI启动与普通身份凭据分发见[快速开始](../README.md#本地快速开始)；仅普通限定scope token-file进入接入层。兼容矩阵保Pi有限SDK/dsh有限官方链、Claude新checks固定native有限通过与Codex C.1归属修复已验、工具发现仍失败/工具未认证；本地交付不升级四宿主完整CLI/profile/model认证。
++本地builtCLI启动与普通身份凭据分发见[快速开始](../README.md#本地快速开始)；仅普通限定scope token-file进入接入层。兼容矩阵保Pi有限SDK/dsh有限官方链、Claude新checks固定native有限通过与Codex C.1归属修复已验、E/R1固定native九工具/check矩阵已有限通过；本地交付不升级四宿主完整CLI/profile/model认证。
+ 
+-Codex固定版本隔离实验已返回initialize/thread响应，但MCP候选不同worker组而拒绝接入；v2可信候选absence接受不等于工具认证，见[C记录](../docs/reviews/2026-10-10-m7-4-c/README.md)。C.1有限安全修复已接受，normal仍未取得工具；下一D批准规划待C.1封存/fresh/dispatch，不授权绕过保护。
++历史C/C.1失败、候选归属与清退事实保持，见[C记录](../docs/reviews/2026-10-10-m7-4-c/README.md)；当前E/R1有限通过不回填旧失败，不授权绕过保护。
+ 
+-当前[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过；下一E修Codex入口+白名单诊断，待D封存/fresh/root dispatch。
++历史[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过。当前E/R1有限结果见下。
+ 
+-当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。下一[E批准规划](../docs/reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)修Codex ACK后built入口与安全诊断，尚未实施。
++当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。E/R1已实施并有限通过，见下。
++
++当前[E/R1有限Codex结果](../docs/reviews/2026-10-10-m7-4-e/README.md)：核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
+--- before/integrations/compatibility.json
++++ after/integrations/compatibility.json
+@@ -1,7 +1,7 @@
+ {
+   "schema_version": 1,
+   "reviewed_at": "2026-10-10",
+-  "summary": "M7.4-D安全生命周期与launcher入口修复已获root有限接受：固定Claude2.1.282原生initialize、exact九工具及普通check两写六读/权限/取消/noACK矩阵通过，自有资源清退已证。核心论坛、正式评审、检查回执与D01可本地使用，schema6不变。Codex C.1归属/ACK/清退修复保持接受，工具发现仍未认证；下一E修同一launcher入口遗漏并增加白名单诊断，尚未实施。Pi固定SDK/dsh有限官方链保持；完整四宿主CLI/profile/model、clean install/最低Node/当前Linux和许可决定仍未齐，前端取消，M8独立。",
++  "summary": "核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。",
+   "adapters": [
+     {
+       "name": "mcp-stdio-bridge",
+@@ -66,20 +66,23 @@
+       "route": "stdio-mcp-bridge",
+       "status": "partial",
+       "docs": "https://learn.chatgpt.com/docs/extend/mcp",
+-      "notes": "M4.5-A原保护阻塞保留，不回填旧失败。M7.4-C固定0.144.6以child官方用途私有CODEX_HOME/fileauth/sqlite/log返回initialize与thread响应；两normal均失败，v2候选不同workerPGID而拒接，工具矩阵未执行。可信候选coverage/独立absence及本次自有清退接受，不证明首未登记候选或全局清退，不读账号/发送prompt或模型请求。 C.1独立组exactUID/direct native父/PGID证明、confirmed observer和ACK门禁及故障清退已有限接受；唯一normal8.157s failed，status/list40、tools空，无tool call。旧C首未登记候选限制不倒改，不推断工具发现根因。",
++      "notes": "M4.5-A原保护阻塞保留，不回填旧失败。M7.4-C固定0.144.6以child官方用途私有CODEX_HOME/fileauth/sqlite/log返回initialize与thread响应；两normal均失败，v2候选不同workerPGID而拒接，工具矩阵未执行。可信候选coverage/独立absence及本次自有清退接受，不证明首未登记候选或全局清退，不读账号/发送prompt或模型请求。 C.1独立组exactUID/direct native父/PGID证明、confirmed observer和ACK门禁及故障清退已有限接受；唯一normal8.157s failed，status/list40、tools空，无tool call。旧C首未登记候选限制不倒改，不推断工具发现根因。 E/R1已修launcher入口与多transport握手，fixed0.144.6九工具与普通check矩阵有限通过；first失败/red/静审修复保留，不回填旧失败。",
+       "static_protocol_status": "passed",
+       "os_guard_status": "passed",
+       "native_initialize_status": "passed_limited",
+-      "tool_discovery_status": "not_certified",
+-      "tool_call_status": "not_tested",
++      "tool_discovery_status": "passed_limited_native",
++      "tool_call_status": "passed_limited_native",
+       "model_session_status": "not_tested",
+-      "verified_via": "docs/reviews/2026-10-10-m7-4-c1/verification/independent-report.md",
++      "verified_via": "docs/reviews/2026-10-10-m7-4-e/verification/independent-report.md",
+       "historical_verified_via": "docs/reviews/2026-10-09-m4-5-a/author/codex/README.md",
+-      "current_isolation_status": "failed_safely",
++      "current_isolation_status": "passed_limited",
+       "current_candidate_cleanup_status": "passed_limited",
+-      "current_native_checks_status": "not_certified",
++      "current_native_checks_status": "passed_limited_native",
+       "next_owned_group_status": "passed_limited",
+-      "current_owned_group_status": "passed_limited"
++      "current_owned_group_status": "passed_limited",
++      "current_tool_count": 9,
++      "current_checks_status": "passed_limited_native",
++      "current_checks_notes": "R1normal2.067569s exact9/toolcall19，ordinary两写六读/权限/取消/noACK；rejectsecond4.267850s只首ACK，实际taskssettled/两candidateabsence；native nullSIGTERM清退、driver0null。完整模型/CLI/profile未认证。"
+     },
+     {
+       "name": "claude-code",
+--- before/integrations/codex-claude.md
++++ after/integrations/codex-claude.md
+@@ -1,6 +1,6 @@
+ # Codex 与 Claude Code
+ 
+-Claude原八工具事实为M4.5-B历史；D固定2.1.282 native initialize/exact九工具与新增checks矩阵已有限通过，见[D当前记录](../docs/reviews/2026-10-10-m7-4-d/README.md)。原guard/EPERM/normal失败保留，不升级完整CLI/profile/model。Codex C包失败与C.1归属安全修复保留，工具仍未认证；下一E修已证launcher入口遗漏并安全诊断，待D封存、新fresh/root dispatch，尚未实施。
++核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
+ 
+ 两者复用同一个 Detuned stdio MCP 桥；服务端保持业务与权限规则，宿主配置不代表新增身份。
+ 
+@@ -50,6 +50,8 @@
+ 
+ 真实post响应ID与DB普通author/space/thread/revision/key对应，session仅诊断关联；两非法零额外HTTP、EOF自然0/allcleanup、无模型/ACK。完整CLI/profile、推理账户/模型及八工具所有分支未认证，不用权限bypass。原flat与启动失败证据见[上包](../docs/reviews/2026-10-09-m4-5-a/author/claude/README.md)。
+ 
+-当前[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过；下一E修Codex入口+白名单诊断，待D封存/fresh/root dispatch。
++历史[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过。当前E/R1有限结果见下。
+ 
+-当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。下一[E批准规划](../docs/reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)修Codex ACK后built入口与安全诊断，尚未实施。
++当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。E/R1已实施并有限通过，见下。
++
++当前[E/R1有限Codex结果](../docs/reviews/2026-10-10-m7-4-e/README.md)：核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
+--- before/examples/README.md
++++ after/examples/README.md
+@@ -2,7 +2,7 @@
+ 
+ 本地启动见[README快速开始](../README.md#本地快速开始)，交付的已跑/未跑范围见[本地交付清单](local-delivery-checklist.md)。不要将bootstrap JSON用作token-file或把admin凭据分发给参与者。
+ 
+-固定Pi公共SDK新增普通check两写/六读有限证据见[兼容记录](../docs/reviews/2026-10-10-m7-4-a/README.md)；Claude固定D native九工具/checks有限通过，原宿主历史边界保留。本地交付已有限接受；Codex C.1归属/ACK/清退已有限接受，normal工具发现仍失败，工具未认证，见[C记录](../docs/reviews/2026-10-10-m7-4-c/README.md)。不改用户全局配置。
++固定Pi公共SDK普通check两写六读与dsh官方链保持有限证据；Claude D与Codex E/R1固定native九工具/check矩阵已有限通过。本地交付有限接受，不改用户全局配置。
+ 
+ 当前实现与验收只以[进度](../docs/progress.md)和[审查索引](../docs/reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
+ 
+@@ -88,6 +88,8 @@
+ 
+ 固定本地外部检查示例见[d01-fixed guide](d01-fixed/README.md)，仅固定验证器，不是完整D01；使用真实check HTTP/CLI setup、exact材料与受限token，完整无模型协作演示见[D01旅程](d01-reviewed.md)：一条CLI命令、真实角色/重启/封存/检查/裁决与后续新问题。
+ 
+-当前[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过；下一E修Codex入口+白名单诊断，待D封存/fresh/root dispatch。
++历史[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过。当前E/R1有限结果见下。
+ 
+-当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。下一[E批准规划](../docs/reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)修Codex ACK后built入口与安全诊断，尚未实施。
++当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。E/R1已实施并有限通过，见下。
++
++当前[E/R1有限Codex结果](../docs/reviews/2026-10-10-m7-4-e/README.md)：核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
+--- before/examples/local-delivery-checklist.md
++++ after/examples/local-delivery-checklist.md
+@@ -9,12 +9,14 @@
+ | CI源 | 原install/build/type/lint/test:all保留，退役两旧archive探针；维护T01–T11保留，远端CI未新运行 |
+ | 当前数据库 | schema6；普通serve不自动迁移，升级/备份恢复用既有[升级](upgrade-recovery.md)/[备份](backup-recovery.md)指南 |
+ | 运行条件 | 本机Node26实际证据；最低Node22.19契约、clean install及当前Linux容器未新认证 |
+-| 接入 | Pi固定SDK/dsh官方plugin有限；Claude原八工具历史保留、D固定native九工具/check矩阵有限通过；Codex C.1归属修复已验、工具发现仍失败/工具未认证（原保护阻塞历史保留），见[矩阵](../integrations/compatibility.json) |
++| 接入 | Pi固定SDK/dsh官方plugin有限；Claude原八工具历史保留、D固定native九工具/check矩阵有限通过；Codex C.1归属修复已验、E/R1固定native九工具/check矩阵已有限通过（原失败历史保留），见[矩阵](../integrations/compatibility.json) |
+ | 分发 | root package private=true/version0.1.0-dev保持；v0.2是本地工程目标，非npm发布/公网部署授权；许可证待维护者决定 |
+ | 研究 | 无模型D01与58固定案例不是AI研究收益或数学证明；M8另评 |
+ 
+-quickstart的init/serve/两普通身份配置三个shell块已有一次有限文档smoke：仅替换自有私有目录/loopback端口，真实两distinct非admin限定同space read/write及me、normalserve close0与登记group/root/control absence已证；未执行install/build块，不证明用户HOME路径或原3000端口实测。见[收据](../docs/reviews/2026-10-10-m7-4-b/verification/doc-smoke-first.json)。新引入的静态COPY修复不能升级旧Linux证据。Codex隔离实验已有限安全收口，C.1有限归属/ACK/清退修复已接受，normal工具发现仍失败；D固定Claude安全修复/native矩阵已有限通过，下一E修Codex入口与安全诊断；禁止前端、VM/Colima操作及全局Agent配置修改。用户手动运行前台服务不代表授权Agent启动常驻环境。
++quickstart的init/serve/两普通身份配置三个shell块已有一次有限文档smoke：仅替换自有私有目录/loopback端口，真实两distinct非admin限定同space read/write及me、normalserve close0与登记group/root/control absence已证；未执行install/build块，不证明用户HOME路径或原3000端口实测。见[收据](../docs/reviews/2026-10-10-m7-4-b/verification/doc-smoke-first.json)。新引入的静态COPY修复不能升级旧Linux证据。Codex E/R1与Claude D固定native矩阵已有限通过；禁止前端、VM/Colima操作及全局配置修改。用户手动前台运行服务不授权Agent创建常驻环境。
+ 
+-当前[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过；下一E修Codex入口+白名单诊断，待D封存/fresh/root dispatch。
++历史[C.1有限修复](../docs/reviews/2026-10-10-m7-4-c1/README.md)：focused4/4，reject-mcp4.311s通过，normal8.157s失败；独立自有组confirmed/ACK及候选/组/root/control清退已证。核心论坛、正式评审、回执与D01可本地使用；Claude固定D native九工具/check矩阵已有限通过。当前E/R1有限结果见下。
+ 
+-当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。下一[E批准规划](../docs/reviews/2026-10-10-m7-4-d/planning/m7-4-e-task.md)修Codex ACK后built入口与安全诊断，尚未实施。
++当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。E/R1已实施并有限通过，见下。
++
++当前[E/R1有限Codex结果](../docs/reviews/2026-10-10-m7-4-e/README.md)：核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
+--- before/docs/reviews/2026-10-10-m7-4-e/README.md
++++ after/docs/reviews/2026-10-10-m7-4-e/README.md
+@@ -0,0 +1,13 @@
++# M7.4-E/R1 有限固定Codex接入
++
++核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择仍待；M8独立，后续前端取消。
++
++Root已亲读R1实际证据并有限接受；最终独立证据复核、metadata审查与封存仍待。
++
++- 原E normal8.267639s目录空失败、CL02旧协议red2.227561s保留；固定官方snapshot另开stdio的诊断与三处静审窄修记录保留。
++- R1 syntax、局部source noEmit通过，focused2/2；双launcher各真实initialize/exact9与EOF0/null，不复用ACK。
++- rejectsecond4.267850s：两候选两独立proof，只首observer/authority/ACK；取消门禁及全部资源absence通过。
++- 唯一R1normal2.067569s：exact9、statuslist1/toolcall19、ordinary两写六读、invalid0HTTP/500/scope/metadata/noACKpending/cancel通过。两独立PID握手、真实taskssettled与coveragecomplete；native实际null/SIGTERM为清退、driver0/null，不称native自然0。
++- 当前437source/555dist；64cap/格式/全部unsettled变体仅静态边界，不是穷尽故障实测。历史full967/155只引用，无新full/build/workspace type/lint/schema/current。
++
++见[独验](verification/independent-report.md)、[首失败诊断](author/backend/native-first-diagnosis.md)、[v2安全修复](author/backend/r1-v2-self-review.md)、[R1 gates](verification/r1-new-single-file-focused-first.receipt.json)、[rejectsecond](verification/reject-second-mcp-first.receipt.json)、[normal](verification/r1-normal-native-first.receipt.json)。不认证全部九工具行为、完整四宿主模型会话或整个M0–M7。
+--- before/docs/reviews/2026-10-10-m7-4-e/next-agent-prompt.md
++++ after/docs/reviews/2026-10-10-m7-4-e/next-agent-prompt.md
+@@ -0,0 +1,7 @@
++# 后续工程入口
++
++E/R1已获root本机有限接受，当前需完成最终独审、metadata独验与封存。固定Codex0.144.6与Claude2.1.282无模型控制接入九工具/check矩阵有限通过；Pi公共SDK/dsh官方有限链保持。核心论坛/HTTP/CLI/MCP/正式独立评审/外部检查/D01可本地使用。历史失败、真实退出与未跑范围见[本包](README.md)及[独验](verification/independent-report.md)。
++
++封存后主代理按持续授权自动衔接必要收尾，无需用户手工发继续。剩余T10/D02真实宿主模型会话、clean install/最低Node/当前Linux独立环境证据及维护者许可证选择；这些外部条件未齐，不编造认证或发布许可。M8研究价值另评估，不扩大产品功能。
++
++先读项目入口和最新审查、划定所有权；主代理编排、gpt-6.1-sol子Agent实现，runtime并发1、测试worker1/文件串行。后续前端/Web/视觉/浏览器专项取消；禁deepseek-brainstorm、VM/Colima/Docker管理或清理、全局配置/账户key/父环境读改、擅自模型调用/安装改锁/发布push；旧封存包和受保护源码测试原字节保留。确需外部输入时只说明具体阻塞并请求必要输入，不重复要求普通本地实现许可。

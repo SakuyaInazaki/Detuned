@@ -1,0 +1,68 @@
+{
+  "status": "root-authorized CP08-only correction, shared prefix restored and verified; B/root runtime release pending",
+  "before_test_sha256": "2bb5417897548b8acf0a51bdbebb220c4a5efbb288cf6e6c8c6e706a75d6731d",
+  "after_test_sha256": "e6341a8c7a7fe3bff61b57fe7705c26c0d49072c638068dff02f66b9504e1d7a",
+  "diff_sha256": "a8d6bf2b77f98e292104d2287924d6397cbddb66f125aeb426d1dc3e60b28e01",
+  "source_sha256": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+  "capture_sha256": "b501f08c2429e4b04b5888ad49e48385202ca012f8f1241c6495fb7714b498b8",
+  "cap_change": {
+    "old": "stdout.length > 32768 UTF16 code units",
+    "new": "stdoutBytes > 1048576 UTF8 bytes",
+    "scope": "only new CP08 fixture stdout; aligns production existing stdout bound, no timeout/operation/assertion change"
+  },
+  "static_proof": {
+    "frame_utf16_code_units": 38111,
+    "frame_utf8_bytes": 38997,
+    "original_actual_limit_hit": "not recorded, not retroactively claimed",
+    "units_receipt": "cp08-fixed-catalogue-units-first.json"
+  },
+  "safe_diagnostic_fields": [
+    "phase",
+    "stdoutBytes",
+    "fixture_limit_hit",
+    "actual_closed",
+    "close_code",
+    "close_signal"
+  ],
+  "not_emitted": [
+    "raw stderr",
+    "raw response",
+    "token",
+    "private path"
+  ],
+  "unchanged": "original source/capture/guard, assertions/finally/default5s/env/nine catalogue/control calls, prior failures",
+  "commands": [
+    {
+      "id": "cp08-new-source-noemit",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsc",
+        "-p",
+        "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-10-m7-4-d/verification/new-source-tsconfig.json"
+      ]
+    },
+    {
+      "id": "cp08-related-after-cap",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "tests/contracts/m7-claude-probe-ownership.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "-t",
+        "^CP08 "
+      ],
+      "permission": "require_escalated auto_review ownNode/exactps only"
+    }
+  ],
+  "runtime_permission": "pending B/root release; no other gates/full/source syntax/guard/front seven/native/reject",
+  "shared_prefix": {
+    "byte_identical_to_first_seven_pass": true,
+    "bytes": 12507,
+    "sha256": "faa46e9ad1bbf71783a2bcc85d1f6b187ad6325f6570d64f171db9e3720b8f0e",
+    "first_pass_test_sha256": "115c7807619614c4c0786ad8d7616b0da2b85b0b2ed281367507f8de791f1ce3"
+  }
+}

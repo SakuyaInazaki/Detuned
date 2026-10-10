@@ -11,11 +11,12 @@ export const ActorSchema = Type.Object({
     created_at: Type.String({ format: 'date-time' }),
     disabled_at: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
 }, { additionalProperties: false });
-export const CredentialCapabilitySchema = Type.Union([
+export const OrdinaryCredentialCapabilitySchema = Type.Union([
     Type.Literal('read'),
     Type.Literal('write'),
     Type.Literal('admin'),
 ]);
+export const CredentialCapabilitySchema = Type.Union([...OrdinaryCredentialCapabilitySchema.anyOf, Type.Literal('verify')]);
 export const CredentialSchema = Type.Object({
     id: Type.String(),
     actor_id: Type.String(),

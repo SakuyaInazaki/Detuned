@@ -1,0 +1,34 @@
+{
+  "status": "R1 prepared/frozen; zero postrepair runtime",
+  "source_sha256": "fb69c4b6f76f6be0b2a18c82a32e39632138f6c132f9c8b329428a7b7c68b1af",
+  "test_sha256": "f421379b725f806b8df8fd3fd8fed68b7abe3c4de53e6a44c5bd5725e9a48279",
+  "capture_sha256": "a19423d5040f7cb6f52f79b2b4427489dd189ff86820dd6465af7479befe039b",
+  "plan_sha256": "76471e68b269ad54b8b26644db2489bd0cd7e74d06d3ae2ba7f75a5d8d67e278",
+  "binding_sha256": "8ec49b5e3d54850e024045d93674ad526ba158cbc328cc90a39441d561208352",
+  "protected_helper": {
+    "bytes": 1015,
+    "sha256": "0202f11b6071607d6180aa833eeb39c42f82a1a2ba019c3df47ea650b9e2acf1"
+  },
+  "protected_files": {
+    "tests/contracts/m7-codex-owned-group.test.ts": "81fed70fcbb5d5fa7ecf59138c7e05a819a1985eb7d5d68022024b25a6d96a6f",
+    "scripts/integrations/claude-check-probe.mjs": "fd773e6002b5f0dfd7053132ddb17f3120901cefbabde1a48965e6cc8adedafb",
+    "tests/contracts/m7-claude-probe-ownership.test.ts": "e6341a8c7a7fe3bff61b57fe7705c26c0d49072c638068dff02f66b9504e1d7a"
+  },
+  "nonowner_drift": [],
+  "source_baseline_count": 436,
+  "source_current_count": 437,
+  "dist_count": 555,
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "lock_sha256": "364bc51aa18dc6a00935daf3b8ed1c25ffedf728308c01f520705c8b8bffcc88",
+  "red_receipt": "r1-cl02-red-first.receipt.json",
+  "preserved": [
+    "original6f1test",
+    "firstaee7sourcefreeze",
+    "firstcapture",
+    "firstnormalfailure",
+    "red7a5test/output"
+  ],
+  "guard": "unchangedliteral binding reuses sealed actualguard; no standalone rerun",
+  "absence": "each registered candidate positivekill0absence and each independently confirmedgroup; no globalcensus; coveragefalse/uncovered latecandidate preventsroot/controldeletion",
+  "limit": 64
+}

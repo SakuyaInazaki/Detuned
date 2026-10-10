@@ -1,0 +1,141 @@
+{
+  "status": "bounded_functional_gates_complete_after_related_repairs",
+  "receipts": [
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/source-noemit-first.json",
+      "sha256": "56d3bed90c1fd77ce6055934a8c6d3c7c6af782a9531c7bbb65dca42b4f0606d",
+      "gate": "source-noemit",
+      "exit_code": 0,
+      "duration_seconds": 1.453
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/core-once-first.json",
+      "sha256": "5fe13472e6d1d90b2482bf7cd4af6515c9dcb0f53474e9aa1fd7c135d6dbb816",
+      "gate": "core-once",
+      "exit_code": 1,
+      "duration_seconds": 293.301
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/current-29-first.json",
+      "sha256": "588b2c575a7821c8e1871d6c67bfe38c4cf420c297a632ee34290a0fab5726dd",
+      "gate": "current-29",
+      "exit_code": 0,
+      "duration_seconds": 0.507
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/schema-first.json",
+      "sha256": "b3a0d0b54f2ad24cb9aa3aca71df95ae03e0aa2de8bd4cde55cecc8fdcc25ef4",
+      "gate": "schema",
+      "exit_code": 0,
+      "duration_seconds": 0.077
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/build-first.json",
+      "sha256": "101da0bd02041a76c7cc22d02653979111ff38638307fc932b557fe5ec88d274",
+      "gate": "build",
+      "exit_code": 2,
+      "duration_seconds": 2.862
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/focused-repair-first.json",
+      "sha256": "13dc11972a12e293cccd58c0d406a89f3fa4bb840215c77bbe65f351b003fc5f",
+      "gate": "focused-repair",
+      "exit_code": 0,
+      "duration_seconds": 3.62
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/current-28-first.json",
+      "sha256": "70f77074dc8e7ec716c81927f90a821e4f938a3129b540e255147789e72a89c7",
+      "gate": "current-28",
+      "exit_code": 0,
+      "duration_seconds": 0.532
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/new-and-adjacent-first.json",
+      "sha256": "39df132d27a3bd606542b88674b53d99bc1cd0fd7b6a0259780957ae99f9beae",
+      "gate": "new-and-adjacent",
+      "exit_code": 1,
+      "duration_seconds": 21.617
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/build-v3.json",
+      "sha256": "b673528b9a4a207ed14aa3702d5135b976a0fe2e61f8f898d71256577a6d4aca",
+      "gate": "build",
+      "exit_code": 0,
+      "duration_seconds": 12.198
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/legacy-repair-first.json",
+      "sha256": "29a25f9795531811d8fff5d40b971bb0d03d74af9382bba0e2332d806fb5beda",
+      "gate": "legacy-repair",
+      "exit_code": 0,
+      "duration_seconds": 8.272
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/lint-first.json",
+      "sha256": "899b014da66279dba135dc7949f99680d732a2c05951fe903f54e99fb7b2e17f",
+      "gate": "lint",
+      "exit_code": 0,
+      "duration_seconds": 8.457
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/source-noemit-repair.json",
+      "sha256": "f547e52ab9f25b862cab41f1d490d302fe86aee0ecff480e9b64d2e7fa4d4405",
+      "gate": "source-noemit",
+      "exit_code": 0,
+      "duration_seconds": 1.761
+    },
+    {
+      "path": "docs/reviews/2026-10-09-m7-1-a/verification/typecheck-first.json",
+      "sha256": "b100f89036546f2a5a16e06a56516651c0655a476c15460a9423145f593cf8e3",
+      "gate": "typecheck",
+      "exit_code": 0,
+      "duration_seconds": 8.794
+    }
+  ],
+  "full": {
+    "runs": 1,
+    "tests": 892,
+    "passed": 884,
+    "failed": 8,
+    "files": 144,
+    "passed_files": 143,
+    "failed_files": 1,
+    "final_statement": "One full run had 8 old fixture failures; the entire corrected related file then passed82/82. No second full run and no claim full first run green."
+  },
+  "focused_first": {
+    "tests": 101,
+    "passed": 100,
+    "failed": 1,
+    "files": 17
+  },
+  "focused_repair": {
+    "tests": 13,
+    "passed": 13,
+    "files": 2
+  },
+  "legacy_repair": {
+    "tests": 82,
+    "passed": 82,
+    "files": 1
+  },
+  "new": {
+    "total": 24,
+    "included_in_full": true,
+    "A": 11,
+    "B": 3,
+    "D": 10,
+    "not_additive_to_full": true
+  },
+  "current": {
+    "run_ids": [
+      28,
+      29
+    ],
+    "each_runs": 1,
+    "passed": 2,
+    "other_probes": "prior accepted evidence reused; no current25/current29 matrix rerun"
+  },
+  "final_integrity_sha256": "6a368edc1b3b97bdcaa0b337b04af3048125740b56b2f724a859ec71799f53c6",
+  "cleanup_sha256": "c6c33a935af09974470e89d55d4fc5a5132d1be32528e7069a8dfecd9b1bfc9c"
+}

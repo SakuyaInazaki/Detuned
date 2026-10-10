@@ -1,0 +1,25 @@
+Schema actual relation_resolutions: id TEXT PRIMARY KEY; no relation_id/version composite index
+[
+  {
+    seq: 0,
+    name: 'sqlite_autoindex_relation_resolutions_1',
+    unique: 1,
+    origin: 'pk',
+    partial: 0
+  }
+]
+[
+  { id: 6, parent: 0, notused: 216, detail: 'SCAN r' },
+  {
+    id: 8,
+    parent: 0,
+    notused: 47,
+    detail: 'SEARCH l USING INDEX sqlite_autoindex_relations_1 (id=?)'
+  },
+  {
+    id: 27,
+    parent: 0,
+    notused: 0,
+    detail: 'USE TEMP B-TREE FOR ORDER BY'
+  }
+]

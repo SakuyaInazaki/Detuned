@@ -1,0 +1,11 @@
+--- docs/reviews/2026-10-09-m6-2-a/verification/adapters/check-legacy-input-presence.mjs
++++ docs/reviews/2026-10-09-m6-3-a/verification/adapters/check-legacy-input-presence.mjs
+@@ -42,7 +42,7 @@
+ function clone(name, logicalV1 = false) {
+   const path = join(dir, `${name}.sqlite`); writeFileSync(path, db.serialize());
+   const database = new Database(path);
+-  if (logicalV1) database.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++  if (logicalV1) database.exec('DROP TABLE review_decisions; DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+   return { path, database };
+ }
+ function setRef(database, key, value) {

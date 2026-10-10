@@ -1,0 +1,17 @@
+--- docs/reviews/2026-10-09-m5-1-a/verification/adapters/check-c-completion-v2.mjs
++++ docs/reviews/2026-10-09-m6-4-a/verification/adapters/check-c-completion-v2.mjs
+@@ -132,8 +132,12 @@
+       for (const [media, content] of Object.entries(op.requestBody?.content ?? {})) {
+         ajv.compile(content.schema);
+         if (media !== 'application/json') {
+-          if (media !== 'multipart/form-data' || route.path !== '/spaces/{space_id}/artifacts') throw Error('Unexpected media type');
+-          if (JSON.stringify(content.schema.required) !== '["file"]' || content.schema.additionalProperties !== false || content.schema.properties.file.format !== 'binary' || content.schema.properties.metadata.type !== 'string') throw Error('Multipart schema shape mismatch');
++          const publicMultipart = route.path === '/spaces/{space_id}/artifacts';
++          const privateMultipart = route.path === '/spaces/{space_id}/review-requests/{requestId}/artifacts';
++          if (media !== 'multipart/form-data' || (!publicMultipart && !privateMultipart)) throw Error('Unexpected media type');
++          if (JSON.stringify(content.schema.required) !== '["file"]' || content.schema.additionalProperties !== false || content.schema.properties.file.format !== 'binary') throw Error('Multipart schema shape mismatch');
++          if (publicMultipart && content.schema.properties.metadata.type !== 'string') throw Error('Multipart schema shape mismatch');
++          if (privateMultipart && (JSON.stringify(content.schema.properties.metadata) !== JSON.stringify({additionalProperties:false,type:'object',properties:{}}) || content.encoding?.metadata?.contentType !== 'application/json')) throw Error('Private multipart schema shape mismatch');
+         }
+         mediaSchemas.push({method: route.method, path: route.path, media, direction: 'request'});
+       }

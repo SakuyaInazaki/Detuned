@@ -1,0 +1,31 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-mcp-runtime.test.ts [ tests/contracts/m4-mcp-runtime.test.ts ]
+Error: Cannot find module '@detuned/client/node' imported from '/Users/sakimi/Desktop/Detuned/packages/mcp/src/index.ts'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ packages/mcp/src/index.ts:5:1
+      3| import { pathToFileURL } from 'node:url';
+      4| import { DetunedClient } from '@detuned/client';
+      5| import { resolveLocalToken } from '@detuned/client/node';
+       | ^
+      6| import { createMcpBridge } from './bridge.js';
+      7| export { createMcpBridge, BridgeShutdownError, type McpBridgeOptions }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/contracts/m4-node-credentials.test.ts [ tests/contracts/m4-node-credentials.test.ts ]
+Error: Cannot find module '@detuned/client/node' imported from '/Users/sakimi/Desktop/Detuned/packages/cli/src/token-source.ts'.
+
+- If you rely on tsconfig.json's "paths" to resolve modules, please install "vite-tsconfig-paths" plugin to handle module resolution.
+- Make sure you don't have relative aliases in your Vitest config. Use absolute paths instead. Read more: https://vitest.dev/guide/common-errors
+ ❯ packages/cli/src/token-source.ts:1:1
+      1| import { resolveLocalToken } from '@detuned/client/node';
+       | ^
+      2| 
+      3| /** Preserve the CLI two-argument composition contract; shared logic r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -1,0 +1,94 @@
+{
+  "status": "recorded_runner_pids_absent",
+  "runners": [
+    {
+      "receipt": "build-first.json",
+      "pid": 96690,
+      "alive": false
+    },
+    {
+      "receipt": "build-v2-first.json",
+      "pid": 2811,
+      "alive": false
+    },
+    {
+      "receipt": "core-first.json",
+      "pid": 5909,
+      "alive": false
+    },
+    {
+      "receipt": "current-23-first.json",
+      "pid": 9654,
+      "alive": false
+    },
+    {
+      "receipt": "current-24-first.json",
+      "pid": 9660,
+      "alive": false
+    },
+    {
+      "receipt": "current-25-first.json",
+      "pid": 9737,
+      "alive": false
+    },
+    {
+      "receipt": "current-27-first.json",
+      "pid": 9799,
+      "alive": false
+    },
+    {
+      "receipt": "current-28-first.json",
+      "pid": 9801,
+      "alive": false
+    },
+    {
+      "receipt": "current-29-first.json",
+      "pid": 9816,
+      "alive": false
+    },
+    {
+      "receipt": "current-6-first.json",
+      "pid": 9649,
+      "alive": false
+    },
+    {
+      "receipt": "lint-first.json",
+      "pid": 5217,
+      "alive": false
+    },
+    {
+      "receipt": "node-targeted-first.json",
+      "pid": 97293,
+      "alive": false
+    },
+    {
+      "receipt": "node-targeted-v2-first.json",
+      "pid": 4149,
+      "alive": false
+    },
+    {
+      "receipt": "schema-first.json",
+      "pid": 5693,
+      "alive": false
+    },
+    {
+      "receipt": "source-noemit-first.json",
+      "pid": 97154,
+      "alive": false
+    },
+    {
+      "receipt": "source-noemit-v2-first.json",
+      "pid": 3682,
+      "alive": false
+    },
+    {
+      "receipt": "typecheck-first.json",
+      "pid": 4764,
+      "alive": false
+    }
+  ],
+  "count": 17,
+  "fixture_recipe": "D afterEach awaits app.close/db.close/rm owned mkdtemp fixture; real WAL second connection closes in finally. Original/adjacent tests and current scripts keep their existing finally cleanup. All final tests completed without teardown errors.",
+  "limit": "No global process/temp scan or old tmp cleanup. Per-fixture absolute temp paths were not independently archived; cleanup inference is from awaited teardown and absent runner PIDs, not a filesystem census.",
+  "operations": "No kill/VM/daemon/global operation."
+}

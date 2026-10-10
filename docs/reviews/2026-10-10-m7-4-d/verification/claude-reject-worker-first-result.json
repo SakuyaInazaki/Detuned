@@ -1,0 +1,44 @@
+{
+  "status": "failed",
+  "code": "NATIVE_PROBE_FAILED",
+  "prompt_sent": false,
+  "model_request_sent": false,
+  "diagnostics": {
+    "stages": [],
+    "issued_controls": {},
+    "supervision": {
+      "work_budget_ms": 50000,
+      "total_budget_ms": 60000,
+      "worker_budget_ms": 60000,
+      "emergency_budget_ms": 65000,
+      "initializer_settled": true,
+      "registrations_settled": true,
+      "mcp_watch_settled": true,
+      "fork_pid_present": true,
+      "fork_pid_valid": true,
+      "bootstrap_sent": false,
+      "group_probe": "absent",
+      "worker_registered": true,
+      "worker_group_confirmed": true,
+      "worker_observer_completed": false,
+      "native_registered": false,
+      "mcp_candidate_received": false,
+      "mcp_candidate_observed": false,
+      "mcp_registered": false,
+      "mcp_acknowledged": false,
+      "mcp_parent_verified": false,
+      "mcp_same_worker_group": false,
+      "mcp_phase": "not-received",
+      "mcp_candidate_probe": "not_created"
+    },
+    "supervisor_failed": true,
+    "deadline_exceeded": false,
+    "supervisor_error_name": "Error"
+  },
+  "cleanup": {
+    "worker_closed": true,
+    "worker_group_closed": true,
+    "mcp_candidates_absent": true,
+    "private_directory_removed": true
+  }
+}

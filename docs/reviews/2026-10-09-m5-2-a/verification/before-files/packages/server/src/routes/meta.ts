@@ -1,0 +1,31 @@
+import { FastifyPluginAsync } from 'fastify';
+import { AuthenticatedContext } from '@detuned/core';
+import { validateAllowedQueryParams } from '../utils/query.js';
+
+export const metaRoutes: FastifyPluginAsync = async (app) => {
+  app.get('/capabilities', async (req) => {
+    validateAllowedQueryParams(req.query, []);
+    return {
+      api_version: '1',
+      request_id: req.id,
+      data: {
+        server_version: '0.1.0',
+        api_version: '1',
+        modules_enabled: ['core', 'fts5', 'sqlite-wal', ...((app as any).artifactBackendConfigured ? ['artifacts'] : [])],
+        limits: {
+          max_body_bytes: 65536,
+          max_json_bytes: 262144,
+          max_artifact_bytes: (app as any).artifactBackendConfigured ? (app as any).artifactLimits.max_file_bytes : 26214400,
+          max_poll_wait_ms: 25000,
+          max_search_query_chars: 256,
+        },
+      },
+    };
+  });
+
+  app.get('/me', async (req) => {
+    validateAllowedQueryParams(req.query, []);
+    const auth = (req as any).auth as AuthenticatedContext;
+    return {api_version:'1',request_id:req.id,data:(app as any).authService.getMe(auth)};
+  });
+};

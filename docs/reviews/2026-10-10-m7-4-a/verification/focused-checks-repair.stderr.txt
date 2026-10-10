@@ -1,0 +1,28 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m4-pi-native-lifecycle.test.ts > M7.4-A fixed Pi ordinary check branches > native checks prepares no invalid input and performs real two-write/six-read calls
+AssertionError: {"lastStage":"directory-cleanup-done","stages":["setup-begin","setup-done","SDK-begin","SDK-done","matrix-invalid","matrix-create","matrix-log-receipt","matrix-reads","matrix-scope","matrix-invalidate","matrix-done","subscribe-begin","subscribe-done","wait-begin","wait-entry","abort","flight-settled","host-cleanup-begin","host-cleanup-done","app-cleanup-begin","app-cleanup-fail","db-cleanup-begin","db-cleanup-done","directory-cleanup-begin","directory-cleanup-done"],"caught":{}}: expected { exit: { code: null, …(1) }, …(2) } to deeply equal { …(3) }
+
+- Expected
++ Received
+
+  {
+    "exit": {
+-     "code": 0,
+-     "signal": null,
++     "code": null,
++     "signal": "SIGKILL",
+    },
+-   "killed": false,
+-   "stderr": "",
++   "killed": true,
++   "stderr": "{\"mode\":\"checks\",\"passed\":false,\"code\":\"CHECKS_FAILED\"}
++ ",
+  }
+
+ ❯ tests/contracts/m4-pi-native-lifecycle.test.ts:51:45
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

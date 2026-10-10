@@ -1,0 +1,36 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 2 tests using 1 worker
+
+  ✓  1 scripts/integrations/web/m5-d2.spec.ts:22:1 › D201 revision pagination, fixed old reference, five actual fields and honest oversized comparison (1.4s)
+  ✘  2 scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation (1.0m)
+
+
+  1) scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.post-directory li').filter({ hasText: 'pst_8b01332d-0afb-4bda-848d-383c09813933' }).getByRole('button', { name: '查看修订 1', exact: true })
+        - locator resolved to <button>查看修订 1</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      10 | }
+      11 | async function open(page: Page, id: string, revision: number) {
+    > 12 |   await page.locator('.post-directory li').filter({hasText: id}).getByRole('button', {name: `查看修订 ${revision}`, exact: true}).click();
+         |                                                                                                                               ^
+      13 |   await expect(page.getByRole('button', {name: '从首段重开', exact: true})).toBeEnabled();
+      14 | }
+      15 | async function login(page: Page, forum: ForumFixture) {await page.goto(forum.baseURL); await forum.login(page); await discussion(page, forum);}
+        at open (/Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-d2.spec.ts:12:127)
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-d2.spec.ts:169:9
+
+    Error Context: docs/reviews/2026-10-09-m5-1-d2/verification/browser-locator-browser-second/playwright-output/m5-d2-D204-held-catalog-co-c8b9e--space-or-logout-generation/error-context.md
+
+  1 failed
+    scripts/integrations/web/m5-d2.spec.ts:157:1 › D204 held catalog, comparison, committed upload and download never cross ref space or logout generation 
+  1 passed (1.0m)
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,183 @@
+{
+  "product_source_config_test_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "current_document_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "protected_review_probe_log_evidence_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "frozen_sql_archive_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "tracked_build_artifact_hashes": {
+    "changed": [
+      "packages/core/dist/services/post-service.d.ts.map",
+      "packages/core/dist/services/post-service.js",
+      "packages/core/dist/services/post-service.js.map",
+      "packages/core/dist/services/thread-service.d.ts.map",
+      "packages/core/dist/services/thread-service.js",
+      "packages/core/dist/services/thread-service.js.map"
+    ],
+    "added": [],
+    "removed": []
+  },
+  "untracked_build_artifact_hashes": {
+    "changed": [
+      "packages/core/dist/services/artifact-references.d.ts",
+      "packages/core/dist/services/artifact-references.d.ts.map",
+      "packages/core/dist/services/artifact-references.js",
+      "packages/core/dist/services/artifact-references.js.map"
+    ],
+    "added": [
+      "packages/core/dist/services/typed-write-validation.d.ts",
+      "packages/core/dist/services/typed-write-validation.d.ts.map",
+      "packages/core/dist/services/typed-write-validation.js",
+      "packages/core/dist/services/typed-write-validation.js.map"
+    ],
+    "removed": []
+  },
+  "schema_profile_hashes": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "protected_vs_initial": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "frozen_vs_initial": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "schema_profile_vs_initial": {
+    "changed": [],
+    "added": [],
+    "removed": []
+  },
+  "head_unchanged": true,
+  "test_counts": [
+    {
+      "file": "tests/contracts/m0-m1-adapters-regression.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "tests/integration/m2-artifacts-http.test.ts",
+      "tests": 8
+    },
+    {
+      "file": "tests/integration/m0-m1-r3-regression.test.ts",
+      "tests": 11
+    },
+    {
+      "file": "tests/integration/m1-discussion.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "tests/integration/m2-artifacts-filesystem.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/integration/m0-m1-r2-regression.test.ts",
+      "tests": 12
+    },
+    {
+      "file": "tests/contracts/cross-interface-contract.test.ts",
+      "tests": 2
+    },
+    {
+      "file": "tests/contracts/r4-c-route-contracts.test.ts",
+      "tests": 4
+    },
+    {
+      "file": "tests/integration/m2-artifacts-cli.test.ts",
+      "tests": 4
+    },
+    {
+      "file": "packages/storage-sqlite/tests/storage.test.ts",
+      "tests": 7
+    },
+    {
+      "file": "tests/probes/m0-probes.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "tests/integration/m2-typed-writes.test.ts",
+      "tests": 12
+    },
+    {
+      "file": "tests/contracts/m2-typed-write-contracts.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "tests/integration/m2-artifacts-core.test.ts",
+      "tests": 9
+    },
+    {
+      "file": "tests/contracts/m0-m1-r2-adapters.test.ts",
+      "tests": 3
+    },
+    {
+      "file": "packages/protocol/tests/schema.test.ts",
+      "tests": 5
+    },
+    {
+      "file": "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "tests": 6
+    },
+    {
+      "file": "tests/contracts/r4-c-contracts.test.ts",
+      "tests": 26
+    },
+    {
+      "file": "tests/integration/m0-m1-r4-b-regression.test.ts",
+      "tests": 82
+    }
+  ],
+  "test_total": 227,
+  "current_commands": {
+    "passed": 29,
+    "total": 29,
+    "timeouts": 0
+  },
+  "probe_summary": {
+    "check-c-boundaries": {
+      "passed": 6,
+      "total": 6
+    },
+    "check-c-completion-v2": {
+      "passed": 5,
+      "total": 5
+    },
+    "check-c2-boundaries": {
+      "passed": 5,
+      "total": 5
+    },
+    "check-unfinished-contracts": {
+      "passed": 8,
+      "total": 8
+    }
+  },
+  "nonempty_stderr": {
+    "observed-build.stderr.txt": "$ pnpm -r run build\n",
+    "observed-check-c-completion-v2.stderr.txt": "unknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/expires_at/anyOf/0\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\nunknown format \"date-time\" ignored in schema at path \"#/properties/data/properties/created_at\"\n",
+    "observed-typecheck.stderr.txt": "$ pnpm -r run typecheck\n",
+    "observed-lint.stderr.txt": "$ pnpm -r run lint\n",
+    "observed-tests.stderr.txt": "$ vitest run\n"
+  }
+}

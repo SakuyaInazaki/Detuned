@@ -1,0 +1,75 @@
+{
+  "state": "root_approved_functional_composite_not_final_whole_exit0",
+  "core": {
+    "unique_tests": 803,
+    "files": 125,
+    "first_full": {
+      "passed": 802,
+      "failed": 1,
+      "exit_code": 1,
+      "receipt": "core-first.json"
+    },
+    "affected_closure": {
+      "passed": 5,
+      "unselected": 5,
+      "exit_code": 0,
+      "receipt": "g01-h02-v4.json"
+    },
+    "H01_additional_wire_replay": {
+      "passed": 1,
+      "exit_code": 0,
+      "receipt": "h01-json-mime-first.json"
+    },
+    "root_authorized_no_second_whole": true
+  },
+  "new_cases": {
+    "author_HTTP": 3,
+    "author_client": 4,
+    "independent_HTTP": 6,
+    "total": 13,
+    "initial_target": {
+      "passed": 5,
+      "failed": 8
+    },
+    "fixture_closure": {
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "gates": [
+    {
+      "name": "build",
+      "receipt": "build-v4.json",
+      "exit_code": 0
+    },
+    {
+      "name": "typecheck",
+      "receipt": "typecheck-v4.json",
+      "exit_code": 0
+    },
+    {
+      "name": "lint",
+      "receipt": "lint-v4.json",
+      "exit_code": 0
+    }
+  ],
+  "source_noemit": "h01-json-mime-noemit.json",
+  "current29": "current29-final-selection.json",
+  "current25": {
+    "passed": 25,
+    "original_selected_first_passed": 24,
+    "old28_first_failed": true,
+    "new28_exact_adapter_passed": true,
+    "composition": {
+      "originals": 6,
+      "prior_adapters": 18,
+      "current_adapter": 1
+    }
+  },
+  "known_warnings": [
+    "pnpmfiles dependency-state warning; no install",
+    "Vite bundle679.14kB >500 advisory",
+    "old AD02 Ajv ignores date-time; independent HTTP response guard bad-date negative actually passed"
+  ],
+  "metadata_updated": false
+}

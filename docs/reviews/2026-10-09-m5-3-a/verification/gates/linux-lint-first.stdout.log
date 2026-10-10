@@ -1,0 +1,23 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+Scope: 10 of 11 workspace projects
+packages/protocol lint$ tsc --noEmit
+packages/protocol lint: Done
+packages/client lint$ tsc --noEmit
+packages/core lint$ tsc --noEmit
+packages/client lint: Done
+packages/core lint: Done
+modules/review lint$ tsc --noEmit
+packages/adapter-pi lint$ tsc --noEmit
+modules/review lint: Done
+packages/mcp lint$ tsc --noEmit
+packages/mcp lint: Done
+packages/storage-sqlite lint$ node scripts/check-schema-sync.mjs && tsc --noEmit
+packages/storage-sqlite lint: schema.sql and schema.ts are in exact synchronization.
+packages/storage-sqlite lint: Done
+packages/web lint$ tsc --noEmit
+packages/adapter-pi lint: Done
+packages/web lint: Done
+packages/server lint$ tsc --noEmit
+packages/server lint: Done
+packages/cli lint$ tsc --noEmit
+packages/cli lint: Done

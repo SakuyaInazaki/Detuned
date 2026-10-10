@@ -1,0 +1,35 @@
+[WARN] Your node_modules are out of sync with your lockfile. The list of pnpmfiles changed.
+
+Running 1 test using 1 worker
+
+  ✘  1 scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK (5.6s)
+
+
+  1) scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('.reading .body-text')
+    Expected: "Pinned fixed original body"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" locator('.reading .body-text') with timeout 5000ms
+      - waiting for locator('.reading .body-text')
+
+
+      35 |   const overviewNavigation=page.getByRole('navigation',{name:'空间页面',exact:true}).getByRole('button',{name:'概览',exact:true});await overviewNavigation.focus();await page.keyboard.press('Enter');
+      36 |   const pinned=page.getByRole('button',{name:'查看置顶修订 1',exact:true});await pinned.focus();await page.keyboard.press('Enter');
+    > 37 |   await expect(page.locator('.reading .body-text')).toHaveText('Pinned fixed original body');
+         |                                                     ^
+      38 |   expect(await page.getByRole('button',{name:'进入主题并引用',exact:true}).count()).toBe(0);
+      39 |   const reply=page.getByRole('button',{name:'引用回复',exact:true});expect(await reply.count()===0||await reply.isDisabled()).toBe(true);
+      40 |   await page.getByRole('button',{name:'返回空间概览',exact:true}).click();
+        at /Users/sakimi/Desktop/Detuned/scripts/integrations/web/m5-e1.spec.ts:37:53
+
+    Error Context: docs/reviews/2026-10-09-m5-1-e1/verification/browser-overview-browser-second/playwright-output/m5-e1-E101-ordinary-and-em-aece1-narrow-keyboard-without-ACK/error-context.md
+
+  1 failed
+    scripts/integrations/web/m5-e1.spec.ts:14:1 › E101 ordinary and empty overview, finite candidates, old pinned reference and narrow keyboard without ACK 
+[ELIFECYCLE] Command failed with exit code 1.

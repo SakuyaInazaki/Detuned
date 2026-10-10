@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/contracts/m7-check-http-client-independent.test.ts > HI09 real TCP successful domain mutations tolerate a legitimate wall-clock rollback; public run and directory follow causal versions
+ FAIL  tests/contracts/m7-check-http-client-independent.test.ts > HI10 true TCP scoped content401/404/410 responses carry private no-store before successful streaming
+ FAIL  tests/contracts/m7-check-http.test.ts > CH04 OpenAPI contains twelve scoped operations and credential issuance has no key header
+FastifyError: Failed building the validation schema for POST: /api/v1/spaces/:space_id/check-runs/:run_id/receipt, due to error strict mode: unknown keyword: "x-max-codepoints"
+ ❯ Boot.<anonymous> node_modules/.pnpm/fastify@5.12.5/node_modules/fastify/lib/route.js:433:21
+ ❯ node_modules/.pnpm/avvio@9.3.0/node_modules/avvio/index.js:102:12
+ ❯ node_modules/.pnpm/avvio@9.3.0/node_modules/avvio/index.js:451:7
+ ❯ done node_modules/.pnpm/avvio@9.3.0/node_modules/avvio/lib/plugin.js:228:5
+ ❯ check node_modules/.pnpm/avvio@9.3.0/node_modules/avvio/lib/plugin.js:252:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+

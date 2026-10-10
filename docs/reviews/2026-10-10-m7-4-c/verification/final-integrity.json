@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-10T02:52:34.372284+00:00",
+  "baseline_sha256": "50977a3a551e0e55422bc95f84dff6dbaee27b4e6153cf7a4f6005873faebdc6",
+  "fresh_ready_sha256": "857842c01e87a9d43a1c87239c11a45e7de6a859f702df693ed61c2027991c8c",
+  "head": "b8dacd56779a007a2e7045b682bca0c036fdfc44",
+  "head_unchanged": true,
+  "checks": {
+    "product_source_config_test_hashes": {
+      "count": 433,
+      "drift": []
+    },
+    "dist_hashes": {
+      "count": 555,
+      "drift": []
+    },
+    "current_document_hashes": {
+      "count": 72,
+      "drift": []
+    },
+    "sql_archive_before_hashes": {
+      "count": 7,
+      "drift": []
+    },
+    "schema_profile_before_hashes": {
+      "count": 2,
+      "drift": []
+    },
+    "integration_protection_hashes": {
+      "count": 7,
+      "drift": []
+    }
+  },
+  "baseline_source_count": 433,
+  "current_source_count": 434,
+  "source_added": [
+    {
+      "path": "scripts/integrations/codex-check-probe.mjs",
+      "sha256": "6015a755cf2323670ddd8352c93237ecf850739bfb656242c18a32f109860c99"
+    }
+  ],
+  "unexpected_active_source_additions": [],
+  "nonowner_drift": [],
+  "dist_count": 555,
+  "dist_unchanged": true,
+  "oldsealed_chain": {
+    "files": 12177,
+    "basis": {
+      "previous12089": "accepted chain reused, no recursive oldevidence hash",
+      "M7_4_B": {
+        "manifest": "docs/reviews/2026-10-10-m7-4-b/verification/finalization-manifest.json",
+        "sha256": "80d406f35a0e97244e11aabe781b34a8e8a703653c658c8b7d259ce2a815940e",
+        "total": 88,
+        "finalization_sha256": "f086f36652e53feee35f95b81abb549be10c376a557d75a6af13d6fbaa64cf8d"
+      },
+      "total_chain_files": 12177
+    },
+    "manifest_pointer_hash_verified": true,
+    "old_entries_not_recursive_rehashed": true
+  },
+  "runtime_repeated": false
+}

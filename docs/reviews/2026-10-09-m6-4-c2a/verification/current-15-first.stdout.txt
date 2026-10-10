@@ -1,0 +1,32 @@
+{
+  "reviewed_date": "2026-09-29",
+  "runtime": "v26.3.0",
+  "fixture_note": "Actual fa1b35c DDL with synthetic compatible rows and historical full Post result; no old application binary executed.",
+  "historical_schema_source_sha256": "a68b02a5d4335c3d0fe48f481212d4d46205ac7f43823fd951e4ccfeca5b0890",
+  "probes": [
+    {
+      "id": "K01",
+      "description": "A genuine old schema preserves credentials, cleans old content cache and replays correctly across reopen",
+      "observed": {
+        "pre": {
+          "classification": "supported_legacy",
+          "metadata_absent": true,
+          "thread_versions_absent": true,
+          "versions": [
+            1
+          ],
+          "foreign_key_errors": 0
+        },
+        "issued_admin_token": false,
+        "credentials_unchanged": true,
+        "counts_unchanged": true,
+        "cached_body_removed": true,
+        "replay_exact_after_reopen": true,
+        "repeated_serve_unchanged": true
+      },
+      "passes": true
+    }
+  ],
+  "passed": 1,
+  "failed": 0
+}

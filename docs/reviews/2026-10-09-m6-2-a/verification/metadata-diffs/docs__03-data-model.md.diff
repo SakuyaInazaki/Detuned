@@ -1,0 +1,20 @@
+--- docs/03-data-model.md (fresh before)
++++ docs/03-data-model.md (metadata v2)
+@@ -247,10 +247,16 @@
+ 
+ 新增只读目录不改表：post_revisions主键支持revision_desc键集，revision_artifacts关联固定post/revision与artifact。目录不读取正文；ready/missing保登记owner/hash/bytes/mime/time/purpose，bytes允许合法safeinteger大声明，purpose原字符串保真。redacted仅id/state；跨space或非space visibility连ID和数量不披露。登记不是文件存在或内容hash验证，旧完整revision端点语义不变。
+ 
+-## M6.1-B当前schema3内部持久对象
++## M6.1-B历史schema3内部持久对象
+ 
+ 当前schema3增加且实际使用五表：snapshots、snapshot_items、review_requests、review_request_versions、review_assignments。请求head与不可变版本分开；每请求独立快照，round唯一(space,target_post,round)，名单unique(request,reviewer)。本包只collecting创建与cancelled取消，不存在submissions/decisions/check表或公共review入口。snapshot_items PK(snapshot,item_type,item_id,revision)全部NOT NULL；target_post/dependency_post为固定正修订、artifact=0哨兵、space_rules正修订且hash为null，精确对应manifest。
+ 
+ snapshot保存exact canonical JSON/SHA及空间、规则/策略、固定target与创建人/时间；固定名单保存group_at_assignment而不声称认知独立。请求和版本保存真实操作者/时间/reason，创建v1且reason=null、取消v2。所有状态、items/名单、无正文事件及compact幂等ref同一写事务。历史读取/重放始终重核当前ACL/材料保密性；仅新revision不改原历史，脱敏410不能绕storedmanifest还原材料。
+ 
+ 普通init/serve仅blank初始化(init)或current3重开，拒legacy1|2并指引显式离线migrate；这是原auto1→2行为的兼容调整。低层bootstrap只在明确新实例/owned stage执行迁移。source1|2→新stage3、旧backup2→stage3及新backup3的五表历史保真；逻辑public交换排除正式表，导入目标3正式表为空。原内容/幂等Hasher不变。
++
++## M6.2-A当前schema4内部封存对象
++
++schema4在既有五formal表上增加review_submissions；assignment有稳定ID，请求head/不可变版本记录submitted_count。提交保存完整严格payload、本人session与固定snapshot绑定；每assignment/session唯一。最终一位提交在同一事务核全部已有证据当前隐私和ready状态，更新所有revealed_at、phase/count/version、metadata事件和typed幂等结果；不经公共posts/FTS存意见。
++
++普通init仅blank/current4、serve仅current4，legacy1/2/3须显式offline复制到新stage4。物理format1接受真实source2/3/4并按原profile验证，源manifest不改；current4备份保六表。逻辑wire1/source2/not_enabled与wire2/source3|4/excluded严格相关，十族public材料排除formal/private对象，导入目标4正式表为空。历史schema3描述是其交付阶段事实，当前以本节为准。

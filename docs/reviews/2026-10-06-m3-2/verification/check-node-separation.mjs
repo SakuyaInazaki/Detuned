@@ -1,0 +1,4 @@
+import {readFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const visited=new Set();async function trace(file){if(visited.has(file))return;visited.add(file);const source=await readFile(file,'utf8');assert.ok(!/from\s*['"]node:|import\s*\(\s*['"]node:/.test(source),'Node dependency in base entry '+file);for(const m of source.matchAll(/(?:from\s*|import\s*\()\s*['"](\.\/[^'"]+\.js)['"]/g))await trace(new URL(m[1],file));}
+await trace(new URL('../../../../packages/client/dist/index.js',import.meta.url));const pkg=JSON.parse(await readFile(new URL('../../../../packages/client/package.json',import.meta.url),'utf8'));assert.equal(pkg.exports['./node'].import,'./dist/node.js');console.log(JSON.stringify({base_entry_without_node_builtin_dependencies:true,traced_local_modules:[...visited].map(x=>x.pathname.split('/').pop()),optional_export:pkg.exports['./node']}));

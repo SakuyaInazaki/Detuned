@@ -8,11 +8,11 @@ export const metaRoutes = async (app) => {
             data: {
                 server_version: '0.1.0',
                 api_version: '1',
-                modules_enabled: ['core', 'fts5', 'sqlite-wal'],
+                modules_enabled: ['core', 'fts5', 'sqlite-wal', 'review', ...(app.artifactBackendConfigured ? ['artifacts'] : [])],
                 limits: {
                     max_body_bytes: 65536,
                     max_json_bytes: 262144,
-                    max_artifact_bytes: 26214400,
+                    max_artifact_bytes: app.artifactBackendConfigured ? app.artifactLimits.max_file_bytes : 26214400,
                     max_poll_wait_ms: 25000,
                     max_search_query_chars: 256,
                 },
@@ -22,22 +22,7 @@ export const metaRoutes = async (app) => {
     app.get('/me', async (req) => {
         validateAllowedQueryParams(req.query, []);
         const auth = req.auth;
-        const storage = app.storage;
-        const visibleSpaces = storage.listVisibleSpaces(auth.actor.id, 100, undefined, auth.credential.allowed_space_ids);
-        return {
-            api_version: '1',
-            request_id: req.id,
-            data: {
-                actor: auth.actor,
-                capabilities: auth.credential.capabilities,
-                allowed_space_ids: auth.credential.allowed_space_ids,
-                visible_spaces: visibleSpaces.spaces.map((s) => ({
-                    id: s.id,
-                    slug: s.slug,
-                    role: storage.getMembership(s.id, auth.actor.id)?.role ?? 'none',
-                })),
-            },
-        };
+        return { api_version: '1', request_id: req.id, data: app.authService.getMe(auth) };
     });
 };
 //# sourceMappingURL=meta.js.map

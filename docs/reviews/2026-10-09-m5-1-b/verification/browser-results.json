@@ -1,0 +1,41 @@
+{
+  "unique_cases": 6,
+  "core_counted": false,
+  "passed": 6,
+  "author": {
+    "case": "author normal human journey",
+    "receipt": "gates/browser-first.receipt.json",
+    "scope": "B v1; later CSS/copy deltas verified by affected BI01 only"
+  },
+  "independent": [
+    {
+      "cases": [
+        "BI02",
+        "BI03",
+        "BI04"
+      ],
+      "receipt": "gates/browser-independent-second.receipt.json"
+    },
+    {
+      "cases": [
+        "BI05"
+      ],
+      "receipt": "gates/browser-bi01-bi05-fourth.receipt.json"
+    },
+    {
+      "cases": [
+        "BI01"
+      ],
+      "receipt": "gates/browser-bi01-copy-final.receipt.json"
+    }
+  ],
+  "final_web_coverage": "B v3 copy-only via necessary Web tsc/build and affected real viewport/hover BI01",
+  "diagnostic": "select-key-diagnostic.json",
+  "failures_preserved": [
+    "browser-first-output",
+    "browser-second-output",
+    "browser-third-output",
+    "browser-fourth-output"
+  ],
+  "no_har_trace_video_storage_state": true
+}

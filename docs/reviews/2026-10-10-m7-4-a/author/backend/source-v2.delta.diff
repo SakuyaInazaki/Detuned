@@ -1,0 +1,88 @@
+--- a/tests/fixtures/pi-runtime/native-lifecycle.mjs
++++ b/tests/fixtures/pi-runtime/native-lifecycle.mjs
+@@ -230,7 +230,7 @@
+   const {ArtifactFileStore}=await import('../../../packages/server/dist/index.js');
+   const dir=await fs.mkdtemp(path.join(os.tmpdir(),'detuned-pi-native-checks-'));let db,app,host,originalFailure;
+   const budgetAbort=new AbortController();const deadline=setTimeout(()=>budgetAbort.abort(),60000);
+-  const evidence={mode:'checks',metadata,model_calls:0,tools:[],checks:{},cleanup:{}};
++  const evidence={mode:'checks',metadata,model_calls:0,tools:[],checks:{},cleanup:{host_disposed:false,app_closed:false,db_closed:false,private_directory_removed:false}};
+   try {
+     db=new Database(path.join(dir,'private.sqlite'));const boot=bootstrapDatabase(db);const blobs=await ArtifactFileStore.create(dir);
+     app=buildApp({storage:new SqliteStorage(db,{dataDir:dir}),artifactBlobs:blobs,writeRateLimits:{per_minute:60000,burst:10000}});
+@@ -252,11 +252,15 @@
+     const waiting=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'checks-waiting',start:'now'},'checks-waiting')).data.consumer;
+     const beforeAck=requests.filter(req=>req.path.endsWith('/ack')).length;let entered;const entry=new Promise(resolve=>{entered=resolve;});waitingEntered={id:waiting.id,resolve:entered};
+     const controller=new AbortController(),flight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000},controller.signal);await Promise.race([entry,new Promise((_,reject)=>{const fail=()=>reject(new UserAbortError());if(budgetAbort.signal.aborted)fail();else budgetAbort.signal.addEventListener('abort',fail,{once:true});})]);controller.abort();const cancelled=await flight;assert.equal(cancelled.ok,false);assert.ok(cancelled.error instanceof UserAbortError);
+-    await host.dispose();host=null;const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
++    await host.dispose();host=null;evidence.cleanup.host_disposed=true;const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
+     evidence.checks={...evidence.checks,ack_delta:0,pending_unchanged:true,cancelled:true};
+   } catch(error) {originalFailure=error;}
+   finally {
+-    clearTimeout(deadline);let cleanupFailure;try{if(host)await host.dispose();if(app)await app.close();db?.close();await fs.rm(dir,{recursive:true,force:true});evidence.cleanup={host_disposed:true,app_closed:true,private_directory_removed:true};}catch(error){cleanupFailure=error;}
++    clearTimeout(deadline);let cleanupFailure;const attempt=async(action,done)=>{try{await action();done();}catch(error){cleanupFailure??=error;}};
++    if(host)await attempt(()=>host.dispose(),()=>{evidence.cleanup.host_disposed=true;});
++    if(app)await attempt(()=>app.close(),()=>{evidence.cleanup.app_closed=true;});
++    if(db)await attempt(()=>{db.close();},()=>{evidence.cleanup.db_closed=true;});
++    await attempt(()=>fs.rm(dir,{recursive:true,force:true}),()=>{evidence.cleanup.private_directory_removed=true;});
+     if(originalFailure||cleanupFailure){console.error(JSON.stringify({mode:'checks',passed:false,error_name:(originalFailure??cleanupFailure)?.name,error_code:(originalFailure??cleanupFailure)?.code}));process.exitCode=1;}
+   }
+   if(!originalFailure&&process.exitCode!==1)console.log(JSON.stringify({...evidence,passed:true}));
+--- a/scripts/integrations/claude-check-probe.mjs
++++ b/scripts/integrations/claude-check-probe.mjs
+@@ -2,6 +2,7 @@
+ // Optional fixed installed-native experiment; importing the fixture helpers starts no host.
+ import assert from 'node:assert/strict';
+ import fs from 'node:fs/promises';
++import {createReadStream} from 'node:fs';
+ import path from 'node:path';
+ import {tmpdir} from 'node:os';
+ import {spawn} from 'node:child_process';
+@@ -51,8 +52,16 @@
+ }
+ const safeFailure=()=>({status:'failed',code:'NATIVE_PROBE_FAILED'});
+ async function publishReport(output,value){const staging=output+'.stage-'+process.pid;let handle;try{handle=await fs.open(staging,'wx',0o600);await handle.writeFile(JSON.stringify(value,null,2)+'\n');await handle.sync();await handle.close();handle=null;await fs.link(staging,output);}finally{if(handle)await handle.close();await fs.unlink(staging).catch(()=>{});}}
++// Observe both callback failures and later asynchronous stream errors. No host is launched.
++export function createNativeInputWriter(child){
++ if(!child.stdin)throw Error('Native input is unavailable');let failure;const pending=new Set();
++ const fail=()=>{failure??=Object.assign(Error('Native input failed'),{code:'NATIVE_INPUT_FAILED'});for(const reject of pending)reject(failure);pending.clear();};
++ child.stdin.on('error',fail);
++ return Object.freeze({assertHealthy(){if(failure)throw failure;},write(text){return new Promise((resolve,reject)=>{if(failure){reject(failure);return;}const rejectWrite=error=>{pending.delete(rejectWrite);reject(error);};pending.add(rejectWrite);try{child.stdin.write(text,error=>{if(error){fail();return;}pending.delete(rejectWrite);failure?reject(failure):resolve();});}catch{fail();}});}});
++}
++async function hashFixedBinary(file){const digest=createHash('sha256');for await(const chunk of createReadStream(file,{highWaterMark:65536}))digest.update(chunk);return digest.digest('hex');}
+ export async function runClaudeCheckProbe({binary,output}){
+- assert.equal(await fs.realpath(binary),FIXED_BINARY);const stat=await fs.stat(binary);assert.equal(stat.isFile(),true);assert.equal(stat.size,222245312);assert.equal(sha(await fs.readFile(binary)),FIXED_SHA);
++ assert.equal(await fs.realpath(binary),FIXED_BINARY);const stat=await fs.stat(binary);assert.equal(stat.isFile(),true);assert.equal(stat.size,222245312);assert.equal(await hashFixedBinary(binary),FIXED_SHA);
+  try{await fs.lstat(output);throw Error('Output exists');}catch(error){if(error.code!=='ENOENT')throw error;}
+  const owned=await fs.mkdtemp(path.join(tmpdir(),'detuned-claude-checks-'));let app,db,native,forbidden,originalFailure;const children=new Map();const requests=[];
+  const report={status:'passed',version_path:'2.1.282',binary_sha256:FIXED_SHA,model_calls:0,input_mode:'wrapped',tools:[],guard:{},checks:{},cleanup:{}};
+@@ -66,8 +75,8 @@
+  forbidden=createServer((_q,s)=>s.end('owned negative'));await new Promise(resolve=>forbidden.listen(0,'127.0.0.1',resolve));const sentinel=path.join(owned,'forbidden-sentinel');await fs.writeFile(sentinel,'negative');const home=process.env.HOME;assert.equal(typeof home,'string');assert.ok(!home.includes('"')&&!owned.includes('"'));const profile=path.join(owned,'guard.sb');const policy=`(version 1)\n(allow default)\n(deny network*)\n(allow network-outbound (remote ip "localhost:${port}"))\n(deny mach-lookup)\n(deny file-read* file-write* (subpath "${home}/.codex") (subpath "${home}/.claude") (literal "${home}/.claude.json") (subpath "${home}/.config") (subpath "${home}/Library/Keychains") (subpath "/Library/Keychains") (subpath "${home}/Library/Application Support/Codex") (subpath "${home}/Library/Application Support/Claude"))\n(deny file-write*)\n(allow file-write* (subpath "${owned}"))\n(deny file-read* file-write* (literal "${sentinel}"))\n`;await fs.writeFile(profile,policy,{mode:0o600});report.profile_sha256=sha(Buffer.from(policy));
+  const checkfile=path.join(owned,'guard-check.cjs');await fs.writeFile(checkfile,`const http=require('node:http'),fs=require('node:fs');const get=p=>new Promise(r=>{const q=http.get({host:'127.0.0.1',port:p,path:'/api/v1/health/live'},s=>{s.resume();s.on('end',()=>r('allowed'));});q.on('error',e=>r(e.code));});(async()=>{let sentinel;try{fs.readFileSync(${JSON.stringify(sentinel)});sentinel='allowed';}catch(e){sentinel=e.code;}console.log(JSON.stringify({allowed:await get(${port}),forbidden:await get(${forbidden.address().port}),sentinel}));})()`);
+  const guard=track(spawn('/usr/bin/sandbox-exec',['-f',profile,process.execPath,checkfile],{cwd:owned,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin'},stdio:['ignore','pipe','ignore']}));let guardText='';guard.stdout.setEncoding('utf8');guard.stdout.on('data',text=>{guardText+=text;if(guardText.length>4096)guard.kill('SIGKILL');});const gt=setTimeout(()=>guard.kill('SIGKILL'),3000);const gs=await children.get(guard).promise;clearTimeout(gt);assert.equal(gs.code,0);report.guard=JSON.parse(guardText);assert.equal(report.guard.allowed,'allowed');assert.ok(['EPERM','EACCES'].includes(report.guard.forbidden));assert.ok(['EPERM','EACCES'].includes(report.guard.sentinel));
+- ensure();native=track(spawn('/usr/bin/sandbox-exec',['-f',profile,binary,'--bare','-p','--input-format','stream-json','--output-format','stream-json','--verbose','--setting-sources','','--settings',settings,'--strict-mcp-config','--mcp-config',mcp,'--no-session-persistence'],{cwd:owned,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',HOME:home,CLAUDE_CODE_TMPDIR:path.join(owned,'tmp'),CLAUDE_CONFIG_DIR:path.join(owned,'state')},detached:true,stdio:['pipe','pipe','pipe']}));native.stderr.resume();let lines='',bytes=0,serial=0;const responses=new Map();native.stdout.setEncoding('utf8');native.stdout.on('data',text=>{bytes+=Buffer.byteLength(text);if(bytes>1048576){cancel();return;}lines+=text;let i;while((i=lines.indexOf('\n'))>=0){const line=lines.slice(0,i);lines=lines.slice(i+1);try{const value=JSON.parse(line);if(value.type==='control_response')responses.set(value.response?.request_id,value);}catch{}}});
+- const control=async request=>{ensure();const id='native-'+(++serial);assert.equal(children.get(native).closed,undefined);native.stdin.write(JSON.stringify({type:'control_request',request_id:id,request})+'\n');const deadline=Date.now()+15000;while(!cancelled&&!responses.has(id)&&!children.get(native).closed&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,20));const value=responses.get(id);responses.delete(id);if(!value)throw Error('Control deadline');return value;};
++ ensure();native=track(spawn('/usr/bin/sandbox-exec',['-f',profile,binary,'--bare','-p','--input-format','stream-json','--output-format','stream-json','--verbose','--setting-sources','','--settings',settings,'--strict-mcp-config','--mcp-config',mcp,'--no-session-persistence'],{cwd:owned,env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true',HOME:home,CLAUDE_CODE_TMPDIR:path.join(owned,'tmp'),CLAUDE_CONFIG_DIR:path.join(owned,'state')},detached:true,stdio:['pipe','pipe','pipe']}));native.stderr.resume();const input=createNativeInputWriter(native);let lines='',bytes=0,serial=0;const responses=new Map();native.stdout.setEncoding('utf8');native.stdout.on('data',text=>{bytes+=Buffer.byteLength(text);if(bytes>1048576){cancel();return;}lines+=text;let i;while((i=lines.indexOf('\n'))>=0){const line=lines.slice(0,i);lines=lines.slice(i+1);try{const value=JSON.parse(line);if(value.type==='control_response')responses.set(value.response?.request_id,value);}catch{}}});
++ const control=async request=>{ensure();const id='native-'+(++serial);assert.equal(children.get(native).closed,undefined);await input.write(JSON.stringify({type:'control_request',request_id:id,request})+'\n');const deadline=Date.now()+15000;while(!cancelled&&!responses.has(id)&&!children.get(native).closed&&Date.now()<deadline){input.assertHealthy();await new Promise(resolve=>setTimeout(resolve,20));}input.assertHealthy();const value=responses.get(id);responses.delete(id);if(!value)throw Error('Control deadline');return value;};
+  assert.equal((await control({subtype:'initialize'})).response?.subtype,'success');let server;for(let n=0;n<40;n++){const response=await control({subtype:'mcp_status'});server=response.response?.response?.mcpServers?.find(item=>item.name==='detuned');if(server?.status==='connected')break;await new Promise(resolve=>setTimeout(resolve,100));}assert.equal(server?.status,'connected');report.tools=server.tools.map(tool=>tool.name).sort();assert.deepEqual(report.tools,nativeCheckNames);report.initialize=true;report.catalogue_exact=true;
+  const call=async(name,args)=>{const response=(await control({subtype:'mcp_call',tool:'mcp__detuned__'+name,arguments:{input:args}})).response;if(response?.subtype!=='success'){let code;try{code=JSON.parse(response?.error).error?.code;}catch{}return{ok:false,code};}const value=response.response?.structuredContent?.result;return{ok:true,value};};
+  report.checks=await exerciseOrdinaryCheckBranches(call,fixture,()=>requests.length);
+@@ -75,7 +84,18 @@
+  const waiting=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'native-waiting',start:'now'},'native-waiting')).data.consumer;
+  const inFlight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000});const observed=inFlight.then(()=>undefined,()=>undefined);const waitDeadline=Date.now()+3000;while(!requests.some(r=>r.path.endsWith('/consumers/'+waiting.id+'/poll'))&&Date.now()<waitDeadline)await new Promise(resolve=>setTimeout(resolve,20));assert.ok(requests.some(r=>r.path.endsWith('/consumers/'+waiting.id+'/poll')));native.stdin.end();await close(native,true);await observed;
+  const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(r=>r.path.endsWith('/ack')).length,beforeAck);report.checks.ack_delta=0;report.checks.pending_unchanged=true;report.checks.cancelled=true;report.native_close={code:children.get(native).code,signal:children.get(native).signal};
+- }catch(error){originalFailure=error;}finally{clearTimeout(timer);process.off('SIGINT',cancel);process.off('SIGTERM',cancel);let cleanupFailure;try{for(const child of children.keys())await close(child,child===native);if(forbidden)await new Promise(resolve=>forbidden.close(resolve));if(app)await app.close();db?.close();await fs.rm(owned,{recursive:true,force:true});report.cleanup={children_closed:[...children.values()].every(state=>state.closed),app_closed:true,private_directory_removed:true};}catch(error){cleanupFailure=error;}if(originalFailure||cleanupFailure){await publishReport(output,{...safeFailure(),version_path:'2.1.282',binary_sha256:FIXED_SHA,cleanup:report.cleanup});throw Error('Protected native probe failed');}}
++ }catch(error){originalFailure=error;}finally{
++ clearTimeout(timer);process.off('SIGINT',cancel);process.off('SIGTERM',cancel);let cleanupFailure;
++ const attempt=async(action,done)=>{try{await action();done();}catch(error){cleanupFailure??=error;}};
++ report.cleanup={children_closed:false,forbidden_closed:false,app_closed:false,db_closed:false,private_directory_removed:false};
++ for(const child of children.keys())await attempt(()=>close(child,child===native),()=>{});
++ report.cleanup.children_closed=[...children.values()].every(state=>state.closed===true);
++ if(forbidden)await attempt(()=>new Promise((resolve,reject)=>forbidden.close(error=>error?reject(error):resolve())),()=>{report.cleanup.forbidden_closed=true;});
++ if(app)await attempt(()=>app.close(),()=>{report.cleanup.app_closed=true;});
++ if(db)await attempt(()=>{db.close();},()=>{report.cleanup.db_closed=true;});
++ await attempt(()=>fs.rm(owned,{recursive:true,force:true}),()=>{report.cleanup.private_directory_removed=true;});
++ if(originalFailure||cleanupFailure){try{await publishReport(output,{...safeFailure(),version_path:'2.1.282',binary_sha256:FIXED_SHA,cleanup:report.cleanup});}catch{}throw originalFailure??cleanupFailure;}
++ }
+  await publishReport(output,report);return report;
+ }
+ if(process.argv[1]&&pathToFileURL(process.argv[1]).href===import.meta.url){try{const args=process.argv.slice(2);assert.equal(args.length,4);const values=new Map();for(let i=0;i<args.length;i+=2){assert.ok(['--binary','--output'].includes(args[i]));assert.ok(!values.has(args[i]));values.set(args[i],args[i+1]);}assert.equal(values.size,2);const report=await runClaudeCheckProbe({binary:values.get('--binary'),output:path.resolve(values.get('--output'))});process.stdout.write(JSON.stringify({status:report.status,tools:report.tools.length})+'\n');}catch{process.stderr.write('NATIVE_PROBE_FAILED\n');process.exitCode=1;}}

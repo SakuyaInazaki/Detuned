@@ -1,0 +1,23 @@
+--- before-v11-bind
++++ final-preparation
+@@ -6,9 +6,9 @@
+ import path from 'node:path';
+ import assert from 'node:assert/strict';
+ const repo='/Users/sakimi/Desktop/Detuned',verification=path.join(repo,'docs/reviews/2026-10-10-m7-4-a/verification');
+-const source=path.join(repo,'scripts/integrations/claude-check-probe.mjs'),SOURCE_SHA='ecebcdd61f6315995e64044093e2b0f621389f62f6f823d6acd32f1103f6c8be';
++const source=path.join(repo,'scripts/integrations/claude-check-probe.mjs'),SOURCE_SHA='a6f3a8069342647f326520d711198e4e30a0f380f95ac7b3c2c6fcd66ac4962c';
+ const binary='/Users/sakimi/.local/share/claude/versions/2.1.282';
+-const args=process.argv.slice(2);assert.equal(args.length,4);assert.equal(args[0],'--output');assert.equal(args[2],'--mode');const mode=args[3];assert.ok(['normal','reject-worker','hold-worker'].includes(mode));const output=path.resolve(args[1]);assert.equal(path.dirname(output),verification);
++const args=process.argv.slice(2);assert.equal(args.length,4);assert.equal(args[0],'--output');assert.equal(args[2],'--mode');const mode=args[3];assert.ok(['normal','reject-worker','hold-worker','signal-worker'].includes(mode));const output=path.resolve(args[1]);assert.equal(path.dirname(output),verification);
+ const hash=b=>createHash('sha256').update(b).digest('hex'),pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const driverSource=String.raw`
+ import fs from 'node:fs/promises';import path from 'node:path';import assert from 'node:assert/strict';import {pathToFileURL} from 'node:url';
+@@ -18,7 +18,7 @@
+  assert.equal(typeof value.privateRoot,'string');assert.equal(path.dirname(value.privateRoot),'/private/tmp');assert.ok(/^detuned-claude-checks-[A-Za-z0-9]+$/.test(path.basename(value.privateRoot)));assert.equal(await fs.realpath(value.privateRoot),value.privateRoot);const s=await fs.lstat(value.privateRoot);assert.ok(s.isDirectory()&&!s.isSymbolicLink());assert.equal(s.uid,process.getuid());assert.equal(s.mode&0o777,0o700);
+  for(const key of fields.filter(key=>key.endsWith('PID')||key.endsWith('PGID')))assert.ok(Number.isSafeInteger(value[key])&&value[key]>1);assert.equal(value.workerPID,value.workerPGID);
+  if(entries.length){assert.equal(value.privateRoot,entries[0].privateRoot);assert.equal(value.workerPID,entries[0].workerPID);assert.equal(value.workerPGID,entries[0].workerPGID);}else assert.equal(value.stage,'worker_registered');
+- await new Promise((resolve,reject)=>{const receive=message=>{if(message?.type==='ownership_ack'&&message.stage===value.stage){process.off('message',receive);resolve();}};process.on('message',receive);process.send({type:'ownership',value},error=>{if(error){process.off('message',receive);reject(error);}});});entries.push({...value});const temp=registry+'.stage';await fs.writeFile(temp,JSON.stringify({driverPID:process.pid,entries}),{flag:'wx',mode:0o600});await fs.rename(temp,registry);if(value.stage==='worker_registered'&&mode==='reject-worker')throw Error('Controlled ownership rejection');if(value.stage==='worker_registered'&&mode==='hold-worker')await new Promise(()=>{});
++ await new Promise((resolve,reject)=>{const receive=message=>{if(message?.type==='ownership_ack'&&message.stage===value.stage){process.off('message',receive);resolve();}};process.on('message',receive);process.send({type:'ownership',value},error=>{if(error){process.off('message',receive);reject(error);}});});entries.push({...value});const temp=registry+'.stage';await fs.writeFile(temp,JSON.stringify({driverPID:process.pid,entries}),{flag:'wx',mode:0o600});await fs.rename(temp,registry);if(value.stage==='worker_registered'&&mode==='reject-worker')throw Error('Controlled ownership rejection');if(value.stage==='worker_registered'&&mode==='signal-worker'){process.kill(process.pid,'SIGTERM');await new Promise(()=>{});}if(value.stage==='worker_registered'&&mode==='hold-worker')await new Promise(()=>{});
+ };
+ try{await runClaudeCheckProbe({binary,output,onOwnership});process.stdout.write(JSON.stringify({status:'passed'})+'\n');}catch{process.stdout.write(JSON.stringify({status:'failed'})+'\n');process.exitCode=1;}
+ `;

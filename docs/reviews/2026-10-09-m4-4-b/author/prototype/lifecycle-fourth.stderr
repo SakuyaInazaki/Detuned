@@ -1,0 +1,18 @@
+file:///Users/sakimi/Desktop/Detuned/packages/protocol/dist/tools.js:18
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum_context parameters.', 400, false);
+              ^
+
+DetunedError: Invalid forum_context parameters.
+    at validateToolContextParams (file:///Users/sakimi/Desktop/Detuned/packages/protocol/dist/tools.js:18:15)
+    at DetunedClient.callTool (file:///Users/sakimi/Desktop/Detuned/packages/client/dist/client.js:799:17)
+    at Object.execute (file:///Users/sakimi/Desktop/Detuned/packages/adapter-pi/dist/index.js:47:45)
+    at file:///Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-09-m4-4-b/author/prototype/lifecycle.mjs:34:64 {
+  isDetunedError: true,
+  isTransportError: false,
+  code: 'VALIDATION_ERROR',
+  statusCode: 400,
+  retryable: false,
+  details: undefined
+}
+
+Node.js v26.3.0

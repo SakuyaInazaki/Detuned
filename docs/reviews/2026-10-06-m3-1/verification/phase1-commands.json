@@ -1,0 +1,9 @@
+{
+  "phase":"before and preparation; no workspace build/fullsuite",
+  "commands":[
+    {"command":"python3 docs/reviews/2026-10-06-m3-1/verification/capture-baseline.py","exit":0,"output":"baseline.json"},
+    {"command":"node docs/reviews/2026-10-06-m3-1/verification/before-candidates.mjs","exit":0,"meaning":"candidate observations, not product pass","stdout":"before-candidates.stdout.log","stderr":"before-candidates.stderr.log","result":"before-candidates.json"},
+    {"command":"pnpm exec vitest run tests/integration/m3-event-recovery.test.ts","exit":1,"product":"old dist; no build","actual_tests":2,"expected_before_failed":2,"fixture_errors":0,"stdout":"formal-before.stdout.log","stderr":"formal-before.stderr.log","snapshot":"formal-before.test.txt"},
+    {"command":"node --check tests/helpers/m3-event-worker.mjs","exit":0,"scope":"syntax only; not behavioral certification"}
+  ]
+}

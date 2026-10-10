@@ -242,6 +242,151 @@ CREATE VIRTUAL TABLE IF NOT EXISTS post_fts USING fts5(
   tags,
   tokenize="trigram"
 );
+
+
+CREATE TABLE IF NOT EXISTS snapshots (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  manifest_json TEXT NOT NULL,
+  manifest_sha256 TEXT NOT NULL,
+  policy_revision INTEGER NOT NULL,
+  rules_revision INTEGER NOT NULL,
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS snapshot_items (
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  item_type TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  revision INTEGER NOT NULL,
+  sha256 TEXT,
+  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
+);
+
+CREATE TABLE IF NOT EXISTS review_requests (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  round INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  version INTEGER NOT NULL,
+  requested_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  UNIQUE (space_id, target_post_id, round)
+);
+
+CREATE TABLE IF NOT EXISTS review_request_versions (
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  version INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  PRIMARY KEY (request_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS review_assignments (
+  id TEXT NOT NULL UNIQUE,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  group_at_assignment TEXT,
+  PRIMARY KEY (request_id, reviewer_actor_id)
+);
+
+CREATE TABLE IF NOT EXISTS review_submissions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  assignment_id TEXT NOT NULL UNIQUE REFERENCES review_assignments(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  reviewer_session_id TEXT NOT NULL UNIQUE REFERENCES sessions(id),
+  snapshot_sha256 TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  submitted_at TEXT NOT NULL,
+  revealed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS review_decisions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL UNIQUE REFERENCES review_requests(id),
+  actor_id TEXT NOT NULL REFERENCES actors(id),
+  snapshot_sha256 TEXT NOT NULL,
+  review_ids_json TEXT NOT NULL,
+  check_receipt_ids_json TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  rationale TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS snapshot_items_material_idx ON snapshot_items(item_type,item_id,snapshot_id);
+CREATE INDEX IF NOT EXISTS review_requests_active_idx ON review_requests(space_id,phase,snapshot_id);
+
+CREATE TABLE IF NOT EXISTS check_runs (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  snapshot_sha256 TEXT NOT NULL,
+  check_name TEXT NOT NULL,
+  attempt INTEGER NOT NULL CHECK (attempt > 0),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  check_config_sha256 TEXT NOT NULL,
+  created_request_version INTEGER NOT NULL CHECK (created_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  version INTEGER NOT NULL CHECK (version > 0),
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  UNIQUE (request_id, check_name, attempt)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_versions (
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  version INTEGER NOT NULL CHECK (version > 0),
+  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  receipt_id TEXT,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  PRIMARY KEY (check_run_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS check_receipts (
+  receipt_id TEXT PRIMARY KEY,
+  check_run_id TEXT NOT NULL UNIQUE REFERENCES check_runs(id),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  observed_snapshot_sha256 TEXT NOT NULL,
+  observed_check_config_sha256 TEXT NOT NULL,
+  result TEXT NOT NULL CHECK (result IN ('pass','fail','error')),
+  environment TEXT NOT NULL,
+  tool_versions_json TEXT NOT NULL,
+  execution_steps TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT NOT NULL,
+  exit_code INTEGER NOT NULL,
+  logs_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+  received_at TEXT NOT NULL,
+  run_version INTEGER NOT NULL CHECK (run_version > 0)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_credentials (
+  credential_id TEXT PRIMARY KEY REFERENCES credentials(id),
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS check_run_credentials_run_idx ON check_run_credentials(check_run_id);
 `;
 // END SCHEMA_SQL
 
@@ -264,6 +409,151 @@ export const THREAD_VERSIONS_DDL = `CREATE TABLE IF NOT EXISTS thread_versions (
   created_at TEXT NOT NULL,
   PRIMARY KEY (thread_id, version)
 );`;
+
+export const REVIEW_TABLES_DDL = `CREATE TABLE IF NOT EXISTS snapshots (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  manifest_json TEXT NOT NULL,
+  manifest_sha256 TEXT NOT NULL,
+  policy_revision INTEGER NOT NULL,
+  rules_revision INTEGER NOT NULL,
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS snapshot_items (
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  item_type TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  revision INTEGER NOT NULL,
+  sha256 TEXT,
+  PRIMARY KEY (snapshot_id, item_type, item_id, revision)
+);
+
+CREATE TABLE IF NOT EXISTS review_requests (
+  id TEXT PRIMARY KEY NOT NULL,
+  space_id TEXT NOT NULL REFERENCES spaces(id),
+  target_post_id TEXT NOT NULL REFERENCES posts(id),
+  target_revision INTEGER NOT NULL,
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  round INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  version INTEGER NOT NULL,
+  requested_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  UNIQUE (space_id, target_post_id, round)
+);
+
+CREATE TABLE IF NOT EXISTS review_request_versions (
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  version INTEGER NOT NULL,
+  phase TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  reason TEXT,
+  submitted_count INTEGER NOT NULL DEFAULT 0 CHECK (submitted_count BETWEEN 0 AND 5),
+  PRIMARY KEY (request_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS review_assignments (
+  id TEXT NOT NULL UNIQUE,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  group_at_assignment TEXT,
+  PRIMARY KEY (request_id, reviewer_actor_id)
+);
+
+CREATE TABLE IF NOT EXISTS review_submissions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  assignment_id TEXT NOT NULL UNIQUE REFERENCES review_assignments(id),
+  reviewer_actor_id TEXT NOT NULL REFERENCES actors(id),
+  reviewer_session_id TEXT NOT NULL UNIQUE REFERENCES sessions(id),
+  snapshot_sha256 TEXT NOT NULL,
+  payload_json TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  submitted_at TEXT NOT NULL,
+  revealed_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS review_decisions (
+  id TEXT PRIMARY KEY NOT NULL,
+  request_id TEXT NOT NULL UNIQUE REFERENCES review_requests(id),
+  actor_id TEXT NOT NULL REFERENCES actors(id),
+  snapshot_sha256 TEXT NOT NULL,
+  review_ids_json TEXT NOT NULL,
+  check_receipt_ids_json TEXT NOT NULL,
+  outcome TEXT NOT NULL,
+  rationale TEXT NOT NULL,
+  request_version INTEGER NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS snapshot_items_material_idx ON snapshot_items(item_type,item_id,snapshot_id);
+CREATE INDEX IF NOT EXISTS review_requests_active_idx ON review_requests(space_id,phase,snapshot_id);`;
+export const CHECK_TABLES_DDL = `CREATE TABLE IF NOT EXISTS check_runs (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL REFERENCES review_requests(id),
+  snapshot_id TEXT NOT NULL REFERENCES snapshots(id),
+  snapshot_sha256 TEXT NOT NULL,
+  check_name TEXT NOT NULL,
+  attempt INTEGER NOT NULL CHECK (attempt > 0),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  check_config_sha256 TEXT NOT NULL,
+  created_request_version INTEGER NOT NULL CHECK (created_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  version INTEGER NOT NULL CHECK (version > 0),
+  created_by TEXT NOT NULL REFERENCES actors(id),
+  created_at TEXT NOT NULL,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  UNIQUE (request_id, check_name, attempt)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_versions (
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  version INTEGER NOT NULL CHECK (version > 0),
+  observed_request_version INTEGER NOT NULL CHECK (observed_request_version > 0),
+  state TEXT NOT NULL CHECK (state IN ('pending','pass','fail','error','invalidated')),
+  receipt_id TEXT,
+  changed_by TEXT NOT NULL REFERENCES actors(id),
+  changed_at TEXT NOT NULL,
+  invalidation_reason TEXT,
+  PRIMARY KEY (check_run_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS check_receipts (
+  receipt_id TEXT PRIMARY KEY,
+  check_run_id TEXT NOT NULL UNIQUE REFERENCES check_runs(id),
+  verifier_actor_id TEXT NOT NULL REFERENCES actors(id),
+  observed_snapshot_sha256 TEXT NOT NULL,
+  observed_check_config_sha256 TEXT NOT NULL,
+  result TEXT NOT NULL CHECK (result IN ('pass','fail','error')),
+  environment TEXT NOT NULL,
+  tool_versions_json TEXT NOT NULL,
+  execution_steps TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT NOT NULL,
+  exit_code INTEGER NOT NULL,
+  logs_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+  received_at TEXT NOT NULL,
+  run_version INTEGER NOT NULL CHECK (run_version > 0)
+);
+
+CREATE TABLE IF NOT EXISTS check_run_credentials (
+  credential_id TEXT PRIMARY KEY REFERENCES credentials(id),
+  check_run_id TEXT NOT NULL REFERENCES check_runs(id),
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS check_run_credentials_run_idx ON check_run_credentials(check_run_id);`;
 // END MIGRATION_DDL
 
 export interface ColumnRequirement {
@@ -315,6 +605,8863 @@ export interface TableRequirement {
   indexes?: IndexRequirement[];
   fts?: FtsRequirement;
 }
+
+export const V5_SCHEMA_TABLES: Record<string, TableRequirement> = {
+  "actors": {
+    "name": "actors",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "display_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "disabled_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "artifacts": {
+    "name": "artifacts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "owner_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_assignment_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "bytes",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "mime",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "storage_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "owner_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "consumers": {
+    "name": "consumers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "subscription_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "consumer_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "ack_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active_batch_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "subscription_id",
+        "table": "subscriptions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "subscription_id",
+          "consumer_key"
+        ],
+        "keyTerms": [
+          {
+            "name": "subscription_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "consumer_key",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "credentials": {
+    "name": "credentials",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "token_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "allowed_space_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "capabilities",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "expires_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "revoked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "keyTerms": [
+          {
+            "name": "token_hash",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "delivery_batches": {
+    "name": "delivery_batches",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "consumer_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "from_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "through_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "consumer_id",
+        "table": "consumers",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "events": {
+    "name": "events",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "object_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_events_space_seq",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "idempotency_records": {
+    "name": "idempotency_records",
+    "columns": [
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "operation",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "request_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "result_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "http_status",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "instance_metadata": {
+    "name": "instance_metadata",
+    "columns": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "memberships": {
+    "name": "memberships",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "role",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_eligible",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "independence_group",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "post_fts": {
+    "name": "post_fts",
+    "virtual": true,
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [],
+    "fts": {
+      "module": "fts5",
+      "columns": [
+        {
+          "name": "post_id",
+          "unindexed": true
+        },
+        {
+          "name": "space_id",
+          "unindexed": true
+        },
+        {
+          "name": "title",
+          "unindexed": false
+        },
+        {
+          "name": "summary",
+          "unindexed": false
+        },
+        {
+          "name": "body",
+          "unindexed": false
+        },
+        {
+          "name": "tags",
+          "unindexed": false
+        }
+      ],
+      "configs": {
+        "tokenize": "trigram"
+      }
+    }
+  },
+  "post_revisions": {
+    "name": "post_revisions",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "structured",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "content_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "posts": {
+    "name": "posts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "author_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "lifecycle",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "author_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "redactions": {
+    "name": "redactions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "affected_revisions",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "operator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "operator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relation_resolutions": {
+    "name": "relation_resolutions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "relation_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "resolver_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "action",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "resolver_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "relation_id",
+        "table": "relations",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relations": {
+    "name": "relations",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "source_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "source_post_id",
+          "source_revision",
+          "target_post_id",
+          "target_revision",
+          "type"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "type",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_assignments": {
+    "name": "review_assignments",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "group_at_assignment",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "id"
+        ],
+        "keyTerms": [
+          {
+            "name": "id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_decisions": {
+    "name": "review_decisions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_ids_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_receipt_ids_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "outcome",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rationale",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "request_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "request_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_request_versions": {
+    "name": "review_request_versions",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "review_requests": {
+    "name": "review_requests",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "round",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "requested_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "requested_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "target_post_id",
+          "round"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "round",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "review_requests_active_idx",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "phase",
+          "snapshot_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "phase",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "snapshot_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "review_submissions": {
+    "name": "review_submissions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "assignment_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_session_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "payload_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "submitted_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revealed_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_session_id",
+        "table": "sessions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "assignment_id",
+        "table": "review_assignments",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "reviewer_session_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "reviewer_session_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      },
+      {
+        "columns": [
+          "assignment_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "assignment_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "revision_artifacts": {
+    "name": "revision_artifacts",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "artifact_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "purpose",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "artifact_id",
+        "table": "artifacts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "schema_migrations": {
+    "name": "schema_migrations",
+    "columns": [
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "applied_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "sessions": {
+    "name": "sessions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_version",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "harness_session_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "metadata",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshot_items": {
+    "name": "snapshot_items",
+    "columns": [
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "item_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "item_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [],
+    "indexes": [
+      {
+        "name": "snapshot_items_material_idx",
+        "unique": false,
+        "columns": [
+          "item_type",
+          "item_id",
+          "snapshot_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "item_type",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "item_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "snapshot_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "snapshots": {
+    "name": "snapshots",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "created_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "space_revisions": {
+    "name": "space_revisions",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "objective",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_policy",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_profiles",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "pinned_refs",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "spaces": {
+    "name": "spaces",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "slug",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "slug"
+        ],
+        "keyTerms": [
+          {
+            "name": "slug",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "subscriptions": {
+    "name": "subscriptions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_types",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "thread_versions": {
+    "name": "thread_versions",
+    "columns": [
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "threads": {
+    "name": "threads",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  }
+};
+
+export const V6_SCHEMA_TABLES: Record<string, TableRequirement> = {
+  "actors": {
+    "name": "actors",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "display_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "disabled_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "artifacts": {
+    "name": "artifacts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "owner_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_assignment_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "bytes",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "mime",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "storage_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "owner_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "check_receipts": {
+    "name": "check_receipts",
+    "columns": [
+      {
+        "name": "receipt_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "verifier_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "observed_snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "observed_check_config_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "result",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "environment",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "tool_versions_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "execution_steps",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "started_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "finished_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "exit_code",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "logs_artifact_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "received_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "run_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "logs_artifact_id",
+        "table": "artifacts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "verifier_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "check_run_id",
+        "table": "check_runs",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "check_run_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "check_run_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "check_run_credentials": {
+    "name": "check_run_credentials",
+    "columns": [
+      {
+        "name": "credential_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "check_run_id",
+        "table": "check_runs",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "credential_id",
+        "table": "credentials",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [],
+    "indexes": [
+      {
+        "name": "check_run_credentials_run_idx",
+        "unique": false,
+        "columns": [
+          "check_run_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "check_run_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "check_run_versions": {
+    "name": "check_run_versions",
+    "columns": [
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "observed_request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "receipt_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "invalidation_reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "check_run_id",
+        "table": "check_runs",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "check_runs": {
+    "name": "check_runs",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "attempt",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "verifier_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_config_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "invalidation_reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "created_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "verifier_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "request_id",
+          "check_name",
+          "attempt"
+        ],
+        "keyTerms": [
+          {
+            "name": "request_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "check_name",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "attempt",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "consumers": {
+    "name": "consumers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "subscription_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "consumer_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "ack_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active_batch_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "subscription_id",
+        "table": "subscriptions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "subscription_id",
+          "consumer_key"
+        ],
+        "keyTerms": [
+          {
+            "name": "subscription_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "consumer_key",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "credentials": {
+    "name": "credentials",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "token_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "allowed_space_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "capabilities",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "expires_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "revoked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "keyTerms": [
+          {
+            "name": "token_hash",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "delivery_batches": {
+    "name": "delivery_batches",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "consumer_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "from_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "through_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "consumer_id",
+        "table": "consumers",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "events": {
+    "name": "events",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "object_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_events_space_seq",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "idempotency_records": {
+    "name": "idempotency_records",
+    "columns": [
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "operation",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "request_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "result_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "http_status",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "instance_metadata": {
+    "name": "instance_metadata",
+    "columns": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "memberships": {
+    "name": "memberships",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "role",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_eligible",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "independence_group",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "post_fts": {
+    "name": "post_fts",
+    "virtual": true,
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [],
+    "fts": {
+      "module": "fts5",
+      "columns": [
+        {
+          "name": "post_id",
+          "unindexed": true
+        },
+        {
+          "name": "space_id",
+          "unindexed": true
+        },
+        {
+          "name": "title",
+          "unindexed": false
+        },
+        {
+          "name": "summary",
+          "unindexed": false
+        },
+        {
+          "name": "body",
+          "unindexed": false
+        },
+        {
+          "name": "tags",
+          "unindexed": false
+        }
+      ],
+      "configs": {
+        "tokenize": "trigram"
+      }
+    }
+  },
+  "post_revisions": {
+    "name": "post_revisions",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "structured",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "content_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "posts": {
+    "name": "posts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "author_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "lifecycle",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "author_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "redactions": {
+    "name": "redactions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "affected_revisions",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "operator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "operator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relation_resolutions": {
+    "name": "relation_resolutions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "relation_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "resolver_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "action",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "resolver_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "relation_id",
+        "table": "relations",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relations": {
+    "name": "relations",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "source_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "source_post_id",
+          "source_revision",
+          "target_post_id",
+          "target_revision",
+          "type"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "type",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_assignments": {
+    "name": "review_assignments",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "group_at_assignment",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "id"
+        ],
+        "keyTerms": [
+          {
+            "name": "id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_decisions": {
+    "name": "review_decisions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_ids_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_receipt_ids_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "outcome",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rationale",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "request_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "request_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_request_versions": {
+    "name": "review_request_versions",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "review_requests": {
+    "name": "review_requests",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "round",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "requested_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "requested_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "target_post_id",
+          "round"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "round",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "review_requests_active_idx",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "phase",
+          "snapshot_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "phase",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "snapshot_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "review_submissions": {
+    "name": "review_submissions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "assignment_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_session_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "payload_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "submitted_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revealed_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_session_id",
+        "table": "sessions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "assignment_id",
+        "table": "review_assignments",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "reviewer_session_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "reviewer_session_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      },
+      {
+        "columns": [
+          "assignment_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "assignment_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "revision_artifacts": {
+    "name": "revision_artifacts",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "artifact_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "purpose",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "artifact_id",
+        "table": "artifacts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "schema_migrations": {
+    "name": "schema_migrations",
+    "columns": [
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "applied_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "sessions": {
+    "name": "sessions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_version",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "harness_session_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "metadata",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshot_items": {
+    "name": "snapshot_items",
+    "columns": [
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "item_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "item_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [],
+    "indexes": [
+      {
+        "name": "snapshot_items_material_idx",
+        "unique": false,
+        "columns": [
+          "item_type",
+          "item_id",
+          "snapshot_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "item_type",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "item_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "snapshot_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "snapshots": {
+    "name": "snapshots",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "created_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "space_revisions": {
+    "name": "space_revisions",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "objective",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_policy",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_profiles",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "pinned_refs",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "spaces": {
+    "name": "spaces",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "slug",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "slug"
+        ],
+        "keyTerms": [
+          {
+            "name": "slug",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "subscriptions": {
+    "name": "subscriptions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_types",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "thread_versions": {
+    "name": "thread_versions",
+    "columns": [
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "threads": {
+    "name": "threads",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  }
+};
+
+export const V4_SCHEMA_TABLES: Record<string, TableRequirement> = {
+  "actors": {
+    "name": "actors",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "display_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "disabled_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "artifacts": {
+    "name": "artifacts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "owner_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_assignment_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "bytes",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "mime",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "storage_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "owner_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "consumers": {
+    "name": "consumers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "subscription_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "consumer_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "ack_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active_batch_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "subscription_id",
+        "table": "subscriptions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "subscription_id",
+          "consumer_key"
+        ],
+        "keyTerms": [
+          {
+            "name": "subscription_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "consumer_key",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "credentials": {
+    "name": "credentials",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "token_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "allowed_space_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "capabilities",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "expires_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "revoked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "keyTerms": [
+          {
+            "name": "token_hash",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "delivery_batches": {
+    "name": "delivery_batches",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "consumer_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "from_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "through_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "consumer_id",
+        "table": "consumers",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "events": {
+    "name": "events",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "object_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_events_space_seq",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "idempotency_records": {
+    "name": "idempotency_records",
+    "columns": [
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "operation",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "request_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "result_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "http_status",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "instance_metadata": {
+    "name": "instance_metadata",
+    "columns": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "memberships": {
+    "name": "memberships",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "role",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_eligible",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "independence_group",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "post_fts": {
+    "name": "post_fts",
+    "virtual": true,
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [],
+    "fts": {
+      "module": "fts5",
+      "columns": [
+        {
+          "name": "post_id",
+          "unindexed": true
+        },
+        {
+          "name": "space_id",
+          "unindexed": true
+        },
+        {
+          "name": "title",
+          "unindexed": false
+        },
+        {
+          "name": "summary",
+          "unindexed": false
+        },
+        {
+          "name": "body",
+          "unindexed": false
+        },
+        {
+          "name": "tags",
+          "unindexed": false
+        }
+      ],
+      "configs": {
+        "tokenize": "trigram"
+      }
+    }
+  },
+  "post_revisions": {
+    "name": "post_revisions",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "structured",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "content_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "posts": {
+    "name": "posts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "author_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "lifecycle",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "author_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "redactions": {
+    "name": "redactions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "affected_revisions",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "operator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "operator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relation_resolutions": {
+    "name": "relation_resolutions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "relation_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "resolver_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "action",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "resolver_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "relation_id",
+        "table": "relations",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relations": {
+    "name": "relations",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "source_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "source_post_id",
+          "source_revision",
+          "target_post_id",
+          "target_revision",
+          "type"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "type",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_assignments": {
+    "name": "review_assignments",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "group_at_assignment",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "id"
+        ],
+        "keyTerms": [
+          {
+            "name": "id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_request_versions": {
+    "name": "review_request_versions",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "review_requests": {
+    "name": "review_requests",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "round",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "requested_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "submitted_count",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "requested_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "target_post_id",
+          "round"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "round",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_submissions": {
+    "name": "review_submissions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "assignment_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_session_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "payload_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "request_version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "submitted_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revealed_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_session_id",
+        "table": "sessions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "assignment_id",
+        "table": "review_assignments",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "reviewer_session_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "reviewer_session_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      },
+      {
+        "columns": [
+          "assignment_id"
+        ],
+        "keyTerms": [
+          {
+            "name": "assignment_id",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "revision_artifacts": {
+    "name": "revision_artifacts",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "artifact_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "purpose",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "artifact_id",
+        "table": "artifacts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "schema_migrations": {
+    "name": "schema_migrations",
+    "columns": [
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "applied_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "sessions": {
+    "name": "sessions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_version",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "harness_session_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "metadata",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshot_items": {
+    "name": "snapshot_items",
+    "columns": [
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "item_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "item_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshots": {
+    "name": "snapshots",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "created_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "space_revisions": {
+    "name": "space_revisions",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "objective",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_policy",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_profiles",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "pinned_refs",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "spaces": {
+    "name": "spaces",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "slug",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "slug"
+        ],
+        "keyTerms": [
+          {
+            "name": "slug",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "subscriptions": {
+    "name": "subscriptions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_types",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "thread_versions": {
+    "name": "thread_versions",
+    "columns": [
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "threads": {
+    "name": "threads",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  }
+};
+
+export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = {
+  "actors": {
+    "name": "actors",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "display_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "disabled_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "artifacts": {
+    "name": "artifacts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "owner_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_assignment_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "check_run_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "bytes",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "mime",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "storage_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "owner_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "consumers": {
+    "name": "consumers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "subscription_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "consumer_key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "ack_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active_batch_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "subscription_id",
+        "table": "subscriptions",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "subscription_id",
+          "consumer_key"
+        ],
+        "keyTerms": [
+          {
+            "name": "subscription_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "consumer_key",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "credentials": {
+    "name": "credentials",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "token_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "allowed_space_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "capabilities",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "expires_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "revoked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "token_hash"
+        ],
+        "keyTerms": [
+          {
+            "name": "token_hash",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "delivery_batches": {
+    "name": "delivery_batches",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "consumer_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "from_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "through_seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acked_at",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "consumer_id",
+        "table": "consumers",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "events": {
+    "name": "events",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "seq",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "object_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "visibility",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_events_space_seq",
+        "unique": false,
+        "columns": [
+          "space_id",
+          "seq"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "seq",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ],
+        "partial": false
+      }
+    ]
+  },
+  "idempotency_records": {
+    "name": "idempotency_records",
+    "columns": [
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "operation",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "request_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "result_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "http_status",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "instance_metadata": {
+    "name": "instance_metadata",
+    "columns": [
+      {
+        "name": "key",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "value",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "memberships": {
+    "name": "memberships",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "role",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reviewer_eligible",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "independence_group",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "post_fts": {
+    "name": "post_fts",
+    "virtual": true,
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "UNINDEXED",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [],
+    "fts": {
+      "module": "fts5",
+      "columns": [
+        {
+          "name": "post_id",
+          "unindexed": true
+        },
+        {
+          "name": "space_id",
+          "unindexed": true
+        },
+        {
+          "name": "title",
+          "unindexed": false
+        },
+        {
+          "name": "summary",
+          "unindexed": false
+        },
+        {
+          "name": "body",
+          "unindexed": false
+        },
+        {
+          "name": "tags",
+          "unindexed": false
+        }
+      ],
+      "configs": {
+        "tokenize": "trigram"
+      }
+    }
+  },
+  "post_revisions": {
+    "name": "post_revisions",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "summary",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "body",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "tags",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "structured",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "content_hash",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "posts": {
+    "name": "posts",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "author_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "kind",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "lifecycle",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "author_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "redactions": {
+    "name": "redactions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "affected_revisions",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "operator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "operator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relation_resolutions": {
+    "name": "relation_resolutions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "relation_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "resolver_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason_ref",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "action",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "resolver_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "relation_id",
+        "table": "relations",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "relations": {
+    "name": "relations",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "source_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "source_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "source_post_id",
+          "source_revision",
+          "target_post_id",
+          "target_revision",
+          "type"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "source_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_revision",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "type",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "review_assignments": {
+    "name": "review_assignments",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "reviewer_actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "group_at_assignment",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "reviewer_actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "review_request_versions": {
+    "name": "review_request_versions",
+    "columns": [
+      {
+        "name": "request_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "request_id",
+        "table": "review_requests",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "review_requests": {
+    "name": "review_requests",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "round",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "phase",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "requested_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "changed_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "changed_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "requested_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "space_id",
+          "target_post_id",
+          "round"
+        ],
+        "keyTerms": [
+          {
+            "name": "space_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "target_post_id",
+            "coll": "BINARY",
+            "desc": 0
+          },
+          {
+            "name": "round",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "revision_artifacts": {
+    "name": "revision_artifacts",
+    "columns": [
+      {
+        "name": "post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "artifact_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "purpose",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "artifact_id",
+        "table": "artifacts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "schema_migrations": {
+    "name": "schema_migrations",
+    "columns": [
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "applied_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": []
+  },
+  "sessions": {
+    "name": "sessions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_name",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "client_version",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "harness_session_id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      },
+      {
+        "name": "metadata",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshot_items": {
+    "name": "snapshot_items",
+    "columns": [
+      {
+        "name": "snapshot_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "item_type",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "item_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 3
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 4
+      },
+      {
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "snapshot_id",
+        "table": "snapshots",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "snapshots": {
+    "name": "snapshots",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_json",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "manifest_sha256",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_post_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "target_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_by",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "created_by",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "target_post_id",
+        "table": "posts",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "space_revisions": {
+    "name": "space_revisions",
+    "columns": [
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "objective",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "rules",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "review_policy",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "check_profiles",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "pinned_refs",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "editor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "editor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "spaces": {
+    "name": "spaces",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "slug",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "current_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "policy_revision",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "acl_epoch",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [],
+    "uniqueConstraints": [
+      {
+        "columns": [
+          "slug"
+        ],
+        "keyTerms": [
+          {
+            "name": "slug",
+            "coll": "BINARY",
+            "desc": 0
+          }
+        ]
+      }
+    ]
+  },
+  "subscriptions": {
+    "name": "subscriptions",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "actor_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "thread_ids",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "event_types",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "actor_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "thread_versions": {
+    "name": "thread_versions",
+    "columns": [
+      {
+        "name": "thread_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 1
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 2
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "thread_id",
+        "table": "threads",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  },
+  "threads": {
+    "name": "threads",
+    "columns": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "notnull": false,
+        "pk": 1
+      },
+      {
+        "name": "space_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "state",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "creator_id",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      },
+      {
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": true,
+        "pk": 0
+      }
+    ],
+    "foreignKeys": [
+      {
+        "from": "creator_id",
+        "table": "actors",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      },
+      {
+        "from": "space_id",
+        "table": "spaces",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "NO ACTION"
+      }
+    ],
+    "uniqueConstraints": []
+  }
+};
 
 export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = {
   "actors": {
@@ -3640,9 +12787,9 @@ export function verifyTableStructure(
 
 export function verifyDatabaseStructure(
   db: any,
-  version: 1 | 2
+  version: 1 | 2 | 3 | 4 | 5 | 6
 ): { valid: boolean; reason?: string } {
-  const tableMap = version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
+  const tableMap = version === 6 ? V6_SCHEMA_TABLES : version === 5 ? V5_SCHEMA_TABLES : version === 4 ? V4_SCHEMA_TABLES : version === 3 ? V3_SCHEMA_TABLES : version === 2 ? V2_SCHEMA_TABLES : V1_SCHEMA_TABLES;
   for (const [tbl, req] of Object.entries(tableMap)) {
     const res = verifyTableStructure(db, tbl, req);
     if (!res.valid) {

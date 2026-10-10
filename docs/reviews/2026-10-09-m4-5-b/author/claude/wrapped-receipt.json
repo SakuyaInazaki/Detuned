@@ -1,0 +1,386 @@
+{
+  "version": "2.1.282",
+  "environment_keys": [
+    "PATH",
+    "CI",
+    "HOME (unchanged inherited value)",
+    "CLAUDE_CODE_TMPDIR (owned)",
+    "CLAUDE_CONFIG_DIR (owned)"
+  ],
+  "messages": [
+    {
+      "type": "system",
+      "subtype": "commands_changed"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "success"
+    },
+    {
+      "type": "control_response",
+      "subtype": "error"
+    },
+    {
+      "type": "control_response",
+      "subtype": "error"
+    }
+  ],
+  "http": [
+    {
+      "method": "GET",
+      "route": "/api/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/me"
+    },
+    {
+      "method": "POST",
+      "route": "/api/v1/spaces/:space_id/sessions"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/spaces/:space_id/context"
+    },
+    {
+      "method": "GET",
+      "route": "/api/v1/spaces/:space_id/revisions/:revision"
+    },
+    {
+      "method": "POST",
+      "route": "/api/v1/spaces/:space_id/threads/:id/posts"
+    }
+  ],
+  "cleanup": {
+    "child_reaped": true,
+    "app_closed": true,
+    "db_closed": true,
+    "private_removed": true
+  },
+  "input_mode": "wrapped",
+  "control_kind": "installed-internal-not-public-SDK",
+  "fixture": {
+    "actor_id": "act_40508697-6220-4631-8ca3-1bcb497fab30",
+    "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+    "thread_id": "thd_cc389be4-ecbd-4811-b29c-4a55d49605c1"
+  },
+  "dist_hashes": {
+    "index.js": "b415754656e12f7256e8d5fedf6f78dfe535154584de20c9a16c5b0969d4b185",
+    "bridge.js": "104c9403fcb3c538df20d25991e119c528d16f19f4c6deabe6cc9e662fb3bfd8",
+    "tool-validation.js": "9d92fbb49e5dfe18f6c4dfc253a7964a84d5f25295218f87a9f8312c1ed1487c"
+  },
+  "guard": {
+    "exit": 0,
+    "allowed": "allowed",
+    "forbidden": "EPERM",
+    "sentinel": "EPERM"
+  },
+  "profile_sha256": "eebccf6eb8e555cd0cd7a3d0cc04ffa42e15d72c3cbaa8a2b8e97a5a7432fbfe",
+  "help": {
+    "exit": 0,
+    "stderr_bytes": 0,
+    "failure_category": null,
+    "flags": [
+      {
+        "flag": "--bare",
+        "present": true
+      },
+      {
+        "flag": "--input-format",
+        "present": true
+      },
+      {
+        "flag": "--output-format",
+        "present": true
+      },
+      {
+        "flag": "--verbose",
+        "present": true
+      },
+      {
+        "flag": "--setting-sources",
+        "present": true
+      },
+      {
+        "flag": "--settings",
+        "present": true
+      },
+      {
+        "flag": "--strict-mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--mcp-config",
+        "present": true
+      },
+      {
+        "flag": "--no-session-persistence",
+        "present": true
+      }
+    ]
+  },
+  "argv": [
+    "-f",
+    "<owned>/guard.sb",
+    "/Users/sakimi/.local/bin/claude",
+    "--bare",
+    "-p",
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--setting-sources",
+    "",
+    "--settings",
+    "<owned>/settings.json",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "<owned>/mcp.json",
+    "--no-session-persistence"
+  ],
+  "pid": 75880,
+  "initialize": {
+    "received": true,
+    "success": true
+  },
+  "status": {
+    "polls": 2,
+    "received": true,
+    "success": true,
+    "payload_keys": [
+      "mcpServers"
+    ],
+    "servers": [
+      {
+        "name": "detuned",
+        "status": "connected",
+        "keys": [
+          "name",
+          "status",
+          "serverInfo",
+          "config",
+          "scope",
+          "source",
+          "tools"
+        ],
+        "error": null,
+        "tool_count": 8,
+        "tool_names": [
+          "forum_context",
+          "forum_search",
+          "forum_read",
+          "forum_publish",
+          "forum_relate",
+          "forum_subscribe",
+          "forum_poll",
+          "forum_ack"
+        ],
+        "tool_keys": [
+          "name",
+          "annotations"
+        ]
+      }
+    ]
+  },
+  "exact_eight": true,
+  "context": {
+    "received": true,
+    "success": true,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "success",
+        "request_id": "context-1",
+        "response": {
+          "content": "{\"result\":{\"data\":{\"space_id\":\"spc_84ab22de-e2aa-4809-a520-6702ad309ca3\",\"slug\":\"claude-owned\",\"space_revision_ref\":{\"space_id\":\"spc_84ab22de-e2aa-4809-a520-6702ad309ca3\",\"revision\":1},\"space_content_status\":\"included\",\"objective\":\"isolated host probe\",\"rules\":[],\"policy_revision\":1,\"pinned_summaries\":[],\"blocking_objections\":[],\"recent_failures\":[],\"recent_activity\":[{\"type\":\"space.revised\",\"object_id\":\"spc_84ab22de-e2aa-4809-a520-6702ad309ca3\",\"occurred_at\":\"2026-10-08T19:20:18.524Z\"},{\"type\":\"thread.created\",\"object_id\":\"thd_cc389be4-ecbd-4811-b29c-4a55d49605c1\",\"occurred_at\":\"2026-10-08T19:20:18.532Z\"}],\"checkpoint_token\":\"REDACTED_CHECKPOINT\"},\"meta\":{\"truncated\":false,\"next_cursor\":null}}}",
+          "structuredContent": {
+            "result": {
+              "data": {
+                "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+                "slug": "claude-owned",
+                "space_revision_ref": {
+                  "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+                  "revision": 1
+                },
+                "space_content_status": "included",
+                "objective": "isolated host probe",
+                "rules": [],
+                "policy_revision": 1,
+                "pinned_summaries": [],
+                "blocking_objections": [],
+                "recent_failures": [],
+                "recent_activity": [
+                  {
+                    "type": "space.revised",
+                    "object_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+                    "occurred_at": "2026-10-08T19:20:18.524Z"
+                  },
+                  {
+                    "type": "thread.created",
+                    "object_id": "thd_cc389be4-ecbd-4811-b29c-4a55d49605c1",
+                    "occurred_at": "2026-10-08T19:20:18.532Z"
+                  }
+                ],
+                "checkpoint_token": "REDACTED_CHECKPOINT"
+              },
+              "meta": {
+                "truncated": false,
+                "next_cursor": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "original_response_sha256": "2976fa3f6a6629cf00fb14f435d4945a8ab87312646ee7803244ed4fbb395266",
+    "http_after": 4
+  },
+  "read": {
+    "received": true,
+    "success": true,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "success",
+        "request_id": "read-1",
+        "response": {
+          "content": "{\"result\":{\"data\":{\"ref\":{\"space_id\":\"spc_84ab22de-e2aa-4809-a520-6702ad309ca3\",\"revision\":1},\"encoding\":\"json\",\"chunk\":\"{\\\"objective\\\":\\\"isolated host probe\\\",\\\"rules\\\":[]}\",\"start_byte\":0,\"end_byte\":46,\"complete\":true},\"meta\":{\"truncated\":false,\"next_cursor\":null}}}",
+          "structuredContent": {
+            "result": {
+              "data": {
+                "ref": {
+                  "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+                  "revision": 1
+                },
+                "encoding": "json",
+                "chunk": "{\"objective\":\"isolated host probe\",\"rules\":[]}",
+                "start_byte": 0,
+                "end_byte": 46,
+                "complete": true
+              },
+              "meta": {
+                "truncated": false,
+                "next_cursor": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "original_response_sha256": "2a69f7e21e0bb581022ae8e28798df703991a3763b70e8d68f025434e616a86c",
+    "http_after": 5
+  },
+  "publish": {
+    "received": true,
+    "success": true,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "success",
+        "request_id": "publish-1",
+        "response": {
+          "content": "{\"result\":{\"post\":{\"id\":\"pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f\",\"space_id\":\"spc_84ab22de-e2aa-4809-a520-6702ad309ca3\",\"thread_id\":\"thd_cc389be4-ecbd-4811-b29c-4a55d49605c1\",\"author_id\":\"act_40508697-6220-4631-8ca3-1bcb497fab30\",\"kind\":\"note\",\"current_revision\":1,\"lifecycle\":\"active\",\"created_at\":\"2026-10-08T19:20:19.287Z\"},\"revision\":{\"post_id\":\"pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f\",\"revision\":1,\"title\":\"Wrapped native note\",\"summary\":\"Private native fixture\",\"body\":\"Private wrapped body\",\"tags\":[],\"structured\":{},\"content_hash\":\"88be4c359d77fcdb205733da168ced28d11d12620451bda69e5dd745d0dc33e7\",\"editor_id\":\"act_40508697-6220-4631-8ca3-1bcb497fab30\",\"created_at\":\"2026-10-08T19:20:19.287Z\"},\"relations\":[]}}",
+          "structuredContent": {
+            "result": {
+              "post": {
+                "id": "pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f",
+                "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+                "thread_id": "thd_cc389be4-ecbd-4811-b29c-4a55d49605c1",
+                "author_id": "act_40508697-6220-4631-8ca3-1bcb497fab30",
+                "kind": "note",
+                "current_revision": 1,
+                "lifecycle": "active",
+                "created_at": "2026-10-08T19:20:19.287Z"
+              },
+              "revision": {
+                "post_id": "pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f",
+                "revision": 1,
+                "title": "Wrapped native note",
+                "summary": "Private native fixture",
+                "body": "Private wrapped body",
+                "tags": [],
+                "structured": {},
+                "content_hash": "88be4c359d77fcdb205733da168ced28d11d12620451bda69e5dd745d0dc33e7",
+                "editor_id": "act_40508697-6220-4631-8ca3-1bcb497fab30",
+                "created_at": "2026-10-08T19:20:19.287Z"
+              },
+              "relations": []
+            }
+          }
+        }
+      }
+    },
+    "original_response_sha256": "0e49312f761313dcb5914c9a28e275f9fbcebbf1058b7964709142bfb99bce3a",
+    "http_after": 6
+  },
+  "invalid_outer": {
+    "received": true,
+    "success": false,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "error",
+        "request_id": "bad-outer",
+        "error": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid forum tool arguments.\"\n  }\n}"
+      }
+    },
+    "original_response_sha256": "fb5c39ce1bab6b649bfcce87c0dcb4f6a49caae03e98395688a99424b6d78394",
+    "http_after": 6
+  },
+  "invalid_inner": {
+    "received": true,
+    "success": false,
+    "response": {
+      "type": "control_response",
+      "response": {
+        "subtype": "error",
+        "request_id": "bad-inner",
+        "error": "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid forum tool arguments.\"\n  }\n}"
+      }
+    },
+    "original_response_sha256": "264d7cab0723f36b803fd8b798d9512d1b54b1e2939d6f5ea59a6e96b2c5a4e3",
+    "http_after": 6
+  },
+  "invalid_zero_http": true,
+  "published_post_id": "pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f",
+  "post_count_delta": 1,
+  "post_identity_match": true,
+  "post_oracle": {
+    "id": "pst_5c33c6d0-e7ed-49b3-b35d-fbe915a5518f",
+    "author_id": "act_40508697-6220-4631-8ca3-1bcb497fab30",
+    "space_id": "spc_84ab22de-e2aa-4809-a520-6702ad309ca3",
+    "thread_id": "thd_cc389be4-ecbd-4811-b29c-4a55d49605c1",
+    "current_revision": 1
+  },
+  "fixed_request_key_present": true,
+  "ordinary_actor_sessions": true,
+  "session_delta": 1,
+  "raw_stderr_bytes": 0,
+  "raw_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr": "",
+  "no_user_prompt": true,
+  "exit": 0,
+  "signal": null,
+  "stderr_requires_private_review": false
+}

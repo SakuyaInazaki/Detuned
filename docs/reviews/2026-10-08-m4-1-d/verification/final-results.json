@@ -1,0 +1,56 @@
+{
+  "status": "accepted_by_parent",
+  "date": "2026-10-08",
+  "new_tests": 14,
+  "new_targeted": {
+    "passed": 14,
+    "files": 4,
+    "exit_code": 0
+  },
+  "fullsuite_attempts": [
+    {
+      "passed": 527,
+      "total": 569,
+      "files_passed": 48,
+      "files_total": 79,
+      "exit_code": 1,
+      "runner_seconds": 412.65,
+      "unhandled_rpc_timeouts": 1,
+      "sleep_seconds_in_window": 357
+    },
+    {
+      "passed": 569,
+      "total": 569,
+      "files_passed": 79,
+      "files_total": 79,
+      "exit_code": 0,
+      "runner_seconds": 50.1
+    }
+  ],
+  "gate_runs": {
+    "build": 1,
+    "typecheck": 1,
+    "lint": 1,
+    "fullsuite": 2
+  },
+  "current29": {
+    "passed": 29,
+    "total": 29,
+    "composition": "4 gates + 24 original probes + approved A.1 scenario11 adapter",
+    "first_full_window": "3 successful gates, fullsuite failed, remaining 25 probes not yet started"
+  },
+  "diagnostic_tests": {
+    "passed": 2,
+    "skipped": 6,
+    "not_added_to_new_test_count": true
+  },
+  "fullsuite_inherited_40MiB_executions": 2,
+  "protected_old_review_files": 4877,
+  "owned_resources_remaining": 0,
+  "limits": [
+    "supported local scope only",
+    "no 600s/model/host evaluation",
+    "sleep evidence supports environment interference but does not independently prove every failed variant safe"
+  ],
+  "accepted_at": "2026-10-08"
+}

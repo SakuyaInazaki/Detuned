@@ -1,0 +1,46 @@
+{
+  "status": "root_released_four_red_only",
+  "cwd": "/Users/sakimi/Desktop/Detuned",
+  "commands": [
+    {
+      "gate": "build-red",
+      "argv": [
+        "/opt/homebrew/bin/pnpm",
+        "-r",
+        "--workspace-concurrency=1",
+        "run",
+        "build"
+      ]
+    },
+    {
+      "gate": "red-four",
+      "argv": [
+        "/Users/sakimi/Desktop/Detuned/node_modules/.bin/vitest",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism",
+        "tests/contracts/m7-check-http-client-independent.test.ts",
+        "tests/contracts/m7-check-http.test.ts",
+        "-t",
+        "^(HI09|HI10|CH03|CH04)"
+      ]
+    }
+  ],
+  "source_ready_sha256": "13e4ba28afc416480b37b62af070c69a5fc16d05e4564ba060dc029badbbeb41",
+  "scope": "Exactly four current product redexamples; prior three aborted atboot, retained; CH06 requestboundary source only deferred",
+  "limits": "defaulttimeout unchanged; boundedownedtemporarySQLite/ephemerallocalhost only; preserve expected failures raw; no product edits",
+  "bindings": {
+    "A": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/author/backend/freeze-v6.json",
+      "sha256": "4bec0cd803f9b89e446874b640e7837ba9e193319e4009bef52873a0945c4397"
+    },
+    "B": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/author/client/freeze.json",
+      "sha256": "1c953e5036d65c4a9a7c3ade58545508e09ae1325807f8b30a35768f5203addc"
+    },
+    "D": {
+      "path": "docs/reviews/2026-10-10-m7-1-b1/verification/d-source-ready-red.json",
+      "sha256": "13e4ba28afc416480b37b62af070c69a5fc16d05e4564ba060dc029badbbeb41"
+    }
+  }
+}

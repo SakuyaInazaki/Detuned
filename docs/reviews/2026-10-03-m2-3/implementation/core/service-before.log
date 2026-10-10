@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /Users/sakimi/Desktop/Detuned
+
+ ❯ tests/integration/m2-search.test.ts (4 tests | 2 failed) 24ms
+   ✓ M2.3 product search semantics and bound cursors > S01: tags are exact all-match properties before paging, not FTS text 14ms
+   ✓ M2.3 product search semantics and bound cursors > S02: 1/2/3+ Unicode codepoints and literal symbols match product content including tags 3ms
+   × M2.3 product search semantics and bound cursors > S03: signed keyset pages bind actor/space/query/filters and permit equivalent tag order 5ms
+     → expected 'pst_c810aa45-71c8-46be-802d-cb7051541…' to contain '.'
+   × M2.3 product search semantics and bound cursors > S04: query cardinality and encoded items excess fail explicitly, not a partial-prefix empty result 2ms
+     → expected function to throw an error, but it didn't
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S03: signed keyset pages bind actor/space/query/filters and permit equivalent tag order
+AssertionError: expected 'pst_c810aa45-71c8-46be-802d-cb7051541…' to contain '.'
+
+Expected: "."
+Received: "pst_c810aa45-71c8-46be-802d-cb7051541f12"
+
+ ❯ tests/integration/m2-search.test.ts:28:67
+     26|     for(let i=0;i<5;i++)add(`needle-${i}`,['a','b']);
+     27|     const service=searchService();const first=service.search(auth,sid,…
+     28|     expect(first.items).toHaveLength(2);expect(first.next_cursor).toCo…
+       |                                                                   ^
+     29|     const second=service.search(auth,sid,{q:'needle',tags:['a','b'],li…
+     30|     const third=service.search(auth,sid,{q:'needle',tags:['a','b'],lim…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/m2-search.test.ts > M2.3 product search semantics and bound cursors > S04: query cardinality and encoded items excess fail explicitly, not a partial-prefix empty result
+AssertionError: expected function to throw an error, but it didn't
+ ❯ tests/integration/m2-search.test.ts:37:102
+     35|   it('S04: query cardinality and encoded items excess fail explicitly,…
+     36|     add('unrelated-1');add('unrelated-2');add('far-z');
+     37|     expect(()=>searchService({max_candidates:2,max_response_bytes:2621…
+       |                                                                                                      ^
+     38|     expect(()=>searchService({max_candidates:5000,max_response_bytes:1…
+     39|     // Internal empty-query views keep their old behavior and do not n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  16:10:06
+   Duration  482ms (transform 154ms, setup 0ms, collect 251ms, tests 24ms, environment 0ms, prepare 36ms)
+

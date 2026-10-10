@@ -1,0 +1,34 @@
+{
+  "passes": true,
+  "results": [
+    {
+      "id": "FC02-04",
+      "pins_own_thread_duplicate_order_cross_thread_fixed_source": true,
+      "failure_id_desc_filter_before_limit": true,
+      "challenge_filter_before_limit_double_end_dedup_both_space": true
+    },
+    {
+      "id": "FC05",
+      "latest5_public_filtered_before_limit_seq_asc_and_upper_bound": true,
+      "checkpoint_space_highwater": true
+    },
+    {
+      "id": "FC01",
+      "archived_metadata_no_focus_no_key_current_acl_401_403_404_400": true,
+      "withdrawn_redacted_source_safe": true
+    },
+    {
+      "id": "FC06",
+      "rules_downgrade_keeps_focus": true,
+      "mandatory_quotes_fit": 1632,
+      "next_quotes_422": 1633,
+      "actual_bytes": 4095,
+      "huge_focus_metadata_422": true
+    }
+  ],
+  "fixture_origin": "HTTP baseline plus explicit synthetic stored corruption/events/boundaries",
+  "limits": [
+    "SQL VM/CPU and pinned sources not hard capped",
+    "dynamic current metadata; not four-host model certification"
+  ]
+}

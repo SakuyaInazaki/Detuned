@@ -1,0 +1,10 @@
+--- before/scripts/integrations/web/m5-c.spec.ts
++++ after/scripts/integrations/web/m5-c.spec.ts
+@@ -4,6 +4,7 @@
+ async function selectSpace(page: Page, forum: ForumFixture, alternate = false) {
+   const space = alternate ? forum.alternate : forum.space;
+   await page.getByRole('button', {name: `${space.slug} 进入空间 →`, exact: true}).click();
++  await page.getByRole('navigation', {name: '空间页面', exact: true}).getByRole('button', {name: '讨论', exact: true}).click();
+   await expect(page.getByRole('status')).toContainText('主题已加载');
+ }
+ async function searchView(page: Page) {

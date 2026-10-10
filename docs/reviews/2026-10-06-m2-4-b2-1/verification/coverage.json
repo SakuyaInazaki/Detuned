@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-06",
+  "status": "independent finite local engineering checks passed; final acceptance by parent",
+  "formal": {
+    "tests": 293,
+    "passed": 293,
+    "files": 30,
+    "new_tests": 17,
+    "new_core": 10,
+    "new_contracts": 7,
+    "new_files": 2,
+    "per_file_counts": {
+      "tests/integration/m0-m1-regression.test.ts": 11,
+      "tests/contracts/m2-search-contracts.test.ts": 5,
+      "tests/integration/m0-m1-r3-regression.test.ts": 11,
+      "tests/integration/m2-artifacts-http.test.ts": 8,
+      "tests/integration/m0-m1-r2-regression.test.ts": 12,
+      "tests/integration/m1-discussion.test.ts": 5,
+      "tests/integration/m2-artifacts-cli.test.ts": 4,
+      "tests/contracts/m0-m1-adapters-regression.test.ts": 6,
+      "tests/contracts/m2-context-contracts.test.ts": 4,
+      "tests/contracts/m2-knowledge-view-contracts.test.ts": 4,
+      "tests/contracts/m2-space-read-contracts.test.ts": 5,
+      "tests/contracts/m2-typed-write-contracts.test.ts": 5,
+      "tests/integration/m2-artifacts-filesystem.test.ts": 6,
+      "tests/contracts/m2-post-revision-read-contracts.test.ts": 7,
+      "tests/contracts/cross-interface-contract.test.ts": 2,
+      "tests/contracts/r4-c-route-contracts.test.ts": 4,
+      "tests/integration/m2-context.test.ts": 7,
+      "tests/integration/m2-typed-writes.test.ts": 12,
+      "tests/integration/m2-space-revision-read.test.ts": 8,
+      "packages/storage-sqlite/tests/storage.test.ts": 7,
+      "tests/integration/m2-post-revision-read.test.ts": 10,
+      "tests/integration/m2-artifacts-core.test.ts": 9,
+      "tests/probes/m0-probes.test.ts": 3,
+      "packages/protocol/tests/schema.test.ts": 5,
+      "tests/contracts/m0-m1-r2-adapters.test.ts": 3,
+      "tests/integration/m2-knowledge-views.test.ts": 7,
+      "tests/integration/m2-search.test.ts": 9,
+      "packages/storage-sqlite/tests/schema-generation.test.ts": 6,
+      "tests/contracts/r4-c-contracts.test.ts": 26,
+      "tests/integration/m0-m1-r4-b-regression.test.ts": 82
+    }
+  },
+  "actual_recorded_commands": 39,
+  "nonzero_commands": [],
+  "current29": [
+    {
+      "command": "pnpm build",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-build-2026-10-06.txt"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-01-2026-10-06.txt"
+    },
+    {
+      "command": "pnpm lint",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-02-2026-10-06.txt"
+    },
+    {
+      "command": "pnpm test:all",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-03-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-behavior.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-04-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1/check-adapters.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-05-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-remaining.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-06-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r2/check-cli.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-07-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-invariants.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-08-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r3/check-serve-version.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-09-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r4/check-unfinished-contracts.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-10-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r5/check-r4b-gaps.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-11-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-28-m0-m1-r6/check-upgrade-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-12-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-b2-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-13-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r7/check-legacy-fixture.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-14-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r8/check-b3-gates.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-15-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r9/check-b4-1-acceptance.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-16-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-29-m0-m1-r10/check-b4-2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-17-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r11/check-validation-pipeline.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-18-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r12/check-precheck-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-19-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-09-30-m0-m1-r13/check-legacy-input-presence.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-20-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-01-m0-m1-r14/check-legacy-helper-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-21-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r15/check-structural-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-22-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r16/check-schema-semantics.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-23-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r17/check-profile-and-fts.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-24-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r18/check-generation-completeness.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-25-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r20/check-c-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-26-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-03-m2-1/verification/check-c-completion-v2.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-27-2026-10-06.txt"
+    },
+    {
+      "command": "node docs/reviews/2026-10-02-m0-m1-r22/check-c2-boundaries.mjs",
+      "exit_code": 0,
+      "output_file": "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-06-m2-4-b2-1/verification/observed-current29-28-2026-10-06.txt"
+    }
+  ],
+  "PR": {
+    "PR01": "independent empty/stored historical document+formal coreP03/04",
+    "PR02": "independent oldref head update and withdrawn metadata+formal fixedprojection",
+    "PR03": "independent rawHTTP105164bytes 4K/64K/default42/3/13pages and serializer equality",
+    "PR04": "realreqid1695quotes4096body bytes1696to422",
+    "PR05": "independent two nonterminal Clock advances, inherited expiry, budget change, invalid payload/binding/UTF8 positions; formal too",
+    "PR06": "independent removed404/revoked401/redacted410 before badcursor+formal actual RedactionService/capability/targetspace",
+    "PR07": "independent WAL oldmaterial+oldmetadata then newmetadata+fixedmaterial; formal real concurrent redaction; wholeDB fingerprints",
+    "PR08": "installedPi0.87.1 actual validator-execute/MCPstdio ListTools/call new and oldpost",
+    "PR09": "CLI22pages exactreassembly/numericerror2/oldread full data; actual dynamiccatalog",
+    "PR10": "current29/fullformal/typecheck/lint/oldSR4SQKV/integrity complete; losthistorynot_run"
+  },
+  "prior_probes": [
+    "SR HTTP",
+    "SR boundary Unicode/reqid/ACL",
+    "SR WAL/checkpoint",
+    "SR Pi/MCP/CLI",
+    "SQ/native HTTP",
+    "KV"
+  ],
+  "catalog": {
+    "operations": 37,
+    "actual_routes": 37,
+    "requestBodies": 20,
+    "request_media_counts": {
+      "application/json": 19,
+      "multipart/form-data": 1
+    },
+    "placeholder_body_count": 0,
+    "date_time_ignored_warning_lines": 18
+  },
+  "lost_real_historical_fixture_replay": "not_run; temporary original DB/credentials lost; no repeated ENOENT or reconstructed old success",
+  "first_failures": [],
+  "limits": [
+    "Node26.3.0/pnpm11.7.0 only; Node22 clean install remoteCI real four host models100k notrun",
+    "successful compact HTTP bodycap excludes headers errors SDK/CLI pretty wrappers",
+    "wholefixed document O(doc) memory/CPU, noSQLVM/constantmemorycap",
+    "stored TEXT isolatedsurrogate loss already existed before read",
+    "B2.2 theme directory/fullaggregation unfrozen; B2.1 not wholeM2.4/T06/M2"
+  ]
+}

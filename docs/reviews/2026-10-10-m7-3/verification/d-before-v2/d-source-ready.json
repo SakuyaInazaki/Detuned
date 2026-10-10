@@ -1,0 +1,22 @@
+{
+  "status": "frozen_source_only_not_run",
+  "files": {
+    "tests/integration/m7-d01-reviewed-independent.test.ts": {
+      "sha256": "d13ddb4c5e97c77e6d6f0e4c3964df61e1f23d34f4f4a2da34850b460189cc9a",
+      "bytes": 13836
+    }
+  },
+  "cases": [
+    "DI01 three actual TCP read checkpoints, original open challenge and immutable hashes; transparent real spawn/fork and safe actual IPC before/resume/ACK observations",
+    "DI02 actual CLI success exit/0600/safe output and existing file no-clobber exit/nonmutation",
+    "DI03 observer-throw preserves original failure, own children close and private directory removed, no output",
+    "DI03 observer-abort while observer promise remains pending; actual cancellation settles own children/private directory, no output"
+  ],
+  "expanded_cases": 4,
+  "execution_plan_sha256": "1d51ffbb7537df12ac685a2045a7cf2074c6e8122dca3c501242f4c9de4fd43a",
+  "boundary_addendum_v2_sha256": "546e101b32f73d5da21652b0e6de306d6aef7c5a767ad3f8a3dbb9f7fec397c5",
+  "observation_boundary": "Proxy forwards original spawn/fork/send arguments and actual child results unchanged. Only safe PID, poll batch/events, fixed public chunk, explicit ACK metadata are retained in process; configure credential messages are never captured. Not native host certification.",
+  "cleanup_boundary": "4s owned watchdog + signal; default5000ms unchanged. finally awaits demo settle; afterEach aborts registered controllers and closes only captured owned child handles with250ms fallback. No machine/temp census. CLI descendants checked against ledger only after real CLI exit; direct-module journey additionally crosschecks child PIDs against independent handles.",
+  "static_notes": "Dynamic JS callback parameter explicitly Observation. AssetDownload from client, public search page.data, metadata.state ready, sealed ordinary R2 NOT_FOUND matches existing service. Source noEmit not run.",
+  "checks_run": []
+}

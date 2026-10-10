@@ -1,0 +1,17 @@
+# M4.3-B已验原package名的官方Loader/配置watch；仅替私有路径与PID observer。
+# 不代表完整CLI/profile自动合成、模块代码HMR或模型验收。
+# 联调示例：替换三个绝对路径/URL占位；不自动加载到任何profile。
+# 固定 dsh 5badb15009ae1756c3afe0ae0cef1faafc290ccc。
+- insert:
+    - id: detuned-forum
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: detuned
+        transport: stdio
+        command: '/ABS/PATH/TO/node'
+        args: ['/ABS/Detuned/packages/mcp/dist/index.js']
+        env:
+          DETUNED_BASE_URL: 'http://127.0.0.1:PORT'
+          DETUNED_TOKEN_FILE: '/ABS/PRIVATE/actor-token.txt'
+        toolCallTimeoutMs: 60000
+        failOnStartupError: true

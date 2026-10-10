@@ -1,0 +1,225 @@
+--- packages/protocol/src/review.ts before
++++ packages/protocol/src/review.ts after
+@@ -1,3 +1,4 @@
++import {DetunedError,ErrorCode} from './errors.js';
+ import { Value } from '@sinclair/typebox/value';
+ import { Type, Static } from '@sinclair/typebox';
+ import { ReviewPolicySchema } from './spaces.js';
+@@ -241,3 +242,26 @@
+   request_id: reviewId, submissions: Type.Array(ReviewSubmissionViewSchema, { maxItems: 5 }),
+ }, { additionalProperties: false });
+ export type ReviewSubmissionsView = Static<typeof ReviewSubmissionsViewSchema>;
++
++export const PostReviewRequestsQuerySchema = Type.Object({
++ limit:Type.Optional(Type.Integer({minimum:1,maximum:50})),
++ max_bytes:Type.Optional(Type.Integer({minimum:4096,maximum:65536})),
++ cursor:Type.Optional(Type.String({minLength:1,maxLength:4096})),
++},{additionalProperties:false});
++export type PostReviewRequestsQuery = Static<typeof PostReviewRequestsQuerySchema>;
++export const ReviewRoundSummarySchema = Type.Object({
++ ...ReviewStatusViewSchema.properties,space_id:reviewId,target_post_id:reviewId,
++ round:reviewPositive,target_revision:reviewPositive,created_at:Type.String({format:'date-time'}),
++},{additionalProperties:false});
++export type ReviewRoundSummary = Static<typeof ReviewRoundSummarySchema>;
++export const PostReviewRequestsPageSchema = Type.Object({data:Type.Array(ReviewRoundSummarySchema,{maxItems:50}),
++ meta:Type.Object({truncated:Type.Boolean(),next_cursor:Type.Union([Type.String({minLength:1,maxLength:4096}),Type.Null()])},{additionalProperties:false})},{additionalProperties:false});
++export type PostReviewRequestsPage = Static<typeof PostReviewRequestsPageSchema>;
++export const PostReviewRequestsEnvelopeSchema = Type.Object({api_version:Type.Literal('1'),request_id:Type.String(),...PostReviewRequestsPageSchema.properties},{additionalProperties:false});
++export const PostReviewRequestsCursorSchema = Type.Object({v:Type.Literal(1),purpose:Type.Literal('post_review_requests'),actor_id:reviewId,space_id:reviewId,post_id:reviewId,sort:Type.Literal('round_desc'),after_round:reviewPositive,exp:reviewPositive},{additionalProperties:false});
++export function isPostReviewRequestsCursor(value:unknown):value is Static<typeof PostReviewRequestsCursorSchema>{return Value.Check(PostReviewRequestsCursorSchema,value);}
++export function validatePostReviewRequestsQuery(value:unknown):asserts value is PostReviewRequestsQuery {
++ if(!Value.Check(PostReviewRequestsQuerySchema,value))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid review directory query.',400);
++}
++export function serializePostReviewRequestsEnvelope(requestId:string,page:PostReviewRequestsPage):string{return JSON.stringify({api_version:'1',request_id:requestId,...page});}
++export function postReviewRequestsEnvelopeBytes(requestId:string,page:PostReviewRequestsPage):number{return new TextEncoder().encode(serializePostReviewRequestsEnvelope(requestId,page)).byteLength;}
+--- packages/protocol/src/response-guards.ts before
++++ packages/protocol/src/response-guards.ts after
+@@ -1,3 +1,4 @@
++import {ReviewRoundSummarySchema,type PostReviewRequestsPage} from './review.js';
+ import { isReadableArtifactMetadata, type ReviewArtifactMetadata } from './artifacts.js';
+ import {
+  ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema,
+@@ -123,3 +124,12 @@
+ export function isReviewStatusView(value:unknown):value is ReviewStatusView { return Value.Check(ReviewStatusViewSchema,value); }
+ 
+ export function isReviewArtifactMetadata(value:unknown):value is ReviewArtifactMetadata { return isReadableArtifactMetadata(value)&&value.visibility==='review_assignment'; }
++
++const reviewRoundCheck=Type.Object({...ReviewRoundSummarySchema.properties,created_at:Type.String()},{additionalProperties:false});
++const reviewRoundPageCheck=Type.Object({data:Type.Array(reviewRoundCheck,{maxItems:50}),meta:Type.Object({truncated:Type.Boolean(),next_cursor:Type.Union([Type.String({minLength:1,maxLength:4096}),Type.Null()])},{additionalProperties:false})},{additionalProperties:false});
++export function isPostReviewRequestsPage(value:unknown):value is PostReviewRequestsPage {
++ if(!Value.Check(reviewRoundPageCheck,value))return false;
++ if(value.data.length===0&&(value.meta.truncated||value.meta.next_cursor!==null))return false;
++ if(value.meta.truncated&&value.meta.next_cursor===null)return false;
++ return value.data.every((row,i)=>validDate(row.created_at)&&(i===0||value.data[i-1]!.round>row.round));
++}
+--- packages/protocol/src/openapi.ts before
++++ packages/protocol/src/openapi.ts after
+@@ -1,4 +1,4 @@
+-import { CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
++import { PostReviewRequestsQuerySchema,PostReviewRequestsEnvelopeSchema,CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
+ import { ReviewArtifactMetadataSchema } from './artifacts.js';
+ import type { TSchema } from '@sinclair/typebox';
+ import { PostRevisionCatalogQuerySchema, RevisionArtifactsQuerySchema, PostRevisionCatalogEnvelopeSchema, PostRevisionArtifactsEnvelopeSchema } from './post-catalogs.js';
+@@ -744,7 +744,9 @@
+     '/spaces/{space_id}/review-requests/{requestId}/artifacts':{post:{...withId(reviewOperation(ReviewArtifactMetadataSchema,'201',Type.Object({})), 'requestId'),
+       requestBody:{required:true,content:{'multipart/form-data':{schema:Type.Object({file:Type.String({format:'binary'}),metadata:Type.Optional(Type.Object({},{additionalProperties:false}))},{additionalProperties:false}),encoding:{metadata:{contentType:'application/json'}}}}}}},
+   };
+-  const allPaths={...spec.paths,...reviewPaths};
++  const catalogPath='/spaces/{space_id}/posts/{id}/review-requests';
++  const catalogOperation={...withId(reviewOperation(PostReviewRequestsEnvelopeSchema,'200')),parameters:[reviewParameter('space_id'),reviewParameter('id'),...Object.entries(PostReviewRequestsQuerySchema.properties).map(([name,schema])=>({name,in:'query',schema}))],'x-query-schema':PostReviewRequestsQuerySchema,responses:{'200':{description:'Bounded all-round directory',content:{'application/json':{schema:PostReviewRequestsEnvelopeSchema}}}}};
++  const allPaths={...spec.paths,...reviewPaths,[catalogPath]:{get:catalogOperation}};
+   for (const [path, methods] of Object.entries(allPaths)) {
+     for (const [operationName, operation] of Object.entries(methods)) {
+       if (!['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'].includes(operationName)) continue;
+@@ -763,6 +765,7 @@
+         if (path === '/spaces/{space_id}/posts/{id}/revisions/{revision}' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = PostRevisionReadQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/revisions/{revision}' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = SpaceRevisionReadQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/threads/{id}/posts' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = ThreadPostsReadQuerySchema.properties.cursor!;
++        if (path === '/spaces/{space_id}/posts/{id}/review-requests' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = PostReviewRequestsQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/posts/{id}/revisions/catalog' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = PostRevisionCatalogQuerySchema.properties.cursor!;
+         if (path === '/spaces/{space_id}/posts/{id}/revisions/{revision}/artifacts' && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = RevisionArtifactsQuerySchema.properties.cursor!;
+         if (path.endsWith('/search') && parameter.in === 'query' && parameter.name === 'cursor') parameter.schema = SearchCursorStringSchema;
+--- packages/protocol/src/tools.ts before
++++ packages/protocol/src/tools.ts after
+@@ -8,7 +8,7 @@
+ import { PostRefSchema } from './common.js';
+ import { RelationTypeSchema } from './relations.js';
+ import { EventTypeSchema, SubscriptionStartSchema, SubscriptionStartConstraintSchema, isSubscriptionStartValid } from './events.js';
+-import { CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema } from './review.js';
++import { PostReviewRequestsQuerySchema, CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema } from './review.js';
+ 
+ export const ToolContextParamsSchema = Type.Object({
+   space_id: Type.String({ minLength: 1 }),
+@@ -30,6 +30,7 @@
+ export type ToolSearchParams = Static<typeof ToolSearchParamsSchema>;
+ 
+ export const ToolReadParamsUnion = Type.Union([
++  Type.Object({kind:Type.Literal('review_requests'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),...PostReviewRequestsQuerySchema.properties},{additionalProperties:false}),
+   Type.Object({ kind: Type.Literal('thread_posts'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), ...ThreadPostsReadQuerySchema.properties }, { additionalProperties: false }),
+   Type.Object({ kind: Type.Literal('space'), space_id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...SpaceRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+   Type.Object({ kind: Type.Literal('post_revision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...PostRevisionReadQuerySchema.properties }, { additionalProperties: false }),
+--- packages/core/src/ports/storage.ts before
++++ packages/core/src/ports/storage.ts after
+@@ -80,6 +80,7 @@
+   getNextReviewRequestRound(spaceId: string, targetPostId: string): number;
+   createReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord, assignments: ReviewAssignmentRecord[]): void;
+   findReviewRequestById(id: string): ReviewRequestRecord | null;
++  listPostReviewRequests(spaceId:string,postId:string,limit:number,afterRound?:number):{requests:ReviewRequestRecord[];has_more:boolean};
+   findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null;
+   listReviewAssignments(requestId: string): ReviewAssignmentRecord[];
+   updateReviewRequest(record: ReviewRequestRecord, version: ReviewRequestVersionRecord): void;
+--- packages/storage-sqlite/src/sqlite-storage.ts before
++++ packages/storage-sqlite/src/sqlite-storage.ts after
+@@ -1588,6 +1588,12 @@
+     return {...rest,target_ref:{post_id:target_post_id,revision:target_revision}};
+   }
+ 
++  listPostReviewRequests(spaceId:string,postId:string,limit:number,afterRound?:number):{requests:ReviewRequestRecord[];has_more:boolean} {
++    const sql='SELECT * FROM review_requests WHERE space_id=? AND target_post_id=?'+(afterRound===undefined?'':' AND round<?')+' ORDER BY round DESC LIMIT ?';
++    const rows=this.db.prepare(sql).all(...(afterRound===undefined?[spaceId,postId,limit+1]:[spaceId,postId,afterRound,limit+1])) as (Omit<ReviewRequestRecord,'target_ref'>&{target_post_id:string;target_revision:number})[];
++    return {requests:rows.slice(0,limit).map(({target_post_id,target_revision,...rest})=>({...rest,target_ref:{post_id:target_post_id,revision:target_revision}})),has_more:rows.length>limit};
++  }
++
+   findReviewRequestVersion(requestId: string, version: number): ReviewRequestVersionRecord | null {
+     return (this.db.prepare('SELECT request_id,version,phase,submitted_count,changed_by,changed_at,reason FROM review_request_versions WHERE request_id=? AND version=?').get(requestId,version) as ReviewRequestVersionRecord | undefined) ?? null;
+   }
+--- modules/review/src/index.ts before
++++ modules/review/src/index.ts after
+@@ -141,3 +141,5 @@
+ 
+ export * from './finalization-service.js';
+ export * from './status-service.js';
++
++export {ReviewPostCatalogService} from './post-catalog-service.js';
+--- packages/server/src/app.ts before
++++ packages/server/src/app.ts after
+@@ -1,4 +1,4 @@
+-import { ReviewModule, ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService } from '@detuned/module-review';
++import { ReviewModule, ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService, ReviewPostCatalogService } from '@detuned/module-review';
+ import { reviewRoutes } from './routes/reviews.js';
+ import type { Server as HttpServer } from 'node:http';
+ import type { Server as HttpsServer } from 'node:https';
+@@ -123,6 +123,7 @@
+     submissions:new ReviewSubmissionService(options.storage,authService,idempotency,clock,idGen),
+     finalization:new ReviewFinalizationService(options.storage,authService,idempotency,clock,idGen),
+     status:new ReviewStatusService(options.storage,authService),
++    catalog:new ReviewPostCatalogService(options.storage,authService,new ReviewStatusService(options.storage,authService),tokenSigner,tokenSecret,clock),
+   };
+   const spaceExportService = new SpaceExportService(options.storage, authService, clock, { limits: options.exportLimits });
+   const spaceService = new SpaceService(options.storage, idGen, clock, authService, idempotency, writeRateLimiter);
+--- packages/server/src/routes/reviews.ts before
++++ packages/server/src/routes/reviews.ts after
+@@ -1,11 +1,11 @@
+ import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
+ import type { AuthenticatedContext } from '@detuned/core';
+-import type { ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService } from '@detuned/module-review';
++import type { ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService, ReviewPostCatalogService } from '@detuned/module-review';
+ import { CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema,
+  type CreateReviewRequest, type CreateReviewSubmission, type CancelReviewRequest, type FinalizeReviewRequest,
+- DetunedError, ErrorCode, isNonblankString } from '@detuned/protocol';
+-import { validateAllowedQueryParams } from '../utils/query.js';
+-interface ReviewRouteOptions { requests:ReviewRequestService; submissions:ReviewSubmissionService; finalization:ReviewFinalizationService; status:ReviewStatusService; }
++ DetunedError, ErrorCode, isNonblankString,serializePostReviewRequestsEnvelope } from '@detuned/protocol';
++import { parseIntegerQuery, validateAllowedQueryParams } from '../utils/query.js';
++interface ReviewRouteOptions { requests:ReviewRequestService; submissions:ReviewSubmissionService; finalization:ReviewFinalizationService; status:ReviewStatusService; catalog:ReviewPostCatalogService; }
+ const auth=(req:FastifyRequest)=>(req as FastifyRequest & {auth:AuthenticatedContext}).auth;
+ const params=(req:FastifyRequest)=>req.params as {space_id:string;id:string};
+ function key(req:FastifyRequest):string {
+@@ -18,7 +18,13 @@
+ const envelope=(requestId:string,data:unknown)=>({api_version:'1',request_id:requestId,data});
+ export const reviewRoutes:FastifyPluginAsync<ReviewRouteOptions>=async(app,services)=>{
+  app.addHook('onRequest',async(_req,reply)=>{reply.header('Cache-Control','private, no-store');});
+- app.addHook('preValidation',async req=>{validateAllowedQueryParams(req.query,[]);});
++ app.addHook('preValidation',async req=>{validateAllowedQueryParams(req.query,req.routeOptions.url?.endsWith('/posts/:id/review-requests')?['limit','max_bytes','cursor']:[]);});
++ app.get('/spaces/:space_id/posts/:id/review-requests',async(req,reply)=>{
++  const {space_id,id}=params(req);const q=req.query as {limit?:unknown;max_bytes?:unknown;cursor?:unknown};
++  if(q.cursor!==undefined&&(typeof q.cursor!=='string'||q.cursor.length<1||q.cursor.length>4096))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid review directory cursor.',400);
++  const page=services.catalog.getRequests(auth(req),space_id,id,{limit:parseIntegerQuery(q.limit,'limit',{min:1,max:50,defaultValue:20}),max_bytes:parseIntegerQuery(q.max_bytes,'max_bytes',{min:4096,max:65536,defaultValue:12288}),cursor:q.cursor as string|undefined},{request_id:req.id});
++  return reply.type('application/json; charset=utf-8').send(serializePostReviewRequestsEnvelope(req.id,page));
++ });
+  app.post<{Body:CreateReviewRequest}>('/spaces/:space_id/review-requests',{schema:{body:CreateReviewRequestSchema}},async(req,reply)=>{
+   const {space_id}=params(req);const value=services.requests.createRequest(auth(req),space_id,req.body,key(req));reply.code(201);return envelope(req.id,value);
+  });
+--- packages/client/src/client.ts before
++++ packages/client/src/client.ts after
+@@ -1,3 +1,4 @@
++import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
+ import { validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
+ import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeReviewRequest, type CancelReviewRequest,
+   type ReviewRequestView, type ReviewRequestReadView, type ReviewSnapshotView, type OwnReviewAssignmentView,
+@@ -647,6 +648,12 @@
+       v=>v.space_id===spaceId && v.target_ref.post_id===body.target_ref.post_id && v.target_ref.revision===body.target_ref.revision,
+       {spaceId,operation:'review.request.create',target:null},opts);
+   }
++  async getPostReviewRequests(spaceId:string,postId:string,query:PostReviewRequestsQuery={},options?:{signal?:AbortSignal}):Promise<PostReviewRequestsPage> {
++    try{validatePostReviewRequestsQuery(query);}catch{throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid review directory query.',400);}
++    const result=await this.requestWithBody<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/review-requests`,query,signal:options?.signal},undefined,true);
++    if(!isPostReviewRequestsPage(result)||result.data.length>(query.limit??20)||result.data.some(row=>row.space_id!==spaceId||row.target_post_id!==postId))throw new ClientProtocolError('Invalid review directory response.');
++    return result;
++  }
+   getReviewRequest(spaceId: string, requestId: string, options?: {signal?:AbortSignal}): Promise<ReviewRequestReadView> {
+     return this.reviewResponse({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/review-requests/${encodeURIComponent(requestId)}`,signal:options?.signal},isReviewRequestReadView,v=>v.id===requestId&&v.space_id===spaceId);
+   }
+@@ -1058,6 +1065,7 @@
+ 
+       case 'forum_read': {
+         validateToolReadParams(params);
++        if (params.kind === 'review_requests') return this.getPostReviewRequests(spaceId,params.id,{limit:params.limit,cursor:params.cursor,max_bytes:params.max_bytes},opts);
+         if (params.kind === 'space') return this.getSpaceRevision(spaceId, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+         if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor, sort: params.sort }, opts);
+         if (params.kind === 'post_revision') return this.getPostRevisionContent(spaceId, params.id, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+--- packages/cli/src/index.ts before
++++ packages/cli/src/index.ts after
+@@ -542,6 +542,12 @@
+   });
+ 
+ const reviewCommand=program.command('review').description('正式评审：固定材料、本人评审身份与明确提交');
++reviewCommand.command('rounds <space-id> <post-id>')
++ .option('--limit <count>','每页1–50，默认20').option('--max-bytes <bytes>','完整目录响应4096–65536字节').option('--cursor <cursor>','上一页opaque游标')
++ .action(async(spaceId,postId,options)=>{try{
++  const integer=(value:unknown)=>{if(value===undefined)return undefined;if(typeof value!=='string'||!/^\d+$/.test(value))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid review directory query.',400);return Number(value);};
++  printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getPostReviewRequests(spaceId,postId,{limit:integer(options.limit),max_bytes:integer(options.maxBytes),cursor:options.cursor},{signal})),program.opts().json);
++ }catch(error){handleError(error,program.opts().json);}});
+ reviewCommand.command('read <space-id> <request-id>').action(async(spaceId,id)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getReviewRequest(spaceId,id,{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+ reviewCommand.command('snapshot <space-id> <snapshot-id>').action(async(spaceId,id)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getReviewSnapshot(spaceId,id,{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+ reviewCommand.command('assignment <space-id> <request-id>').action(async(spaceId,id)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getOwnReviewAssignment(spaceId,id,{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});

@@ -1,0 +1,119 @@
+--- tests/integration/m0-m1-r4-b-regression.test.ts (fresh exact before)
++++ tests/integration/m0-m1-r4-b-regression.test.ts (current)
+@@ -650,7 +650,7 @@
+ 
+     let faultDb = new Database(faultDbPath);
+     try {
+-      faultDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      faultDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       const beforeSnapshot = fullLogicalSnapshot(faultDb);
+ 
+       let faultHits = 0;
+@@ -771,7 +771,7 @@
+     writeFileSync(legacyDbPath, db.serialize());
+     const legacyDb = new Database(legacyDbPath);
+     try {
+-      legacyDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++      legacyDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       const upgraded = bootstrapDatabase(legacyDb);
+       expect(upgraded.isNewInstance).toBe(false);
+@@ -833,7 +833,7 @@
+     writeFileSync(legacyServeDbPath, db.serialize());
+     const legacyServeDb = new Database(legacyServeDbPath);
+     try {
+-      legacyServeDb.exec('DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++      legacyServeDb.exec('DROP TABLE IF EXISTS review_submissions; DROP TABLE IF EXISTS review_assignments; DROP TABLE IF EXISTS review_request_versions; DROP TABLE IF EXISTS review_requests; DROP TABLE IF EXISTS snapshot_items; DROP TABLE IF EXISTS snapshots; DROP TABLE IF EXISTS thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+       const credsBefore = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+       expect(() => openAndCoordinateDatabase(legacyServeDb, 'serve')).toThrow(/migrate/);
+       const credsAfter = (legacyServeDb.prepare('SELECT count(*) AS n FROM credentials').get() as any).n;
+@@ -1159,7 +1159,7 @@
+       writeFileSync(h05Path1, db.serialize());
+       const db1 = new Database(h05Path1);
+       try {
+-        db1.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        db1.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         db1.prepare(
+           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'post.create', 'h05-key-1', 'hash', 201, ?, datetime('now'))"
+         ).run(JSON.stringify({ v: 99, $ref: 'post', post_id: 'pst_fake', revision: 1 }));
+@@ -1173,7 +1173,7 @@
+       writeFileSync(h05Path2, db.serialize());
+       const db2 = new Database(h05Path2);
+       try {
+-        db2.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        db2.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         db2.prepare(
+           "INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, http_status, result_ref, created_at) VALUES ('act_admin', 'spc_1', 'thread.create', 'h05-key-2', 'hash', 201, ?, datetime('now'))"
+         ).run(JSON.stringify({ post: { id: 'pst_fake' }, revision: { revision: 1 } }));
+@@ -1416,7 +1416,7 @@
+       writeFileSync(j04Path, db.serialize());
+       const dbTime = new Database(j04Path);
+       try {
+-        dbTime.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++        dbTime.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+         dbTime.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'j04-p1'").run(JSON.stringify(patch1));
+         bootstrapDatabase(dbTime);
+       } finally {
+@@ -1720,7 +1720,7 @@
+       const l02Path = join(tempDir, 'r8_l02_marker.sqlite');
+       writeFileSync(l02Path, db.serialize());
+       const l02Db = new Database(l02Path);
+-      l02Db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      l02Db.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       l02Db.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+       );
+@@ -1751,7 +1751,7 @@
+       const repPath = join(tempDir, 'r8_l02_replay.sqlite');
+       writeFileSync(repPath, db.serialize());
+       const repDb = new Database(repPath);
+-      repDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      repDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       repDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l02-rep-patch2'").run(
+         JSON.stringify({ $ref: 'thread', thread_id: thread, thread_version: 2 })
+       );
+@@ -1861,7 +1861,7 @@
+         const testPath = join(tempDir, `invalid_marker_${item.label}.sqlite`);
+         writeFileSync(testPath, db.serialize());
+         const tDb = new Database(testPath);
+-        tDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++        tDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+         tDb.prepare("INSERT INTO idempotency_records (actor_id, space_id, operation, key, request_hash, result_ref, http_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+           .run(adminActorId, 'instance', item.op, `bad-${item.label}`, 'hash', JSON.stringify(item.ref), 200, new Date().toISOString());
+ 
+@@ -1939,7 +1939,7 @@
+       const posPath = join(tempDir, 'r8_l08_positive.sqlite');
+       writeFileSync(posPath, db.serialize());
+       const posDb = new Database(posPath);
+-      posDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
++      posDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1;');
+       posDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'l08-thread'").run(JSON.stringify(original));
+ 
+       bootstrapDatabase(posDb);
+@@ -2289,7 +2289,7 @@
+       const p04Path = join(tempDir, 'p04_time.sqlite');
+       writeFileSync(p04Path, db.serialize());
+       const p04Db = new Database(p04Path);
+-      p04Db.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++      p04Db.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+       const missingTime = { ...patch2 };
+       delete missingTime.created_at;
+       delete missingTime.updated_at;
+@@ -2400,7 +2400,7 @@
+       const fixturePath = join(tempDir, 'q03_missing_updated.sqlite');
+       writeFileSync(fixturePath, db.serialize());
+       const tDb = new Database(fixturePath);
+-      tDb.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
++      tDb.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DELETE FROM schema_migrations WHERE version > 1');
+       tDb.prepare("UPDATE idempotency_records SET result_ref = ? WHERE key = 'q03-th-create'").run(JSON.stringify(original));
+       const missingUpdated = { ...patch2 };
+       delete missingUpdated.updated_at;
+@@ -3411,7 +3411,7 @@
+         writeFileSync(legacyPath, db.serialize());
+         const dbLeg = new Database(legacyPath);
+         try {
+-          dbLeg.exec('DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
++          dbLeg.exec('DROP TABLE review_submissions; DROP TABLE review_assignments; DROP TABLE review_request_versions; DROP TABLE review_requests; DROP TABLE snapshot_items; DROP TABLE snapshots; DROP TABLE thread_versions; DROP TABLE IF EXISTS instance_metadata; DELETE FROM schema_migrations WHERE version > 1;');
+           expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');
+           expect(() => openAndCoordinateDatabase(dbLeg, 'serve')).toThrow(/migrate/);
+           expect(classifyDatabase(dbLeg).kind).toBe('supported_legacy');

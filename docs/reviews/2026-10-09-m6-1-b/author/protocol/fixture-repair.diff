@@ -1,0 +1,132 @@
+--- packages/storage-sqlite/tests/schema-generation.test.ts (fresh)
++++ packages/storage-sqlite/tests/schema-generation.test.ts
+@@ -25,6 +25,8 @@
+   for (const sub of ['src', 'scripts']) {
+     cpSync(join(root, 'packages/storage-sqlite', sub), join(dir, 'packages/storage-sqlite', sub), { recursive: true });
+   }
++  // Frozen schema2 is required independently of the schema1 missing-input case.
++  copyFileSync(join(root, 'tests/fixtures/historical-v2-schema.sql'), join(dir, 'tests/fixtures/historical-v2-schema.sql'));
+   if (historical) {
+     copyFileSync(join(root, 'tests/fixtures/historical-v1-schema.sql'), join(dir, 'tests/fixtures/historical-v1-schema.sql'));
+   }
+@@ -67,7 +69,7 @@
+   const db = new Database(':memory:');
+   try {
+     db.exec(mod.SCHEMA_SQL);
+-    const v2Check = mod.verifyDatabaseStructure(db, 2);
++    const v2Check = mod.verifyDatabaseStructure(db, 3);
+     expect(v2Check.valid).toBe(true);
+   } finally {
+     db.close();
+@@ -81,7 +83,7 @@
+     } catch {}
+   });
+ 
+-  it('generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V2 updates and frozen V1 remains unchanged', async () => {
++  it('generates and synchronizes cleanly on healthy input and allowed column nullability changes, asserting V3 updates and frozen V1/V2 remain unchanged', async () => {
+     const dir = copyProject('healthy-column-change');
+     const needle = 'objective TEXT NOT NULL,';
+     const replacement = 'objective TEXT,';
+@@ -102,8 +104,8 @@
+ 
+     const generatedTs = readFileSync(join(dir, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
+ 
+-    // Parse V2 and V1 profile tables from generated code to assert schema reflection
+-    const v2Match = generatedTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
++    // Parse current V3 and frozen V1 profile tables from generated code to assert schema reflection
++    const v2Match = generatedTs.match(/export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+     expect(v2Match).not.toBeNull();
+     const v2Tables = JSON.parse(v2Match![1]);
+     const objColV2 = v2Tables.space_revisions.columns.find((c: any) => c.name === 'objective');
+@@ -141,7 +143,7 @@
+     expect(syncIndex.exitCode).toBe(0);
+ 
+     const generatedIndexTs = readFileSync(join(dirIndex, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
+-    const v2IndexMatch = generatedIndexTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
++    const v2IndexMatch = generatedIndexTs.match(/export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+     const v2IndexTables = JSON.parse(v2IndexMatch![1]);
+     const eventsIdx = v2IndexTables.events.indexes.find((i: any) => i.name === 'idx_events_space_seq');
+     expect(eventsIdx).toBeDefined();
+@@ -172,7 +174,7 @@
+     expect(syncFts.exitCode).toBe(0);
+ 
+     const generatedFtsTs = readFileSync(join(dirFts, 'packages/storage-sqlite/src/schema.ts'), 'utf8');
+-    const v2FtsMatch = generatedFtsTs.match(/export const V2_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
++    const v2FtsMatch = generatedFtsTs.match(/export const V3_SCHEMA_TABLES: Record<string, TableRequirement> = (\{[\s\S]*?\n\});/);
+     const v2FtsTables = JSON.parse(v2FtsMatch![1]);
+     const bodyCol = v2FtsTables.post_fts.fts.columns.find((c: any) => c.name === 'body');
+     expect(bodyCol).toBeDefined();
+@@ -233,6 +235,7 @@
+   });
+ 
+   it.each([
++    { version: 'V3', profileName: 'V3_SCHEMA_TABLES' },
+     { version: 'V2', profileName: 'V2_SCHEMA_TABLES' },
+     { version: 'V1', profileName: 'V1_SCHEMA_TABLES' },
+   ])('detects corrupt $version profile in sync check and successfully repairs it via generate-schema (AB03)', async ({ profileName }) => {
+--- packages/storage-sqlite/tests/storage.test.ts (fresh)
++++ packages/storage-sqlite/tests/storage.test.ts
+@@ -11,6 +11,7 @@
+   DirectoryLock,
+   SCHEMA_SQL,
+   V2_SCHEMA_TABLES,
++  V3_SCHEMA_TABLES,
+   V1_SCHEMA_TABLES,
+   parseFts5Ddl,
+ } from '../src/index.js';
+@@ -188,6 +189,9 @@
+     upgradedDb.prepare("INSERT INTO actors (id, kind, display_name, created_at) VALUES ('act_admin', 'human', 'Admin', ?)").run(new Date().toISOString());
+     upgradedDb.prepare("INSERT INTO credentials (id, actor_id, token_hash, allowed_space_ids, capabilities, created_at) VALUES ('cred_admin', 'act_admin', 'hash', '[\"*\"]', '[\"admin\"]', ?)").run(new Date().toISOString());
+ 
++    expect(() => openAndCoordinateDatabase(upgradedDb, 'serve')).toThrow(/detuned migrate --offline/);
++    // Explicit owned-stage migration, followed by the current serve coordinator.
++    bootstrapDatabase(upgradedDb);
+     openAndCoordinateDatabase(upgradedDb, 'serve');
+ 
+     const getTableNames = (d: Database.Database) =>
+@@ -232,12 +236,15 @@
+   });
+ 
+   it('asserts complete consistency between runtime schema profiles and authoritative DDL sources (schema.sql and historical-v1-schema.sql)', () => {
+-    // 1. V2 Profile Parity against authoritative schema.sql
++    // 1. V2 Profile Parity against the frozen schema2 source
+     const v2Db = new Database(':memory:');
+-    const v2Sql = fs.readFileSync(path.resolve(__dirname, '../src/schema.sql'), 'utf8');
++    const v2Sql = fs.readFileSync(path.resolve(__dirname, '../../../tests/fixtures/historical-v2-schema.sql'), 'utf8');
+     v2Db.exec(v2Sql);
+     const expectedV2 = extractDatabaseRequirements(v2Db);
+     expect(V2_SCHEMA_TABLES).toEqual(expectedV2);
++    const v3Db = new Database(':memory:');
++    v3Db.exec(SCHEMA_SQL);
++    expect(V3_SCHEMA_TABLES).toEqual(extractDatabaseRequirements(v3Db));
+ 
+     // 2. V1 Profile Parity against frozen historical fixture
+     const v1Db = new Database(':memory:');
+@@ -264,6 +271,7 @@
+     const checkResult = spawnSync(process.execPath, [checkScriptPath], { encoding: 'utf8' });
+     expect(checkResult.status).toBe(0);
+ 
++    v3Db.close();
+     v2Db.close();
+     v1Db.close();
+     mutatedDb.close();
+--- tests/integration/historical-http-replay.test.ts (fresh)
++++ tests/integration/historical-http-replay.test.ts
+@@ -6,7 +6,7 @@
+ import { createHash, randomBytes } from 'node:crypto';
+ import { buildApp } from '@detuned/server';
+ import type { Thread, Post, PostRevision, Relation } from '@detuned/protocol';
+-import { SqliteStorage, openAndCoordinateDatabase } from '@detuned/storage-sqlite';
++import { SqliteStorage, bootstrapDatabase, openAndCoordinateDatabase } from '@detuned/storage-sqlite';
+ 
+ const directory = new URL('../fixtures/history-b8dacd5/', import.meta.url);
+ type PostResult = { post: Post; revision: PostRevision; relations?: Relation[] };
+@@ -22,6 +22,8 @@
+   const snapshot = () => Object.fromEntries(tables.map(name => [name, db.prepare(`SELECT * FROM ${name} ORDER BY rowid`).all()]));
+   const start = () => {
+     db = new Database(join(dir, 'runtime.db'));
++    // Only this owned runtime copy is explicitly migrated; archived legacy.db stays exact.
++    bootstrapDatabase(db);
+     openAndCoordinateDatabase(db, 'serve');
+     const clock = { now: () => new Date(expected.generated_clock), nowIso: () => expected.generated_clock };
+     app = buildApp({ storage: new SqliteStorage(db), clock });

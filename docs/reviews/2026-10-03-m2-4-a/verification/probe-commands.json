@@ -1,0 +1,50 @@
+[
+  {
+    "command": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-4-a/verification/check-context-http.mjs"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-03T09:05:44.735016+00:00",
+    "finished_at": "2026-10-03T09:05:45.087714+00:00",
+    "stdout": "observed-http-first.txt",
+    "stderr": "observed-http-first.stderr.txt"
+  },
+  {
+    "command": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-4-a/verification/check-context-snapshot.mjs"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-03T09:05:45.088083+00:00",
+    "finished_at": "2026-10-03T09:05:45.330085+00:00",
+    "stdout": "observed-snapshot-first.txt",
+    "stderr": "observed-snapshot-first.stderr.txt"
+  },
+  {
+    "command": [
+      "node",
+      "/Users/sakimi/Desktop/Detuned/docs/reviews/2026-10-03-m2-4-a/verification/check-context-tools.mjs"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-03T09:05:45.330370+00:00",
+    "finished_at": "2026-10-03T09:05:46.003391+00:00",
+    "stdout": "observed-tools-first.txt",
+    "stderr": "observed-tools-first.stderr.txt"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/integration/m2-context.test.ts",
+      "tests/contracts/m2-context-contracts.test.ts"
+    ],
+    "exit_code": 0,
+    "started_at": "2026-10-03T09:05:46.003698+00:00",
+    "finished_at": "2026-10-03T09:05:47.369378+00:00",
+    "stdout": "observed-targeted-first.txt",
+    "stderr": "observed-targeted-first.stderr.txt"
+  }
+]
