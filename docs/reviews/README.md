@@ -1,8 +1,9 @@
 # Detuned 审查记录
 
 
-M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0，私有clean fixture install、配置/SQLite/esbuild及九backend build已验证；文件级组合验收为142文件904cases与16文件73cases，完整覆盖158文件977cases，组合0fail/pending/todo。逐文件完整替换，非挑选单case补齐；不是一次全绿流水线，历史失败及v3 full中断保留。未新安装pnpm工具链，不含Web、当前Linux或模型完整会话；许可证按用户决定暂未指定。
-当前入口：[M7.5-A最低Node与后端组合验收](2026-10-10-m7-5-a/README.md)。核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、当前Linux独立环境证据仍待；许可证按用户决定暂未指定；M8独立，后续前端取消。 E/R1已封存，历史失败与有限接受证据保持。
+当前入口：[Arch Linux 问题处置与验收](2026-11-04-arch/README.md)。本包固定 Arch x86_64、Node 22.19.0、pnpm 11.7.0 的私有冻结安装、九后端构建及同九包 typecheck/lint 已通过；核心回归一次完整通过 161 文件、987 项，0 fail/pending/todo（326.89 秒）；前两次失败和补测分别保留。Codex 0.165.0 / Claude Code 2.1.312 无模型原生控制矩阵与活动取消已实测，Codex 闲置退出单独验证；dsh/Pi 范围和外部五报告历史证据分别记载。核心论坛、HTTP/CLI/MCP、正式评审、外部检查回执和无模型 D01 已可本地使用，schema6 不变。
+
+历史 Darwin M7.5-A 的 158 文件、977 项完整文件组合覆盖保持原结论，非本包成绩。当前证据不认证任意宿主配置、供应商推理账户、生产容量或科研增益；许可证暂未指定，M8 独立，后续前端已取消。
 
 
 ## M7.1-B1历史接入事实（2026-10-10）
@@ -17,6 +18,7 @@ M7.1-A阶段历史入口：[M7.1-A内部检查与schema6维护](2026-10-09-m7-1-
 
 | 审查目录 | 被审查源码 | 用途 |
 |---|---|---|
+| [Arch 问题处置](2026-11-04-arch/README.md) | 接入错误可见性、隔离夹具及验证器生命周期 | 固定 Arch x86_64；本包实测和历史五报告分开，结果见入口 |
 | [M7.5-A](2026-10-10-m7-5-a/README.md) | 最低Node与clean后端组合交付 | 固定22.19.0 Darwin arm64；142+16文件/904+73cases组合验收通过，历史失败保留 |
 | [M7.4-E/R1](2026-10-10-m7-4-e/README.md) | Codex逐PID安全握手与固定native矩阵 | focused2/2、rejectsecond、唯一R1normal通过；历史失败保留，有限接受，已封存 |
 | [M7.4-D](2026-10-10-m7-4-d/README.md) | Claude lifecycle/launcher入口与native九工具/check矩阵 | 本地8组合、reject通过、唯一normal通过；有限固定native认证；当时E规划已由后续E/R1实施 |

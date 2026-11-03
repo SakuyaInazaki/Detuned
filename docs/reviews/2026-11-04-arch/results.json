@@ -1,0 +1,903 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "671ad5545cd5b00fbd409758ec46517482ea4aba",
+  "environment": {
+    "platform": "Arch Linux x86_64",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "sqlite": "3.53.4",
+    "isolation": "private root, HOME/XDG/TMP, read-only system mounts, isolated loopback; no models or VM/container daemon"
+  },
+  "backend_checks": {
+    "packages": [
+      "protocol",
+      "core",
+      "client",
+      "storage-sqlite",
+      "module-review",
+      "server",
+      "cli",
+      "mcp",
+      "adapter-pi"
+    ],
+    "build_exit_code": 0,
+    "typecheck_exit_code": 0,
+    "lint_exit_code": 0,
+    "exit_evidence": "actual exec completion statuses; schema generation/check included in storage build/lint",
+    "warning_pnpmfiles_changed": true
+  },
+  "full": {
+    "files": 161,
+    "cases": 987,
+    "unique_case_keys": 987,
+    "passed": 987,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "duration_seconds": 326.89,
+    "execution": {
+      "exit_code": 0,
+      "deadline_exceeded": false,
+      "elapsed_seconds": 327.434415288968,
+      "files": 161,
+      "workers": 1,
+      "file_parallelism": false,
+      "observer_scope": "only spawned runner descendants via proc children; no unrelated process enumeration"
+    },
+    "excluded_web_contracts": [
+      "tests/contracts/m6-knowledge-web-input.test.ts",
+      "tests/contracts/m6-review-web-input.test.ts"
+    ],
+    "file_case_counts": {
+      "packages/protocol/tests/schema.test.ts": 5,
+      "packages/storage-sqlite/tests/schema-generation.test.ts": 10,
+      "packages/storage-sqlite/tests/storage.test.ts": 7,
+      "tests/contracts/cli-tls.test.ts": 3,
+      "tests/contracts/cross-interface-contract.test.ts": 2,
+      "tests/contracts/m0-m1-adapters-regression.test.ts": 6,
+      "tests/contracts/m0-m1-r2-adapters.test.ts": 3,
+      "tests/contracts/m2-context-contracts.test.ts": 4,
+      "tests/contracts/m2-focused-context-contracts.test.ts": 6,
+      "tests/contracts/m2-knowledge-view-contracts.test.ts": 4,
+      "tests/contracts/m2-post-revision-read-contracts.test.ts": 7,
+      "tests/contracts/m2-search-contracts.test.ts": 5,
+      "tests/contracts/m2-space-read-contracts.test.ts": 5,
+      "tests/contracts/m2-thread-posts-read-contracts.test.ts": 8,
+      "tests/contracts/m2-typed-write-contracts.test.ts": 5,
+      "tests/contracts/m3-backup-cli.test.ts": 5,
+      "tests/contracts/m3-events-contract.test.ts": 7,
+      "tests/contracts/m3-logical-import-contract.test.ts": 6,
+      "tests/contracts/m3-offline-upgrade-contract.test.ts": 3,
+      "tests/contracts/m3-operations-contract.test.ts": 4,
+      "tests/contracts/m3-request-key-cli.test.ts": 5,
+      "tests/contracts/m3-resource-limits-contract.test.ts": 4,
+      "tests/contracts/m3-shutdown-contract.test.ts": 4,
+      "tests/contracts/m3-space-export-contract.test.ts": 6,
+      "tests/contracts/m3-write-limits-contract.test.ts": 5,
+      "tests/contracts/m4-admin-cli.test.ts": 4,
+      "tests/contracts/m4-artifact-cli.test.ts": 4,
+      "tests/contracts/m4-cli-boundaries-independent.test.ts": 5,
+      "tests/contracts/m4-cli-errors.test.ts": 4,
+      "tests/contracts/m4-dsh-error-code.test.ts": 2,
+      "tests/contracts/m4-mcp-binding-independent.test.ts": 6,
+      "tests/contracts/m4-mcp-input-mode.test.ts": 4,
+      "tests/contracts/m4-mcp-lifecycle-independent.test.ts": 6,
+      "tests/contracts/m4-mcp-runtime.test.ts": 6,
+      "tests/contracts/m4-mcp-schema.test.ts": 4,
+      "tests/contracts/m4-mcp-session.test.ts": 5,
+      "tests/contracts/m4-mcp-wrapped-independent.test.ts": 5,
+      "tests/contracts/m4-node-credentials.test.ts": 3,
+      "tests/contracts/m4-pi-native-lifecycle.test.ts": 7,
+      "tests/contracts/m4-pi-runtime.test.ts": 6,
+      "tests/contracts/m4-read-cli-contract.test.ts": 4,
+      "tests/contracts/m4-runtime-binding-native.test.ts": 9,
+      "tests/contracts/m4-runtime-response-validation.test.ts": 3,
+      "tests/contracts/m4-token-source.test.ts": 7,
+      "tests/contracts/m4-write-consume-cli.test.ts": 4,
+      "tests/contracts/m5-post-catalogs-client.test.ts": 4,
+      "tests/contracts/m5-post-catalogs.test.ts": 5,
+      "tests/contracts/m5-post-order-index.test.ts": 4,
+      "tests/contracts/m5-thread-post-order.test.ts": 4,
+      "tests/contracts/m5-web-auth-client.test.ts": 4,
+      "tests/contracts/m5-web-auth-independent.test.ts": 7,
+      "tests/contracts/m5-web-auth-server.test.ts": 6,
+      "tests/contracts/m5-web-static.test.ts": 5,
+      "tests/contracts/m6-knowledge-status-contracts.test.ts": 4,
+      "tests/contracts/m6-public-review-search-contracts.test.ts": 4,
+      "tests/contracts/m6-public-review-search-tools-cli.test.ts": 5,
+      "tests/contracts/m6-review-canonicalization.test.ts": 7,
+      "tests/contracts/m6-review-catalog-independent.test.ts": 4,
+      "tests/contracts/m6-review-catalog.test.ts": 3,
+      "tests/contracts/m6-review-cli.test.ts": 3,
+      "tests/contracts/m6-review-client.test.ts": 4,
+      "tests/contracts/m6-review-http-independent.test.ts": 6,
+      "tests/contracts/m6-review-http.test.ts": 3,
+      "tests/contracts/m6-review-tools-independent.test.ts": 6,
+      "tests/contracts/m6-review-tools.test.ts": 4,
+      "tests/contracts/m7-check-cli-tools-independent.test.ts": 7,
+      "tests/contracts/m7-check-cli.test.ts": 5,
+      "tests/contracts/m7-check-client.test.ts": 9,
+      "tests/contracts/m7-check-http-client-independent.test.ts": 10,
+      "tests/contracts/m7-check-http.test.ts": 6,
+      "tests/contracts/m7-check-tools.test.ts": 5,
+      "tests/contracts/m7-claude-probe-ownership.test.ts": 8,
+      "tests/contracts/m7-codex-launcher.test.ts": 2,
+      "tests/contracts/m7-codex-owned-group.test.ts": 4,
+      "tests/contracts/m7-delivery-layout.test.ts": 2,
+      "tests/contracts/m7-linux-native-probe.test.ts": 5,
+      "tests/contracts/m7-pi-native-checks-independent.test.ts": 2,
+      "tests/contracts/r4-c-contracts.test.ts": 26,
+      "tests/contracts/r4-c-route-contracts.test.ts": 4,
+      "tests/contracts/scale-run-lifecycle.test.ts": 2,
+      "tests/contracts/server-tls.test.ts": 4,
+      "tests/core/m5-web-session.test.ts": 6,
+      "tests/integration/historical-http-replay.test.ts": 7,
+      "tests/integration/m0-m1-r2-regression.test.ts": 12,
+      "tests/integration/m0-m1-r3-regression.test.ts": 11,
+      "tests/integration/m0-m1-r4-b-regression.test.ts": 82,
+      "tests/integration/m0-m1-regression.test.ts": 11,
+      "tests/integration/m1-discussion.test.ts": 5,
+      "tests/integration/m2-artifacts-cli.test.ts": 4,
+      "tests/integration/m2-artifacts-core.test.ts": 9,
+      "tests/integration/m2-artifacts-filesystem.test.ts": 6,
+      "tests/integration/m2-artifacts-http.test.ts": 8,
+      "tests/integration/m2-context-focus.test.ts": 9,
+      "tests/integration/m2-context-session-chain.test.ts": 1,
+      "tests/integration/m2-context.test.ts": 7,
+      "tests/integration/m2-knowledge-views.test.ts": 7,
+      "tests/integration/m2-post-revision-read.test.ts": 10,
+      "tests/integration/m2-search.test.ts": 9,
+      "tests/integration/m2-space-revision-read.test.ts": 8,
+      "tests/integration/m2-thread-posts-read.test.ts": 10,
+      "tests/integration/m2-typed-writes.test.ts": 12,
+      "tests/integration/m3-backup-recovery-independent.test.ts": 4,
+      "tests/integration/m3-backup-recovery.test.ts": 11,
+      "tests/integration/m3-event-core.test.ts": 11,
+      "tests/integration/m3-event-recovery.test.ts": 2,
+      "tests/integration/m3-export-independent.test.ts": 4,
+      "tests/integration/m3-import-independent.test.ts": 4,
+      "tests/integration/m3-logical-import.test.ts": 12,
+      "tests/integration/m3-milestone-gate.test.ts": 2,
+      "tests/integration/m3-offline-upgrade.test.ts": 6,
+      "tests/integration/m3-operations-independent.test.ts": 5,
+      "tests/integration/m3-operations.test.ts": 6,
+      "tests/integration/m3-request-key-recovery.test.ts": 6,
+      "tests/integration/m3-request-key-store.test.ts": 8,
+      "tests/integration/m3-resource-limits-independent.test.ts": 4,
+      "tests/integration/m3-resource-limits.test.ts": 10,
+      "tests/integration/m3-shutdown-independent.test.ts": 5,
+      "tests/integration/m3-shutdown-resources.test.ts": 6,
+      "tests/integration/m3-space-export.test.ts": 11,
+      "tests/integration/m3-upgrade-independent.test.ts": 4,
+      "tests/integration/m3-write-limits-independent.test.ts": 4,
+      "tests/integration/m3-write-rate-limit.test.ts": 9,
+      "tests/integration/m4-admin-cli-independent.test.ts": 4,
+      "tests/integration/m4-admin-client.test.ts": 5,
+      "tests/integration/m4-artifact-client-cli-independent.test.ts": 5,
+      "tests/integration/m4-artifact-client.test.ts": 8,
+      "tests/integration/m4-consumer-lifecycle.test.ts": 4,
+      "tests/integration/m4-read-cli-independent.test.ts": 4,
+      "tests/integration/m4-session-subscription-client.test.ts": 2,
+      "tests/integration/m4-write-consume-independent.test.ts": 4,
+      "tests/integration/m6-knowledge-status-independent.test.ts": 4,
+      "tests/integration/m6-knowledge-status.test.ts": 7,
+      "tests/integration/m6-public-review-search-independent.test.ts": 7,
+      "tests/integration/m6-public-review-search.test.ts": 6,
+      "tests/integration/m6-review-finalization-independent.test.ts": 6,
+      "tests/integration/m6-review-finalization.test.ts": 6,
+      "tests/integration/m6-review-material-lifecycle.test.ts": 3,
+      "tests/integration/m6-review-private-artifacts.test.ts": 6,
+      "tests/integration/m6-review-requests-independent.test.ts": 7,
+      "tests/integration/m6-review-requests.test.ts": 7,
+      "tests/integration/m6-review-snapshot-independent.test.ts": 6,
+      "tests/integration/m6-review-snapshot.test.ts": 5,
+      "tests/integration/m6-review-status.test.ts": 3,
+      "tests/integration/m6-review-submissions-independent.test.ts": 10,
+      "tests/integration/m6-review-submissions.test.ts": 7,
+      "tests/integration/m6-schema3-maintenance.test.ts": 5,
+      "tests/integration/m6-schema4-maintenance-independent.test.ts": 2,
+      "tests/integration/m6-schema4-maintenance.test.ts": 3,
+      "tests/integration/m6-schema5-maintenance-independent.test.ts": 2,
+      "tests/integration/m6-schema5-maintenance.test.ts": 3,
+      "tests/integration/m7-check-domain-independent.test.ts": 7,
+      "tests/integration/m7-check-domain.test.ts": 6,
+      "tests/integration/m7-check-scope-artifacts.test.ts": 5,
+      "tests/integration/m7-d01-reviewed-independent.test.ts": 6,
+      "tests/integration/m7-d01-reviewed.test.ts": 2,
+      "tests/integration/m7-fixed-verifier-independent.test.ts": 17,
+      "tests/integration/m7-fixed-verifier.test.ts": 5,
+      "tests/integration/m7-local-startup.test.ts": 1,
+      "tests/integration/m7-schema6-maintenance-independent.test.ts": 3,
+      "tests/integration/m7-schema6-maintenance.test.ts": 3,
+      "tests/probes/m0-probes.test.ts": 3
+    },
+    "default_collection_equivalent": true,
+    "default_collection_files": 161
+  },
+  "observed_full_runs": [
+    {
+      "files": 161,
+      "cases": 987,
+      "unique_case_keys": 987,
+      "passed": 985,
+      "failed": 2,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "duration_seconds": 336.78,
+      "failures": [
+        {
+          "file": "tests/contracts/r4-c-contracts.test.ts",
+          "test": "R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter C03: Pi Adapter Headless Output & Compatibility C03-4: Registered Pi tools reject bad JSON and preserve complete 409 business error fields"
+        },
+        {
+          "file": "tests/contracts/server-tls.test.ts",
+          "test": "server native TLS TLS02 real HTTPS trusts only private CA/hostname, limits TLS and headers, snapshots caller bytes"
+        }
+      ]
+    },
+    {
+      "files": 161,
+      "cases": 987,
+      "unique_case_keys": 987,
+      "passed": 985,
+      "failed": 2,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "duration_seconds": 354.89,
+      "failures": [
+        {
+          "file": "tests/integration/m6-schema5-maintenance.test.ts",
+          "test": "SM501 genuine original4 history upgrades to5 preserving source and compact/base response bytes"
+        },
+        {
+          "file": "tests/integration/m6-schema5-maintenance.test.ts",
+          "test": "SM502 actual immutable decision and formal history survive physical backup/restore"
+        }
+      ]
+    }
+  ],
+  "related": {
+    "initial_focused": {
+      "files": 9,
+      "cases": 59,
+      "unique_case_keys": 59,
+      "passed": 59,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true,
+      "duration_seconds": 18.59
+    },
+    "tls_pi_complete_files": {
+      "files": 2,
+      "cases": 30,
+      "unique_case_keys": 30,
+      "passed": 30,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true,
+      "duration_seconds": 8.17
+    },
+    "schema5_complete_file": {
+      "files": 1,
+      "cases": 3,
+      "unique_case_keys": 3,
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true,
+      "duration_seconds": 1.63
+    },
+    "pi_without_passwd": {
+      "files": 2,
+      "cases": 9,
+      "unique_case_keys": 9,
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true,
+      "duration_seconds": 8.43
+    },
+    "tls_portable_complete_file": {
+      "files": 1,
+      "cases": 4,
+      "unique_case_keys": 4,
+      "passed": 4,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true,
+      "duration_seconds": 1.2
+    }
+  },
+  "native": {
+    "codex_active": {
+      "status": "passed",
+      "host": "codex",
+      "version": "codex-cli 0.165.0",
+      "scope": "native-control-no-model",
+      "shutdown": "active",
+      "stage": "complete",
+      "tools": [
+        "forum_ack",
+        "forum_context",
+        "forum_poll",
+        "forum_publish",
+        "forum_read",
+        "forum_relate",
+        "forum_review",
+        "forum_search",
+        "forum_subscribe"
+      ],
+      "catalogues": [
+        {
+          "data_count": 1,
+          "detuned_count": 1,
+          "tool_count": 9,
+          "next_cursor_present": false
+        }
+      ],
+      "native_close": {
+        "code": 0,
+        "signal": null
+      },
+      "lifecycle": [
+        {
+          "event": "stdin-end",
+          "after_first_shutdown_event_ms": 0
+        },
+        {
+          "event": "close",
+          "code": 0,
+          "signal": null,
+          "after_first_shutdown_event_ms": 4279
+        }
+      ],
+      "checks": {
+        "invalid_before_prepare_http": 0,
+        "reads": [
+          "check_run",
+          "check_snapshot",
+          "check_post_revision",
+          "check_receipt",
+          "check_artifact",
+          "required_checks"
+        ],
+        "reason_500": true,
+        "scope_denied": true,
+        "artifact_metadata_only": true,
+        "pending_unchanged": true,
+        "ack_delta": 0,
+        "cancelled": true,
+        "active_poll_aborted": true,
+        "runtime_drained": true
+      },
+      "cleanup": {
+        "group_absent": true,
+        "server_closed": true,
+        "db_closed": true,
+        "bridge_count": 2,
+        "bridges_absent": true,
+        "private_directory_removed": true
+      },
+      "frozen_script_rechecked_after_full": true,
+      "driver_exit_code": 0,
+      "eof_to_close_ms": 4279
+    },
+    "codex_idle": {
+      "status": "passed",
+      "host": "codex",
+      "version": "codex-cli 0.165.0",
+      "scope": "native-control-no-model",
+      "shutdown": "idle",
+      "stage": "complete",
+      "tools": [
+        "forum_ack",
+        "forum_context",
+        "forum_poll",
+        "forum_publish",
+        "forum_read",
+        "forum_relate",
+        "forum_review",
+        "forum_search",
+        "forum_subscribe"
+      ],
+      "catalogues": [
+        {
+          "data_count": 1,
+          "detuned_count": 1,
+          "tool_count": 9,
+          "next_cursor_present": false
+        }
+      ],
+      "native_close": {
+        "code": 0,
+        "signal": null
+      },
+      "thread_release": {
+        "status": "unsubscribed"
+      },
+      "idle_exit": {
+        "observed": true,
+        "natural": true,
+        "code": 0,
+        "signal": null
+      },
+      "lifecycle": [
+        {
+          "event": "stdin-end",
+          "after_first_shutdown_event_ms": 0
+        },
+        {
+          "event": "close",
+          "code": 0,
+          "signal": null,
+          "after_first_shutdown_event_ms": 4260
+        }
+      ],
+      "checks": {
+        "invalid_before_prepare_http": 0,
+        "reads": [
+          "check_run",
+          "check_snapshot",
+          "check_post_revision",
+          "check_receipt",
+          "check_artifact",
+          "required_checks"
+        ],
+        "reason_500": true,
+        "scope_denied": true,
+        "artifact_metadata_only": true
+      },
+      "cleanup": {
+        "group_absent": true,
+        "server_closed": true,
+        "db_closed": true,
+        "bridge_count": 2,
+        "bridges_absent": true,
+        "private_directory_removed": true
+      },
+      "frozen_script_rechecked_after_full": true,
+      "driver_exit_code": 0,
+      "eof_to_close_ms": 4260
+    },
+    "claude_active": {
+      "status": "passed",
+      "host": "claude",
+      "version": "2.1.312 (Claude Code)",
+      "scope": "native-control-no-model",
+      "shutdown": "active",
+      "stage": "complete",
+      "tools": [
+        "forum_ack",
+        "forum_context",
+        "forum_poll",
+        "forum_publish",
+        "forum_read",
+        "forum_relate",
+        "forum_review",
+        "forum_search",
+        "forum_subscribe"
+      ],
+      "catalogues": [
+        {
+          "connected": false,
+          "tool_count": 0
+        },
+        {
+          "connected": false,
+          "tool_count": 0
+        },
+        {
+          "connected": true,
+          "tool_count": 9
+        }
+      ],
+      "native_close": {
+        "code": 0,
+        "signal": null
+      },
+      "lifecycle": [
+        {
+          "event": "stdin-end",
+          "after_first_shutdown_event_ms": 0
+        },
+        {
+          "event": "close",
+          "code": 0,
+          "signal": null,
+          "after_first_shutdown_event_ms": 97
+        }
+      ],
+      "checks": {
+        "invalid_before_prepare_http": 0,
+        "reads": [
+          "check_run",
+          "check_snapshot",
+          "check_post_revision",
+          "check_receipt",
+          "check_artifact",
+          "required_checks"
+        ],
+        "reason_500": true,
+        "scope_denied": true,
+        "artifact_metadata_only": true,
+        "pending_unchanged": true,
+        "ack_delta": 0,
+        "cancelled": true,
+        "active_poll_aborted": true,
+        "runtime_drained": true
+      },
+      "cleanup": {
+        "group_absent": true,
+        "server_closed": true,
+        "db_closed": true,
+        "bridge_count": 1,
+        "bridges_absent": true,
+        "private_directory_removed": true
+      },
+      "frozen_script_rechecked_after_full": true,
+      "driver_exit_code": 0,
+      "eof_to_close_ms": 97
+    },
+    "codex_short_grace_failure": {
+      "status": "failed",
+      "host": "codex",
+      "version": "codex-cli 0.165.0",
+      "scope": "native-control-no-model",
+      "shutdown": "active",
+      "stage": "poll-cancel",
+      "tools": [
+        "forum_ack",
+        "forum_context",
+        "forum_poll",
+        "forum_publish",
+        "forum_read",
+        "forum_relate",
+        "forum_review",
+        "forum_search",
+        "forum_subscribe"
+      ],
+      "catalogues": [
+        {
+          "data_count": 1,
+          "detuned_count": 1,
+          "tool_count": 9,
+          "next_cursor_present": false
+        }
+      ],
+      "native_close": {
+        "code": null,
+        "signal": "SIGKILL"
+      },
+      "error": {
+        "name": "Error",
+        "code": "NATIVE_PROBE_FAILED"
+      },
+      "lifecycle": [
+        {
+          "event": "stdin-end",
+          "after_first_shutdown_event_ms": 0
+        },
+        {
+          "event": "SIGTERM",
+          "after_first_shutdown_event_ms": 1500
+        },
+        {
+          "event": "SIGKILL",
+          "after_first_shutdown_event_ms": 3000
+        },
+        {
+          "event": "close",
+          "code": null,
+          "signal": "SIGKILL",
+          "after_first_shutdown_event_ms": 3007
+        }
+      ],
+      "checks": {
+        "invalid_before_prepare_http": 0,
+        "reads": [
+          "check_run",
+          "check_snapshot",
+          "check_post_revision",
+          "check_receipt",
+          "check_artifact",
+          "required_checks"
+        ],
+        "reason_500": true,
+        "scope_denied": true,
+        "artifact_metadata_only": true
+      },
+      "cleanup": {
+        "group_absent": true,
+        "bridge_count": 2,
+        "bridges_absent": true,
+        "private_directory_removed": true
+      }
+    },
+    "pi_cli": {
+      "version": "0.87.1",
+      "node": "22.19.0",
+      "scope": "native-cli-discovery-no-model",
+      "model_calls": 0,
+      "commands": [
+        "forum-check",
+        "forum-status"
+      ],
+      "idle": true,
+      "registration_source": "built-adapter-explicit-extension",
+      "status": "passed",
+      "close": {
+        "code": 0,
+        "signal": null
+      },
+      "eof_natural": true,
+      "exit_code": 0
+    },
+    "dsh_release": {
+      "version": "0.2.1-rc.2",
+      "mcp_version": "0.2.1-rc.2",
+      "host_node": "v26.11.1",
+      "backend_node": "v22.19.0",
+      "tools": [
+        "mcp__detuned__forum_ack",
+        "mcp__detuned__forum_context",
+        "mcp__detuned__forum_poll",
+        "mcp__detuned__forum_publish",
+        "mcp__detuned__forum_read",
+        "mcp__detuned__forum_relate",
+        "mcp__detuned__forum_review",
+        "mcp__detuned__forum_search",
+        "mcp__detuned__forum_subscribe"
+      ],
+      "invalid_code": "VALIDATION_ERROR",
+      "invalid_http": 0,
+      "denied_code": "NOT_FOUND",
+      "read_success": true,
+      "model_calls": 0,
+      "shutdown_request": "diagnostic_plugin_SIGTERM",
+      "close": {
+        "code": 0,
+        "signal": null
+      },
+      "server_closed": true,
+      "owned_group_absent": true,
+      "error_shape": {
+        "is_error": true,
+        "error_message_string": true,
+        "content_text_string": true,
+        "structured_error_present": false
+      }
+    },
+    "dsh_fixed_source": {
+      "commit": "5badb15009ae1756c3afe0ae0cef1faafc290ccc",
+      "official_version": "0.2.1-alpha.1",
+      "node": "22.19.0",
+      "pnpm": "11.7.0",
+      "tooling": {
+        "typescript": "6.0.3",
+        "vitest": "4.1.8",
+        "vite": "8.0.16",
+        "tsdown": "0.22.2"
+      },
+      "dependency_layout": "filtered original frozen lock runtime closure and exact original-lock tooling subset; no full workspace install",
+      "official_tracked_source_or_lock_modified": false,
+      "suites": [
+        {
+          "suite": "plugin",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "exit": 0,
+          "elapsed_ms": 3824
+        },
+        {
+          "suite": "loader",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "exit": 0,
+          "elapsed_ms": 5080
+        }
+      ],
+      "compile": {
+        "projects": 40,
+        "forced": true,
+        "exit": 0,
+        "elapsed_ms": 4200
+      },
+      "bundle": {
+        "official_decorator_transform": true,
+        "exit": 0,
+        "elapsed_ms": 1524
+      },
+      "verified": {
+        "exact_nine_tools": true,
+        "review_registered": true,
+        "error_decode_validation_error": true,
+        "error_decode_not_found": true,
+        "invalid_business_http": 0,
+        "ordinary_actor_isolation": true,
+        "cancel_no_ack": true,
+        "pending_preserved": true,
+        "real_loader_patch": true,
+        "real_hmr_config_refresh": true,
+        "old_actor_replaced": true,
+        "all_recorded_mcp_pids_exited": true
+      },
+      "model_calls": 0,
+      "max_step_ms": 180000,
+      "allocated_limit_kib": 1048576,
+      "allocated_kib_after": 593088,
+      "initial_failures": [
+        {
+          "stage": "compile",
+          "exit": 2,
+          "reason": "minimal production layout omitted commander, esbuild, and official HMR type development dependencies; restored exact original locked dependencies without source changes",
+          "raw_compile_log_overwritten_on_rerun": true
+        },
+        {
+          "stage": "loader",
+          "tests": 3,
+          "passed": 1,
+          "failed": 2,
+          "exit": 1,
+          "reason": "minimal production layout omitted the official root development workspace link for dsh-mcp-client; restored link to the same fixed source package without changing source or assertions"
+        }
+      ],
+      "scope": "fixed source official plugin/registry and Loader/Include/config HMR; not full source CLI, full workspace build, module-code HMR or model certification"
+    },
+    "earlier_successful_eof_observations_ms": {
+      "codex_active": 4294,
+      "codex_idle": 4300,
+      "claude_active": 93
+    }
+  },
+  "scale_smoke": {
+    "mode": "smoke",
+    "complete": true,
+    "failure": null,
+    "requests": 591,
+    "success": 586,
+    "unexpected_errors": 0,
+    "ordinary_http_ms": {
+      "p50": 2.536628000001656,
+      "p95": 7.229530999999952,
+      "p99": 7.806539000000157
+    },
+    "server_close": {
+      "closed": true,
+      "forced": false,
+      "code": 0,
+      "signal": null,
+      "success": true
+    },
+    "http_concurrency": {
+      "scope": "fetch_start_through_complete_response_body",
+      "peak": 20,
+      "active": 0,
+      "by_phase": {
+        "setup": {
+          "active": 0,
+          "peak": 20
+        },
+        "warmup": {
+          "active": 0,
+          "peak": 20
+        },
+        "measure": {
+          "active": 0,
+          "peak": 1
+        },
+        "catchup": {
+          "active": 0,
+          "peak": 20
+        }
+      }
+    },
+    "measure_target_ms": 10000,
+    "seed_counts": {
+      "posts": 1000,
+      "post_revisions": 9914,
+      "events": 10000,
+      "threads": 40,
+      "relations": 40,
+      "actors": 21,
+      "sessions": 20
+    },
+    "logical_operations": 400,
+    "expected_conflicts": 5,
+    "clients": 20,
+    "missed_ticks": 0,
+    "all_consumers_same_final_ack": true,
+    "final_ack_seq": 10084,
+    "supervisor_success": true,
+    "runner_result": {
+      "exit_code": 0,
+      "signal": null
+    },
+    "released_gates": [
+      "preflight",
+      "postflight"
+    ]
+  },
+  "conditions_and_failures": [
+    {
+      "condition": "private pnpm setup",
+      "observation": "plain option names rejected, then string concurrency rejected; corrected only private options/YAML before successful frozen install"
+    },
+    {
+      "condition": "isolated test startup",
+      "observation": "localhost lacked a mapping; private hosts mapping restored before tests executed"
+    },
+    {
+      "condition": "first full",
+      "observation": "Pi registered-error message contract omitted stable code prefix; TLS fixture CA depended on ambient OpenSSL config. Exact message contract and explicit CA/leaf certificate extensions repaired; strict TLS negative checks retained"
+    },
+    {
+      "condition": "full with concurrent private fixed-source dependency preparation",
+      "observation": "SM501 and SM502 exceeded original 5s timeouts; installation activity overlapped. Resource causation not established; unchanged complete file passed separately. Final full ran after all private install/build activity ended"
+    },
+    {
+      "condition": "Codex initial active probe",
+      "observation": "1.5s EOF grace triggered TERM/KILL; probe also used waitForIdle before beginClosing. Corrected harness lifecycle API and 5s grace; later active/idle actually exited naturally in approximately 4.3s"
+    }
+  ],
+  "cleanup": {
+    "ownership_parent_uid_device_inode_marker_verified": true,
+    "directory_mode_0700": true,
+    "no_nested_mounts": true,
+    "recorded_test_processes_closed": true,
+    "symlink_safe_removal": true,
+    "private_root_removed": true,
+    "immediate_lstat": "ENOENT",
+    "independent_ssh_lstat": "ENOENT",
+    "other_paths_removed": false
+  },
+  "tested_tree_comparison": {
+    "method": "direct byte comparison, no checksum artifacts",
+    "changed_runtime_files": 32,
+    "files": [
+      "packages/adapter-pi/dist/index.d.ts.map",
+      "packages/adapter-pi/dist/index.js",
+      "packages/adapter-pi/dist/index.js.map",
+      "packages/adapter-pi/dist/runtime.d.ts",
+      "packages/adapter-pi/dist/runtime.d.ts.map",
+      "packages/adapter-pi/dist/runtime.js",
+      "packages/adapter-pi/dist/runtime.js.map",
+      "packages/adapter-pi/src/index.ts",
+      "packages/adapter-pi/src/runtime.ts",
+      "scripts/integrations/dsh-runtime/cli-check-probe.mjs",
+      "scripts/integrations/dsh-runtime/error-code.d.mts",
+      "scripts/integrations/dsh-runtime/error-code.mjs",
+      "scripts/integrations/dsh-runtime/launch.mjs",
+      "scripts/integrations/dsh-runtime/loader.spec.ts",
+      "scripts/integrations/dsh-runtime/runtime.spec.ts",
+      "scripts/integrations/linux-native-check-probe.mjs",
+      "scripts/scale/README.md",
+      "scripts/scale/run-lifecycle.mjs",
+      "scripts/scale/run-verified.mjs",
+      "scripts/scale/run.mjs",
+      "tests/contracts/m4-dsh-error-code.test.ts",
+      "tests/contracts/m4-pi-native-lifecycle.test.ts",
+      "tests/contracts/m4-pi-runtime.test.ts",
+      "tests/contracts/m7-linux-native-probe.test.ts",
+      "tests/contracts/m7-pi-native-checks-independent.test.ts",
+      "tests/contracts/r4-c-contracts.test.ts",
+      "tests/contracts/scale-run-lifecycle.test.ts",
+      "tests/contracts/server-tls.test.ts",
+      "tests/fixtures/pi-runtime/native-lifecycle.mjs",
+      "tests/helpers/pi-native-environment.ts",
+      "tests/integration/m3-logical-import.test.ts",
+      "tests/integration/m3-request-key-recovery.test.ts"
+    ],
+    "mismatches": [],
+    "documentation_and_result_files_excluded": true
+  }
+}

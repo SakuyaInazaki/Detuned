@@ -6,6 +6,7 @@ import { fork } from 'node:child_process';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { performance } from 'node:perf_hooks';
 import { cpus, totalmem, platform, release, loadavg } from 'node:os';
+import { observeChild, closeServer, httpConcurrency } from './run-lifecycle.mjs';
 import { DetunedClient } from '../../packages/client/dist/index.js';
 import { sha, decode, sleep, rng, block, journal, size, disk, percentile, postBody, within } from './run-support.mjs';
 
@@ -33,7 +34,8 @@ const origin=performance.now(), als=new AsyncLocalStorage(), nativeFetch=globalT
 const samples=[], opSamples=[], recent=[], counts={}, pending=new Set();let phase='setup', failure=null, measurementStart=null, lastResource=null, ended=false;
 const now=()=>performance.now()-origin;
 const stop=reason=>{failure??=reason;};
-let child, baseUrl, timer, serverLog,serverEnvironment;
+let child, childCompletion, serverClose=null, baseUrl, timer, serverLog,serverEnvironment;
+const concurrency=httpConcurrency();
 const resourcePaths=[db,db+'-wal',db+'-shm',...names.map(n=>join(out,n+'.jsonl'))];
 async function resource(){
   const free=await disk(dirname(db));const sizes=await Promise.all(resourcePaths.map(async p=>({file:p===db?'db':p.startsWith(db)?p.slice(db.length):p.split('/').at(-1),bytes:await size(p)})));
@@ -53,7 +55,7 @@ globalThis.fetch=async(url,init={})=>{
   const parsedURL=new URL(url),endpoint=parsedURL.pathname,q=parsedURL.searchParams.get('q');const queryChars=q===null?null:Array.from(q).length;const requestBytes=Buffer.byteLength(typeof init.body==='string'?init.body:'');
   let record={schema_version:1,phase,client:c.client,logical_op:c.op,op_id:c.op_id,attempt:c.attempt,method:init.method??'GET',endpoint,request_id_sent:requestId,start_ms:start,request_bytes:requestBytes,expected_status:c.expected_status??200,replay:c.replay??false,query_category:c.query_category??null,query_chars:queryChars,short_chinese_query:q!==null&&queryChars>=1&&queryChars<=3&&/[\u3400-\u9fff]/u.test(q),request_url_bytes:Buffer.byteLength(String(url)),max_bytes:parsedURL.searchParams.has('max_bytes')?Number(parsedURL.searchParams.get('max_bytes')):null,cursor_sha256:parsedURL.searchParams.has('cursor')?sha(parsedURL.searchParams.get('cursor')):null,retry_attempt:c.retry_attempt??0};
   try{
-    const res=await nativeFetch(url,{...init,headers});const raw=await res.text();let json;try{json=JSON.parse(raw);}catch{}
+    const finish=concurrency.begin(record.phase);let res,raw;try{res=await nativeFetch(url,{...init,headers});raw=await res.text();}finally{finish();}let json;try{json=JSON.parse(raw);}catch{}
     const retryAfter=res.headers.get('retry-after');if(retryAfter)c.retry_after_ms=/^\d+$/.test(retryAfter)?Number(retryAfter)*1000:Math.max(0,Date.parse(retryAfter)-Date.now());
     const searchLimit=c.op==='search'&&res.status===422&&json?.error?.code==='QUERY_TOO_BROAD';
     record={...record,classification:searchLimit?'search_limit':res.ok?'success':res.status===c.expected_status?'expected_conflict':'unexpected_error',end_ms:now(),latency_ms:now()-start,status:res.status,code:json?.error?.code??null,response_bytes:Buffer.byteLength(raw),request_id:json?.request_id??null};
@@ -163,7 +165,7 @@ async function window(ms){
 }
 try{
   if(await disk(dirname(db))<6*1024**3)throw new Error('disk_free_below_6GiB');
-  child=fork(new URL('./run-server.mjs',import.meta.url),[db,space],{stdio:['ignore','pipe','pipe','ipc']});
+  child=fork(new URL('./run-server.mjs',import.meta.url),[db,space],{stdio:['ignore','pipe','pipe','ipc']});childCompletion=observeChild(child);
   serverLog=await journal(join(out,'server-log.jsonl'));child.stderr.on('data',b=>void serverLog.write({stream:'stderr',text:b.toString()}));child.stdout.on('data',b=>void serverLog.write({stream:'stdout',text:b.toString()}));
   baseUrl=await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('server start timeout')),10000);child.on('message',m=>{if(m.type==='resource')lastResource=m;if(m.type==='ready'){serverEnvironment=m.environment;clearTimeout(t);resolve(m.url);}});child.once('exit',code=>reject(new Error(`server exit ${code}`)));});
   for(const c of clients)c.api=new DetunedClient({baseUrl,token:runtime.tokens[c.index],maxRetries:0,timeoutMs:5000});
@@ -186,12 +188,12 @@ try{
 }catch(e){stop(e.message);await logs.operations.write({type:'fatal',schema_version:1,phase,t_ms:now(),message:e.message});}
 finally{
   clearInterval(timer);for(const c of controllers)c.abort();await Promise.allSettled([...pending]);
-  if(child?.connected){child.send({type:'close'});await within(new Promise(r=>child.once('exit',r)),10000);if(child.exitCode===null)child.kill('SIGTERM');}
+  if(child){serverClose=await closeServer(child,childCompletion);if(!serverClose.success)stop('server_shutdown_failed');}
   if(serverLog)await serverLog.close();globalThis.fetch=nativeFetch;
   const measured=samples.filter(s=>s.phase==='measure'), successful=measured.filter(s=>s.status>=200&&s.status<300);
   const percentiles=rows=>({n:rows.length,p50:percentile(rows.map(s=>s.latency_ms),.5),p95:percentile(rows.map(s=>s.latency_ms),.95),p99:percentile(rows.map(s=>s.latency_ms),.99)});
   const logical=opSamples.filter(o=>o.phase==='measure');
-  const summary={schema_version:1,run_id:runId,mode,complete:ended&&!failure,failure,measurement_start_ms:measurementStart,measure_target_ms:duration,logical_operations:{all:percentiles(logical),success:percentiles(logical.filter(o=>o.outcome==='success')),by_kind:Object.fromEntries(['context','read','search','create','revision','poll'].map(kind=>[kind,{all:percentiles(logical.filter(o=>o.logical_op===kind)),success:percentiles(logical.filter(o=>o.logical_op===kind&&o.outcome==='success')),outcomes:logical.filter(o=>o.logical_op===kind).reduce((a,o)=>(a[o.outcome]=(a[o.outcome]??0)+1,a),{})}]))},all_attempts:percentiles(measured),success_attempts:percentiles(successful),endpoints:Object.fromEntries([...new Set(measured.map(s=>s.endpoint))].map(endpoint=>[endpoint,{all:percentiles(measured.filter(s=>s.endpoint===endpoint)),success:percentiles(successful.filter(s=>s.endpoint===endpoint))}])),short_search:{all:percentiles(measured.filter(s=>s.short_chinese_query)),success:percentiles(successful.filter(s=>s.short_chinese_query)),limited:percentiles(measured.filter(s=>s.short_chinese_query&&s.classification==='search_limit'))},requests:measured.length,success:successful.length,unexpected_errors:measured.filter(s=>s.status===null||s.status>=400&&s.status!==s.expected_status&&s.classification!=='search_limit').length,ordinary_http_ms:{p50:percentile(successful.map(s=>s.latency_ms),.5),p95:percentile(successful.map(s=>s.latency_ms),.95),p99:percentile(successful.map(s=>s.latency_ms),.99)},clients:clients.map(c=>({client:c.index,actor_id:c.actor_id,missed_ticks:c.missed,missed_ticks_by_phase:c.missedByPhase,measure_intents:logical.filter(o=>o.client===c.index).length,measure_logical_rate:logical.filter(o=>o.client===c.index).length/(duration/1000),intents:c.intent,kind_counts:c.kindCounts,consumer_id:c.consumer,final_ack_seq:c.ackSeq})),lock_wait:'not_observed'};
+  const summary={schema_version:1,run_id:runId,mode,complete:ended&&!failure,failure,server_close:serverClose,http_concurrency:concurrency.snapshot(),measurement_start_ms:measurementStart,measure_target_ms:duration,logical_operations:{all:percentiles(logical),success:percentiles(logical.filter(o=>o.outcome==='success')),by_kind:Object.fromEntries(['context','read','search','create','revision','poll'].map(kind=>[kind,{all:percentiles(logical.filter(o=>o.logical_op===kind)),success:percentiles(logical.filter(o=>o.logical_op===kind&&o.outcome==='success')),outcomes:logical.filter(o=>o.logical_op===kind).reduce((a,o)=>(a[o.outcome]=(a[o.outcome]??0)+1,a),{})}]))},all_attempts:percentiles(measured),success_attempts:percentiles(successful),endpoints:Object.fromEntries([...new Set(measured.map(s=>s.endpoint))].map(endpoint=>[endpoint,{all:percentiles(measured.filter(s=>s.endpoint===endpoint)),success:percentiles(successful.filter(s=>s.endpoint===endpoint))}])),short_search:{all:percentiles(measured.filter(s=>s.short_chinese_query)),success:percentiles(successful.filter(s=>s.short_chinese_query)),limited:percentiles(measured.filter(s=>s.short_chinese_query&&s.classification==='search_limit'))},requests:measured.length,success:successful.length,unexpected_errors:measured.filter(s=>s.status===null||s.status>=400&&s.status!==s.expected_status&&s.classification!=='search_limit').length,ordinary_http_ms:{p50:percentile(successful.map(s=>s.latency_ms),.5),p95:percentile(successful.map(s=>s.latency_ms),.95),p99:percentile(successful.map(s=>s.latency_ms),.99)},clients:clients.map(c=>({client:c.index,actor_id:c.actor_id,missed_ticks:c.missed,missed_ticks_by_phase:c.missedByPhase,measure_intents:logical.filter(o=>o.client===c.index).length,measure_logical_rate:logical.filter(o=>o.client===c.index).length/(duration/1000),intents:c.intent,kind_counts:c.kindCounts,consumer_id:c.consumer,final_ack_seq:c.ackSeq})),lock_wait:'not_observed'};
   const output=await journal(join(out,'summary.jsonl'));await output.write(summary);await output.close();await Promise.all(Object.values(logs).map(l=>l.close()));
   process.stdout.write(JSON.stringify({run_id:runId,out,complete:summary.complete,failure})+'\n');if(!summary.complete)process.exitCode=1;
 }

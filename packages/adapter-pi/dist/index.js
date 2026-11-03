@@ -1,4 +1,4 @@
-import { createPiRuntime, safePiError } from './runtime.js';
+import { createPiRuntime, safePiError, piToolError } from './runtime.js';
 import { DETUNED_TOOLS } from '@detuned/protocol';
 export function adaptToolSchema(schema) {
     // Protocol uses @sinclair/typebox; Pi 0.87.1 uses typebox. Their TS schema
@@ -22,7 +22,12 @@ export function activate(pi) {
             description: toolDef.description,
             parameters: adaptToolSchema(toolDef.schema),
             execute: async (_toolCallId, params, signal, _onUpdate, _ctx) => {
-                return runtime.tool(toolDef.name, params, signal);
+                try {
+                    return await runtime.tool(toolDef.name, params, signal);
+                }
+                catch (error) {
+                    throw piToolError(error);
+                }
             },
         });
     }

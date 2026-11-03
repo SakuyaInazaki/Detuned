@@ -1,5 +1,8 @@
 import { DetunedClient } from '@detuned/client';
 export declare function safePiError(error: unknown): Error;
+/** Pi's agent loop retains only error.message for failed tools. Keep the thrown
+ * business type/metadata while making its stable code visible in that channel. */
+export declare function piToolError(error: unknown): Error;
 export declare function piResult(result: unknown): {
     content: {
         type: "text";

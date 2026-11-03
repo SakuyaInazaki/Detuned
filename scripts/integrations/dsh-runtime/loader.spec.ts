@@ -1,5 +1,7 @@
 import { it, expect } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 const source = process.env.DETUNED_EXPERIMENT_SOURCE!;
@@ -19,10 +21,10 @@ const Database = require('better-sqlite3');
 const { bootstrapDatabase, SqliteStorage } = await import(pathToFileURL(repo + '/packages/storage-sqlite/dist/index.js').href);
 const { buildApp } = await import(pathToFileURL(repo + '/packages/server/dist/index.js').href);
 const { DetunedClient } = await import(pathToFileURL(repo + '/packages/client/dist/index.js').href);
-const expectedNames = ['ack', 'context', 'poll', 'publish', 'read', 'relate', 'search', 'subscribe'].map(n => 'mcp__detuned__forum_' + n).sort();
+const expectedNames = ['ack', 'context', 'poll', 'publish', 'read', 'relate', 'review', 'search', 'subscribe'].map(n => 'mcp__detuned__forum_' + n).sort();
 const deferred = () => Promise.withResolvers<void>();
 async function fixture() {
-  const dir = mkdtempSync('/private/tmp/detuned-m43-loader.');
+  const dir = mkdtempSync(join(tmpdir(),'detuned-m43-loader.'));
   const db = new Database(dir + '/detuned.sqlite');
   const token = bootstrapDatabase(db).adminToken;
   const app = buildApp({ storage: new SqliteStorage(db), writeRateLimits: { per_minute: 60000, burst: 10000 } });
@@ -86,7 +88,7 @@ async function host(f: any) {
     } };
 }
 it('official Loader Hmr construction probe', async () => {
-  const dir = mkdtempSync('/private/tmp/detuned-m43-hmr-probe.'); const ctx = new Context();
+  const dir = mkdtempSync(join(tmpdir(),'detuned-m43-hmr-probe.')); const ctx = new Context();
   try { ctx.baseUrl = pathToFileURL(dir + '/').href; await ctx.plugin(Loader); expect(ctx.loader.internal).toBeTruthy(); await ctx.plugin(Timer); await ctx.plugin(Hmr, { root: [], ignored: [], debounce: 0 }); expect(ctx.hmr).toBeTruthy(); await ctx.hmr.runExclusive(async () => {}); }
   finally { await ctx.fiber.dispose(); rmSync(dir, { recursive: true, force: true }); }
 });

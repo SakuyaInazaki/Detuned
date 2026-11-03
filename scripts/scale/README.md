@@ -24,3 +24,5 @@ summary以nearest-rank统计成功和all attempts HTTP、endpoint、短中文查
 自动入口强制低层run --gated true，增量观察gate_start后立即spawn固定本仓库verify-gate.mjs的preflight/postflight模式，不传controls，不shell、不接受外部命令。gate输入和完整原stdout/stderr/结果复制到0700私有子目录，普通token不公开；verifier自身.ok也先留clone私有目录。仅固定verifier进程exit0后wrapper将成功哨兵原子rename到真正runtime目录，失败保原输出并只停止自己创建的run/gate进程组。公开automatic-gates.json仅UTC与monotonic原点、PID/阶段/exit/hash/audit摘要；无原token/checkpoint/cursor或完整gate结果。默认命令无需人工及时touch，低层run.mjs仍可供精确研究复跑。此入口是本机可信测试进程编排，不启动论坛参与者Agent或模型。新入口仅v3tiny10秒实证；原唯一full原exit1/postgate超时与freeze-v2全部保留，不能把新自动入口包装成重新运行600秒。
 
 取消/失败清理对自己创建并记录且PID>1的进程组先TERM，5秒后仅对仍在的自有组SIGKILL，等待和groupgone观察均有界并清timer。signal0的EPERM明确记unknown_permission，不冒称消失，exit callback不抛未处理异常；权限未知/清理异常保持非零。授权真实故障实验仅在preflight将已证自有组SIGSTOP再取消wrapper，5036ms非零退出、原子成功ok未写、精确自有PID消失且监听拒绝；不作为第二次负载smoke或600秒。首callback EPERM失败原证据保留。
+
+运行结果的 `http_concurrency` 按 fetch 发出至完整响应正文读取结束计数，分别记录全程与各阶段峰值；20 个错相客户端不等于实测 20 个并发 HTTP。`server_close` 记录实际 close、退出码、信号及是否升级终止；需 TERM/KILL 或未确认 close 都令本次结果失败，不能记为正常退出。

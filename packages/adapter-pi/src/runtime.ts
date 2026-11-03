@@ -10,6 +10,16 @@ export function safePiError(error: unknown): Error {
   if (error instanceof UserAbortError) return new UserAbortError('Operation was cancelled.');
   return new Error('Forum operation failed.');
 }
+/** Pi's agent loop retains only error.message for failed tools. Keep the thrown
+ * business type/metadata while making its stable code visible in that channel. */
+export function piToolError(error: unknown): Error {
+  const safe = safePiError(error);
+  if (!(safe instanceof DetunedError)) return safe;
+  const prefix = `[${safe.code}] `;
+  return new DetunedError(safe.code,
+    safe.message.startsWith(prefix) ? safe.message : prefix + safe.message,
+    safe.statusCode, safe.retryable, safe.details);
+}
 export function piResult(result: unknown) {
   const full = JSON.stringify(result, null, 2);
   const text = new TextEncoder().encode(full).byteLength <= 16384 ? full : JSON.stringify({ truncated: true, full_result: 'details', text_limit_bytes: 16384, message: 'The complete result is retained in host details; it is not automatically available to the model.', next_step: 'Retry with a smaller result using the advertised tool budget or pagination options, or read a specific object with an existing tool.' });

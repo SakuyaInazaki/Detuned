@@ -23,13 +23,6 @@ it('accepts filtered resolution gaps but rejects a present terminal action incon
 it('reports post-unlink double publication failure accurately while preserving input',async()=>{const f=await fixture();try{const target=path.join(f.root,'double');await expect(importSpace({inputPath:f.input,dataDir:target,adminName:'admin',hooks:{atStage:stage=>{if(stage==='readiness-unlinked'||stage==='readiness-gate-restoring')throw new Error('fixed failure');}}})).rejects.toMatchObject({code:'IMPORT_FAILED',message:expect.stringContaining('may be startable')});assertDataDirReady(target);expect(await readFile(f.input,'utf8')).toBe(f.wire);const db=new Database(path.join(target,'detuned.sqlite'));try{expect(db.pragma('integrity_check')).toEqual([{integrity_check:'ok'}]);}finally{db.close();}}finally{await f.close();}});
 
 it('rejects a FIFO with no writer in a watchdog-bounded child without publishing',async()=>{
- const supplied=process.env.DETUNED_IMPORT_FIFO_CASE;
- if(supplied){
-  const socket=createConnection(path.join(supplied,'control.sock'));await once(socket,'connect');
-  const go=once(socket,'data');socket.write('ready\n');await go;
-  try{await expect(importSpace({inputPath:path.join(supplied,'fifo'),dataDir:path.join(supplied,'target'),adminName:'admin'})).rejects.toMatchObject({code:'INVALID_INPUT'});socket.end('done\n');}
-  catch(error){socket.end('failed\n');throw error;}return;
- }
  const root=await mkdtemp(path.join(os.tmpdir(),'detuned-import-fifo-'));
  const server=createServer();let child:ReturnType<typeof spawn>|undefined;
  let startup:ReturnType<typeof setTimeout>|undefined,operation:ReturnType<typeof setTimeout>|undefined,reap:ReturnType<typeof setTimeout>|undefined;
@@ -43,7 +36,26 @@ it('rejects a FIFO with no writer in a watchdog-bounded child without publishing
    else{phase='invalid-ipc';terminate();}
   }});});
   server.listen(path.join(root,'control.sock'));await once(server,'listening');
-  child=spawn('pnpm',['exec','vitest','run','tests/integration/m3-logical-import.test.ts','-t','rejects a FIFO'],{env:{...process.env,DETUNED_IMPORT_FIFO_CASE:root},stdio:'ignore',detached:true});
+  const worker=`
+import {createConnection} from 'node:net';
+import {once} from 'node:events';
+import {importSpace} from './packages/storage-sqlite/dist/index.js';
+const root=process.argv[1],socket=createConnection(root+'/control.sock');
+await once(socket,'connect');
+const go=once(socket,'data');
+socket.write('ready\\n');
+await go;
+try{
+  await importSpace({inputPath:root+'/fifo',dataDir:root+'/target',adminName:'admin'});
+  socket.end('failed\\n');
+  process.exitCode=1;
+}catch(error){
+  if(error.code!=='INVALID_INPUT'){
+    socket.end('failed\\n');
+    process.exitCode=1;
+  }else socket.end('done\\n');
+}`;
+  child=spawn(process.execPath,['--input-type=module','-e',worker,root],{env:{...process.env},stdio:'ignore',detached:true});
   startup=setTimeout(terminate,15000);
   const code=await new Promise<number|null>((resolve,reject)=>{child!.once('error',reject);child!.once('close',resolve);});
   clearTimeout(startup);clearTimeout(operation);clearTimeout(reap);

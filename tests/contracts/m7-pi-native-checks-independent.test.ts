@@ -4,6 +4,8 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 
+import {createPiNativeEnvironment} from '../helpers/pi-native-environment.js';
+
 // Independently loaded actual SDK/extension, not the author fixture's booleans.
 // Code is fixed repository-owned text, never selected by forum content.
 const program=String.raw`
@@ -77,9 +79,10 @@ if(error)process.stderr.write(JSON.stringify({error,cleanup})+'\n');else process
 `;
 
 it('PII01 independent actual fixed Pi SDK executes ordinary check writes/reads and current authority, rejects before prepare and awaits cancellation without ACK',async()=>{
+ const isolated=await createPiNativeEnvironment();
  const directory=await mkdtemp(path.join(tmpdir(),'detuned-pi-checks-independent-')),file=path.join(directory,'independent.mjs');let child:ReturnType<typeof spawn>|undefined;let timer:ReturnType<typeof setTimeout>|undefined;
  try{
-  await writeFile(file,program,{mode:0o600});child=spawn('/usr/bin/env',['-i','PATH=/opt/homebrew/bin:/usr/bin:/bin','CI=true',process.execPath,file,process.cwd(),directory],{env:{},stdio:['ignore','pipe','pipe']});let stdout='',stderr='',killed=false;child.stdout!.setEncoding('utf8');child.stderr!.setEncoding('utf8');child.stdout!.on('data',text=>{stdout+=text});child.stderr!.on('data',text=>{stderr+=text});timer=setTimeout(()=>{killed=true;child!.kill('SIGKILL');},70000);
+  await writeFile(file,program,{mode:0o600});child=spawn(process.execPath,[file,process.cwd(),directory],{env:isolated.env,stdio:['ignore','pipe','pipe']});let stdout='',stderr='',killed=false;child.stdout!.setEncoding('utf8');child.stderr!.setEncoding('utf8');child.stdout!.on('data',text=>{stdout+=text});child.stderr!.on('data',text=>{stderr+=text});timer=setTimeout(()=>{killed=true;child!.kill('SIGKILL');},70000);
   const exit=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>((resolve,reject)=>{child!.once('error',reject);child!.once('close',(code,signal)=>resolve({code,signal}));});clearTimeout(timer);expect(/detuned_(?:vrf|admin|agent|adm|agt)_[A-Za-z0-9_-]+|Bearer\s/i.test(stdout+stderr)).toBe(false);expect({code:exit.code,signal:exit.signal,killed,stderr}).toEqual({code:0,signal:null,killed:false,stderr:''});
   const {outcome:o,cleanup}=JSON.parse(stdout);expect(cleanup).toEqual({host_disposed:true,app_closed:true,db_closed:true});expect(o.metadata).toEqual({version:'0.87.1',loader_sha256:'81106b07522aaf9197858c4679fecd7fbd23c346376d6e1f2cc3dd5294d543f4'});expect(o.names).toEqual(['forum_ack','forum_context','forum_poll','forum_publish','forum_read','forum_relate','forum_review','forum_search','forum_subscribe']);expect(o.activation_http_delta).toBe(0);expect(o.invalid).toEqual(Array.from({length:4},()=>({code:'VALIDATION_ERROR',http_delta:0})));
   expect(o.native_create_requests).toBe(1);expect(o.created).toMatchObject({id:o.ids.run,space_id:o.ids.space,request_id:o.ids.request,state:'pending',created_by:o.ids.actor});expect(o.created.created_by).not.toBe(o.ids.admin_actor);
@@ -88,7 +91,7 @@ it('PII01 independent actual fixed Pi SDK executes ordinary check writes/reads a
   expect(o.pending_batch_id).toEqual(expect.any(String));expect(o.cancel).toMatchObject({settled_before_dispose:false,settled_after_dispose:true,is_user_abort:true,ack_delta:0});expect(o.cancel.pending_after).toEqual(o.cancel.pending_before);expect(o.cancel.waiting_after).toEqual(o.cancel.waiting_before);expect(o.verify_ordinary.code).toBe('FORBIDDEN');expect(o.model_calls).toBe(0);
   const schemas=JSON.stringify(o.schemas);for(const prohibited of ['issue_check_credential','submit_check_receipt','upload_check_artifact'])expect(schemas.includes(prohibited)).toBe(false);expect(schemas.includes('check_create')&&schemas.includes('check_invalidate')).toBe(true);
  }finally{
-  if(timer)clearTimeout(timer);if(child&&child.exitCode===null&&child.signalCode===null){const closed=new Promise<void>(resolve=>child!.once('close',()=>resolve()));child.kill('SIGKILL');await closed;}await rm(directory,{recursive:true,force:true});
+  if(timer)clearTimeout(timer);if(child&&child.exitCode===null&&child.signalCode===null){const closed=new Promise<void>(resolve=>child!.once('close',()=>resolve()));child.kill('SIGKILL');await closed;}await rm(directory,{recursive:true,force:true});await isolated.remove();
  }
 },80000);
 

@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { createPiNativeEnvironment } from '../helpers/pi-native-environment.js';
 const helper = fileURLToPath(new URL('../fixtures/pi-runtime/native-lifecycle.mjs', import.meta.url));
 const modes = ['identity', 'new', 'switch', 'fork', 'reload', 'shutdown'] as const;
 describe('M4.4-B independent real Pi 0.87.1 SDK lifecycle', () => {
   for (const mode of modes) it(`native ${mode} uses isolated ordinary credentials and awaited lifecycle cleanup`, async () => {
-    const child = spawn('/usr/bin/env', ['-i', 'PATH=/opt/homebrew/bin:/usr/bin:/bin', 'CI=true', process.execPath, helper, mode], { env: {}, stdio: ['ignore', 'pipe', 'pipe'] });
+    const isolated = await createPiNativeEnvironment();
+    try {
+    const child = spawn(process.execPath, [helper, mode], { env: isolated.env, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '', stderr = ''; let killed = false;
     child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8');
     child.stdout.on('data', value => { stdout += value; }); child.stderr.on('data', value => { stderr += value; });
@@ -22,18 +25,20 @@ describe('M4.4-B independent real Pi 0.87.1 SDK lifecycle', () => {
     if (mode === 'reload') expect(evidence).toMatchObject({ closed_extension_no_http: true, reload_reactivated_without_start: true, replacement_uses_b: true });
     if (mode === 'shutdown') expect(evidence.closed_extension_no_http).toBe(true);
     console.info(JSON.stringify(evidence));
+    } finally { await isolated.remove(); }
   }, 80000);
 });
 
-// The historical six cases above are retained byte-for-byte.
+// Historical business assertions and deadlines above are preserved; child paths are private.
 describe('M7.4-A fixed Pi ordinary check branches',()=>{
  it('native checks prepares no invalid input and performs real two-write/six-read calls',async()=>{
   const {mkdtemp,chmod,realpath,rm,access}=await import('node:fs/promises');const {tmpdir}=await import('node:os');const {join}=await import('node:path');
+  const isolated=await createPiNativeEnvironment();
   const privateRoot=await realpath(await mkdtemp(join(tmpdir(),'detuned-pi-checks-parent-')));await chmod(privateRoot,0o700);
   let stdout='',stderr='',killed=false,lastStage='parent-created',exit:{code:number|null;signal:NodeJS.Signals|null}|undefined;
   const stages:string[]=[];const caught:{error_name?:string;error_code?:string}={};const counts:Record<string,{active_count?:number;connections?:number}>={};const diagnostic=()=>JSON.stringify({lastStage,stages,caught,counts});
   try {
-   const child=spawn(process.execPath,[helper,'checks',privateRoot],{env:{PATH:'/opt/homebrew/bin:/usr/bin:/bin',CI:'true'},stdio:['ignore','pipe','pipe','ipc']});
+   const child=spawn(process.execPath,[helper,'checks',privateRoot],{env:isolated.env,stdio:['ignore','pipe','pipe','ipc']});
    child.on('message',value=>{
     if(typeof value!=='object'||value===null||!('stage'in value)||typeof value.stage!=='string'||!/^[A-Za-z-]{1,64}$/.test(value.stage))return;
     lastStage=value.stage;if(stages.length<64){stages.push(value.stage);const observed:{active_count?:number;connections?:number}={};if('active_count'in value&&typeof value.active_count==='number'&&Number.isSafeInteger(value.active_count)&&value.active_count>=0)observed.active_count=value.active_count;if('connections'in value&&typeof value.connections==='number'&&Number.isSafeInteger(value.connections)&&value.connections>=0)observed.connections=value.connections;counts[value.stage]=observed;}
@@ -45,7 +50,7 @@ describe('M7.4-A fixed Pi ordinary check branches',()=>{
    child.stdout!.setEncoding('utf8');child.stderr!.setEncoding('utf8');child.stdout!.on('data',value=>{stdout+=value;});child.stderr!.on('data',value=>{stderr+=value;});const timer=setTimeout(()=>{killed=true;child.kill('SIGKILL');},70000);
    let spawnFailed=false;exit=await new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>{child.once('error',()=>{spawnFailed=true;});child.once('close',(code,signal)=>resolve({code,signal}));}).finally(()=>clearTimeout(timer));
    expect(spawnFailed,diagnostic()).toBe(false);
-  } finally {await rm(privateRoot,{recursive:true,force:true});}
+  } finally {await rm(privateRoot,{recursive:true,force:true});await isolated.remove();}
   let removed=false;try{await access(privateRoot);}catch(error){removed=typeof error==='object'&&error!==null&&'code'in error&&error.code==='ENOENT';}expect(removed,diagnostic()).toBe(true);
   // The child only emits white-listed evidence; no credentials/raw HTTP are captured.
   expect({exit,killed,stderr},diagnostic()).toEqual({exit:{code:0,signal:null},killed:false,stderr:''});const evidence=JSON.parse(stdout);

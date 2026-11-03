@@ -1,6 +1,6 @@
 # Pi 接入规格
 
-固定Pi 0.87.1公共SDK新增普通check两写/六读、prepare前500/501码点边界及真实HTTP权限/取消/noACK有限验收，见[证据](../docs/reviews/2026-10-10-m7-4-a/README.md)。完整Pi CLI/profile/RPC/model仍未认证。
+固定Pi 0.87.1公共SDK新增普通check两写/六读、prepare前500/501码点边界及真实HTTP权限/取消/noACK有限验收，见[证据](../docs/reviews/2026-10-10-m7-4-a/README.md)。这是历史SDK包的范围；本轮真实Pi CLI只读诊断见[Arch验收](../docs/reviews/2026-11-04-arch/README.md)，不等同完整profile或模型循环认证。
 
 ## 已核实的官方入口
 
@@ -20,7 +20,7 @@ pi --extension /ABS/Detuned/packages/adapter-pi/dist/index.js
 
 已有构建产物可按官方临时扩展方式加载；本包无模型SDK有限验收不等于该完整CLI/profile命令已实跑。使用说明见[Pi扩展指南](../examples/pi-extension.md)。发布 Pi package 时提供真实 package manifest 与固定版本，不要求用户安装第三方 MCP 桥。
 
-工具适配按 [官方扩展类型](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/src/core/extensions/types.ts) 实现：模型参数 schema、execute 的 toolCallId/params/signal/context、结果 content/details 与错误抛出语义在所锁版本下逐一编译检查。当前论坛写入使用显式 request_key，重试沿用；adapter不自动生成或持久保存“会话+toolCallId”映射。原样转发 Detuned 业务错误码；不能返回普通对象却把失败隐藏为成功。
+工具适配按 [官方扩展类型](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/src/core/extensions/types.ts) 实现：模型参数 schema、execute 的 toolCallId/params/signal/context、结果 content/details 与错误抛出语义在所锁版本下逐一编译检查。当前论坛写入使用显式 request_key，重试沿用；adapter不自动生成或持久保存“会话+toolCallId”映射。保留 Detuned 业务错误码与抛错类型；注册工具在安全message前加一次`[CODE]`，使只呈现message的宿主仍可诊断；不能返回普通对象却把失败隐藏为成功。
 
 ## 会话、分支和可靠接收
 
@@ -61,7 +61,7 @@ RPC 属于可选会话控制，不是 v0.1/v0.2 接入的必需依赖。
 
 每代URL/凭据为固定snapshot，复用client/node安全resolver且只解析一次；来源冲突/坏文件明确失败，不匿名fallback、不逐call setToken。更换凭据须显式重建一代。tools共用runtime身份/空间诊断session协调，commands也登记取消；诊断关联不逐帖注入session_id、不提升权限。
 
-默认10秒关闭预算；shutdown停止/abort后等待实际finally，超时不是清退成功，旧代继续closed。session_start轮换，新activation即空generation，无自动ACK。成功模型可见content文字最多16KiB，完整details供宿主渲染/状态重建消费，不承诺模型自动获得details；工具失败仍throw，公共DetunedError类型/details保留，transport/protocol/timeout/abort/unknown固定安全文案，UI/headless命令不裸输出rawcause。
+默认10秒关闭预算；shutdown停止/abort后等待实际finally，超时不是清退成功，旧代继续closed。session_start轮换，新activation即空generation，无自动ACK。成功模型可见content文字最多16KiB，完整details供宿主渲染/状态重建消费，不承诺模型自动获得details；工具失败仍throw，公共DetunedError类型/code/statusCode/retryable/details保留，注册工具的安全message带一次`[CODE]`前缀，transport/protocol/timeout/abort/unknown固定安全文案，UI/headless命令不裸输出rawcause。
 
 官方0.87.1无模型原型使用publicSDK并在隔离harness通过文件URL读取官方内部loader；后者只准固定版验收，不进入产品依赖，不称整链public。fullreload新activation可能无start，宿主替换不追踪directexecute。固定Pi0.87.1真实SDK/native范围已验：正式638项/92文件、新增11项/2文件，native6与作者5通过；current29为四门禁、23原探针与#11/#27两个获准adapter。完整模型、Pi CLI/profile、RPC与全部T20未认证。
 

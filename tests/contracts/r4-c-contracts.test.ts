@@ -1619,7 +1619,7 @@ describe('R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter', () =
         }).then(() => undefined, (err: unknown) => err);
         expect(error).toBeInstanceOf(DetunedError);
         expect(error).toMatchObject({ code: 'REVISION_CONFLICT', statusCode: 409, retryable: false,
-          message: 'transaction aborted because revision changed', details: { current_revision: 2 } });
+          message: '[REVISION_CONFLICT] transaction aborted because revision changed', details: { current_revision: 2 } });
         expect(calls).toBe(1);
       } finally {
         globalThis.fetch = savedFetch;

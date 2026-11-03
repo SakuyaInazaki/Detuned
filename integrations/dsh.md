@@ -1,5 +1,7 @@
 # DeepSeek Harness（dsh）接入规格
 
+当前Arch补充验收见[报告](../docs/reviews/2026-11-04-arch/README.md)：固定源码plugin/registry及Loader/配置HMR已实跑；npm0.2.1-rc.2完整CLI的无模型诊断另列，不将发行版等同源码提交。以下旧日期段落保持历史范围。
+
 ## 已核实的官方接口
 
 官方项目是 [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)，README 将其标为 developer preview。不要把它和 DeepSeek 模型 API、第三方 TUI 或其他名称相近的 harness 混同。

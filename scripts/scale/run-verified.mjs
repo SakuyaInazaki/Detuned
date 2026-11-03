@@ -12,7 +12,7 @@ if(Object.keys(options).some(k=>!['manifest','runtime','out','mode'].includes(k)
 const runtime=resolve(options.runtime),privateRoot=dirname(runtime),out=resolve(options.out);
 if((await stat(runtime)).mode&0o077)throw new Error('Private runtime permissions must be 0600 or stricter');
 const automation=join(privateRoot,'automatic-gates');await mkdir(automation,{mode:0o700,recursive:false});
-const started=performance.now(),startUTC=new Date().toISOString();const events=[];let runner,gateChild,runExit=null,runEnded=false,stopped=false,failure=null,offset=0;
+const started=performance.now(),startUTC=new Date().toISOString();const events=[];let runner,runnerCompletion,gateChild,runExit=null,runEnded=false,stopped=false,failure=null,offset=0;
 const seen=new Set(),ownGroups=new Set(),terminations=new Map();
 const event=x=>events.push({schema_version:1,t_ms:performance.now()-started,utc:new Date().toISOString(),...x});
 function validOwned(pid){return Number.isSafeInteger(pid)&&pid>1&&ownGroups.has(pid);}
@@ -38,7 +38,7 @@ for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{stopped=true;f
 async function fixedProcess(script,args,prefix){
  const stdoutPath=join(automation,prefix+'.stdout.log'),stderrPath=join(automation,prefix+'.stderr.log');const stdout=await open(stdoutPath,'wx',0o600),stderr=await open(stderrPath,'wx',0o600);
  let child;try{child=spawn(process.execPath,[fileURLToPath(new URL(script,import.meta.url)),...args],{stdio:['ignore',stdout.fd,stderr.fd],detached:true});}finally{await stdout.close();await stderr.close();}
- const completion=new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',(code,signal)=>{if(!terminations.has(child.pid)||!groupAlive(child.pid))clearTermination(child.pid);resolve({exit_code:code,signal});});});
+ const completion=new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>{if(!groupAlive(child.pid))clearTermination(child.pid);else if(!terminations.has(child.pid)){failure??='owned_descendants_after_close';stopOwned(child);}resolve({exit_code:code,signal});});});
  ownGroups.add(child.pid);event({action:'spawn_fixed_script',script,pid:child.pid,args_without_secrets:args});return {child,completion,stdoutPath,stderrPath};
 }
 async function runGate(phase){
@@ -58,7 +58,7 @@ async function runGate(phase){
 }
 try{
  for(const phase of ['preflight','postflight']){try{await stat(join(privateRoot,phase+'.ok'));throw new Error('Fresh runtime must have no prior gate sentinel');}catch(e){if(e.code!=='ENOENT')throw e;}}
- const p=await fixedProcess('run.mjs',['--manifest',resolve(options.manifest),'--runtime',runtime,'--out',out,'--mode',options.mode,'--gated','true'],'runner');runner=p.child;
+ const p=await fixedProcess('run.mjs',['--manifest',resolve(options.manifest),'--runtime',runtime,'--out',out,'--mode',options.mode,'--gated','true'],'runner');runner=p.child;runnerCompletion=p.completion;
  p.completion.then(result=>{runExit=result;runEnded=true;event({action:'runner_exit',...result});if(gateChild)stopOwned(gateChild);}).catch(e=>{failure=e.message;runEnded=true;stopOwned(gateChild);});
  while(!runEnded&&!stopped){
   try{
@@ -75,7 +75,7 @@ try{
  if(seen.size!==2)failure??='both_gates_not_observed';
 }catch(e){failure??=e.message;stopped=true;stopOwned(gateChild);stopOwned(runner);}
 finally{
- if(runner&&!runEnded){stopOwned(runner);await within(new Promise(resolve=>runner.once('exit',resolve)),8000);}
+ if(runner&&!runEnded){stopOwned(runner);await within(runnerCompletion,8000);}
  if(terminations.size)await within(Promise.all([...terminations.values()].map(x=>x.promise)),8000);
  for(const pid of [...terminations.keys()]){failure??='owned_cleanup_deadline';clearTermination(pid);}
  const status={schema_version:1,mode:options.mode,started_utc:startUTC,origin_performance_ms:started,elapsed_ms:performance.now()-started,runner_result:runExit,success:!failure&&runExit?.exit_code===0, failure,events,private_artifacts:automation};

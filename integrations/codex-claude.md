@@ -57,3 +57,31 @@ M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0
 当前[D有限native结果](../docs/reviews/2026-10-10-m7-4-d/README.md)：Claude2.1.282 initialize/exact九工具、ordinary两写六读、非法prepare前0HTTP、500/scope/metadata/noACKpending/cancel通过；native143/null为TERM清退，driver0/null与候选/组/root/control absence已证。完整CLI/profile/model不升级。E/R1已实施并有限通过，见下。
 
 当前[E/R1有限Codex结果](../docs/reviews/2026-10-10-m7-4-e/README.md)：核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、当前Linux独立环境证据仍待；许可证按用户决定暂未指定；M8独立，后续前端取消。
+
+## Linux 原生控制验收入口
+
+`scripts/integrations/linux-native-check-probe.mjs` 为 Linux 的可复现入口，复用已有普通身份 check 业务矩阵，不修改历史 Darwin 固定路径、二进制及隔离证据。它只调用 Codex app-server 或 Claude 原生 control 协议，不发提示词、`turn/start`、模型请求，也不认证完整模型会话。
+
+先在全新私有目录完成 README 的后端构建。操作者必须提供外层 OS 隔离：只读挂载必要运行时、仓库和指定宿主；禁止外网，仅允许隔离 namespace 内回环；真实 HOME、账号、全局配置不可见；私有 HOME/TMPDIR 可写，Linux UID 可正常解析。`DETUNED_NATIVE_ISOLATED=1` 是调用者对该前提的声明，不是脚本提供的安全边界。脚本不创建 VM、容器守护进程或修改系统配置。
+
+在该隔离环境中，先对指定现有二进制运行 `--version`，把完整单行结果传给 `--version`；版本不匹配立即停止，不下载或切换宿主/模型。已有安装只读，二进制路径需绝对路径。以下为命令格式，路径和版本必须换成刚核实的实际值，输出文件须不存在：
+
+```sh
+DETUNED_NATIVE_ISOLATED=1 node scripts/integrations/linux-native-check-probe.mjs \
+  --host codex --binary /readonly/codex --version 'codex-cli 0.165.0' \
+  --output /private/codex-native.json
+DETUNED_NATIVE_ISOLATED=1 node scripts/integrations/linux-native-check-probe.mjs \
+  --host codex --binary /readonly/codex --version 'codex-cli 0.165.0' \
+  --shutdown idle --output /private/codex-idle.json
+DETUNED_NATIVE_ISOLATED=1 node scripts/integrations/linux-native-check-probe.mjs \
+  --host claude --binary /readonly/claude --version '2.1.282 (Claude Code)' \
+  --output /private/claude-native.json
+```
+
+Codex 使用事先创建的私有 `CODEX_HOME/config.toml`，不把 `thread/start.config` 动态注入当作配置加载证明；工具发现按 `mcpServerStatus/list` 的 `data`、服务器 `tools` 对象解析。每次发现记录数量、分页和连接形状，不记录凭据或原始工具正文；非空分页明确失败，不把部分目录计作通过。Claude 显式 strict MCP 配置、空 settings 来源与私有 state。两者的桥子进程明确指定 `OPENSSL_CONF=/dev/null`，仅适用于本无 TLS 的回环实验，避免隔离环境 Node 读取不可见系统 OpenSSL 配置；不修改系统 OpenSSL，也不作为生产 TLS 配置建议。
+
+默认 `--shutdown active` 运行活动 poll 取消；独立 `--shutdown idle` 在相同普通身份工具矩阵完成、HTTP 无活动后，用 Codex 已安装版协议的 `thread/unsubscribe {threadId}` 释放 ephemeral thread，再关闭 stdin，观察 5 秒。idle 必须实际 close 0、无退出信号、未发 TERM/KILL 才通过；未自然退出仍清退，但收据失败。0.165.0 的 generate-json-schema 明确该操作参数为 threadId、响应为 status；其他版本须先核对本地协议，不使用 thread/archive 改变持久线程。两分支须分别运行和报告，活动取消通过不能关闭闲置退出缺陷。
+
+收据区分 stdin EOF、TERM、KILL 与实际 close/code/signal；活动长轮询取消允许 TERM 退出，但 KILL 一律失败。完成后检查未 ACK 批次身份和事件覆盖保持，允许协议定义的签名游标续签，不自动 ACK。每个真实 MCP launcher 登记 PID，仅对已证明属于本次自建组的进程组做清退；未证明的候选只检查存在性，留目录并失败。正常读取发现、控制协议矩阵与 EOF 自然退出应按收据分别判断，不能因 driver exit0 就写成宿主自然退出。
+
+若要跑有模型的原生 turn，必须另行得到模型/服务选择的明确授权。Codex 0.165.0 的 `approval_policy=never` 可能在工具到达 HTTP 前拒绝；仅在明确授权的私有测试 MCP 表设置必要的工具审批，或逐次处理请求。不得用全局权限绕过。Claude 的完整 turn 同样只授权具体必要工具。无模型 control 驱动不代表该层审批或转接器已验收。

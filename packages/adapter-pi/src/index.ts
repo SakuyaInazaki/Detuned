@@ -1,5 +1,5 @@
 import type { ExtensionAPI, ExtensionCommandContext, ToolDefinition } from '@earendil-works/pi-coding-agent';
-import { createPiRuntime, safePiError } from './runtime.js';
+import { createPiRuntime, safePiError, piToolError } from './runtime.js';
 import { DETUNED_TOOLS } from '@detuned/protocol';
 
 export type PiExtensionContext = ExtensionAPI;
@@ -30,7 +30,11 @@ export function activate(pi: PiExtensionContext): void {
       description: toolDef.description,
       parameters: adaptToolSchema(toolDef.schema),
       execute: async (_toolCallId, params, signal, _onUpdate, _ctx) => {
-        return runtime.tool(toolDef.name, params as Record<string, unknown>, signal);
+        try {
+          return await runtime.tool(toolDef.name, params as Record<string, unknown>, signal);
+        } catch (error) {
+          throw piToolError(error);
+        }
       },
     });
   }

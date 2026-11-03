@@ -106,6 +106,9 @@ try {
   const invalidCount = requests.length;
   const invalid = await call('forum_review', { space_id: space, op: 'create_session', request_id: 'absent', client_name: 'invalid', client_version: '1', actor_id: 'PRIVATE_INVALID_MARKER' }).then(() => undefined, error => error);
   assert.equal(invalid?.code, 'VALIDATION_ERROR');
+  assert.equal(invalid.message, '[VALIDATION_ERROR] Invalid forum tool arguments.');
+  assert.equal(invalid.statusCode, 400);
+  assert.equal(invalid.retryable, false);
   assert.equal(String(invalid?.message).includes('PRIVATE_INVALID_MARKER'), false);
   assert.equal(requests.length, invalidCount);
   evidence.invalid_review_before_prepare_http = 0;
@@ -137,6 +140,7 @@ try {
     assert.ok(denied instanceof DetunedError);
     assert.equal(denied.code, 'NOT_FOUND');
     assert.equal(denied.statusCode, 404);
+    assert.equal(denied.message.startsWith('[NOT_FOUND] '), true);
     assert.equal(JSON.stringify({ message: denied.message, details: denied.details }).includes(actors[1].credential.token), false);
     // Add the ninth-tool path only after all original identity/session counts.
     await admin.patchSpace(space, { expected_revision: 1, review_policy: { enabled: true, required_reviewers: 1, exclude_contributors: true, distinct_actors: true, distinct_independence_groups: false, seal_until_all_submitted: true, invalidate_on_revision: true, required_checks: [], allow_open_objections: false } }, 'review-policy');

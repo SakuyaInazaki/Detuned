@@ -25,9 +25,11 @@ function get(port: number, options: { servername?: string; ca?: Buffer; headers?
 }
 beforeAll(() => {
   dir=mkdtempSync(join(tmpdir(),'detuned-tls-author-'));
-  openssl(['req','-x509','-newkey','rsa:2048','-nodes','-keyout','ca.key','-out','ca.pem','-days','1','-subj','/CN=Detuned private author CA']);
+  // Explicit CA extensions avoid depending on the machine's OpenSSL defaults.
+  writeFileSync(join(dir,'ca.cnf'),'[req]\ndistinguished_name=dn\nx509_extensions=ca\n[dn]\n[ca]\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n');
+  openssl(['req','-x509','-newkey','rsa:2048','-nodes','-keyout','ca.key','-out','ca.pem','-days','1','-subj','/CN=Detuned private author CA','-config','ca.cnf']);
   openssl(['req','-new','-newkey','rsa:2048','-nodes','-keyout','leaf.key','-out','leaf.csr','-subj','/CN=localhost']);
-  writeFileSync(join(dir,'leaf.ext'),'subjectAltName=DNS:localhost,IP:127.0.0.1\nbasicConstraints=CA:FALSE\n');
+  writeFileSync(join(dir,'leaf.ext'),'subjectAltName=DNS:localhost,IP:127.0.0.1\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\n');
   openssl(['x509','-req','-in','leaf.csr','-CA','ca.pem','-CAkey','ca.key','-CAcreateserial','-out','leaf.pem','-days','1','-extfile','leaf.ext']);
   cert=readFileSync(join(dir,'leaf.pem'));key=readFileSync(join(dir,'leaf.key'));ca=readFileSync(join(dir,'ca.pem'));
 });

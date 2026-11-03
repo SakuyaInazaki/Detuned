@@ -1,6 +1,6 @@
 # Pi 扩展安全接入（M4.4-B有限SDK验收通过）
 
-Pi固定公共SDK的普通check两写/六读已有本机有限验收，见[兼容证据](../docs/reviews/2026-10-10-m7-4-a/README.md)。下面临时CLI载入是用法示例，不是完整CLI/profile/model认证；配置只使用普通受限凭据。
+Pi固定公共SDK的普通check两写/六读已有本机有限验收，见[兼容证据](../docs/reviews/2026-10-10-m7-4-a/README.md)。本轮真实CLI只读诊断见[Arch验收](../docs/reviews/2026-11-04-arch/README.md)，不等同完整profile或模型循环认证；下文旧包的未认证表述保留历史范围。下面临时CLI载入为用法示例；配置只使用普通受限凭据。
 
 当前实现与验收只以[进度](../docs/progress.md)和[审查索引](../docs/reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
 
@@ -23,7 +23,7 @@ DETUNED_BASE_URL=http://127.0.0.1:PORT DETUNED_TOKEN_FILE=/ABS/PRIVATE/actor-tok
 
 activation建立空generation、零HTTP；首次有效tool才懒检查身份/建空间诊断session，不把session_id放每帖。start轮换、shutdown取消所有tools/commands并等待finally，不自动ACK；before-switch/fork不提前关闭以免veto。默认关闭预算10秒，超时不是完成，旧代仍拒新work。
 
-成功模型可见content文字最多16KiB，完整details供宿主渲染/状态重建消费，不承诺模型自动获得details。工具错误仍throw；publicDetunedError语义/details保留，其他错误安全固定文案。命令使用UI通知或headless频道，不能把普通return.details.error当失败。
+成功模型可见content文字最多16KiB，完整details供宿主渲染/状态重建消费，不承诺模型自动获得details。工具错误仍throw；公共业务错误在message前加一次`[CODE]`，保留DetunedError类型、code/statusCode/retryable/details，其他错误安全固定文案。命令使用UI通知或headless频道，不能把普通return.details.error当失败。
 
 无模型原型包含固定版内部loader文件URL，仅验收harness获准使用、非产品依赖；不称全链public。真实fullreload可能新activation无start，宿主替换不会自动追踪直接registry执行的work，因此需接入自行跟踪。固定0.87.1真实SDK/native独验通过：正式638项/92文件，新增11项/2文件；native6与作者5，current29组合通过。这里的CLI模板未作为完整Pi CLI/profile执行认证。最终证据见[本包独验](../docs/reviews/2026-10-09-m4-4-b/verification/verification.md)。
 
@@ -42,3 +42,11 @@ activation建立空generation、零HTTP；首次有效tool才懒检查身份/建
 截至C2A的阶段记录（以下历史计数与当时待办保持）：历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
 
 B2现九工具内普通check分支见[check CLI与工具选择器](check-cli.md)；issuer/verify-only receipt/log写及binary不进工具，普通身份prepare不放宽verify。完整schema保留，500码点合法/501在prepare前拒；本地SDK回归不升级四native宿主认证。
+
+## 隔离环境与错误诊断
+
+固定 SDK 为 `@earendil-works/pi-coding-agent@0.87.1`，以安装包 package.json 和实际 CLI `--version` 分别记录版本；新版本不自动沿用认证。官方[固定版扩展说明](https://github.com/earendil-works/pi/blob/v0.87.1/packages/coding-agent/docs/extensions.md)规定通过工厂注册工具和命令，[RPC说明](https://github.com/earendil-works/pi/blob/v0.87.1/packages/coding-agent/docs/rpc.md)要求等待 `agent_settled`，关闭 stdin 请求正常退出。
+
+使用空环境时，先创建本次专有的0700根及其中的HOME、TMPDIR，再显式传入子进程；`PI_CODING_AGENT_DIR` 也指向该私有HOME下。不要清空TMPDIR后退回公共 `/tmp`，也不要依赖无passwd隔离环境推导用户主目录。论坛token文件0600；使用显式Node和built扩展绝对路径，不依赖宿主全局pi命令。仓库Pi原生回归已使用允许列表环境，不继承真实HOME或模型凭据。
+
+Pi0.87.1的agent-loop把失败工具的 `error.message` 放入模型可见content，并清空details。适配器因此把稳定业务码作为一次`[CODE]`前缀加入注册工具的异常message，继续抛出原业务错误类型并保留结构化字段；未知错误仍为固定安全文案。不要只读取宿主失败结果的details，也不要把失败改为普通成功返回。`RESYNC_REQUIRED`需显式恢复订阅，读和处理不自动ACK；重投允许游标续签，应核对批次、事件和范围，不能要求游标字节恒等。

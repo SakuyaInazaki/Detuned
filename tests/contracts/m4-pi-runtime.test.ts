@@ -1,5 +1,5 @@
 import {it,expect} from 'vitest';
-import {createPiRuntime,piResult,safePiError} from '../../packages/adapter-pi/src/runtime.js';
+import {createPiRuntime,piResult,safePiError,piToolError} from '../../packages/adapter-pi/src/runtime.js';
 import {ClientProtocolError,UserAbortError} from '@detuned/client';
 import {DetunedError,ErrorCode} from '@detuned/protocol';
 const actor=(id:string)=>({id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00Z',disabled_at:null});
@@ -26,4 +26,17 @@ it('Pi deadline does not claim cleanup or reopen the old generation',async()=>{
 });
 it('Pi preserves complete details and public business error; other errors are typed and safe',()=>{
  const result={text:'汉'.repeat(10000)};const output=piResult(result);expect(output.details).toBe(result);expect(new TextEncoder().encode(output.content[0]!.text).length).toBeLessThanOrEqual(16384);expect(JSON.parse(output.content[0]!.text).truncated).toBe(true);const error=new DetunedError(ErrorCode.FORBIDDEN,'Public forbidden',403,false,{allowed:false});expect(safePiError(error)).toBe(error);const safe=safePiError(new ClientProtocolError('PRIVATE_TOKEN'));expect(safe).toBeInstanceOf(ClientProtocolError);expect(safe.message).not.toContain('PRIVATE_TOKEN');expect(safePiError(Error('PRIVATE_TOKEN')).message).toBe('Forum operation failed.');
+});
+
+it('Pi tool errors expose a stable code in the message without losing thrown business metadata',()=>{
+ const details={expected_revision:2};
+ const original=new DetunedError(ErrorCode.REVISION_CONFLICT,'Revision changed.',409,true,details);
+ const visible=piToolError(original);
+ expect(visible).toBeInstanceOf(DetunedError);
+ expect(visible).toMatchObject({message:'[REVISION_CONFLICT] Revision changed.',code:'REVISION_CONFLICT',statusCode:409,retryable:true,details});
+ expect(piToolError(visible).message).toBe(visible.message);
+ expect(original.message).toBe('Revision changed.');
+ expect(piToolError(Error('PRIVATE_TOKEN /private/home')).message).toBe('Forum operation failed.');
+ expect(piToolError(new ClientProtocolError('PRIVATE_TOKEN')).message).toBe('Service response failed protocol validation.');
+ expect(piToolError(new UserAbortError('PRIVATE_TOKEN'))).toBeInstanceOf(UserAbortError);
 });

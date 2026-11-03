@@ -1,6 +1,8 @@
 # dsh 官方 MCP 插件联调
 
-状态：**固定版官方 plugin/registry、Loader 配置加载与真实配置 HMR 有限本机验收通过（2026-10-09）**。固定官方 commit `5badb15009ae1756c3afe0ae0cef1faafc290ccc`，MCP 插件 `@deepseek-ai/dsh-mcp-client` 版本 `0.2.1-alpha.1`；没有在本页宣称完整 CLI/profile 自动合成、模块代码 HMR 或模型运行验收。
+当前Arch补充验收见[验收报告](../docs/reviews/2026-11-04-arch/README.md)：固定源码plugin/registry与Loader/配置HMR均已独立实跑，另有0.2.1-rc.2完整CLI的无模型诊断。以下2026-10-09段落保留历史范围。
+
+历史状态：**固定版官方 plugin/registry、Loader 配置加载与真实配置 HMR 有限本机验收通过（2026-10-09）**。固定官方 commit `5badb15009ae1756c3afe0ae0cef1faafc290ccc`，MCP 插件 `@deepseek-ai/dsh-mcp-client` 版本 `0.2.1-alpha.1`；没有在本页宣称完整 CLI/profile 自动合成、模块代码 HMR 或模型运行验收。
 
 使用 [独立 patch](../integrations/dsh/cordis.patch.example.yml)，替换显式 Node 可执行文件绝对路径、已构建桥的绝对路径、loopback URL 与私有 actor token-file。这里只给配置文本，不自动写入任何 home/profile。token-file 建议0600，仅分配 read/write 和指定空间；普通 Agent 不分发管理员权限。
 
@@ -37,6 +39,24 @@ stdio 协商可能启动临时 probe。probe、initialize、list-tools 不创建
 
 M4.3-B 使用真实 `loadOverlayPatches`/`mountRootInclude`、Loader/Include 与 `Hmr.watchConfig`，没有手 emit。作者最终3/3（一个 constructor probe、两个业务case）4.09s；独立坏YAML→保留A→有效B恢复首1/1、5.66s。旧在途poll取消不ACK，真实配置事件重装后新帖author/空间属B；独立四PID自然退出。坏YAML解析失败保留前一有效A配置，**不承诺任意重装失败完整回滚**。见 [作者报告](../docs/reviews/2026-10-09-m4-3-b/author/loader/README.md) 与 [独立报告](../docs/reviews/2026-10-09-m4-3-b/verification/independent/README.md)。
 
-运行图来自同SHA官方源、官方编译器、40项目受限构建及官方标准decorator transform；未运行全workspace Typert生成或完整hostbuild。同SHA新checkout与已装原锁依赖的前置和受限build recipe见 [可复现说明](../docs/reviews/2026-10-09-m4-3-b/author/loader/reproduce.md)；portable helper仅语法检查/dry-run已验，未在新checkout完整实跑。完整CLI/profile自动合成、模块代码HMR和模型会话仍未测。读取/取消不自动ACK，未确认批次按可靠消费协议保留。
+运行图来自同SHA官方源、官方编译器、40项目受限构建及官方标准decorator transform；未运行全workspace Typert生成或完整hostbuild。同SHA新checkout与已装原锁依赖的前置和受限build recipe见 [可复现说明](../docs/reviews/2026-10-09-m4-3-b/author/loader/reproduce.md)；该历史包当时的portable helper仅语法检查/dry-run已验；本轮新checkout的原锁最小依赖布局、40项目编译与官方transform构建、plugin与loader实跑见[Arch验收](../docs/reviews/2026-11-04-arch/README.md)。完整CLI/profile自动合成、模块代码HMR和模型会话仍未测。读取/取消不自动ACK，未确认批次按可靠消费协议保留。
 
 固定来源：[MCP README](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md)、[app-boot](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/boot/app-boot/README.md)、[insert/patch 说明](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/docs/user/develop/basic/publish.md)。接入边界见 [规格](../integrations/dsh.md)。
+
+## Linux复现与错误结果
+
+复现必须区分固定源码提交与 npm 发行版。历史源码链固定 `5badb15009ae1756c3afe0ae0cef1faafc290ccc`；外部Arch报告分别取得 `@deepseek-ai/dsh@0.2.1-alpha.1` 和既有 `0.2.1-rc.2`。发行包缺少可核实gitHead时，不宣称等同源码提交。记录实际CLI及MCP插件package.json版本、Node版本、入口和profile；不得用registry诊断驱动的成功冒充自主模型会话。
+
+官方[MCP说明](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md)要求每server单独配置并使用命名空间。每次私有cwd、HOME和TMPDIR均应处于本次自有0700根，token文件0600；launcher显式隔离HOME和TMPDIR，runtime/loader fixture遵循TMPDIR，不使用Darwin专有`/private/tmp`。源码链仍要求预先取得固定源码及依赖，不自动安装上游。
+
+标准MCP错误有 `isError` 和结构化错误；dsh registry可能把同一错误保留为JSON文本，不能只检查 `structuredContent.error`。可复用仓库的 `scripts/integrations/dsh-runtime/error-code.mjs` 中 `dshErrorCode(result)`：它先要求 `isError === true`，再只从 `structuredContent.error.code`、官方registry的 `error.message` 内完整JSON `error.code`，或 `content` 内text块的完整JSON `error.code` 精确读取；仅允许移除官方内容固定的`Error: `前缀。无效JSON、干扰字符串、成功结果及相互冲突的错误码均不推断为业务码。文本不是可执行指令。非法参数应取得 `VALIDATION_ERROR` 且零HTTP，无权对象为安全 `NOT_FOUND`，跨actor consumer可为 `FORBIDDEN`。不要把所有越权响应限定为401/403，也不要把返回文本当成功。
+
+共享服务重启后，以批次ID、事件和覆盖范围验证未ACK重投；next_cursor允许续签。取消和卸载须等待自有调用finally与已登记子进程退出，不以工具发现、dump-config或被强杀等同正常关闭。可选通知、完整模块HMR和任意宿主配置仍需各自验收。
+
+固定发行版CLI无模型诊断可在外部已隔离的Linux测试根中执行（安装目录只读映射，预先构建九后端包）：
+
+```sh
+DETUNED_DSH_PROBE_ISOLATED=1 node /ABS/Detuned/scripts/integrations/dsh-runtime/cli-check-probe.mjs /ABS/Detuned /ABS/OWNED/TEST-ROOT /ABS/READ-ONLY/DSH
+```
+
+此probe固定dsh0.2.1-rc.2，通过完整CLI加载私有空bundle profile和官方MCP插件；诊断插件等待九工具真实注册，再经registry调用。父服务用屏障独立计数非法输入的零HTTP，核对越权拒绝、成功固定读取与关闭。诊断插件主动向自身发送SIGTERM，请求官方launcher处理关闭，随后验证实际exit0及自有进程组消失；这与stdin EOF自然结束分别记录。显式标记只是调用者对外部隔离的确认，脚本不自行建立隔离。它不发送prompt或模型请求；不代表自主模型会话，也不将npm发行版等同固定源码提交。
