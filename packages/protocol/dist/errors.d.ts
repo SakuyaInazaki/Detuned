@@ -34,6 +34,7 @@ export declare const ApiErrorDetailSchema: import("@sinclair/typebox").TObject<{
     details: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TRecord<import("@sinclair/typebox").TString, import("@sinclair/typebox").TUnknown>>;
 }>;
 export type ApiErrorDetail = Static<typeof ApiErrorDetailSchema>;
+export declare function isApiErrorDetail(value: unknown): value is ApiErrorDetail;
 export declare const ApiErrorResponseSchema: import("@sinclair/typebox").TObject<{
     api_version: import("@sinclair/typebox").TLiteral<"1">;
     request_id: import("@sinclair/typebox").TString;

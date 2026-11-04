@@ -72,8 +72,11 @@ it('DF01 finalizer current rights and ordered errors remain mandatory while immu
  refused(()=>f.finals.finalizeRequest(f.context(f.actors.reader),f.sid,f.request.id,{expected_version:3},'readonly'),'FORBIDDEN');
  refused(()=>f.finals.finalizeRequest(f.context(),f.other,f.request.id,{expected_version:3},'cross'),'NOT_FOUND');expect(f.counts()).toEqual(before);
  const result=f.finalize();expect(result).toMatchObject({outcome:'accepted',request_version:4,check_receipt_ids:[]});
+ f.spaces.patchSpace(f.context(),f.sid,{expected_revision:1,rules:['Owned rule']},'same-rules-after-decision');
+ expect(f.status.getStatus(f.context(f.actors.reader),f.sid,f.request.id)).toMatchObject({phase:'accepted',current_validity:'current',validity_reasons:[]});
+ expect(f.finals.getDecision(f.context(f.actors.reader),f.sid,f.request.id)).toEqual(result);
  const member=f.storage.getMembership(f.sid,f.actors.one)!;f.storage.upsertMembership({...member,reviewer_eligible:false});
- f.spaces.patchSpace(f.context(),f.sid,{expected_revision:1,rules:['changed policy']},'after-decision-rule');
+ f.spaces.patchSpace(f.context(),f.sid,{expected_revision:2,rules:['changed policy']},'after-decision-rule');
  const snapshot=f.counts();expect(f.finals.finalizeRequest(f.context(),f.sid,f.request.id,{expected_version:3},'finalize')).toEqual(result);expect(f.counts()).toEqual(snapshot);
  expect(f.finals.getDecision(f.context(f.actors.reader),f.sid,f.request.id)).toEqual(result);
  f.db.prepare('UPDATE credentials SET capabilities=? WHERE actor_id=?').run(JSON.stringify(['read']),f.actors.author);

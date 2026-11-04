@@ -232,6 +232,9 @@ try {
 async function runPiChecks() {
   const {prepareOrdinaryCheckFixture,exerciseOrdinaryCheckBranches,nativeCheckNames}=await import('../../../scripts/integrations/claude-check-probe.mjs');
   const {ArtifactFileStore}=await import('../../../packages/server/dist/index.js');
+  const {assertPendingRedelivery}=await import('../../../scripts/integrations/poll-redelivery.mjs');
+  let clockOffset=0;
+  const clock={now:()=>new Date(Date.now()+clockOffset),nowIso:()=>new Date(Date.now()+clockOffset).toISOString()};
   const dir=process.argv[3];assert.equal(typeof dir,'string');assert.equal(process.argv.length,4);assert.equal(await fs.realpath(dir),dir);const rootStat=await fs.lstat(dir);assert.ok(rootStat.isDirectory()&&!rootStat.isSymbolicLink());assert.equal(rootStat.mode&0o777,0o700);assert.deepEqual(await fs.readdir(dir),[]);let db,app,host,originalFailure,body;const ownedSockets=new Map();let acceptedSockets=0,closedSockets=0;
   const stage=(label,error,counts={})=>{if(budgetAbort.signal.aborted&&!label.includes('cleanup')&&label!=='catch'){const failure=new Error('Checks cancelled');failure.code='CHECKS_DEADLINE';throw failure;}const value={stage:label};for(const key of ['active_count','connections'])if(Number.isSafeInteger(counts[key])&&counts[key]>=0)value[key]=counts[key];if(error){value.error_name=/^[A-Za-z0-9_]{1,64}$/.test(error.name??'')?error.name:'Error';if(/^[A-Z0-9_]{1,64}$/.test(error.code??''))value.error_code=error.code;}if(process.connected)process.send(value,()=>{});};
   const bounded=async(promise,signal,ms)=>{let timer,listener;try{return await Promise.race([promise,new Promise((_,reject)=>{const fail=()=>{const error=new Error('Bounded checks wait');error.code='CHECKS_DEADLINE';reject(error);};if(signal?.aborted)fail();else if(signal){listener=fail;signal.addEventListener('abort',listener,{once:true});}if(ms!==undefined)timer=setTimeout(fail,ms);})]);}finally{clearTimeout(timer);if(listener)signal.removeEventListener('abort',listener);}};
@@ -241,7 +244,7 @@ async function runPiChecks() {
   try {
     body=(async()=>{
     db=new Database(path.join(dir,'private.sqlite'));const boot=bootstrapDatabase(db);const blobs=await ArtifactFileStore.create(dir);
-    app=buildApp({storage:new SqliteStorage(db,{dataDir:dir}),artifactBlobs:blobs,writeRateLimits:{per_minute:60000,burst:10000}});
+    app=buildApp({storage:new SqliteStorage(db,{dataDir:dir}),artifactBlobs:blobs,clock,writeRateLimits:{per_minute:60000,burst:10000}});
     app.server.on('connection',socket=>{acceptedSockets++;const closed=new Promise(resolve=>socket.once('close',()=>{closedSockets++;ownedSockets.delete(socket);resolve();}));ownedSockets.set(socket,closed);});
     const requests=[];let waitingEntered;app.addHook('onRequest',async req=>{requests.push({method:req.method,path:req.url.split('?')[0]});if(waitingEntered&&req.url.includes('/consumers/'+waitingEntered.id+'/poll'))waitingEntered.resolve();});
     await app.listen({host:'127.0.0.1',port:0});const url='http://127.0.0.1:'+app.server.address().port;
@@ -261,11 +264,23 @@ async function runPiChecks() {
     evidence.checks=await exerciseOrdinaryCheckBranches(call,fixture,()=>requests.length,label=>stage(label));
     stage('matrix-done');stage('subscribe-begin');
     const pending=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'checks-pending',start:'beginning'},'checks-pending')).data.consumer,batch=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.ok(batch.batch_id);
+    const pendingState=()=>db.prepare('SELECT ack_seq,active_batch_id FROM consumers WHERE id=?').get(pending.id);
+    const batchState=()=>db.prepare('SELECT from_seq,through_seq,event_ids,acked_at FROM delivery_batches WHERE id=?').get(batch.batch_id);
+    const pendingBefore=pendingState(),batchBefore=batchState();
     const waiting=(await fixture.ordinary.subscribe(fixture.space,{consumer_key:'checks-waiting',start:'now'},'checks-waiting')).data.consumer;
     stage('subscribe-done');
     const beforeAck=requests.filter(req=>req.path.endsWith('/ack')).length;let entered;const entry=new Promise(resolve=>{entered=resolve;});waitingEntered={id:waiting.id,resolve:()=>{stage('wait-entry');entered();}};stage('wait-begin');
     const controller=new AbortController(),flight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000},controller.signal);await Promise.race([entry,new Promise((_,reject)=>{const fail=()=>reject(new UserAbortError());if(budgetAbort.signal.aborted)fail();else budgetAbort.signal.addEventListener('abort',fail,{once:true});})]);stage('abort');controller.abort();const cancelled=await flight;stage('flight-settled');assert.equal(cancelled.ok,false);assert.ok(cancelled.error instanceof UserAbortError);
-    stage('host-cleanup-begin');await bounded(host.dispose(),budgetAbort.signal);host=null;stage('host-cleanup-done');evidence.cleanup.host_disposed=true;const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
+    stage('host-cleanup-begin');await bounded(host.dispose(),budgetAbort.signal);host=null;stage('host-cleanup-done');evidence.cleanup.host_disposed=true;
+    // Advance the injected business clock, not real time. Re-signing is allowed;
+    // batch events, persisted coverage and acknowledgement position must survive.
+    clockOffset+=2000;
+    const resumed=(await fixture.ordinary.poll(fixture.space,pending.id,{limit:1})).data;
+    assertPendingRedelivery(resumed,batch);
+    assert.deepEqual(pendingState(),pendingBefore);assert.deepEqual(batchState(),batchBefore);
+    assert.equal(requests.filter(req=>req.path.endsWith('/ack')).length,beforeAck);
+    evidence.checks.cursor_renewed=resumed.next_cursor!==batch.next_cursor;
+    evidence.checks.ack_position_unchanged=true;evidence.checks.persisted_range_unchanged=true;
     evidence.checks={...evidence.checks,ack_delta:0,pending_unchanged:true,cancelled:true};
     })();await bounded(body,budgetAbort.signal);
   } catch(error) {originalFailure=error;stage('catch',error);budgetAbort.abort();if(body)await bounded(body,undefined,2000).catch(()=>{});}

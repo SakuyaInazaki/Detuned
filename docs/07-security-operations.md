@@ -194,6 +194,8 @@ WAL 使用 NOOP 观测 busy/log/checkpointed，不推进 checkpoint，不解释�
 
 BlobReadHandle的dispose为内部必需契约，不公开在HTTP JSON：真实ReadStream destroy并等待close，未读取首chunk或open晚兑现后取消同样显式dispose；不能依赖未启动asyncgenerator的iterator.return。读取错误也必须等close后才报告关闭失败。活动lease从异步操作前覆盖整个finally，socketclose不是lease完成；cancel回调只同步触发abort/destroy，异步cleanup/dispose由owner等待后finish。单cancel同步throw继续取消其他项，idle后固定错误拒绝，禁止吞成成功。
 
+plain HTTP 传输另观察本服务自己的 socket 与请求/响应生命周期。业务 finally 收束后及时关闭空连接、半 headers/body 及无在途响应的连接；已完整请求的正常响应须完成并 flush 后才清退，同 socket 的不完整后续 pipeline 不得使前一响应截断。TLS 原路径保持；普通业务响应不冒充新增资源 lease，默认退出预算不延长，超预算仍失败。长期不读取、令大响应持续背压的对端仍受原 CLI 退出预算约束，不承诺任意不合作对端都能自然关闭。
+
 严格锁释放与旧offline best-effort release分开。close失败不unlink；close成功后不重复关闭同FD；unlink失败保留锁材料待明确处理且退出失败，不能称锁已成功释放。成功后重复调用幂等。进程超时强制退出后的恢复仍走已有stale PID lock/临时材料恢复入口，不建立后台daemon、WAL硬配额或全目录占盘保证。本包实际签收以对应review/C最终报告为准。
 
 ## M5.1-A 有界同源Web认证部署边界

@@ -1,4 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
 
 export const ErrorCode = {
   INTERNAL_ERROR: 'INTERNAL_ERROR',
@@ -64,6 +65,10 @@ export const ApiErrorDetailSchema = Type.Object({
 }, { additionalProperties: false });
 
 export type ApiErrorDetail = Static<typeof ApiErrorDetailSchema>;
+
+export function isApiErrorDetail(value: unknown): value is ApiErrorDetail {
+  return Value.Check(ApiErrorDetailSchema, value);
+}
 
 export const ApiErrorResponseSchema = Type.Object({
   api_version: Type.Literal('1'),

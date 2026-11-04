@@ -1,4 +1,5 @@
 import { Type } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
 export const ErrorCode = {
     INTERNAL_ERROR: 'INTERNAL_ERROR',
     SERVICE_NOT_READY: 'SERVICE_NOT_READY',
@@ -57,6 +58,9 @@ export const ApiErrorDetailSchema = Type.Object({
     retryable: Type.Boolean(),
     details: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
 }, { additionalProperties: false });
+export function isApiErrorDetail(value) {
+    return Value.Check(ApiErrorDetailSchema, value);
+}
 export const ApiErrorResponseSchema = Type.Object({
     api_version: Type.Literal('1'),
     request_id: Type.String(),

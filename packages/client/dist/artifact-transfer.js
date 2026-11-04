@@ -1,4 +1,5 @@
-import { isArtifactMetadata, isReadableArtifactMetadata, isReadableCheckArtifactMetadata, isCreateArtifactMetadata, DetunedError, ErrorCode } from '@detuned/protocol';
+import { publicHttpError } from './http-error.js';
+import { isArtifactMetadata, isReadableArtifactMetadata, isReadableCheckArtifactMetadata, isCreateArtifactMetadata, DetunedError } from '@detuned/protocol';
 import { ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from './client.js';
 const MAX_BYTES = 26214400;
 const invalid = () => new ClientProtocolError('Invalid artifact metadata or transfer integrity.');
@@ -78,9 +79,9 @@ export async function downloadArtifactBytes(baseUrl, token, spaceId, artifactId,
                 if (cause instanceof ClientProtocolError)
                     throw cause;
             }
-            const detail = body?.error;
+            const detail = publicHttpError(body, response.status);
             const retryable = ![400, 401, 403, 404, 409, 413, 422].includes(response.status) && (response.status === 429 || [502, 503, 504].includes(response.status) || detail?.retryable === true);
-            throw new DetunedError(detail?.code ?? (response.status === 429 ? ErrorCode.RATE_LIMITED : response.status >= 500 ? ErrorCode.TEMPORARILY_UNAVAILABLE : ErrorCode.VALIDATION_ERROR), detail?.message ?? `HTTP ${response.status} 请求失败`, response.status, retryable, detail?.details);
+            throw new DetunedError(detail.code, detail.message, response.status, retryable, detail.details);
         }
         const length = response.headers.get('content-length');
         const mime = response.headers.get('content-type');

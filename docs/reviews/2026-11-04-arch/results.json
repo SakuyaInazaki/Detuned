@@ -899,5 +899,2318 @@
     ],
     "mismatches": [],
     "documentation_and_result_files_excluded": true
+  },
+  "followup": {
+    "baseline_commit": "5ff4961452292f5f6feff7dcc779e5bd5432c249",
+    "environment": {
+      "platform": "Arch Linux x86_64",
+      "node": "22.19.0",
+      "pnpm": "11.7.0",
+      "fresh_private_root": true,
+      "home_tmp_xdg_cache_isolated": true,
+      "external_network_disabled_for_checks": true,
+      "workers": 1,
+      "file_parallelism": false,
+      "provider_calls": 0
+    },
+    "backend_checks": {
+      "packages": [
+        "protocol",
+        "core",
+        "client",
+        "storage-sqlite",
+        "module-review",
+        "server",
+        "cli",
+        "mcp",
+        "adapter-pi"
+      ],
+      "build_exit_code": 0,
+      "typecheck_exit_code": 0,
+      "lint_exit_code": 0,
+      "actual_serial_steps": 27,
+      "schema_generation_and_check_passed": true,
+      "pnpmfiles_warning_retained": true
+    },
+    "full": {
+      "files": 165,
+      "total": 1009,
+      "passed": 1009,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/core/m5-web-session.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/probes/m0-probes.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/cli-tls.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/cross-interface-contract.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m0-m1-adapters-regression.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m0-m1-r2-adapters.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m2-context-contracts.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m2-focused-context-contracts.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m2-knowledge-view-contracts.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m2-post-revision-read-contracts.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m2-search-contracts.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m2-space-read-contracts.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m2-thread-posts-read-contracts.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/contracts/m2-typed-write-contracts.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m3-backup-cli.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m3-events-contract.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m3-logical-import-contract.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m3-offline-upgrade-contract.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m3-operations-contract.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m3-request-key-cli.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m3-resource-limits-contract.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m3-shutdown-contract.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m3-space-export-contract.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m3-write-limits-contract.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m4-admin-cli.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-artifact-cli.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-cli-boundaries-independent.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m4-cli-errors.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-client-error-boundary.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-dsh-error-code.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m4-mcp-binding-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-mcp-input-mode.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-mcp-lifecycle-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-mcp-runtime.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-mcp-schema.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-mcp-session.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m4-node-credentials.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m4-pi-error-loop.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m4-pi-runtime.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m4-read-cli-contract.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m4-runtime-binding-native.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m4-runtime-response-validation.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m4-token-source.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m4-write-consume-cli.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m5-post-catalogs-client.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m5-post-catalogs.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m5-post-order-index.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m5-thread-post-order.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m5-web-auth-client.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m5-web-auth-independent.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m5-web-auth-server.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m5-web-static.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m6-knowledge-status-contracts.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m6-public-review-search-contracts.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m6-public-review-search-tools-cli.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m6-review-canonicalization.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m6-review-catalog-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m6-review-catalog.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m6-review-cli.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m6-review-client.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m6-review-http-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m6-review-http.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/contracts/m6-review-tools-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m6-review-tools.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m7-check-cli-tools-independent.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m7-check-cli.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m7-check-client.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m7-check-http-client-independent.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "tests/contracts/m7-check-http.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m7-check-tools.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m7-claude-probe-ownership.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/contracts/m7-codex-launcher.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m7-codex-owned-group.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m7-delivery-layout.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m7-dsh-probe-json.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m7-linux-native-probe.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m7-pi-native-checks-independent.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/r4-c-contracts.test.ts",
+          "passed": 26,
+          "failed": 0,
+          "pending": 0,
+          "cases": 26
+        },
+        {
+          "file": "tests/contracts/r4-c-route-contracts.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/scale-run-lifecycle.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/server-http-shutdown.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/server-tls.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/historical-http-replay.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m0-m1-r2-regression.test.ts",
+          "passed": 12,
+          "failed": 0,
+          "pending": 0,
+          "cases": 12
+        },
+        {
+          "file": "tests/integration/m0-m1-r3-regression.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m0-m1-r4-b-regression.test.ts",
+          "passed": 82,
+          "failed": 0,
+          "pending": 0,
+          "cases": 82
+        },
+        {
+          "file": "tests/integration/m0-m1-regression.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m1-discussion.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m2-artifacts-cli.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m2-artifacts-core.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/integration/m2-artifacts-filesystem.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m2-artifacts-http.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/integration/m2-context-focus.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/integration/m2-context-session-chain.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/integration/m2-context.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m2-knowledge-views.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m2-post-revision-read.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "tests/integration/m2-search.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/integration/m2-space-revision-read.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/integration/m2-thread-posts-read.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "tests/integration/m2-typed-writes.test.ts",
+          "passed": 12,
+          "failed": 0,
+          "pending": 0,
+          "cases": 12
+        },
+        {
+          "file": "tests/integration/m3-backup-recovery-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-backup-recovery.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m3-event-core.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m3-event-recovery.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m3-export-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-import-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-logical-import.test.ts",
+          "passed": 12,
+          "failed": 0,
+          "pending": 0,
+          "cases": 12
+        },
+        {
+          "file": "tests/integration/m3-milestone-gate.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m3-offline-upgrade.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m3-operations-independent.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m3-operations.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m3-request-key-recovery.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m3-request-key-store.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/integration/m3-resource-limits-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-resource-limits.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "tests/integration/m3-shutdown-independent.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m3-shutdown-resources.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m3-space-export.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m3-upgrade-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-write-limits-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m3-write-rate-limit.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/integration/m4-admin-cli-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m4-admin-client.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m4-artifact-client-cli-independent.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m4-artifact-client.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/integration/m4-consumer-lifecycle.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m4-read-cli-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m4-session-subscription-client.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m4-write-consume-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m6-knowledge-status-independent.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m6-knowledge-status.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m6-public-review-search-independent.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m6-public-review-search.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-finalization-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-finalization.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-material-lifecycle.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/integration/m6-review-private-artifacts.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-requests-independent.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m6-review-requests.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m6-review-snapshot-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-snapshot.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m6-review-status.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/integration/m6-review-submissions-independent.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "tests/integration/m6-review-submissions.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m6-schema3-maintenance.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m6-schema4-maintenance-independent.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m6-schema4-maintenance.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/integration/m6-schema5-maintenance-independent.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m6-schema5-maintenance.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/integration/m7-check-domain-independent.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/integration/m7-check-domain.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m7-check-scope-artifacts.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m7-d01-reviewed-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m7-d01-reviewed.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/integration/m7-fixed-verifier-independent.test.ts",
+          "passed": 17,
+          "failed": 0,
+          "pending": 0,
+          "cases": 17
+        },
+        {
+          "file": "tests/integration/m7-fixed-verifier.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/integration/m7-local-startup.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/integration/m7-schema6-maintenance-independent.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "tests/integration/m7-schema6-maintenance.test.ts",
+          "passed": 3,
+          "failed": 0,
+          "pending": 0,
+          "cases": 3
+        },
+        {
+          "file": "packages/protocol/tests/schema.test.ts",
+          "passed": 5,
+          "failed": 0,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "packages/storage-sqlite/tests/schema-generation.test.ts",
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "cases": 10
+        },
+        {
+          "file": "packages/storage-sqlite/tests/storage.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        }
+      ],
+      "vitest_seconds": 318.5,
+      "exit_code": 0,
+      "command": "CI=true pnpm exec vitest run --maxWorkers=1 --no-file-parallelism --exclude tests/contracts/m6-knowledge-web-input.test.ts --exclude tests/contracts/m6-review-web-input.test.ts",
+      "unique_file_count": 165
+    },
+    "focused_first": {
+      "files": 14,
+      "total": 89,
+      "passed": 88,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/m4-client-error-boundary.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-dsh-error-code.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m4-pi-error-loop.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "passed": 6,
+          "failed": 1,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m4-pi-runtime.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m6-review-client.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m7-check-client.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m7-dsh-probe-json.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m7-linux-native-probe.test.ts",
+          "passed": 8,
+          "failed": 0,
+          "pending": 0,
+          "cases": 8
+        },
+        {
+          "file": "tests/contracts/m7-pi-native-checks-independent.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/r4-c-contracts.test.ts",
+          "passed": 26,
+          "failed": 0,
+          "pending": 0,
+          "cases": 26
+        },
+        {
+          "file": "tests/contracts/scale-run-lifecycle.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-finalization-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-material-lifecycle.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        }
+      ],
+      "vitest_seconds": 18.5
+    },
+    "focused_final": {
+      "files": 15,
+      "total": 101,
+      "passed": 101,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/m4-client-error-boundary.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/contracts/m4-dsh-error-code.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/m4-pi-error-loop.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m4-pi-runtime.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        },
+        {
+          "file": "tests/contracts/m6-review-client.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/m7-check-client.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m7-dsh-probe-json.test.ts",
+          "passed": 1,
+          "failed": 0,
+          "pending": 0,
+          "cases": 1
+        },
+        {
+          "file": "tests/contracts/m7-linux-native-probe.test.ts",
+          "passed": 9,
+          "failed": 0,
+          "pending": 0,
+          "cases": 9
+        },
+        {
+          "file": "tests/contracts/m7-pi-native-checks-independent.test.ts",
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "cases": 2
+        },
+        {
+          "file": "tests/contracts/r4-c-contracts.test.ts",
+          "passed": 26,
+          "failed": 0,
+          "pending": 0,
+          "cases": 26
+        },
+        {
+          "file": "tests/contracts/scale-run-lifecycle.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m3-event-core.test.ts",
+          "passed": 11,
+          "failed": 0,
+          "pending": 0,
+          "cases": 11
+        },
+        {
+          "file": "tests/integration/m6-review-finalization-independent.test.ts",
+          "passed": 6,
+          "failed": 0,
+          "pending": 0,
+          "cases": 6
+        },
+        {
+          "file": "tests/integration/m6-review-material-lifecycle.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        }
+      ],
+      "vitest_seconds": 21.93
+    },
+    "http_before": {
+      "files": 1,
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/server-http-shutdown.test.ts",
+          "passed": 0,
+          "failed": 4,
+          "pending": 0,
+          "cases": 4
+        }
+      ],
+      "vitest_seconds": 7.12
+    },
+    "http_after_with_tls": {
+      "files": 2,
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/server-http-shutdown.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        },
+        {
+          "file": "tests/contracts/server-tls.test.ts",
+          "passed": 4,
+          "failed": 0,
+          "pending": 0,
+          "cases": 4
+        }
+      ],
+      "vitest_seconds": 1.74
+    },
+    "client_baseline": {
+      "files": 2,
+      "total": 12,
+      "passed": 9,
+      "failed": 3,
+      "pending": 0,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/m4-client-error-boundary.test.ts",
+          "passed": 2,
+          "failed": 3,
+          "pending": 0,
+          "cases": 5
+        },
+        {
+          "file": "tests/contracts/m4-pi-runtime.test.ts",
+          "passed": 7,
+          "failed": 0,
+          "pending": 0,
+          "cases": 7
+        }
+      ]
+    },
+    "native_baseline": {
+      "files": 1,
+      "total": 8,
+      "passed": 0,
+      "failed": 1,
+      "pending": 7,
+      "todo": 0,
+      "per_file": [
+        {
+          "file": "tests/contracts/m7-linux-native-probe.test.ts",
+          "passed": 0,
+          "failed": 1,
+          "pending": 7,
+          "cases": 8
+        }
+      ],
+      "selection": "One behavior case executed by -t; seven unmatched tests reported as skipped/pending and were not executed."
+    },
+    "policy_baseline": {
+      "file": "tests/integration/m6-review-material-lifecycle.test.ts",
+      "cases": 4,
+      "passed": 3,
+      "failed": 1,
+      "ML04_ms": 55.758749999999964
+    },
+    "native": {
+      "codex-active": {
+        "status": "passed",
+        "host": "codex",
+        "version": "codex-cli 0.165.0",
+        "scope": "native-control-no-model",
+        "shutdown": "active",
+        "stage": "complete",
+        "cleanup": {
+          "group_absent": true,
+          "server_closed": true,
+          "db_closed": true,
+          "bridge_count": 2,
+          "bridges_absent": true,
+          "private_directory_removed": true
+        },
+        "native_close": {
+          "code": 0,
+          "signal": null
+        },
+        "lifecycle": [
+          {
+            "event": "stdin-end",
+            "after_eof_ms": 0
+          },
+          {
+            "event": "close",
+            "code": 0,
+            "signal": null,
+            "after_eof_ms": 4273
+          }
+        ],
+        "checks": {
+          "invalid_before_prepare_http": 0,
+          "reads": [
+            "check_run",
+            "check_snapshot",
+            "check_post_revision",
+            "check_receipt",
+            "check_artifact",
+            "required_checks"
+          ],
+          "reason_500": true,
+          "scope_denied": true,
+          "artifact_metadata_only": true,
+          "pending_unchanged": true,
+          "ack_delta": 0,
+          "cancelled": true,
+          "active_poll_aborted": true,
+          "runtime_drained": true
+        },
+        "tools": [
+          "forum_ack",
+          "forum_context",
+          "forum_poll",
+          "forum_publish",
+          "forum_read",
+          "forum_relate",
+          "forum_review",
+          "forum_search",
+          "forum_subscribe"
+        ]
+      },
+      "codex-idle": {
+        "status": "passed",
+        "host": "codex",
+        "version": "codex-cli 0.165.0",
+        "scope": "native-control-no-model",
+        "shutdown": "idle",
+        "stage": "complete",
+        "cleanup": {
+          "group_absent": true,
+          "server_closed": true,
+          "db_closed": true,
+          "bridge_count": 2,
+          "bridges_absent": true,
+          "private_directory_removed": true
+        },
+        "native_close": {
+          "code": 0,
+          "signal": null
+        },
+        "lifecycle": [
+          {
+            "event": "stdin-end",
+            "after_eof_ms": 0
+          },
+          {
+            "event": "close",
+            "code": 0,
+            "signal": null,
+            "after_eof_ms": 4266
+          }
+        ],
+        "checks": {
+          "invalid_before_prepare_http": 0,
+          "reads": [
+            "check_run",
+            "check_snapshot",
+            "check_post_revision",
+            "check_receipt",
+            "check_artifact",
+            "required_checks"
+          ],
+          "reason_500": true,
+          "scope_denied": true,
+          "artifact_metadata_only": true
+        },
+        "tools": [
+          "forum_ack",
+          "forum_context",
+          "forum_poll",
+          "forum_publish",
+          "forum_read",
+          "forum_relate",
+          "forum_review",
+          "forum_search",
+          "forum_subscribe"
+        ],
+        "thread_release": {
+          "status": "unsubscribed"
+        },
+        "idle_exit": {
+          "observed": true,
+          "natural": true,
+          "code": 0,
+          "signal": null
+        }
+      },
+      "claude-active": {
+        "status": "passed",
+        "host": "claude",
+        "version": "2.1.312 (Claude Code)",
+        "scope": "native-control-no-model",
+        "shutdown": "active",
+        "stage": "complete",
+        "cleanup": {
+          "group_absent": true,
+          "server_closed": true,
+          "db_closed": true,
+          "bridge_count": 1,
+          "bridges_absent": true,
+          "private_directory_removed": true
+        },
+        "native_close": {
+          "code": 0,
+          "signal": null
+        },
+        "lifecycle": [
+          {
+            "event": "stdin-end",
+            "after_eof_ms": 0
+          },
+          {
+            "event": "close",
+            "code": 0,
+            "signal": null,
+            "after_eof_ms": 75
+          }
+        ],
+        "checks": {
+          "invalid_before_prepare_http": 0,
+          "reads": [
+            "check_run",
+            "check_snapshot",
+            "check_post_revision",
+            "check_receipt",
+            "check_artifact",
+            "required_checks"
+          ],
+          "reason_500": true,
+          "scope_denied": true,
+          "artifact_metadata_only": true,
+          "pending_unchanged": true,
+          "ack_delta": 0,
+          "cancelled": true,
+          "active_poll_aborted": true,
+          "runtime_drained": true
+        },
+        "tools": [
+          "forum_ack",
+          "forum_context",
+          "forum_poll",
+          "forum_publish",
+          "forum_read",
+          "forum_relate",
+          "forum_review",
+          "forum_search",
+          "forum_subscribe"
+        ]
+      }
+    },
+    "dsh": {
+      "version": "0.2.1-rc.2",
+      "mcp_version": "0.2.1-rc.2",
+      "host_node": "v26.11.1",
+      "backend_node": "v22.19.0",
+      "tools": [
+        "mcp__detuned__forum_ack",
+        "mcp__detuned__forum_context",
+        "mcp__detuned__forum_poll",
+        "mcp__detuned__forum_publish",
+        "mcp__detuned__forum_read",
+        "mcp__detuned__forum_relate",
+        "mcp__detuned__forum_review",
+        "mcp__detuned__forum_search",
+        "mcp__detuned__forum_subscribe"
+      ],
+      "invalid_code": "VALIDATION_ERROR",
+      "invalid_http": 0,
+      "denied_code": "NOT_FOUND",
+      "read_success": true,
+      "model_calls": 0,
+      "shutdown_request": "diagnostic_plugin_SIGTERM",
+      "close": {
+        "code": 0,
+        "signal": null
+      },
+      "server_closed": true,
+      "owned_group_absent": true,
+      "error_shape": {
+        "is_error": true,
+        "error_message_string": true,
+        "content_text_string": true,
+        "structured_error_present": false
+      }
+    },
+    "pi_cli": {
+      "passed": true,
+      "version": "0.87.1",
+      "node": "v22.19.0",
+      "commands": [
+        "forum-status",
+        "forum-check"
+      ],
+      "idle": true,
+      "eof_close": {
+        "code": 0,
+        "signal": null
+      },
+      "provider_calls": 0,
+      "business_tool_execution": false
+    },
+    "controls": {
+      "passed": true,
+      "provider_calls": 0,
+      "clock_advance_ms": 2000,
+      "cursor_renewed": true,
+      "ack_used_renewed_cursor": true,
+      "consumption": {
+        "from_seq": 10000,
+        "through_seq": 10001,
+        "actual_ack": true,
+        "no_auto_ack": true
+      },
+      "ACL_statuses": [
+        404,
+        403,
+        401,
+        401
+      ],
+      "source_lifecycle_projection": [
+        "active",
+        "withdrawn",
+        "redacted"
+      ],
+      "server_closed": true
+    },
+    "transport_before": {
+      "rows": [
+        {
+          "entry": "buildApp",
+          "mode": "keepalive",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": true,
+          "observe_ms": 1
+        },
+        {
+          "entry": "buildApp",
+          "mode": "raw",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": false,
+          "observe_ms": 1500
+        },
+        {
+          "entry": "buildApp",
+          "mode": "partial",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": true,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": false,
+          "observe_ms": 1502
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "keepalive",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "close_called": true,
+          "close_callback": true,
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 12,
+          "shutdown_failure_reported": false
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "raw",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "close_called": true,
+          "close_callback": false,
+          "code": 1,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 10006,
+          "shutdown_failure_reported": true
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "partial",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": true,
+          "close_called": true,
+          "close_callback": false,
+          "code": 1,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 10011,
+          "shutdown_failure_reported": true
+        }
+      ]
+    },
+    "transport_after": {
+      "rows": [
+        {
+          "entry": "buildApp",
+          "mode": "keepalive",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": true,
+          "observe_ms": 1
+        },
+        {
+          "entry": "buildApp",
+          "mode": "raw",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": true,
+          "observe_ms": 0
+        },
+        {
+          "entry": "buildApp",
+          "mode": "partial",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": true,
+          "active_resources": 0,
+          "preclose_active": 0,
+          "closed_before_owned_socket_release": true,
+          "observe_ms": 0
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "keepalive",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "close_called": true,
+          "close_callback": true,
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 11,
+          "shutdown_failure_reported": false
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "raw",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": false,
+          "close_called": true,
+          "close_callback": true,
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 11,
+          "shutdown_failure_reported": false
+        },
+        {
+          "entry": "built CLI serve",
+          "mode": "partial",
+          "server_accept_confirmed": true,
+          "partial_data_confirmed": true,
+          "close_called": true,
+          "close_callback": true,
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsed_ms": 11,
+          "shutdown_failure_reported": false
+        }
+      ]
+    },
+    "scale_signal": {
+      "signal-old": {
+        "injected": true,
+        "runner_exit": 1,
+        "post_signal_ack_received": 20,
+        "post_signal_ack_2xx": 20,
+        "consumers_ack_advanced": 20,
+        "pending_before": 3,
+        "pending_preserved": 0,
+        "complete": false,
+        "failure": "SIGTERM",
+        "server_close": {
+          "closed": true,
+          "forced": false,
+          "code": 0,
+          "signal": null,
+          "success": true
+        },
+        "http_concurrency": {
+          "scope": "fetch_start_through_complete_response_body",
+          "peak": 20,
+          "active": 0,
+          "by_phase": {
+            "setup": {
+              "active": 0,
+              "peak": 20
+            },
+            "warmup": {
+              "active": 0,
+              "peak": 20
+            },
+            "measure": {
+              "active": 0,
+              "peak": 1
+            },
+            "catchup": {
+              "active": 0,
+              "peak": 20
+            }
+          }
+        }
+      },
+      "signal-new": {
+        "injected": true,
+        "runner_exit": 1,
+        "post_signal_ack_received": 0,
+        "post_signal_ack_2xx": 0,
+        "consumers_ack_advanced": 0,
+        "pending_before": 3,
+        "pending_preserved": 3,
+        "complete": false,
+        "failure": "SIGTERM",
+        "server_close": {
+          "closed": true,
+          "forced": true,
+          "code": null,
+          "signal": "SIGKILL",
+          "success": false
+        },
+        "http_concurrency": {
+          "scope": "fetch_start_through_complete_response_body",
+          "peak": 20,
+          "active": 0,
+          "by_phase": {
+            "setup": {
+              "active": 0,
+              "peak": 20
+            },
+            "warmup": {
+              "active": 0,
+              "peak": 20
+            },
+            "measure": {
+              "active": 0,
+              "peak": 1
+            },
+            "catchup": {
+              "active": 0,
+              "peak": 20
+            }
+          }
+        }
+      },
+      "signal-final": {
+        "injected": true,
+        "runner_exit": 1,
+        "post_signal_ack_received": 0,
+        "post_signal_ack_2xx": 0,
+        "consumers_ack_advanced": 0,
+        "pending_before": 3,
+        "pending_preserved": 3,
+        "complete": false,
+        "failure": "SIGTERM",
+        "server_close": {
+          "closed": true,
+          "forced": false,
+          "code": 0,
+          "signal": null,
+          "success": true
+        },
+        "http_concurrency": {
+          "scope": "fetch_start_through_complete_response_body",
+          "peak": 20,
+          "active": 0,
+          "by_phase": {
+            "setup": {
+              "active": 0,
+              "peak": 20
+            },
+            "warmup": {
+              "active": 0,
+              "peak": 20
+            },
+            "measure": {
+              "active": 0,
+              "peak": 1
+            },
+            "catchup": {
+              "active": 0,
+              "peak": 20
+            }
+          }
+        }
+      }
+    },
+    "normal_smoke": {
+      "mode": "smoke",
+      "complete": true,
+      "failure": null,
+      "server_close": {
+        "closed": true,
+        "forced": false,
+        "code": 0,
+        "signal": null,
+        "success": true
+      },
+      "http_concurrency": {
+        "scope": "fetch_start_through_complete_response_body",
+        "peak": 20,
+        "active": 0,
+        "by_phase": {
+          "setup": {
+            "active": 0,
+            "peak": 20
+          },
+          "warmup": {
+            "active": 0,
+            "peak": 20
+          },
+          "measure": {
+            "active": 0,
+            "peak": 1
+          },
+          "catchup": {
+            "active": 0,
+            "peak": 20
+          }
+        }
+      },
+      "all_attempts": {
+        "n": 591,
+        "p50": 2.552799999999479,
+        "p95": 6.83199599999989,
+        "p99": 8.02383699999973
+      },
+      "success_attempts": {
+        "n": 586,
+        "p50": 2.5644689999999173,
+        "p95": 6.83199599999989,
+        "p99": 8.02383699999973
+      },
+      "logical_operations": {
+        "all": {
+          "n": 400,
+          "p50": 4.53641000000016,
+          "p95": 8.588204000000133,
+          "p99": 12.056089000000156
+        },
+        "success": {
+          "n": 395,
+          "p50": 4.6111909999999625,
+          "p95": 8.61699899999985,
+          "p99": 12.078563000000031
+        }
+      },
+      "wrapper_exit": 0,
+      "gates": {
+        "success": true,
+        "failure": null,
+        "elapsed_ms": 13813.612387000001,
+        "runner_result": {
+          "exit_code": 0,
+          "signal": null
+        },
+        "phases": [
+          {
+            "phase": "preflight",
+            "audit": {
+              "documents_checked": [
+                "task conditions/evidence/variants/retry and sources"
+              ],
+              "HTTP_records": 23,
+              "HTTP_bytes": 102123,
+              "oracle_opened_after_session": true
+            }
+          },
+          {
+            "phase": "postflight",
+            "audit": {
+              "documents_checked": [
+                "task conditions/evidence/variants/retry and sources"
+              ],
+              "HTTP_records": 23,
+              "HTTP_bytes": 102427,
+              "oracle_opened_after_session": true
+            }
+          }
+        ]
+      },
+      "independent_audit": {
+        "exit_code": 0,
+        "independent": true,
+        "requests": 591,
+        "successful_requests": 586,
+        "operations": 400,
+        "ordinary_success_ms": {
+          "p50": 2.5644689999999173,
+          "p95": 6.83199599999989,
+          "p99": 8.02383699999973
+        },
+        "short_search_success_ms": {
+          "p50": 2.047309000000496,
+          "p95": 4.180561000000125,
+          "p99": 4.766368999999031
+        },
+        "unexpected_errors": 0,
+        "measurement_window_ms": 10000.417134,
+        "short_search_definition": "actual Chinese q <=3 Unicode code points",
+        "server_internal_lock_wait": "not_observed",
+        "consumer_count": 20
+      }
+    },
+    "official_pi_error_loop": {
+      "sdk_version": "0.87.1",
+      "real_official_runAgentLoop": true,
+      "synthetic_stream_fixture": true,
+      "provider_calls": 0,
+      "cases": 3,
+      "old_client_marker_reflected": true,
+      "new_client_marker_reflected": false,
+      "valid_public_conflict_message_preserved": true,
+      "sdk_tool_error_details_empty": true,
+      "scope": "Predetermined in-memory tool-call stream through registered product execute and shared client; no real inference or provider request."
+    },
+    "certification_boundaries": [
+      "Pi CLI verifies extension command discovery, idle state and EOF exit only; business error propagation uses the official SDK predetermined stream fixture.",
+      "Codex and Claude native control channels and dsh installed CLI use no model inference; arbitrary versions/accounts are not certified.",
+      "Darwin probes share the opaque-redelivery helper but were not executed.",
+      "The old fixed-source dsh suite and 32-file comparison remain historical evidence; this followup reruns the installed release, not the old fixed Git chain.",
+      "No global maximum for schema-valid public business error messages was invented; unknown or malformed public fields use safe HTTP-status fallback.",
+      "Normal smoke double gates do not invoke explicit controls; controls were executed separately.",
+      "Historical large-scale reports are not replaced by this smoke."
+    ],
+    "conditions_and_failures": [
+      {
+        "condition": "Initial frozen installation tool setup",
+        "observed": "Node archive download TLS EOF and initial missing-tool exit127; bounded retry installed the pinned tools. No application test conclusion from setup failures."
+      },
+      {
+        "condition": "Early mixed baseline native file",
+        "observed": "Two new-helper missing-export failures are excluded from behavior-red evidence; exact malformed-ready behavior was separately reproduced against old implementation."
+      },
+      {
+        "condition": "Official Pi loop fixture preparation",
+        "observed": "CJS resolution and ESM entry preparation failures corrected before genuine reflected-error assertion red."
+      },
+      {
+        "condition": "First patched related run",
+        "observed": "88/89; only the old whole-batch cursor-string equality failed. Harness now compares protocol batch/events and persisted range, advances injected clock, and accepts opaque fresh cursor."
+      },
+      {
+        "condition": "First explicit controls run",
+        "observed": "Renewed-cursor ACK and database checks passed, then withdraw returned400 because the verifier omitted required expected_revision. Fresh complete controls passes after supplying the required input."
+      },
+      {
+        "condition": "Intermediate signal run after cancellation fix",
+        "observed": "Zero post-signal ACKs but server required SIGKILL; retained as close failure and independently traced to accepted parser-only plain HTTP sockets."
+      },
+      {
+        "condition": "Pi CLI diagnostic recipe",
+        "observed": "First recipe expected command forum, while product registers forum-status/forum-check. Correct actual-name assertions passed; no product change or model request."
+      }
+    ],
+    "tested_tree_comparison": {
+      "method": "direct byte comparison, no checksum artifacts",
+      "historical_changed_runtime_files": 32,
+      "current_changed_runtime_files": 54,
+      "files": [
+        "packages/client/dist/artifact-transfer.d.ts.map",
+        "packages/client/dist/artifact-transfer.js",
+        "packages/client/dist/artifact-transfer.js.map",
+        "packages/client/dist/client.d.ts.map",
+        "packages/client/dist/client.js",
+        "packages/client/dist/client.js.map",
+        "packages/client/dist/http-error.d.ts",
+        "packages/client/dist/http-error.d.ts.map",
+        "packages/client/dist/http-error.js",
+        "packages/client/dist/http-error.js.map",
+        "packages/client/src/artifact-transfer.ts",
+        "packages/client/src/client.ts",
+        "packages/client/src/http-error.ts",
+        "packages/core/dist/services/space-service.d.ts.map",
+        "packages/core/dist/services/space-service.js",
+        "packages/core/dist/services/space-service.js.map",
+        "packages/core/src/services/space-service.ts",
+        "packages/protocol/dist/errors.d.ts",
+        "packages/protocol/dist/errors.d.ts.map",
+        "packages/protocol/dist/errors.js",
+        "packages/protocol/dist/errors.js.map",
+        "packages/protocol/src/errors.ts",
+        "packages/server/dist/app.d.ts.map",
+        "packages/server/dist/app.js",
+        "packages/server/dist/app.js.map",
+        "packages/server/dist/http-sockets.d.ts",
+        "packages/server/dist/http-sockets.d.ts.map",
+        "packages/server/dist/http-sockets.js",
+        "packages/server/dist/http-sockets.js.map",
+        "packages/server/src/app.ts",
+        "packages/server/src/http-sockets.ts",
+        "scripts/integrations/claude-check-probe.mjs",
+        "scripts/integrations/codex-check-probe.mjs",
+        "scripts/integrations/dsh-runtime/cli-check-probe.mjs",
+        "scripts/integrations/dsh-runtime/probe-json.mjs",
+        "scripts/integrations/linux-native-check-probe.mjs",
+        "scripts/integrations/poll-redelivery.mjs",
+        "scripts/scale/README.md",
+        "scripts/scale/run-lifecycle.mjs",
+        "scripts/scale/run.mjs",
+        "scripts/scale/verify-controls.mjs",
+        "tests/contracts/m4-client-error-boundary.test.ts",
+        "tests/contracts/m4-pi-error-loop.test.ts",
+        "tests/contracts/m4-pi-runtime.test.ts",
+        "tests/contracts/m7-dsh-probe-json.test.ts",
+        "tests/contracts/m7-linux-native-probe.test.ts",
+        "tests/contracts/scale-run-lifecycle.test.ts",
+        "tests/contracts/server-http-shutdown.test.ts",
+        "tests/fixtures/pi-runtime/error-loop.mjs",
+        "tests/fixtures/pi-runtime/native-lifecycle.mjs",
+        "tests/fixtures/scale/catchup-signal-preload.mjs",
+        "tests/fixtures/scale/controls-clock.mjs",
+        "tests/integration/m6-review-finalization-independent.test.ts",
+        "tests/integration/m6-review-material-lifecycle.test.ts"
+      ],
+      "mismatches": [],
+      "dist_retrieved_from_actual_arch_build": true,
+      "new_dist_dependencies": [
+        "packages/client/dist/http-error.js",
+        "packages/client/dist/http-error.js.map",
+        "packages/client/dist/http-error.d.ts",
+        "packages/client/dist/http-error.d.ts.map",
+        "packages/server/dist/http-sockets.js",
+        "packages/server/dist/http-sockets.js.map",
+        "packages/server/dist/http-sockets.d.ts",
+        "packages/server/dist/http-sockets.d.ts.map"
+      ],
+      "documentation_and_result_files_excluded": true
+    },
+    "cleanup": {
+      "status": "complete",
+      "parent_uid_device_inode_mode_marker_checked": true,
+      "no_nested_mounts": true,
+      "owned_test_processes_remaining": 0,
+      "cleanup_controller_ancestry_excluded": true,
+      "removed_only_this_run_owned_root": true,
+      "root_removed": true,
+      "immediate_lstat": "ENOENT",
+      "independent_ssh_enoent": true,
+      "raw_logs_retained_until_review": true,
+      "raw_logs_removed_with_owned_root": true
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { markReviewRequestsStale } from './review-lifecycle.js';
+import { isDeepStrictEqual } from 'node:util';
 import { DetunedError, ErrorCode, } from '@detuned/protocol';
 const DEFAULT_REVIEW_POLICY = {
     enabled: true,
@@ -95,11 +96,13 @@ export class SpaceService {
             }
             const now = this.clock.nowIso();
             const nextRevision = space.current_revision + 1;
-            // Policy change check
-            const policyChanged = req.objective !== undefined ||
-                req.rules !== undefined ||
-                req.review_policy !== undefined ||
-                req.check_profiles !== undefined;
+            // Saving identical policy content still creates a space revision, but
+            // must not invalidate frozen reviews. Object key order is immaterial;
+            // ordered rules and other arrays remain significant.
+            const policyChanged = (req.objective !== undefined && req.objective !== currentRev.objective) ||
+                (req.rules !== undefined && !isDeepStrictEqual(req.rules, currentRev.rules)) ||
+                (req.review_policy !== undefined && !isDeepStrictEqual(req.review_policy, currentRev.review_policy)) ||
+                (req.check_profiles !== undefined && !isDeepStrictEqual(req.check_profiles, currentRev.check_profiles));
             const nextPolicyRevision = policyChanged ? nextRevision : space.policy_revision;
             const updatedSpace = {
                 ...space,

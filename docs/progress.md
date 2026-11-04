@@ -1,9 +1,15 @@
 # Detuned 实施进度追踪
 
 
-当前入口：[Arch Linux 问题处置与验收](reviews/2026-11-04-arch/README.md)。本包固定 Arch x86_64、Node 22.19.0、pnpm 11.7.0 的私有冻结安装、九后端构建及同九包 typecheck/lint 已通过；核心回归一次完整通过 161 文件、987 项，0 fail/pending/todo（326.89 秒）；前两次失败和补测分别保留。Codex 0.165.0 / Claude Code 2.1.312 无模型原生控制矩阵与活动取消已实测，Codex 闲置退出单独验证；dsh/Pi 范围和外部五报告历史证据分别记载。核心论坛、HTTP/CLI/MCP、正式评审、外部检查回执和无模型 D01 已可本地使用，schema6 不变。
+当前入口：[Arch Linux 问题处置与验收](reviews/2026-11-04-arch/README.md)。基于修复前 `5ff49614` 的独立复核已闭合政策同值误失效、畸形上游错误、catch-up 停止后 ACK、plain HTTP 半开连接关闭及接入验证器边界；固定 Arch x86_64、Node 22.19.0、pnpm 11.7.0 九后端 build/typecheck/lint 共 27 步通过。最终独占核心回归一次完整通过 **165 文件、1009/1009 项，0 fail/pending/todo（318.50 秒）**，相关 15 文件 101/101 单独通过。正常 verified smoke、真实 SIGTERM 不 ACK 与正常 server close、显式时钟续签 controls、四宿主有限无模型路径均通过。核心论坛、HTTP/CLI/MCP、正式评审、外部检查回执和无模型 D01 已可本地使用，schema6 不变。
 
 历史 Darwin M7.5-A 的 158 文件、977 项完整文件组合覆盖保持原结论，非本包成绩。当前证据不认证任意宿主配置、供应商推理账户、生产容量或科研增益；许可证暂未指定，M8 独立，后续前端已取消。
+
+既有 Arch 161 文件、987 项与其失败/补测保持独立历史事实；本次首 focused 88/89、原实现行为失败、controls 缺参数和中间 server 强杀均如实保留，不由补测拼成最终 1009 项成绩。Pi 真实 CLI 仅验证命令发现、idle/EOF；业务错误另经官方 SDK 预定流测试，不是模型认证。机器摘要仅追加 followup，原历史字段不覆盖；行为、命令及清退事实见同一审查入口。
+
+正常 smoke 另经独立 ledger/DB audit exit0，核对 20 个 consumer、591 请求/586 成功、400 操作和 unexpected0；测量实际 HTTP 峰值 1，不能称为 20 并发容量。所有收据统一见 [results.json 的 followup](reviews/2026-11-04-arch/results.json)。
+
+本次私有根经父目录与身份/设备/inode/权限/标记核对后，仅清退本次自有环境；自有测试进程为 0，即时及独立 SSH 均确认 ENOENT。必要收据保留，临时原始日志随根删除，历史根与用户资料不操作。
 
 ## M7.4-E/R1有限Codex原生控制接入（2026-10-10）
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // No model requests. Run only inside an externally isolated Linux test environment.
 import assert from 'node:assert/strict';
+import {assertPendingRedelivery} from './poll-redelivery.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
@@ -113,6 +114,8 @@ export function nativeConnection(child, host, report, workEnd) {
           if (Date.now() >= deadline) throw Error('Native RPC deadline');
           await pause(20);
         }
+        writer.assertHealthy();
+        if (streamFailure) throw streamFailure;
         const value = responses.get(id);
         if (value.error) throw Error('Native RPC rejected');
         return host === 'codex' ? value.result : value.response;
@@ -232,15 +235,35 @@ async function checkCancellation({fixture, call, requests, stop, connection, app
   assert.equal(app.runtimeResources.activeCount, 0);
   assert.equal(poll.aborted, true, 'Active HTTP poll must be aborted by native teardown');
   const second = (await fixture.ordinary.poll(fixture.space, consumer.id, {limit: 1})).data;
-  const {next_cursor: _first, ...firstBinding} = first;
-  const {next_cursor: _second, ...secondBinding} = second;
-  assert.deepEqual(secondBinding, firstBinding);
+  assertPendingRedelivery(second, first);
   assert.equal(requests.filter(item => item.path.endsWith('/ack')).length, ackBefore);
   Object.assign(report.checks, {pending_unchanged: true, ack_delta: 0, cancelled: true, active_poll_aborted: true, runtime_drained: true});
 }
 
 export function naturalNativeClose(close, lifecycle = []) {
   return close?.code === 0 && close.signal === null && !lifecycle.some(item => ['SIGTERM', 'SIGKILL'].includes(item.event));
+}
+
+export function recordNativeSignal(report, name, target = 'host') {
+  report.lifecycle.push({event: name, target, at_ms: Date.now()});
+  if (report.idle_exit) report.idle_exit.natural = false;
+  if (report.shutdown === 'idle' || name === 'SIGKILL') report.status = 'failed';
+}
+
+// Call only after verifyOwnGroup has established this probe's detached group.
+export async function cleanupNativeGroup(pid, report) {
+  if (!groupAbsent(pid)) {
+    recordNativeSignal(report, 'SIGTERM', 'group');
+    process.kill(-pid, 'SIGTERM');
+    await pause(300);
+    if (!groupAbsent(pid)) {
+      recordNativeSignal(report, 'SIGKILL', 'group');
+      process.kill(-pid, 'SIGKILL');
+      await pause(100);
+    }
+  }
+  report.cleanup.group_absent = groupAbsent(pid);
+  if (!report.cleanup.group_absent) report.status = 'failed';
 }
 
 export async function observeIdleExit(child, completion, report, milliseconds = 5000) {
@@ -268,7 +291,7 @@ export async function runLinuxNativeProbe({host, binary, version, output, shutdo
   let db, app, child, connection, closeResult, closePromise, failure, groupConfirmed = false, stdinEnded = false, watchdog;
   const workEnd = Date.now() + 75000;
   const signal = name => {
-    report.lifecycle.push({event: name, at_ms: Date.now()});
+    recordNativeSignal(report, name);
     if (child && !closeResult) child.kill(name);
   };
   const stop = async () => {
@@ -374,17 +397,7 @@ export async function runLinuxNativeProbe({host, binary, version, output, shutdo
     connection?.stop();
     if (groupConfirmed) {
       try {
-        if (!groupAbsent(child.pid)) {
-          process.kill(-child.pid, 'SIGTERM');
-          await pause(300);
-          if (!groupAbsent(child.pid)) {
-            process.kill(-child.pid, 'SIGKILL');
-            report.status = 'failed';
-            await pause(100);
-          }
-        }
-        report.cleanup.group_absent = groupAbsent(child.pid);
-        if (!report.cleanup.group_absent) report.status = 'failed';
+        await cleanupNativeGroup(child.pid, report);
       } catch { report.status = 'failed'; }
     }
     for (const socket of sockets) socket.destroy();

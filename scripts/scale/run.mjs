@@ -6,7 +6,7 @@ import { fork } from 'node:child_process';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { performance } from 'node:perf_hooks';
 import { cpus, totalmem, platform, release, loadavg } from 'node:os';
-import { observeChild, closeServer, httpConcurrency } from './run-lifecycle.mjs';
+import { observeChild, closeServer, httpConcurrency, catchupAll } from './run-lifecycle.mjs';
 import { DetunedClient } from '../../packages/client/dist/index.js';
 import { sha, decode, sleep, rng, block, journal, size, disk, percentile, postBody, within } from './run-support.mjs';
 
@@ -182,8 +182,17 @@ try{
   phase='drain';await within(Promise.allSettled([...pending]),30000);if(pending.size){stop('drain_timeout');for(const c of controllers)c.abort();await Promise.allSettled([...pending]);}
   if(failure)throw new Error(failure);
   const terminal=await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('highwater timeout')),5000);const handler=m=>{if(m.type==='highwater'){clearTimeout(t);child.off('message',handler);resolve(m.seq);}};child.on('message',handler);child.send({type:'highwater'});});
-  phase='catchup';const deadline=performance.now()+120000;
-  await Promise.all(clients.map(async c=>{let batches=0;while(performance.now()<deadline){const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),5000);const ctx={client:c.index,op:'catchup',op_id:`catchup-${c.index}-${batches++}`,attempt:0,signal:controller.signal};try{const p=await als.run(ctx,()=>consume(c,ctx));if(!p.batch_id&&!p.has_more){if(c.ackSeq<terminal)throw new Error('catchup invariant below terminal');await logs['consumer-ledger'].write({schema_version:1,phase,client:c.index,type:'terminal',consumer_id:c.consumer,ack_seq:c.ackSeq,target_highwater:terminal,highwater_source:'server_readonly_MAX_space_seq_after_drain'});return;}}finally{clearTimeout(timeout);}}throw new Error('catchup_deadline');}));
+  phase='catchup';
+  await catchupAll(clients,{controllers,stopped:()=>failure,onFailure:e=>stop(e.message),step:async(c,signal,batch)=>{
+    const ctx={client:c.index,op:'catchup',op_id:`catchup-${c.index}-${batch}`,attempt:0,signal};
+    const p=await als.run(ctx,()=>consume(c,ctx));
+    if(!p.batch_id&&!p.has_more){
+      if(c.ackSeq<terminal)throw new Error('catchup invariant below terminal');
+      await logs['consumer-ledger'].write({schema_version:1,phase,client:c.index,type:'terminal',consumer_id:c.consumer,ack_seq:c.ackSeq,target_highwater:terminal,highwater_source:'server_readonly_MAX_space_seq_after_drain'});
+      return true;
+    }
+    return false;
+  }});
   await gate('postflight');ended=true;
 }catch(e){stop(e.message);await logs.operations.write({type:'fatal',schema_version:1,phase,t_ms:now(),message:e.message});}
 finally{

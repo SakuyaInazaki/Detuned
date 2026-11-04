@@ -66,6 +66,10 @@ verify仅单空间、单verify capability、显式到期且真实run绑定；普
 
 对于无权访问对象，不返回 current_revision、名称、空间归属等 details；统一 404。列表先按权限过滤再排序、分页、摘要，不得先取前 N 条再在应用中删掉。
 
+共享客户端对非 2xx JSON 错误只采用已登记的合法 code，以及符合公开 ApiErrorDetail schema 的 message、retryable、details。显式 api_version 必须为 `"1"`，显式 request_id 必须为非空白字符串；信封字段可按历史兼容省略。缺少或未知 code、显式信封字段错误、公开错误字段类型不合法时，不反射响应中的正文或 metadata，而保留真实 HTTP 状态并生成固定安全错误：429 对应 RATE_LIMITED，5xx 对应 TEMPORARILY_UNAVAILABLE，其余对应 VALIDATION_ERROR。已知 code 下省略 message 或 retryable 时分别使用固定 HTTP 错误说明和 false；未知响应属性忽略。实际重试资格仍按原 HTTP 状态、合法 retryable、Retry-After、预算及取消规则决定，安全回退不取消原网关重试。
+
+导出入口原有严格错误 guard 保持。普通 JSON 请求遇到非 JSON 网关正文时不反射文本，仍按原 HTTP 状态回退及重试；附件传输的非 JSON 或损坏 JSON 仍沿既有 ClientProtocolError 路径拒绝，不能将两类入口描述为完全相同的非 JSON 行为。
+
 ## 2. HTTP 路由
 
 表中省略 `/api/v1`。`S=/spaces/:space_id`；“读/写”描述业务副作用而不是 HTTP 动词。
@@ -76,7 +80,7 @@ verify仅单空间、单verify capability、显式到期且真实run绑定；普
 | GET `/me` | 凭据 | actor、凭据范围、可见空间 |
 | GET `/spaces` | limit,cursor | 可见空间列表 |
 | POST `/spaces` | slug,objective,rules,review_policy,check_profiles? | 创建空间；instance admin |
-| PATCH `S` | expected_revision,内容字段 | 新 space_revision；owner/maintainer |
+| PATCH `S` | expected_revision,内容字段 | 新 space_revision；owner/maintainer；仅政策四字段实际变化推进 policy_revision，同值保存保留原指针 |
 | POST `S/sessions` | client_name/version,harness_session_id? | 会话 ID；actor 来自凭据 |
 | GET `S/context` | max_bytes,focus_thread_id? | 限长项目上下文、checkpoint |
 | POST `S/threads` | title,initial_post? | 原子创建主题和可选首帖 |
@@ -355,6 +359,8 @@ buildApp 可选同步 requestLogSink，无sink静默；serve 默认 stderr 请�
 `serve --shutdown-timeout-ms` 默认10000，1000..120000 safeinteger，前置于mkdir/open校验。单一serve-owned shutdown promise处理首次SIGINT/SIGTERM与listen失败，重复signal不重置deadline。typed `detunedBeginDraining()` 同步标Operations draining与共享RuntimeResources closing/cancelAll，根onRequest拒新业务503；health仅尽力，不保证closing后可达。
 
 lease覆盖upload整个handler finally/core commit/discard、metadata exists await、download从open前到显式dispose确认、poll全finally、export streamdestroy/sessionclose；统一同步取消所有族再等待idle，app单一preClose不依plugin顺序。完成顺序app.close→db.close→DirectoryLock.releaseStrict，deadline覆盖严格释放；失败/超时固定安全诊断、exit1，不提早数据库/锁清理。资源dispose拒绝时释放未确认、lease保留，标准CLI预算退出；库宿主需自有关闭预算。同步native不能硬抢占；日志best effort、stderr不destroy。旧offline lock.release语义保持，业务commit/取消规则不新造。
+
+业务 lease 收束后，plain HTTP 还清退本服务已接受的空连接及未完成 headers/body 的解析连接，避免它们单独耗尽退出预算。已完整请求的普通响应仍等待 finish/close，再结束 socket 可写侧并等待待发字节 flush 后清退；同一连接后随不完整 pipeline 不得截断前一正常响应。TLS 保留原传输清退规则，CLI 退出总预算不变；连接关闭不等于业务未提交。
 
 ## M4.1-A CLI 读取映射
 

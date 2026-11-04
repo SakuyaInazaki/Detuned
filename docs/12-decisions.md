@@ -424,3 +424,11 @@ R1本地2/2、rejectsecond和唯一normal已有限接受，native null/SIGTERM�
 M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0，私有clean fixture install、配置/SQLite/esbuild及九backend build已验证；文件级组合验收为142文件904cases与16文件73cases，完整覆盖158文件977cases，组合0fail/pending/todo。逐文件完整替换，非挑选单case补齐；不是一次全绿流水线，历史失败及v3 full中断保留。未新安装pnpm工具链，不含Web、当前Linux或模型完整会话；许可证按用户决定暂未指定。
 
 保留安装/参数类型/生成JS/full-sandbox失败与devnull/setuid-ps EPERM诊断；仅获批normal-local测试续跑不额外sandbox-exec，原安装及构建证据复用。所有结果与清退以真实回执为准，预算/锁/依赖版本不扩。
+
+## ADR086：空间内容修订与实际政策变化分开判断
+
+空间 PATCH 保留新鲜成功写入的内容修订、事件与原幂等规则；只有 objective、rules、review_policy、check_profiles 的实际内容变化才推进 policy_revision。比较忽略对象属性次序，保留数组次序；同值政策与置顶一起提交也不使已有评审失效。此项落实 docs/03 的政策指针定义，避免维护者重复保存当前配置使 collecting/revealed 评审 stale 或历史 accepted 无故标为 policy_superseded；真正政策修改仍按原事务失效。回归和实测状态见当前 Arch 审查，不改变旧样本或历史修订。
+
+## ADR087：plain HTTP 解析连接与完整业务响应分域收尾
+
+原业务资源 lease 完整收束后，plain HTTP 单独清退本服务拥有的空连接及未完成解析连接；完整请求的正常响应保留至 finish/close，再先结束可写侧并 flush 后清退，不因后续半 pipeline 截断正文。不把 socket 当业务 lease、不延长 CLI 退出预算、不改 TLS 原路径或业务提交语义。此项解决资源计数为零仍被半开 plain HTTP 连接阻塞的问题；实际红绿、正常响应及完整生命周期证据记在当前 Arch 审查。

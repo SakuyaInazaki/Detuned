@@ -1,4 +1,33 @@
 import {within} from './run-support.mjs';
+import {performance} from 'node:perf_hooks';
+
+// Join every worker before the caller closes HTTP, the server or evidence files.
+// One controller spans a worker's poll -> ledger -> ACK chain, including the gap
+// between poll completion and starting ACK.
+export async function catchupAll(clients, {controllers,stopped,onFailure,step,timeoutMs=5000,durationMs=120000}) {
+  const deadline=performance.now()+durationMs, group=new Set();
+  const results=await Promise.allSettled(clients.map(async client=>{
+    const controller=new AbortController();group.add(controller);controllers.add(controller);
+    try{
+      for(let batch=0;performance.now()<deadline;batch++){
+        if(stopped()||controller.signal.aborted)throw new Error(stopped()||'catchup_cancelled');
+        const timer=setTimeout(()=>controller.abort(),timeoutMs);
+        try{
+          const done=await step(client,controller.signal,batch);
+          if(stopped()||controller.signal.aborted)throw new Error(stopped()||'catchup_cancelled');
+          if(done)return;
+        }finally{clearTimeout(timer);}
+      }
+      throw new Error('catchup_deadline');
+    }catch(error){
+      onFailure(error);
+      for(const sibling of group)sibling.abort();
+      throw error;
+    }finally{controllers.delete(controller);group.delete(controller);}
+  }));
+  const failed=results.find(result=>result.status==='rejected');
+  if(failed)throw failed.reason;
+}
 
 // Observe close immediately after spawn: exit alone does not prove stdio was reaped.
 export function observeChild(child) {

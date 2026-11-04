@@ -1,3 +1,4 @@
+import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt,
   type CheckRunView, type CheckSnapshotView, type CheckPostRevisionView, type CheckReceiptView,
   type RequiredChecksView, type IssueCheckRunCredentialRequest, type IssueCheckRunCredentialData,
@@ -35,7 +36,6 @@ import {
   ReadableArtifactMetadata,
   CreateArtifactMetadata,
   ErrorCode,
-  ErrorCodeType,
   DetunedError,
   PostRef,
   CreateSpaceRequest,
@@ -491,16 +491,9 @@ export class DetunedClient {
                   outcome = { kind: 'success', value: { data: json.data, meta: json.meta } };
                 }
               } else {
-                const errDetail = json?.error;
-                const code: ErrorCodeType =
-                  errDetail?.code ??
-                  (res.status === 429
-                    ? ErrorCode.RATE_LIMITED
-                    : res.status >= 500
-                    ? ErrorCode.TEMPORARILY_UNAVAILABLE
-                    : ErrorCode.VALIDATION_ERROR);
-                const message: string = errDetail?.message ?? `HTTP ${res.status} 请求失败`;
-                const serverReportedRetryable = errDetail?.retryable;
+                const errDetail = publicHttpError(json, res.status);
+                const {code,message} = errDetail;
+                const serverReportedRetryable = errDetail.retryable;
 
                 const isNonRetryableStatus = [400, 401, 403, 404, 409, 413, 422].includes(res.status);
                 const retryable =

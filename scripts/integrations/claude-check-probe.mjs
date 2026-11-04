@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Optional fixed installed-native experiment; importing the fixture helpers starts no host.
 import assert from 'node:assert/strict';
+import {assertPendingRedelivery} from './poll-redelivery.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream} from 'node:fs';
 import path from 'node:path';
@@ -105,7 +106,7 @@ async function runNativeWorker({binary,owned}){ let app,db,native,forbidden,orig
  ensure();const pending=(await bounded(fixture.ordinary.subscribe(fixture.space,{consumer_key:'native-pending',start:'beginning'},'native-subscribe'))).data.consumer;const batch=(await bounded(fixture.ordinary.poll(fixture.space,pending.id,{limit:1}))).data;assert.ok(batch.batch_id);const beforeAck=requests.filter(r=>r.path.endsWith('/ack')).length;
  ensure();const waiting=(await bounded(fixture.ordinary.subscribe(fixture.space,{consumer_key:'native-waiting',start:'now'},'native-waiting'))).data.consumer;
  const inFlight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000});flights.add(inFlight);const observed=inFlight.then(()=>{flights.delete(inFlight);},()=>{flights.delete(inFlight);});const waitDeadline=Math.min(Date.now()+3000,end);while(!requests.some(r=>r.path.endsWith('/consumers/'+waiting.id+'/poll'))&&Date.now()<waitDeadline)await bounded(pause(20));ensure();assert.ok(requests.some(r=>r.path.endsWith('/consumers/'+waiting.id+'/poll')));native.stdin.end();await close(native);stage('poll-close');await observed;
- ensure();const resumed=(await bounded(fixture.ordinary.poll(fixture.space,pending.id,{limit:1}))).data;assert.deepEqual(resumed,batch);assert.equal(requests.filter(r=>r.path.endsWith('/ack')).length,beforeAck);report.checks.ack_delta=0;report.checks.pending_unchanged=true;report.checks.cancelled=true;report.native_close={code:children.get(native).code,signal:children.get(native).signal};
+ ensure();const resumed=(await bounded(fixture.ordinary.poll(fixture.space,pending.id,{limit:1}))).data;assertPendingRedelivery(resumed,batch);assert.equal(requests.filter(r=>r.path.endsWith('/ack')).length,beforeAck);report.checks.ack_delta=0;report.checks.pending_unchanged=true;report.checks.cancelled=true;report.native_close={code:children.get(native).code,signal:children.get(native).signal};
  }catch(error){originalFailure??=error;stage('catch');diagnostics.error=safeError(error);}finally{
  stage('cleanup-begin');cancelled=true;
  process.off('SIGINT',cancel);process.off('SIGTERM',cancel);let cleanupFailure;

@@ -48,3 +48,29 @@ it('ML03 stale event fault rolls back original rules mutation and request versio
  const r=await patch(`/api/v1/spaces/${sid}`,{expected_revision:space.current_revision,rules:['attempted']},'rules-fault');fault.mockRestore();
  expect(r.statusCode).toBe(500);expect(storage.findSpaceById(sid)).toEqual(space);expect(storage.findReviewRequestById(request.id)).toMatchObject({phase:'collecting',version:1});expect(counts()).toEqual(before);
 });
+
+it('ML04 same policy content with fresh keys keeps collecting review current; mixed actual edits still stale it',async()=>{
+ const created=await app.inject({method:'POST',url:`/api/v1/spaces/${sid}/review-requests`,headers:{authorization:`Bearer ${token}`,'idempotency-key':'noop-review'},payload:req});
+ expect(created.statusCode,created.body).toBe(201);const request=created.json().data;
+ const original=storage.getSpaceRevision(sid,1)!;
+ const reversedPolicy=Object.fromEntries(Object.entries(original.review_policy).reverse());
+ const unchanged=[{objective:original.objective},{rules:original.rules},{review_policy:reversedPolicy},{check_profiles:original.check_profiles},
+  {pinned_refs:[{post_id:pid,revision:1}],objective:original.objective,rules:original.rules,review_policy:reversedPolicy,check_profiles:original.check_profiles}];
+ const status=async()=>{const r=await app.inject({method:'GET',url:`/api/v1/spaces/${sid}/review-requests/${request.id}/status`,headers:{authorization:`Bearer ${token}`}});expect(r.statusCode,r.body).toBe(200);return r.json().data;};
+ for(const [index,fields] of unchanged.entries()){
+  const before=storage.findSpaceById(sid)!,body={expected_revision:before.current_revision,...fields},key='same-policy-'+index;
+  const result=await patch(`/api/v1/spaces/${sid}`,body,key);expect(result.statusCode,result.body).toBe(200);
+  expect(storage.findSpaceById(sid)).toMatchObject({current_revision:before.current_revision+1,policy_revision:1});
+  expect(await status()).toMatchObject({phase:'collecting',current_validity:'current',validity_reasons:[]});
+  const committed=counts();expect((await patch(`/api/v1/spaces/${sid}`,body,key)).statusCode).toBe(200);expect(counts()).toEqual(committed);
+  expect((await patch(`/api/v1/spaces/${sid}`,body,key+'-stale-version')).statusCode).toBe(409);expect(counts()).toEqual(committed);
+ }
+ const current=storage.findSpaceById(sid)!;
+ const changed=await patch(`/api/v1/spaces/${sid}`,{expected_revision:current.current_revision,objective:original.objective,rules:['A genuinely changed rule','Order matters']},'mixed-real-policy');
+ expect(changed.statusCode,changed.body).toBe(200);expect(storage.findSpaceById(sid)).toMatchObject({current_revision:current.current_revision+1,policy_revision:current.current_revision+1});
+ expect(await status()).toMatchObject({phase:'stale',current_validity:'superseded',validity_reasons:['policy_superseded']});
+ const ordered=storage.findSpaceById(sid)!;
+ expect((await patch(`/api/v1/spaces/${sid}`,{expected_revision:ordered.current_revision,rules:['Order matters','A genuinely changed rule']},'reordered-rules')).statusCode).toBe(200);
+ expect(storage.findSpaceById(sid)!.policy_revision).toBe(ordered.current_revision+1);
+ expect((db.prepare("SELECT count(*) n FROM events WHERE type='review.stale'").get() as {n:number}).n).toBe(1);
+});

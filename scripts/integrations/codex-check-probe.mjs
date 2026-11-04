@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Optional fixed installed-native experiment; importing the fixture helpers starts no host.
 import assert from 'node:assert/strict';
+import {assertPendingRedelivery} from './poll-redelivery.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream,constants as fsConstants} from 'node:fs';
 import path from 'node:path';
@@ -117,7 +118,7 @@ async function runNativeWorker({binary,owned}) {
  const flight=call('forum_poll',{space_id:fixture.space,consumer_id:waiting.id,limit:1,wait_ms:25000}),settled=flight.then(()=>undefined,()=>undefined);
  const waitUntil=Math.min(end,Date.now()+3000);while(!requests.some(value=>value.path.endsWith('/consumers/'+waiting.id+'/poll'))&&Date.now()<waitUntil)await bounded(pause(20));assert.ok(requests.some(value=>value.path.endsWith('/consumers/'+waiting.id+'/poll')));
  native.stdin.end();await close(native);await bounded(settled);stage('poll-close');
- assert.deepEqual((await bounded(fixture.ordinary.poll(fixture.space,pending.id,{limit:1}))).data,batch);assert.equal(requests.filter(value=>value.path.endsWith('/ack')).length,beforeAck);report.checks.ack_delta=0;report.checks.pending_unchanged=true;report.checks.cancelled=true;
+ assertPendingRedelivery((await bounded(fixture.ordinary.poll(fixture.space,pending.id,{limit:1}))).data,batch);assert.equal(requests.filter(value=>value.path.endsWith('/ack')).length,beforeAck);report.checks.ack_delta=0;report.checks.pending_unchanged=true;report.checks.cancelled=true;
  }catch(error){originalFailure=error;diagnostics.error=safeError(error);stage('catch');}finally{
  cancelled=true;stage('cleanup-begin');const attempt=async(action,done)=>{try{await withinDeadline(Promise.resolve().then(action),totalEnd-Date.now());done();}catch(error){cleanupFailure??=error;}};
  report.cleanup={flights_settled:false,children_closed:false,forbidden_closed:forbidden===undefined,app_closed:app===undefined,db_closed:db===undefined};

@@ -5,6 +5,7 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { resolveServerTlsOptions, type ServerTlsOptions } from './tls-config.js';
 import { trackTlsSockets } from './tls-sockets.js';
+import { trackHttpSockets } from './http-sockets.js';
 import {resolveWebAssetsDir,isWebStaticRequest,staticWebRoutes} from './static-web.js';
 import {authRoutes} from './routes/auth.js';
 import {resolveWebAuthConfig,checkWebRequest,readWebCookie,readCsrf,uniqueHeader} from './web-auth.js';
@@ -165,14 +166,14 @@ export function buildApp(options: AppOptions): ServerApp {
   const app: ServerApp = tls
     ? Fastify({ ...common, https: { ...tls, minVersion: 'TLSv1.2', maxHeaderSize: 65536 } })
     : Fastify({ ...common, http: { maxHeaderSize: 65536 } });
-  const tlsSockets = tls ? trackTlsSockets(app.server) : undefined;
+  const transportSockets = tls ? trackTlsSockets(app.server) : trackHttpSockets(app.server);
 
   const resources = new RuntimeResources();
   app.decorate('runtimeResources', resources);
   app.decorate('detunedBeginDraining', () => { operationsService.beginDraining(); resources.beginClosing(); });
   installRequestLogging(app, options.requestLogSink);
-  app.addHook('preClose', async () => { app.detunedBeginDraining(); webSessions?.close(); await resources.waitForIdle(); await tlsSockets?.drain(); });
-  app.addHook('onClose', async () => { tlsSockets?.dispose(); });
+  app.addHook('preClose', async () => { app.detunedBeginDraining(); webSessions?.close(); await resources.waitForIdle(); await transportSockets.drain(); });
+  app.addHook('onClose', async () => { transportSockets.dispose(); });
   app.addHook('onRequest', async (req,reply) => {
     if(webConfig&&(req.routeOptions.url===WEB_AUTH_PATH||req.headers.cookie!==undefined))reply.header('cache-control','no-store');
     if(/\/(?:review-(?:requests|snapshots|submissions)|check-runs)(?:\/|$)/.test(req.routeOptions.url??''))reply.header('Cache-Control','private, no-store');

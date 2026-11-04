@@ -62,6 +62,8 @@ run/request/snapshot/actor、receipt→run/log与credential→run/credential均�
 
 `rules` 为字符串数组。`check_profiles` 默认为空对象，按检查名映射到 `{verifier_actor_ids, config_sha256, description}`；正式申请评审前必须配置所有 required_checks。`config_sha256` 绑定外部检查说明/配置的实际字节，不只是任意标签。配置变更推进 policy_revision，适用快照重新评审。
 
+空间 PATCH 的新鲜成功写入仍创建内容修订和事件；只有 objective、rules、review_policy 或 check_profiles 的实际内容变化才推进 policy_revision 并触发相关评审失效。同值保存、同值政策与置顶一起保存均保持原 policy_revision。对象属性次序不影响相等判断，数组次序有意义；显式请求键重放仍复用原结果，不新增修订或事件。
+
 引用的统一形状：`PostRef={post_id, revision}`；`EvidenceRef` 为 `{kind:"post", post_id, revision}` 或 `{kind:"artifact", artifact_id}`；发布请求的 `refs` 为 `{target_ref:PostRef,type:RelationType}[]`，source 由本次生成的帖子修订填入。证据中提到的附件必须同时列入 artifact_ids 并经过相同授权。外部链接放正文或 code_refs，不作为已校验内部对象。
 
 若分页/上下文 checkpoint 使用数据库随机句柄实现，增加 `read_checkpoints(token_hash,actor_id,space_id,seq,query_hash,expires_at)`；若采用标准库签名/加密 token 则不需要此表。两种实现只能选一套并在 M0 记录，业务语义相同。

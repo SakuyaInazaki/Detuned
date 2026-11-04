@@ -26,3 +26,7 @@ summary以nearest-rank统计成功和all attempts HTTP、endpoint、短中文查
 取消/失败清理对自己创建并记录且PID>1的进程组先TERM，5秒后仅对仍在的自有组SIGKILL，等待和groupgone观察均有界并清timer。signal0的EPERM明确记unknown_permission，不冒称消失，exit callback不抛未处理异常；权限未知/清理异常保持非零。授权真实故障实验仅在preflight将已证自有组SIGSTOP再取消wrapper，5036ms非零退出、原子成功ok未写、精确自有PID消失且监听拒绝；不作为第二次负载smoke或600秒。首callback EPERM失败原证据保留。
 
 运行结果的 `http_concurrency` 按 fetch 发出至完整响应正文读取结束计数，分别记录全程与各阶段峰值；20 个错相客户端不等于实测 20 个并发 HTTP。`server_close` 记录实际 close、退出码、信号及是否升级终止；需 TERM/KILL 或未确认 close 都令本次结果失败，不能记为正常退出。
+
+catch-up 同样受停止信号控制：取消正在进行的 poll/ACK，投递与 ACK 之间检查取消，不再开始下一轮 poll；任一 worker 失败会取消同组，并等待所有 worker 收束后关闭服务与日志。取消无法撤销服务端已经提交的 ACK，不能将客户端取消结果解释为数据库必然没有确认；需要由投递/ACK 证据与最终数据库判定该次状态。HTTP 与逻辑测量样本按开始阶段归属，测量窗口内开始、drain 中结束的请求仍计入 measure 样本，并保留完整响应体耗时。
+
+显式 `verify-gate --controls` 的后置控制验证按相同 batch、事件、consumer 与持久 from/through 范围检查重投，允许签名游标续签；实际使用本次重投游标 ACK，并核对数据库精确确认位置。自动双 gate 默认不带 controls，不能把正常 smoke 的只读 gate 通过当作该控制路径已运行。控制验证可由可信本地测试传入 `beforeRedelivery` 回调推进其注入时钟，以确定性跨越签发秒边界，不添加等待或改变产品消费规则。

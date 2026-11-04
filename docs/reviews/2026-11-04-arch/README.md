@@ -1,6 +1,39 @@
 # Arch Linux 问题处置与验收
 
-本包核对 2026-11-03 的五份 Arch 报告，修正可复现的接入与测试工具问题，并保留既有服务端权限、消费和评审语义。本包最终独占核心回归一次通过 161 文件、987 项，失败、pending、todo 均为 0。未开展前端、浏览器、模型推理、全局配置修改或部署。
+本包核对五份 2026-11-03 外部报告，并从修复前提交 `5ff49614` 独立复核可复现边界。修后固定 Arch Linux x86_64、Node 22.19.0、pnpm 11.7.0 的九个后端包 build/typecheck/lint 全部通过；最终独占核心回归一次完整通过 **165 文件、1009/1009 项，0 fail/pending/todo，318.50 秒**。schema6 不变。既有 161 文件、987 项是独立的修复前验收，保留在下文及原机器摘要中，不与新成绩拼接。未开展前端、浏览器、模型推理、全局配置修改或部署；Mac 未运行安装、构建或测试。
+
+## 当前修复与验收
+
+| 问题 | 修复行为与证据 |
+|---|---|
+| 同值空间政策保存使评审失效 | 原实现通过正常 HTTP 同值 PATCH 即把 policy_revision 从 1 推到 2，ML04 行为失败。现仅四个政策字段实际变化时推进指针；同值及同值政策与置顶混合保持评审 current，真实变化和数组反序照常失效。正常修订、事件、幂等与历史 accepted 保持断言均通过，见契约和 ADR086。 |
+| 畸形上游错误进入共享客户端及 Pi 错误显示 | 非 2xx 只采用合法公开错误字段；缺失/未知 code、字段类型错误或显式错误信封不再反射正文和 metadata，保留真实 HTTP 状态、安全回退及原重试/取消规则。合法业务错误、历史缺省字段仍兼容；普通 JSON 与附件非 JSON 路径分别保持，导出严格 guard 不变。 |
+| catch-up 停止后仍 ACK | 原 runner 在真实 catch-up poll 完整正文后收到 SIGTERM，仍产生 20 个服务端 ACK 200，20 个 consumer 的 SQLite 确认位置均推进。修后控制器纳入停止信号、同组失败取消并等待全部任务；相同时机真实故障对照的信号后 ACK 发出/提交均为 0，20 个确认位置不增长，原 pending 绑定保持。取消不能撤销已经提交的 ACK，相关正反回归保留此区别。 |
+| plain HTTP 半开连接阻塞退出 | 资源数为 0 时，已接受的空 TCP/半 headers 使原 built CLI 耗尽默认 10 秒、SHUTDOWN_FAILED/exit1；正常 keepalive 对照自然 exit0。现业务 finally 后清退本服务空/半解析连接，完整普通响应须完成并 flush；4 项原服务端测试均失败、修后 HTTP 4 项与 TLS 4 项共 8/8 通过。2MiB 完整响应、后随半 pipeline、第二空连接和 drain 中新连接均受控验证；真实 CLI 三类均自然 exit0，约 11 毫秒。TLS、业务 lease 和原 CLI 预算保持，见 ADR087。 |
+| 宿主与 controls 将续签游标字节变化误作丢批 | 共用不透明游标比较，严格保留批次及事件，controls 另核持久 from/through 范围并实际 ACK 新凭据。Pi 原 fixture 整对象比较导致的首 focused 88/89 失败保留；修正测试而未改变服务端消费策略。显式 controls 通过注入时钟推进 2000ms，证明游标已续签且实际使用新游标 ACK 到 10001，ACL 404/403/401/401、来源 active/withdrawn/redacted 与关闭全部通过。首次 controls 在 ACK 后因撤回请求缺 expected_revision 得到正确 400；控制器补本次真实修订号后 fresh fixture 全程通过，原失败保留。 |
+| 原生验证器可能误计成功 | 修正同帧 JSON 失败与就绪响应竞态；idle 进程退出但残留自有组需要救援时不得计自然退出成功；dsh 诊断 JSON 原子发布，避免读取半份文件。相应受控回归与四宿主无模型验证通过；清退信号、自然退出和强杀分别记录。 |
+
+catch-up 控制器修好后的中间故障对照曾无 ACK 却仍需 SIGKILL 结束 server，不能算正常关闭；它促成上述 plain HTTP 根因复现。最终相同故障对照保留预期 runner exit1、complete=false、failure=SIGTERM，同时 server 实际 close0、无信号、forced=false、success=true、HTTP 在途归零。原 pending 保持不排除取消时已经进入服务端的其他 poll 合法创建待确认批次，不把“取消”写成所有状态回滚。
+
+修后正常 verified smoke 实际完成 400 个逻辑动作、591 次测量 HTTP：586 成功、5 次预期修订冲突、意外错误 0。成功 HTTP p50/p95/p99 为 2.56/6.83/8.02 毫秒；两个只读 gate 与 wrapper 均通过，complete=true、server close0；测量 HTTP 峰值在途为 1，全程峰值 20。本次另行执行独立 ledger/DB audit，exit0，核对 20 个 consumer、591 请求、586 成功、400 操作与 unexpected0，而非仅凭双 gate 推导消费正确。
+
+规模统计按请求或动作开始阶段归属，drain 中完成者保留完整正文耗时；`complete=true` 不单独证明零错误，普通错误另行统计。自动双 gate 默认不执行 controls，亦不替代独立账本审计；上述 controls 为另一次 fresh fixture 显式验证。全部机器证据统一在 [results.json 的 followup](results.json)，未重跑十万帖、百万事件、600 秒容量场景。
+
+首修后 focused 的 14 文件、89 项为 88 通过、1 失败，Pi fixture 的错误游标字节断言单独保留；修后最终相关测试一次通过 15 文件、101/101 项（21.93 秒）。原 policy 行为失败、HTTP 4 项原实现失败、catch-up 错误 ACK、controls 缺参数及中间强杀均在机器摘要中保留，未改记成功。native 基线中两次缺新 helper/export 的失败不算行为反例，真实同帧错误/就绪竞态另有原实现复现。最终 1009/1009 来自一次完整独占运行，而非这些失败与补测的组合。具体收据见 [机器摘要的 followup](results.json)，原顶层历史字段和原 32 文件比较保持；修后直接字节比较覆盖 54 个运行文件，差异为 0，构建产物取自实际 Arch 构建。
+
+当前宿主认证均无模型调用。Codex 0.165.0 的活动取消与 idle 分支分别在 EOF 后 4273/4266 毫秒自然 close0，Claude Code 2.1.312 活动分支为 75 毫秒，均未发 TERM/KILL，九工具、普通身份检查矩阵、取消未 ACK、pending 与资源清退通过。dsh/MCP 0.2.1-rc.2（宿主 Node 26.11.1、后端 Node 22.19.0）真实 CLI 验证九工具、非法参数零 HTTP、业务错误和固定读取，通过诊断插件显式 SIGTERM 请求 launcher 关闭，最终 close0、无信号；不称 EOF 自然退出。本次未重跑下文固定源码的官方编译/HMR 链。
+
+Pi 0.87.1、Node 22.19.0 的真实 offline CLI 只认证扩展命令 forum-status/forum-check 发现、idle 与 EOF close0，不冒充业务工具模型循环。错误传播另用真实官方 runAgentLoop 的三项预定内存流案例，经注册工具与共享客户端证明旧实现反射标记、新实现不反射、合法公开冲突 message 保持；它是无供应商请求的 SDK 测试。Darwin 探针虽共用不透明游标比较，本次未在 Darwin 执行。
+
+本次私有根在复核后已清退：先核对父目录和本次根的 UID、设备/inode、权限与标记，确认无嵌套挂载、自有测试进程剩余为 0，并排除清理控制器祖先，仅删除本次自有根；即时 lstat 与独立 SSH 均为 ENOENT。原始临时日志保留至复核后随该根删除，必要成功/失败收据留在同一 followup；未再次操作既有历史根或用户数据。
+
+已安装和构建的 Linux 副本可串行运行定点验证；完整核心命令见下文：
+
+```sh
+CI=true pnpm exec vitest run tests/contracts/scale-run-lifecycle.test.ts --maxWorkers=1 --no-file-parallelism
+CI=true pnpm exec vitest run tests/integration/m6-review-material-lifecycle.test.ts tests/integration/m6-review-finalization-independent.test.ts --maxWorkers=1 --no-file-parallelism
+CI=true pnpm exec vitest run tests/contracts/server-http-shutdown.test.ts tests/contracts/server-tls.test.ts --maxWorkers=1 --no-file-parallelism
+```
 
 ## 五份报告的处置
 
@@ -22,7 +55,7 @@
 
 [封存初评独立测试](../../../tests/integration/m6-review-submissions-independent.test.ts) 已覆盖同一身份换 session 的 `VALIDATION_ERROR`，并与两个合格身份才揭示的正向场景对照。400 不是重复投票成功，亦不应改成 409 以满足错误探针。
 
-## 变更与验证
+## 既有 Arch 验收：161 文件、987 项
 
 Pi 只在工具执行抛错边界把稳定业务码加入宿主保留的 message，未知异常仍脱敏；共享 HTTP/client/core 的错误码与权限规则保持。dsh 实验路径使用平台临时目录，错误码回归必须从实际错误文本或结构化错误中解析。Codex/Claude 的 Linux 探针使用显式二进制、专用 HOME/临时区、普通凭据与真实 MCP 通道，记录关闭和自有 PID，不以目录发现代替工具行为。
 

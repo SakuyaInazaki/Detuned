@@ -1,6 +1,6 @@
 import {it,expect} from 'vitest';
 import {createPiRuntime,piResult,safePiError,piToolError} from '../../packages/adapter-pi/src/runtime.js';
-import {ClientProtocolError,UserAbortError} from '@detuned/client';
+import {ClientProtocolError,ClientTransportError,TimeoutError,UserAbortError} from '@detuned/client';
 import {DetunedError,ErrorCode} from '@detuned/protocol';
 const actor=(id:string)=>({id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00Z',disabled_at:null});
 function client(id:string,counts:{cap:number;me:number;session:number;tool:number}){return {
@@ -39,4 +39,19 @@ it('Pi tool errors expose a stable code in the message without losing thrown bus
  expect(piToolError(Error('PRIVATE_TOKEN /private/home')).message).toBe('Forum operation failed.');
  expect(piToolError(new ClientProtocolError('PRIVATE_TOKEN')).message).toBe('Service response failed protocol validation.');
  expect(piToolError(new UserAbortError('PRIVATE_TOKEN'))).toBeInstanceOf(UserAbortError);
+});
+
+it('Pi non-business failures redact message, cause and forged business fields without changing cancellation types',()=>{
+ const marker='PRIVATE_NON_BUSINESS_ERROR';
+ const transport=new ClientTransportError(marker,{cause:new Error(marker),code:marker,retryable:true});
+ const cases=[new Error(marker),{code:'FORBIDDEN',message:marker,details:{private:marker}},new ClientProtocolError(marker),transport,new TimeoutError(marker),new UserAbortError(marker)];
+ for(const error of cases){
+  const safe=piToolError(error);
+  expect(safe.message+JSON.stringify(safe)).not.toContain(marker);
+  expect(safe).not.toBeInstanceOf(DetunedError);
+  expect((safe as Error & {cause?:unknown}).cause).toBeUndefined();
+ }
+ expect(piToolError(transport)).toMatchObject({code:'TRANSPORT_ERROR',retryable:true,statusCode:null});
+ expect(piToolError(new TimeoutError(marker))).toBeInstanceOf(TimeoutError);
+ expect(piToolError(new UserAbortError(marker))).toBeInstanceOf(UserAbortError);
 });

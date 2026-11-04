@@ -1,3 +1,4 @@
+import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView, isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
 import { validateSearchSourceQuery, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
 import { isFindingsView, isFailuresView } from '@detuned/protocol';
@@ -412,15 +413,9 @@ export class DetunedClient {
                                 }
                             }
                             else {
-                                const errDetail = json?.error;
-                                const code = errDetail?.code ??
-                                    (res.status === 429
-                                        ? ErrorCode.RATE_LIMITED
-                                        : res.status >= 500
-                                            ? ErrorCode.TEMPORARILY_UNAVAILABLE
-                                            : ErrorCode.VALIDATION_ERROR);
-                                const message = errDetail?.message ?? `HTTP ${res.status} 请求失败`;
-                                const serverReportedRetryable = errDetail?.retryable;
+                                const errDetail = publicHttpError(json, res.status);
+                                const { code, message } = errDetail;
+                                const serverReportedRetryable = errDetail.retryable;
                                 const isNonRetryableStatus = [400, 401, 403, 404, 409, 413, 422].includes(res.status);
                                 const retryable = !isNonRetryableStatus &&
                                     (res.status === 429 ||

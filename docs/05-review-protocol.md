@@ -53,6 +53,8 @@ API 中 review_status 映射到 request.phase；verification_status 为 `not_req
 
 required_checks 引用同一有效空间策略的 check_profiles。检查配置缺失时可保存空间草案，但正式 review request 必须拒绝并报告 VALIDATION_ERROR；不能静默忽略所需检查。仅改置顶摘要不推进 policy_revision，不无故使研究材料失效。
 
+同值保存目标、规则、评审策略或检查配置也不推进 policy_revision，不使进行中评审 stale 或历史 accepted 增加 policy_superseded；正常空间内容修订与事件仍产生。实际内容变化照常触发失效，对象字段次序忽略而数组次序保留。
+
 当前 `POST /api/v1/spaces/:space_id/review-requests` body 输入：target_ref、dependency_refs、artifact_ids、code_refs（repository、精确commit、source_artifact_id、reproduction_instructions）、declared_contributors、reviewer_actor_ids、expected_policy_revision、顶层reproduction_instructions。请求键通过HTTP `Idempotency-Key`，不在body；tool层名为request_key。内部M6.1-B已执行目标作者或当前maintainer/owner的申请门禁；独立材料builder仍仅observer授权，不能将单独构造材料当申请成功。字段限额与错误见[协议当前材料构造](04-protocol.md#m61-a-未公开评审请求与材料构造)。
 
 reviewer 必须是有效成员并被空间 owner 标记 eligible；不能由作者随意创建两个假账号。服务根据被纳入帖子所有修订的作者/编辑者、声明的代码贡献者和显式贡献名单计算排除集，取并集不能减去。外部工作贡献者仍需诚实申报，服务不能自动识别全部研究贡献。

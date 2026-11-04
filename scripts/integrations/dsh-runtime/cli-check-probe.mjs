@@ -28,11 +28,12 @@ assert.equal(version, '0.2.1-rc.2');
 assert.equal(mcpVersion, version);
 
 // This trusted diagnostic runs inside the real CLI. It registers no replacement tools.
-function diagnosticSource(readerUrl) {
+function diagnosticSource(readerUrl, publisherUrl) {
   return `
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { dshErrorCode } from ${JSON.stringify(readerUrl)};
+import { publishProbeJson } from ${JSON.stringify(publisherUrl)};
 export const inject = ['tools'];
 const pause = () => new Promise(resolve => setTimeout(resolve, 20));
 async function awaitMarker(file) {
@@ -70,7 +71,7 @@ export function apply(ctx, config) {
         content_text_string: typeof invalid.content?.[0]?.text === 'string',
         structured_error_present: invalid.structuredContent?.error !== undefined,
       };
-      await fs.writeFile(config.invalid, JSON.stringify({ code: invalidCode, shape }));
+      await publishProbeJson(config.invalid, { code: invalidCode, shape });
       await awaitMarker(config.resume);
       assert.equal(invalidCode, 'VALIDATION_ERROR');
       const denied = await call('forum_context', { space_id: config.denied });
@@ -80,12 +81,12 @@ export function apply(ctx, config) {
       });
       assert.notEqual(read.isError, true);
       assert.ok(JSON.stringify(read).includes('actual-dsh-private-fixture'));
-      await fs.writeFile(config.receipt, JSON.stringify({
+      await publishProbeJson(config.receipt, {
         names, host_node: process.version, invalid_code: invalidCode,
         denied_code: dshErrorCode(denied), read_success: true,
-      }));
+      });
     } catch {
-      await fs.writeFile(config.receipt, JSON.stringify({ failed: true }));
+      await publishProbeJson(config.receipt, { failed: true });
     }
     // Request the official launcher's bounded shutdown, rather than stdin EOF.
     process.kill(process.pid, 'SIGTERM');
@@ -143,7 +144,7 @@ try {
   await fs.writeFile(path.join(profile, 'package.json'), JSON.stringify({ private: true, 'dsh.profile': { bundles: [] } }));
   const files = Object.fromEntries(['ready', 'start', 'invalid', 'resume', 'receipt'].map(name => [name, path.join(dir, name)]));
   const plugin = path.join(dir, 'diagnostic.mjs');
-  await fs.writeFile(plugin, diagnosticSource(new URL('./error-code.mjs', import.meta.url).href), { mode: 0o600 });
+  await fs.writeFile(plugin, diagnosticSource(new URL('./error-code.mjs', import.meta.url).href, new URL('./probe-json.mjs', import.meta.url).href), { mode: 0o600 });
   const rows = [
     { id: 'prompt', name: '@deepseek-ai/dsh-system-prompt' },
     { id: 'tools', name: '@deepseek-ai/dsh-tools' },
