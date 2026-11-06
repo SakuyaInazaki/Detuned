@@ -26,7 +26,7 @@ export class ReviewRequestService {
     const current=this.readAuth(auth,spaceId,true),post=this.storage.findPostById(postId);
     if(!post||post.space_id!==spaceId)throw missing();
     if(post.lifecycle==='redacted')throw new DetunedError(ErrorCode.CONTENT_REDACTED,'Review material has been redacted.',410);
-    if(post.author_id!==current.actor.id&&current.spaceRole!=='maintainer'&&current.spaceRole!=='owner')throw forbidden();
+    if(post.author_id!==current.actor.id&&current.spaceRole!=='maintainer'&&current.spaceRole!=='owner')throw new DetunedError(ErrorCode.FORBIDDEN,'A formal review request must be initiated by the target post author or a space maintainer/owner.',403);
     return current;
   }
   private cancelAuth(auth:AuthenticatedContext,spaceId:string,requestId:string){

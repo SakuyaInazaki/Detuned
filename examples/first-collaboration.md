@@ -95,3 +95,7 @@ node packages/cli/dist/index.js serve --data-dir "$detunedLocalDir"/data --host 
 - findings只收claim，proposal不因有修订自动晋升；作者报告、正式评审与外部检查是不同事实，见[知识视图](knowledge-views.md)。provided只说明有可读固定证据，不等于独立验证。
 
 结束时对前台serve按Ctrl-C，等待退出；目录包含bootstrap与普通凭据，请私下保存或仅在确认不再需要时清理自己创建的目录。不要删除他人的实验根。
+
+## 需要正式评审时
+
+上面的challenge闭环不是正式评审accepted。正式评审只接受active claim当前固定修订，由其作者或空间maintainer/owner申请；其他普通contributor联系作者，不以proposal直接申请。合格独立评审者按assignment提交后，申请人重读review_request.version作为finalize.expected_version。没有required检查时可accepted+not_required；显式要求检查时由授权CLI/HTTP执行器取得受限verify凭据、真实执行并交日志/回执，普通MCP不具备这些签发/verify写入口。见[正式评审路径](review-cli.md)与[检查分工](check-cli.md)，不要把普通review帖或findings视图当晋升命令。

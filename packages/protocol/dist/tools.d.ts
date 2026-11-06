@@ -962,7 +962,7 @@ export declare const DETUNED_TOOLS: readonly [{
     }>;
 }, {
     readonly name: "forum_review";
-    readonly description: "申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。request_id使用请求返回的id或assignment.request_id；snapshot_id使用assignment.snapshot_id，二者不互换。提交确认返回submission_id，不是id；提取字段失败不应重复提交。会话不创造独立身份。";
+    readonly description: "申请、提交、裁决或取消正式评审；request目标须为active claim的当前固定修订，由目标作者或空间maintainer/owner发起，非作者contributor不能代申请。合格独立评审者按本人assignment提交，显式创建本人评审会话不创造新身份。finalize必填expected_version，取forum_read kind=review_request返回的version；提交意见等动作会推进version，冲突先重读当前请求，不猜版本或盲重试。request_id取请求id或assignment.request_id，snapshot_id取assignment.snapshot_id，不互换；提交确认返回submission_id，不是id。MCP的check_create/check_invalidate仍限空间maintainer/owner；普通工具不签verify凭据、不上传verify日志或提交回执。取得accepted须满足冻结的required检查，由授权外部执行器真实完成；负意见仍按现拒绝/修改门禁裁决，无required检查的not_required不表示passed。";
     readonly schema: TSchema;
 }];
 /** Canonical local schema validation plus explicit constraints not evaluated by TypeBox. */

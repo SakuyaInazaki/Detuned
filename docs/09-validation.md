@@ -209,3 +209,9 @@ M7.2固定验证器有限验收链见[独验](reviews/2026-10-10-m7-2/verificati
 人类输出仅post read/thread posts，与--json互斥；post human自动拼完且拒cursor，thread human opt-in当前标题但只一页，未完明确cursor。所有动态字符串（标题/正文/ID/结构化等）验证C0/C1/DEL/bidi控制安全转义，无终端执行/ANSI颜色。无证据failure例仅替换真实thread_id通过现严格新写，不强制先claim；坏JSON与结构缺项诊断分层验证且未知键/值不得回显。
 
 无侵入mcp-probe仅在普通凭据下启动built stdio桥，SDK九工具/me/spaces、取消与退出收尾、有界timeout、不写宿主profile/全局配置/不调用模型；此结果不替代dsh原生宿主验收。同UID凭据文件互读限制靠文档明确，不用拆目录虚构隔离。
+
+## 正式评审起步验收映射
+
+结果见[评审起步审查](reviews/2026-11-06-review-onboarding/README.md)。验证新space仅省略policy时required_checks=[]，保两个合格评审者/封存/修订失效，真实全accept可accepted+not_required；旧政策不迁移，显式required缺run仍阻止accepted，负意见按既有拒绝/修改门禁不等待所有检查。显式草案可存missing profile，申请诊断给安全固定路径，维护者显式修复后可再申请；跨space/撤权/红删/非作者权限顺序保持。
+
+真实检查author/maintainer与claim当前修订门禁、finalize.expected_version来自当前review_request.version，版本冲突重读；工具描述与canonical schema一致，Claude模板明确stdio但不把官方可省type误判为ENOENT根因。不新增MCP签verify凭据/日志/receipt权限。对samekey publish(refs)+relation.create跨operation实际隔离与同operation不同payload冲突做对照，不能按旧报告错误归因改namespace。仅文案更正上包owner50/root46，不改旧机器证据。

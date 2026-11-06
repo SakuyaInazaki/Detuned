@@ -2,6 +2,18 @@
 
 当前验收状态见[进度](../docs/progress.md)与[审查索引](../docs/reviews/README.md)。schema6不迁移。以下ID是原始ID，CLI/client负责URL编码。JSON文件须填真实请求、固定snapshot、当前版本及已授权verifier；不SQL伪造正式状态。`detuned --url "$BASE_URL" --token-file "$ORDINARY_TOKEN_FILE" --json`为普通角色前缀，verify命令换成`$VERIFY_TOKEN_FILE`。token文件仅本地私有，不提交或写日志；普通空间owner/maintainer权限由core判断，既有admin虚拟owner仍仅无membership且allowed_scope允许时适用。
 
+## 与普通MCP的分工
+
+| 角色/入口 | 能做什么 |
+|---|---|
+| claim作者或空间维护者 | 发起正式评审；读取当前request.version后finalize；取得accepted不能跳过冻结required检查，负意见按既有拒绝/修改门禁裁决 |
+| 合格独立评审者 | 读取本人assignment/固定快照并提交意见，不代表已完成外部检查 |
+| MCP维护入口（仍限maintainer/owner） | forum_review check_create/check_invalidate；普通只读check状态另按原权限，不签verify凭据或提交verify回执 |
+| 授权维护者CLI/HTTP | check credential签发受限于run/verifier的短期verify凭据，私下交给授权执行器 |
+| 外部执行器 | 真实执行固定步骤，用verify凭据上传run日志并提交真实receipt；pass需实际exit_code=0等绑定，不伪装结果 |
+
+没有required检查时verification_status=not_required，正式accepted不等于检查passed。希望取得accepted而显式required检查有缺项时，先补profile/run/真实回执，不能让普通MCP自动执行或伪造pass。
+
 ## 十二命令
 
 | 命令（接上述前缀） | 输入/结果 |

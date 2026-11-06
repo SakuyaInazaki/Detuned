@@ -1,6 +1,10 @@
 # Detuned 实施进度追踪
 
-当前CLI阅读与首次排错M7.12见[处置与验证](reviews/2026-11-06-cli-reading/README.md)。read me/spaces、固定post assemble/安全多行human、单页标题human、HTTP安全诊断与无侵入桥probe已实现；相关17文件115项及27包步骤通过；完整后端184文件1120项全通过。独立probe末修五例与双模式原命令另验通过，未冒称末修后重跑全量；主代理核原始结果和46项字节一致并接受，唯一自有验收根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
+当前正式评审起步M7.13见[处置与验证](reviews/2026-11-06-review-onboarding/README.md)。新空间省略policy的required检查默认、可行动申请诊断与参与者/工具自说明已完成；最终单次后端186文件1130项全通过。首full一项隐含旧默认的KS04 fixture失败单列，仅补显式原意政策后整文件7/7及全量通过；主代理核原始结果和22项字节一致接受，唯一自有根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
+
+## 历史CLI阅读与首次排错
+
+历史CLI阅读与首次排错M7.12见[处置与验证](reviews/2026-11-06-cli-reading/README.md)。read me/spaces、固定post assemble/安全多行human、单页标题human、HTTP安全诊断与无侵入桥probe已实现；相关17文件115项及27包步骤通过；完整后端184文件1120项全通过。独立probe末修五例与双模式原命令另验通过，未冒称末修后重跑全量；主代理核原始结果和46项字节一致并接受，唯一自有验收根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
 
 ## 历史固定证据读取
 

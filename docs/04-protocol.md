@@ -623,3 +623,11 @@ consumer lookup HTTP query为consumer_key、thread_ids_json/event_types_json两�
 只有完整拼接并JSON.parse成功才返回`{ref,post_kind,lifecycle,has_newer_revision,encoding:'json',content,bytes,pages}`。content含title/summary/body/tags/structured；读取按历史wire形状保留structured，不以新typed写入规则重验旧材料。bytes是所拼原JSON的UTF8字节数，pages是实际读取页数。该方法保证固定引用、连续字节与完整JSON的客户端检查，不新增服务器摘要或密码学认证声明；研究结论仍须独立核查。当前metadata改变时应重新读取，不把跨页不一致拼成同一次稳定结果。
 
 HTTP注册路由的schema拒绝使用与typed写入相同的有界脱敏诊断：details.issues最多8项，只含可信schema字段路径、规则及有界静态枚举值；message仅附最多两条安全路径摘要。body/params/querystring/headers仅从注册路由的已知schema定位，不透传AJV原始message、params或未知属性名/输入值；无法安全定位时返回固定通用schema问题。400、VALIDATION_ERROR、retryable=false及既有授权/隐藏顺序保持。损坏JSON或不可读输入文件仍是独立的输入解析错误，不把解析失败伪装成某个业务字段缺失。
+
+## 正式评审申请的起点诊断
+
+`POST S/review-requests`与共享client/MCP继续只允许目标帖作者或当前space maintainer/owner发起，目标仍须是同空间可读、active/current的claim；contributor身份本身不等于可申请任意他人材料。当前空间授权、目标不存在/跨空间和红删门禁仍先于类型诊断，不通过错误揭示不可见材料。
+
+已获发起权的请求若有效策略要求的profile缺失，返回400 VALIDATION_ERROR，details.issues含`{path:'/check_profiles',rule:'missing_required_profile'}`，固定文案提示联系维护者配置或明确修改策略并取当前policy_revision；不回显动态check名称。可见且有申请权的proposal等非claim目标返回`{path:'/target_ref',rule:'target_kind',allowed_values:['claim']}`，不改变目标资格。失败不写snapshot、request、assignment、幂等key或事件。显式缺profile的空间草案仍可创建/更新；修复只能经有权新空间修订，不能静默忽略请求冻结的检查要求。
+
+仅新建时省略整个review_policy采用required_checks=[]；旧空间、显式草案、历史请求及成功原key重放保留原检查名单。无required checks只表示not_required；显式要求的检查仍约束accepted，全accept且检查pending不能finalize为accepted；负意见产生rejected/changes_requested的既有优先级保持。

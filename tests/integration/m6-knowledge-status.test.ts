@@ -84,7 +84,7 @@ it('KS03 accepted historical target remains fixed while current revision and dis
   expect(findings()[0]).toMatchObject({ revision: 2, formal_review_status: 'accepted', formal_check_status: 'not_required', formal_review: { request_id: first.id, target_revision: 1, phase: 'accepted', current_validity: 'superseded', validity_reasons: ['target_superseded', 'policy_superseded'] } });
 });
 it('KS04 real collecting round becomes stale on revision; frozen checks remain pending', async () => {
-  await call('PATCH', path(), { expected_revision: 1, check_profiles: { reproduce: { verifier_actor_ids: [], config_sha256: 'a'.repeat(64), description: 'external' } } }, 'profile');
+  await call('PATCH', path(), { expected_revision: 1, review_policy: { ...policy(), required_checks: ['reproduce'] }, check_profiles: { reproduce: { verifier_actor_ids: [], config_sha256: 'a'.repeat(64), description: 'external' } } }, 'profile');
   const first = await request('pending');
   expect(findings()[0]).toMatchObject({ formal_review_status: 'collecting', formal_check_status: 'pending' });
   await call('POST', path(`/posts/${pid}/revisions`), { expected_revision: 1, title: 'new', summary: 's', body: 'revised claim', structured: claim }, 'revise');

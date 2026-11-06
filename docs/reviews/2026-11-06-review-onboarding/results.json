@@ -1,0 +1,370 @@
+{
+  "task": "M7.13",
+  "base_commit": "01e0fbf65c603d10092aeae3791f31ddf5517a01",
+  "environment": {
+    "host": "arch-ms-a2",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "root": "/var/tmp/detuned-m713-ktu4af7v",
+    "uid": 1000,
+    "device": 66306,
+    "inode": 786460,
+    "mode": "0700",
+    "parent": {
+      "path": "/var/tmp",
+      "uid": 0,
+      "device": 66306,
+      "inode": 58196314,
+      "mode": "1777"
+    },
+    "marker": {
+      "name": ".detuned-owner",
+      "inode": 786461,
+      "mode": "0600",
+      "text": "detuned-owned-M7.13-d71e7fd82182ed3dce1f8f2b110715b5\n"
+    },
+    "private_home_cache_tmp_store": true,
+    "worker_count": 1,
+    "file_parallelism": false,
+    "model_calls": 0
+  },
+  "stages": {
+    "old_red": {
+      "files": 1,
+      "tests": 8,
+      "passed": 5,
+      "failed": 3,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-review-entry-defaults.test.ts",
+          "full_name": "M7.13 omitted-policy new spaces have a coherent no-required-check default and can request review"
+        },
+        {
+          "file": "tests/contracts/m7-review-entry-defaults.test.ts",
+          "full_name": "M7.13 explicit reproduce drafts remain storable and missing profiles give safe actionable diagnostics"
+        },
+        {
+          "file": "tests/contracts/m7-review-entry-defaults.test.ts",
+          "full_name": "M7.13 a visible authorized proposal gets a claim-only target diagnostic without creating records"
+        }
+      ],
+      "outer": {
+        "exit_code": 1,
+        "wall_ms": 2093
+      },
+      "root_independent_raw_review": true
+    },
+    "candidate_green": {
+      "files": 1,
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "success": true,
+      "failed_cases": [],
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 2009
+      },
+      "root_independent_raw_review": true
+    },
+    "first_journey": {
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "success": true,
+      "failed_cases": [],
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 3302
+      }
+    },
+    "focused": {
+      "files": 12,
+      "tests": 56,
+      "passed": 56,
+      "failed": 0,
+      "success": true,
+      "failed_cases": [],
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 22168
+      },
+      "root_independent_raw_review": true
+    },
+    "checks": [
+      {
+        "command": "pnpm build:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10903
+      },
+      {
+        "command": "pnpm typecheck:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9992
+      },
+      {
+        "command": "pnpm lint:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10065
+      }
+    ],
+    "raw_journey": {
+      "model_calls": 0,
+      "transports": [
+        {
+          "mode": "flat",
+          "tool_count": 9,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "requested_signals": []
+        },
+        {
+          "mode": "wrapped",
+          "tool_count": 9,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "requested_signals": []
+        },
+        {
+          "mode": "flat",
+          "tool_count": 9,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "requested_signals": []
+        },
+        {
+          "mode": "wrapped",
+          "tool_count": 9,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "requested_signals": []
+        },
+        {
+          "mode": "wrapped",
+          "tool_count": 9,
+          "exit": {
+            "code": 0,
+            "signal": null
+          },
+          "requested_signals": []
+        }
+      ],
+      "passed": true,
+      "distinct_ordinary_actors": 3,
+      "eligible_reviewers": 2,
+      "reviewer_actor_count": 2,
+      "reviewer_session_count": 2,
+      "default_required_checks": [],
+      "finalize_expected_version": 3,
+      "phase_before_finalize": "revealed",
+      "finalize_outcome": "accepted",
+      "default_checks_empty": true,
+      "accepted": true,
+      "verification_status": "not_required",
+      "check_receipts": 0,
+      "sealed_second_reviewer_denied": true,
+      "current_version_read_before_finalize": true,
+      "stale_version_no_writes": true,
+      "visible_target_and_missing_profile_safe_diagnostics": true,
+      "same_key_different_operations_succeed_both_modes": true,
+      "same_operation_conflict_no_writes_both_modes": true,
+      "claude_template_wrapped_global_reads_zero_rows": true,
+      "admin_discussion_posts": 0,
+      "protocol_identity_independence_only": true,
+      "cleanup": {
+        "all_mcp_closed": true,
+        "app_closed": true,
+        "private_directory_removed": true
+      }
+    },
+    "raw_journey_outer": {
+      "exit_code": 0,
+      "wall_ms": 2788
+    },
+    "raw_journey_stderr_bytes": 0,
+    "checks_root_independent_raw_review": true,
+    "raw_journey_root_independent_raw_review": true
+  },
+  "notes": {
+    "role_assertion": "Original old-red eight-case run remains3failed5passed. Its role check used contains(author), accidentally satisfied by old authority. The final same case uses contains(target post author); old literal was inspected statically, not rerun or counted as a fourth old-red failure. Final full eight-case candidate run passed.",
+    "fixture_preexecution_review": "Independent review identified bootstrap/buildApp ordering, initialization cleanup, and noncanonical proposal structured fields before the first execution. They were corrected using existing canonical fixtures; no actual journey preparation failure is claimed.",
+    "raw_journey_provenance": "The first wrapper parsed child stdout in memory but did not persist it. The raw JSON is an additional independent direct run after related tests, not reconstructed first-run stdout. Only safe observed actor/session/version counts were added to output; behavior and assertions stayed unchanged.",
+    "identity_scope": "Two distinct eligible ordinary reviewer actors and two real sessions prove protocol identity independence only. No cognitive or model research independence is claimed.",
+    "namespace": "Both raw flat and wrapped workflows successfully publish a post with cites refs and independently create a relation using the same key across operations. A changed same-operation payload conflicts with unchanged full database snapshot. No namespace production change was made.",
+    "required_checks": "New omitted-policy spaces default to no required checks. Explicit drafts and old stored policy/replays are preserved. Accepted with not_required is not a passed check or verification receipt. Existing required-check regression remains enforced.",
+    "claude_template": "Only explicit type and existing command/args/env fields were mapped to the real SDK/project bridge; no native Claude host/profile/model call. Omitted type was not claimed to be a defect.",
+    "first_full_fixture_failure": "KS04 intended a frozen required reproduce check but only supplied its profile, implicitly relying on the pre-change default. The new default legitimately made it not_required. One fixture is being made explicit about required_checks; all pending/stale assertions and timeouts remain unchanged. The first full1130 total with1failure is retained separately."
+  },
+  "final_backend_full": {
+    "pending": false,
+    "files": 186,
+    "unique_files": 186,
+    "tests": 1130,
+    "assertions": 1130,
+    "unique_cases": 1130,
+    "passed": 1130,
+    "failed": 0,
+    "pending_tests": 0,
+    "todo": 0,
+    "success": true,
+    "outer": {
+      "exit_code": 0,
+      "wall_ms": 363343
+    },
+    "duration_ms": 362883.30517578125,
+    "existing_timeouts_and_behavioral_invariants_preserved": true,
+    "root_independent_raw_review": true
+  },
+  "cleanup": {
+    "removed": true,
+    "only_owned_root": "/var/tmp/detuned-m713-ktu4af7v",
+    "identity_marker_parent_rechecked": true,
+    "own_process_count": 0,
+    "nested_mount_count": 0,
+    "parent_dirfd_nofollow_removal": true,
+    "immediate_lstat_errno": 2,
+    "immediate_enoent": true,
+    "root_separate_review_pending": false,
+    "owner_new_ssh_enoent": true,
+    "owner_new_ssh_connection_sharing_disabled": true,
+    "owner_new_ssh_exit_code": 0,
+    "root_new_ssh_enoent": true,
+    "root_new_ssh_connection_sharing_disabled": true,
+    "root_new_ssh_exit_code": 0
+  },
+  "artifacts": {
+    "tracked_backend_compared": 608,
+    "same": 597,
+    "changed_files": [
+      "modules/review/dist/index.d.ts.map",
+      "modules/review/dist/index.js",
+      "modules/review/dist/index.js.map",
+      "modules/review/dist/request-service.js",
+      "modules/review/dist/request-service.js.map",
+      "packages/core/dist/services/space-service.js",
+      "packages/core/dist/services/space-service.js.map",
+      "packages/mcp/dist/tool-validation.d.ts",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map"
+    ],
+    "changed_count": 11,
+    "new_modules": 0,
+    "web_untouched": true,
+    "copied_from_frozen_final_27_build": true
+  },
+  "final_binding": {
+    "tested_repo_root": "/var/tmp/detuned-m713-ktu4af7v/src",
+    "files": [
+      "examples/claude.mcp.json",
+      "modules/review/dist/index.d.ts.map",
+      "modules/review/dist/index.js",
+      "modules/review/dist/index.js.map",
+      "modules/review/dist/request-service.js",
+      "modules/review/dist/request-service.js.map",
+      "modules/review/src/index.ts",
+      "modules/review/src/request-service.ts",
+      "package.json",
+      "packages/core/dist/services/space-service.js",
+      "packages/core/dist/services/space-service.js.map",
+      "packages/core/src/services/space-service.ts",
+      "packages/mcp/dist/tool-validation.d.ts",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map",
+      "packages/protocol/src/tools.ts",
+      "pnpm-lock.yaml",
+      "tests/contracts/m7-review-entry-defaults.test.ts",
+      "tests/contracts/m7-review-entry-journey.test.ts",
+      "tests/fixtures/review-entry-journey.mjs",
+      "tests/integration/m6-knowledge-status.test.ts"
+    ],
+    "file_count": 22,
+    "owner_all_bytes_equal": true,
+    "root_independent_review_pending": false,
+    "same_owner_root_scope": true,
+    "static_docs_not_claimed_as_executed_input": true,
+    "no_checksum_file_generated": true,
+    "root_new_ssh_independent_memory_comparison_all_21_equal": true,
+    "added_after_first_full": "tests/integration/m6-knowledge-status.test.ts",
+    "root_new_ssh_independent_memory_comparison_all_22_equal": true
+  },
+  "first_backend_full": {
+    "files": 186,
+    "unique_files": 186,
+    "tests": 1130,
+    "unique_cases": 1130,
+    "passed": 1129,
+    "failed": 1,
+    "success": false,
+    "outer": {
+      "exit_code": 1,
+      "wall_ms": 365513
+    },
+    "failed_cases": [
+      {
+        "file": "tests/integration/m6-knowledge-status.test.ts",
+        "full_name": "KS04 real collecting round becomes stale on revision; frozen checks remain pending"
+      }
+    ],
+    "root_independent_raw_review": true
+  },
+  "first_full_fixture_correction": {
+    "file": "tests/integration/m6-knowledge-status.test.ts",
+    "scope": "KS04 setup adds explicit review_policy required_checks reproduce matching its intended pending-check scenario. Original assertions/timeouts and production sources unchanged.",
+    "independent_review_passed": true,
+    "validation": {
+      "files": 1,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "success": true,
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 1878
+      },
+      "root_independent_raw_review": true
+    }
+  },
+  "cleanup_precheck": {
+    "identity_parent_marker_verified": true,
+    "root_uid": 1000,
+    "root_dev": 66306,
+    "root_inode": 786460,
+    "root_mode": "0700",
+    "marker_inode": 786461,
+    "marker_mode": "0600",
+    "parent_uid": 0,
+    "parent_dev": 66306,
+    "parent_inode": 58196314,
+    "parent_mode": "1777",
+    "owned_process_count": 0,
+    "nested_mount_count": 0,
+    "root_independent_raw_review": true
+  },
+  "raw_evidence_paths": {
+    "old_red": "/var/tmp/detuned-m713-ktu4af7v/evidence/review-entry-old-red.json",
+    "first_full": "/var/tmp/detuned-m713-ktu4af7v/evidence/first-full.json",
+    "first_full_exit": "/var/tmp/detuned-m713-ktu4af7v/evidence/first-full-exit.json",
+    "final_full": "/var/tmp/detuned-m713-ktu4af7v/evidence/vitest-final.json",
+    "final_full_exit": "/var/tmp/detuned-m713-ktu4af7v/evidence/test-final-exit.json",
+    "raw_journey": "/var/tmp/detuned-m713-ktu4af7v/evidence/review-journey-raw.json",
+    "note": "Original private raw logs and JSON were retained temporarily for independent root review, then are removed only with the verified owned root. This single compact receipt retains necessary real failures and results."
+  }
+}

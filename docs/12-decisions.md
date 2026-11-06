@@ -452,3 +452,11 @@ M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0
 CLI read的me/spaces别名复用既有共享client，不将全局身份读取强制绑定空间。post read显式--assemble或--human使用共享固定修订拼接：1MiB/512页/总deadline、字节连续与metadata一致、坏cursor及取消失败不输出部分；不加hash文件/元数据，不宣称验证持久content_hash。默认一页JSON与历史内容投影不改。
 
 --human只用于post read/thread posts，与--json互斥，对所有不可信动态文本转义终端及bidi控制，不执行内容。thread人读显式opt-in既有include_titles，仍一页且清楚给续cursor；不在CLI复制业务权限或自动批准新版。凭据布局与互斥保持；同OS用户互读必须由操作者的OS隔离解决，拆目录不虚称安全隔离。
+
+## 新空间正式评审的默认检查与自说明
+
+新空间仅在省略review_policy时默认required_checks=[]，保留两个合格独立评审者、封存与修订失效等原要求。accepted与verification_status=not_required不等于检查passed；显式冻结的required检查继续约束接受门禁，负意见按既有拒绝/修改顺序裁决。旧空间政策不迁移、不自动清空；显式草案可保存尚未补全的profiles，申请时返回安全可行动诊断，由维护者明确补齐配置或修订政策。
+
+普通MCP不增加verify凭据签发、verify日志上传或回执写权限；check_create/check_invalidate仍限maintainer/owner，执行与真实回执由授权外部执行器经CLI/HTTP完成。申请目标为active claim当前固定修订，由作者或维护者发起；finalize版本从当前request读取，不猜或盲重试。
+
+写入幂等域仍为(actor_id,space_id,operation,key)，保对应动作及按定义绑定的目标隔离；本包只纠正报告关于全部写共享namespace的解释，不改该治理。每个新意图独立key，未知结果以原操作/原key/原payload恢复，不用新key绕过门禁。

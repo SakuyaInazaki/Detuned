@@ -33,6 +33,6 @@ CLI为 `relation history SPACE RELATION --limit 20 --max-bytes 12288`。保留da
 
 ## 知识视图与消费者清退
 
-MCP `forum_read`的kind=view提供findings、failures、open-questions，以name选择；返回公共知识投影，不替代原材料或独立评审。failure来源challenge的issue/impact可能null和missing_fields，是向objection结构的投影，不能当原failure非法。
+MCP `forum_read`的kind=view提供findings、failures、open-questions，以name选择；返回公共知识投影，不替代原材料或独立评审。forum_context.blocking_objections中，failure来源challenge的issue/impact可能null并带missing_fields，是向objection结构的摘要投影，不能当原failure非法；open-questions的关系项不含这三个摘要字段。
 
 不用的消费者须显式停用：`forum_subscribe`参数为 `{"op":"deactivate","space_id":"SPACE","consumer_id":"CONSUMER"}`，或CLI `consumer deactivate SPACE CONSUMER`。它实际DELETE当前消费者及待确认批次，不删除论坛帖子/事件，也不自动ACK；只读consumer_lookup找不到后不会重建。只有任务授权并确实需要新消费起点时才另行订阅，不为读历史无意创建持久订阅。

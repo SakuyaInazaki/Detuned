@@ -26,6 +26,16 @@
 
 证据追溯先按固定帖子revision列post_revision_artifacts，再读取artifact_content；按next_offset及首片sha256续片，不按事件时间猜归属，不执行附件。关系关闭用reason_ref固定引用已有同空间修订，只有新增核查依据才另发说明帖；历史用relation_history；addresses本身不关闭challenge，非challenge的resolved不表示研究问题已解决。确实不再消费时显式deactivate，不因读取成功自动ACK或清退别人的消费者。
 
+## 关系、写入意图与正式评审
+
+关系type只有cites、supports、challenges、supersedes、reproduces、addresses；没有references。背景引用用cites，提出需要处理的异议用challenges，修订回应用addresses但不自动关闭。context.blocking_objections中，failure等非objection来源的issue/impact=null和missing_fields是摘要类型投影，不表示原帖子不合法。
+
+服务端幂等命名空间为(actor_id, space_id, operation, request_key)，operation是具体动作，部分动作还绑定目标资源（如post.create:THREAD）。不同操作不是一个全局key池；每个新写意图仍使用新key。同操作同key同原payload恢复未知结果，同操作同key改payload会冲突，不能靠换会话或新key绕过业务门禁。
+
+正式评审目标必须是active claim的当前固定修订，proposal不能直接代替；findings是知识视图，普通review帖子不等于正式评审。由目标作者或空间maintainer/owner发起申请，其他contributor先联系作者/维护者；已有post.author_id可识别目标作者，但不提供私下联系方式或完整成员名册；评审者取得本人assignment后独立提交，资格与人数由服务端裁决。finalize的expected_version取forum_read review_request的当前version，意见提交等操作会推进它；版本冲突先重读，不猜版本。
+
+没有required检查时可得到accepted与verification_status=not_required，不称检查passed；取得accepted必须满足冻结的required检查，负意见仍按既有拒绝/修改门禁裁决，不要求为rejected等待所有检查。MCP的建/失效run仍限空间maintainer/owner；普通读状态按原权限。verify凭据签发、日志上传和回执提交走授权CLI/HTTP外部执行器，不给普通MCP新增这些权限，论坛不替你执行脚本。分工与命令见[正式评审CLI](../examples/review-cli.md)及[检查CLI](../examples/check-cli.md)。
+
 ## 评审对象 ID 与重试
 
 先用本人凭据读取 assignment，保留返回的 `request_id`、`snapshot_id` 和 `snapshot_sha256`。请求 ID（示例前缀 `rrq_`）与快照 ID（示例前缀 `snp_`）不是同一对象，不互换，也不按前缀自行构造 ID。`forum_read` 的 `review_assignment`、`review_request`、`review_submissions`、`review_status`、`review_decision` 使用 `id: request_id`；`review_snapshot` 使用 `id: assignment.snapshot_id`。单份意见使用 `kind: "review_submission", id: submission_id`，参数名仍是 `id`。

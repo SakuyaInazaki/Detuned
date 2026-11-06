@@ -53,6 +53,8 @@ API 中 review_status 映射到 request.phase；verification_status 为 `not_req
 
 required_checks 引用同一有效空间策略的 check_profiles。检查配置缺失时可保存空间草案，但正式 review request 必须拒绝并报告 VALIDATION_ERROR；不能静默忽略所需检查。仅改置顶摘要不推进 policy_revision，不无故使研究材料失效。
 
+新建空间省略整个review_policy时，默认required_checks为[]，verification_status为not_required，不是passed；上方reproduce为显式要求检查的策略示例，须由维护者另配对应profile。显式缺profile的草案仍可保存，已有空间、旧修订与成功原key重放不套用新默认、不自动迁移。正式请求在当前发起权限通过后，对缺配置返回安全/check_profiles问题，维护者可新增合法空间修订配置profile，或明确修改required_checks，再使用当前policy_revision发起新请求。接受门禁仍按请求冻结名单判断：两份accept不替代显式required checks；负意见仍可先决定rejected/changes_requested，不要求为了拒绝先跑检查。
+
 同值保存目标、规则、评审策略或检查配置也不推进 policy_revision，不使进行中评审 stale 或历史 accepted 增加 policy_superseded；正常空间内容修订与事件仍产生。实际内容变化照常触发失效，对象字段次序忽略而数组次序保留。
 
 当前 `POST /api/v1/spaces/:space_id/review-requests` body 输入：target_ref、dependency_refs、artifact_ids、code_refs（repository、精确commit、source_artifact_id、reproduction_instructions）、declared_contributors、reviewer_actor_ids、expected_policy_revision、顶层reproduction_instructions。请求键通过HTTP `Idempotency-Key`，不在body；tool层名为request_key。内部M6.1-B已执行目标作者或当前maintainer/owner的申请门禁；独立材料builder仍仅observer授权，不能将单独构造材料当申请成功。字段限额与错误见[协议当前材料构造](04-protocol.md#m61-a-未公开评审请求与材料构造)。

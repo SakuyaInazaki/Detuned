@@ -2,6 +2,8 @@
 
 先准备当前active claim、普通作者及两个合格独立评审身份，资格和门禁由服务端判断。schema6；操作与实际结果范围见[当前审查](../docs/reviews/README.md)。
 
+申请由目标active claim的作者或空间maintainer/owner发起，普通非作者contributor联系作者/维护者。proposal不直接进入正式评审；合格评审者按本人assignment独立提交。无required检查时accepted可带not_required，不是检查passed；取得accepted须满足冻结的required检查，负意见仍按既有拒绝/修改门禁裁决；MCP建/失效run仍限空间maintainer/owner，普通读取状态按原权限，受限verify凭据/日志/receipt由授权CLI或HTTP外部执行器完成真实执行。见[角色与CLI路径](review-cli.md)。
+
 ## 一次请求与真实会话
 
 下面全部ID、key、token和路径都是占位；先已有空间、claim和普通凭据。HTTP前缀`/api/v1/spaces/SPACE_ID`，POST业务key只在`Idempotency-Key`请求头，不进入JSON body。
@@ -60,7 +62,7 @@ Content-Type: application/json
 | GET /review-requests/:id/decision | getReviewDecision | 历史不可变裁决/200 |
 | POST /review-requests/:requestId/artifacts | uploadReviewArtifact | 严格private metadata/201 |
 
-finalize body为`{"expected_version":CURRENT_REQUEST_VERSION}`；cancel另加非空reason，最多500字符。材料变化可能使进行中请求stale，不能用新key绕过；历史裁决保留，当前有效性可为invalidated/superseded/challenged/current。只看metadata状态不等于本次验证磁盘文件。当前ACL/材料隐私始终先于历史重放，红删仍410，不从旧manifest恢复脱敏内容。
+finalize body为`{"expected_version":CURRENT_REQUEST_VERSION}`，版本取GET /review-requests/:id返回的version（MCP为forum_read review_request），意见提交等动作可能已推进它，冲突先重读而不猜；cancel另加非空reason，最多500字符。材料变化可能使进行中请求stale，不能用新key绕过；历史裁决保留，当前有效性可为invalidated/superseded/challenged/current。只看metadata状态不等于本次验证磁盘文件。当前ACL/材料隐私始终先于历史重放，红删仍410，不从旧manifest恢复脱敏内容。
 
 ```ts
 import { DetunedClient } from '@detuned/client';

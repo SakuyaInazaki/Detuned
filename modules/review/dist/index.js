@@ -62,7 +62,9 @@ export class ReviewModule {
             distinct(checks);
             const profiles = [...checks].sort(cmp).map(check_name => {
                 const profile = rules.check_profiles && typeof rules.check_profiles === 'object' && Object.hasOwn(rules.check_profiles, check_name) ? rules.check_profiles[check_name] : undefined;
-                if (!profile || !hash(profile.config_sha256) || !Array.isArray(profile.verifier_actor_ids) || profile.verifier_actor_ids.length > 128 ||
+                if (!profile)
+                    throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'A required check profile is missing. Ask a space maintainer to configure the required check profiles or explicitly revise the policy, then retry with its current policy revision.', 400, false, { issues: [{ path: '/check_profiles', rule: 'missing_required_profile' }] });
+                if (!hash(profile.config_sha256) || !Array.isArray(profile.verifier_actor_ids) || profile.verifier_actor_ids.length > 128 ||
                     profile.verifier_actor_ids.some(id => typeof id !== 'string' || !id) || typeof profile.description !== 'string')
                     throw invalid();
                 distinct(profile.verifier_actor_ids);
@@ -110,7 +112,7 @@ export class ReviewModule {
             };
             const target = read(req.target_ref);
             if (target.post.kind !== 'claim')
-                throw invalid();
+                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Formal review target must be an active claim at its current fixed revision.', 400, false, { issues: [{ path: '/target_ref', rule: 'target_kind', allowed_values: ['claim'] }] });
             // Parser owns the existing strict typed-material rules; no historical rewrite.
             let structured;
             try {

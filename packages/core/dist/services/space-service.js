@@ -9,7 +9,7 @@ const DEFAULT_REVIEW_POLICY = {
     distinct_independence_groups: false,
     seal_until_all_submitted: true,
     invalidate_on_revision: true,
-    required_checks: ['reproduce'],
+    required_checks: [],
     allow_open_objections: false,
 };
 export class SpaceService {

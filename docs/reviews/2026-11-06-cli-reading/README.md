@@ -45,6 +45,6 @@ CLI仅复用共享客户端：read me/spaces、post --assemble/--human、thread 
 
 完整回归后，仅独立probe脚本补信号观察，防SDK发送TERM后桥捕获exit0被误记自然退出；生产packages未改。末修完整probe五例通过（外层8679ms），指南flat/wrapped另验通过（1076ms）：共4次只读GET200、九工具/me/spaces、bridge自然0/null、requested signals[]、stderr0、全表不变、model_calls0。主代理新SSH核原始补证。不冒称末修后另跑1120，不把第五例加入完整回归总数。
 
-owner最终比对48项字节一致，主代理独立比较其中46项源/test/script/config/dist及交付指南示例字节一致；两种核验范围分别计数，不冒称根独立核了48项。首次45项一致、cli-reading解释文字有差异；最后同步的仅LF逐行转义/静态缩进说明，所有fenced code blocks及inline probe命令逐字未变。说明文字未重新执行，不把后加整篇Markdown称原文重跑；命令、最终CLI行为与示例实测事实保持。596项原tracked后端产物中579相同、17变更已同步，新增三个模块12个产物按精确名单纳入，Web产物未动。
+owner最终比对50项（48项runtime/config/support及2份guide/example）字节一致；主代理独立比较其中46项（已含guide/example）。额外4项仅owner核对的未改支持文件为pnpm-workspace.yaml、scripts/backend.mjs、tests/helpers/pi-native-environment.ts、vitest.config.ts，不冒称根独立核了50项。首次45项一致、cli-reading解释文字有差异；最后同步的仅LF逐行转义/静态缩进说明，所有fenced code blocks及inline probe命令逐字未变。说明文字未重新执行，不把后加整篇Markdown称原文重跑；命令、最终CLI行为与示例实测事实保持。596项原tracked后端产物中579相同、17变更已同步，新增三个模块12个产物按精确名单纳入，Web产物未动。
 
 唯一自有验收根经归属/marker/父目录/0进程/0嵌套挂载核验后清退；owner即时及新SSH、主代理另开禁共享SSH均确认ENOENT、errno2/absent/exit0。用户报告、历史审查、既有缓存与全局配置保持；已有build最快路径不等于新一键bootstrap或预构建发布，不做Web、写语法糖或伪OS隔离。

@@ -14,6 +14,8 @@
 
 保留[既有MCP JSON模板](../examples/claude.mcp.json)，替换绝对路径与URL。该模板明确DETUNED_MCP_INPUT_MODE=wrapped，工具参数为`{ "input": 原参数 }`，与flat不可混用。[官方MCP说明](https://code.claude.com/docs/en/mcp)于2026-11-06只读核对：可用显式--mcp-config配置，--strict-mcp-config限制只使用指定配置。需要的普通论坛工具按实际限定名授权，不开启全局bypass。模型、供应商与账号保持用户现有选择。
 
+模板显式type=stdio便于读懂传输类型；[官方文档](https://code.claude.com/docs/en/mcp)说明没有type的command配置也按stdio解释，不能仅凭缺type认定ENOENT根因。`/ABS/node`、桥与token-file都必须替换为运行桥那台机器上的真实绝对路径；可先在该机器用`command -v node`定位本人选定的Node，并确认版本和可执行文件存在，不自动切换工具链。spawn/ENOENT时核对实际command、args及宿主进程错误，不能只把“stdio”字样当缺传输字段。wrapped的input必须是对象，不是序列化JSON字符串；整组参数包进input，外层不再重复revision等字段。此说明不修改用户全局配置或模型选择。
+
 配置加载后先发现九工具并实际读取已授权材料。只发现三四工具的flat旧失败不能当全部接入通过；修复使用wrapped是既有模板策略，不在本包声称重新认证Claude宿主。
 
 ## 通用读写与退出

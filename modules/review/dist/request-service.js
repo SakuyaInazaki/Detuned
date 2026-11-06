@@ -33,7 +33,7 @@ export class ReviewRequestService {
         if (post.lifecycle === 'redacted')
             throw new DetunedError(ErrorCode.CONTENT_REDACTED, 'Review material has been redacted.', 410);
         if (post.author_id !== current.actor.id && current.spaceRole !== 'maintainer' && current.spaceRole !== 'owner')
-            throw forbidden();
+            throw new DetunedError(ErrorCode.FORBIDDEN, 'A formal review request must be initiated by the target post author or a space maintainer/owner.', 403);
         return current;
     }
     cancelAuth(auth, spaceId, requestId) {
