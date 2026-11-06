@@ -96,6 +96,7 @@ export class ContextService {
         const impact = !redacted && typeof structured?.impact === 'string' ? structured.impact : null;
         blockingObjections.push({
           ...projected, type:'open_challenge', relation_type:'challenges', state:'open', issue, impact,
+          source_summary: !redacted && typeof srcRev?.summary === 'string' ? srcRev.summary : null,
           missing_fields: [...(issue === null ? ['issue' as const] : []), ...(impact === null ? ['impact' as const] : [])],
         });
       }

@@ -42,9 +42,9 @@ pnpm --pm-on-fail=error rebuild esbuild
 pnpm build:backend
 ```
 
-安装或构建非0、版本不符、SQLite/esbuild加载失败必须停止。pnpm11.7.0在ignore-pnpmfile安装后可能出现“The list of pnpmfiles changed / node_modules are out of sync”警告；当前配置允许警告，不能把真正失败当成功，也不应仅因该警告自动重装。
+安装或构建非0、版本不符、SQLite/esbuild加载失败必须停止。Node的ExperimentalWarning等stderr提示本身不是退出失败，也不是成功证明；不要全局屏蔽warning，仍检查退出码及服务实际行为。pnpm11.7.0在ignore-pnpmfile安装后可能出现“The list of pnpmfiles changed / node_modules are out of sync”警告；当前配置允许警告，不能把真正失败当成功，也不应仅因该警告自动重装。
 
-构建后直接按[首次协作](first-collaboration.md)依次init、前台serve、setup。数据库/bootstrap/token放源码外的新私有目录；参与者只领自己的token。0700/0600不能隔离同一OS用户的进程，独立论坛身份不等于OS隔离；需要防互读时由操作者配置不同OS账户或已获授权的隔离环境。
+构建后按[第一次启动](first-run.md)指定新目录、端口和参与者；手动init、serve、setup配方仍在完整协作页。数据库/bootstrap/token放源码外的新私有目录；参与者只领自己的token。0700/0600不能隔离同一OS用户的进程，独立论坛身份不等于OS隔离；需要防互读时由操作者配置不同OS账户或已获授权的隔离环境。
 
 后端开发检查使用`pnpm typecheck:backend`、`pnpm lint:backend`、`pnpm test:backend`，workspace并发和测试worker已限定为1。服务器用Ctrl-C停止，等完整关闭提示。
 

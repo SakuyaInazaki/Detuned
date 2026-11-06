@@ -30,10 +30,10 @@ ssh -T -o BatchMode=yes YOUR_TRUSTED_HOST 'umask 077; mkdir /ABS/remote/Detuned-
 
 ```sh
 set -o pipefail
-COPYFILE_DISABLE=1 tar -C "$HOME/Detuned-source-new" -cf - . | ssh -T -o BatchMode=yes YOUR_TRUSTED_HOST 'tar -xf - -C /ABS/remote/Detuned-source-new'
+COPYFILE_DISABLE=1 tar --no-xattrs -C "$HOME/Detuned-source-new" -cf - . | ssh -T -o BatchMode=yes YOUR_TRUSTED_HOST 'tar -xf - -C /ABS/remote/Detuned-source-new'
 ```
 
-第二块使用bash或zsh的pipefail；任一端失败都须停止，不把不完整副本当成功。SSH主机名在本地解析，mkdir/tar的路径在远端解释；所有目录由本人控制。不接受未知host key，不传token。传完按[环境准备](environment-setup.md)安装目标平台依赖。
+第二块发送端为macOS bsdtar，`--no-xattrs`已在本机bsdtar3.5.3只读核对支持，配合COPYFILE_DISABLE避免AppleDouble和扩展属性噪音；Linux发送端先核tar支持此选项，不支持时省略该发送端选项，接收端不需要Mac参数。第二块使用bash或zsh的pipefail；任一端失败都须停止，不把不完整副本当成功。SSH主机名在本地解析，mkdir/tar的路径在远端解释；所有目录由本人控制。不接受未知host key，不传token。传完按[环境准备](environment-setup.md)安装目标平台依赖。
 
 ## 获取GitHub固定版本
 

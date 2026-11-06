@@ -15,4 +15,29 @@ export function humanThread(page) {
     lines.push('truncated: ' + terminalText(page.meta.truncated), 'next_cursor: ' + terminalText(page.meta.next_cursor));
     return lines.join('\n') + '\n';
 }
+export function humanRelationHistory(page) {
+    const lines = ['关系理由历史（仅本页）: ' + terminalText(page.data.relation_id)];
+    for (const row of page.data.resolutions)
+        lines.push('版本 ' + terminalText(row.version) + ' / ' + terminalText(row.action) + '；理由: ' + terminalText(row.reason_ref) + '；可见性: ' + terminalText(row.reason_status));
+    lines.push('next_cursor: ' + terminalText(page.meta.next_cursor));
+    return lines.join('\n') + '\n';
+}
+export function humanRelation(relation, history) {
+    const lines = ['关系: ' + terminalText(relation.relation_id), '类型: ' + terminalText(relation.relation_type) + '；关系状态: ' + terminalText(relation.state) + '；版本: ' + terminalText(relation.version),
+        '固定来源: ' + terminalText(relation.source_ref), '固定目标: ' + terminalText(relation.target_ref),
+        '固定端点有更新修订: 来源=' + terminalText(relation.source_has_newer_revision) + '；目标=' + terminalText(relation.target_has_newer_revision) + '。这不表示异议未解决，也不移动固定端点。'];
+    if (relation.relation_type === 'addresses')
+        lines.push('addresses仅表示已关联回应，不会关闭任何challenge；其resolved是本关系状态。');
+    else if (relation.relation_type === 'challenges') {
+        lines.push('异议状态: ' + terminalText(relation.state));
+        const current = history?.data.resolutions.find(row => row.version === relation.version);
+        if (current)
+            lines.push('当前状态理由: ' + terminalText(current.reason_ref) + '；' + terminalText(current.reason_status) + '；动作: ' + terminalText(current.action));
+        else
+            lines.push(relation.version === 1 ? '当前版本尚无resolve/reopen理由。' : '当前版本理由未载入；不能把历史首条当成当前理由。');
+        if (history)
+            lines.push('理由历史next_cursor: ' + terminalText(history.meta.next_cursor));
+    }
+    return lines.join('\n') + '\n';
+}
 //# sourceMappingURL=reading-output.js.map

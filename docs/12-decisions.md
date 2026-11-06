@@ -466,3 +466,11 @@ CLI read的me/spaces别名复用既有共享client，不将全局身份读取强
 CLI采用`--input-json <object>`作为显式内联JSON入口，保留`--input`文件路径及`-`标准输入；不根据`{`前缀或文件内容猜测输入模式。两选项互斥且内联值须为对象，统一走原业务输入与安全错误路径，不让解析失败回显正文、文件名或凭据。setup保留必须明确选择输入的要求，省略输入时管理、会话、评审、check及空间/主题维护沿原stdin规则，publish/relate保持原空对象行为，import的NDJSON不纳入内联对象入口。长正文和秘密仍优先文件/stdin，引用heredoc分隔符避免shell展开。
 
 要求显式幂等意图的写入在发HTTP前提示已有三条路径：flag key、兼容body key、显式成对持久key；不改共享客户端或服务端幂等域，不将check自动key、非幂等管理命令或session强制改为必填。顶层refs与返回relations原事务语义保持，不为发布回执新增目标latest读取或高亮界面。验证与适用命令范围见当前审查记录。
+
+## 前台首次运行与宿主验证分层
+
+已构建的首次运行使用显式新绝对目录、端口与2–8参与者的前台监督脚本，复用CLI的init、serve和setup，不自动下载、后台化或创建系统服务。仅在自有serve管道出现成功监听marker后，使用本次新随机管理员凭据核对init返回actor，再检查ready并setup；端口冲突不得探测或写入别人的服务。阶段有界，失败保私有数据/凭据/receipt，不自动重建未知写；Ctrl-C等待真实child close与完整关闭提示，强制清退始终失败。
+
+项目MCP探针的写能力是三参数显式opt-in、普通限定空间身份、固定note与固定revision读回；同key固定payload恢复未知结果，不自动删除。桥SDK、私有dsh配置组合、dsh原生插件执行和模型循环分层记录，前两者不升级为后两者认证。每actor独立DSH_HOME/cwd/tmp/patch/token，不为接入更改既有全局profile或模型设置。
+
+CLI新增post create别名共用publish处理；主题全文只对--human显式opt-in，固定当前页修订并约束10帖/1MiB/128内容请求/30秒，中途错误无partial stdout。context仅添加固定来源summary，不补造failure的issue/impact；人类关系输出解释既有state与固定端点，不改变状态机、默认JSON或证据要求。

@@ -635,3 +635,15 @@ HTTP注册路由的schema拒绝使用与typed写入相同的有界脱敏诊断�
 已获发起权的请求若有效策略要求的profile缺失，返回400 VALIDATION_ERROR，details.issues含`{path:'/check_profiles',rule:'missing_required_profile'}`，固定文案提示联系维护者配置或明确修改策略并取当前policy_revision；不回显动态check名称。可见且有申请权的proposal等非claim目标返回`{path:'/target_ref',rule:'target_kind',allowed_values:['claim']}`，不改变目标资格。失败不写snapshot、request、assignment、幂等key或事件。显式缺profile的空间草案仍可创建/更新；修复只能经有权新空间修订，不能静默忽略请求冻结的检查要求。
 
 仅新建时省略整个review_policy采用required_checks=[]；旧空间、显式草案、历史请求及成功原key重放保留原检查名单。无required checks只表示not_required；显式要求的检查仍约束accepted，全accept且检查pending不能finalize为accepted；负意见产生rejected/changes_requested的既有优先级保持。
+
+### 首次协作的显式读取与写入入口
+
+`post create <space-id>`为`publish --space <space-id> --op post`的同一处理入口，JSON仍含thread_id，保留file/显式stdin/内联对象、key来源优先级和成对持久key规则；不新增服务端业务规则。`schema publish --op create`只提示正确的`--op post --kind …`，不静默转换。
+
+context.blocking_objections可选`source_summary`来自关系来源固定修订的summary，不从来源最新head替换，不把failure摘要伪造成issue/impact；原null/missing_fields保持。任一端脱敏时source_summary为null，仍按原权限及完整context预算判断。
+
+`relation read … --human`解释addresses的resolved只表示该回应关系已关联，并不关闭challenge；固定端点has_newer_revision也不表示challenge未解决。challenge理由只读取history首20项/12288字节，只有匹配当前relation.version的条目才标当前理由；不在本页则明确未载入并给cursor。`relation history … --human`仅渲染当前一页。默认JSON不加理由字段，两human均与--json互斥。
+
+`thread posts … --human`默认仍为单页metadata目录。显式`--full`须同时--human且不得--json，只读取当前目录页最多10帖（默认limit10）的固定catalog revision正文，不自动翻目录cursor；脱敏条目不请求正文。整个命令的内容合计至多1MiB、128次实际内容片请求、30秒；预算模式禁内容重试，且共用外层取消信号。预算耗尽报静态QUERY_TOO_BROAD并提示减limit或逐帖post read；权限变化、畸形内容、取消、超时或任一中途失败都不输出已收集的部分正文。既有默认目录JSON与单帖拼接规则保持。
+
+已构建环境的`scripts/first-run.mjs`只编排现有CLI init/serve/setup与ready检查，前台运行、仅信号处理自己spawn的子进程；它不是服务端API、安装器或daemon。SDK桥探针默认只读，显式write-space/write-thread/request-key三项组才发布固定note并固定读回；普通限定空间身份、服务端权限及幂等沿原路径，输出不构成dsh原生模型认证。

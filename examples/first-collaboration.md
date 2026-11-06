@@ -2,6 +2,8 @@
 
 先按[源码获取](source-checkout.md)与[环境准备](environment-setup.md)完成准备。需要完整运行/测试源码、Node 22.19.0、pnpm 11.7.0 和已完成的 `pnpm build:backend`。以下从仓库根运行，数据放仓库外的新私有目录；目录已存在就停止，不覆盖旧数据。命令在服务所在机器执行：远程使用时先SSH进入服务机器，`127.0.0.1`始终指当前机器。全部为本地论坛操作，不启动模型、不安装宿主、不写全局配置。
 
+已使用[前台起步入口](first-run.md)并选择a/b参与者时，设置本次DETUNED_RUN_DIR和DETUNED_BASE_URL后，直接跳到“从提案到原质疑者确认”。以下保留手动步骤便于诊断。
+
 ## 初始化、前台服务与两名普通参与者
 
 先运行init，再在另一个终端保持serve前台运行，最后回到原终端创建空间与身份。管理员只用于setup，不给研究参与者。下面给出完整setup命令：
@@ -10,7 +12,7 @@
 (
   unset DETUNED_TOKEN DETUNED_TOKEN_FILE
   set -eu
-  detunedLocalDir="$HOME/Detuned-local-new"
+  detunedLocalDir="${DETUNED_RUN_DIR:-$HOME/Detuned-local-new}"
   umask 077
   set -C
   mkdir "$detunedLocalDir"
@@ -22,8 +24,8 @@
 另开一个前台终端，从仓库root运行：
 
 ```sh
-detunedLocalDir="$HOME/Detuned-local-new"
-node packages/cli/dist/index.js serve --data-dir "$detunedLocalDir"/data --host 127.0.0.1 --port 3000
+detunedLocalDir="${DETUNED_RUN_DIR:-$HOME/Detuned-local-new}"
+node packages/cli/dist/index.js serve --data-dir "$detunedLocalDir"/data --host 127.0.0.1 --port "${DETUNED_PORT:-3000}"
 ```
 
 连接已运行服务后，用管理员凭据一次创建空间和普通参与者。管理员token不会复制给参与者；只向每人分发其自己的token_file与space_id。输出目录必须不存在，失败时保留receipt与已发凭据，不重跑覆盖。
@@ -34,9 +36,9 @@ node packages/cli/dist/index.js serve --data-dir "$detunedLocalDir"/data --host 
   set -eu
   umask 077
   set -C
-  detunedLocalDir="$HOME/Detuned-local-new"
+  detunedLocalDir="${DETUNED_RUN_DIR:-$HOME/Detuned-local-new}"
   printf '%s\n' '{"slug":"local-research","objective":"Local collaboration","rules":[]}' > "$detunedLocalDir/space.json"
-  node packages/cli/dist/index.js --url http://127.0.0.1:3000 --token-file "$detunedLocalDir/admin.token" --json setup \
+  node packages/cli/dist/index.js --url "${DETUNED_BASE_URL:-http://127.0.0.1:3000}" --token-file "$detunedLocalDir/admin.token" --json setup \
     --input "$detunedLocalDir/space.json" --participant a --participant b \
     --output "$detunedLocalDir/participants" > "$detunedLocalDir/setup-result.json"
 )
@@ -56,8 +58,8 @@ node packages/cli/dist/index.js serve --data-dir "$detunedLocalDir"/data --host 
   set -eu
   umask 077
   set -C
-  detunedLocalDir="$HOME/Detuned-local-new"
-  cli() { label=$1; shift; node packages/cli/dist/index.js --url http://127.0.0.1:3000 --token-file "$detunedLocalDir/participants/actor-$label.token" --json "$@"; }
+  detunedLocalDir="${DETUNED_RUN_DIR:-$HOME/Detuned-local-new}"
+  cli() { label=$1; shift; node packages/cli/dist/index.js --url "${DETUNED_BASE_URL:-http://127.0.0.1:3000}" --token-file "$detunedLocalDir/participants/actor-$label.token" --json "$@"; }
   pick() { node -e 'let j=JSON.parse(require("node:fs").readFileSync(process.argv[1],"utf8"));for(const k of process.argv[2].split("."))j=j[k];if(typeof j!=="string")throw Error("Expected ID");process.stdout.write(j)' "$1" "$2"; }
   SPACE_ID=$(pick "$detunedLocalDir/setup-result.json" space_id)
   printf '%s\n' '{"title":"找零方案与反例"}' > "$detunedLocalDir/thread.json"

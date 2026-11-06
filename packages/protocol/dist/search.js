@@ -165,6 +165,7 @@ export const BlockingObjectionSchema = Type.Union(relationVariants(openChallenge
     const redacted = schema.properties.source_status.const === 'redacted' || schema.properties.target_status.const === 'redacted';
     return Type.Object({
         ...schema.properties,
+        source_summary: Type.Optional(redacted ? Type.Null() : nullable(Type.String())),
         issue: redacted ? Type.Null() : nullable(Type.String()),
         impact: redacted ? Type.Null() : nullable(Type.String()),
         missing_fields: Type.Array(Type.Union([Type.Literal('issue'), Type.Literal('impact')]), {

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Read-only project bridge check: no host profile, model, or arbitrary child command.
+// Project bridge check (read-only unless explicit write triplet): no host profile, model, or arbitrary child command.
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const repo=fileURLToPath(new URL('../',import.meta.url));
 const expectedNames=['forum_context','forum_search','forum_read','forum_publish','forum_relate','forum_subscribe','forum_poll','forum_ack','forum_review'].sort();
-let stage='arguments';
+let stage='arguments',writeRequested=false;
 function options(argv) {
-  const known=new Set(['--url','--token-file','--input-mode','--timeout-ms']);
+  const known=new Set(['--url','--token-file','--input-mode','--timeout-ms','--write-space','--write-thread','--request-key']);
   const values=new Map();
   for(let i=0;i<argv.length;i+=2) {
     const key=argv[i],value=argv[i+1];
@@ -24,7 +24,12 @@ function options(argv) {
   if(!/^\d+$/.test(text))throw Error('Invalid deadline');
   const timeoutMs=Number(text);
   if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1000||timeoutMs>60000)throw Error('Invalid deadline');
-  return {url:url.href,tokenFile:path.resolve(values.get('--token-file')),mode,timeoutMs};
+  const writeKeys=['--write-space','--write-thread','--request-key'];
+  const supplied=writeKeys.filter(key=>values.has(key));
+  if(supplied.length!==0&&supplied.length!==3)throw Error('Write options must be a complete triplet');
+  for(const key of supplied)if(!values.get(key).trim()||values.get(key).length>128||/[\x00-\x20\x7f]/.test(values.get(key)))throw Error('Invalid write identifier');
+  return {url:url.href,tokenFile:path.resolve(values.get('--token-file')),mode,timeoutMs,
+    write:supplied.length?{space:values.get('--write-space'),thread:values.get('--write-thread'),key:values.get('--request-key')}:null};
 }
 function privateTokenFile(file) {
   let fd;
@@ -36,7 +41,7 @@ function privateTokenFile(file) {
   } finally {if(fd!==undefined)fs.closeSync(fd);}
 }
 async function main() {
-  const config=options(process.argv.slice(2));
+  const config=options(process.argv.slice(2));writeRequested=Boolean(config.write);
   stage='credential';privateTokenFile(config.tokenFile);
   stage='dependencies';
   const [{Client},{StdioClientTransport},{isMeResponse,isSpacesPage}]=await Promise.all([
@@ -71,15 +76,28 @@ async function main() {
     stage='tools';const catalog=await client.listTools(undefined,request);
     const names=catalog.tools.map(tool=>tool.name).sort();
     if(names.length!==9||names.some((name,i)=>name!==expectedNames[i]))throw Error('Unexpected tool catalog');
-    const read=async args=>{
-      const response=await client.callTool({name:'forum_read',arguments:config.mode==='wrapped'?{input:args}:args},undefined,request);
+    const call=async (name,args)=>{
+      const response=await client.callTool({name,arguments:config.mode==='wrapped'?{input:args}:args},undefined,request);
       if(response.isError||!response.structuredContent||!Object.hasOwn(response.structuredContent,'result'))throw Error('Read refused');
       return response.structuredContent.result;
     };
-    stage='me';if(!isMeResponse(await read({kind:'me'})))throw Error('Invalid identity response');
+    const read=args=>call('forum_read',args);
+    stage='me';const me=await read({kind:'me'});if(!isMeResponse(me))throw Error('Invalid identity response');
     stage='spaces';const spaces=await read({kind:'spaces',limit:1});
     if(!isSpacesPage(spaces)||spaces.data.length>1)throw Error('Invalid space response');
     result={ok:true,input_mode:config.mode,tool_count:9,me_valid:true,spaces_valid:true,spaces_returned:spaces.data.length};
+    if(config.write){
+      stage='write_identity';
+      if(me.capabilities.includes('admin')||!me.capabilities.includes('read')||!me.capabilities.includes('write')||!me.allowed_space_ids.includes(config.write.space))throw Error('Ordinary scoped read-write identity required');
+      stage='write_thread';const thread=await read({kind:'thread',space_id:config.write.space,id:config.write.thread});
+      if(thread?.thread?.id!==config.write.thread||thread.thread.space_id!==config.write.space)throw Error('Thread binding mismatch');
+      const payload={op:'post',space_id:config.write.space,thread_id:config.write.thread,request_key:config.write.key,kind:'note',title:'Detuned bridge write probe',summary:'Explicit SDK bridge write check',body:'This fixed note verifies the project MCP bridge write path. It is retained as an explicit probe record.',tags:['bridge-probe']};
+      stage='write_publish';const created=await call('forum_publish',payload);
+      if(!created?.post||created.post.space_id!==config.write.space||created.post.thread_id!==config.write.thread||created.post.author_id!==me.actor.id||created.post.kind!=='note'||created.revision?.revision!==1||created.revision.body!==payload.body)throw Error('Write binding mismatch');
+      stage='write_readback';const fixed=await read({kind:'post',space_id:config.write.space,id:created.post.id,revision:1});
+      if(fixed?.post?.id!==created.post.id||fixed.revision?.revision!==1||fixed.revision.body!==payload.body||fixed.revision.title!==payload.title)throw Error('Readback mismatch');
+      result.write={post_ref:{post_id:created.post.id,revision:1},space_id:config.write.space,thread_id:config.write.thread,retained:true,readback_valid:true};
+    }
   } catch(error) {failed=true;throw error;}
   finally {
     try {
@@ -96,4 +114,4 @@ async function main() {
   }
   process.stdout.write(JSON.stringify({...result,bridge_exit:exit,bridge_requested_signals:requestedSignals,stderr_bytes_capped:Math.min(4096,observedBytes),stderr_truncated:observedBytes>4096})+'\n');
 }
-void main().catch(()=>{process.stderr.write(`Detuned MCP probe failed at ${stage}. Check the explicit service, private credential, and built bridge.\n`);process.exitCode=1;});
+void main().catch(()=>{process.stderr.write(`Detuned MCP probe failed at ${stage}. Check the explicit service, private credential, and built bridge.${writeRequested?' Retain the original write key: the note may already have committed.':''}\n`);process.exitCode=1;});

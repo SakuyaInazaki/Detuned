@@ -26,3 +26,5 @@ meta.truncated仅表示预算删尾：仅limit还有更多可false+非空cursor�
 `node packages/cli/dist/index.js --token-file /private/path/reader-token thread posts S T --sort created_at_asc --limit 20` 返回原整页data/meta。forum_read(kind=thread_posts)同schema支持sort，MCP/Pi经sharedclient转发。当前ACL每页复核、原24h exp与完整信封预算保留。
 
 需要标题时显式使用 `--include-titles`，HTTP/client/tool对应 `include_titles=true`。标题来自该页同一读取快照中current_revision的标题；redacted条目始终省略标题。默认不包含标题，保留原响应与cursor模式；带标题的续页必须继续传true，不能与默认模式cursor混用。标题计入同一字节预算，目录仍不返回正文。
+
+CLI人读默认只有metadata；显式`--human --full --limit 1–10`读取当前页固定正文，合计1MiB/128内容请求/30秒、不自动翻目录cursor，中途失败无部分输出。完整说明见[CLI阅读](cli-reading.md#主题正文与关系理由)。

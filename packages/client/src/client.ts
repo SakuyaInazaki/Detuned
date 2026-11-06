@@ -1002,10 +1002,10 @@ export class DetunedClient {
     return { data: result.data, meta: result.meta } as PostRevisionContentPage;
   }
 
-  async assemblePostRevisionContent(spaceId:string,postId:string,revision:number,query:PostAssembleQuery={},opts?:{signal?:AbortSignal}):Promise<AssembledPostRevisionContent> {
+  async assemblePostRevisionContent(spaceId:string,postId:string,revision:number,query:PostAssembleQuery={},opts?:{signal?:AbortSignal;readBudget?:import('./fixed-content-assemble.js').FixedContentReadBudget}):Promise<AssembledPostRevisionContent> {
     validatePostAssembleQuery(query);
     if(typeof spaceId!=='string'||!spaceId.trim()||typeof postId!=='string'||!postId.trim()||!Number.isSafeInteger(revision)||revision<1)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid fixed post reference.',400,false);
-    return assembleFixedPostContent(spaceId,postId,revision,query,this.timeoutMs,opts?.signal,(page,signal)=>this.requestWithBody<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}`,query:page,signal},undefined,query.max_bytes??CONTEXT_BYTES.default));
+    return assembleFixedPostContent(spaceId,postId,revision,query,this.timeoutMs,opts?.signal,(page,signal)=>this.requestWithBody<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}`,query:page,signal},undefined,page.max_bytes??CONTEXT_BYTES.default,opts?.readBudget?0:this.maxRetries),opts?.readBudget);
   }
 
   async getPostRevisionCatalog(spaceId: string, postId: string, query: PostRevisionCatalogQuery = {}, options?: { signal?: AbortSignal }): Promise<PostRevisionCatalogPage> {

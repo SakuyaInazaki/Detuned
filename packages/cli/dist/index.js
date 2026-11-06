@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { setupParticipants, validateSetupOptions } from './setup.js';
-import { humanPost, humanThread } from './reading-output.js';
+import { humanPost, humanThread, humanRelation, humanRelationHistory, terminalText } from './reading-output.js';
 import { cliInputSchema } from './schema.js';
 import { CliSafeError, renderCliError } from './cli-errors.js';
 import { configureCliParser, diagnosticJsonMode, parserError } from './argv-diagnostics.js';
@@ -626,20 +626,45 @@ catch (error) {
 } });
 const relationCommand = program.command('relation').description('当前关系metadata与固定端点读取');
 relationCommand.command('read <space-id> <relation-id>').description('读取有权关系的类型、固定两端、状态与version')
-    .action(async (spaceId, relationId) => { try {
-    printOutput(await getClient(program.opts()).getRelation(spaceId, relationId), program.opts().json);
-}
-catch (error) {
-    handleError(error, program.opts().json);
-} });
+    .option('--human', '安全解释关系状态与固定端点；只读理由历史首20项，与--json互斥')
+    .action(async (spaceId, relationId, options) => {
+    try {
+        if (options.human && program.opts().json)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'human与json互斥。', 400);
+        const result = await withArtifactSignal(async (signal) => {
+            const client = getClient(program.opts());
+            const relation = await client.getRelation(spaceId, relationId, { signal });
+            if (!options.human)
+                return relation;
+            const history = relation.relation_type === 'challenges' ? await client.getRelationHistory(spaceId, relationId, { limit: 20, max_bytes: 12288 }, { signal }) : undefined;
+            return humanRelation(relation, history);
+        });
+        if (options.human)
+            process.stdout.write(result);
+        else
+            printOutput(result, program.opts().json);
+    }
+    catch (error) {
+        handleError(error, program.opts().json);
+    }
+});
 relationCommand.command('history <space-id> <relation-id>').description('读取有界resolve/reopen历史与可见固定理由引用')
     .option('--limit <count>', '每页数量', '20').option('--max-bytes <bytes>', '完整目录JSON预算4096–65536', '12288').option('--cursor <token>', '上一页opaque next_cursor')
-    .action(async (spaceId, relationId, options) => { try {
-    printOutput(await withArtifactSignal(signal => getClient(program.opts()).getRelationHistory(spaceId, relationId, { limit: parsePageLimit(options.limit), max_bytes: parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor }, { signal })), program.opts().json);
-}
-catch (error) {
-    handleError(error, program.opts().json);
-} });
+    .option('--human', '安全纯文本理由历史单页；不自动翻页，与--json互斥')
+    .action(async (spaceId, relationId, options) => {
+    try {
+        if (options.human && program.opts().json)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'human与json互斥。', 400);
+        const result = await withArtifactSignal(signal => getClient(program.opts()).getRelationHistory(spaceId, relationId, { limit: parsePageLimit(options.limit), max_bytes: parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor }, { signal }));
+        if (options.human)
+            process.stdout.write(humanRelationHistory(result));
+        else
+            printOutput(result, program.opts().json);
+    }
+    catch (error) {
+        handleError(error, program.opts().json);
+    }
+});
 consumerCommand.command('deactivate <space-id> <consumer-id>').action(async (spaceId, consumerId) => {
     try {
         printOutput((await getClient(program.opts()).deactivateConsumer(spaceId, consumerId)).data, program.opts().json);
@@ -1037,6 +1062,12 @@ spaceReadCommand.command('read <space-id>').description('按固定内容修订�
     }
 });
 const postReadCommand = program.command('post').description('帖子固定修订内容读取');
+postReadCommand.command('create <space-id>').description('publish --op post的同一写入入口；其他修订/撤回仍用publish')
+    .option('--request-key <key>', '显式幂等键')
+    .option('--request-key-dir <dir>', '私有持久key目录；与logical-operation-id成对')
+    .option('--logical-operation-id <id>', '同一写入意图稳定ID')
+    .option('--input <file>', 'JSON文件或-；省略沿publish使用空对象')
+    .action(async (spaceId, options) => publishAction({ ...options, space: spaceId, op: 'post' }));
 postReadCommand.command('relations <space-id> <post-id>').description('有界读取固定帖子修订的入/出关系；整页data/meta')
     .requiredOption('--revision <n>', '固定帖子修订，正安全整数')
     .option('--direction <in|out|both>', '入边/出边/两者', 'both')
@@ -1121,23 +1152,61 @@ threadCommand.command('list <space-id>').option('--state <state>', 'open 或 arc
 threadCommand.command('posts <space-id> <thread-id>')
     .description('有界帖子元数据目录；整页data/meta，不含正文；旧read thread仅默认首批')
     .option('--include-titles', '显式包含当前修订标题；脱敏帖仍不返回标题')
-    .option('--human', '安全纯文本单页目录，自动请求标题；与--json互斥')
+    .option('--human', '安全纯文本单页元数据目录，自动请求标题；正文须显式--full，与--json互斥')
+    .option('--full', '须配--human；仅当前页最多10帖固定正文，合计1MiB/128内容请求/30秒，不翻目录续页')
     .option('--limit <count>', '每页最多帖子数1..100（默认50）')
     .option('--max-bytes <bytes>', 'compact envelope预算4096..65536（默认12288）')
     .option('--sort <sort>', 'id_asc（默认）或created_at_asc（记录创建时间，未知历史时间末尾）')
     .option('--cursor <token>', '上一页签名next_cursor；跨页目录动态变化')
     .action(async (spaceId, threadId, options) => {
     try {
-        if (options.human && program.opts().json)
-            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'human与json互斥。', 400);
-        const page = await getClient(program.opts()).getThreadPosts(spaceId, threadId, {
-            limit: options.limit === undefined ? undefined : parseReadPositiveInteger(options.limit, 'limit'),
-            max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort, include_titles: options.human ? true : options.includeTitles,
-        });
-        if (options.human)
-            process.stdout.write(humanThread(page));
-        else
-            printOutput(page, program.opts().json);
+        if ((options.human || options.full) && program.opts().json)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'human/full与json互斥。', 400);
+        if (options.full && !options.human)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '--full须配--human，仅读取当前目录一页固定正文。', 400);
+        const limit = options.limit === undefined ? (options.full ? 10 : undefined) : parseReadPositiveInteger(options.limit, 'limit');
+        if (options.full && (limit ?? 0) > 10)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '--full每页最多10帖；请使用limit 1–10与目录cursor。', 400);
+        const query = { limit, max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort, include_titles: options.human ? true : options.includeTitles };
+        if (options.full) {
+            const text = await withArtifactSignal(async (outer) => {
+                const controller = new AbortController(), abort = () => controller.abort();
+                outer.addEventListener('abort', abort, { once: true });
+                if (outer.aborted)
+                    abort();
+                const timer = setTimeout(abort, 30000);
+                try {
+                    const client = getClient(program.opts(), undefined, 0), signal = controller.signal, page = await client.getThreadPosts(spaceId, threadId, query, { signal });
+                    const readBudget = { remainingBytes: 1048576, remainingRequests: 128 }, parts = [humanThread(page)];
+                    for (const post of page.data.posts) {
+                        if (signal.aborted)
+                            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '主题全文读取已取消或超过30秒，未输出部分正文。', 400);
+                        if (post.lifecycle === 'redacted') {
+                            parts.push('固定帖子 ' + terminalText(post.id) + ' 已脱敏，不读取正文。\n');
+                            continue;
+                        }
+                        const content = await client.assemblePostRevisionContent(spaceId, post.id, post.current_revision, { max_bytes: query.max_bytes }, { signal, readBudget });
+                        parts.push(humanPost(content));
+                    }
+                    if (signal.aborted)
+                        throw new DetunedError(ErrorCode.VALIDATION_ERROR, '主题全文读取已取消或超过30秒，未输出部分正文。', 400);
+                    return parts.join('\n');
+                }
+                finally {
+                    clearTimeout(timer);
+                    outer.removeEventListener('abort', abort);
+                    controller.abort();
+                }
+            });
+            process.stdout.write(text);
+        }
+        else {
+            const page = await getClient(program.opts()).getThreadPosts(spaceId, threadId, query);
+            if (options.human)
+                process.stdout.write(humanThread(page));
+            else
+                printOutput(page, program.opts().json);
+        }
     }
     catch (err) {
         handleError(err, program.opts().json);
@@ -1269,7 +1338,8 @@ program
     .option('--logical-operation-id <id>', '稳定逻辑操作 ID，重试沿用，有意新写使用新 ID')
     .option('--input <file>', '输入 JSON 文件路径或 - (stdin)')
     .addHelpText('after', '\nCLI JSON: thread需title；post需thread_id/kind/title/summary/body；revision需post_id/expected_revision/title/summary/body；withdraw需post_id/expected_revision/reason。类型化structured按schema要求；request_key或--request-key必需；也可显式使用成对持久选项。MCP envelope不能直接作为CLI body。示例见examples/cli-writing-events.md。')
-    .action(async (options) => {
+    .action(publishAction);
+async function publishAction(options) {
     try {
         const input = readAdminInput(() => readInputJson(options));
         const { client, writeOptions } = await getWriteContext(options, input);
@@ -1307,7 +1377,7 @@ program
     catch (err) {
         handleError(err, program.opts().json);
     }
-});
+}
 program
     .command('relate')
     .description('创建或解决/重开关系；CLI JSON不含space_id/op。离线字段：schema relate --op <op>')

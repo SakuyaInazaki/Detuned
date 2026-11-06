@@ -341,6 +341,7 @@ export declare class DetunedClient {
     }): Promise<PostRevisionContentPage>;
     assemblePostRevisionContent(spaceId: string, postId: string, revision: number, query?: PostAssembleQuery, opts?: {
         signal?: AbortSignal;
+        readBudget?: import('./fixed-content-assemble.js').FixedContentReadBudget;
     }): Promise<AssembledPostRevisionContent>;
     getPostRevisionCatalog(spaceId: string, postId: string, query?: PostRevisionCatalogQuery, options?: {
         signal?: AbortSignal;

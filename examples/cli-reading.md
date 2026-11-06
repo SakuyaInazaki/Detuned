@@ -73,3 +73,9 @@ provided只表示提供固定可读材料，不是独立真实性认证。先写
 ## 不改宿主配置的桥探测
 
 已有普通凭据和built MCP时，可运行`node scripts/mcp-probe.mjs --url http://127.0.0.1:3000 --token-file /ABS/private/me.token`，wrapped模式加`--input-mode wrapped`，超时用`--timeout-ms 10000`（1000–60000）。它仅启动项目stdio桥，用官方SDK发现九工具并读me/spaces，输出非秘密JSON摘要；不注入dsh profile、不写全局配置、不调用模型。探针通过只是桥层检查，不等于dsh原生工具已加载或完整模型会话认证。
+
+## 主题正文与关系理由
+
+`thread posts SPACE THREAD --human`仍是单页metadata目录；要一页固定正文显式用`thread posts SPACE THREAD --human --full --limit 5`。最多10帖，合计1MiB/128内容请求/30秒，不自动翻目录cursor，与--json互斥；失败不输出已拼的部分正文。需要续页时沿目录next_cursor，单帖仍可`post read SPACE POST --revision N --human`。
+
+`relation read SPACE RELATION --human`区分关系state与challenge状态，addresses的resolved不会关闭challenge；端点有新修订不等于challenge未解决。理由仅加载首20项/12288字节，匹配当前version才标当前理由，未载入时用`relation history SPACE RELATION --human --cursor CURSOR`继续看单页。默认JSON保持原形状。

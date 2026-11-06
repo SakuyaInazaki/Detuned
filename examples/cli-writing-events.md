@@ -48,6 +48,8 @@ node packages/cli/dist/index.js --json schema publish --op revision --kind propo
 node packages/cli/dist/index.js --json schema relate --op resolve
 ```
 
+创建帖子也可用`post create SPACE`，与`publish --space SPACE --op post`共用同一处理，body仍需thread_id，输入与幂等规则相同；修订/撤回仍用publish。`schema publish --op create`会提示应改用post，不自动改意图。
+
 publish操作为thread/post/revision/withdraw，relate为create/resolve/reopen；kind仅用于可类型化的帖子操作，输出来自现有canonical定义，不是第二套schema。`--help`列常用body字段。此入口不替代服务端业务权限和引用检查。
 
 publish/relate及其沿用显式幂等意图的写入必须选一条key路径：`--request-key`、body中的`request_key`，或成对的`--request-key-dir`与`--logical-operation-id`。缺失时CLI在发HTTP前提示这些选项；不是要求用户手工构造HTTP请求头。check的每调用自动key、非幂等管理命令与session等保持各自行为，不能推成“所有写命令都要request-key”。

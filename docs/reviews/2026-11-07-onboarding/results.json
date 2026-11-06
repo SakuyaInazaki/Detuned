@@ -1,0 +1,314 @@
+{
+  "task": "M7.16",
+  "status": "accepted_and_cleaned",
+  "baseline_commit": "c1ac3ce1",
+  "external_report_commit": "ace87152",
+  "model_calls": 0,
+  "old_red": {
+    "initial_five": {
+      "tests": 5,
+      "failed": 4,
+      "passed": 1,
+      "wall_ms": 2476,
+      "note": "unknown full flag rejection is not evidence of implemented full limits"
+    },
+    "expanded_seven": {
+      "tests": 7,
+      "failed": 7,
+      "wall_ms": 2904
+    },
+    "final_pure_seven": {
+      "tests": 7,
+      "failed": 7,
+      "wall_ms": 2855,
+      "note": "provided negative fixture removed an inapplicable extra reason field"
+    },
+    "candidate_after_budget_diagnostic_is_byte_identical": false
+  },
+  "candidate_core_focused": {
+    "files": 12,
+    "tests": 81,
+    "passed": 81,
+    "exit_code": 0,
+    "wall_ms": 29481,
+    "root_independent_review": true,
+    "paths": [
+      "tests/contracts/m7-cli-collaboration-reading.test.ts",
+      "tests/contracts/m7-cli-input-key.test.ts",
+      "tests/contracts/m7-cli-reading.test.ts",
+      "tests/contracts/m7-discovery-cli.test.ts",
+      "tests/contracts/m7-evidence-access-cli.test.ts",
+      "tests/contracts/m4-cli-errors.test.ts",
+      "tests/contracts/m3-request-key-cli.test.ts",
+      "tests/contracts/m2-typed-write-contracts.test.ts",
+      "tests/contracts/m7-fixed-content-assemble.test.ts",
+      "tests/integration/m2-typed-writes.test.ts",
+      "tests/integration/m2-context.test.ts",
+      "tests/integration/m2-context-focus.test.ts"
+    ],
+    "command_argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/contracts/m7-cli-collaboration-reading.test.ts",
+      "tests/contracts/m7-cli-input-key.test.ts",
+      "tests/contracts/m7-cli-reading.test.ts",
+      "tests/contracts/m7-discovery-cli.test.ts",
+      "tests/contracts/m7-evidence-access-cli.test.ts",
+      "tests/contracts/m4-cli-errors.test.ts",
+      "tests/contracts/m3-request-key-cli.test.ts",
+      "tests/contracts/m2-typed-write-contracts.test.ts",
+      "tests/contracts/m7-fixed-content-assemble.test.ts",
+      "tests/integration/m2-typed-writes.test.ts",
+      "tests/integration/m2-context.test.ts",
+      "tests/integration/m2-context-focus.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=json",
+      "--outputFile=<ownedroot>/evidence/candidate-focused.json"
+    ],
+    "command_note": "Actual test paths were passed as separate argv items; ownedroot represents the temporary private output location."
+  },
+  "candidate_27": {
+    "all_exit_zero": true,
+    "build_wall_ms": 10761,
+    "typecheck_wall_ms": 9876,
+    "lint_wall_ms": 10094,
+    "root_independent_review": true,
+    "commands": [
+      "pnpm build:backend",
+      "pnpm typecheck:backend",
+      "pnpm lint:backend"
+    ]
+  },
+  "narrow_client_cli_six_steps": {
+    "all_exit_zero": true,
+    "root_independent_review": true
+  },
+  "b_initial_real": {
+    "files": 2,
+    "tests": 6,
+    "passed": 6,
+    "exit_code": 0,
+    "wall_ms": 7066,
+    "source_note": "before explicit subprocess timedOut flag; final-source rerun required"
+  },
+  "b_final_real": {
+    "files": 2,
+    "tests": 6,
+    "passed": 6,
+    "exit_code": 0,
+    "wall_ms": 7064,
+    "root_independent_review": true,
+    "paths": [
+      "tests/contracts/m7-first-run.test.ts",
+      "tests/contracts/m7-mcp-write-probe.test.ts"
+    ],
+    "command": "pnpm exec vitest run tests/contracts/m7-first-run.test.ts tests/contracts/m7-mcp-write-probe.test.ts --maxWorkers=1 --no-file-parallelism"
+  },
+  "controlled_lifecycle": {
+    "tests": 4,
+    "passed": 4,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0,
+    "exit_code": 0,
+    "wall_ms": 20655,
+    "root_independent_review": true,
+    "runner": "node:test, not included in Vitest counts",
+    "path": "tests/scripts/first-run-lifecycle.check.mjs",
+    "command": "node --test --test-concurrency=1 tests/scripts/first-run-lifecycle.check.mjs",
+    "scope": "controlled private CLI child fixtures, not real forum-service certification"
+  },
+  "full_backend": {
+    "command": "pnpm test:backend",
+    "files": 191,
+    "unique_tests": 1154,
+    "passed": 1154,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "exit_code": 0,
+    "wall_ms": 383428,
+    "workers": 1,
+    "file_parallelism": false,
+    "root_independent_raw_json_and_exit_review": true,
+    "node_lifecycle_tests_included": false
+  },
+  "cleanup": {
+    "status": "complete",
+    "owned_root": "/var/tmp/detuned-m716-u0e04muz",
+    "delete_exit_code": 0,
+    "identity_marker_parent_rechecked": true,
+    "own_process_count": 0,
+    "nested_mount_count": 0,
+    "parent_dirfd_nofollow": true,
+    "deleted_only_owned_root": true,
+    "immediate_enoent": true,
+    "immediate_errno": 2,
+    "owner_fresh_ssh": {
+      "absent": true,
+      "errno": 2,
+      "exit_code": 0,
+      "connection_sharing": false
+    },
+    "root_independent_fresh_ssh": {
+      "absent": true,
+      "errno": 2,
+      "exit_code": 0,
+      "ssh_options": [
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ControlPath=none"
+      ]
+    },
+    "existing_user_dsh_installation_untouched": true,
+    "other_user_directories_untouched": true
+  },
+  "runtime": {
+    "os": "Arch Linux",
+    "architecture": "x64",
+    "node": "v22.19.0",
+    "pnpm": "11.7.0"
+  },
+  "deadline_regression": {
+    "discovered_by": "B source review after initial green tests",
+    "old_script_single_case": {
+      "tests": 1,
+      "failed": 1,
+      "exit_code": 1,
+      "wall_ms": 11647,
+      "native_init_timeout_ms": 10000,
+      "child_returned_valid_json_and_exit_zero": true,
+      "actual_serve_entered": true,
+      "expected_serve_entered": false
+    },
+    "fix": "explicit timedOut flag rejects successful-looking child output after stage deadline",
+    "root_independent_review": true
+  },
+  "earlier_controlled_lifecycle": [
+    {
+      "tests": 3,
+      "passed": 3,
+      "wall_ms": 10585,
+      "script": "before timedOut fix"
+    },
+    {
+      "tests": 3,
+      "passed": 3,
+      "wall_ms": 10502,
+      "script": "after timedOut fix; lacks deadline-specific case"
+    }
+  ],
+  "dsh_read_only": {
+    "installed_version": "0.2.1-rc.2",
+    "version_exit_code": 0,
+    "help_exit_code": 0,
+    "stderr_bytes": 0,
+    "private_environment": true,
+    "model_calls": 0,
+    "profile_or_patch_started": false,
+    "root_independent_review": true
+  },
+  "raw_evidence_scope": "Original reports and logs were inside the owned temporary verification root and read directly by the root agent. They are not persistent downloadable deliverables; no raw credential, database or log bundle is shipped.",
+  "source_paths": [
+    "packages/cli/src/index.ts",
+    "packages/cli/src/reading-output.ts",
+    "packages/cli/src/schema.ts",
+    "packages/client/src/client.ts",
+    "packages/client/src/fixed-content-assemble.ts",
+    "packages/core/src/services/context-service.ts",
+    "packages/protocol/src/search.ts",
+    "scripts/first-run.mjs",
+    "scripts/mcp-probe.mjs"
+  ],
+  "test_paths": [
+    "tests/contracts/m7-cli-collaboration-reading.test.ts",
+    "tests/contracts/m7-first-run.test.ts",
+    "tests/contracts/m7-mcp-write-probe.test.ts",
+    "tests/scripts/first-run-lifecycle.check.mjs"
+  ],
+  "guide_validation": {
+    "first_run_entry_executed_in_b_real_six": true,
+    "full_collaboration_journey_repeated_in_this_task": false,
+    "url_paths_commands_statically_reviewed": true
+  },
+  "artifacts": {
+    "compared": 608,
+    "unchanged": 584,
+    "changed": 24,
+    "new_typescript_modules": 0,
+    "web_untouched": true
+  },
+  "final_binding": {
+    "file_count": 54,
+    "paths": [
+      "README.md",
+      "docs/04-protocol.md",
+      "docs/12-decisions.md",
+      "examples/cli-reading.md",
+      "examples/cli-writing-events.md",
+      "examples/dsh-mcp.md",
+      "examples/environment-setup.md",
+      "examples/first-collaboration.md",
+      "examples/first-run.md",
+      "examples/source-checkout.md",
+      "examples/thread-posts-read.md",
+      "examples/typed-posts.md",
+      "integrations/dsh.md",
+      "package.json",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/cli/dist/reading-output.d.ts",
+      "packages/cli/dist/reading-output.d.ts.map",
+      "packages/cli/dist/reading-output.js",
+      "packages/cli/dist/reading-output.js.map",
+      "packages/cli/dist/schema.d.ts.map",
+      "packages/cli/dist/schema.js",
+      "packages/cli/dist/schema.js.map",
+      "packages/cli/src/index.ts",
+      "packages/cli/src/reading-output.ts",
+      "packages/cli/src/schema.ts",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/dist/fixed-content-assemble.d.ts",
+      "packages/client/dist/fixed-content-assemble.d.ts.map",
+      "packages/client/dist/fixed-content-assemble.js",
+      "packages/client/dist/fixed-content-assemble.js.map",
+      "packages/client/src/client.ts",
+      "packages/client/src/fixed-content-assemble.ts",
+      "packages/core/dist/services/context-service.d.ts.map",
+      "packages/core/dist/services/context-service.js",
+      "packages/core/dist/services/context-service.js.map",
+      "packages/core/src/services/context-service.ts",
+      "packages/protocol/dist/search.d.ts",
+      "packages/protocol/dist/search.d.ts.map",
+      "packages/protocol/dist/search.js",
+      "packages/protocol/dist/search.js.map",
+      "packages/protocol/src/search.ts",
+      "pnpm-lock.yaml",
+      "scripts/first-run.mjs",
+      "scripts/mcp-probe.mjs",
+      "tests/contracts/m7-cli-collaboration-reading.test.ts",
+      "tests/contracts/m7-first-run.test.ts",
+      "tests/contracts/m7-mcp-write-probe.test.ts",
+      "tests/scripts/first-run-lifecycle.check.mjs",
+      "tsconfig.json",
+      "vitest.config.ts"
+    ],
+    "owner_byte_equal": true,
+    "root_independent_review": true,
+    "root_independent_byte_equal": true,
+    "mismatch_count": 0,
+    "production_sources_and_scripts": 9,
+    "new_tests": 4,
+    "backend_dist": 24,
+    "user_and_contract_docs": 13,
+    "config_files": 4
+  }
+}

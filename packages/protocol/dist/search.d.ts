@@ -712,6 +712,7 @@ export declare const RecentFailureSchema: import("@sinclair/typebox").TObject<{
     report_kind: import("@sinclair/typebox").TLiteral<"author_report">;
 }>;
 export declare const BlockingObjectionSchema: import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+    source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
     issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
     impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
     missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -794,6 +795,7 @@ export declare const ContextIncludedDataSchema: import("@sinclair/typebox").TObj
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
     }>>;
     blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+        source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
         issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -885,6 +887,7 @@ export declare const ContextOmittedDataSchema: import("@sinclair/typebox").TObje
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
     }>>;
     blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+        source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
         issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -976,6 +979,7 @@ export declare const ContextResponseDataSchema: import("@sinclair/typebox").TUni
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
     }>>;
     blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+        source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
         issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -1066,6 +1070,7 @@ export declare const ContextResponseDataSchema: import("@sinclair/typebox").TUni
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
     }>>;
     blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+        source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
         issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
         missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -1163,6 +1168,7 @@ export declare const ContextPageSchema: import("@sinclair/typebox").TUnion<[impo
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
         }>>;
         blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+            source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
             issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -1259,6 +1265,7 @@ export declare const ContextPageSchema: import("@sinclair/typebox").TUnion<[impo
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
         }>>;
         blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+            source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
             issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -1357,6 +1364,7 @@ export declare const ContextEnvelopeSchema: import("@sinclair/typebox").TUnion<i
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
         }>>;
         blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+            source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
             issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;
@@ -1455,6 +1463,7 @@ export declare const ContextEnvelopeSchema: import("@sinclair/typebox").TUnion<i
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"source_refs">[]>>;
         }>>;
         blocking_objections: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TObject<{
+            source_summary: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>> | import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TNull>;
             issue: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             impact: import("@sinclair/typebox").TNull | import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TString, import("@sinclair/typebox").TNull]>;
             missing_fields: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"issue">, import("@sinclair/typebox").TLiteral<"impact">]>>;

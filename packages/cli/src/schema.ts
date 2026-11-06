@@ -5,6 +5,7 @@ import {CreateThreadRequestSchema,CreatePostRequestSchema,CreatePostRevisionRequ
 type BodySchema={properties:Record<string,unknown>;required?:readonly string[];[key:string]:unknown};
 /** Offline JSON projection of canonical schemas. No token/client access or new runtime dependency. */
 export function cliInputSchema(target:string,op:string,kind?:string):BodySchema {
+ if(target==='publish'&&op==='create')throw new DetunedError(ErrorCode.VALIDATION_ERROR,'创建帖子请用 schema publish --op post --kind note|failure；创建主题用 --op thread。',400);
  const invalid=()=>new DetunedError(ErrorCode.VALIDATION_ERROR,'schema请选择已知publish/relate操作及帖子kind。',400);
  const tables:Record<string,Record<string,BodySchema>>={publish:{thread:CreateThreadRequestSchema,post:CreatePostRequestSchema,revision:CreatePostRevisionRequestSchema,withdraw:WithdrawPostRequestSchema},relate:{create:CreateRelationRequestSchema,resolve:ResolveRelationRequestSchema,reopen:ReopenRelationRequestSchema}};
  if(!Object.prototype.hasOwnProperty.call(tables,target)||!Object.prototype.hasOwnProperty.call(tables[target]!,op))throw invalid();

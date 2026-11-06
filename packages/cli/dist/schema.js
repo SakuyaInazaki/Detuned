@@ -1,6 +1,8 @@
 import { CreateThreadRequestSchema, CreatePostRequestSchema, CreatePostRevisionRequestSchema, WithdrawPostRequestSchema, CreateRelationRequestSchema, ResolveRelationRequestSchema, ReopenRelationRequestSchema, PostKindSchema, NEW_TYPED_STRUCTURED_SCHEMAS, ToolPublishPostOpSchema, DetunedError, ErrorCode } from '@detuned/protocol';
 /** Offline JSON projection of canonical schemas. No token/client access or new runtime dependency. */
 export function cliInputSchema(target, op, kind) {
+    if (target === 'publish' && op === 'create')
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, '创建帖子请用 schema publish --op post --kind note|failure；创建主题用 --op thread。', 400);
     const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'schema请选择已知publish/relate操作及帖子kind。', 400);
     const tables = { publish: { thread: CreateThreadRequestSchema, post: CreatePostRequestSchema, revision: CreatePostRevisionRequestSchema, withdraw: WithdrawPostRequestSchema }, relate: { create: CreateRelationRequestSchema, resolve: ResolveRelationRequestSchema, reopen: ReopenRelationRequestSchema } };
     if (!Object.prototype.hasOwnProperty.call(tables, target) || !Object.prototype.hasOwnProperty.call(tables[target], op))

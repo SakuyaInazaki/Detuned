@@ -31,4 +31,7 @@ export declare function humanThread(page: {
         next_cursor: string | null;
     };
 }): string;
+import type { RelationReadView, RelationHistoryPage } from '@detuned/protocol';
+export declare function humanRelationHistory(page: RelationHistoryPage): string;
+export declare function humanRelation(relation: RelationReadView, history?: RelationHistoryPage): string;
 //# sourceMappingURL=reading-output.d.ts.map
