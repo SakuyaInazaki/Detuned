@@ -30,6 +30,8 @@ pnpm --version
 
 Corepack的enable只创建shim，并不等于已准备固定pnpm版本。已有Corepack使用者须自行隔离COREPACK_HOME并显式准备固定版本；本指南采用直接npm安装，不经过默认latest选择。官方依据：[Node固定发行目录](https://nodejs.org/download/release/v22.19.0/)、[pnpm安装与兼容表](https://pnpm.io/installation)、[npm本地目录规则](https://docs.npmjs.com/cli/v10/configuring-npm/folders/)、[Corepack命令说明](https://github.com/nodejs/corepack/blob/main/README.md)。
 
+仓库Node engines声明为`>=22.19.0`；本指南22.19.0与pnpm11.7.0是已验证的固定取用路径，不表示其它满足engines的Node版本都已完成回归，也不依据一次外部失败断言全部Node26不可用。
+
 ## 安装依赖、构建并使用
 
 在轻量源码副本根目录，保持上述PATH，使用目标机器自己的依赖：
@@ -51,7 +53,7 @@ pnpm build:backend
 | 问题 | 处理 |
 |---|---|
 | `/health`返回404 | 用`health live`/`health ready`；HTTP路径为`/api/v1/health/live`或`ready` |
-| JSON输入失败 | `--input`传文件路径或`-`，不传JSON原文；用`schema`查看离线输入形状 |
+| JSON输入失败 | `--input`传文件路径或`-`，内联对象显式用`--input-json`且两者互斥；见[输入示例](cli-writing-events.md)，用`schema`查看离线形状 |
 | 顶层space_id/op被拒 | CLI用`--space`/`--op`；MCP按工具schema的envelope与body层级调用 |
 | 未完chunk不能解析 | `post read --assemble`，人读用`--human` |
 | token互斥 | 四种来源只选一个，不能靠失败fallback |

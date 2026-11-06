@@ -7,7 +7,9 @@ export function readAdminInput(read) {
             throw new Error('object required');
         return value;
     }
-    catch {
+    catch (error) {
+        if (error instanceof DetunedError)
+            throw error;
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Management input must be a readable JSON object.', 400);
     }
 }

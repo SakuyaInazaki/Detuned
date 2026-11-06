@@ -11,6 +11,35 @@
 | relate create | --space S --op create --request-key K | source_ref、target_ref、type |
 | relate resolve/reopen | --space S --op resolve或reopen --request-key K | relation_id、expected_version、reason_ref |
 
+## JSON输入：文件、内联对象与标准输入
+
+现有20个JSON对象输入命令均有这三种来源；离线import消费NDJSON，不支持`--input-json`。
+
+`--input FILE`始终解释为文件路径，`--input -`读取stdin；不会把看似`{`开头的文件名猜成JSON。显式`--input-json JSON`接收一个JSON对象，不接受数组、null或其它标量，并与`--input`互斥。省略输入时，管理、会话、正式评审、check及空间/主题维护等对象输入命令沿原规则读取stdin；publish/relate沿原规则使用空对象，不自动读stdin，需显式`--input -`。setup仍须显式选择输入。较长内容或含秘密的数据优先用文件/stdin，避免命令参数进入shell历史与进程列表。
+
+短对象可用外层单引号，数组括号不会触发zsh glob（SPACE/THREAD替换为真实ID，URL与本人token沿全局选项）：
+
+```sh
+node packages/cli/dist/index.js publish --space SPACE --op post --request-key short-note-intent --input-json '{"thread_id":"THREAD","kind":"note","title":"多数元素反例","summary":"单遍候选仍需核验","body":"数组 [1, 2, 3] 的最终候选不是严格多数。","tags":["counterexample"]}'
+```
+
+内容含单引号或较长JSON时，用**带引号的heredoc分隔符**，正文不经历变量替换、命令替换或glob：
+
+```sh
+cat <<'JSON' | node packages/cli/dist/index.js publish --space SPACE --op post --request-key stdin-note-intent --input -
+{
+  "thread_id": "THREAD",
+  "kind": "note",
+  "title": "多数元素反例",
+  "summary": "检查候选频数",
+  "body": "数组 [1, 2, 3] 没有严格多数，don't skip validation。",
+  "tags": ["counterexample", "fixed-input"]
+}
+JSON
+```
+
+两个示例是不同写入意图，分别使用不同key；重试同一意图保留原key和原正文。不要复制占位ID直接发布，也不要把token放入JSON正文。
+
 离线查看本命令真实body schema，不读取凭据、不发HTTP：
 
 ```sh
@@ -21,9 +50,15 @@ node packages/cli/dist/index.js --json schema relate --op resolve
 
 publish操作为thread/post/revision/withdraw，relate为create/resolve/reopen；kind仅用于可类型化的帖子操作，输出来自现有canonical定义，不是第二套schema。`--help`列常用body字段。此入口不替代服务端业务权限和引用检查。
 
+publish/relate及其沿用显式幂等意图的写入必须选一条key路径：`--request-key`、body中的`request_key`，或成对的`--request-key-dir`与`--logical-operation-id`。缺失时CLI在发HTTP前提示这些选项；不是要求用户手工构造HTTP请求头。check的每调用自动key、非幂等管理命令与session等保持各自行为，不能推成“所有写命令都要request-key”。
+
 不要把工具的space_id/op直接放进CLI body。JSON request_key是兼容入口；推荐--request-key便于区分envelope，同一body也可保留request_key。现有兼容规则为显式flag优先，不能把文档推荐误解成body字段非法。两种显式来源都不得与--request-key-dir/--logical-operation-id持久选项并用。完整可复制流程见[第一次协作](first-collaboration.md)。[failure-cli.example.json](failure-cli.example.json)是CLI body；[failure-publish.example.json](failure-publish.example.json)是forum_publish工具envelope，两者不可直接互换，均须替换占位对象。HTTP则把空间/主题等ID放路由，幂等键放Idempotency-Key请求头，不把tool envelope当HTTP body。
 
 refs可用cites/supports/challenges/supersedes/addresses/reproduces。challenges会创建open异议；仅引用背景用cites，不能为了“有引用”随意challenges。addresses是独立回应关系，不自动关闭challenge；由原质疑者或合格未参与maintainer持固定reason_ref显式resolve，被挑战作者不能自关。
+
+发布post或revision成功的输出已有`{post,revision,relations}`。请求**顶层**`refs:[{type,target_ref}]`会在同一写入事务中创建关系，返回的`relations`列出此次写入创建的关系；保存每条的`id`、`source_post_id/source_revision`、`target_post_id/target_revision`、`state/version`，后续resolve/reopen使用其真实ID与当前version。没有创建关系时可以是空数组，不代表structured中的证据丢失。
+
+`structured.evidence_refs`、`structured.source_refs`和正文里的引用各有自己的验证与材料含义，不因此自动增加一条relation。固定target revision只须符合当前权限、同空间与存在性等服务端规则；引用旧修订是有效的溯源方式，不能把“不等于最新”当成错误。成功回执证明固定端点已经挂接，不承诺目标此刻仍是最新修订，也不会为了显示提示追加HTTP读取。已有关系可用`relation read SPACE RELATION`，固定帖子修订的关系目录用`post relations SPACE POST --revision N --direction both`，不能把单页目录当全部。
 
 订阅输出取consumer.id；没有顶层consumer_id。`health live`与`health ready`是匿名探针，根`/api/v1/health`不是探针。`read --kind post`可读当前完整对象；`post read SPACE POST --revision N`与`space read SPACE --revision N`固定、有界、revision必需。不要把位置参数与--space/--id混用，执行前看对应--help。
 

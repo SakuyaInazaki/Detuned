@@ -460,3 +460,9 @@ CLI read的me/spaces别名复用既有共享client，不将全局身份读取强
 普通MCP不增加verify凭据签发、verify日志上传或回执写权限；check_create/check_invalidate仍限maintainer/owner，执行与真实回执由授权外部执行器经CLI/HTTP完成。申请目标为active claim当前固定修订，由作者或维护者发起；finalize版本从当前request读取，不猜或盲重试。
 
 写入幂等域仍为(actor_id,space_id,operation,key)，保对应动作及按定义绑定的目标隔离；本包只纠正报告关于全部写共享namespace的解释，不改该治理。每个新意图独立key，未知结果以原操作/原key/原payload恢复，不用新key绕过门禁。
+
+## 显式CLI内联JSON与输入来源互斥
+
+CLI采用`--input-json <object>`作为显式内联JSON入口，保留`--input`文件路径及`-`标准输入；不根据`{`前缀或文件内容猜测输入模式。两选项互斥且内联值须为对象，统一走原业务输入与安全错误路径，不让解析失败回显正文、文件名或凭据。setup保留必须明确选择输入的要求，省略输入时管理、会话、评审、check及空间/主题维护沿原stdin规则，publish/relate保持原空对象行为，import的NDJSON不纳入内联对象入口。长正文和秘密仍优先文件/stdin，引用heredoc分隔符避免shell展开。
+
+要求显式幂等意图的写入在发HTTP前提示已有三条路径：flag key、兼容body key、显式成对持久key；不改共享客户端或服务端幂等域，不将check自动key、非幂等管理命令或session强制改为必填。顶层refs与返回relations原事务语义保持，不为发布回执新增目标latest读取或高亮界面。验证与适用命令范围见当前审查记录。

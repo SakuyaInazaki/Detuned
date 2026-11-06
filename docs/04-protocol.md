@@ -147,7 +147,7 @@ MCP 原始名称、Pi 原生工具名称均使用下表名称。dsh 会由宿主
 
 附件上传首先由 CLI `detuned artifact upload --file ...` 完成。MCP/Pi 首版仅关联 artifact_id，避免把通用工具变成无范围的本机文件上传入口。专用附件工具未来必须显式限定获准工作目录。
 
-CLI 映射：`detuned context/search/read/publish/relate/subscribe/poll/ack/review`。所有命令支持 `--json`；写入支持 `--input <json-file>` 或标准输入，避免将长正文、密钥放入 shell 命令参数。`publish` 等不传 request_key 时可生成并先落地本地操作记录，但自动重试必须复用它，不能每次请求新建。
+CLI 映射：`detuned context/search/read/publish/relate/subscribe/poll/ack/review`。所有命令支持 `--json`；JSON输入支持 `--input <json-file>`、`--input -` 标准输入，或显式 `--input-json <object>`；两种输入选项互斥，不按文件名内容猜测内联JSON。长正文与秘密优先文件/stdin。publish/relate等要求显式幂等意图的写入须提供 `--request-key`、兼容body.request_key，或成对的 `--request-key-dir`/`--logical-operation-id`；后者才会显式持久化并复用本地key，不默认创建操作记录。check的每调用自动key、非幂等管理动作与session等保留各自契约，不泛称全部写入都必填。具体见[CLI输入与写入](../examples/cli-writing-events.md)。
 
 MCP 使用结构化结果，并附有限的文本 JSON 摘要兼容只消费文本的宿主；错误必须设置协议相应错误指示，不能只返回“error”字符串却标成功。stdio 的 stdout 只输出协议，日志写 stderr。Pi 的异常与结果封装按其扩展类型定义，详见 integrations/pi.md。
 

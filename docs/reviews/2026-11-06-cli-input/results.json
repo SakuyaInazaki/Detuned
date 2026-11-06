@@ -1,0 +1,188 @@
+{
+  "task": "M7.15",
+  "status": "accepted_and_cleaned",
+  "model_calls": 0,
+  "cleanup": {
+    "status": "complete",
+    "owned_root": "/var/tmp/detuned-m715-sgbi2iw4",
+    "delete_exit_code": 0,
+    "deleted_only_owned_root": true,
+    "identity_marker_parent_rechecked": true,
+    "own_process_count": 0,
+    "nested_mount_count": 0,
+    "parent_dirfd_nofollow": true,
+    "immediate_enoent": true,
+    "immediate_errno": 2,
+    "owner_fresh_ssh": {
+      "exit_code": 0,
+      "absent": true,
+      "errno": 2,
+      "connection_sharing": false
+    },
+    "root_independent_fresh_ssh": {
+      "exit_code": 0,
+      "absent": true,
+      "errno": 2,
+      "ssh_options": [
+        "-oControlMaster=no",
+        "-oControlPath=none"
+      ]
+    }
+  },
+  "baseline_commit": "ace87152ddcd245f4735d990ee0f8a86d1d60c7d",
+  "report_source_commit": null,
+  "report_source_note": "External report does not identify its source commit; current baseline comparison is not attribution of that version to the report.",
+  "baseline_final_seven": {
+    "files": 1,
+    "tests": 7,
+    "passed": 0,
+    "failed": 7,
+    "exit_code": 1,
+    "wall_ms": 3881,
+    "root_independent_raw_json_and_exit_review": true,
+    "test_source_same_as_candidate": true,
+    "earlier_six_case_run_retained_separately": true
+  },
+  "candidate_steps": {
+    "workspace_packages": 9,
+    "build_typecheck_lint_steps": 27,
+    "all_exit_zero": true,
+    "root_independent_review": true,
+    "build_wall_ms": 10675,
+    "typecheck_wall_ms": 9864,
+    "lint_wall_ms": 10034,
+    "commands": [
+      "pnpm build:backend",
+      "pnpm typecheck:backend",
+      "pnpm lint:backend"
+    ]
+  },
+  "candidate_focused": {
+    "files": 12,
+    "tests": 61,
+    "passed": 61,
+    "failed": 0,
+    "exit_code": 0,
+    "wall_ms": 66900,
+    "root_independent_review": true,
+    "paths": [
+      "tests/contracts/m7-cli-input-key.test.ts",
+      "tests/contracts/m3-request-key-cli.test.ts",
+      "tests/contracts/m4-admin-cli.test.ts",
+      "tests/contracts/m4-write-consume-cli.test.ts",
+      "tests/contracts/m4-artifact-cli.test.ts",
+      "tests/contracts/m6-review-cli.test.ts",
+      "tests/contracts/m7-setup-cli.test.ts",
+      "tests/contracts/m7-check-cli.test.ts",
+      "tests/contracts/m7-check-cli-tools-independent.test.ts",
+      "tests/contracts/m4-cli-errors.test.ts",
+      "tests/contracts/m7-first-use-cli.test.ts",
+      "tests/contracts/m4-cli-boundaries-independent.test.ts"
+    ],
+    "command_argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "tests/contracts/m7-cli-input-key.test.ts",
+      "tests/contracts/m3-request-key-cli.test.ts",
+      "tests/contracts/m4-admin-cli.test.ts",
+      "tests/contracts/m4-write-consume-cli.test.ts",
+      "tests/contracts/m4-artifact-cli.test.ts",
+      "tests/contracts/m6-review-cli.test.ts",
+      "tests/contracts/m7-setup-cli.test.ts",
+      "tests/contracts/m7-check-cli.test.ts",
+      "tests/contracts/m7-check-cli-tools-independent.test.ts",
+      "tests/contracts/m4-cli-errors.test.ts",
+      "tests/contracts/m7-first-use-cli.test.ts",
+      "tests/contracts/m4-cli-boundaries-independent.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=json",
+      "--outputFile=<ownedroot>/evidence/candidate-focused.json"
+    ],
+    "command_note": "Actual test paths were passed as 12 separate arguments; ownedroot placeholder represents the private output location, not a persistent download."
+  },
+  "full_backend": {
+    "files": 188,
+    "unique_tests": 1141,
+    "passed": 1141,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "exit_code": 0,
+    "wall_ms": 378542,
+    "workers": 1,
+    "file_parallelism": false,
+    "root_independent_raw_json_and_exit_review": true,
+    "evidence": [
+      "evidence/final-full.json",
+      "evidence/final-full-exit.json"
+    ],
+    "command": "pnpm test:backend"
+  },
+  "guide_smoke": {
+    "passed": true,
+    "wall_ms": 1368,
+    "shell": "/bin/sh",
+    "arch_zsh_available": false,
+    "shell_installation": false,
+    "replaced_placeholders_only": [
+      "SPACE",
+      "THREAD"
+    ],
+    "url_and_ordinary_token": "environment supplied without recording secrets",
+    "distinct_posts": 2,
+    "body_exact_arrays_and_single_quote_preserved": true,
+    "ordinary_actor": true,
+    "relations_empty_as_examples": true,
+    "serve_sigint_exit_code": 0,
+    "complete_shutdown_marker": true,
+    "model_calls": 0,
+    "owner_evidence": "evidence/guide-smoke.json",
+    "root_independent_review": true
+  },
+  "historical_environment_evidence": {
+    "task": "M7.14",
+    "reference": "../2026-11-06-first-run/results.json",
+    "repeated_full_cold_start_journey_in_this_task": false
+  },
+  "final_binding": {
+    "file_count": 14,
+    "root_independent_byte_equal": true,
+    "scope": "2 CLI sources, 1 new test, 5 changed CLI dist, 4 guides/contracts, package.json and pnpm-lock.yaml",
+    "paths": [
+      "packages/cli/src/admin-input.ts",
+      "packages/cli/src/index.ts",
+      "tests/contracts/m7-cli-input-key.test.ts",
+      "packages/cli/dist/admin-input.d.ts.map",
+      "packages/cli/dist/admin-input.js",
+      "packages/cli/dist/admin-input.js.map",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "docs/04-protocol.md",
+      "docs/12-decisions.md",
+      "examples/cli-writing-events.md",
+      "examples/environment-setup.md",
+      "package.json",
+      "pnpm-lock.yaml"
+    ]
+  },
+  "baseline_earlier_six": {
+    "tests": 6,
+    "failed": 6,
+    "exit_code": 1,
+    "wall_ms": 3697,
+    "retained_separately": true,
+    "not_combined_with_final_seven": true
+  },
+  "environment": {
+    "os": "Arch Linux",
+    "platform": "linux",
+    "architecture": "x64",
+    "node": "v22.19.0",
+    "pnpm": "11.7.0"
+  },
+  "raw_evidence_scope": "evidence/* names identify original files inside the owned temporary validation root, directly reviewed by the root agent. They are not downloadable persistent deliverables; raw tokens, databases and logs are not shipped."
+}

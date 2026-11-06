@@ -88,22 +88,38 @@ function getClient(cmdOpts, requestKeyStore, maxRetries) {
     const token = resolveCliToken({ token: cmdOpts.token, tokenFile: cmdOpts.tokenFile }, { DETUNED_TOKEN: process.env.DETUNED_TOKEN, DETUNED_TOKEN_FILE: process.env.DETUNED_TOKEN_FILE });
     return new DetunedClient({ baseUrl, token, requestKeyStore, ...(maxRetries !== undefined ? { maxRetries } : {}) });
 }
-function readInputJson(inputPath) {
-    if (!inputPath)
-        return {};
-    if (inputPath === '-') {
-        const content = fs.readFileSync(0, 'utf8');
-        return JSON.parse(content);
+function readInputJson(options, omitted = 'empty') {
+    if (options.input !== undefined && options.inputJson !== undefined)
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, '--input 与 --input-json 不能并用；文件或stdin使用--input，内联对象使用--input-json。', 400);
+    if (options.inputJson !== undefined) {
+        try {
+            const value = JSON.parse(options.inputJson);
+            if (value === null || typeof value !== 'object' || Array.isArray(value))
+                throw new Error('object required');
+            return value;
+        }
+        catch {
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '--input-json 必须是有效JSON对象；请正确引用shell参数，或使用 --input - 从stdin读取。', 400);
+        }
     }
-    const content = fs.readFileSync(inputPath, 'utf8');
-    return JSON.parse(content);
+    const inputPath = options.input ?? (omitted === 'stdin' ? '-' : undefined);
+    if (inputPath === undefined) {
+        if (omitted === 'required')
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '请提供 --input <file>（或-读取stdin）或 --input-json <json>。', 400);
+        return {};
+    }
+    return JSON.parse(fs.readFileSync(inputPath === '-' ? 0 : inputPath, 'utf8'));
 }
 // Persistence is explicit for publish/relate, artifact upload and redact.
-async function getWriteContext(options, input) {
+async function getWriteContext(options, input, allowGeneratedKey = false) {
     const directoryGiven = options.requestKeyDir !== undefined;
     const logicalIdGiven = options.logicalOperationId !== undefined;
-    if (!directoryGiven && !logicalIdGiven)
+    if (!directoryGiven && !logicalIdGiven) {
+        const key = options.requestKey ?? input.request_key;
+        if (!allowGeneratedKey && (typeof key !== 'string' || !key.trim()))
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, '请提供非空 --request-key <key> 或JSON字段request_key；恢复写入可使用成对 --request-key-dir 与 --logical-operation-id。', 400);
         return { client: getClient(program.opts()), writeOptions: undefined };
+    }
     const invalid = (message) => { throw new DetunedError(ErrorCode.VALIDATION_ERROR, message, 400); };
     if (options.requestKey !== undefined || Object.hasOwn(input, 'request_key'))
         invalid('持久 request_key 选项不能与显式 request_key 并用。');
@@ -514,7 +530,8 @@ const actorCommand = program.command('actor').description('显式身份管理');
 actorCommand.command('create').option('--input <file>', 'JSON文件或 -；省略读取stdin')
     .action(async (options) => {
     try {
-        printOutput(await getClient(program.opts()).createActor(readAdminInput(() => readInputJson(options.input ?? '-'))), program.opts().json);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        printOutput(await getClient(program.opts()).createActor(input), program.opts().json);
     }
     catch (error) {
         handleError(error, program.opts().json);
@@ -524,7 +541,8 @@ const credentialCommand = program.command('credential').description('显式凭�
 credentialCommand.command('create').option('--input <file>', 'JSON文件或 -；省略读取stdin')
     .action(async (options) => {
     try {
-        printOutput(await getClient(program.opts()).createCredential(readAdminInput(() => readInputJson(options.input ?? '-'))), program.opts().json);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        printOutput(await getClient(program.opts()).createCredential(input), program.opts().json);
     }
     catch (error) {
         handleError(error, program.opts().json);
@@ -542,7 +560,8 @@ const membershipCommand = program.command('membership').description('显式空�
 membershipCommand.command('create <space-id>').option('--input <file>', 'JSON文件或 -；省略读取stdin')
     .action(async (spaceId, options) => {
     try {
-        printOutput(await getClient(program.opts()).createMembership(spaceId, readAdminInput(() => readInputJson(options.input ?? '-'))), program.opts().json);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        printOutput(await getClient(program.opts()).createMembership(spaceId, input), program.opts().json);
     }
     catch (error) {
         handleError(error, program.opts().json);
@@ -551,7 +570,8 @@ membershipCommand.command('create <space-id>').option('--input <file>', 'JSON文
 membershipCommand.command('patch <space-id> <actor-id>').option('--input <file>', 'JSON文件或 -；省略读取stdin')
     .action(async (spaceId, actorId, options) => {
     try {
-        printOutput(await getClient(program.opts()).patchMembership(spaceId, actorId, readAdminInput(() => readInputJson(options.input ?? '-'))), program.opts().json);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        printOutput(await getClient(program.opts()).patchMembership(spaceId, actorId, input), program.opts().json);
     }
     catch (error) {
         handleError(error, program.opts().json);
@@ -572,7 +592,7 @@ program.command('redact <space-id>').description('显式脱敏帖子或附件；
     .option('--logical-operation-id <id>', '同次操作恢复沿用；不同操作改ID')
     .action(async (spaceId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const key = options.requestKey ?? input.request_key;
         const { request_key, ...body } = input;
@@ -586,7 +606,8 @@ const sessionCommand = program.command('session').description('显式客户端�
 sessionCommand.command('create <space-id>').option('--input <file>', 'JSON文件或 -；省略stdin')
     .action(async (spaceId, options) => {
     try {
-        printOutput((await getClient(program.opts()).createSession(spaceId, readAdminInput(() => readInputJson(options.input ?? '-')))).data, program.opts().json);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        printOutput((await getClient(program.opts()).createSession(spaceId, input)).data, program.opts().json);
     }
     catch (error) {
         handleError(error, program.opts().json);
@@ -757,7 +778,7 @@ reviewCommand.command('request <space-id>')
     .option('--logical-operation-id <id>', '同一意图稳定标识；与目录成对')
     .action(async (spaceId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.createReviewRequest(spaceId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
@@ -773,7 +794,7 @@ reviewCommand.command('submit <space-id> <request-id>')
     .option('--logical-operation-id <id>', '同一意图稳定标识；与目录成对')
     .action(async (spaceId, requestId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.submitReview(spaceId, requestId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
@@ -789,7 +810,7 @@ reviewCommand.command('finalize <space-id> <request-id>')
     .option('--logical-operation-id <id>', '同一意图稳定标识；与目录成对')
     .action(async (spaceId, requestId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.finalizeReviewRequest(spaceId, requestId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
@@ -805,7 +826,7 @@ reviewCommand.command('cancel <space-id> <request-id>')
     .option('--logical-operation-id <id>', '同一意图稳定标识；与目录成对')
     .action(async (spaceId, requestId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.cancelReviewRequest(spaceId, requestId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
@@ -839,8 +860,8 @@ function rejectCheckPersistent(options, issuer = false) {
 checkKeyOptions(checkCommand.command('create <space-id>').option('--input <file>', 'JSON；省略从stdin读取'))
     .action(async (spaceId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
-        const { client, writeOptions } = await getWriteContext(options, input);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        const { client, writeOptions } = await getWriteContext(options, input, true);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.createCheckRun(spaceId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
     }
@@ -874,7 +895,7 @@ checkKeyOptions(checkCommand.command('credential <space-id> <run-id>').option('-
     .action(async (spaceId, runId, options) => {
     try {
         rejectCheckPersistent(options, true);
-        const body = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const body = readAdminInput(() => readInputJson(options, 'stdin'));
         printOutput(await withArtifactSignal(signal => getClient(program.opts()).issueCheckRunCredential(spaceId, runId, body, { signal })), program.opts().json);
     }
     catch (error) {
@@ -885,7 +906,7 @@ checkKeyOptions(checkCommand.command('receipt-submit <space-id> <run-id>').optio
     .action(async (spaceId, runId, options) => {
     try {
         rejectCheckPersistent(options);
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => getClient(program.opts()).submitCheckReceipt(spaceId, runId, body, options.requestKey ?? request_key, { signal })), program.opts().json);
     }
@@ -902,8 +923,8 @@ catch (error) {
 checkKeyOptions(checkCommand.command('invalidate <space-id> <run-id>').option('--input <file>', 'JSON；省略stdin'))
     .action(async (spaceId, runId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
-        const { client, writeOptions } = await getWriteContext(options, input);
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
+        const { client, writeOptions } = await getWriteContext(options, input, true);
         const { request_key, ...body } = input;
         printOutput(await withArtifactSignal(signal => client.invalidateCheckRun(spaceId, runId, body, options.requestKey ?? request_key, { ...writeOptions, signal })), program.opts().json);
     }
@@ -971,7 +992,7 @@ spaceReadCommand.command('create').option('--input <file>', 'JSON文件或 -；�
     .option('--request-key <key>', '显式幂等键').option('--request-key-dir <dir>', '私有持久key目录').option('--logical-operation-id <id>', '与目录成对；恢复沿用')
     .action(async (options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput((await client.createSpace(body, options.requestKey ?? request_key, writeOptions)).data, program.opts().json);
@@ -984,7 +1005,7 @@ spaceReadCommand.command('patch <space-id>').option('--input <file>', 'JSON文�
     .option('--request-key <key>', '显式幂等键').option('--request-key-dir <dir>', '私有持久key目录').option('--logical-operation-id <id>', '与目录成对；恢复沿用')
     .action(async (spaceId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput((await client.patchSpace(spaceId, body, options.requestKey ?? request_key, writeOptions)).data, program.opts().json);
@@ -1076,7 +1097,7 @@ threadCommand.command('patch <space-id> <thread-id>').option('--input <file>', '
     .option('--request-key <key>', '显式幂等键').option('--request-key-dir <dir>', '私有持久key目录').option('--logical-operation-id <id>', '与目录成对；恢复沿用')
     .action(async (spaceId, threadId, options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input ?? '-'));
+        const input = readAdminInput(() => readInputJson(options, 'stdin'));
         const { client, writeOptions } = await getWriteContext(options, input);
         const { request_key, ...body } = input;
         printOutput((await client.patchThread(spaceId, threadId, body, options.requestKey ?? request_key, writeOptions)).data, program.opts().json);
@@ -1218,11 +1239,11 @@ program
 });
 program.command('setup')
     .description('连接已运行服务，创建空间与普通参与者，将凭据保存到新私有目录；不启动服务或模型')
-    .requiredOption('--input <file>', '空间CreateSpace JSON；无tool envelope')
+    .option('--input <file>', '空间CreateSpace JSON文件或-；与input-json二选一')
     .requiredOption('--participant <label>', '1–32个唯一安全标签，可重复该选项', (value, prior) => [...prior, value], [])
     .requiredOption('--output <dir>', '不存在的新0700目录；结果失败也保留收据和已发凭据')
     .action(async (options) => { try {
-    const checked = validateSetupOptions(readAdminInput(() => readInputJson(options.input)), options.participant, options.output);
+    const checked = validateSetupOptions(readAdminInput(() => readInputJson(options, 'required')), options.participant, options.output);
     printOutput(await setupParticipants(getClient(program.opts(), undefined, 0), checked), program.opts().json);
 }
 catch (error) {
@@ -1247,10 +1268,10 @@ program
     .option('--request-key-dir <dir>', '显式私有 request_key 持久目录（需 logical-operation-id）')
     .option('--logical-operation-id <id>', '稳定逻辑操作 ID，重试沿用，有意新写使用新 ID')
     .option('--input <file>', '输入 JSON 文件路径或 - (stdin)')
-    .addHelpText('after', '\nCLI JSON: thread需title；post需thread_id/kind/title/summary/body；revision需post_id/expected_revision/title/summary/body；withdraw需post_id/expected_revision/reason。类型化structured按schema要求；request_key可选。MCP envelope不能直接作为CLI body。示例见examples/cli-writing-events.md。')
+    .addHelpText('after', '\nCLI JSON: thread需title；post需thread_id/kind/title/summary/body；revision需post_id/expected_revision/title/summary/body；withdraw需post_id/expected_revision/reason。类型化structured按schema要求；request_key或--request-key必需；也可显式使用成对持久选项。MCP envelope不能直接作为CLI body。示例见examples/cli-writing-events.md。')
     .action(async (options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input));
+        const input = readAdminInput(() => readInputJson(options));
         const { client, writeOptions } = await getWriteContext(options, input);
         const reqKey = options.requestKey ?? input.request_key;
         if (options.op === 'thread') {
@@ -1296,10 +1317,10 @@ program
     .option('--request-key-dir <dir>', '显式私有 request_key 持久目录（需 logical-operation-id）')
     .option('--logical-operation-id <id>', '稳定逻辑操作 ID，重试沿用，有意新写使用新 ID')
     .option('--input <file>', '输入 JSON 文件路径或 - (stdin)')
-    .addHelpText('after', '\nCLI JSON: create需type/source_ref/target_ref；resolve/reopen需relation_id/expected_version/reason_ref。request_key可选。字段来自canonical schema，示例见examples/cli-writing-events.md。')
+    .addHelpText('after', '\nCLI JSON: create需type/source_ref/target_ref；resolve/reopen需relation_id/expected_version/reason_ref。request_key或--request-key必需；也可显式使用成对持久选项。字段来自canonical schema，示例见examples/cli-writing-events.md。')
     .action(async (options) => {
     try {
-        const input = readAdminInput(() => readInputJson(options.input));
+        const input = readAdminInput(() => readInputJson(options));
         const { client, writeOptions } = await getWriteContext(options, input);
         const reqKey = options.requestKey ?? input.request_key;
         if (options.op === 'create') {
@@ -1394,6 +1415,21 @@ program
         handleError(err, program.opts().json);
     }
 });
+// Every existing JSON-object input command has the same explicit inline alternative.
+// Offline import consumes NDJSON and is intentionally excluded.
+function addInlineJsonOptions(command) {
+    const input = command.options.find(option => option.long === '--input');
+    if (command.name() !== 'import' && input) {
+        input.description += '；仅文件路径或-，不猜测JSON原文；与--input-json互斥';
+        command.option('--input-json <json>', '显式内联JSON对象；与--input文件/-互斥，内容需shell引用');
+    }
+    const key = command.options.find(option => option.long === '--request-key');
+    if (key && command.parent?.name() !== 'check' && command.options.some(option => option.long === '--logical-operation-id'))
+        key.description += '；此项、JSON request_key或成对持久选项至少一种';
+    for (const child of command.commands)
+        addInlineJsonOptions(child);
+}
+addInlineJsonOptions(program);
 function markRequiredHelp(command) {
     for (const option of command.options)
         if (option.mandatory && !option.description.includes('必需'))
