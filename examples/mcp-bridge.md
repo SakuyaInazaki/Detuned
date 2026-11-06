@@ -34,6 +34,8 @@
 
 lookup示例适用于原订阅没有过滤条件；有过滤时须同时传原thread_ids/event_types。spaces与post_relations返回整page，保留meta并显式续页，不自动拼完。me的scope/visible_spaces不替代服务端完整ACL判断。
 
+固定附件目录、完整验证后的有界内容片、关系关闭理由历史、知识view与显式消费者停用见[证据与接续指南](evidence-access.md)。这些分支复用九工具，不新增模型或本地文件执行权限。
+
 ## 取消与重连
 
 工具取消signal传HTTP，读取、取消或关闭不ACK。订阅结果的consumer.id用于poll/ack，见[事件](events.md)。创建诊断session一旦开始，失败可能已留下记录；重连前不循环新建。身份读取失败可在前次finally完成后由新的显式调用重试。

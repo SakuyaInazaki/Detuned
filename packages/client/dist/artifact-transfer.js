@@ -41,7 +41,7 @@ export async function snapshotUpload(file, metadata, signal) {
     const hash = signal ? await waitForArtifact(digest, signal, () => new UserAbortError()) : await digest;
     return { blob, metadataJson, bytes: bytes.length, sha256: hash };
 }
-export async function downloadArtifactBytes(baseUrl, token, spaceId, artifactId, timeoutMs, external, getMetadata, cookieSession = false, checkRunId) {
+export async function downloadArtifactBytes(baseUrl, token, spaceId, artifactId, timeoutMs, external, getMetadata, cookieSession = false, checkRunId, maximumBytes = MAX_BYTES) {
     const controller = new AbortController();
     let timedOut = false;
     const error = () => external?.aborted ? new UserAbortError() : timedOut ? new TimeoutError() : new UserAbortError();
@@ -56,6 +56,8 @@ export async function downloadArtifactBytes(baseUrl, token, spaceId, artifactId,
         void value.body?.cancel().catch(() => { }); };
     try {
         const metadata = await waitForArtifact(getMetadata(controller.signal), controller.signal, error);
+        if (metadata.bytes > maximumBytes)
+            throw new DetunedError('VALIDATION_ERROR', 'Artifact exceeds the 1 MiB content-read limit; use CLI artifact download or extract a smaller evidence artifact.', 400, false);
         if (checkRunId !== undefined && (!isReadableCheckArtifactMetadata(metadata, spaceId, checkRunId) || metadata.id !== artifactId))
             throw invalid();
         const contentPath = checkRunId === undefined

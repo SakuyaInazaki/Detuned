@@ -17,6 +17,11 @@ import { RelationService, AuthenticatedContext } from '@detuned/core';
 export const relationRoutes: FastifyPluginAsync = async (app) => {
   const relationService = (app as any).relationService as RelationService;
   const reads=(app as any).discoveryReadService as DiscoveryReadService;
+  app.get('/spaces/:space_id/relations/:id/history',async(req)=>{
+    const p=req.params as {space_id:string;id:string},q=req.query as Record<string,unknown>;validateAllowedQueryParams(q,['limit','max_bytes','cursor']);
+    const query={limit:parseIntegerQuery(q.limit,'limit',{min:1,max:100}),max_bytes:parseIntegerQuery(q.max_bytes,'max_bytes',{min:4096,max:65536}),cursor:parseStringQuery(q.cursor,'cursor')};
+    return {api_version:'1',request_id:req.id,...reads.getRelationHistory((req as any).auth,p.space_id,p.id,query,{request_id:req.id})};
+  });
   app.get('/spaces/:space_id/relations/:id',async(req)=>{validateAllowedQueryParams(req.query as Record<string,unknown>,[]);const p=req.params as {space_id:string;id:string};return {api_version:'1',request_id:req.id,data:reads.getRelation((req as any).auth,p.space_id,p.id)};});
   app.get('/spaces/:space_id/posts/:id/revisions/:revision/relations',async(req)=>{
     const p=req.params as {space_id:string;id:string;revision:string},q=req.query as Record<string,unknown>;validateAllowedQueryParams(q,['direction','limit','max_bytes','cursor']);

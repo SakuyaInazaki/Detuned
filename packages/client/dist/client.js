@@ -1,8 +1,11 @@
+import { validateRelationHistoryQuery, isRelationHistoryPage } from '@detuned/protocol';
+import { artifactContentPage } from './artifact-content.js';
+import { validateArtifactContentQuery, ARTIFACT_CONTENT_LIMITS } from '@detuned/protocol';
 import { isThreadPostsPageForQuery, isGlobalRead, isMeResponse, isSpacesPage, isRelationReadView, isPostRelationsPage, isConsumerLookupView, validateDiscoveryQuery, PostRelationsQuerySchema, ConsumerLookupQuerySchema } from '@detuned/protocol';
 import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView, isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
 import { normalizeSearchQuery, validateSearchSourceQuery, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
-import { isFindingsView, isFailuresView } from '@detuned/protocol';
+import { isFindingsView, isFailuresView, isOpenQuestionsView } from '@detuned/protocol';
 import { isPostReviewRequestsPage, validatePostReviewRequestsQuery } from '@detuned/protocol';
 import { toolValidationError, validateToolParams, isSession } from '@detuned/protocol';
 import { isReviewRequestView, isReviewRequestReadView, isReviewSnapshotView, isOwnReviewAssignmentView, isReviewSubmissionAcknowledgement, isReviewSubmissionView, isReviewSubmissionsView, isReviewDecisionView, isReviewStatusView, isReadableArtifactMetadata } from '@detuned/protocol';
@@ -758,6 +761,16 @@ export class DetunedClient {
     downloadArtifact(spaceId, artifactId, opts) {
         return downloadArtifactBytes(this.baseUrl, this.token, spaceId, artifactId, this.timeoutMs, opts?.signal, signal => this.getArtifact(spaceId, artifactId, { signal }), !!this.browserSession);
     }
+    async readArtifactContent(spaceId, artifactId, query = {}, opts) {
+        validateArtifactContentQuery(query);
+        const download = await downloadArtifactBytes(this.baseUrl, this.token, spaceId, artifactId, this.timeoutMs, opts?.signal, async (signal) => {
+            const metadata = await this.getArtifact(spaceId, artifactId, { signal });
+            if (query.expected_sha256 !== undefined && query.expected_sha256 !== metadata.sha256)
+                throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Artifact continuation hash does not match current metadata.', 400, false);
+            return metadata;
+        }, !!this.browserSession, undefined, ARTIFACT_CONTENT_LIMITS.blob_bytes);
+        return artifactContentPage(download, query);
+    }
     exportSpace(spaceId, options) {
         return streamSpaceExport(this.baseUrl, this.token, spaceId, this.timeoutMs, options, !!this.browserSession);
     }
@@ -974,6 +987,13 @@ export class DetunedClient {
             signal: opts?.signal,
         }, opts);
     }
+    async getRelationHistory(spaceId, relationId, query = {}, opts) {
+        validateRelationHistoryQuery(query);
+        const result = await this.requestWithBody({ method: 'GET', path: `/spaces/${encodeURIComponent(spaceId)}/relations/${encodeURIComponent(relationId)}/history`, query, signal: opts?.signal }, undefined, true);
+        if (!isRelationHistoryPage(result, relationId, query))
+            throw new ClientProtocolError('Invalid relation history response.');
+        return result;
+    }
     resolveRelation(spaceId, relationId, expectedVersion, reasonRef, requestKey, opts) {
         return this.write({ spaceId: spaceId, operation: 'relation.resolve', target: relationId }, {
             method: 'POST',
@@ -1026,7 +1046,7 @@ export class DetunedClient {
             path: `/spaces/${spaceId}/views/${name}`,
             signal: opts?.signal,
         });
-        if ((name === 'findings' && !isFindingsView(result.data, spaceId)) || (name === 'failures' && !isFailuresView(result.data, spaceId)))
+        if ((name === 'findings' && !isFindingsView(result.data, spaceId)) || (name === 'failures' && !isFailuresView(result.data, spaceId)) || (name === 'open-questions' && !isOpenQuestionsView(result.data)))
             throw new ClientProtocolError('Invalid knowledge view response.');
         return result;
     }
@@ -1117,6 +1137,14 @@ export class DetunedClient {
                     return this.getCheckSnapshot(spaceId, params.id, opts);
                 if (params.kind === 'check_receipt')
                     return this.getCheckReceipt(spaceId, params.id, opts);
+                if (params.kind === 'relation_history')
+                    return this.getRelationHistory(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor }, opts);
+                if (params.kind === 'artifact_content')
+                    return this.readArtifactContent(spaceId, params.id, { encoding: params.encoding, offset: params.offset, expected_sha256: params.expected_sha256, max_bytes: params.max_bytes }, opts);
+                if (params.kind === 'post_revision_artifacts')
+                    return this.getPostRevisionArtifacts(spaceId, params.id, params.revision, { limit: params.limit, cursor: params.cursor, max_bytes: params.max_bytes }, opts);
+                if (params.kind === 'view')
+                    return (await this.getView(spaceId, params.name, opts)).data;
                 if (params.kind === 'required_checks')
                     return this.getRequiredChecks(spaceId, params.id, opts);
                 if (params.kind === 'check_post_revision')
@@ -1253,6 +1281,8 @@ export class DetunedClient {
                 return response.data;
             }
             case 'forum_subscribe':
+                if (params.op === 'deactivate')
+                    return (await this.deactivateConsumer(spaceId, params.consumer_id, opts)).data;
                 return (await this.subscribe(spaceId, {
                     consumer_key: params.consumer_key,
                     thread_ids: params.thread_ids,

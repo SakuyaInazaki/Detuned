@@ -39,16 +39,25 @@ export class ArtifactService {
     }
     async getMetadata(auth, spaceId, id) {
         const artifact = this.authorizeRead(auth, spaceId, id);
-        if (!await this.blobs.exists(artifact.storage_key))
+        const exists = await this.blobs.exists(artifact.storage_key);
+        const current = this.authorizeRead(auth, spaceId, id);
+        if (!exists)
             throw new DetunedError(ErrorCode.NOT_FOUND, '附件文件不存在。', 404);
-        return this.toReadableMetadata(artifact);
+        return this.toReadableMetadata(current);
     }
     async getContent(auth, spaceId, id) {
         const artifact = this.authorizeRead(auth, spaceId, id);
         const handle = await this.blobs.open(artifact.storage_key);
         if (!handle)
             throw new DetunedError(ErrorCode.NOT_FOUND, '附件文件不存在。', 404);
-        return { metadata: this.toReadableMetadata(artifact), chunks: handle.chunks, dispose: () => handle.dispose(), download_name: artifact.id };
+        try {
+            const current = this.authorizeRead(auth, spaceId, id);
+            return { metadata: this.toReadableMetadata(current), chunks: handle.chunks, dispose: () => handle.dispose(), download_name: current.id };
+        }
+        catch (error) {
+            await handle.dispose();
+            throw error;
+        }
     }
     toReadableMetadata(artifact) {
         if (artifact.visibility === 'space')

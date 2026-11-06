@@ -1,3 +1,6 @@
+import {validateRelationHistoryQuery,isRelationHistoryPage,type RelationHistoryQuery,type RelationHistoryPage} from '@detuned/protocol';
+import {artifactContentPage} from './artifact-content.js';
+import {validateArtifactContentQuery,ARTIFACT_CONTENT_LIMITS,type ArtifactContentQuery,type ArtifactContentPage} from '@detuned/protocol';
 import {isThreadPostsPageForQuery,isGlobalRead,isMeResponse,isSpacesPage,isRelationReadView,isPostRelationsPage,isConsumerLookupView,validateDiscoveryQuery,PostRelationsQuerySchema,ConsumerLookupQuerySchema,type PostRelationsQuery,type PostRelationsPage,type RelationReadView,type ConsumerLookupQuery,type ConsumerLookupView} from '@detuned/protocol';
 import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt,
@@ -6,7 +9,7 @@ import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, typ
   isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView,
   isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
 import { normalizeSearchQuery, validateSearchSourceQuery, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
-import { isFindingsView, isFailuresView } from '@detuned/protocol';
+import { isFindingsView, isFailuresView, isOpenQuestionsView } from '@detuned/protocol';
 import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
 import { toolValidationError, validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
 import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeReviewRequest, type CancelReviewRequest,
@@ -17,6 +20,7 @@ import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeRev
 import { isPostRevisionCatalogPage, isPostRevisionArtifactsPage, type PostRevisionCatalogQuery, type RevisionArtifactsQuery, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from '@detuned/protocol';
 import { WEB_AUTH_PATH, WEB_CSRF_HEADER, isWebSessionResponse, type WebSessionResponse } from '@detuned/protocol';
 import { artifactMetadata, readableArtifactMetadata, snapshotUpload, downloadArtifactBytes, waitForArtifact, readArtifactJson, type ArtifactDownload } from './artifact-transfer.js';
+export type {ArtifactContentQuery,ArtifactContentPage,RelationHistoryQuery,RelationHistoryPage} from '@detuned/protocol';
 export type { ArtifactDownload } from './artifact-transfer.js';
 import { streamSpaceExport, type SpaceExportOptions } from './export-stream.js';
 export type { SpaceExportOptions } from './export-stream.js';
@@ -824,6 +828,16 @@ export class DetunedClient {
     return downloadArtifactBytes(this.baseUrl, this.token, spaceId, artifactId, this.timeoutMs, opts?.signal, signal => this.getArtifact(spaceId, artifactId, { signal }), !!this.browserSession);
   }
 
+  async readArtifactContent(spaceId:string,artifactId:string,query:ArtifactContentQuery={},opts?:{signal?:AbortSignal}):Promise<ArtifactContentPage> {
+    validateArtifactContentQuery(query);
+    const download=await downloadArtifactBytes(this.baseUrl,this.token,spaceId,artifactId,this.timeoutMs,opts?.signal,async signal=>{
+      const metadata=await this.getArtifact(spaceId,artifactId,{signal});
+      if(query.expected_sha256!==undefined&&query.expected_sha256!==metadata.sha256)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Artifact continuation hash does not match current metadata.',400,false);
+      return metadata;
+    },!!this.browserSession,undefined,ARTIFACT_CONTENT_LIMITS.blob_bytes);
+    return artifactContentPage(download,query);
+  }
+
   exportSpace(spaceId: string, options: SpaceExportOptions) {
     return streamSpaceExport(this.baseUrl, this.token, spaceId, this.timeoutMs, options, !!this.browserSession);
   }
@@ -1052,6 +1066,13 @@ export class DetunedClient {
     }, opts);
   }
 
+  async getRelationHistory(spaceId:string,relationId:string,query:RelationHistoryQuery={},opts?:{signal?:AbortSignal}):Promise<RelationHistoryPage> {
+    validateRelationHistoryQuery(query);
+    const result=await this.requestWithBody<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/relations/${encodeURIComponent(relationId)}/history`,query,signal:opts?.signal},undefined,true);
+    if(!isRelationHistoryPage(result,relationId,query))throw new ClientProtocolError('Invalid relation history response.');
+    return result;
+  }
+
   resolveRelation(
     spaceId: string,
     relationId: string,
@@ -1120,7 +1141,7 @@ export class DetunedClient {
       path: `/spaces/${spaceId}/views/${name}`,
       signal: opts?.signal,
     });
-    if ((name === 'findings' && !isFindingsView(result.data,spaceId)) || (name === 'failures' && !isFailuresView(result.data,spaceId))) throw new ClientProtocolError('Invalid knowledge view response.');
+    if ((name === 'findings' && !isFindingsView(result.data,spaceId)) || (name === 'failures' && !isFailuresView(result.data,spaceId)) || (name === 'open-questions' && !isOpenQuestionsView(result.data))) throw new ClientProtocolError('Invalid knowledge view response.');
     return result;
   }
 
@@ -1204,6 +1225,10 @@ export class DetunedClient {
         if (params.kind === 'check_run') return this.getCheckRun(spaceId,params.id,opts);
         if (params.kind === 'check_snapshot') return this.getCheckSnapshot(spaceId,params.id,opts);
         if (params.kind === 'check_receipt') return this.getCheckReceipt(spaceId,params.id,opts);
+        if(params.kind==='relation_history')return this.getRelationHistory(spaceId,params.id,{limit:params.limit,max_bytes:params.max_bytes,cursor:params.cursor},opts);
+        if(params.kind==='artifact_content')return this.readArtifactContent(spaceId,params.id,{encoding:params.encoding,offset:params.offset,expected_sha256:params.expected_sha256,max_bytes:params.max_bytes},opts);
+        if(params.kind==='post_revision_artifacts')return this.getPostRevisionArtifacts(spaceId,params.id,params.revision,{limit:params.limit,cursor:params.cursor,max_bytes:params.max_bytes},opts);
+        if(params.kind==='view')return (await this.getView(spaceId,params.name,opts)).data;
         if (params.kind === 'required_checks') return this.getRequiredChecks(spaceId,params.id,opts);
         if (params.kind === 'check_post_revision') return this.getCheckPostRevision(spaceId,params.run_id,params.id,params.revision,opts);
         if (params.kind === 'check_artifact') return this.getCheckArtifact(spaceId,params.run_id,params.id,opts);
@@ -1361,6 +1386,7 @@ export class DetunedClient {
       }
 
       case 'forum_subscribe':
+        if(params.op==='deactivate')return (await this.deactivateConsumer(spaceId,params.consumer_id,opts)).data;
         return (await this.subscribe(
           spaceId,
           {

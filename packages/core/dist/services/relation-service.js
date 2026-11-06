@@ -175,6 +175,11 @@ export class RelationService {
             if (relation.version !== req.expected_version) {
                 throw new DetunedError(ErrorCode.REVISION_CONFLICT, '关系版本冲突，请获取最新状态。', 409, false, { current_version: relation.version });
             }
+            const reasonPost = tx.findPostById(req.reason_ref.post_id);
+            if (!reasonPost || reasonPost.space_id !== spaceId)
+                throw new DetunedError(ErrorCode.NOT_FOUND, '重开理由帖子不存在。', 404);
+            if (!tx.getPostRevision(req.reason_ref.post_id, req.reason_ref.revision))
+                throw new DetunedError(ErrorCode.NOT_FOUND, '重开理由帖子修订版本不存在。', 404);
             const now = this.clock.nowIso();
             const nextVersion = relation.version + 1;
             const updatedRel = {

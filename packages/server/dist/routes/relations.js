@@ -3,6 +3,12 @@ import { CreateRelationRequestSchema, ResolveRelationRequestSchema, ReopenRelati
 export const relationRoutes = async (app) => {
     const relationService = app.relationService;
     const reads = app.discoveryReadService;
+    app.get('/spaces/:space_id/relations/:id/history', async (req) => {
+        const p = req.params, q = req.query;
+        validateAllowedQueryParams(q, ['limit', 'max_bytes', 'cursor']);
+        const query = { limit: parseIntegerQuery(q.limit, 'limit', { min: 1, max: 100 }), max_bytes: parseIntegerQuery(q.max_bytes, 'max_bytes', { min: 4096, max: 65536 }), cursor: parseStringQuery(q.cursor, 'cursor') };
+        return { api_version: '1', request_id: req.id, ...reads.getRelationHistory(req.auth, p.space_id, p.id, query, { request_id: req.id }) };
+    });
     app.get('/spaces/:space_id/relations/:id', async (req) => { validateAllowedQueryParams(req.query, []); const p = req.params; return { api_version: '1', request_id: req.id, data: reads.getRelation(req.auth, p.space_id, p.id) }; });
     app.get('/spaces/:space_id/posts/:id/revisions/:revision/relations', async (req) => {
         const p = req.params, q = req.query;

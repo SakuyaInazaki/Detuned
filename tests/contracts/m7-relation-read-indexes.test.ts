@@ -12,3 +12,8 @@ it('M7.10-A forward/reverse seeks use their anchor indexes without a per-branch 
  for(const [side,index] of [['source',RELATION_SOURCE_INDEX],['target',RELATION_TARGET_INDEX]]){const rows=db.prepare(`EXPLAIN QUERY PLAN SELECT r.id FROM relations r INDEXED BY ${index} WHERE r.space_id=? AND r.${side}_post_id=? AND r.${side}_revision=? AND r.id>? ORDER BY r.id ASC LIMIT ?`).all('space','post',1,'after',3);expect(JSON.stringify(rows)).toContain(index);expect(JSON.stringify(rows)).not.toContain('TEMP B-TREE');}
  }finally{db.close();}
 });
+it('M7.11 history uses its derived ordered seek and rejects a colliding definition atomically',()=>{
+ const db=new Database(':memory:');try{bootstrapDatabase(db);prepareRelationReadIndexes(db);const name='relation_resolutions_relation_version_id_v1';const rows=db.prepare(`EXPLAIN QUERY PLAN SELECT * FROM relation_resolutions INDEXED BY ${name} WHERE relation_id=? AND version<=? AND (version,id)>(?,?) ORDER BY version,id LIMIT ?`).all('relation',100,50,'after',3);expect(JSON.stringify(rows)).toContain(name);expect(JSON.stringify(rows)).not.toContain('TEMP B-TREE');
+ db.exec(`DROP INDEX ${name}; CREATE INDEX ${name} ON relation_resolutions(id,version)`);expect(()=>prepareRelationReadIndexes(db)).toThrow(expect.objectContaining({code:'TEMPORARILY_UNAVAILABLE'}));expect(db.prepare('SELECT sql FROM sqlite_master WHERE name=?').get(name)).toEqual({sql:`CREATE INDEX ${name} ON relation_resolutions(id,version)`});expect(classifyDatabase(db).kind).toBe('current_initialized');
+ }finally{db.close();}
+});

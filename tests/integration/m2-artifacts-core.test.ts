@@ -12,6 +12,9 @@ class ControlledBlobs implements BlobStorePort {
   stages = new Map<string, Uint8Array>();
   objects = new Map<string, Uint8Array>();
   beforePublish?: () => void;
+  beforeExists?:()=>void;
+  beforeOpen?:()=>void;
+  disposed=0;
   collide = false;
   sequence = 0;
   async stage(chunks: AsyncIterable<Uint8Array>, maxBytes: number): Promise<StagedBlob> {
@@ -28,8 +31,8 @@ class ControlledBlobs implements BlobStorePort {
   }
   async discardStage(stage: StagedBlob) { this.stages.delete(stage.stage_key); }
   async discardPublished(key: string) { this.objects.delete(key); }
-  async exists(key: string) { return this.objects.has(key); }
-  async open(key: string) { const data = this.objects.get(key); return data ? { chunks: (async function* () { yield data; })(), dispose: async () => {} } : null; }
+  async exists(key: string) { this.beforeExists?.();return this.objects.has(key); }
+  async open(key: string) { const data = this.objects.get(key);this.beforeOpen?.(); return data ? { chunks: (async function* () { yield data; })(), dispose: async () => {this.disposed++;} } : null; }
 }
 
 describe('M2.1 core artifact transaction and references', () => {
@@ -48,6 +51,15 @@ describe('M2.1 core artifact transaction and references', () => {
     sid = new SpaceService(storage, ids, clock, authService, idem).createSpace(auth, { slug: 'm2-core', objective: 'contracts', rules: [] }, 'space').space.id;
   });
   afterEach(() => { db.close(); rmSync(dir, { recursive: true, force: true }); });
+
+  it('M7.11 metadata refreshes permission after asynchronous existence check',async()=>{
+    const artifact=await upload('fresh-metadata');blobs.beforeExists=()=>{db.prepare('UPDATE credentials SET revoked_at=? WHERE id=?').run(clock.nowIso(),auth.credential.id);};
+    await expect(service.getMetadata(auth,sid,artifact.id)).rejects.toMatchObject({code:'UNAUTHENTICATED'});
+  });
+  it('M7.11 content refreshes redaction after asynchronous open and disposes handle',async()=>{
+    const artifact=await upload('fresh-content');blobs.beforeOpen=()=>storage.updateArtifactState(artifact.id,'redacted');
+    await expect(service.getContent(auth,sid,artifact.id)).rejects.toMatchObject({code:'CONTENT_REDACTED'});expect(blobs.disposed).toBe(1);
+  });
 
   it('A01: typed replay returns same object, separate keys bill separate objects, private keys never enter DTO/events', async () => {
     const first = await upload('same'); const replay = await upload('same'); const other = await upload('other');

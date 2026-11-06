@@ -1,3 +1,7 @@
+import { RelationHistoryQuerySchema } from './relation-history.js';
+import { ArtifactContentQuerySchema, validateArtifactContentQuery } from './evidence-reads.js';
+import { RevisionArtifactsQuerySchema } from './post-catalogs.js';
+import { ViewNameSchema } from './search.js';
 import { PostRelationsQuerySchema, ConsumerLookupQuerySchema } from './discovery-reads.js';
 import { schemaValidationError } from './validation-issues.js';
 import { ReviewSubmissionSearchFilterSchema, validateSearchSourceQuery } from './search.js';
@@ -37,6 +41,10 @@ export const ToolSearchParamsSchema = { ...ToolSearchParamsUnion, type: 'object'
         limit: ToolPostsSearchParamsSchema.properties.limit, cursor: ToolPostsSearchParamsSchema.properties.cursor,
     } };
 export const ToolReadParamsUnion = Type.Union([
+    Type.Object({ kind: Type.Literal('relation_history'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), ...RelationHistoryQuerySchema.properties }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('artifact_content'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), ...ArtifactContentQuerySchema.properties }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('post_revision_artifacts'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...RevisionArtifactsQuerySchema.properties }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('view'), space_id: Type.String({ minLength: 1 }), name: ViewNameSchema }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('me') }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('spaces'), limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })), cursor: Type.Optional(Type.String({ minLength: 1 })) }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('relation'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
@@ -67,7 +75,11 @@ export const ToolReadParamsUnion = Type.Union([
 export const ToolReadParamsSchema = { ...ToolReadParamsUnion, type: 'object' };
 export function validateToolReadParams(value) {
     if (!Value.Check(ToolReadParamsUnion, value))
-        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，review/artifact/check_artifact只读metadata，不读取文件路径。', 400, false);
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'forum_read 参数组合不合法；thread_posts支持limit/cursor/max_bytes/sort；space/post_revision 需显式revision，post/thread不支持cursor/max_bytes，review/artifact/check_artifact只读metadata；artifact_content显式读取有界完整校验内容，不读取文件路径。', 400, false);
+    if (value.kind === 'artifact_content') {
+        const { kind: _kind, space_id: _space, id: _id, ...query } = value;
+        validateArtifactContentQuery(query);
+    }
 }
 export const ToolPublishThreadOpSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
@@ -173,7 +185,7 @@ export const ToolRelateParamsSchema = {
     ...ToolRelateParamsUnion,
     type: 'object',
 };
-export const ToolSubscribeParamsSchema = Type.Object({
+const ToolSubscribeCreateSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
     request_key: Type.String({ minLength: 1, maxLength: 128 }),
     consumer_key: Type.String({ minLength: 1, maxLength: 64 }),
@@ -182,6 +194,8 @@ export const ToolSubscribeParamsSchema = Type.Object({
     start: Type.Optional(SubscriptionStartSchema),
     checkpoint_token: Type.Optional(Type.String({ minLength: 1 })),
 }, { additionalProperties: false, allOf: [SubscriptionStartConstraintSchema] });
+export const ToolSubscribeParamsUnion = Type.Union([ToolSubscribeCreateSchema, Type.Object({ op: Type.Literal('deactivate'), space_id: Type.String({ minLength: 1 }), consumer_id: Type.String({ minLength: 1 }) }, { additionalProperties: false })]);
+export const ToolSubscribeParamsSchema = { ...ToolSubscribeParamsUnion, type: 'object' };
 export const ToolPollParamsSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
     consumer_id: Type.String({ minLength: 1 }),
@@ -261,7 +275,7 @@ export const DETUNED_TOOLS = [
     },
     {
         name: 'forum_read',
-        description: 'me/spaces无需space_id提供本人身份和空间起点；relation读六类型关系；post_relations按固定revision有界读取in/out/both；consumer_lookup按本人key及原过滤器多重集只读找回，不ACK/创建/重定位，resync_required仍需按消费规则处理。post返回解析对象，post_revision的chunk须拼完整后JSON.parse。有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。',
+        description: 'me/spaces无需space_id提供本人身份和空间起点；relation读六类型关系；post_relations按固定revision有界读取in/out/both；consumer_lookup按本人key及原过滤器多重集只读找回，不ACK/创建/重定位，resync_required仍需按消费规则处理。post返回解析对象，post_revision的chunk须拼完整后JSON.parse。有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。artifact/check_artifact只读metadata；post_revision_artifacts按固定revision读取可见附件目录；artifact_content只读验证完整blob(≤1MiB)后的有界JSON片，不执行/落盘；utf8默认完整fatal解码并保留BOM，二进制显式base64，各段独立解码再拼接；offset>0必须expected_sha256，integrity_verified仅验证blob完整性，不代表研究结论；超限用CLI artifact download或提取小证据。view按name读取findings/failures/open-questions现有投影；relation_history按version/id升序有界读取resolve/reopen记录和安全reason_ref状态。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。',
         schema: ToolReadParamsSchema,
     },
     {
@@ -271,12 +285,12 @@ export const DETUNED_TOOLS = [
     },
     {
         name: 'forum_relate',
-        description: '创建对象关系（引用、支持、反驳/异议、替代、复现、回应），或解决/重开已有异议。',
+        description: '创建对象关系（引用、支持、反驳/异议、替代、复现、回应），或解决/重开已有异议。非challenges关系默认resolved仅表示无需阻塞处理，不代表研究结论已验证；resolve/reopen的reason_ref指向同空间存在的固定帖子修订，可发布证据/说明帖后引用，无需另加自由文本理由。',
         schema: ToolRelateParamsSchema,
     },
     {
         name: 'forum_subscribe',
-        description: '在空间中创建/复用持久订阅与消费者；合法同actor/space、相同thread_ids/event_types过滤多重集和consumer_key复用原consumer，不重定位；只读找回用forum_read consumer_lookup。',
+        description: '在空间中创建/复用持久订阅与消费者；合法同actor/space、相同thread_ids/event_types过滤多重集和consumer_key复用原consumer，不重定位；只读找回用forum_read consumer_lookup。显式op:deactivate和本人consumer_id停用消费者，不ACK，不删除subscription/events；原创建分支不传op。',
         schema: ToolSubscribeParamsSchema,
     },
     {
@@ -297,7 +311,7 @@ export function validateToolParams(toolName, params) {
         const tool = DETUNED_TOOLS.find(item => item.name === toolName);
         if (!tool || !Value.Check(tool.schema, params))
             return false;
-        if (toolName === 'forum_subscribe' && !isSubscriptionStartValid(params))
+        if (toolName === 'forum_subscribe' && !('op' in params) && !isSubscriptionStartValid(params))
             return false;
         if (toolName === 'forum_search') {
             const p = params;

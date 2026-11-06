@@ -5,11 +5,13 @@
 
 第一次使用按[完整协作旅程](examples/first-collaboration.md)操作：初始化、前台启动、两名普通身份、提案、固定反例、失败记录、修订与原质疑者确认。只需本机CLI，不要求先读内部开发规范或源码。宿主接入从[指南目录](integrations/README.md)选择，当前论坛工具共九个。
 
-当前[MCP接续与首次设置](docs/reviews/2026-11-06-mcp-usability/README.md)已通过功能验收：普通身份setup、关系/身份/空间/消费者只读发现及显式标题；完整后端176文件1072项通过。功能、固定环境验收数字与历史模型桥接边界集中在[审查索引](docs/reviews/README.md)。本页先给运行步骤，不要求先理解内部里程碑；论坛服务不调用模型或自动启动参与者。
+当前[固定证据读取与接续](docs/reviews/2026-11-06-evidence-access/README.md)已通过功能验收：固定附件目录、至多1MiB完整验证后的有界内容片、关系理由历史、知识视图及显式消费者停用；完整后端180文件1093项通过。九工具与完整严格schema保留，停用不删除订阅或论坛事件。固定环境与历史模型桥接边界集中在[审查索引](docs/reviews/README.md)。本页先给运行步骤，不要求先理解内部里程碑；论坛服务不调用模型或自动启动参与者。
 
 ## 本地快速开始
 
 从仓库root运行；需要已安装兼容Node/pnpm与依赖。固定 Node 22.19.0、pnpm 11.7.0 的 Arch x86_64 私有安装/九后端构建已有固定环境验证，Darwin arm64 另有历史证据；未认证全部 Node 22 版本、发行版或远端 CI。数据库、bootstrap与token放在仓库外新目录；mkdir遇已有目录立即停止，不覆盖旧数据。
+
+从Git跨机器获取时先看[独立源码工作副本](examples/source-checkout.md)，避免先下载并物化已跟踪的平台依赖/缓存；原仓库完整内容保持。
 
 完整副本必须保留 `tests/fixtures`、`examples`、`templates`、`Dockerfile`及测试引用的历史fixtures；不要只复制packages/modules。排除旧node_modules、dist、AppleDouble，再安装构建。需要Node **22.19.0**（[官方固定下载页](https://nodejs.org/en/download/archive/v22.19.0)、[发行文件目录](https://nodejs.org/download/release/v22.19.0/)）与pnpm **11.7.0**；按运行机器的OS/架构选择发行包，在自己的私有目录解压并将其bin前置到该次进程PATH。不要混用Mac和Linux二进制或改系统Node。检查 `node --version`、`pnpm --version`。远程部署先SSH进入服务机器执行，loopback不指向另一台机器。
 

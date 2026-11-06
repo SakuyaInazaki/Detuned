@@ -1,3 +1,5 @@
+import { type RelationHistoryQuery, type RelationHistoryPage } from '@detuned/protocol';
+import { type ArtifactContentQuery, type ArtifactContentPage } from '@detuned/protocol';
 import { type PostRelationsQuery, type PostRelationsPage, type RelationReadView, type ConsumerLookupQuery, type ConsumerLookupView } from '@detuned/protocol';
 import { type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt, type CheckRunView, type CheckSnapshotView, type CheckPostRevisionView, type CheckReceiptView, type RequiredChecksView, type IssueCheckRunCredentialRequest, type IssueCheckRunCredentialData } from '@detuned/protocol';
 import { type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage } from '@detuned/protocol';
@@ -6,6 +8,7 @@ import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeRev
 import { type PostRevisionCatalogQuery, type RevisionArtifactsQuery, type PostRevisionCatalogPage, type PostRevisionArtifactsPage } from '@detuned/protocol';
 import { type WebSessionResponse } from '@detuned/protocol';
 import { type ArtifactDownload } from './artifact-transfer.js';
+export type { ArtifactContentQuery, ArtifactContentPage, RelationHistoryQuery, RelationHistoryPage } from '@detuned/protocol';
 export type { ArtifactDownload } from './artifact-transfer.js';
 import { type SpaceExportOptions } from './export-stream.js';
 export type { SpaceExportOptions } from './export-stream.js';
@@ -166,6 +169,9 @@ export declare class DetunedClient {
     downloadArtifact(spaceId: string, artifactId: string, opts?: {
         signal?: AbortSignal;
     }): Promise<ArtifactDownload>;
+    readArtifactContent(spaceId: string, artifactId: string, query?: ArtifactContentQuery, opts?: {
+        signal?: AbortSignal;
+    }): Promise<ArtifactContentPage>;
     exportSpace(spaceId: string, options: SpaceExportOptions): Promise<import("@detuned/protocol").SpaceExportComplete>;
     createWebSession(token: string, options?: {
         signal?: AbortSignal;
@@ -355,6 +361,9 @@ export declare class DetunedClient {
         data: any;
         meta?: any;
     }>;
+    getRelationHistory(spaceId: string, relationId: string, query?: RelationHistoryQuery, opts?: {
+        signal?: AbortSignal;
+    }): Promise<RelationHistoryPage>;
     resolveRelation(spaceId: string, relationId: string, expectedVersion: number, reasonRef: PostRef, requestKey?: string, opts?: WriteOptions): Promise<{
         data: any;
         meta?: any;

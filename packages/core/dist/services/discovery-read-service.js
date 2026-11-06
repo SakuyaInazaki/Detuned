@@ -1,3 +1,4 @@
+import { validateRelationHistoryQuery } from '@detuned/protocol';
 import { DetunedError, ErrorCode, validateDiscoveryQuery, PostRelationsQuerySchema } from '@detuned/protocol';
 export class DiscoveryReadService {
     storage;
@@ -23,6 +24,51 @@ export class DiscoveryReadService {
     getRelation(auth, spaceId, id) {
         return this.storage.readSnapshot(() => { const current = this.authService.refreshContext(auth); this.authService.requireSpaceAccess(current, spaceId, 'observer'); const relation = this.storage.findRelationById(id), result = relation ? this.project(spaceId, relation) : null; if (!result)
             throw new DetunedError(ErrorCode.NOT_FOUND, 'Relation does not exist or is not accessible.', 404); return result; });
+    }
+    getRelationHistory(auth, spaceId, relationId, query, budget) {
+        return this.storage.readSnapshot(() => {
+            const current = this.authService.refreshContext(auth);
+            this.authService.requireSpaceAccess(current, spaceId, 'observer');
+            const relation = this.storage.findRelationById(relationId);
+            if (!relation || !this.project(spaceId, relation))
+                throw new DetunedError(ErrorCode.NOT_FOUND, 'Relation does not exist or is not accessible.', 404);
+            validateRelationHistoryQuery(query);
+            const now = Math.floor(this.clock.now().getTime() / 1000);
+            let exp = now + 86400, throughVersion = relation.version, after;
+            if (query.cursor !== undefined) {
+                const p = this.signer.verify(query.cursor, this.secret, now);
+                if (!p || Object.keys(p).length !== 10 || p.v !== 1 || p.purpose !== 'relation_history' || p.sort !== 'version_id_asc' || p.actor_id !== current.actor.id || p.space_id !== spaceId || p.relation_id !== relationId || typeof p.through_version !== 'number' || !Number.isSafeInteger(p.through_version) || p.through_version < 1 || p.through_version > relation.version || typeof p.after_version !== 'number' || !Number.isSafeInteger(p.after_version) || p.after_version < 2 || p.after_version > p.through_version || typeof p.after_id !== 'string' || !p.after_id.trim() || typeof p.exp !== 'number' || !Number.isSafeInteger(p.exp) || p.exp < now || p.exp > exp)
+                    throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid relation history cursor.', 400);
+                throughVersion = p.through_version;
+                exp = p.exp;
+                after = { version: p.after_version, id: p.after_id };
+            }
+            const rows = this.storage.listRelationResolutions(relationId, throughVersion, query.limit ?? 20, after);
+            const resolutions = rows.resolutions.map(row => this.projectReason(spaceId, row));
+            let removed = false;
+            while (true) {
+                const more = rows.has_more || removed, last = resolutions.at(-1);
+                if (more && !last)
+                    throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Required history metadata cannot fit the budget.', 422);
+                const next = more ? this.signer.sign({ v: 1, purpose: 'relation_history', sort: 'version_id_asc', actor_id: current.actor.id, space_id: spaceId, relation_id: relationId, through_version: throughVersion, after_version: last.version, after_id: last.resolution_id, exp }, this.secret) : null;
+                const page = { data: { relation_id: relationId, resolutions: [...resolutions] }, meta: { truncated: removed, next_cursor: next } };
+                if ((next === null || next.length <= 4096) && new TextEncoder().encode(JSON.stringify({ api_version: '1', request_id: budget.request_id, ...page })).length <= (query.max_bytes ?? 12288))
+                    return page;
+                if (resolutions.length <= 1)
+                    throw new DetunedError(ErrorCode.QUERY_TOO_BROAD, 'Required history metadata cannot fit the budget.', 422);
+                resolutions.pop();
+                removed = true;
+            }
+        });
+    }
+    projectReason(spaceId, row) {
+        const base = { resolution_id: row.id, relation_id: row.relation_id, version: row.version, action: row.action, resolver_id: row.resolver_id, created_at: row.created_at };
+        const post = this.storage.findPostById(row.reason_ref.post_id);
+        if (!post || post.space_id !== spaceId || !this.storage.getPostRevisionMetadata(post.id, row.reason_ref.revision))
+            return { ...base, reason_ref: null, reason_status: 'unavailable', reason_has_newer_revision: null };
+        if (post.lifecycle === 'redacted')
+            return { ...base, reason_ref: row.reason_ref, reason_status: 'redacted', reason_has_newer_revision: null };
+        return { ...base, reason_ref: row.reason_ref, reason_status: post.lifecycle, reason_has_newer_revision: post.current_revision > row.reason_ref.revision };
     }
     getPostRelations(auth, spaceId, postId, revision, query, budget) {
         return this.storage.readSnapshot(() => {

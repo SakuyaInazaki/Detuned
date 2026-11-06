@@ -1,3 +1,4 @@
+import {QuestionViewItemSchema,OpenChallengeViewItemSchema,type QuestionViewItem,type OpenChallengeViewItem} from './search.js';
 import { PublicReviewSubmissionSearchItemSchema, SearchResponseMetaSchema, SEARCH_LIMITS, isUnicodeReviewId, compareReviewSubmissionIds, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage } from './search.js';
 import { FindingViewItemSchema, FailureViewItemSchema, type FindingViewItem, type FailureViewItem } from './search.js';
 import {ReviewRoundSummarySchema,type PostReviewRequestsPage} from './review.js';
@@ -223,3 +224,6 @@ export function isRequiredChecksView(value:unknown,spaceId:string,requestId:stri
  }
  const status=value.checks.length===0?'not_required':value.checks.some(c=>c.run?.state==='fail')?'failed':value.checks.some(c=>c.run?.state==='error')?'error':value.checks.every(c=>c.run?.state==='pass')?'passed':'pending';return status===value.verification_status;
 }
+
+const openQuestionsWire=Type.Array(Type.Union([Type.Object({...QuestionViewItemSchema.properties,created_at:Type.String()},{additionalProperties:false}),OpenChallengeViewItemSchema]));
+export function isOpenQuestionsView(value:unknown):value is (QuestionViewItem|OpenChallengeViewItem)[] {return Value.Check(openQuestionsWire,value)&&value.every(item=>item.type!=='question'||validDate(item.created_at));}

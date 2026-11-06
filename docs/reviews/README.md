@@ -1,6 +1,10 @@
 # Detuned 审查记录
 
-当前MCP接续与首次设置M7.10见[处置与验证](2026-11-06-mcp-usability/README.md)。关系/身份/空间/consumer只读发现、setup与CLI帮助已实现；最终一次完整后端176文件1072项全通过，主代理新SSH核原始JSON，首full七个不完整/me fixture失败另存，原断言/时序/timeout保持。原文setup协作旅程与三普通身份flat/wrapped/Pi SDK接续通过；主代理独立核验原始JSON/SQLite及113源/test/fixture/dist与guide逐字相同并接受。唯一自有验收根已清退，owner及主代理独立新SSH确认ENOENT；不新增模型/供应商认证。
+当前固定证据读取与接续M7.11见[处置与验证](2026-11-06-evidence-access/README.md)。固定附件目录/有界内容片、关系理由历史、view与显式消费者清退及三项独立代码缺陷已修；最终单次后端180文件1093项全通过，主代理新SSH核原始结果。最终raw三模式指南probe通过，源码获取fresh原文/构建通过；主代理新SSH核raw probe/checkout收据，并独立核99项源/test/fixture/config/dist与两guide逐字一致，最终功能接受；唯一自有根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
+
+## 历史MCP接续与首次设置
+
+历史MCP接续与首次设置M7.10见[处置与验证](2026-11-06-mcp-usability/README.md)。关系/身份/空间/consumer只读发现、setup与CLI帮助已实现；最终一次完整后端176文件1072项全通过，主代理新SSH核原始JSON，首full七个不完整/me fixture失败另存，原断言/时序/timeout保持。原文setup协作旅程与三普通身份flat/wrapped/Pi SDK接续通过；主代理独立核验原始JSON/SQLite及113源/test/fixture/dist与guide逐字相同并接受。唯一自有验收根已清退，owner及主代理独立新SSH确认ENOENT；不新增模型/供应商认证。
 
 ## 历史首次使用与诊断
 

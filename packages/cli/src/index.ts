@@ -511,6 +511,10 @@ const relationCommand = program.command('relation').description('当前关系met
 relationCommand.command('read <space-id> <relation-id>').description('读取有权关系的类型、固定两端、状态与version')
   .action(async(spaceId,relationId)=>{try{printOutput(await getClient(program.opts()).getRelation(spaceId,relationId),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 
+relationCommand.command('history <space-id> <relation-id>').description('读取有界resolve/reopen历史与可见固定理由引用')
+  .option('--limit <count>', '每页数量', '20').option('--max-bytes <bytes>', '完整目录JSON预算4096–65536', '12288').option('--cursor <token>', '上一页opaque next_cursor')
+  .action(async(spaceId,relationId,options)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getRelationHistory(spaceId,relationId,{limit:parsePageLimit(options.limit),max_bytes:parseReadPositiveInteger(options.maxBytes,'max-bytes'),cursor:options.cursor},{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+
 consumerCommand.command('deactivate <space-id> <consumer-id>').action(async (spaceId, consumerId) => {
   try { printOutput((await getClient(program.opts()).deactivateConsumer(spaceId, consumerId)).data, program.opts().json); }
   catch (error) { handleError(error, program.opts().json); }
@@ -543,6 +547,10 @@ artifactCommand.command('metadata <space-id> <artifact-id>')
     try { printOutput(await withArtifactSignal(signal => getClient(program.opts()).getArtifact(spaceId, artifactId, {signal})), program.opts().json); }
     catch (error) { handleError(error, program.opts().json); }
   });
+artifactCommand.command('read <space-id> <artifact-id>').description('完整验证至多1MiB附件后返回有界内容片；不执行内容或验证研究结论')
+  .option('--encoding <encoding>', 'utf8（严格解码）或显式base64', 'utf8').option('--offset <byte>', '非负安全整数字节偏移', '0')
+  .option('--expected-sha256 <hash>', '续片绑定首片sha256').option('--max-bytes <bytes>', '结果JSON预算4096–12288', '8192')
+  .action(async(spaceId,artifactId,options)=>{try{if(!/^\d+$/.test(options.offset)||!Number.isSafeInteger(Number(options.offset)))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'offset必须为非负safeinteger。',400);printOutput(await withArtifactSignal(signal=>getClient(program.opts()).readArtifactContent(spaceId,artifactId,{encoding:options.encoding,offset:Number(options.offset),expected_sha256:options.expectedSha256,max_bytes:parseReadPositiveInteger(options.maxBytes,'max-bytes')},{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 artifactCommand.command('download <space-id> <artifact-id>')
   .requiredOption('--output <new-file>', '不存在的新私有文件')
   .action(async (spaceId, artifactId, options) => {
@@ -729,6 +737,10 @@ postReadCommand.command('relations <space-id> <post-id>').description('有界读
   .option('--cursor <token>', '上页不透明next_cursor，保持原过滤条件')
   .action(async(spaceId,postId,options)=>{try{printOutput(await getClient(program.opts()).getPostRelations(spaceId,postId,parseReadPositiveInteger(options.revision,'revision'),{direction:options.direction,limit:parsePageLimit(options.limit),max_bytes:parseReadPositiveInteger(options.maxBytes,'max-bytes'),cursor:options.cursor}),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 
+postReadCommand.command('artifacts <space-id> <post-id>').description('列固定帖子修订的有界附件目录，不猜事件或下载正文')
+  .requiredOption('--revision <n>', '固定正安全整数修订号').option('--limit <count>', '每页数量', '20')
+  .option('--max-bytes <bytes>', '完整目录JSON预算4096–65536', '12288').option('--cursor <token>', '上一页opaque next_cursor')
+  .action(async(spaceId,postId,options)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getPostRevisionArtifacts(spaceId,postId,parseReadPositiveInteger(options.revision,'revision'),{limit:parsePageLimit(options.limit),max_bytes:parseReadPositiveInteger(options.maxBytes,'max-bytes'),cursor:options.cursor},{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 postReadCommand.command('revisions <space-id> <post-id>').option('--limit <count>', '每页1–100', '20').option('--cursor <token>', '上一页next_cursor')
   .action(async (spaceId, postId, options) => {
     try { printOutput(await getClient(program.opts()).listPostRevisions(spaceId, postId, parsePageLimit(options.limit), options.cursor), program.opts().json); }

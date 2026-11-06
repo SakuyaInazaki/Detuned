@@ -440,3 +440,9 @@ M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0
 管理员可显式连接已运行服务，使用setup的space JSON、1–32唯一安全participant标签和全新0700 output目录创建空间及普通contributor/read-write/单空间凭据。该命令不启动服务或模型，不改全局配置，不以actor.kind猜管理员；权限仍由服务裁决。credential签发单attempt，未知结果立即停，不重放或删除服务端材料；0600收据记录步骤状态、非秘密ID和恢复提示，token以0600新文件保存。本地保存失败保留credential_id并标received_not_saved或明确私有recovery文件，不报告成功却丢弃凭据；重复output在业务写前拒绝。
 
 关系目录新增两条runtime derived索引（source/target固定修订+id），由现prepareRuntimeReadIndexes机制在配额后显式维护，保逻辑schema6及历史迁移材料；保留名但定义不符则拒绝启动，不默吞或删除。双向各索引seek取limit+1后UNION去重及最终限额，自环一次；保证单页候选与响应边界，不作全库容量承诺。主题目录标题采用显式include_titles模式，仅读同快照当前修订标题，默认/false旧响应与cursor保持，红删不返回标题。
+
+## 普通证据读取的资源与隐私边界
+
+采用共享客户端完整验证≤1MiB附件后生成字节offset内容页，保持旧25MiB文件下载路径，不新增服务器任意URL读取、执行或落盘入口。UTF8 fatal并保BOM、码点边界、显式base64分片、续页SHA绑定及完整JSON字节预算共同避免截断冒充完整。generic附件异步I/O后重新核当前ACL/封存资格/生命周期，并释放失败handle。
+
+关系动作history独立于默认Relation读，复用已有resolution记录，以非unique derived(relation_id,version,id)索引和双键seek控制单页候选，初始version上界与签名cursor固定TTL。当前理由不可见时隐藏ref或保红删墓碑，不输出正文/附件。新reopen理由存在性和同空间校验与resolve对齐，成功幂等重放不变。消费者停用仅在forum_subscribe严格op分支复用现DELETE，不把写动作混入forum_read，也不改变ACK、订阅或事件语义。

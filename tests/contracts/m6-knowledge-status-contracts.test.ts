@@ -105,7 +105,7 @@ it('KC03 controlled transport rejects every malformed row, scope/date/flags mism
     await expect(client.getView(sid, 'findings')).rejects.toBeInstanceOf(ClientProtocolError);
   }
 });
-it('KC04 controlled transport preserves null semantics and failure array guard, unrelated view behavior stays unchanged', async () => {
+it('KC04 controlled transport preserves null semantics and rejects malformed whole knowledge pages', async () => {
   const finding = (await client.getView(sid, 'findings')).data[0]!;
   const failureItem: FailureViewItem = (await client.getView(sid, 'failures')).data[0]!;
   expect(isFindingsView([{ ...finding, formal_review_status: 'not_enabled', formal_check_status: 'not_enabled' }], sid)).toBe(true);
@@ -116,5 +116,14 @@ it('KC04 controlled transport preserves null semantics and failure array guard, 
   }
   const opaqueOtherView = [{ legacy_shape: 'unchanged transport' }];
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'controlled', data: opaqueOtherView }), { status: 200 })));
-  expect((await client.getView(sid, 'open-questions')).data).toEqual(opaqueOtherView);
+  await expect(client.getView(sid, 'open-questions')).rejects.toBeInstanceOf(ClientProtocolError);
+  vi.unstubAllGlobals();
+  const tid=storage.findPostById(pid)!.thread_id;
+  const question=(await write('POST',path(`/threads/${tid}/posts`),{kind:'question',title:'real question',summary:'question summary',body:'question body'},'question')).post;
+  const actual=await client.getView(sid,'open-questions');
+  expect(actual.data).toHaveLength(1);
+  expect(actual.data[0]).toMatchObject({type:'question',kind:'question',post_id:question.id,revision:1,title:'real question',summary:'question summary'});
+  const raw=await fetch(`${url}/api/v1${path('/views/open-questions')}`,{headers:{authorization:`Bearer ${token}`}});
+  expect(raw.status).toBe(200);
+  expect(actual.data).toEqual((await raw.json()).data);
 });

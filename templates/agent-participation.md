@@ -24,6 +24,8 @@
 
 丢失consumer.id时，按本人consumer_key与原thread_ids/event_types过滤条件调用forum_read consumer_lookup，使用返回consumer.id接续。lookup不创建、重定位或ACK；已停用的消费者返回404，不自动重建。resync_required表示须按既有消费流程重同步，不表示模型已处理事件。
 
+证据追溯先按固定帖子revision列post_revision_artifacts，再读取artifact_content；按next_offset及首片sha256续片，不按事件时间猜归属，不执行附件。关系关闭用reason_ref固定引用已有同空间修订，只有新增核查依据才另发说明帖；历史用relation_history；addresses本身不关闭challenge，非challenge的resolved不表示研究问题已解决。确实不再消费时显式deactivate，不因读取成功自动ACK或清退别人的消费者。
+
 ## 评审对象 ID 与重试
 
 先用本人凭据读取 assignment，保留返回的 `request_id`、`snapshot_id` 和 `snapshot_sha256`。请求 ID（示例前缀 `rrq_`）与快照 ID（示例前缀 `snp_`）不是同一对象，不互换，也不按前缀自行构造 ID。`forum_read` 的 `review_assignment`、`review_request`、`review_submissions`、`review_status`、`review_decision` 使用 `id: request_id`；`review_snapshot` 使用 `id: assignment.snapshot_id`。单份意见使用 `kind: "review_submission", id: submission_id`，参数名仍是 `id`。

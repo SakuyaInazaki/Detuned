@@ -87,7 +87,13 @@ describe('M4.1-D consumer lifecycle regressions', () => {
       const denied = await f.call('POST', `/api/v1/spaces/${f.spaceB}/subscriptions`, f.onlyA, { consumer_key: 'no-access', start: 'now' });
       expect(denied.statusCode).toBe(404); expect(counts(f.db)).toEqual(before);
       expect(CreateSubscriptionRequestSchema.allOf?.[0]).toBe(SubscriptionStartConstraintSchema);
-      expect(ToolSubscribeParamsSchema.allOf?.[0]).toBe(SubscriptionStartConstraintSchema);
+      const createBranch=ToolSubscribeParamsSchema.anyOf?.find((branch:any)=>branch.properties?.consumer_key);
+      expect(createBranch).toBeDefined();
+      expect(createBranch!.allOf?.[0]).toBe(SubscriptionStartConstraintSchema);
+      expect(createBranch!.required).toEqual(['space_id','request_key','consumer_key']);
+      expect(Object.keys(createBranch!.properties)).toEqual(['space_id','request_key','consumer_key','thread_ids','event_types','start','checkpoint_token']);
+      expect(createBranch!.additionalProperties).toBe(false);
+      expect(adaptToolSchema(createBranch!)).toBe(createBranch);
       expect(adaptToolSchema(ToolSubscribeParamsSchema)).toBe(ToolSubscribeParamsSchema);
     } finally { await f.close(); }
   });

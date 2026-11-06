@@ -1,4 +1,4 @@
-import {prepareRelationReadIndexes,RELATION_SOURCE_INDEX,RELATION_TARGET_INDEX} from './relation-read-indexes.js';
+import {prepareRelationReadIndexes,RELATION_HISTORY_INDEX,RELATION_SOURCE_INDEX,RELATION_TARGET_INDEX} from './relation-read-indexes.js';
 import { POST_CREATED_SORT_KEY_SQL, preparePostCreatedOrderIndex } from './post-created-order-index.js';
 import { checkSqliteReadiness, sampleSqliteStatus, type OperationalOptions } from './operational-status.js';
 import { configureSqliteResourceLimits } from './sqlite-resource-limits.js';
@@ -981,6 +981,11 @@ export class SqliteStorage implements StoragePort {
         resolution.action,
         resolution.created_at
       );
+  }
+
+  listRelationResolutions(relationId:string,throughVersion:number,limit:number,after?:{version:number;id:string}):{resolutions:RelationResolution[];has_more:boolean} {
+    const rows=this.db.prepare(`SELECT * FROM relation_resolutions INDEXED BY ${RELATION_HISTORY_INDEX} WHERE relation_id=? AND version<=? AND (version,id)>(?,?) ORDER BY version,id LIMIT ?`).all(relationId,throughVersion,after?.version??0,after?.id??'',limit+1) as any[];
+    return {resolutions:rows.slice(0,limit).map(row=>({id:row.id,relation_id:row.relation_id,version:row.version,resolver_id:row.resolver_id,reason_ref:JSON.parse(row.reason_ref),action:row.action,created_at:row.created_at})),has_more:rows.length>limit};
   }
 
   findRelationResolutionById(id: string): RelationResolution | null {

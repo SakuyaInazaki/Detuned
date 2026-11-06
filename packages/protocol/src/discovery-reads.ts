@@ -1,3 +1,4 @@
+import {THREAD_POST_LIMIT} from './request-policies.js';
 import {ThreadSchema,type ThreadPostsPage,type ThreadPostsReadQuery,ThreadPostDirectoryItemSchema} from './threads.js';
 import {isCheckInstant} from './review.js';
 import {SpaceSchema} from './spaces.js';
@@ -31,6 +32,6 @@ export function isSpacesPage(value:unknown):boolean {return Value.Check(spacesPa
 
 const threadPageWire=Type.Object({data:Type.Object({thread:Type.Object({...ThreadSchema.properties,created_at:Type.String(),updated_at:Type.String()},{additionalProperties:false}),posts:Type.Array(Type.Object({...ThreadPostDirectoryItemSchema.properties,created_at:Type.String()},{additionalProperties:false}),{maxItems:100})},{additionalProperties:false}),meta:Type.Object({truncated:Type.Boolean(),next_cursor:Type.Union([Type.String({minLength:1}),Type.Null()])},{additionalProperties:false})},{additionalProperties:false});
 export function isThreadPostsPageForQuery(value:unknown,spaceId:string,threadId:string,query?:ThreadPostsReadQuery):value is ThreadPostsPage {
- if(!Value.Check(threadPageWire,value)||value.data.thread.id!==threadId||value.data.thread.space_id!==spaceId||value.data.posts.length>(query?.limit??20)||(value.meta.truncated&&value.meta.next_cursor===null)||(value.meta.next_cursor!==null&&value.data.posts.length===0))return false;
+ if(!Value.Check(threadPageWire,value)||value.data.thread.id!==threadId||value.data.thread.space_id!==spaceId||value.data.posts.length>(query?.limit??THREAD_POST_LIMIT.default)||(value.meta.truncated&&value.meta.next_cursor===null)||(value.meta.next_cursor!==null&&value.data.posts.length===0))return false;
  return value.data.posts.every(post=>post.space_id===spaceId&&post.thread_id===threadId&&(!('title' in post)||(query?.include_titles===true&&post.lifecycle!=='redacted')));
 }

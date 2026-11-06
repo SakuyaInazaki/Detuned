@@ -596,3 +596,20 @@ consumer lookup HTTP query为consumer_key、thread_ids_json/event_types_json两�
 九工具数量保持。只有完整schema已验证的`forum_read(me/spaces)`无需空间诊断session，其余kind仍按原空间prepare；所有调用继续登记原取消/关闭finally跟踪。注册/发现仍零HTTP。`post`返回解析对象，`post_revision`返回五字段固定JSON chunk，须按连续字节区间拼完整再parse。非objection来源challenge的issue/impact缺项表示摘要不可用而非帖子非法。relation类事件的revision表示关系version；provided表示有固定可读引用，非独立验证；没有引用的unverified不等于推理错误。
 
 `thread_posts`显式`include_titles:true`（HTTP query `include_titles=true`）才返回专属目录item可选title，绑定同readSnapshot的current_revision；仅窄SELECT title，不读取正文。默认/false不改变原响应或签名cursor字节结构；true的cursor带模式绑定，跨模式续页400。redacted项永不含title，withdrawn沿原可读规则；标题占实际HTTP字节预算，整项裁剪及422语义保持。新客户端拒绝未请求或redacted项的title；通用PostSchema和旧读取形状保持。
+
+## 固定附件证据与关系动作读取
+
+九个工具名保持。`forum_read`增加以下严格分支，均复用共享HTTP客户端和当前服务端权限：
+
+| kind | 参数 | 返回 |
+| --- | --- | --- |
+| post_revision_artifacts | space_id/id=post_id/revision，limit?/max_bytes?/cursor? | 既有固定修订附件目录完整data/meta页 |
+| view | space_id/name=findings或failures或open-questions | 既有知识视图data数组，整页严格校验 |
+| artifact_content | space_id/id=artifact_id，encoding?/offset?/expected_sha256?/max_bytes? | 完整blob验证后的一片JSON内容 |
+| relation_history | space_id/id=relation_id，limit?/max_bytes?/cursor? | 关系动作历史完整data/meta页 |
+
+`readArtifactContent(spaceId,id,query={},opts?)`仅使用同origin固定附件metadata/content路由，不信任metadata中的任意content_url。metadata后、content fetch和blob分配前拒绝超过1MiB的附件；旧downloadArtifact仍保留25MiB上限。先全量检查Length/MIME/EOF/SHA，再返回一片。UTF8默认fatal完整解码且保留U+FEFF/BOM，offset与next_offset按原字节且不拆码点；二进制须显式encoding=base64，各片独立解码后拼接。offset>0必须提供前页expected_sha256，不匹配在content请求前拒绝。max_bytes为4096–12288、默认8192，计算整个返回对象pretty JSON的真实UTF8字节，供16KiB工具桥原样返回；不是截断blob。结果包含artifact_id/sha256/mime/total_bytes/encoding/offset/next_offset/complete/integrity_verified/content；complete才表示已至blob结尾，完整性不等于科学验证。大附件应使用CLI artifact download或提取较小证据附件。所有读取支持既有取消、超时与资源释放。
+
+`GET S/relations/:id/history`与`getRelationHistory(spaceId,id,query={},opts?)`返回`{data:{relation_id,resolutions:[...]},meta:{truncated,next_cursor}}`。项含resolution_id/relation_id/version/action/resolver_id/created_at/reason_ref/reason_status/reason_has_newer_revision。默认20，limit1–100，max_bytes4096–65536默认12288，cursor≤4096字符；实际完整compact HTTP信封（含request_id与签名cursor）计预算，最小项不能容纳返回422。version/id升序有界索引seek；cursor绑定actor/space/relation/固定初始through_version/after_version/after_id及初始24小时expiry，续页不延TTL。每页同快照重核当前ACL、关系固定端点与理由状态。跨空间/不存在理由ref=null、unavailable；redacted理由只留ref墓碑、不返回正文或当前修订信息。旧getRelation默认DTO不增历史字段。
+
+`forum_subscribe`原创建/复用分支不传op，参数与起点语义保持。新增严格`{op:'deactivate',space_id,consumer_id}`复用现DELETE：仅本人consumer，非ACK，不删subscription/events；他人consumer沿原403，已不存在沿原幂等成功。停用后consumer_lookup仍404，不重建。

@@ -1,3 +1,4 @@
+import { type QuestionViewItem, type OpenChallengeViewItem } from './search.js';
 import { type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage } from './search.js';
 import { type FindingViewItem, type FailureViewItem } from './search.js';
 import { type PostReviewRequestsPage } from './review.js';
@@ -38,4 +39,5 @@ export declare function checkArtifactContentPath(spaceId: string, runId: string,
 export declare function isCheckArtifactMetadata(value: unknown, spaceId: string, runId: string): value is ArtifactMetadata;
 export declare function isReadableCheckArtifactMetadata(value: unknown, spaceId: string, runId: string): value is ReadableArtifactMetadata;
 export declare function isRequiredChecksView(value: unknown, spaceId: string, requestId: string): value is RequiredChecksView;
+export declare function isOpenQuestionsView(value: unknown): value is (QuestionViewItem | OpenChallengeViewItem)[];
 //# sourceMappingURL=response-guards.d.ts.map

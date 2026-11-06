@@ -1,3 +1,4 @@
+import { type RelationHistoryQuery, type RelationHistoryPage } from '@detuned/protocol';
 import { type PostRelationsQuery, type PostRelationsPage, type RelationReadView } from '@detuned/protocol';
 import { StoragePort } from '../ports/storage.js';
 import { TokenSignerPort } from '../ports/token-signer.js';
@@ -12,6 +13,10 @@ export declare class DiscoveryReadService {
     constructor(storage: StoragePort, signer: TokenSignerPort, authService: AuthService, secret: string, clock: ClockPort);
     private project;
     getRelation(auth: AuthenticatedContext, spaceId: string, id: string): RelationReadView;
+    getRelationHistory(auth: AuthenticatedContext, spaceId: string, relationId: string, query: RelationHistoryQuery, budget: {
+        request_id: string;
+    }): RelationHistoryPage;
+    private projectReason;
     getPostRelations(auth: AuthenticatedContext, spaceId: string, postId: string, revision: number, query: PostRelationsQuery, budget: {
         request_id: string;
     }): PostRelationsPage;

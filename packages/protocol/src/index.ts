@@ -30,3 +30,5 @@ export { canonicalizeReviewJson, ReviewCanonicalizationError, type ReviewCanonic
 export * from './validation-issues.js';
 
 export * from './discovery-reads.js';
+export * from './evidence-reads.js';
+export * from './relation-history.js';

@@ -92,6 +92,13 @@ export declare class SqliteStorage implements StoragePort {
     listOpenChallenges(spaceId: string, targetPostId?: string, targetRevision?: number): Relation[];
     listOpenChallengesForThread(spaceId: string, threadId: string, limit: number): Relation[];
     createRelationResolution(resolution: RelationResolution): void;
+    listRelationResolutions(relationId: string, throughVersion: number, limit: number, after?: {
+        version: number;
+        id: string;
+    }): {
+        resolutions: RelationResolution[];
+        has_more: boolean;
+    };
     findRelationResolutionById(id: string): RelationResolution | null;
     findRelationResolutionByVersion(relationId: string, version: number): RelationResolution | null;
     configureResourceLimits(limits: ResourceLimits): void;

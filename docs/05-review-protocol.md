@@ -200,3 +200,9 @@ findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`forma
 ### 普通发现读取与封存边界
 
 本人me/spaces、普通帖子固定修订的关系目录及本人consumer找回不参与正式评审资格判定，不创建独立身份或评审会话，也不揭示封存初评。关系端点仍限同空间真实PostRef，不把review_submission或其私有证据变成公共帖子/关系。当前ACL、红删墓碑、旧版本不沿用批准及显式ACK规则保持。
+
+### 证据内容与动作理由的普通读取
+
+固定修订附件目录、显式artifact_content、关系动作history和知识view均不赋予正式评审资格。附件generic metadata在异步exists后重新核当前权限/生命周期/可见性，content在异步open后重核，失败释放已开handle；封存与揭示材料仍使用原资格及显式证据引用规则，不能通过普通读取绕过。
+
+resolve和reopen的新动作均要求reason_ref为同空间存在的固定帖子修订；成功幂等重放保持原语义。理由可写入证据或说明帖后固定引用，无需新增自由文本理由字段。非challenges关系默认resolved仅表示无需阻塞处理，不等于研究已验证；typed structured的anyOf为按kind选择的严格结构分支，不表示每种字段可任意混用。evidence_state=provided陈述作者提供引用的状态，不自动验证内容；没有引用不自动否定推理。

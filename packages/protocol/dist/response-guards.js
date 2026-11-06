@@ -1,3 +1,4 @@
+import { QuestionViewItemSchema, OpenChallengeViewItemSchema } from './search.js';
 import { PublicReviewSubmissionSearchItemSchema, SearchResponseMetaSchema, SEARCH_LIMITS, isUnicodeReviewId, compareReviewSubmissionIds } from './search.js';
 import { FindingViewItemSchema, FailureViewItemSchema } from './search.js';
 import { ReviewRoundSummarySchema } from './review.js';
@@ -240,4 +241,6 @@ export function isRequiredChecksView(value, spaceId, requestId) {
     const status = value.checks.length === 0 ? 'not_required' : value.checks.some(c => c.run?.state === 'fail') ? 'failed' : value.checks.some(c => c.run?.state === 'error') ? 'error' : value.checks.every(c => c.run?.state === 'pass') ? 'passed' : 'pending';
     return status === value.verification_status;
 }
+const openQuestionsWire = Type.Array(Type.Union([Type.Object({ ...QuestionViewItemSchema.properties, created_at: Type.String() }, { additionalProperties: false }), OpenChallengeViewItemSchema]));
+export function isOpenQuestionsView(value) { return Value.Check(openQuestionsWire, value) && value.every(item => item.type !== 'question' || validDate(item.created_at)); }
 //# sourceMappingURL=response-guards.js.map

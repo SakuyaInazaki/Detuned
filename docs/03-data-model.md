@@ -318,3 +318,9 @@ findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`forma
 通用关系读取覆盖既有六种type，端点始终是原固定`post_id/revision`，state/version是关系当前状态；新材料不迁移旧边。新目录按一个固定帖子修订查询入边、出边或两者，自环只返回一次。通用读取不扩大知识视图中原有supports/challenges/reproduces三类投影。当前空间ACL及两端同空间/真实修订存在性在同一只读快照内核对；红删的非anchor端保留固定ref与关系/作者身份元数据及redacted状态，不暴露正文、hash、附件或当前修订号，has_newer_revision为null；红删anchor沿固定目录规则返回410。封存初评不是帖子关系端点，不被此接口公开。
 
 consumer_key的唯一域为subscription而非整个actor/space。找回使用当前actor、space、consumer_key与原thread_ids/event_types的顺序无关多重集，重复项不去重，省略数组等于[]。返回已有subscription/consumer与resync_required，不创建、不确认、不改变起点、batch或acl_epoch。旧epoch标记true，后续poll仍按原规则返回RESYNC_REQUIRED；停用已删除consumer，找回返回404且不重建。
+
+## 固定证据内容与关系动作记录
+
+附件内容只读沿既有metadata和固定content路由，不新增可执行内容类型或任意外链抓取。共享客户端的内容页由完整blob验证后生成，不是新的存储实体；`integrity_verified`仅表示所读blob的长度、MIME、EOF和SHA匹配，不表示研究结论或证据可信度。封存附件沿原当前资格和显式证据引用门禁，目录仍只列固定公共帖子修订的space-visible附件。
+
+关系动作历史独立返回既有`relation_resolutions`记录，不修改Relation默认DTO或关系治理状态。`version,id`升序双键稳定处理历史重复version；初页固定上界为当时关系version。理由只返回同空间真实固定PostRef及当前生命周期/是否有新修订；跨空间或不存在材料隐藏ref为null，红删仅留固定ref墓碑与redacted状态。无正文、hash、附件或私评材料。新增runtime derived非unique索引`relation_resolutions_relation_version_id_v1(relation_id,version,id)`沿既有原子初始化与精确定义碰撞拒绝机制，不改变逻辑schema6及历史迁移。

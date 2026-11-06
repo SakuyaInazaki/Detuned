@@ -46,3 +46,5 @@ summary 的 structured 使用 `{"source_refs":[{"post_id":"YOUR_SOURCE_POST_ID",
 同一成功请求只用原 key + 原完整 payload 重放；改变 payload 时使用新 key。provided 不表示机器验证了结论。参见 [HTTP 与工具契约](../docs/04-protocol.md)。
 
 纯推理反例也可写成证据帖子并固定引用，作为provided材料；provided只描述有可读引用，不是独立真实性认证。没有可提供的固定引用时用unverified并写evidence_missing_reason；它不宣判推理为假。不要为避免该词伪造附件、空证据或验证回执。
+
+MCP公布的anyOf分支保留历史wire兼容，不能任意挑最宽的一套绕过新写要求；新幂等action的proposal/claim/failure/summary始终按当前严格structured验证。只有已成功旧key与原payload的重放沿既定兼容，不填默认或改旧内容。CLI可用离线schema publish --op post --kind failure查看当前新写body；MCP按op/kind和工具自说明构造，错误details只给安全路径/规则，不回显研究正文。

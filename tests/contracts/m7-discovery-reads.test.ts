@@ -80,3 +80,32 @@ it('M7.10-A reverse fixed-anchor read ignores hundreds of unrelated target edges
  const wanted=(await b.createRelation(sid,{type:'cites',source_ref:{post_id:qid,revision:1},target_ref:{post_id:pid,revision:1}},'reverse-wanted')).data;
  const before=rows();const result=await a.callTool('forum_read',{kind:'post_relations',space_id:sid,id:pid,revision:1,direction:'in',limit:1});expect(result.data.relations.map((relation:any)=>relation.relation_id)).toEqual([wanted.id]);expect(result.meta.next_cursor).toBeNull();expect(rows()).toEqual(before);
 });
+
+it('M7.11 fixed artifact catalogs and all named views are available through read tools',async()=>{
+ const before=rows();const catalog=await a.callTool('forum_read',{kind:'post_revision_artifacts',space_id:sid,id:pid,revision:1});expect(catalog.data.artifacts).toEqual([]);
+ for(const name of ['findings','failures','open-questions']){const view=await a.callTool('forum_read',{kind:'view',space_id:sid,name});expect(view).toEqual((await a.getView(sid,name as any)).data);}expect(rows()).toEqual(before);expect(getMcpTools()).toHaveLength(9);
+});
+it('M7.11 consumer deactivation tool deletes only the own consumer and preserves subscription/events',async()=>{
+ const sub=await a.subscribe(sid,{consumer_key:'stop',start:'beginning'});await a.poll(sid,sub.data.consumer.id,{limit:1});const before=rows();await expect(b.callTool('forum_subscribe',{op:'deactivate',space_id:sid,consumer_id:sub.data.consumer.id})).rejects.toMatchObject({code:'FORBIDDEN',statusCode:403});
+ expect(await a.callTool('forum_subscribe',{op:'deactivate',space_id:sid,consumer_id:sub.data.consumer.id})).toEqual({deactivated:true});const after=rows();expect(after.subscriptions).toEqual(before.subscriptions);expect(after.events).toEqual(before.events);expect((after.consumers as any[]).some(row=>row.id===sub.data.consumer.id)).toBe(false);
+});
+it('M7.11 relation action history paginates fixed reasons without mutating relation reads',async()=>{
+ const rel=(await a.createRelation(sid,{type:'challenges',source_ref:{post_id:pid,revision:1},target_ref:{post_id:qid,revision:1}},'history')).data;
+ await a.resolveRelation(sid,rel.id,1,{post_id:pid,revision:1},'resolve');await a.reopenRelation(sid,rel.id,2,{post_id:qid,revision:1},'reopen');const old=await a.getRelation(sid,rel.id),before=rows();
+ const first=await a.callTool('forum_read',{kind:'relation_history',space_id:sid,id:rel.id,limit:1,max_bytes:4096});expect(first.data.resolutions.map((r:any)=>r.version)).toEqual([2]);expect(first.data.resolutions[0]).toMatchObject({action:'resolve',reason_ref:{post_id:pid,revision:1},reason_status:'active'});expect(first.meta.next_cursor).toEqual(expect.any(String));
+ const second=await a.callTool('forum_read',{kind:'relation_history',space_id:sid,id:rel.id,limit:1,cursor:first.meta.next_cursor});expect(second.data.resolutions.map((r:any)=>r.version)).toEqual([3]);expect(second.meta.next_cursor).toBeNull();expect(await a.getRelation(sid,rel.id)).toEqual(old);expect(rows()).toEqual(before);
+ await expect(b.callTool('forum_read',{kind:'relation_history',space_id:sid,id:rel.id,cursor:first.meta.next_cursor})).rejects.toMatchObject({code:'VALIDATION_ERROR'});
+});
+it('M7.11 reopen validates new reason references and preserves successful replay',async()=>{
+ const rel=(await a.createRelation(sid,{type:'challenges',source_ref:{post_id:pid,revision:1},target_ref:{post_id:qid,revision:1}},'invalid-reason')).data;await a.resolveRelation(sid,rel.id,1,{post_id:pid,revision:1},'first-resolve');const before=rows();
+ await expect(a.reopenRelation(sid,rel.id,2,{post_id:'absent',revision:1},'bad-reason')).rejects.toMatchObject({code:'NOT_FOUND'});expect(rows()).toEqual(before);
+ const reopened=await a.reopenRelation(sid,rel.id,2,{post_id:pid,revision:1},'valid-reopen');expect(await a.reopenRelation(sid,rel.id,2,{post_id:pid,revision:1},'valid-reopen')).toEqual(reopened);
+});
+it('M7.11 history hides foreign reasons and preserves only redacted tombstones/current ACL',async()=>{
+ const rel=(await a.createRelation(sid,{type:'challenges',source_ref:{post_id:pid,revision:1},target_ref:{post_id:qid,revision:1}},'history-privacy')).data;await a.resolveRelation(sid,rel.id,1,{post_id:pid,revision:1},'history-resolve');await a.reopenRelation(sid,rel.id,2,{post_id:qid,revision:1},'history-reopen');
+ const foreign=(await admin.createSpace({slug:'reason-foreign',objective:'hidden',rules:[]},'foreign-reason')).data.space.id,foreignThread=(await admin.createThread(foreign,{title:'hidden'},'foreign-thread')).data.thread.id,foreignPost=(await admin.createPost(foreign,foreignThread,{kind:'note',title:'PRIVATE_REASON',summary:'PRIVATE_REASON',body:'PRIVATE_REASON'},'foreign-post')).data.post.id;
+ db.prepare('UPDATE relation_resolutions SET reason_ref=? WHERE relation_id=? AND version=2').run(JSON.stringify({post_id:foreignPost,revision:1}),rel.id);await admin.redact(sid,{target_type:'post',target_id:qid,reason:'hide'},'history-hide');
+ const before=rows(),page=await a.getRelationHistory(sid,rel.id,{max_bytes:4096});expect(page.data.resolutions[0]).toMatchObject({reason_ref:null,reason_status:'unavailable',reason_has_newer_revision:null});expect(page.data.resolutions[1]).toMatchObject({reason_ref:{post_id:qid,revision:1},reason_status:'redacted',reason_has_newer_revision:null});expect(JSON.stringify(page)).not.toContain(foreignPost);expect(JSON.stringify(page)).not.toContain('PRIVATE_REASON');expect(rows()).toEqual(before);
+ const response=await app.inject({method:'GET',url:`/api/v1/spaces/${sid}/relations/${rel.id}/history?max_bytes=4096`,headers:{authorization:`Bearer ${(a as any).token}`}});expect(response.statusCode).toBe(200);expect(Buffer.byteLength(response.body)).toBeLessThanOrEqual(4096);
+ const first=await a.getRelationHistory(sid,rel.id,{limit:1});db.prepare('UPDATE memberships SET active=0 WHERE space_id=? AND actor_id=?').run(sid,(await a.getMe()).data.actor.id);await expect(a.getRelationHistory(sid,rel.id,{cursor:first.meta.next_cursor!})).rejects.toMatchObject({code:'NOT_FOUND'});
+});

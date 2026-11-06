@@ -1,0 +1,702 @@
+{
+  "task": "M7.11",
+  "base_commit": "633c0e5513ab3343b3d8491378546b597c0b4110",
+  "environment": {
+    "host": "arch-ms-a2",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "owned_root": "/var/tmp/detuned-cld3-8K0Df6yT",
+    "uid": 1000,
+    "device": 66306,
+    "inode": 827241,
+    "mode": "0700",
+    "model_calls": 0,
+    "worker_count": 1,
+    "file_parallelism": false,
+    "ownership_record": {
+      "root_uid": 1000,
+      "root_device": 66306,
+      "root_inode": 827241,
+      "root_mode": "0700",
+      "parent": "/var/tmp",
+      "parent_uid": 0,
+      "parent_device": 66306,
+      "parent_inode": 58196314,
+      "parent_mode": "1777",
+      "marker": ".detuned-owner",
+      "marker_inode": 827242,
+      "marker_mode": "0600",
+      "marker_text": "detuned-owned-cld3-2026-11-06\n"
+    }
+  },
+  "stages": {
+    "default-limit-red": {
+      "files": 1,
+      "tests": 3,
+      "passed": 2,
+      "failed": 1,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-thread-directory-default-limit.test.ts",
+          "full_name": "default thread directory accepts canonical default pages at 21 and 50 items"
+        }
+      ]
+    },
+    "default-limit-related": {
+      "files": 2,
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "success": true,
+      "failed_cases": []
+    },
+    "evidence-cli-red": {
+      "files": 1,
+      "tests": 3,
+      "passed": 0,
+      "failed": 3,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-evidence-access-cli.test.ts",
+          "full_name": "M7.11-B post artifacts CLI discovers fixed revision evidence without event guessing"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-access-cli.test.ts",
+          "full_name": "M7.11-B artifact read CLI returns verified bounded content and rejects bad offsets before HTTP"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-access-cli.test.ts",
+          "full_name": "M7.11-B relation history CLI returns bounded resolution history separately from relation endpoints"
+        }
+      ]
+    },
+    "evidence-access-red": {
+      "files": 3,
+      "tests": 30,
+      "passed": 21,
+      "failed": 9,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 fixed artifact catalogs and all named views are available through read tools"
+        },
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 consumer deactivation tool deletes only the own consumer and preserves subscription/events"
+        },
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 relation action history paginates fixed reasons without mutating relation reads"
+        },
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 reopen validates new reason references and preserves successful replay"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-content-read.test.ts",
+          "full_name": "M7.11 UTF8 evidence pages preserve full bytes/hash and actual JSON budget"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-content-read.test.ts",
+          "full_name": "M7.11 binary requires explicit base64 and independent decoded pages reconstruct bytes"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-content-read.test.ts",
+          "full_name": "M7.11 open question view rejects an invalid whole page instead of trusting partial items"
+        },
+        {
+          "file": "tests/integration/m2-artifacts-core.test.ts",
+          "full_name": "M2.1 core artifact transaction and references M7.11 metadata refreshes permission after asynchronous existence check"
+        },
+        {
+          "file": "tests/integration/m2-artifacts-core.test.ts",
+          "full_name": "M2.1 core artifact transaction and references M7.11 content refreshes redaction after asynchronous open and disposes handle"
+        }
+      ]
+    },
+    "evidence-access-first-green": {
+      "files": 5,
+      "tests": 36,
+      "passed": 35,
+      "failed": 1,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 consumer deactivation tool deletes only the own consumer and preserves subscription/events"
+        }
+      ]
+    },
+    "evidence-access-focused": {
+      "files": 7,
+      "tests": 43,
+      "passed": 41,
+      "failed": 2,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-discovery-reads.test.ts",
+          "full_name": "M7.11 history hides foreign reasons and preserves only redacted tombstones/current ACL"
+        },
+        {
+          "file": "tests/contracts/m7-evidence-transports-independent.test.ts",
+          "full_name": "M7.11 independent built flat/wrapped MCP and real offline Pi SDK access verified evidence and explicitly deactivate"
+        }
+      ]
+    },
+    "evidence-access-focused-final": {
+      "files": 7,
+      "tests": 43,
+      "passed": 43,
+      "failed": 0,
+      "success": true,
+      "failed_cases": []
+    },
+    "transport-expanded": {
+      "files": 1,
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "success": true,
+      "failed_cases": []
+    },
+    "final-focused": {
+      "files": 17,
+      "tests": 102,
+      "passed": 102,
+      "failed": 0,
+      "success": true,
+      "failed_cases": []
+    },
+    "final_27": [
+      {
+        "command": "pnpm build:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10693
+      },
+      {
+        "command": "pnpm typecheck:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9920
+      },
+      {
+        "command": "pnpm lint:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9932
+      }
+    ],
+    "final_focused_outer": {
+      "exit_code": 0,
+      "wall_ms": 20442
+    },
+    "checkout_fresh": {
+      "exit_code": 0,
+      "wall_seconds": 15
+    },
+    "checkout_restore": {
+      "exit_code": 0,
+      "wall_seconds": 8
+    },
+    "checkout_build": {
+      "exit_code": 0
+    }
+  },
+  "final_backend_full": {
+    "pending": false,
+    "files": 180,
+    "unique_files": 180,
+    "tests": 1093,
+    "unique_test_cases": 1093,
+    "actual_assertions": 1093,
+    "passed": 1093,
+    "failed": 0,
+    "pending_tests": 0,
+    "todo": 0,
+    "success": true,
+    "duration_ms": 347657.3095703125,
+    "outer": {
+      "exit_code": 0,
+      "wall_ms": 348120
+    },
+    "root_independent_raw_json_and_exit_review": true,
+    "existing_timeouts_and_behavioral_invariants_preserved": true,
+    "error_shape_and_schema_branch_assertions_updated_for_new_contracts": true
+  },
+  "cleanup": {
+    "removed": true,
+    "only_owned_root": "/var/tmp/detuned-cld3-8K0Df6yT",
+    "identity_marker_parent_rechecked": true,
+    "own_process_count": 0,
+    "nested_mount_count": 0,
+    "parent_dirfd_no_follow_removal": true,
+    "immediate_lstat_errno": 2,
+    "immediate_enoent": true,
+    "root_separate_review_pending": false,
+    "owner_new_ssh_enoent": true,
+    "owner_new_ssh_connection_sharing_disabled": true,
+    "owner_new_ssh_exit_code": 0,
+    "root_new_ssh_enoent": true,
+    "root_new_ssh_connection_sharing_disabled": true,
+    "root_new_ssh_exit_code": 0
+  },
+  "stage_notes": {
+    "default_limit": "Canonical default50 was rejected at21/50 by old hardcoded20 guard; new3 and related11 passed.",
+    "first_implementation_focus": "35/36: new cross-actor deactivate test incorrectly expected404; canonical existing DELETE is FORBIDDEN403. Only precise assertion corrected, service unchanged.",
+    "candidate_focus": "41/43: new history test used getMe.actor instead of getMe.data.actor; independent fixture omitted required private blob directory before ArtifactFileStore.create. Fixtures corrected without behavioral assertion changes, subsequent43/43.",
+    "transport_initial_diagnostic": "ENOENT in ArtifactFileStore.create because own fixture blob directory was absent; mkdir0700 fixed fixture preparation.",
+    "checkout_initial": "Initial default-HTTP sparse lazy fetch showed no progress for about140 seconds and only owned git-remote-https was terminated after PID/URL/cwd checks; outer128 retained. No claim of HTTP2 root cause.",
+    "checkout_restore": "Same owned clone resumed once with GIT_TERMINAL_PROMPT=0 and per-command http.version=HTTP/1.1,http.lowSpeedLimit=1024,http.lowSpeedTime=30; exit0 in8s, required tracked missing0/excluded materialized0 measured before install.",
+    "checkout_final": "Final guide block set-eu and per-command options ran in fresh Detuned-source-final (directory name only substitution), exit0/15s. HEAD633; private frozen install+esbuild rebuild+nine-package build exit0. Final-clone exclusion inspection occurred after installation/build so no false preinstall materialization claim.",
+    "source_checkout_scope": "Network checkout verifies published633 snapshot separately from current repaired source full regression. Original repository cache/history/global Git config unchanged."
+  },
+  "first_backend_full": {
+    "files": 180,
+    "unique_files": 180,
+    "tests": 1093,
+    "unique_test_cases": 1093,
+    "passed": 1088,
+    "failed": 5,
+    "success": false,
+    "outer": {
+      "exit_code": 1,
+      "wall_ms": 350061
+    },
+    "failed_cases": [
+      {
+        "file": "tests/integration/m4-consumer-lifecycle.test.ts",
+        "full_name": "M4.1-D consumer lifecycle regressions enforces the shared start/token constraint in HTTP and direct core before any subscription mutation"
+      },
+      {
+        "file": "tests/contracts/m6-knowledge-status-contracts.test.ts",
+        "full_name": "KC04 controlled transport preserves null semantics and failure array guard, unrelated view behavior stays unchanged"
+      },
+      {
+        "file": "tests/contracts/r4-c-contracts.test.ts",
+        "full_name": "R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter C01: Route Schema Validation & Query Integer Parsing C01-7: API-v1 OpenAPI 3.1 body constraints agree with existing protocol and HTTP (AD02)"
+      },
+      {
+        "file": "tests/contracts/r4-c-contracts.test.ts",
+        "full_name": "R4-C Contracts: Route Schemas, Client Lifecycle, and Pi Adapter C01: Route Schema Validation & Query Integer Parsing C01-8: API-v1 OpenAPI route parameter bounds, search kind enum, anonymous capabilities, and body requirements (AE03)"
+      },
+      {
+        "file": "tests/contracts/r4-c-route-contracts.test.ts",
+        "full_name": "C.3-GATE complete API-v1 route contracts G01: compares every actual API-v1 method/path and every body schema, including absence"
+      }
+    ],
+    "root_independent_raw_json_and_exit_review": true
+  },
+  "necessary_full_failure_correction": {
+    "scope": [
+      "packages/protocol/src/openapi.ts",
+      "tests/integration/m4-consumer-lifecycle.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts"
+    ],
+    "reason": "Add genuinely missing canonical OpenAPI history route; locate unchanged subscription-create schema identity inside new union and strengthen exact old shape; reject malformed legacy open-question payload and verify actual nonempty HTTP question projection. No timeout or count changes.",
+    "checks": [
+      {
+        "command": "pnpm build:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10623
+      },
+      {
+        "command": "pnpm typecheck:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9973
+      },
+      {
+        "command": "pnpm lint:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9921
+      }
+    ],
+    "focus": {
+      "files": 4,
+      "tests": 38,
+      "passed": 38,
+      "failed": 0,
+      "success": true,
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 10171
+      }
+    }
+  },
+  "artifacts": {
+    "tracked_backend_compared": 584,
+    "tracked_identical": 531,
+    "tracked_changed": [
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/client/dist/artifact-transfer.d.ts",
+      "packages/client/dist/artifact-transfer.d.ts.map",
+      "packages/client/dist/artifact-transfer.js",
+      "packages/client/dist/artifact-transfer.js.map",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/core/dist/ports/storage.d.ts",
+      "packages/core/dist/ports/storage.d.ts.map",
+      "packages/core/dist/services/artifact-service.d.ts.map",
+      "packages/core/dist/services/artifact-service.js",
+      "packages/core/dist/services/artifact-service.js.map",
+      "packages/core/dist/services/discovery-read-service.d.ts",
+      "packages/core/dist/services/discovery-read-service.d.ts.map",
+      "packages/core/dist/services/discovery-read-service.js",
+      "packages/core/dist/services/discovery-read-service.js.map",
+      "packages/core/dist/services/relation-service.d.ts.map",
+      "packages/core/dist/services/relation-service.js",
+      "packages/core/dist/services/relation-service.js.map",
+      "packages/mcp/dist/tool-validation.d.ts",
+      "packages/mcp/dist/tool-validation.d.ts.map",
+      "packages/protocol/dist/discovery-reads.d.ts.map",
+      "packages/protocol/dist/discovery-reads.js",
+      "packages/protocol/dist/discovery-reads.js.map",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/protocol/dist/openapi.d.ts.map",
+      "packages/protocol/dist/openapi.js",
+      "packages/protocol/dist/openapi.js.map",
+      "packages/protocol/dist/response-guards.d.ts",
+      "packages/protocol/dist/response-guards.d.ts.map",
+      "packages/protocol/dist/response-guards.js",
+      "packages/protocol/dist/response-guards.js.map",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.d.ts.map",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map",
+      "packages/server/dist/routes/relations.d.ts.map",
+      "packages/server/dist/routes/relations.js",
+      "packages/server/dist/routes/relations.js.map",
+      "packages/storage-sqlite/dist/relation-read-indexes.d.ts",
+      "packages/storage-sqlite/dist/relation-read-indexes.d.ts.map",
+      "packages/storage-sqlite/dist/relation-read-indexes.js",
+      "packages/storage-sqlite/dist/relation-read-indexes.js.map",
+      "packages/storage-sqlite/dist/sqlite-storage.d.ts",
+      "packages/storage-sqlite/dist/sqlite-storage.d.ts.map",
+      "packages/storage-sqlite/dist/sqlite-storage.js",
+      "packages/storage-sqlite/dist/sqlite-storage.js.map"
+    ],
+    "new_modules_exact_files": [
+      "packages/client/dist/artifact-content.js",
+      "packages/client/dist/artifact-content.js.map",
+      "packages/client/dist/artifact-content.d.ts",
+      "packages/client/dist/artifact-content.d.ts.map",
+      "packages/protocol/dist/evidence-reads.js",
+      "packages/protocol/dist/evidence-reads.js.map",
+      "packages/protocol/dist/evidence-reads.d.ts",
+      "packages/protocol/dist/evidence-reads.d.ts.map",
+      "packages/protocol/dist/relation-history.js",
+      "packages/protocol/dist/relation-history.js.map",
+      "packages/protocol/dist/relation-history.d.ts",
+      "packages/protocol/dist/relation-history.d.ts.map"
+    ],
+    "new_modules_git_intent_to_add": true,
+    "web_artifacts_untouched": true
+  },
+  "final_independent_transport": {
+    "model_calls": 0,
+    "transports": [
+      {
+        "label": "flat",
+        "guide_three_json_envelopes_executed": true,
+        "fixed_revision_artifact_catalog": true,
+        "unprepared_invalid_content_zero_http_and_rows": true,
+        "base64_independent_pages_reconstruct": true,
+        "verified_utf8_pages": 5,
+        "full_text_reconstructed": true,
+        "actual_pretty_json_budget": true,
+        "invalid_continuation_zero_http": true,
+        "three_named_views": true,
+        "history_fixed_reasons": true,
+        "content_http_cancelled": true,
+        "deactivation_preserves_subscriptions_events": true,
+        "tool_count": 9,
+        "catalog_utf8_bytes": 45921,
+        "schema_utf8_bytes": 41613,
+        "schema_individual_utf8_bytes": 41603,
+        "global_session_delta": 0,
+        "diagnostic_session_delta_on_first_space_read": 1,
+        "global_reads_all_rows_unchanged": true,
+        "space_reads_after_prepare_all_rows_unchanged": true,
+        "six_relation_types": [
+          "cites",
+          "supports",
+          "challenges",
+          "supersedes",
+          "reproduces",
+          "addresses"
+        ],
+        "relation_paging_count": 6,
+        "consumer_recovered_without_ack": true,
+        "permission_denied": true,
+        "invalid_global_zero_http": true,
+        "active_global_http_cancelled": true,
+        "mcp_exit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      {
+        "label": "wrapped",
+        "guide_three_json_envelopes_executed": true,
+        "fixed_revision_artifact_catalog": true,
+        "unprepared_invalid_content_zero_http_and_rows": true,
+        "base64_independent_pages_reconstruct": true,
+        "verified_utf8_pages": 5,
+        "full_text_reconstructed": true,
+        "actual_pretty_json_budget": true,
+        "invalid_continuation_zero_http": true,
+        "three_named_views": true,
+        "history_fixed_reasons": true,
+        "content_http_cancelled": true,
+        "deactivation_preserves_subscriptions_events": true,
+        "tool_count": 9,
+        "catalog_utf8_bytes": 46740,
+        "schema_utf8_bytes": 42432,
+        "schema_individual_utf8_bytes": 42422,
+        "global_session_delta": 0,
+        "diagnostic_session_delta_on_first_space_read": 1,
+        "global_reads_all_rows_unchanged": true,
+        "space_reads_after_prepare_all_rows_unchanged": true,
+        "six_relation_types": [
+          "cites",
+          "supports",
+          "challenges",
+          "supersedes",
+          "reproduces",
+          "addresses"
+        ],
+        "relation_paging_count": 6,
+        "consumer_recovered_without_ack": true,
+        "permission_denied": true,
+        "invalid_global_zero_http": true,
+        "active_global_http_cancelled": true,
+        "mcp_exit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      {
+        "label": "pi-sdk",
+        "guide_three_json_envelopes_executed": true,
+        "fixed_revision_artifact_catalog": true,
+        "unprepared_invalid_content_zero_http_and_rows": true,
+        "base64_independent_pages_reconstruct": true,
+        "verified_utf8_pages": 5,
+        "full_text_reconstructed": true,
+        "actual_pretty_json_budget": true,
+        "invalid_continuation_zero_http": true,
+        "three_named_views": true,
+        "history_fixed_reasons": true,
+        "content_http_cancelled": true,
+        "deactivation_preserves_subscriptions_events": true,
+        "tool_count": 9,
+        "sdk_version": "0.87.1",
+        "global_session_delta": 0,
+        "diagnostic_session_delta_on_first_space_read": 1,
+        "global_reads_all_rows_unchanged": true,
+        "space_reads_after_prepare_all_rows_unchanged": true,
+        "six_relation_types": [
+          "cites",
+          "supports",
+          "challenges",
+          "supersedes",
+          "reproduces",
+          "addresses"
+        ],
+        "relation_paging_count": 6,
+        "consumer_recovered_without_ack": true,
+        "permission_denied": true,
+        "invalid_global_zero_http": true,
+        "active_global_http_cancelled": true
+      }
+    ],
+    "setup_participants": 3,
+    "old_epoch_lookup_preserved_pending": true,
+    "actual_consumer_delete_then_lookup_404": true,
+    "cross_actor_lookup_404": true,
+    "ack_requests": 0,
+    "cleanup": {
+      "host_disposed": true,
+      "app_closed": true,
+      "private_directory_removed": true
+    },
+    "passed": true
+  },
+  "final_independent_transport_outer": {
+    "exit_code": 0,
+    "wall_ms": 1827
+  },
+  "final_independent_transport_stderr_bytes": 0,
+  "final_binding": {
+    "tested_repo_root": "/var/tmp/detuned-cld3-8K0Df6yT/src",
+    "file_count": 99,
+    "files": [
+      "package.json",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/cli/src/index.ts",
+      "packages/client/dist/artifact-content.d.ts",
+      "packages/client/dist/artifact-content.d.ts.map",
+      "packages/client/dist/artifact-content.js",
+      "packages/client/dist/artifact-content.js.map",
+      "packages/client/dist/artifact-transfer.d.ts",
+      "packages/client/dist/artifact-transfer.d.ts.map",
+      "packages/client/dist/artifact-transfer.js",
+      "packages/client/dist/artifact-transfer.js.map",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/src/artifact-content.ts",
+      "packages/client/src/artifact-transfer.ts",
+      "packages/client/src/client.ts",
+      "packages/core/dist/ports/storage.d.ts",
+      "packages/core/dist/ports/storage.d.ts.map",
+      "packages/core/dist/services/artifact-service.d.ts.map",
+      "packages/core/dist/services/artifact-service.js",
+      "packages/core/dist/services/artifact-service.js.map",
+      "packages/core/dist/services/discovery-read-service.d.ts",
+      "packages/core/dist/services/discovery-read-service.d.ts.map",
+      "packages/core/dist/services/discovery-read-service.js",
+      "packages/core/dist/services/discovery-read-service.js.map",
+      "packages/core/dist/services/relation-service.d.ts.map",
+      "packages/core/dist/services/relation-service.js",
+      "packages/core/dist/services/relation-service.js.map",
+      "packages/core/src/ports/storage.ts",
+      "packages/core/src/services/artifact-service.ts",
+      "packages/core/src/services/discovery-read-service.ts",
+      "packages/core/src/services/relation-service.ts",
+      "packages/mcp/dist/tool-validation.d.ts",
+      "packages/mcp/dist/tool-validation.d.ts.map",
+      "packages/protocol/dist/discovery-reads.d.ts.map",
+      "packages/protocol/dist/discovery-reads.js",
+      "packages/protocol/dist/discovery-reads.js.map",
+      "packages/protocol/dist/evidence-reads.d.ts",
+      "packages/protocol/dist/evidence-reads.d.ts.map",
+      "packages/protocol/dist/evidence-reads.js",
+      "packages/protocol/dist/evidence-reads.js.map",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/protocol/dist/openapi.d.ts.map",
+      "packages/protocol/dist/openapi.js",
+      "packages/protocol/dist/openapi.js.map",
+      "packages/protocol/dist/relation-history.d.ts",
+      "packages/protocol/dist/relation-history.d.ts.map",
+      "packages/protocol/dist/relation-history.js",
+      "packages/protocol/dist/relation-history.js.map",
+      "packages/protocol/dist/response-guards.d.ts",
+      "packages/protocol/dist/response-guards.d.ts.map",
+      "packages/protocol/dist/response-guards.js",
+      "packages/protocol/dist/response-guards.js.map",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.d.ts.map",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map",
+      "packages/protocol/src/discovery-reads.ts",
+      "packages/protocol/src/evidence-reads.ts",
+      "packages/protocol/src/index.ts",
+      "packages/protocol/src/openapi.ts",
+      "packages/protocol/src/relation-history.ts",
+      "packages/protocol/src/response-guards.ts",
+      "packages/protocol/src/tools.ts",
+      "packages/server/dist/routes/relations.d.ts.map",
+      "packages/server/dist/routes/relations.js",
+      "packages/server/dist/routes/relations.js.map",
+      "packages/server/src/routes/relations.ts",
+      "packages/storage-sqlite/dist/relation-read-indexes.d.ts",
+      "packages/storage-sqlite/dist/relation-read-indexes.d.ts.map",
+      "packages/storage-sqlite/dist/relation-read-indexes.js",
+      "packages/storage-sqlite/dist/relation-read-indexes.js.map",
+      "packages/storage-sqlite/dist/sqlite-storage.d.ts",
+      "packages/storage-sqlite/dist/sqlite-storage.d.ts.map",
+      "packages/storage-sqlite/dist/sqlite-storage.js",
+      "packages/storage-sqlite/dist/sqlite-storage.js.map",
+      "packages/storage-sqlite/src/relation-read-indexes.ts",
+      "packages/storage-sqlite/src/sqlite-storage.ts",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "scripts/backend.mjs",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts",
+      "tests/contracts/m7-discovery-reads.test.ts",
+      "tests/contracts/m7-evidence-access-cli.test.ts",
+      "tests/contracts/m7-evidence-content-read.test.ts",
+      "tests/contracts/m7-evidence-transports-independent.test.ts",
+      "tests/contracts/m7-relation-read-indexes.test.ts",
+      "tests/contracts/m7-thread-directory-default-limit.test.ts",
+      "tests/fixtures/pi-runtime/evidence-access.mjs",
+      "tests/helpers/pi-native-environment.ts",
+      "tests/integration/m2-artifacts-core.test.ts",
+      "tests/integration/m4-consumer-lifecycle.test.ts",
+      "vitest.config.ts"
+    ],
+    "all_equal": true,
+    "guides": [
+      "examples/evidence-access.md",
+      "examples/source-checkout.md"
+    ],
+    "all_guide_bytes_equal": true,
+    "checkout_executed_block_equal_with_only_directory_name_substitution": true,
+    "hashes_or_checksum_files_generated": false,
+    "root_independent_review_pending": false,
+    "root_new_ssh_memory_byte_comparison_all_equal": true
+  },
+  "source_checkout": {
+    "restored_clone_before_install": {
+      "head": "633c0e5513ab3343b3d8491378546b597c0b4110",
+      "required_tracked_missing": 0,
+      "excluded_tracked_materialized": 0,
+      "restore": {
+        "exit_code": 0,
+        "wall_seconds": 8
+      }
+    },
+    "fresh_final_clone": {
+      "head": "633c0e5513ab3343b3d8491378546b597c0b4110",
+      "command_block": {
+        "exit_code": 0,
+        "wall_seconds": 15
+      },
+      "private_locked_install_rebuild_build": {
+        "exit_code": 0
+      },
+      "preinstall_materialization_counter_not_collected": true,
+      "filter_unsupported_warning_present": false
+    },
+    "initial_owned_fetch_interruption": {
+      "exit_code": 128
+    }
+  },
+  "raw_evidence_paths": {
+    "first_full": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/first-full.json",
+    "first_full_outer": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/first-full-exit.json",
+    "final_full": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/vitest-final.json",
+    "final_full_outer": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/test-final-exit.json",
+    "final_transport": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/transport-final.json",
+    "final_transport_outer": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/transport-final-exit.json",
+    "checkout": "/var/tmp/detuned-cld3-8K0Df6yT/evidence/checkout-final.json",
+    "note": "Original private logs and complete JSON remain temporarily for independent review, then are removed with only the owned root; this compact receipt retains necessary facts and static failure cases."
+  },
+  "final_independent_transport_root_raw_review": true,
+  "source_checkout_root_raw_review": true
+}
