@@ -1,0 +1,373 @@
+{
+  "task": "M7.7 LIVE4",
+  "date": "2026-11-05",
+  "source": {
+    "head": "be8bbd7a40fa7d51303745d97e1aad2ac62ded1c",
+    "tested_current_uncommitted_workspace": true,
+    "source_snapshot_files": 535,
+    "source_snapshot_bytes": 6186344,
+    "runtime_files_byte_equal": [
+      "package.json",
+      "vitest.config.ts",
+      "packages/protocol/src/tools.ts",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map",
+      "packages/mcp/dist/tool-validation.d.ts"
+    ],
+    "product_code_changes": false
+  },
+  "environment": {
+    "os": "Arch Linux x86_64",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "private_home": true,
+    "isolated_net_namespace": true,
+    "only_loopback": true,
+    "external_test_address": "192.0.2.1:80",
+    "external_test_result": "ENETUNREACH",
+    "real_home_config_paths_visible": false,
+    "system_and_selected_install_mounts_readonly": true,
+    "vm_or_container_daemon_used": false,
+    "dsh_launcher_node": "22.19.0",
+    "pi_launcher_node": "22.19.0"
+  },
+  "checks": {
+    "frozen_install": {
+      "exit": 0,
+      "seconds": 111.1,
+      "ignore_scripts": true,
+      "esbuild_rebuilt": true
+    },
+    "backend_packages": 9,
+    "build_typecheck_lint_package_steps": 27,
+    "build_typecheck_lint_exit": 0,
+    "build_typecheck_lint_seconds": 30.260022131027654,
+    "tests": {
+      "success": true,
+      "numTotalTests": 1009,
+      "numPassedTests": 1009,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "files": 165,
+      "exit": 0,
+      "wall_seconds": 325.29495019698516,
+      "workers": 1,
+      "file_parallelism": false,
+      "excluded_files": [
+        "tests/contracts/m6-knowledge-web-input.test.ts",
+        "tests/contracts/m6-review-web-input.test.ts"
+      ],
+      "lint_tail_overlap_seconds": 2.44,
+      "model_turns_during_tests": false
+    }
+  },
+  "native_harnesses": {
+    "dsh": "0.2.1-rc.2",
+    "pi": "0.87.1",
+    "codex": "0.165.0",
+    "claude": "2.1.312"
+  },
+  "live_phases": [
+    {
+      "phase": "dsh-main",
+      "model_requests": 6,
+      "model_responses": 6,
+      "native_tool_attempts": 5,
+      "exit": 0,
+      "seconds": 84.04352091997862
+    },
+    {
+      "phase": "dsh-continuation",
+      "model_requests": 5,
+      "model_responses": 5,
+      "native_tool_attempts": 7,
+      "exit": 0,
+      "seconds": 70.48277877795044
+    },
+    {
+      "phase": "pi-main",
+      "model_requests": 4,
+      "model_responses": 4,
+      "native_tool_attempts": 5,
+      "exit": 0,
+      "seconds": 72.03430625598412
+    },
+    {
+      "phase": "pi-cancellation",
+      "model_requests": 2,
+      "model_responses": 2,
+      "native_tool_attempts": 2,
+      "exit": 0,
+      "seconds": 71.8702354109846
+    },
+    {
+      "phase": "pi-review",
+      "model_requests": 5,
+      "model_responses": 5,
+      "native_tool_attempts": 5,
+      "exit": 0,
+      "seconds": 74.29956429707818
+    },
+    {
+      "phase": "codex-main",
+      "model_requests": 5,
+      "model_responses": 5,
+      "native_tool_attempts": 10,
+      "exit": 0,
+      "seconds": 90.89878335408866
+    },
+    {
+      "phase": "codex-correction",
+      "model_requests": 4,
+      "model_responses": 4,
+      "native_tool_attempts": 5,
+      "exit": 0,
+      "seconds": 70.09834147291258
+    },
+    {
+      "phase": "claude-main",
+      "model_requests": 4,
+      "model_responses": 4,
+      "native_tool_attempts": 8,
+      "exit": 0,
+      "seconds": 196.12211368302815
+    },
+    {
+      "phase": "claude-blind-review",
+      "model_requests": 6,
+      "model_responses": 6,
+      "native_tool_attempts": 6,
+      "exit": 0,
+      "seconds": 164.69877372006886
+    }
+  ],
+  "model_protocol_notes": [
+    "Responses were generated live by the current authorized root/sol sessions. Protocol model, usage and cost fields are placeholders; no vendor inference API was called and these values are not measured provider usage or billing.",
+    "All responses were produced live by authorized current-model sessions, not replayed research answers.",
+    "The dsh-main request count includes one native title request.",
+    "Claude-main includes one revision-zero validation attempt rejected locally by the bridge; it is not counted as a server rejection.",
+    "Claude-main was driven by root; the formal Claude review was driven by a fresh blind reviewer agent.",
+    "The two formal reviewers had separate actors, groups, homes and sessions; this does not certify cognitive independence of different base models."
+  ],
+  "public_collaboration": {
+    "graph_weights": {
+      "s-a": 11,
+      "s-b": 12,
+      "a-b": 2
+    },
+    "posts_including_problem": 5,
+    "research_actor_count": 4,
+    "relations": 12,
+    "revision_checks": {
+      "dsh": {
+        "post_id": "pst_f2042fe2-1b58-4844-8714-00198ec41d77",
+        "v1_all_fields_unchanged": true,
+        "revisions": [
+          1,
+          2
+        ],
+        "incoming_references_remain_revision_one": true
+      },
+      "codex": {
+        "post_id": "pst_e678258b-c4b5-4cf2-9db4-6ec19cb1a888",
+        "v1_all_fields_unchanged": true,
+        "revisions": [
+          1,
+          2
+        ],
+        "incoming_references_remain_revision_one": true
+      }
+    },
+    "codex_pending_batch_unchanged": true,
+    "codex_ack_seq": 0,
+    "sqlite_quick_check": "ok",
+    "foreign_key_violations": 0,
+    "model_correction": "The original Codex certificate omitted explicit all-edge distance feasibility. A bounded live native correction read the fixed sources and revised the same post to revision 2; revision 1 remains unchanged."
+  },
+  "http_boundaries": {
+    "success": true,
+    "checks": [
+      {
+        "name": "same actor same key same body replay",
+        "zero_new_rows": true
+      },
+      {
+        "name": "same key changed body",
+        "code": "IDEMPOTENCY_CONFLICT",
+        "status": 409
+      },
+      {
+        "name": "cross space ordinary read",
+        "code": "NOT_FOUND",
+        "status": 404
+      },
+      {
+        "name": "cross actor consumer poll",
+        "code": "FORBIDDEN",
+        "status": 403
+      },
+      {
+        "name": "fake ACK",
+        "code": "ACK_INVALID",
+        "status": 409
+      },
+      {
+        "name": "cross consumer ACK",
+        "code": "ACK_INVALID",
+        "status": 409
+      },
+      {
+        "name": "read/poll and rejected ACK preserve pending"
+      },
+      {
+        "name": "SIGKILL same DB replay and explicit ACK",
+        "same_batch": true,
+        "same_events": true,
+        "same_idempotent_post": true
+      },
+      {
+        "name": "HTTP cancellation no ACK or row changes",
+        "observed_abort": true
+      }
+    ],
+    "dedicated_sigkill_server": true,
+    "main_server_was_not_killed": true,
+    "restart_pending_state_equal": true
+  },
+  "native_pi_cancellation": {
+    "actual_tool_start_and_original_server_wait_observed": true,
+    "wait_ms": 25000,
+    "waiting_count_before": 0,
+    "waiting_count_after": 1,
+    "official_rpc_abort": true,
+    "native_tool_error_observed": true,
+    "server_outcome": "aborted",
+    "server_duration_ms": 6574.297291999988,
+    "before_after_database_equal": true,
+    "ack_seq_before": 1,
+    "ack_seq_after": 1,
+    "active_batch_before": null,
+    "active_batch_after": null,
+    "counts": {
+      "events": 1,
+      "delivery_batches": 0,
+      "idempotency_records": 1,
+      "posts": 0
+    },
+    "observer_only_original_promise_returned": true
+  },
+  "formal_review": {
+    "input": [
+      2,
+      9,
+      13
+    ],
+    "request_id": "rrq_1f02e363-fc4c-4a30-878d-85811159cfaa",
+    "decision_id": "rde_be7fd97a-032f-4aad-b0f6-e75bac3548d4",
+    "complete_revealed_submissions": 2,
+    "distinct_actors": 2,
+    "distinct_nonempty_groups": 2,
+    "distinct_sessions_after_request": 2,
+    "snapshot_binding_equal": true,
+    "sealed_gate": {
+      "author": {
+        "direct_read": 404,
+        "list": 0,
+        "search": 0
+      },
+      "other_reviewer": {
+        "direct_read": 404,
+        "list": 0,
+        "search": 0
+      },
+      "administrator": {
+        "direct_read": 404,
+        "list": 0,
+        "search": 0
+      }
+    },
+    "revealed_list_count": 2,
+    "revealed_search_count": 2,
+    "outcome": "accepted",
+    "same_key_finalize_replay_equal": true,
+    "decision_rows_added": 1,
+    "target_current_revision": 1,
+    "current_validity": "current",
+    "verification_status": "not_required",
+    "external_checker_run": false
+  },
+  "setup_events": [
+    {
+      "event": "First bulk initialization hit RATE_LIMITED 429",
+      "scope": "Disposable partial controller database only",
+      "retry_after_seconds": 1,
+      "action": "Stopped the first server normally, retained its evidence, then initialized a fresh database with pacing based on the default 60/minute, burst 20 limit. Only the fresh database is counted."
+    },
+    {
+      "event": "Codex debug generate-config-schema is unsupported by the installed version",
+      "scope": "Isolated diagnostic only",
+      "action": "Used generated app-server schema plus official documentation; no model turn or product change was made."
+    }
+  ],
+  "independent_checks": {
+    "root_verified_full_vitest_json_and_exit": true,
+    "root_verified_six_boundary_and_state_summaries": true,
+    "acceptance_agent": {
+      "agent": "live_accept",
+      "result": "passed",
+      "scope": "Independent SSH review of native records, database state and boundary summaries"
+    }
+  },
+  "shutdown": {
+    "all_native_phases_natural_exit_zero": true,
+    "main_server_sigterm_exit": 0,
+    "diag_server_sigterm_exit": 0,
+    "broker_controller_sigterm_exits": {
+      "004-broker-dsh-pi": -15,
+      "005-broker-codex-claude": -15,
+      "020-broker-codex-claude-review": -15,
+      "024-codex-correction-broker": -15
+    },
+    "supervisor_stopped": true,
+    "owned_root_processes_remaining": 0,
+    "nested_mounts_remaining": 0
+  },
+  "cleanup": {
+    "root": "/var/tmp/detuned-live4-B75108C8",
+    "parent": "/var/tmp",
+    "uid": 1000,
+    "dev": 66306,
+    "inode": 786434,
+    "parent_inode": 58196314,
+    "mode": "0700",
+    "marker_inode": 786441,
+    "marker_matches": true,
+    "root_exists": false,
+    "status": "removed after root authorization",
+    "root_authorized": true,
+    "parent_identity_verified_before_deletion": true,
+    "root_identity_verified_before_deletion": true,
+    "marker_verified_before_deletion": true,
+    "owned_processes_before_deletion": 0,
+    "nested_mounts_before_deletion": 0,
+    "dir_fd_no_symlink_follow": true,
+    "removed_files": 53497,
+    "removed_subdirectories": 5946,
+    "immediate_lstat_errno": 2,
+    "fresh_ssh_lstat_errno": 2,
+    "root_independent_post_delete_check": {
+      "completed": true,
+      "root_exists": false,
+      "lstat_errno": 2,
+      "ssh_exit": 0
+    }
+  },
+  "limitations": [
+    "Native CLI integration through a controlled current-model bridge, not provider inference account authentication.",
+    "No arbitrary configuration, production capacity, disaster recovery or M8 research-value certification.",
+    "No frontend/browser work, package publication, repository push or global configuration change.",
+    "Mac performed no dependency installation or heavy build/test run."
+  ]
+}

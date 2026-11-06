@@ -241,7 +241,7 @@ export class PostService {
         if (post.current_revision !== req.expected_revision) {
           throw new DetunedError(
             ErrorCode.REVISION_CONFLICT,
-            '该帖子已有新修订，请重新读取后提交。',
+            '预期修订与当前修订不一致，请重新读取后提交。',
             409,
             false,
             { current_revision: post.current_revision }

@@ -20,4 +20,4 @@ const attachments = await client.getPostRevisionArtifacts(spaceId, postId, 1, { 
 
 limit1..100/default20，max_bytes4096..65536/default12288，opaque cursor最长4096。续页把实际meta.next_cursor原样交回，可变limit/budget；不decode或拼造。完整UTF8 compact HTTP信封包含真实request_id与签名cursor，裁剪以最后实际交付项继续；truncated只表示预算裁剪，false+cursor仍可有数量续页，null表示当页没有续页。每页动态snapshot，不承诺跨页冻结；续页保首次exp，TTL86400。cursor绑定actor/space/post及附件固定revision；错域/过期400，单项无法容纳422，redacted post410，固定revision不存在404。权限撤销即时影响下一页。
 
-旧`GET .../posts/:id/revisions`完整正文列表保持原语义；固定五字段分段阅读见[正文示例](post-revision-read.md)。目录不是space所有附件或未绑定上传列表，无content_url/storage_key；下载必须另走现固定路径/完整内容校验。D.2 Web界面与真实浏览器下载/上传绑定仍是下一任务，不由本HTTP证据替代。
+CLI `post revisions SPACE POST --limit 20 --cursor ...` 使用旧`GET .../posts/:id/revisions`完整正文列表；仅数量分页、每项含body，不支持max-bytes。它不调用本页metadata catalog。需要字节有界目录时选上面的HTTP或client方法；没有新增CLI catalog命令。固定五字段分段阅读见[正文示例](post-revision-read.md)。目录不是space所有附件或未绑定上传列表，无content_url/storage_key；下载必须另走现固定路径/完整内容校验。这些接口不是通用关系目录，也不触发浏览器预览；本任务不开发前端。

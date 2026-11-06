@@ -1,5 +1,5 @@
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
-import { DETUNED_TOOLS, validateToolParams, DetunedError, ErrorCode, isMeResponse, isSession } from '@detuned/protocol';
+import { DETUNED_TOOLS, toolValidationError, validateToolParams, DetunedError, ErrorCode, isMeResponse, isSession } from '@detuned/protocol';
 import { ClientProtocolError } from '@detuned/client';
 // Trusted protocol schemas only: TypeBox permits a broader contentEncoding string
 // declaration than SDK JsonSchemaType. Preserve the exact object and every keyword;
@@ -28,7 +28,7 @@ export function validateMcpToolArguments(name, args, mode = 'flat') {
         const result = wrappedTools.get(name)?.(args);
         if (result?.valid && validateToolParams(name, result.data.input))
             return result.data.input;
-        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+        throw toolValidationError(name, args, true);
     }
     const validate = tools.get(name);
     if (validate) {
@@ -36,7 +36,7 @@ export function validateMcpToolArguments(name, args, mode = 'flat') {
         if (result.valid && validateToolParams(name, result.data))
             return result.data;
     }
-    throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+    throw toolValidationError(name, args);
 }
 export function parseMcpMe(data) {
     if (isMeResponse(data))

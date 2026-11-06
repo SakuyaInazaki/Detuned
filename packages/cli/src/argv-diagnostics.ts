@@ -1,7 +1,40 @@
 import {Command} from 'commander';
 export {Command} from 'commander';
 import {DetunedError,ErrorCode} from '@detuned/protocol';
-export const parserError=()=>new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid command arguments.',400);
+export function parserError(root?:Command, code?:unknown, argv:readonly string[]=[]):DetunedError {
+  let message='Invalid command arguments.';
+  if(root && typeof code==='string') {
+    let command=root;
+    for(let depth=0;depth<8;depth++) {
+      const child=command.commands.find(item=>item.name()===command.args[0]);
+      if(!child)break;command=child;
+    }
+    if(code==='commander.optionMissingArgument') {
+      const options=[...root.options,...command.options];
+      for(let index=0;index<argv.length;index++){
+        if(argv[index]==='--')break;
+        const option=options.find(item=>item.long===argv[index]||item.short===argv[index]);
+        if(!option?.required)continue;
+        const next=argv[index+1];
+        if(next===undefined || options.some(item=>item.long===next||item.short===next)){
+          const flag=option.long??option.short;
+          if(flag)message=`选项 ${flag} 需要参数。`;
+          break;
+        }
+        index++;
+      }
+    } else if(code==='commander.missingMandatoryOptionValue') {
+      const option=command.options.find(item=>item.mandatory && command.getOptionValue(item.attributeName())===undefined);
+      if(option?.long)message=`缺少必需选项 ${option.long}。`;
+    } else if(code==='commander.missingArgument') {
+      const argument=command.registeredArguments.find((item,index)=>item.required && command.args[index]===undefined);
+      if(argument)message=`缺少必需位置参数 <${argument.name()}>。`;
+    } else if(code==='commander.help' && command.commands.length>0) {
+      message=`请指定子命令：${command.commands.slice(0,8).map(item=>item.name()).join(' / ')}。`;
+    }
+  }
+  return new DetunedError(ErrorCode.VALIDATION_ERROR,message,400);
+}
 /** Only diagnostic output selection; Commander remains the command parser. */
 export function diagnosticJsonMode(root:Command,args:readonly string[]):boolean {
   const required=new Set<string>();

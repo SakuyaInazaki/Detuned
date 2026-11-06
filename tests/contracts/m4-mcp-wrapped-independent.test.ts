@@ -21,7 +21,9 @@ function plain<T>(value: T): T { return JSON.parse(JSON.stringify(value)) as T; 
 function result(value: unknown) { return record(record(value).structuredContent).result; }
 function safeInvalid(value: unknown) {
   expect(record(value).isError).toBe(true);
-  expect(record(record(value).structuredContent).error).toEqual({ code: 'VALIDATION_ERROR', message: 'Invalid forum tool arguments.' });
+  const error=record(record(record(value).structuredContent).error);
+  expect(error).toMatchObject({code:'VALIDATION_ERROR',message:expect.stringMatching(/^Invalid forum tool arguments\./),details:{issues:expect.any(Array)}});
+  const issues=record(error.details).issues as unknown[];expect(issues.length).toBeGreaterThan(0);expect(issues.length).toBeLessThanOrEqual(8);
   expect(JSON.stringify(value).includes(privateMarker)).toBe(false);
 }
 async function eventually(predicate: () => boolean) {

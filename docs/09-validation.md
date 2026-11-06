@@ -1,5 +1,15 @@
 # 工程验收与研究效果评估
 
+首次使用验收需按[完整CLI协作旅程](../examples/first-collaboration.md)在新私有目录真实执行：setup、两普通身份、固定反例、failure、revision和原质疑者resolve，核旧内容/固定关系不漂移。另以无凭据无服务检查离线schema和非法数字0HTTP；所有错误诊断只含静态字段/规则，不回显输入值、token、URL或路径。后端runner须覆盖私有pnpm绝对入口且PATH无pnpm的情况。结果以[当前包](reviews/2026-11-06-first-use/README.md)实际收据为准。
+
+## 后端检查与完整源码副本
+
+运行 `pnpm build:backend`、`pnpm typecheck:backend`、`pnpm lint:backend`，只选择 protocol、core、client、storage-sqlite、module-review、server、cli、mcp、adapter-pi 九包，保持依赖拓扑与 workspace 并发 1。`pnpm test:backend` 保持单 worker、文件串行与原超时，只排除 `tests/contracts/m6-knowledge-web-input.test.ts` 和 `tests/contracts/m6-review-web-input.test.ts`。不要按名称广泛排除 m5、HTTP 或 session 文件。原默认检查入口与历史测试保留；Vitest 全局忽略 Mac AppleDouble `**/._*` 元数据文件。
+
+隔离验收应准备完整的跟踪源码副本，包含 `tests/fixtures`、`examples`、`templates`、`Dockerfile` 和配置文件；不要只复制 packages/tests。读取 Dockerfile 的静态测试不需要启动容器。复制时排除已有依赖、构建产物与 AppleDouble 元数据，再按锁文件安装和构建。确认私有 HOME/TMPDIR、当前 UID 解析及 localhost 映射有效，所有宿主诊断也在私有配置范围内完成。测试收集应核对全部集合与后端集合只差上述两文件，并以受控 `._*.test.ts` 文件验证元数据不收集、正常后端文件不遗漏。
+
+外部宿主报告与本轮实际检查分开记录，见[后端使用与验收](reviews/2026-11-05-usability/README.md)。
+
 
 M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0，私有clean fixture install、配置/SQLite/esbuild及九backend build已验证；文件级组合验收为142文件904cases与16文件73cases，完整覆盖158文件977cases，组合0fail/pending/todo。逐文件完整替换，非挑选单case补齐；不是一次全绿流水线，历史失败及v3 full中断保留。未新安装pnpm工具链，不含Web、当前Linux或模型完整会话；许可证按用户决定暂未指定。
 当前实现与验收只以[进度](progress.md)和[审查索引](reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。

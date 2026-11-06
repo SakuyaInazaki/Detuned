@@ -9,7 +9,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    exclude: [...defaultExclude, 'docs/reviews/**', 'scripts/integrations/dsh-runtime/**', 'scripts/integrations/web/**'],
+    exclude: [...defaultExclude, '**/._*', 'docs/reviews/**', 'scripts/integrations/dsh-runtime/**', 'scripts/integrations/web/**'],
   },
   resolve: {
     alias: [

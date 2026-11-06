@@ -147,7 +147,7 @@ export class PostService {
                 throw new DetunedError(ErrorCode.FORBIDDEN, '非活跃状态的帖子不可发布新修订。', 403);
             }
             if (post.current_revision !== req.expected_revision) {
-                throw new DetunedError(ErrorCode.REVISION_CONFLICT, '该帖子已有新修订，请重新读取后提交。', 409, false, { current_revision: post.current_revision });
+                throw new DetunedError(ErrorCode.REVISION_CONFLICT, '预期修订与当前修订不一致，请重新读取后提交。', 409, false, { current_revision: post.current_revision });
             }
             this.validateStructuredContent(post.kind, req.structured);
             const structured = validateNewTypedWrite(tx, this.authService, auth, spaceId, post.kind, req.structured, req.artifact_ids) ?? req.structured;

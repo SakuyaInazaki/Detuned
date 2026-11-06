@@ -36,7 +36,7 @@ export class FileRequestKeyStore {
             return store;
         }
         catch (error) {
-            throw new RequestKeyError('STORE_ERROR', 'Invalid request key directory.', { cause: error });
+            throw new RequestKeyError('STORE_ERROR', 'Request key directory must be a real directory owned by the current user with exact mode 0700.', { cause: error });
         }
     }
     async checkDirectory() {

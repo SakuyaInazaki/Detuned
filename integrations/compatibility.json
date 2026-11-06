@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-10-10",
-  "summary": "核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、当前Linux独立环境证据仍待；许可证按用户决定暂未指定；M8独立，后续前端取消。 M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0，私有clean fixture install、配置/SQLite/esbuild及九backend build已验证；文件级组合验收为142文件904cases与16文件73cases，完整覆盖158文件977cases，组合0fail/pending/todo。逐文件完整替换，非挑选单case补齐；不是一次全绿流水线，历史失败及v3 full中断保留。未新安装pnpm工具链，不含Web、当前Linux或模型完整会话；许可证按用户决定暂未指定。",
+  "reviewed_at": "2026-11-05",
+  "summary": "固定Arch x86_64、Node22.19.0/pnpm11.7.0，九后端build/typecheck/lint共27步通过，后端回归一次完整通过165文件1009项。dsh0.2.1-rc.2、Pi0.87.1、Codex0.165.0、Claude2.1.312完成真实原生模型协议请求与论坛工具循环并自然退出0；dsh续接、Codex同身份新原生会话补正、Pi服务端进入长轮询后的原生abort与不ACK另有证据。Pi和新身份Claude完整封存初评揭示后accepted/current，verification_status=not_required。模型由root及获授权gpt-6.1-sol会话逐请求现场决策，非预写轨迹、供应商账号认证或跨基础模型独立性证明。schema6保持；历史证据与外部新版报告分别保留，任意配置、生产容量及M8收益未认证。",
   "adapters": [
     {
       "name": "mcp-stdio-bridge",
@@ -23,22 +23,27 @@
       "signature_contract_status": "passed",
       "host_runtime_status": "partial",
       "verified_via": "tests/contracts/m0-m1-adapters-regression.test.ts (A03, A04), tests/contracts/m0-m1-r2-adapters.test.ts (S12), tests/integration/m0-m1-r3-regression.test.ts (T09), tests/contracts/r4-c-contracts.test.ts (C03-1 ~ C03-5); docs/reviews/2026-10-09-m4-4-b/verification/verification.md",
-      "notes": "固定官方@earendil-works/pi-coding-agent0.87.1真实无模型SDK/native加载、8工具、固定代凭据、共享诊断session、命令安全输出、真实new/switch/fork/reload/shutdown取消finally和noACK有限通过。原型/独验用publicSDK及官方内部loader文件URL；内部loader只用于固定版本隔离test harness，非产品依赖，不称全链public。638/92、新11/2，native6与author5；current29四gates+23原+2批准adapter(#11/#27)。整体partial，完整Pi CLI/profile/RPC/model未认证；无自动持久key/consumer映射、inbox或通知器。",
+      "notes": "以下为历史固定版本证据；本次原生模型工具循环见current_live_scope及当前验收入口。固定官方@earendil-works/pi-coding-agent0.87.1真实无模型SDK/native加载、8工具、固定代凭据、共享诊断session、命令安全输出、真实new/switch/fork/reload/shutdown取消finally和noACK有限通过。原型/独验用publicSDK及官方内部loader文件URL；内部loader只用于固定版本隔离test harness，非产品依赖，不称全链public。638/92、新11/2，native6与author5；current29四gates+23原+2批准adapter(#11/#27)。整体partial，完整Pi CLI/profile/RPC/model未认证；无自动持久key/consumer映射、inbox或通知器。",
       "lifecycle_runtime_status": "passed",
       "status": "partial",
       "sdk_version": "0.87.1",
       "native_sdk_status": "passed",
-      "full_cli_status": "not_tested",
+      "full_cli_status": "passed_limited_native_tool_loop",
       "profile_status": "not_tested",
       "rpc_status": "not_tested",
-      "model_session_status": "not_tested",
+      "model_session_status": "passed_limited_live_bridge",
       "current_review_tools_status": "passed_limited",
       "current_tool_count": 9,
       "current_review_verified_via": "docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md",
       "current_review_notes": "九canonical工具与显式Session/本人assignment限定无模型接线；prepare诊断会话保留，新会话不创造独立身份。原历史证据保留，不自动认证完整CLI/profile/model。",
       "current_checks_status": "passed_limited_sdk",
       "current_checks_verified_via": "docs/reviews/2026-10-10-m7-4-a/README.md",
-      "current_checks_notes": "固定公共SDK/HTTP普通check两写六读、权限/取消/noACK与500/501prepare前拒绝；原六场景和历史证据保留，不升级full CLI/profile/RPC/model。"
+      "current_checks_notes": "固定公共SDK/HTTP普通check两写六读、权限/取消/noACK与500/501prepare前拒绝；原六场景和历史证据保留，不升级full CLI/profile/RPC/model。",
+      "historical_model_session_status": "not_tested",
+      "historical_full_cli_status": "not_tested",
+      "current_native_version": "0.87.1",
+      "current_live_verified_via": "docs/reviews/2026-11-05-live4/README.md",
+      "current_live_scope": "项目锁定0.87.1原生扩展/CLI主链、独立正式评审及服务端已进入长轮询后的RPC abort/noACK；自然退出0。"
     },
     {
       "name": "dsh",
@@ -46,19 +51,24 @@
       "route": "official-mcp-client-to-stdio-bridge",
       "status": "partial",
       "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md",
-      "notes": "同SHA官方plugin/registry与原package名patch的Loader/Include真实加载、Hmr.watchConfig配置文件事件通过。作者3/3、默认plugin3/3、独立坏YAML保A/有效B恢复1/1；取消不ACK、无身份混合、PID清退有证据。同SHA官方编译器/受限40项目/decorator transform，未跑全workspace Typert/fullhostbuild。完整CLI/profile自动合成、模块代码HMR、模型会话未测；不承诺任意重装失败回滚。",
+      "notes": "以下为历史固定版本证据；本次原生模型工具循环见current_live_scope及当前验收入口。同SHA官方plugin/registry与原package名patch的Loader/Include真实加载、Hmr.watchConfig配置文件事件通过。作者3/3、默认plugin3/3、独立坏YAML保A/有效B恢复1/1；取消不ACK、无身份混合、PID清退有证据。同SHA官方编译器/受限40项目/decorator transform，未跑全workspace Typert/fullhostbuild。完整CLI/profile自动合成、模块代码HMR、模型会话未测；不承诺任意重装失败回滚。",
       "source_commit": "5badb15009ae1756c3afe0ae0cef1faafc290ccc",
       "official_plugin_registry_status": "passed",
-      "full_cli_status": "not_tested",
+      "full_cli_status": "passed_limited_native_tool_loop",
       "configuration_hmr_status": "passed",
-      "model_session_status": "not_tested",
+      "model_session_status": "passed_limited_live_bridge",
       "verified_via": "docs/reviews/2026-10-08-m4-3-a/author/official-chain/README.md; docs/reviews/2026-10-08-m4-3-a/verification/independent/isolated.runtime-receipt.json; docs/reviews/2026-10-09-m4-3-b/author/loader/README.md; docs/reviews/2026-10-09-m4-3-b/verification/independent/README.md",
       "configuration_load_status": "passed",
       "module_hmr_status": "not_tested",
       "current_review_tools_status": "passed_limited",
       "current_tool_count": 9,
       "current_review_verified_via": "docs/reviews/2026-10-09-m6-4-b/verification/independent-report.md",
-      "current_review_notes": "九canonical工具与显式Session/本人assignment限定无模型接线；prepare诊断会话保留，新会话不创造独立身份。原历史证据保留，不自动认证完整CLI/profile/model。"
+      "current_review_notes": "九canonical工具与显式Session/本人assignment限定无模型接线；prepare诊断会话保留，新会话不创造独立身份。原历史证据保留，不自动认证完整CLI/profile/model。",
+      "historical_model_session_status": "not_tested",
+      "historical_full_cli_status": "not_tested",
+      "current_native_version": "0.2.1-rc.2",
+      "current_live_verified_via": "docs/reviews/2026-11-05-live4/README.md",
+      "current_live_scope": "原生主链及原身份续接均自然退出0，真实读取/发布/修订与固定引用；非全部CLI配置或源码提交构建认证。"
     },
     {
       "name": "codex",
@@ -66,13 +76,13 @@
       "route": "stdio-mcp-bridge",
       "status": "partial",
       "docs": "https://learn.chatgpt.com/docs/extend/mcp",
-      "notes": "M4.5-A原保护阻塞保留，不回填旧失败。M7.4-C固定0.144.6以child官方用途私有CODEX_HOME/fileauth/sqlite/log返回initialize与thread响应；两normal均失败，v2候选不同workerPGID而拒接，工具矩阵未执行。可信候选coverage/独立absence及本次自有清退接受，不证明首未登记候选或全局清退，不读账号/发送prompt或模型请求。 C.1独立组exactUID/direct native父/PGID证明、confirmed observer和ACK门禁及故障清退已有限接受；唯一normal8.157s failed，status/list40、tools空，无tool call。旧C首未登记候选限制不倒改，不推断工具发现根因。 E/R1已修launcher入口与多transport握手，fixed0.144.6九工具与普通check矩阵有限通过；first失败/red/静审修复保留，不回填旧失败。",
+      "notes": "以下为历史固定版本证据；本次原生模型工具循环见current_live_scope及当前验收入口。M4.5-A原保护阻塞保留，不回填旧失败。M7.4-C固定0.144.6以child官方用途私有CODEX_HOME/fileauth/sqlite/log返回initialize与thread响应；两normal均失败，v2候选不同workerPGID而拒接，工具矩阵未执行。可信候选coverage/独立absence及本次自有清退接受，不证明首未登记候选或全局清退，不读账号/发送prompt或模型请求。 C.1独立组exactUID/direct native父/PGID证明、confirmed observer和ACK门禁及故障清退已有限接受；唯一normal8.157s failed，status/list40、tools空，无tool call。旧C首未登记候选限制不倒改，不推断工具发现根因。 E/R1已修launcher入口与多transport握手，fixed0.144.6九工具与普通check矩阵有限通过；first失败/red/静审修复保留，不回填旧失败。",
       "static_protocol_status": "passed",
       "os_guard_status": "passed",
       "native_initialize_status": "passed_limited",
       "tool_discovery_status": "passed_limited_native",
       "tool_call_status": "passed_limited_native",
-      "model_session_status": "not_tested",
+      "model_session_status": "passed_limited_live_bridge",
       "verified_via": "docs/reviews/2026-10-10-m7-4-e/verification/independent-report.md",
       "historical_verified_via": "docs/reviews/2026-10-09-m4-5-a/author/codex/README.md",
       "current_isolation_status": "passed_limited",
@@ -82,7 +92,11 @@
       "current_owned_group_status": "passed_limited",
       "current_tool_count": 9,
       "current_checks_status": "passed_limited_native",
-      "current_checks_notes": "R1normal2.067569s exact9/toolcall19，ordinary两写六读/权限/取消/noACK；rejectsecond4.267850s只首ACK，实际taskssettled/两candidateabsence；native nullSIGTERM清退、driver0null。完整模型/CLI/profile未认证。"
+      "current_checks_notes": "R1normal2.067569s exact9/toolcall19，ordinary两写六读/权限/取消/noACK；rejectsecond4.267850s只首ACK，实际taskssettled/两candidateabsence；native nullSIGTERM清退、driver0null。完整模型/CLI/profile未认证。",
+      "historical_model_session_status": "not_tested",
+      "current_native_version": "0.165.0",
+      "current_live_verified_via": "docs/reviews/2026-11-05-live4/README.md",
+      "current_live_scope": "0.165.0原生Responses/MCP主链与同原普通actor的新native补正会话均turn.completed、自然退出0；具体工具审批与namespace/name按实际schema，非resume。"
     },
     {
       "name": "claude-code",
@@ -90,13 +104,13 @@
       "route": "stdio-mcp-bridge",
       "status": "partial",
       "docs": "https://code.claude.com/docs/en/mcp",
-      "notes": "M4.5-B历史：固定2.1.282受保护native wrapped精确8工具；context/read(space rev1)/publish note真实成功，普通DB身份与key匹配；outer/inner错误额外HTTP0、EOF自然0、无model/ACK。默认flat原契约保留；完整CLI/profile/model及全部工具分支未认证。 D已修安全生命周期与launcher built-entry guard遗漏，固定native九工具/check矩阵有限通过，旧保护失败原样保留。",
+      "notes": "以下为历史固定版本证据；本次原生模型工具循环见current_live_scope及当前验收入口。M4.5-B历史：固定2.1.282受保护native wrapped精确8工具；context/read(space rev1)/publish note真实成功，普通DB身份与key匹配；outer/inner错误额外HTTP0、EOF自然0、无model/ACK。默认flat原契约保留；完整CLI/profile/model及全部工具分支未认证。 D已修安全生命周期与launcher built-entry guard遗漏，固定native九工具/check矩阵有限通过，旧保护失败原样保留。",
       "os_guard_status": "passed",
       "native_initialize_status": "passed",
       "mcp_connection_status": "passed",
       "tool_discovery_status": "passed",
       "tool_call_status": "partial",
-      "model_session_status": "not_tested",
+      "model_session_status": "passed_limited_live_bridge",
       "verified_via": "docs/reviews/2026-10-09-m4-5-b/author/claude/README.md",
       "input_mode": "wrapped",
       "current_checks_native_status": "passed_limited_native",
@@ -105,20 +119,25 @@
       "current_checks_notes": "固定2.1.282 D唯一normal0/2.043s initialize/exact九工具、ordinary两写六读/invalid0HTTP/500/scope/metadata/noACKpending/cancel通过；actual native143/null为TERM清退，capturedriver0/null及独立sameworker/candidate/group/root/control absence已证。原失败保留，不升级完整CLI/profile/model或四宿主认证。",
       "current_checks_status": "passed_limited_native",
       "current_native_checks_status": "passed_limited_native",
-      "current_tool_count": 9
+      "current_tool_count": 9,
+      "historical_model_session_status": "not_tested",
+      "current_native_version": "2.1.312",
+      "current_live_verified_via": "docs/reviews/2026-11-05-live4/README.md",
+      "current_live_scope": "2.1.312原生Messages/MCP主链由root现场驱动；正式评审另用新普通身份、新HOME和无上下文gpt-6.1-sol盲审会话驱动；均end_turn且自然退出0，仅具体论坛工具授权。"
     }
   ],
   "minimum_supported_node": ">=22.19.0",
-  "actual_test_runtime": "v26.3.0",
-  "node_22_runtime_status": "not_tested",
-  "clean_install_status": "not_tested",
+  "actual_test_runtime": "v22.19.0",
+  "node_22_runtime_status": "passed_limited_arch_x86_64",
+  "clean_install_status": "passed_frozen_private_arch",
   "remote_ci_status": "not_tested",
   "local_c1_scope": {
     "status": "passed_limited",
     "verified_via": "docs/reviews/2026-10-09-m6-4-c1/verification/independent-report.md",
     "scope": "13 HTTP/13 review CLI including rounds; canonical forum_read review_requests; local Chrome review workflow new4 and prior24",
     "native_hosts_rerun": false,
-    "notes": "Existing dsh/Pi/Claude/Codex certifications retained unchanged; no model/profile certification. Schema5 and nine tool names unchanged."
+    "notes": "Existing dsh/Pi/Claude/Codex certifications retained unchanged; no model/profile certification. Schema5 and nine tool names unchanged.",
+    "historical_evidence": true
   },
   "local_delivery_scope": {
     "status": "passed_limited",
@@ -129,6 +148,127 @@
     "minimum_node22_fresh_status": "not_tested",
     "clean_install_status": "not_tested",
     "remote_ci_status": "not_tested",
-    "native_hosts_upgraded": false
+    "native_hosts_upgraded": false,
+    "historical_evidence": true
+  },
+  "external_user_reports": {
+    "evidence_kind": "external_user_report_not_reproduced_in_this_documentation_change",
+    "reported_test_date": "2026-11-04",
+    "source_commit": "be8bbd7a40fa7d51303745d97e1aad2ac62ded1c",
+    "platform": "Arch Linux x86_64",
+    "sources": [
+      {
+        "filename": "Detuned-四宿主实机测试.md",
+        "source": "external_user_provided_report_outside_repository"
+      },
+      {
+        "filename": "Detuned-四宿主实机协作验收.md",
+        "source": "external_user_provided_report_outside_repository"
+      },
+      {
+        "filename": "Detuned 四宿主真实会话与封存评审实测.md",
+        "source": "external_user_provided_report_outside_repository"
+      },
+      {
+        "filename": "Detuned 官方发行版接入验收.md",
+        "source": "external_user_provided_report_outside_repository"
+      }
+    ],
+    "baseline_versions": {
+      "dsh": "0.2.1-rc.2",
+      "pi": "0.87.1",
+      "codex": "0.165.0",
+      "claude": "2.1.312"
+    },
+    "official_release_report_versions": {
+      "dsh": "0.2.1-rc.5",
+      "dsh_mcp_client": "0.2.1-rc.5",
+      "pi": "1.5.0",
+      "codex": "0.166.0",
+      "claude": "2.1.318"
+    },
+    "scope": "四份报告整体记录原生工具接力、封存评审、显式消费与恢复；各宿主仅按实际旅程计入：dsh完成工具接力，正式评审由Pi、Claude或Codex承担，不把集体成果视为每个宿主均已验证。实际决策由获授权的现场模型经私有兼容端点实时桥接。非本次复测，不认证供应商推理账号、跨基础模型独立性、任意配置、生产容量或M8收益；不改变上列历史认证字段或锁定依赖。"
+  },
+  "historical_reviewed_at": "2026-10-10",
+  "historical_summary": "核心论坛、HTTP/CLI/MCP、正式独立评审、外部检查回执及无模型D01已可本地使用，数据库schema6不变。M7.4-E/R1已获root本机有限接受：固定Codex0.144.6 initialize/exact九工具、19次工具调用、普通check两写六读及权限/取消/noACK矩阵通过；Claude D固定2.1.282对应有限native结果保持，Pi0.87.1公共SDK与dsh固定官方有限链保持。完整四宿主真实会话、T10/D02、当前Linux独立环境证据仍待；许可证按用户决定暂未指定；M8独立，后续前端取消。 M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0，私有clean fixture install、配置/SQLite/esbuild及九backend build已验证；文件级组合验收为142文件904cases与16文件73cases，完整覆盖158文件977cases，组合0fail/pending/todo。逐文件完整替换，非挑选单case补齐；不是一次全绿流水线，历史失败及v3 full中断保留。未新安装pnpm工具链，不含Web、当前Linux或模型完整会话；许可证按用户决定暂未指定。",
+  "current_live_scope": {
+    "verified_via": "docs/reviews/2026-11-05-live4/README.md",
+    "results": "docs/reviews/2026-11-05-live4/results.json",
+    "test_date": "2026-11-05",
+    "platform": "Arch Linux x86_64",
+    "versions": {
+      "dsh": "0.2.1-rc.2",
+      "pi": "0.87.1",
+      "codex": "0.165.0",
+      "claude-code": "2.1.312"
+    },
+    "backend_runtime": "Node.js 22.19.0; pnpm 11.7.0",
+    "backend_checks": {
+      "steps": 27,
+      "exit_code": 0
+    },
+    "backend_regression": {
+      "files": 165,
+      "tests": 1009,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "exit_code": 0,
+      "single_complete_run": true
+    },
+    "model_transport": "live_authorized_root_and_gpt_6_1_sol_sessions_private_protocol_bridge",
+    "scripted_model_trajectory": false,
+    "supplier_inference_accounts_tested": false,
+    "cross_base_model_cognitive_independence_claimed": false,
+    "review": {
+      "native_reviewers": [
+        "pi",
+        "claude-code"
+      ],
+      "distinct_ordinary_actors": true,
+      "claude_reviewer_fresh_context": true,
+      "decision": "accepted",
+      "validity": "current",
+      "verification_status": "not_required"
+    },
+    "cleanup_status": "completed",
+    "host_runtime": {
+      "dsh": "Node.js 22.19.0 private absolute launcher",
+      "pi": "Node.js 22.19.0 private absolute launcher",
+      "codex": "official native standalone binary 0.165.0",
+      "claude-code": "official native binary 2.1.312"
+    },
+    "clean_install": {
+      "status": "passed",
+      "duration_seconds": 111.1,
+      "frozen_lockfile": true,
+      "ignore_scripts": true,
+      "ignore_pnpmfile": true,
+      "esbuild_rebuild": "passed",
+      "sqlite_open_close": "passed"
+    },
+    "model_requests": 41,
+    "live_responses": 41,
+    "native_tool_attempts": 53,
+    "native_phases": 9,
+    "limitations": [
+      "Only the listed native journeys and configuration were tested.",
+      "Supplier inference accounts, arbitrary host profiles, cross-base-model cognitive independence, production capacity and M8 research benefit were not certified.",
+      "External newer-version reports remain separate historical evidence."
+    ],
+    "cleanup": {
+      "owned_processes_remaining": 0,
+      "nested_mounts_remaining": 0,
+      "private_root_deleted": true,
+      "immediate_lstat": "ENOENT",
+      "independent_new_ssh_lstat": "ENOENT",
+      "root_final_independent_check": "verified_ENOENT_exit0",
+      "root_independent_confirmation": true
+    }
+  },
+  "historical_runtime_scope": {
+    "actual_test_runtime": "v26.3.0",
+    "node_22_runtime_status": "not_tested",
+    "clean_install_status": "not_tested"
   }
 }

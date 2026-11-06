@@ -1,6 +1,6 @@
 import { DetunedClient, createRuntimeSessionBinding, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
 import { resolveLocalToken } from '@detuned/client/node';
-import { DetunedError, ErrorCode, validateToolParams } from '@detuned/protocol';
+import { DetunedError, toolValidationError, validateToolParams } from '@detuned/protocol';
 export function safePiError(error) {
     if (error instanceof DetunedError)
         return error;
@@ -97,7 +97,7 @@ export function createPiRuntime(options) {
     return {
         tool(name, args, signal) {
             if (!validateToolParams(name, args))
-                return Promise.reject(new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400));
+                return Promise.reject(toolValidationError(name, args));
             if (typeof args.space_id !== 'string' || !args.space_id)
                 return Promise.reject(new Error('Forum tool requires a space.'));
             return run(signal, async (client, item, own) => {

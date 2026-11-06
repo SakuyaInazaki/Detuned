@@ -4,10 +4,10 @@ import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, typ
   type RequiredChecksView, type IssueCheckRunCredentialRequest, type IssueCheckRunCredentialData,
   isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView,
   isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
-import { validateSearchSourceQuery, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
+import { normalizeSearchQuery, validateSearchSourceQuery, type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
 import { isFindingsView, isFailuresView } from '@detuned/protocol';
 import {type PostReviewRequestsQuery,type PostReviewRequestsPage,isPostReviewRequestsPage,validatePostReviewRequestsQuery} from '@detuned/protocol';
-import { validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
+import { toolValidationError, validateToolParams, isSession, type ToolReviewParams } from '@detuned/protocol';
 import { type CreateReviewRequest, type CreateReviewSubmission, type FinalizeReviewRequest, type CancelReviewRequest,
   type ReviewRequestView, type ReviewRequestReadView, type ReviewSnapshotView, type OwnReviewAssignmentView,
   type ReviewSubmissionAcknowledgement, type ReviewSubmissionView, type ReviewSubmissionsView, type ReviewDecisionView, type ReviewStatusView, type ReviewArtifactMetadata,
@@ -1066,6 +1066,7 @@ export class DetunedClient {
   }
 
   async search(spaceId: string, query: SearchQuery, opts?: { signal?: AbortSignal }): Promise<SearchPage> {
+    normalizeSearchQuery(query);
     const result = await this.request<SearchResultItem[]>({
       method: 'GET',
       path: `/spaces/${spaceId}/search`,
@@ -1147,7 +1148,7 @@ export class DetunedClient {
     if (opts?.signal?.aborted) {
       throw new Error('Operation aborted');
     }
-    if (!validateToolParams(name, params)) throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+    if (!validateToolParams(name, params)) throw toolValidationError(name, params);
     const spaceId = params.space_id;
     if (!spaceId) {
       throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Tool call missing space_id', 400);

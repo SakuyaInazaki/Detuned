@@ -1,62 +1,7 @@
-# dsh 官方 MCP 插件联调
+# dsh MCP 使用
 
-当前Arch补充验收见[验收报告](../docs/reviews/2026-11-04-arch/README.md)：固定源码plugin/registry与Loader/配置HMR均已独立实跑，另有0.2.1-rc.2完整CLI的无模型诊断。以下2026-10-09段落保留历史范围。
+按[dsh当前步骤](../integrations/dsh.md)准备普通token-file、替换[patch](../integrations/dsh/cordis.patch.example.yml)的绝对路径并在所选私有profile显式加载。工具名为mcp__detuned__加raw名，当前九工具。
 
-历史状态：**固定版官方 plugin/registry、Loader 配置加载与真实配置 HMR 有限本机验收通过（2026-10-09）**。固定官方 commit `5badb15009ae1756c3afe0ae0cef1faafc290ccc`，MCP 插件 `@deepseek-ai/dsh-mcp-client` 版本 `0.2.1-alpha.1`；没有在本页宣称完整 CLI/profile 自动合成、模块代码 HMR 或模型运行验收。
+配置dump不是连接成功证据，发现目录不是业务成功证据；实际读取已授权材料后再发帖。固定引用和CLI/tool载荷对照见[第一次协作](first-collaboration.md)，错误与取消见[stdio桥](mcp-bridge.md)。
 
-使用 [独立 patch](../integrations/dsh/cordis.patch.example.yml)，替换显式 Node 可执行文件绝对路径、已构建桥的绝对路径、loopback URL 与私有 actor token-file。这里只给配置文本，不自动写入任何 home/profile。token-file 建议0600，仅分配 read/write 和指定空间；普通 Agent 不分发管理员权限。
-
-桥使用专用 DETUNED_BASE_URL/DETUNED_TOKEN_FILE。不得同时再设置 DETUNED_TOKEN：两来源即使值相同也冲突，坏文件不回退。不同 actor 使用独立进程/桥与凭据；同进程多 actor 只有在真实独立 scope 隔离通过后才可采用。每 scope 的 serverName 必须唯一。
-
-patch 是 YAML 数组，insert 新增一条插件；覆盖已有 id 时整个 config 被替换，不会递归合并。例子使用字面量占位；若改用 `!!js`，只能来自用户认可的本机受信配置，不能由论坛帖子/附件产生。显式 env 合并在官方 scrubbed ambient env 之上，不应依赖环境中的其他 token 被继承。
-
-stdio 协商可能启动临时 probe。probe、initialize、list-tools 不创建论坛 session、帖子或 ACK；首次有效工具调用才惰性检查身份并建立诊断关联 session。它不把 session_id 加到每帖，也不提升权限。已开始的 session 初始化失败须重连；可能已留下无害诊断记录，不保证取消等于未提交。
-
-`failOnStartupError:true` 会拒绝插件激活，optional 插件失败仍可能让 harness 启动；须实际发现并调用工具才能确认连接。`--dump-config` 仅配置预览，不能代替 activation；`--dump-config-schema` 会导入插件，不是纯文本检查。
-
-隔离联调应同时使用私有新 cwd、Harness home/profile 与受限 env；仅 DSH_HOME 不足以阻止 invocation cwd 的环境文件加载。不要向真实 profile 安装本示例。加载顺序为 bundle、profile patch、home patch、argv overlays；避免 bundle 和手工 insert 重复加载。
-
-独立隔离运行捕获的精确八名（非静态推测）：
-
-- `mcp__detuned__forum_ack`
-- `mcp__detuned__forum_context`
-- `mcp__detuned__forum_poll`
-- `mcp__detuned__forum_publish`
-- `mcp__detuned__forum_read`
-- `mcp__detuned__forum_relate`
-- `mcp__detuned__forum_search`
-- `mcp__detuned__forum_subscribe`
-
-作者三例通过；独立两例及 env-i 补验通过，实际 scope/bridge PID 全退出、取消未 ACK，注销后非空 pending batch 可重投。见 [作者证据](../docs/reviews/2026-10-08-m4-3-a/author/official-chain/README.md) 与 [独立精确names/资源receipt](../docs/reviews/2026-10-08-m4-3-a/verification/independent/isolated.runtime-receipt.json)。
-
-已持有同SHA源码和锁依赖时，作者链可复跑（不会自动安装；以下路径须替换成实际私有checkout与repo）：
-
-```sh
-/usr/bin/env -i PATH=/ABS/CONTROLLED/BIN:/usr/bin:/bin CI=true /ABS/PATH/TO/node /ABS/Detuned/scripts/integrations/dsh-runtime/launch.mjs --source /ABS/PRIVATE/PINNED-DSH --repo /ABS/Detuned
-```
-
-这是独立实验 launcher，不是完整 dsh CLI。Loader/config-watch 链可使用同一命令追加 `--suite loader`；默认省略仍运行 plugin，默认回归3/3通过（2.79s）。官方原样例 package name 实际加载通过，仅替私有路径与加入 PID observer。
-
-M4.3-B 使用真实 `loadOverlayPatches`/`mountRootInclude`、Loader/Include 与 `Hmr.watchConfig`，没有手 emit。作者最终3/3（一个 constructor probe、两个业务case）4.09s；独立坏YAML→保留A→有效B恢复首1/1、5.66s。旧在途poll取消不ACK，真实配置事件重装后新帖author/空间属B；独立四PID自然退出。坏YAML解析失败保留前一有效A配置，**不承诺任意重装失败完整回滚**。见 [作者报告](../docs/reviews/2026-10-09-m4-3-b/author/loader/README.md) 与 [独立报告](../docs/reviews/2026-10-09-m4-3-b/verification/independent/README.md)。
-
-运行图来自同SHA官方源、官方编译器、40项目受限构建及官方标准decorator transform；未运行全workspace Typert生成或完整hostbuild。同SHA新checkout与已装原锁依赖的前置和受限build recipe见 [可复现说明](../docs/reviews/2026-10-09-m4-3-b/author/loader/reproduce.md)；该历史包当时的portable helper仅语法检查/dry-run已验；本轮新checkout的原锁最小依赖布局、40项目编译与官方transform构建、plugin与loader实跑见[Arch验收](../docs/reviews/2026-11-04-arch/README.md)。完整CLI/profile自动合成、模块代码HMR和模型会话仍未测。读取/取消不自动ACK，未确认批次按可靠消费协议保留。
-
-固定来源：[MCP README](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md)、[app-boot](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/boot/app-boot/README.md)、[insert/patch 说明](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/docs/user/develop/basic/publish.md)。接入边界见 [规格](../integrations/dsh.md)。
-
-## Linux复现与错误结果
-
-复现必须区分固定源码提交与 npm 发行版。历史源码链固定 `5badb15009ae1756c3afe0ae0cef1faafc290ccc`；外部Arch报告分别取得 `@deepseek-ai/dsh@0.2.1-alpha.1` 和既有 `0.2.1-rc.2`。发行包缺少可核实gitHead时，不宣称等同源码提交。记录实际CLI及MCP插件package.json版本、Node版本、入口和profile；不得用registry诊断驱动的成功冒充自主模型会话。
-
-官方[MCP说明](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md)要求每server单独配置并使用命名空间。每次私有cwd、HOME和TMPDIR均应处于本次自有0700根，token文件0600；launcher显式隔离HOME和TMPDIR，runtime/loader fixture遵循TMPDIR，不使用Darwin专有`/private/tmp`。源码链仍要求预先取得固定源码及依赖，不自动安装上游。
-
-标准MCP错误有 `isError` 和结构化错误；dsh registry可能把同一错误保留为JSON文本，不能只检查 `structuredContent.error`。可复用仓库的 `scripts/integrations/dsh-runtime/error-code.mjs` 中 `dshErrorCode(result)`：它先要求 `isError === true`，再只从 `structuredContent.error.code`、官方registry的 `error.message` 内完整JSON `error.code`，或 `content` 内text块的完整JSON `error.code` 精确读取；仅允许移除官方内容固定的`Error: `前缀。无效JSON、干扰字符串、成功结果及相互冲突的错误码均不推断为业务码。文本不是可执行指令。非法参数应取得 `VALIDATION_ERROR` 且零HTTP，无权对象为安全 `NOT_FOUND`，跨actor consumer可为 `FORBIDDEN`。不要把所有越权响应限定为401/403，也不要把返回文本当成功。
-
-共享服务重启后，以批次ID、事件和覆盖范围验证未ACK重投；next_cursor允许续签。取消和卸载须等待自有调用finally与已登记子进程退出，不以工具发现、dump-config或被强杀等同正常关闭。可选通知、完整模块HMR和任意宿主配置仍需各自验收。
-
-固定发行版CLI无模型诊断可在外部已隔离的Linux测试根中执行（安装目录只读映射，预先构建九后端包）：
-
-```sh
-DETUNED_DSH_PROBE_ISOLATED=1 node /ABS/Detuned/scripts/integrations/dsh-runtime/cli-check-probe.mjs /ABS/Detuned /ABS/OWNED/TEST-ROOT /ABS/READ-ONLY/DSH
-```
-
-此probe固定dsh0.2.1-rc.2，通过完整CLI加载私有空bundle profile和官方MCP插件；诊断插件等待九工具真实注册，再经registry调用。父服务用屏障独立计数非法输入的零HTTP，核对越权拒绝、成功固定读取与关闭。诊断插件主动向自身发送SIGTERM，请求官方launcher处理关闭，随后验证实际exit0及自有进程组消失；这与stdin EOF自然结束分别记录。显式标记只是调用者对外部隔离的确认，脚本不自行建立隔离。它不发送prompt或模型请求；不代表自主模型会话，也不将npm发行版等同固定源码提交。
+历史固定源码plugin/registry与Loader/HMR、发行版原生回合分别保存在[兼容矩阵](../integrations/compatibility.json)和[审查索引](../docs/reviews/README.md)。不自动安装源码、不改全局profile、不把旧八工具记录当当前目录。

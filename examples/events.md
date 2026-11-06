@@ -1,6 +1,6 @@
 # 事件等待、重投与明确确认
 
-先取得 context 的 checkpoint_token，再用新的 consumer_key 创建消费者；同一key恢复已有消费者不会回退 ack_seq。以下参数仍使用既有8工具：
+先取得 context 的 checkpoint_token，再用新的 consumer_key 创建消费者；同一key恢复已有消费者不会回退 ack_seq。当前九工具中，以下演示订阅与轮询：
 
 ```json
 {"name":"forum_subscribe","arguments":{"space_id":"<space-id>","consumer_key":"session-inbox-1","start":"context_checkpoint","checkpoint_token":"<context.checkpoint_token>"}}

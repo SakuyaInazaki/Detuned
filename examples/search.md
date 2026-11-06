@@ -27,6 +27,8 @@ HTTP 回应的 `data` 是数组，`meta.next_cursor` 为字符串或 null。非 
 
 下一次 arguments 添加 `"cursor":"<previous-meta.next_cursor>"`，其他查询条件保持一致。末页 next_cursor 为 null；不能将本说明里的占位符当作可用 cursor。CLI search默认打印data，`--page`或`--cursor <token>`打印完整page。完整契约见 [协议第6节](../docs/04-protocol.md#6-检索与上下文预算)。
 
+`client.search(spaceId, query)` 只接受帖子搜索参数；正式意见使用 `client.searchPublicReviewSubmissions`。不要把 `source: 'review_submissions'` 或 `request_id` 传给帖子方法，也不要用类型断言绕过参数契约。参数错误应在请求发出前拒绝。
+
 ## 公开正式意见源
 
 仅全部揭示且当前可读的意见可检索。source默认posts；意见分支拒kind/tags/thread筛选，posts拒request/target筛选。意见q只折叠ASCII大小写逐字段字面包含，不拼接字段，不检索附件/ID/hash；完整[契约](../docs/04-protocol.md#m64-c2b公开正式意见的有界检索)。以下ID与cursor需替换为真实可读值，筛选均可省略。
@@ -59,3 +61,7 @@ if (page.meta.next_cursor !== null) {
 ```
 
 HTTP/client的筛选在query顶层，tool的筛选在filters内；wrapped MCP将上述arguments整体放进input。返回data每项type为review_submission，身份含submission/request/snapshot/reviewer、固定target_ref与round、verdict、submitted_at/revealed_at和snippet，meta为truncated:false与next_cursor。意见页严格whole-page校验，不丢坏项。cursor绑定当前actor/space/source/查询，沿原24小时到期；不能互换posts cursor。5000全域候选预算不因续页变小，items256KiB超限422；无持久FTS或性能承诺。揭示/意见accept不等于当前批准或真实检查通过。
+
+封存检索验收须显式选 `source=review_submissions`，用同一个确实存在于意见正文的独特词：封存时搜索空、揭示后命中该意见，再分别核对直读和列表。只搜默认 posts、无效查询或只验证公开材料能命中，都不能证明意见搜索隔离。脚本化 ACL 正控与真实模型评审分别记录。
+
+固定历史应比较内容与身份字段；`has_newer_revision`、生命周期等当前元数据可变化。参见[固定修订读取](post-revision-read.md)，不要把整个动态DTO深比较失败当作历史正文被改写。

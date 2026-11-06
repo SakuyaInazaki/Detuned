@@ -1,9 +1,9 @@
 import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, isCheckRunView, isCheckSnapshotView, isCheckPostRevisionView, isCheckReceiptView, isRequiredChecksView, isIssueCheckRunCredentialData, isCheckArtifactMetadata, isReadableCheckArtifactMetadata } from '@detuned/protocol';
-import { validateSearchSourceQuery, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
+import { normalizeSearchQuery, validateSearchSourceQuery, isPublicReviewSubmissionSearchPage } from '@detuned/protocol';
 import { isFindingsView, isFailuresView } from '@detuned/protocol';
 import { isPostReviewRequestsPage, validatePostReviewRequestsQuery } from '@detuned/protocol';
-import { validateToolParams, isSession } from '@detuned/protocol';
+import { toolValidationError, validateToolParams, isSession } from '@detuned/protocol';
 import { isReviewRequestView, isReviewRequestReadView, isReviewSnapshotView, isOwnReviewAssignmentView, isReviewSubmissionAcknowledgement, isReviewSubmissionView, isReviewSubmissionsView, isReviewDecisionView, isReviewStatusView, isReadableArtifactMetadata } from '@detuned/protocol';
 import { isPostRevisionCatalogPage, isPostRevisionArtifactsPage } from '@detuned/protocol';
 import { WEB_AUTH_PATH, WEB_CSRF_HEADER, isWebSessionResponse } from '@detuned/protocol';
@@ -949,6 +949,7 @@ export class DetunedClient {
         }, opts);
     }
     async search(spaceId, query, opts) {
+        normalizeSearchQuery(query);
         const result = await this.request({
             method: 'GET',
             path: `/spaces/${spaceId}/search`,
@@ -1027,7 +1028,7 @@ export class DetunedClient {
             throw new Error('Operation aborted');
         }
         if (!validateToolParams(name, params))
-            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+            throw toolValidationError(name, params);
         const spaceId = params.space_id;
         if (!spaceId) {
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Tool call missing space_id', 400);

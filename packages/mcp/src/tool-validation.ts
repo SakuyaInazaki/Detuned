@@ -1,6 +1,6 @@
 import {AjvJsonSchemaValidator} from '@modelcontextprotocol/sdk/validation/ajv';
 import type {JsonSchemaType,JsonSchemaValidator} from '@modelcontextprotocol/sdk/validation';
-import {DETUNED_TOOLS,validateToolParams,DetunedError,ErrorCode,isMeResponse,isSession,type MeResponse,type Session} from '@detuned/protocol';
+import {DETUNED_TOOLS,toolValidationError, validateToolParams,DetunedError,ErrorCode,isMeResponse,isSession,type MeResponse,type Session} from '@detuned/protocol';
 import {ClientProtocolError} from '@detuned/client';
 
 export type McpToolArguments = Record<string,unknown> & {space_id:string};
@@ -27,10 +27,10 @@ const wrappedTools = new Map<string,JsonSchemaValidator<{input:McpToolArguments}
 /** Validate the advertised single-source schema without rewriting or copying input. */
 export function validateMcpToolArguments(name:string,args:unknown,mode:McpInputMode='flat'):McpToolArguments {
   resolveMcpInputMode(mode);
-  if(mode==='wrapped'){const result=wrappedTools.get(name)?.(args);if(result?.valid && validateToolParams(name,result.data.input))return result.data.input;throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid forum tool arguments.',400);}
+  if(mode==='wrapped'){const result=wrappedTools.get(name)?.(args);if(result?.valid && validateToolParams(name,result.data.input))return result.data.input;throw toolValidationError(name,args,true);}
   const validate = tools.get(name);
   if(validate){const result=validate(args);if(result.valid && validateToolParams(name,result.data))return result.data;}
-  throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid forum tool arguments.',400);
+  throw toolValidationError(name,args);
 }
 export function parseMcpMe(data:unknown):MeResponse {
   if(isMeResponse(data))return data;

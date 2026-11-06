@@ -1,6 +1,6 @@
 # 可选持久 request_key：CLI publish / relate
 
-在发布前显式提供私有目录和稳定逻辑操作 ID。CLI 使用当前认证 actor，经共用 client 持久取得 key 后才发送业务请求；默认调用不创建目录。输入文件只由调用者保管，不复制到 key store。
+在发布前显式提供私有目录和稳定逻辑操作 ID。目录必须由当前用户拥有、真实非软链且权限恰为0700；不存在时程序以0700创建，已有不合规目录拒绝而不自动chmod。CLI 使用当前认证 actor，经共用 client 持久取得 key 后才发送业务请求；默认调用不创建目录。输入文件只由调用者保管，不复制到 key store。
 
 ```sh
 detuned --url http://127.0.0.1:3000 --json publish \

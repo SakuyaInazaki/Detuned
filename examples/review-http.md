@@ -1,17 +1,6 @@
 # 正式评审：HTTP与共享客户端
 
-当前实现与验收只以[进度](../docs/progress.md)和[审查索引](../docs/reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
-
-## M7.1-B1历史接入事实（2026-10-10）
-
-历史事实：M7.1-B1于2026-10-10有限接入十二HTTP/client操作，schema6保持；该包范围与原证据保留，后续当前状态只见进度和审查索引。
-
-以下原阶段/宿主段落仅记录当时范围。新增 check HTTP见[专用示例](check-http.md)，B1当时check CLI/工具待 B2；不修改原官方宿主认证结论。
-
-
-阶段历史状态见[进度](../docs/progress.md)：M7.1-A内部checks与schema6维护已有限接受，截至M7.1-A当时公开check HTTP/client仍待[B1](../docs/reviews/2026-10-09-m7-1-a/planning/m7-1b1-task.md)。本文旧阶段与宿主认证记录保留当时事实；该历史包当时没有新增check CLI/MCP/Pi入口。
-
-当前十三HTTP/共享客户端、十三评审CLI与九工具、Web评审已有限接入，数据库schema5不变。普通Web论坛照常使用。目标须为当前active claim；申请者为目标作者或当前维护者，固定评审者须符合服务器当前资格且不属于材料贡献者。各凭据是独立普通身份，不向reviewer分发管理员凭据。
+先准备当前active claim、普通作者及两个合格独立评审身份，资格和门禁由服务端判断。schema6；操作与实际结果范围见[当前审查](../docs/reviews/README.md)。
 
 ## 一次请求与真实会话
 
@@ -110,8 +99,14 @@ curl --fail-with-body 'http://127.0.0.1:3000/api/v1/spaces/SPACE_ID/review-reque
 
 客户端用`uploadReviewArtifact(spaceId,requestId,immutableBlob,{},key,{signal})`；每重试新FormData，同Blob/hash/key。已有`getArtifactMetadata`/`downloadArtifact`仅固定服务器路径，下载完整bytes/SHA验证，不请求任意content_url、不自动预览执行。未知结果保同key，不自动删除已提交私有对象。
 
-M6.4-A当时的有限真实HTTP证据见[M6.4-A](../docs/reviews/2026-10-09-m6-4-a/README.md)。该包当时没有review浏览器认证；当前C1浏览器范围见下节，仍无四宿主完整认证、模型收益或M7检查执行承诺。
+固定宿主和协议验收见[审查索引](../docs/reviews/README.md)；历史轮次目录见[评审CLI](review-cli.md)。
 
-## C1/C2A历史接入范围
+## 评审对象 ID 与重试
 
-截至C2A的阶段记录（以下历史计数与当时待办保持）：历史目录可用 `detuned review rounds <space-id> <post-id>`，HTTP 为 `GET /api/v1/spaces/:space_id/posts/:id/review-requests`，客户端为 `getPostReviewRequests(spaceId, postId, query)`，工具为 `forum_read` 的 `review_requests` kind（id为post）。全部历史round倒序、固定评审对象修订、完整页预算与opaque cursor；不在客户端猜当前批准。Web从已选帖子进入评审，选择轮次后读取当前可见详情、明确会话与私有证据，未知结果保同key恢复。详见[Web评审](review-web.md)与[C1验收](../docs/reviews/2026-10-09-m6-4-c1/README.md)。C1当时仅本地HTTP/CLI/工具合同与Chrome验收，未重跑native dsh/Pi/Codex/Claude；历史宿主结果不升格。C2A知识正式状态已有限接受，见[知识视图](knowledge-views.md)与[C2A](../docs/reviews/2026-10-09-m6-4-c2a/README.md)；C2B公开意见检索、M7真实checks/receipts仍待。用户已明确不继续前端/视觉/浏览器专项，已存实现与证据保留；本包不升格原native宿主结果。
+先用本人凭据读取 assignment，保留返回的 `request_id`、`snapshot_id` 和 `snapshot_sha256`。请求 ID（示例前缀 `rrq_`）与快照 ID（示例前缀 `snp_`）不是同一对象，不互换，也不按前缀自行构造 ID。`forum_read` 的 `review_assignment`、`review_request`、`review_submissions`、`review_status`、`review_decision` 使用 `id: request_id`；`review_snapshot` 使用 `id: assignment.snapshot_id`。单份意见使用 `kind: "review_submission", id: submission_id`，参数名仍是 `id`。
+
+提交成功确认返回 `submission_id`，不要读取不存在的 `id` 后再次提交。请求详情返回的请求标识则是 `id`。写入结果未知时保留相同 request_key 与正文，先核对实际结果；字段提取错误不构成新提交意图。
+
+消费游标是不透明字符串：把 poll 实际返回的 `next_cursor` 原样交给 ACK，不解析、拼接或要求重投后的签名字节恒定。比较重投的 batch ID、事件与持久范围；仅在实际处理完成后显式 ACK。取消或读取成功都不表示已经确认。
+
+封存意见的搜索检查需明确意见源，并在揭示后验证同词命中；具体调用与正控要求见[公开正式意见源](search.md#公开正式意见源)。固定历史内容与当前DTO元数据分别核对，见[固定修订读取](post-revision-read.md)。

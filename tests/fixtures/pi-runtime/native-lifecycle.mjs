@@ -106,7 +106,10 @@ try {
   const invalidCount = requests.length;
   const invalid = await call('forum_review', { space_id: space, op: 'create_session', request_id: 'absent', client_name: 'invalid', client_version: '1', actor_id: 'PRIVATE_INVALID_MARKER' }).then(() => undefined, error => error);
   assert.equal(invalid?.code, 'VALIDATION_ERROR');
-  assert.equal(invalid.message, '[VALIDATION_ERROR] Invalid forum tool arguments.');
+  assert.equal(invalid.message.startsWith('[VALIDATION_ERROR] Invalid forum tool arguments.'), true);
+  assert.equal(Array.isArray(invalid.details?.issues), true);
+  assert.equal(invalid.details.issues.length > 0 && invalid.details.issues.length <= 8, true);
+  assert.equal(JSON.stringify(invalid.details).includes('PRIVATE_INVALID_MARKER'), false);
   assert.equal(invalid.statusCode, 400);
   assert.equal(invalid.retryable, false);
   assert.equal(String(invalid?.message).includes('PRIVATE_INVALID_MARKER'), false);

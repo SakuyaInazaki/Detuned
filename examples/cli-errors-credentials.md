@@ -11,7 +11,7 @@ node packages/cli/dist/index.js --json --token-file /private/path/reader-token s
 
 `--json`错误沿原 `{api_version:'1',error:{code,message,details?}}` 输出stdout；文本错误写stderr，原退出码保持。help/version仍是原生文本stdout和exit0。诊断模式只识别不处于声明参数值中的exact `--json`，真正 `--` 后不识别；它不是另一套命令解析器。
 
-本地parser、JSON输入、未知操作及raw运输/协议异常使用固定安全文案，不回显路径、输入片段、cause或stack。服务公开业务错误保留原有message/details。附件/导出失败若完整成品已留下，仍明确保留和持久性未确认；不要据非零退出盲删完整文件。init/serve长期运维日志不在此处承诺全面统一。
+已知缺失选项/位置参数会提示注册的静态名称，schema错误可给有界静态字段路径和规则；未知参数名、输入值、token、URL不回显。JSON输入、未知操作及raw运输/协议异常使用固定安全文案，不回显路径、输入片段、cause或stack。服务公开业务错误保留原有message/details。附件/导出失败若完整成品已留下，仍明确保留和持久性未确认；不要据非零退出盲删完整文件。init/serve长期运维日志不在此处承诺全面统一。
 
 合法credential/adminToken明文仅成功stdout输出；自行安全保存。错误净化不会删除这项必要成功输出。六非幂等管理动作及session仍单attempt，响应丢失不保证未提交，不能靠盲重试找回token。本包不改变HTTP重试或业务授权。
 

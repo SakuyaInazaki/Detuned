@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { cliInputSchema } from './schema.js';
 import { CliSafeError, renderCliError } from './cli-errors.js';
 import { configureCliParser, diagnosticJsonMode, parserError } from './argv-diagnostics.js';
 import { resolveCliToken } from './token-source.js';
@@ -354,6 +355,7 @@ program
     let requestLogs;
     let shutdown;
     try {
+        const port = parseServePort(options.port);
         if ((options.tlsCertFile !== undefined) !== (options.tlsKeyFile !== undefined))
             throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'TLS certificate and key files must be provided together.', 400);
         const tls = options.tlsCertFile !== undefined ? await loadServerTlsOptions(options.tlsCertFile, options.tlsKeyFile) : undefined;
@@ -422,7 +424,6 @@ program
         if (options.requestLogs !== false)
             requestLogs = createRequestLogWriter(process.stderr);
         app = buildApp({ tls, webAssetsDir, webOrigin: options.webOrigin, allowInsecureLoopback: options.webAllowInsecureLoopback, storage, requestLogSink: requestLogs?.write, artifactBlobs, artifactLimits, artifactMaxUploads, writeRateLimits, resourceLimits });
-        const port = parseInt(options.port, 10);
         const host = options.host;
         shutdown = createServeShutdown({
             beginDraining: () => app?.detunedBeginDraining(),
@@ -479,6 +480,11 @@ program
         handleError(err, isJson);
     }
 });
+function parseServePort(value) {
+    if (!/^\d+$/.test(value) || !Number.isSafeInteger(Number(value)) || Number(value) > 65535)
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'port必须为0至65535的整数。', 400);
+    return Number(value);
+}
 function parseReadPositiveInteger(value, label) {
     if (!/^\d+$/.test(value) || !Number.isSafeInteger(Number(value)) || Number(value) < 1)
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, `${label}必须为正safeinteger。`, 400);
@@ -1105,7 +1111,7 @@ program
     try {
         const client = getClient(program.opts());
         if (options.kind === 'post') {
-            const rev = options.revision ? parseInt(options.revision, 10) : undefined;
+            const rev = options.revision === undefined ? undefined : parseReadPositiveInteger(options.revision, 'revision');
             const res = await client.getPost(options.space, options.id, rev);
             printOutput(res.data, program.opts().json);
         }
@@ -1121,15 +1127,26 @@ program
         handleError(err, program.opts().json);
     }
 });
+program.command('schema <target>')
+    .description('离线查看CLI输入JSON schema：publish或relate；不读取凭据、不连接服务')
+    .requiredOption('--op <op>', 'publish: thread/post/revision/withdraw；relate: create/resolve/reopen')
+    .option('--kind <kind>', '按帖子kind缩小structured；revision应与已存帖子kind一致')
+    .action((target, options) => { try {
+    printOutput(cliInputSchema(target, options.op, options.kind), program.opts().json);
+}
+catch (error) {
+    handleError(error, program.opts().json);
+} });
 program
     .command('publish')
-    .description('发布主题、帖子、修订或撤回')
+    .description('发布主题、帖子、修订或撤回；CLI JSON不含space_id/op，--space/--op单独传。离线字段：schema publish --op <op> [--kind <kind>]')
     .requiredOption('--space <space_id>', '空间 ID')
     .requiredOption('--op <op>', '操作 (thread / post / revision / withdraw)')
     .option('--request-key <key>', '幂等键')
     .option('--request-key-dir <dir>', '显式私有 request_key 持久目录（需 logical-operation-id）')
     .option('--logical-operation-id <id>', '稳定逻辑操作 ID，重试沿用，有意新写使用新 ID')
     .option('--input <file>', '输入 JSON 文件路径或 - (stdin)')
+    .addHelpText('after', '\nCLI JSON: thread需title；post需thread_id/kind/title/summary/body；revision需post_id/expected_revision/title/summary/body；withdraw需post_id/expected_revision/reason。类型化structured按schema要求；request_key可选。MCP envelope不能直接作为CLI body。示例见examples/cli-writing-events.md。')
     .action(async (options) => {
     try {
         const input = readAdminInput(() => readInputJson(options.input));
@@ -1171,13 +1188,14 @@ program
 });
 program
     .command('relate')
-    .description('创建或解决/重开关系')
+    .description('创建或解决/重开关系；CLI JSON不含space_id/op。离线字段：schema relate --op <op>')
     .requiredOption('--space <space_id>', '空间 ID')
     .requiredOption('--op <op>', '操作 (create / resolve / reopen)')
     .option('--request-key <key>', '幂等键')
     .option('--request-key-dir <dir>', '显式私有 request_key 持久目录（需 logical-operation-id）')
     .option('--logical-operation-id <id>', '稳定逻辑操作 ID，重试沿用，有意新写使用新 ID')
     .option('--input <file>', '输入 JSON 文件路径或 - (stdin)')
+    .addHelpText('after', '\nCLI JSON: create需type/source_ref/target_ref；resolve/reopen需relation_id/expected_version/reason_ref。request_key可选。字段来自canonical schema，示例见examples/cli-writing-events.md。')
     .action(async (options) => {
     try {
         const input = readAdminInput(() => readInputJson(options.input));
@@ -1284,6 +1302,6 @@ void program.parseAsync(process.argv).catch((error) => {
         json = diagnosticJsonMode(program, process.argv.slice(2));
     }
     catch { }
-    handleError(parserError(), json);
+    handleError(parserError(program, code, process.argv.slice(2)), json);
 });
 //# sourceMappingURL=index.js.map

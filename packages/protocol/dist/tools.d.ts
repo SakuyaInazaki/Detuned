@@ -1,3 +1,4 @@
+import { DetunedError } from './errors.js';
 import { Static, TSchema } from '@sinclair/typebox';
 export declare const ToolContextParamsSchema: import("@sinclair/typebox").TObject<{
     max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
@@ -869,7 +870,7 @@ export declare const DETUNED_TOOLS: readonly [{
     readonly schema: TSchema;
 }, {
     readonly name: "forum_read";
-    readonly description: "有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。";
+    readonly description: "有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。";
     readonly schema: TSchema;
 }, {
     readonly name: "forum_publish";
@@ -911,9 +912,11 @@ export declare const DETUNED_TOOLS: readonly [{
     }>;
 }, {
     readonly name: "forum_review";
-    readonly description: "申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。会话不创造独立身份。";
+    readonly description: "申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。request_id使用请求返回的id或assignment.request_id；snapshot_id使用assignment.snapshot_id，二者不互换。提交确认返回submission_id，不是id；提取字段失败不应重复提交。会话不创造独立身份。";
     readonly schema: TSchema;
 }];
 /** Canonical local schema validation plus explicit constraints not evaluated by TypeBox. */
 export declare function validateToolParams(toolName: string, params: unknown): boolean;
+/** Same rejection decision; diagnostics use only the trusted advertised schema. */
+export declare function toolValidationError(toolName: string, params: unknown, wrapped?: boolean): DetunedError;
 //# sourceMappingURL=tools.d.ts.map

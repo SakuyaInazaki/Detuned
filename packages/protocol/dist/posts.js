@@ -1,3 +1,4 @@
+import { schemaValidationError } from './validation-issues.js';
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { DetunedError, ErrorCode } from './errors.js';
@@ -97,7 +98,7 @@ export function parseNewTypedStructured(kind, structured) {
         return undefined;
     const schema = NEW_TYPED_STRUCTURED_SCHEMAS[kind];
     if (!Value.Check(schema, structured)) {
-        throw new DetunedError('VALIDATION_ERROR', `${kind} structured does not satisfy the new-write schema`, 400);
+        throw schemaValidationError(`${kind} structured does not satisfy the new-write schema`, schema, structured, '/structured');
     }
     return structured;
 }

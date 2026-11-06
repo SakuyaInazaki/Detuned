@@ -1,3 +1,4 @@
+import { schemaValidationError } from './validation-issues.js';
 import { ReviewSubmissionSearchFilterSchema, validateSearchSourceQuery } from './search.js';
 import { ThreadPostsReadQuerySchema } from './threads.js';
 import { Value } from '@sinclair/typebox/value';
@@ -46,13 +47,13 @@ export const ToolReadParamsUnion = Type.Union([
     Type.Object({ kind: Type.Literal('space'), space_id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...SpaceRevisionReadQuerySchema.properties }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('post_revision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER }), ...PostRevisionReadQuerySchema.properties }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('post'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }), revision: Type.Optional(Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER })) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_request'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_snapshot'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_assignment'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_submission'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_submissions'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_status'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
-    Type.Object({ kind: Type.Literal('review_decision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_request'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或本人assignment.request_id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_snapshot'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '固定快照ID，来自本人assignment.snapshot_id或请求snapshot_id；不是request_id。快照读取返回snapshot_id，不是id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_assignment'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id；不是assignment自身id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_submission'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '单份意见ID，来自提交确认或可见意见的submission_id；输入参数名为id，不是submission_id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_submissions'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '评审请求ID；返回该请求当前可见的意见列表，不是单份submission_id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_status'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或assignment.request_id。' }) }, { additionalProperties: false }),
+    Type.Object({ kind: Type.Literal('review_decision'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1, description: '评审请求ID；不是裁决自身ID。' }) }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('artifact'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
     Type.Object({ kind: Type.Literal('thread'), space_id: Type.String({ minLength: 1 }), id: Type.String({ minLength: 1 }) }, { additionalProperties: false }),
 ]);
@@ -197,25 +198,25 @@ export const ToolReviewSubmitOpSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
     request_key: Type.String({ minLength: 1, maxLength: 128 }),
     op: Type.Literal('submit'),
-    request_id: Type.String({ minLength: 1 }),
+    request_id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或本人assignment.request_id；不是snapshot_id。' }),
     ...CreateReviewSubmissionSchema.properties,
 }, { additionalProperties: false });
 export const ToolReviewFinalizeOpSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
     request_key: Type.String({ minLength: 1, maxLength: 128 }),
     op: Type.Literal('finalize'),
-    request_id: Type.String({ minLength: 1 }),
+    request_id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或本人assignment.request_id；不是snapshot_id。' }),
     ...FinalizeReviewRequestSchema.properties,
 }, { additionalProperties: false });
 export const ToolReviewCancelOpSchema = Type.Object({
     space_id: Type.String({ minLength: 1 }),
     request_key: Type.String({ minLength: 1, maxLength: 128 }),
     op: Type.Literal('cancel'),
-    request_id: Type.String({ minLength: 1 }),
+    request_id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或本人assignment.request_id；不是snapshot_id。' }),
     ...CancelReviewRequestSchema.properties,
 }, { additionalProperties: false });
 export const ToolReviewCreateSessionOpSchema = Type.Object({
-    space_id: Type.String({ minLength: 1 }), request_id: Type.String({ minLength: 1 }),
+    space_id: Type.String({ minLength: 1 }), request_id: Type.String({ minLength: 1, description: '评审请求ID，来自请求返回的id或本人assignment.request_id；不是snapshot_id。' }),
     op: Type.Literal('create_session'),
     client_name: CreateSessionRequestSchema.properties.client_name,
     client_version: CreateSessionRequestSchema.properties.client_version,
@@ -254,7 +255,7 @@ export const DETUNED_TOOLS = [
     },
     {
         name: 'forum_read',
-        description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。',
+        description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。',
         schema: ToolReadParamsSchema,
     },
     {
@@ -282,7 +283,7 @@ export const DETUNED_TOOLS = [
         description: '原子确认已持久消费的投递批次。',
         schema: ToolAckParamsSchema,
     },
-    { name: 'forum_review', description: '申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。会话不创造独立身份。', schema: ToolReviewParamsSchema },
+    { name: 'forum_review', description: '申请、提交、裁决或取消正式评审；显式创建本人评审会话；创建或失效普通检查run。request_id使用请求返回的id或assignment.request_id；snapshot_id使用assignment.snapshot_id，二者不互换。提交确认返回submission_id，不是id；提取字段失败不应重复提交。会话不创造独立身份。', schema: ToolReviewParamsSchema },
 ];
 /** Canonical local schema validation plus explicit constraints not evaluated by TypeBox. */
 export function validateToolParams(toolName, params) {
@@ -315,5 +316,12 @@ export function validateToolParams(toolName, params) {
     catch {
         return false;
     }
+}
+/** Same rejection decision; diagnostics use only the trusted advertised schema. */
+export function toolValidationError(toolName, params, wrapped = false) {
+    const schema = DETUNED_TOOLS.find(item => item.name === toolName)?.schema;
+    if (!schema)
+        return new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid forum tool arguments.', 400);
+    return schemaValidationError('Invalid forum tool arguments.', wrapped ? Type.Object({ input: schema }, { additionalProperties: false }) : schema, params);
 }
 //# sourceMappingURL=tools.js.map

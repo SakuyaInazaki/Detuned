@@ -1,19 +1,6 @@
 # 知识视图与摘要来源读取
 
-当前实现与验收只以[进度](../docs/progress.md)和[审查索引](../docs/reviews/README.md)为准；以下阶段事实保留当时范围，不作为后续dispatch或宿主认证升级。
-
-## M7.1-B1历史接入事实（2026-10-10）
-
-历史事实：M7.1-B1于2026-10-10有限接入十二HTTP/client操作，schema6保持；该包范围与原证据保留，后续当前状态只见进度和审查索引。
-
-现知识/评审状态继续显示三个独立事实及 latest round/fixed revision；新 HTTP required checks 目录提供最新 run 和 receipt ID，不把日志上传、pending/not_required 或历史 accepted 视为当前通过。见[check HTTP](check-http.md)。
-
-
-## M7.1-A当前检查事实（2026-10-10）
-
-现有知识HTTP可呈现not_required/pending/passed/failed/error，依冻结required各latest attempt计算，不是作者报告的自称通过。current_validity增加check_invalidated/check_log_redacted/check_log_unavailable，终态后失效不改历史decision。旧C2A示例反映当时材料，其accepted/superseded与not_required保持；新run/receipt操作尚无公开check HTTP/client，不能从示例猜接口。
-
-阶段历史状态见[进度](../docs/progress.md)：M7.1-A内部checks与schema6维护已有限接受，截至M7.1-A当时公开check HTTP/client仍待[B1](../docs/reviews/2026-10-09-m7-1-a/planning/m7-1b1-task.md)。本文旧阶段与宿主认证记录保留当时事实；该历史包当时没有新增check CLI/MCP/Pi入口。
+findings只收claim，不收proposal，也不是proposal经过评审后的自动晋升列表。各view保留作者材料、正式评审、外部检查和当前有效性为不同事实。
 
 以下变量都是占位值。先取得当前身份可读的真实空间；服务不启动模型或自行执行研究实验。
 
@@ -36,9 +23,8 @@ relation source_ref/target_ref是原固定revision，source_author_id/target_aut
 
 context.pinned_summaries只显示有效active summary pin。每项has_newer_revision仍指摘要自身；source_refs中的各ref/status/has_newer_revision另行表示固定来源。status active/withdrawn时新版标识为Boolean；redacted或unavailable时为null，不能显示成“没有新版”。缺失/跨空间/不可读均unavailable且无目标标题/current_revision；source_refs整体null配missing_fields表示历史来源声明缺少/无法解读。若blocking任一端点redacted，issue/impact均null，不恢复旧正文。
 
-M2.2-B当时truncated沿用上下文预算提示；当前完整context预算与续读见接口契约，C2A不改变context预算。HTTP wire、新写与原key历史重放合同继续保持。详见 [接口契约](../docs/04-protocol.md)；这里的说明不是实际模型研究输出。
 
-## C2A历史正式状态读取
+## 正式状态读取
 
 findings最多25条当前claim，failures最多50条当前failure；不是全量知识索引。data仍是数组，原材料、null/missing_fields和公共关系保留。每项必含`formal_review`：无轮为null；有轮为安全最新全部轮次summary（包括cancelled/stale），不挑曾接受的旧轮。
 
@@ -58,8 +44,7 @@ findings最多25条当前claim，failures最多50条当前failure；不是全量
 }
 ```
 
-历史accepted针对固定target_revision；当前条目可能已是修订2，不能沿用批准。评审、检查、current_validity分别读；pending与not_required不表示passed。当前检查只复用冻结required_checks产生not_required/pending，M7真实checks/receipts仍待。failure不能成为正式target，也不继承作为依赖的批准。
+历史accepted针对固定target_revision；当前条目可能已是修订2，不能沿用批准。评审、检查、current_validity分别读；pending与not_required不表示passed。外部检查操作见[check HTTP](check-http.md)与[check CLI](check-cli.md)。failure不能成为正式target，也不继承作为依赖的批准。
 
-服务端同一读快照刷新当前ACL、按policy_revision读取有效政策与最新轮；缺失/非法政策安全RESYNC_REQUIRED，不补默认。共享getView对整数组严格检查未知/坏项、日期、flags一致性及space/post范围；一坏项整页拒绝。新增必填summary与flags须server/client一起升级，旧server缺字段被新client拒绝；方法/data数组签名不变、无需DB迁移。CLI `view`与既有Agent工具复用客户端，不复制权限/批准规则。
 
-截至C2A的阶段记录（以下历史计数与当时待办保持）：[C2A证据](../docs/reviews/2026-10-09-m6-4-c2a/README.md)仅接受本机有限功能。用户已明确不继续前端开发；已存Web与历史证据保留。下一C2B公开意见读时有界检索、M7外部检查仍待，未重跑native宿主或模型评估。
+权限、封存与正式状态由服务端同一读快照判断，不靠客户端猜批准；证据与限制见[审查索引](../docs/reviews/README.md)。

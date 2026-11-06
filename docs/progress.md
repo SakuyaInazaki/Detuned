@@ -1,15 +1,32 @@
 # Detuned 实施进度追踪
 
+当前首次使用与诊断M7.9见[处置与验证](reviews/2026-11-06-first-use/README.md)。全部24报告逐项处置；严格数字、安全字段诊断、离线CLI schema与私有pnpm runner完成。最终27包步骤、34schema对照、相关9文件53项及一次完整170文件1048项通过，原文四块CLI协作旅程通过；主代理独立核验功能和63项字节绑定接受，清退事实见当前入口。
 
-当前入口：[Arch Linux 问题处置与验收](reviews/2026-11-04-arch/README.md)。基于修复前 `5ff49614` 的独立复核已闭合政策同值误失效、畸形上游错误、catch-up 停止后 ACK、plain HTTP 半开连接关闭及接入验证器边界；固定 Arch x86_64、Node 22.19.0、pnpm 11.7.0 九后端 build/typecheck/lint 共 27 步通过。最终独占核心回归一次完整通过 **165 文件、1009/1009 项，0 fail/pending/todo（318.50 秒）**，相关 15 文件 101/101 单独通过。正常 verified smoke、真实 SIGTERM 不 ACK 与正常 server close、显式时钟续签 controls、四宿主有限无模型路径均通过。核心论坛、HTTP/CLI/MCP、正式评审、外部检查回执和无模型 D01 已可本地使用，schema6 不变。
+## 历史搜索参数维护
 
-历史 Darwin M7.5-A 的 158 文件、977 项完整文件组合覆盖保持原结论，非本包成绩。当前证据不认证任意宿主配置、供应商推理账户、生产容量或科研增益；许可证暂未指定，M8 独立，后续前端已取消。
+历史维护见[搜索参数与报告问题处置](reviews/2026-11-05-search/README.md)。M7.8-S修复帖子client.search验证前投影参数的缺口；该问题为代码复核独立发现，不冒称外部报告原来调用该方法。两次旧实现红例与同15项修后全绿、27包步骤、相关6文件36项、本次一次完整166文件1024项通过；独立核验与清退事实见当前入口。
 
-既有 Arch 161 文件、987 项与其失败/补测保持独立历史事实；本次首 focused 88/89、原实现行为失败、controls 缺参数和中间 server 强杀均如实保留，不由补测拼成最终 1009 项成绩。Pi 真实 CLI 仅验证命令发现、idle/EOF；业务错误另经官方 SDK 预定流测试，不是模型认证。机器摘要仅追加 followup，原历史字段不覆盖；行为、命令及清退事实见同一审查入口。
+## 历史四宿主现场验收
+
+历史证据见[四宿主协作与正式评审验收](reviews/2026-11-05-live4/README.md)。固定Arch x86_64、Node22.19.0/pnpm11.7.0，九后端build/typecheck/lint共27步通过，后端回归一次完整通过165文件1009项，0 fail/pending/todo。四个实际宿主版本为dsh0.2.1-rc.2、Pi0.87.1、Codex0.165.0、Claude2.1.312；四主链均经原生模型协议与论坛工具循环自然退出0。dsh续接、Codex同身份新会话补正、Pi服务端已进入长轮询后的原生abort/不ACK均取得实际完成证据。
+
+现场模型由主代理及获授权gpt-6.1-sol会话通过私有协议桥逐请求回答，没有预写研究动作或调用供应商推理账户。主代理驱动Claude主链，Claude正式评审由新的无上下文子Agent驱动；Pi另一独立身份/会话未提前披露判词。两份完整封存初评完成后揭示，裁决accepted/current，外部检查为not_required；不代表验证器通过或不同基础模型认知独立。主代理另核原始JSON，独立审查已通过。自有进程与挂载归零后，仅删除核验归属的唯一私有根，即时及独立新SSH均确认ENOENT，主代理另以新SSH末核确认不存在，清退完成；细节见当前验收收据。
+
+## 历史后端使用维护
+
+[后端使用与验收](reviews/2026-11-05-usability/README.md)保留精确九包串行与后端测试入口、AppleDouble排除、使用smoke以及四份外部报告分类。该次27步检查和165文件1009项回归及其已清退环境保持独立历史事实，不与本次成绩拼接。外部新版rc.5/Pi1.5.0/Codex0.166.0/Claude2.1.318不冒充本次宿主版本。
+
+## 历史 Arch 问题处置与验收
+
+历史入口：[Arch Linux 问题处置与验收](reviews/2026-11-04-arch/README.md)。基于修复前 `5ff49614` 的独立复核已闭合政策同值误失效、畸形上游错误、catch-up 停止后 ACK、plain HTTP 半开连接关闭及接入验证器边界；固定 Arch x86_64、Node 22.19.0、pnpm 11.7.0 九后端 build/typecheck/lint 共 27 步通过。最终独占核心回归一次完整通过 **165 文件、1009/1009 项，0 fail/pending/todo（318.50 秒）**，相关 15 文件 101/101 单独通过。正常 verified smoke、真实 SIGTERM 不 ACK 与正常 server close、显式时钟续签 controls、四宿主有限无模型路径均通过。核心论坛、HTTP/CLI/MCP、正式评审、外部检查回执和无模型 D01 已可本地使用，schema6 不变。
+
+历史 Darwin M7.5-A 的 158 文件、977 项完整文件组合覆盖保持原结论，非本包成绩。该历史证据不认证任意宿主配置、供应商推理账户、生产容量或科研增益；许可证暂未指定，M8 独立，后续前端已取消。
+
+既有 Arch 161 文件、987 项与其失败/补测保持独立历史事实；本次首 focused 88/89、原实现行为失败、controls 缺参数和中间 server 强杀均如实保留，不由补测拼成最终 1009 项成绩。该次 Pi 真实 CLI 仅验证命令发现、idle/EOF；业务错误另经官方 SDK 预定流测试，不是模型认证。机器摘要仅追加 followup，原历史字段不覆盖；行为、命令及清退事实见同一审查入口。
 
 正常 smoke 另经独立 ledger/DB audit exit0，核对 20 个 consumer、591 请求/586 成功、400 操作和 unexpected0；测量实际 HTTP 峰值 1，不能称为 20 并发容量。所有收据统一见 [results.json 的 followup](reviews/2026-11-04-arch/results.json)。
 
-本次私有根经父目录与身份/设备/inode/权限/标记核对后，仅清退本次自有环境；自有测试进程为 0，即时及独立 SSH 均确认 ENOENT。必要收据保留，临时原始日志随根删除，历史根与用户资料不操作。
+该次私有根经父目录与身份/设备/inode/权限/标记核对后，仅清退本次自有环境；自有测试进程为 0，即时及独立 SSH 均确认 ENOENT。必要收据保留，临时原始日志随根删除，历史根与用户资料不操作。
 
 ## M7.4-E/R1有限Codex原生控制接入（2026-10-10）
 
@@ -57,16 +74,16 @@ M7.1-A阶段历史入口：[M7.1-A内部检查与schema6维护](reviews/2026-10-
 
 ## 当前功能状态与未完成能力
 
-“已有基础”不等于整个里程碑验收完成。下表反映当前已接受M7.1–M7.3本机功能及既有历史/有限宿主证据状态；M8是独立研究验证，不是缺失的产品功能。
+“已有基础”不等于整个里程碑验收完成。下表反映当前已接受的本机功能与固定Arch原生会话证据状态；M8是独立研究验证，不是缺失的产品功能。
 
 | 阶段 | 已实现并有本机证据的基础 | 仍未实现或未完成验收 |
 |---|---|---|
 | **M2 共享记忆与读取** | 附件HTTP上传/下载与授权配额、类型化帖子、知识视图/来源状态、FTS搜索签名分页、context正文预算与一致checkpoint、固定空间规则续读、**固定帖子五字段内容续读B.2.1、有界主题metadata目录B.2.2已通过**；新GET/thread_posts/getThreadPosts/CLI thread posts整page，目录id/current_revision衔接固定正文；**C.1主题聚焦上下文已通过**，空间规则/高水位及省略focus兼容；100k帖子/1M事件/20客户端本机基准及T06/M2读取验收完成。 | 本机功能无新增阻塞；受控目标硬件另验，真实模型收益未评估。旧HTTP/client裸cursor分页与旧tool/CLI首批data保持；目录不聚合主题全文、不固定跨页全集。 |
-| **M3 可靠消费与运维** | **M3.1可靠消费/恢复与有效wait_ms已通过**：subscription/consumer/batch、持久单待确认poll/ack、当前public投影、Clock/strict与legacy凭据、重投与ACL epoch、checkpoint起点；100ms复核/最长25秒等待、128实际等待槽与取消不ack；共享client取消/超时/有界重试；**M3.2可选持久request_key已通过**，10业务write wrapper及CLI publish/relate七分支、当前actor域、真实私有文件原子发布与新进程恢复；**M3.3-A离线物理备份/新目录恢复已通过**，current schema2/format1、无覆盖、撤旧凭据/换secret/新human管理员、同原actor新token独立证明旧cursor失效及pending恢复；**M3.3-B.1权限过滤NDJSON导出已通过**，file-WAL独立T0快照、当前ACL/脱敏guard、历史/引用/墓碑/附件manifest、client完整EOF验证及CLI私有新文件发布；**M3.3-B.2 本地新实例逻辑导入已通过**，完整流与业务历史校验、新目录无覆盖发布、禁用来源身份、新本地管理员、ready 附件转 missing 与有界来源元数据；**M3.3-C 离线复制升级与匹配旧 runtime 回退已通过**，受支持 schema1 源保持原材料、新副本迁移 schema2/身份隔离；**M3.4-A.1 统一写入限流/显式配置已通过**，标准服务共享 actor 默认 60/20 预算、权限/幂等优先、CLI 配置；**M3.4-A.2 主库页数与登记附件配额已通过**，默认 1 GiB/全状态 4 GiB/10000，每连接重新 apply，可配置而非全目录硬 cap；**M3.4-B.1 安全日志/健康/管理员统计已通过**，匿名最小健康、管理员只读精确字节采样与可信日志/有界可drop队列；**M3.4-B.2 有界退出已通过**，默认10秒、配置1–120秒，统一取消后等待整个 finally/显式 FD 关闭再关DB/严格放锁，重复信号与 listen 失败共享清理；T02/T08/T12/T13 受支持本机工程出口已接受。 | 跨平台、任意旧库、断电灾难与真实宿主/模型认证未覆盖；非 WAL/全目录硬配额，库宿主需自有关闭预算，native 同步调用不能硬抢占。 |
-| **M4 CLI与宿主接入** | CLI init/serve/backup/restore/export/import/migrate/context/search/read/publish/relate/subscribe/poll/ack、space read与post read/thread posts；**M4.1-A 已通过**：me/capabilities/diagnostics、health live/ready、space/thread list、post revisions/view与search显式page/cursor/thread，保旧默认输出；**M4.1-B 已通过**：附件sharedclient/CLI上传、metadata、SHA/bytes/EOF完整下载与私有无覆盖发布、持久key恢复；25MiB缓存/1MiB JSON响应；**M4.1-C 已通过**：七身份/凭据/成员/redact命令、一次明文stdout、六非幂等singleattempt与脱敏持久key；**M4.1-D 已通过**：空间/主题写、会话单attempt、订阅过滤/checkpoint/poll等待与同事务scope停用；**M4.1-E 已通过**：安全parser/action错误、显式token-file与四来源互斥、锁安全诊断；**M4.2-A 已通过**：Node凭据共享、完整structuredContent与16KiB文字边界、统一取消/关闭与不ACK重投；**M4.2-B 已通过**：完整八schema预校验、惰性身份与诊断session绑定、取消/失败重连边界；**M4.3-A 已通过**：固定官方dsh plugin+registry无模型链、跨空间拒权与pending重连；**M4.3-B 已通过**：官方patch/Loader/Include加载、真实配置watch重装与坏YAML恢复边界；**M4.4-A 已通过**：共享browser身份/session协调、严格targeted Me/Session响应guard、MCP实际thinwrapper消费；stdio MCP真实通信、**M4.4-B 已通过**：Pi0.87.1真实SDK扩展身份、分代取消和new/switch/fork/reload/shutdown本机路径。 | 完整八工具广告校验与capabilities/me、惰性诊断session绑定已通过M4.2-B；dsh/Pi/Codex/Claude四真实宿主会话未完成实测，Pi固定版SDK生命周期路径已通过，完整CLI/profile/RPC与模型等T20未完成。通用MCP任意本机上传不列为首版必需。 |
+| **M3 可靠消费与运维** | **M3.1可靠消费/恢复与有效wait_ms已通过**：subscription/consumer/batch、持久单待确认poll/ack、当前public投影、Clock/strict与legacy凭据、重投与ACL epoch、checkpoint起点；100ms复核/最长25秒等待、128实际等待槽与取消不ack；共享client取消/超时/有界重试；**M3.2可选持久request_key已通过**，10业务write wrapper及CLI publish/relate七分支、当前actor域、真实私有文件原子发布与新进程恢复；**M3.3-A离线物理备份/新目录恢复已通过**，current schema2/format1、无覆盖、撤旧凭据/换secret/新human管理员、同原actor新token独立证明旧cursor失效及pending恢复；**M3.3-B.1权限过滤NDJSON导出已通过**，file-WAL独立T0快照、当前ACL/脱敏guard、历史/引用/墓碑/附件manifest、client完整EOF验证及CLI私有新文件发布；**M3.3-B.2 本地新实例逻辑导入已通过**，完整流与业务历史校验、新目录无覆盖发布、禁用来源身份、新本地管理员、ready 附件转 missing 与有界来源元数据；**M3.3-C 离线复制升级与匹配旧 runtime 回退已通过**，受支持 schema1 源保持原材料、新副本迁移 schema2/身份隔离；**M3.4-A.1 统一写入限流/显式配置已通过**，标准服务共享 actor 默认 60/20 预算、权限/幂等优先、CLI 配置；**M3.4-A.2 主库页数与登记附件配额已通过**，默认 1 GiB/全状态 4 GiB/10000，每连接重新 apply，可配置而非全目录硬 cap；**M3.4-B.1 安全日志/健康/管理员统计已通过**，匿名最小健康、管理员只读精确字节采样与可信日志/有界可drop队列；**M3.4-B.2 有界退出已通过**，默认10秒、配置1–120秒，统一取消后等待整个 finally/显式 FD 关闭再关DB/严格放锁，重复信号与 listen 失败共享清理；T02/T08/T12/T13 受支持本机工程出口已接受。 | 跨平台、任意旧库、断电灾难与供应商推理账户认证未覆盖；非 WAL/全目录硬配额，库宿主需自有关闭预算，native 同步调用不能硬抢占。 |
+| **M4 CLI与宿主接入** | CLI init/serve/backup/restore/export/import/migrate/context/search/read/publish/relate/subscribe/poll/ack、space read与post read/thread posts；**M4.1-A 已通过**：me/capabilities/diagnostics、health live/ready、space/thread list、post revisions/view与search显式page/cursor/thread，保旧默认输出；**M4.1-B 已通过**：附件sharedclient/CLI上传、metadata、SHA/bytes/EOF完整下载与私有无覆盖发布、持久key恢复；25MiB缓存/1MiB JSON响应；**M4.1-C 已通过**：七身份/凭据/成员/redact命令、一次明文stdout、六非幂等singleattempt与脱敏持久key；**M4.1-D 已通过**：空间/主题写、会话单attempt、订阅过滤/checkpoint/poll等待与同事务scope停用；**M4.1-E 已通过**：安全parser/action错误、显式token-file与四来源互斥、锁安全诊断；**M4.2-A 已通过**：Node凭据共享、完整structuredContent与16KiB文字边界、统一取消/关闭与不ACK重投；**M4.2-B 已通过**：完整八schema预校验、惰性身份与诊断session绑定、取消/失败重连边界；**M4.3-A 已通过**：固定官方dsh plugin+registry无模型链、跨空间拒权与pending重连；**M4.3-B 已通过**：官方patch/Loader/Include加载、真实配置watch重装与坏YAML恢复边界；**M4.4-A 已通过**：共享browser身份/session协调、严格targeted Me/Session响应guard、MCP实际thinwrapper消费；stdio MCP真实通信、**M4.4-B 已通过**：Pi0.87.1真实SDK扩展身份、分代取消和new/switch/fork/reload/shutdown本机路径。 | 完整八工具广告校验与capabilities/me、惰性诊断session绑定已通过M4.2-B；dsh/Pi/Codex/Claude上述固定版本真实原生会话已有限通过；Pi原生RPC活动取消、dsh续接与Codex补正另有证据。任意CLI/profile/RPC配置、供应商账号与全部工具分支未认证。通用MCP任意本机上传不列为首版必需。 |
 | **M5 Web与完整v0.1** | M5.1-A同源human认证与sharedclient、M5.1-B真实React/Chrome讨论首片已接受：登录恢复、空间/主题、固定修订续读、note/cites、同key恢复、可靠退出；纯文本、按钮键盘与窄屏本机证据。 | 新主题/搜索/失败作者报告已验；D.1目录API与D.2 Web证据/附件/修订字段对比、E.1概览/规则/本人权限及E.2排序/Markdown已验；Linuxarm64容器/冷构建及有限20进程争用/恢复已验；完整无障碍/其他浏览器、跨平台与公网生产TLS未认证。原生select键盘受测限制见独验；M6部分已验，M7.1-A内部检查已有限接受，公开check HTTP/client已有限接受，CLI/普通工具B2已有限接受，完整M7交付/兼容核对仍待。 |
-| **M6 正式评审** | 内部材料、固定请求/名单、封存提交/私有证据与全员揭示已有限接受，当前schema6（M7.1-A新增四check表）。 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；CLI/MCP/Pi九工具与Web评审已有限接入；知识正式状态C2A已验；C2B公开意见检索已有限接受；M7.1-A内部检查已有限接受，完整M7尚未完成，后续前端任务已按用户要求取消。 |
-| **M7 外部验证与完整v0.2** | M7.1-A内部run/receipt、受限verify、日志/最新门禁、因果历史与schema6维护已有限接受。 | 公开HTTP/sharedclient B1、CLI/普通工具B2、M7.2固定无模型验证器及M7.3完整D01旅程已有限接受；M7.4-B本地交付与A/C有限兼容/安全记录已接受；四宿主全链认证仍未齐；C.1有限安全修复已接受，D有限native矩阵已接受，E/R1有限native控制接入已接受，完整会话及外部交付条件仍待。 |
+| **M6 正式评审** | 内部材料、固定请求/名单、封存提交/私有证据与全员揭示已有限接受；本次Pi与新身份Claude原生正式评审完成封存、揭示及accepted/current裁决，not_required不等于外部验证通过。当前schema6（M7.1-A新增四check表）。 | 内部裁决/失效/当前有效性已验；评审HTTP/共享客户端已验；CLI/MCP/Pi九工具与Web评审已有限接入；知识正式状态C2A已验；C2B公开意见检索已有限接受；M7.1-A内部检查已有限接受，完整M7尚未完成，后续前端任务已按用户要求取消。 |
+| **M7 外部验证与完整v0.2** | M7.1-A内部run/receipt、受限verify、日志/最新门禁、因果历史与schema6维护已有限接受。 | 公开HTTP/sharedclient B1、CLI/普通工具B2、M7.2固定无模型验证器及M7.3完整D01旅程已有限接受；M7.4-B本地交付与A/C有限兼容/安全记录已接受；本次固定四宿主原生工具回合、研究接力与独立评审已有限通过；历史C.1安全修复、D/E/R1无模型控制接入保持原范围。供应商推理账户、任意配置、生产容量与其余外部交付条件仍待。 |
 | **M8 协作效果研究** | 文档已有等预算对照/消融设计。 | 真实研究任务、独立外部评分、预算/成本/置信区间与协作增益实验未做；这是研究验证，工程通过不代表已证明收益。 |
 
 H-R1已归档真实旧b8样本、来源hash和生成配方，三类历史兼容覆盖经独立新进程验证闭合；旧失落原DB与新来源不同的说明留在验收来源区，不再列为当前工作阻碍。当前剩余边界见顶部最新入口；后续Web任务已取消，不作为待开发项。

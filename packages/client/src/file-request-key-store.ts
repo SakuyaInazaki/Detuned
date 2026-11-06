@@ -22,7 +22,7 @@ export class FileRequestKeyStore implements RequestKeyStore {
       const parent = await open(path.dirname(resolved), constants.O_RDONLY);
       try { await parent.sync(); } finally { await parent.close(); }
       return store;
-    } catch (error) { throw new RequestKeyError('STORE_ERROR', 'Invalid request key directory.', { cause: error }); }
+    } catch (error) { throw new RequestKeyError('STORE_ERROR', 'Request key directory must be a real directory owned by the current user with exact mode 0700.', { cause: error }); }
   }
   private async checkDirectory(): Promise<void> {
     const stat = await lstat(this.directory);

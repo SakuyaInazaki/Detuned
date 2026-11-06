@@ -1,0 +1,699 @@
+{
+  "task": "M7.9 first-use CLI, safe diagnostics and backend launcher",
+  "environment": {
+    "platform": "Arch Linux x86_64",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "frozen_install_exit": 0,
+    "install_seconds": 21.5,
+    "esbuild_rebuild_exit": 0,
+    "private_home_cache_tmp_store": true,
+    "mac_install_build_tests": false,
+    "mac_pnpm_store_touched": false
+  },
+  "source_snapshot": "be8bbd7a plus current previously accepted uncommitted worktree and this repair",
+  "baseline_launcher": {
+    "original_script_exit": 1,
+    "original_script_error": "pnpm: command not found",
+    "fixed_runner_actual_nine_package_build_exit": 0,
+    "private_path_contains": [
+      "node",
+      "sh",
+      "sed",
+      "dirname",
+      "uname"
+    ],
+    "private_path_contains_pnpm": false,
+    "explicit_private_pnpm_node_entry": true,
+    "no_global_install_or_config": true
+  },
+  "red_and_intermediate_checks": {
+    "cli-red": {
+      "files": 1,
+      "tests": 3,
+      "passed": 1,
+      "failed": 2,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 688.15771484375,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-first-use-cli.test.ts",
+          "test_full_name": "M7.9-A legacy read rejects malformed revisions before HTTP"
+        },
+        {
+          "file": "tests/contracts/m7-first-use-cli.test.ts",
+          "test_full_name": "M7.9-A serve rejects malformed ports before data access"
+        }
+      ]
+    },
+    "parser-validation-red": {
+      "files": 2,
+      "tests": 10,
+      "passed": 4,
+      "failed": 6,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 3865.307861328125,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-first-use-cli.test.ts",
+          "test_full_name": "M7.9-A known missing inputs name only registered safe syntax"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A provided failure points to empty evidence refs without reflecting content"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A category diagnostics provide only canonical allowed enum values"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A MCP flat/wrapped and Pi visible errors carry bounded static paths"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A client tool validation keeps zero HTTP and exposes known branch fields"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A many failures and hostile property names remain bounded and redacted"
+        }
+      ]
+    },
+    "schema-cli-red": {
+      "files": 1,
+      "tests": 7,
+      "passed": 6,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 4323.079345703125,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-first-use-cli.test.ts",
+          "test_full_name": "M7.9-A offline schema discovers actual CLI bodies without credentials or HTTP"
+        }
+      ]
+    },
+    "messages-red": {
+      "files": 1,
+      "tests": 2,
+      "passed": 0,
+      "failed": 2,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 953.483642578125,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-first-use-messages.test.ts",
+          "test_full_name": "M7.9-A private key directory explains actual owner/0700 constraints without path"
+        },
+        {
+          "file": "tests/contracts/m7-first-use-messages.test.ts",
+          "test_full_name": "M7.9-A future expected revision is a neutral mismatch and preserves conflict metadata"
+        }
+      ]
+    },
+    "related-before-contract-update": {
+      "files": 8,
+      "tests": 45,
+      "passed": 32,
+      "failed": 13,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 17368.020751953125,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m4-mcp-schema.test.ts",
+          "test_full_name": "MS02 rejects top-level/nested unknown fields and wrong types without coercing or removing user values"
+        },
+        {
+          "file": "tests/contracts/m4-mcp-schema.test.ts",
+          "test_full_name": "MS03 executes advertised union branches and subscription allOf rather than only checking object roots"
+        },
+        {
+          "file": "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+          "test_full_name": "wrapped independent outer, nested type, union and allOf rejection remain strict before preflight or session; flat has no wrapped fallback"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native identity uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native new uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native switch uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native fork uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native reload uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-native-lifecycle.test.ts",
+          "test_full_name": "M4.4-B independent real Pi 0.87.1 SDK lifecycle native shutdown uses isolated ordinary credentials and awaited lifecycle cleanup"
+        },
+        {
+          "file": "tests/contracts/m4-pi-runtime.test.ts",
+          "test_full_name": "Pi selected credential failure and conflict are terminal locally; pre-cancel and missing space make no client"
+        },
+        {
+          "file": "tests/contracts/m6-review-tools-independent.test.ts",
+          "test_full_name": "DT01 nine complete flat/wrapped schemas and canonical client/MCP/Pi rejection precede all diagnostic HTTP"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A invalid and missing publish discriminators explain canonical operations"
+        },
+        {
+          "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+          "test_full_name": "M7.9-A numeric bounds are distinct from type errors in actual tool diagnostics"
+        }
+      ]
+    },
+    "related-green": {
+      "files": 9,
+      "tests": 52,
+      "passed": 51,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 18428.952392578125,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m4-mcp-schema.test.ts",
+          "test_full_name": "MS04 retains legacy structured records and validates Me/Session response data with fixed protocol errors"
+        }
+      ]
+    },
+    "option-value-red": {
+      "files": 9,
+      "tests": 53,
+      "passed": 52,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "success": false,
+      "vitest_ms": 18546.375,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-first-use-cli.test.ts",
+          "test_full_name": "M7.9-A missing known option value names static flag without reflecting earlier values"
+        }
+      ]
+    }
+  },
+  "intermediate_green_numeric_and_runner": {
+    "files": 2,
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "vitest_ms": 3183.509765625
+  },
+  "intermediate_green_parser_and_validation": {
+    "files": 2,
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "vitest_ms": 4232.221435546875
+  },
+  "pre_dependency_fix_full": {
+    "files": 170,
+    "tests": 1048,
+    "passed": 1048,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "vitest_ms": 332418.6369628906,
+    "exit_code": 0,
+    "wall_ms": 332844,
+    "scope": "Before mandatory CLI schema production dependency closure fix; separate historical execution, not final result"
+  },
+  "schema_dependency_comparison": {
+    "default_operations": 7,
+    "valid_kinds": 9,
+    "kind_operations": 3,
+    "comparisons": 34,
+    "all_json_equal": true,
+    "new_schema_imports_only_protocol": true
+  },
+  "final_backend_checks": [
+    {
+      "action": "build",
+      "exit_code": 0,
+      "wall_ms": 10545
+    },
+    {
+      "action": "typecheck",
+      "exit_code": 0,
+      "wall_ms": 9801
+    },
+    {
+      "action": "lint",
+      "exit_code": 0,
+      "wall_ms": 9709
+    }
+  ],
+  "final_related": {
+    "files": 9,
+    "tests": 53,
+    "passed": 53,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "vitest_ms": 18596.34326171875,
+    "exit_code": 0
+  },
+  "final_backend_full": {
+    "files": 170,
+    "tests": 1048,
+    "passed": 1048,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "vitest_ms": 333562.306640625,
+    "exit_code": 0,
+    "wall_ms": 334027,
+    "worker_count": 1,
+    "file_parallelism": false,
+    "unique_files_and_cases": true,
+    "command": "CI=true pnpm test:backend --reporter=json --outputFile=<owned evidence>/vitest.json",
+    "file_names": [
+      "packages/protocol/tests/schema.test.ts",
+      "packages/storage-sqlite/tests/schema-generation.test.ts",
+      "packages/storage-sqlite/tests/storage.test.ts",
+      "tests/contracts/cli-tls.test.ts",
+      "tests/contracts/cross-interface-contract.test.ts",
+      "tests/contracts/m0-m1-adapters-regression.test.ts",
+      "tests/contracts/m0-m1-r2-adapters.test.ts",
+      "tests/contracts/m2-context-contracts.test.ts",
+      "tests/contracts/m2-focused-context-contracts.test.ts",
+      "tests/contracts/m2-knowledge-view-contracts.test.ts",
+      "tests/contracts/m2-post-revision-read-contracts.test.ts",
+      "tests/contracts/m2-search-contracts.test.ts",
+      "tests/contracts/m2-space-read-contracts.test.ts",
+      "tests/contracts/m2-thread-posts-read-contracts.test.ts",
+      "tests/contracts/m2-typed-write-contracts.test.ts",
+      "tests/contracts/m3-backup-cli.test.ts",
+      "tests/contracts/m3-events-contract.test.ts",
+      "tests/contracts/m3-logical-import-contract.test.ts",
+      "tests/contracts/m3-offline-upgrade-contract.test.ts",
+      "tests/contracts/m3-operations-contract.test.ts",
+      "tests/contracts/m3-request-key-cli.test.ts",
+      "tests/contracts/m3-resource-limits-contract.test.ts",
+      "tests/contracts/m3-shutdown-contract.test.ts",
+      "tests/contracts/m3-space-export-contract.test.ts",
+      "tests/contracts/m3-write-limits-contract.test.ts",
+      "tests/contracts/m4-admin-cli.test.ts",
+      "tests/contracts/m4-artifact-cli.test.ts",
+      "tests/contracts/m4-cli-boundaries-independent.test.ts",
+      "tests/contracts/m4-cli-errors.test.ts",
+      "tests/contracts/m4-client-error-boundary.test.ts",
+      "tests/contracts/m4-dsh-error-code.test.ts",
+      "tests/contracts/m4-mcp-binding-independent.test.ts",
+      "tests/contracts/m4-mcp-input-mode.test.ts",
+      "tests/contracts/m4-mcp-lifecycle-independent.test.ts",
+      "tests/contracts/m4-mcp-runtime.test.ts",
+      "tests/contracts/m4-mcp-schema.test.ts",
+      "tests/contracts/m4-mcp-session.test.ts",
+      "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+      "tests/contracts/m4-node-credentials.test.ts",
+      "tests/contracts/m4-pi-error-loop.test.ts",
+      "tests/contracts/m4-pi-native-lifecycle.test.ts",
+      "tests/contracts/m4-pi-runtime.test.ts",
+      "tests/contracts/m4-read-cli-contract.test.ts",
+      "tests/contracts/m4-runtime-binding-native.test.ts",
+      "tests/contracts/m4-runtime-response-validation.test.ts",
+      "tests/contracts/m4-token-source.test.ts",
+      "tests/contracts/m4-write-consume-cli.test.ts",
+      "tests/contracts/m5-post-catalogs-client.test.ts",
+      "tests/contracts/m5-post-catalogs.test.ts",
+      "tests/contracts/m5-post-order-index.test.ts",
+      "tests/contracts/m5-thread-post-order.test.ts",
+      "tests/contracts/m5-web-auth-client.test.ts",
+      "tests/contracts/m5-web-auth-independent.test.ts",
+      "tests/contracts/m5-web-auth-server.test.ts",
+      "tests/contracts/m5-web-static.test.ts",
+      "tests/contracts/m6-knowledge-status-contracts.test.ts",
+      "tests/contracts/m6-public-review-search-contracts.test.ts",
+      "tests/contracts/m6-public-review-search-tools-cli.test.ts",
+      "tests/contracts/m6-review-canonicalization.test.ts",
+      "tests/contracts/m6-review-catalog-independent.test.ts",
+      "tests/contracts/m6-review-catalog.test.ts",
+      "tests/contracts/m6-review-cli.test.ts",
+      "tests/contracts/m6-review-client.test.ts",
+      "tests/contracts/m6-review-http-independent.test.ts",
+      "tests/contracts/m6-review-http.test.ts",
+      "tests/contracts/m6-review-tools-independent.test.ts",
+      "tests/contracts/m6-review-tools.test.ts",
+      "tests/contracts/m7-backend-runner.test.ts",
+      "tests/contracts/m7-check-cli-tools-independent.test.ts",
+      "tests/contracts/m7-check-cli.test.ts",
+      "tests/contracts/m7-check-client.test.ts",
+      "tests/contracts/m7-check-http-client-independent.test.ts",
+      "tests/contracts/m7-check-http.test.ts",
+      "tests/contracts/m7-check-tools.test.ts",
+      "tests/contracts/m7-claude-probe-ownership.test.ts",
+      "tests/contracts/m7-codex-launcher.test.ts",
+      "tests/contracts/m7-codex-owned-group.test.ts",
+      "tests/contracts/m7-delivery-layout.test.ts",
+      "tests/contracts/m7-dsh-probe-json.test.ts",
+      "tests/contracts/m7-first-use-cli.test.ts",
+      "tests/contracts/m7-first-use-messages.test.ts",
+      "tests/contracts/m7-linux-native-probe.test.ts",
+      "tests/contracts/m7-pi-native-checks-independent.test.ts",
+      "tests/contracts/m7-search-client-input.test.ts",
+      "tests/contracts/m7-validation-diagnostics.test.ts",
+      "tests/contracts/r4-c-contracts.test.ts",
+      "tests/contracts/r4-c-route-contracts.test.ts",
+      "tests/contracts/scale-run-lifecycle.test.ts",
+      "tests/contracts/server-http-shutdown.test.ts",
+      "tests/contracts/server-tls.test.ts",
+      "tests/core/m5-web-session.test.ts",
+      "tests/integration/historical-http-replay.test.ts",
+      "tests/integration/m0-m1-r2-regression.test.ts",
+      "tests/integration/m0-m1-r3-regression.test.ts",
+      "tests/integration/m0-m1-r4-b-regression.test.ts",
+      "tests/integration/m0-m1-regression.test.ts",
+      "tests/integration/m1-discussion.test.ts",
+      "tests/integration/m2-artifacts-cli.test.ts",
+      "tests/integration/m2-artifacts-core.test.ts",
+      "tests/integration/m2-artifacts-filesystem.test.ts",
+      "tests/integration/m2-artifacts-http.test.ts",
+      "tests/integration/m2-context-focus.test.ts",
+      "tests/integration/m2-context-session-chain.test.ts",
+      "tests/integration/m2-context.test.ts",
+      "tests/integration/m2-knowledge-views.test.ts",
+      "tests/integration/m2-post-revision-read.test.ts",
+      "tests/integration/m2-search.test.ts",
+      "tests/integration/m2-space-revision-read.test.ts",
+      "tests/integration/m2-thread-posts-read.test.ts",
+      "tests/integration/m2-typed-writes.test.ts",
+      "tests/integration/m3-backup-recovery-independent.test.ts",
+      "tests/integration/m3-backup-recovery.test.ts",
+      "tests/integration/m3-event-core.test.ts",
+      "tests/integration/m3-event-recovery.test.ts",
+      "tests/integration/m3-export-independent.test.ts",
+      "tests/integration/m3-import-independent.test.ts",
+      "tests/integration/m3-logical-import.test.ts",
+      "tests/integration/m3-milestone-gate.test.ts",
+      "tests/integration/m3-offline-upgrade.test.ts",
+      "tests/integration/m3-operations-independent.test.ts",
+      "tests/integration/m3-operations.test.ts",
+      "tests/integration/m3-request-key-recovery.test.ts",
+      "tests/integration/m3-request-key-store.test.ts",
+      "tests/integration/m3-resource-limits-independent.test.ts",
+      "tests/integration/m3-resource-limits.test.ts",
+      "tests/integration/m3-shutdown-independent.test.ts",
+      "tests/integration/m3-shutdown-resources.test.ts",
+      "tests/integration/m3-space-export.test.ts",
+      "tests/integration/m3-upgrade-independent.test.ts",
+      "tests/integration/m3-write-limits-independent.test.ts",
+      "tests/integration/m3-write-rate-limit.test.ts",
+      "tests/integration/m4-admin-cli-independent.test.ts",
+      "tests/integration/m4-admin-client.test.ts",
+      "tests/integration/m4-artifact-client-cli-independent.test.ts",
+      "tests/integration/m4-artifact-client.test.ts",
+      "tests/integration/m4-consumer-lifecycle.test.ts",
+      "tests/integration/m4-read-cli-independent.test.ts",
+      "tests/integration/m4-session-subscription-client.test.ts",
+      "tests/integration/m4-write-consume-independent.test.ts",
+      "tests/integration/m6-knowledge-status-independent.test.ts",
+      "tests/integration/m6-knowledge-status.test.ts",
+      "tests/integration/m6-public-review-search-independent.test.ts",
+      "tests/integration/m6-public-review-search.test.ts",
+      "tests/integration/m6-review-finalization-independent.test.ts",
+      "tests/integration/m6-review-finalization.test.ts",
+      "tests/integration/m6-review-material-lifecycle.test.ts",
+      "tests/integration/m6-review-private-artifacts.test.ts",
+      "tests/integration/m6-review-requests-independent.test.ts",
+      "tests/integration/m6-review-requests.test.ts",
+      "tests/integration/m6-review-snapshot-independent.test.ts",
+      "tests/integration/m6-review-snapshot.test.ts",
+      "tests/integration/m6-review-status.test.ts",
+      "tests/integration/m6-review-submissions-independent.test.ts",
+      "tests/integration/m6-review-submissions.test.ts",
+      "tests/integration/m6-schema3-maintenance.test.ts",
+      "tests/integration/m6-schema4-maintenance-independent.test.ts",
+      "tests/integration/m6-schema4-maintenance.test.ts",
+      "tests/integration/m6-schema5-maintenance-independent.test.ts",
+      "tests/integration/m6-schema5-maintenance.test.ts",
+      "tests/integration/m7-check-domain-independent.test.ts",
+      "tests/integration/m7-check-domain.test.ts",
+      "tests/integration/m7-check-scope-artifacts.test.ts",
+      "tests/integration/m7-d01-reviewed-independent.test.ts",
+      "tests/integration/m7-d01-reviewed.test.ts",
+      "tests/integration/m7-fixed-verifier-independent.test.ts",
+      "tests/integration/m7-fixed-verifier.test.ts",
+      "tests/integration/m7-local-startup.test.ts",
+      "tests/integration/m7-schema6-maintenance-independent.test.ts",
+      "tests/integration/m7-schema6-maintenance.test.ts",
+      "tests/probes/m0-probes.test.ts"
+    ],
+    "existing_timeouts_and_behavioral_invariants_preserved": true,
+    "error_shape_assertions_updated_for_diagnostics": true
+  },
+  "first_collaboration_guide": {
+    "four_document_blocks_run": true,
+    "block_results": [
+      {
+        "block": 1,
+        "exit_code": 0
+      },
+      {
+        "block": 3,
+        "exit_code": 0
+      },
+      {
+        "block": 4,
+        "exit_code": 0
+      }
+    ],
+    "only_path_and_loopback_port_replaced": true,
+    "ready": true,
+    "ordinary_actor_count": 2,
+    "distinct_actors": true,
+    "old_revision_complete_fields_unchanged": true,
+    "challenge_target_revision": 1,
+    "new_revision": 2,
+    "original_challenger_resolved": true,
+    "relation_version": 2,
+    "blocking_objections": 0,
+    "private_token_modes": "0600",
+    "proposal_revisions": [
+      1,
+      2
+    ],
+    "admin_not_a_discussion_author": true,
+    "addresses_did_not_resolve_challenge": {
+      "addresses_present": true,
+      "challenge_still_open": true,
+      "proposal_current_revision": 2
+    },
+    "serve_exit_code": 0,
+    "serve_signal": null
+  },
+  "execution_failures": [
+    {
+      "kind": "Preparation",
+      "detail": "Initial restricted PATH omitted sh, so old/new launcher attempts failed with -2 before script execution. Adding sh exposed the intended old literal-pnpm failure. First real runner build then lacked sed/dirname/uname required by pnpm tsc shims; adding only these utilities yielded nine-package success without pnpm in PATH."
+    },
+    {
+      "kind": "Compile",
+      "detail": "Initial diagnostics helper build failed TS2339 after Value.Check narrowed unknown to never; explicit boolean wrapper fixed the type boundary."
+    },
+    {
+      "kind": "Preparation",
+      "detail": "A source-transfer list missed services/ in the post-service path and aborted at its last file; correct source transferred before later behavior tests."
+    },
+    {
+      "kind": "Compile",
+      "detail": "Initial offline schema import preceded CLI shebang and failed TS18026/TS1005; import moved after shebang."
+    },
+    {
+      "kind": "Test fixture",
+      "detail": "Contract update accidentally inserted a local name reference into unrelated Me/Session test MS04; focused52 had51pass1fail. Restoring its original ClientProtocolError check fixed it; final related53 passed."
+    },
+    {
+      "kind": "Compile",
+      "detail": "Pure canonical schema projection initially inferred a literal-only initialRequired list and failed TS2345; explicit string[] type fixed compilation without changing runtime projection."
+    }
+  ],
+  "independent_review": {
+    "root_new_ssh_final_vitest_exit_schema_comparison_and_focused": true,
+    "root_verified_unique_170_files_1048_passed_assertions": true,
+    "journey_and_final_binding_pending": false,
+    "root_new_ssh_journey_summary": true,
+    "root_final_binding_acceptance_pending": false,
+    "root_new_ssh_raw_journey_outputs_and_readonly_sqlite": true,
+    "root_verified_distinct_actors_revisions_immutable_old_row_no_nonparticipant_authors_and_fixed_relations": true,
+    "root_new_ssh_direct_bytes_63_and_guide_all_equal": true
+  },
+  "limits": [
+    "No frontend or browser work",
+    "No model/service-provider switching or vendor inference",
+    "No VM/container/Colima/global configuration or other roots operated",
+    "Legacy revision list byte limit, universal relation reader and interactive setup remain outside this repair scope"
+  ],
+  "cleanup": {
+    "root": "/var/tmp/detuned-repair-Si1A1pS4",
+    "root_uid": 1000,
+    "root_device": 66306,
+    "root_inode": 827241,
+    "root_mode": "0700",
+    "marker": "detuned-owned-experience-2026-11-06",
+    "parent_uid": 0,
+    "parent_device": 66306,
+    "parent_inode": 58196314,
+    "parent_mode": "1777",
+    "identity_matched_before_removal": true,
+    "owned_processes_before": 0,
+    "nested_mounts_before": 0,
+    "symlink_safe_parent_dir_fd_removal": true,
+    "immediate_lstat": "ENOENT",
+    "independent_new_ssh_lstat": "ENOENT",
+    "root_separate_review_pending": false,
+    "root_new_ssh_enoent": true,
+    "root_new_ssh_connection_sharing_disabled": true,
+    "root_new_ssh_exit_code": 0
+  },
+  "build_artifacts": {
+    "tracked_compared": 560,
+    "tracked_changed_and_copied": [
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/posts.d.ts.map",
+      "packages/protocol/dist/posts.js",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/posts.js.map",
+      "packages/protocol/dist/tools.d.ts.map",
+      "packages/protocol/dist/tools.js.map",
+      "packages/protocol/dist/index.js.map",
+      "packages/core/dist/services/post-service.js.map",
+      "packages/core/dist/services/post-service.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/dist/file-request-key-store.js.map",
+      "packages/client/dist/file-request-key-store.js",
+      "packages/client/dist/client.js",
+      "packages/cli/dist/argv-diagnostics.d.ts.map",
+      "packages/cli/dist/argv-diagnostics.js",
+      "packages/cli/dist/argv-diagnostics.js.map",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/argv-diagnostics.d.ts",
+      "packages/cli/dist/index.js.map",
+      "packages/mcp/dist/tool-validation.js.map",
+      "packages/mcp/dist/tool-validation.d.ts.map",
+      "packages/mcp/dist/tool-validation.js",
+      "packages/adapter-pi/dist/runtime.js",
+      "packages/adapter-pi/dist/runtime.js.map"
+    ],
+    "tracked_unchanged": 532,
+    "new_eight_dist_files": [
+      "packages/cli/dist/schema.d.ts",
+      "packages/cli/dist/schema.d.ts.map",
+      "packages/cli/dist/schema.js",
+      "packages/cli/dist/schema.js.map",
+      "packages/protocol/dist/validation-issues.d.ts",
+      "packages/protocol/dist/validation-issues.d.ts.map",
+      "packages/protocol/dist/validation-issues.js",
+      "packages/protocol/dist/validation-issues.js.map"
+    ],
+    "new_files_marked_intent_to_add_only": true
+  },
+  "final_source_binding": {
+    "files_compared": [
+      "package.json",
+      "packages/adapter-pi/dist/runtime.js",
+      "packages/adapter-pi/dist/runtime.js.map",
+      "packages/adapter-pi/src/runtime.ts",
+      "packages/cli/dist/argv-diagnostics.d.ts",
+      "packages/cli/dist/argv-diagnostics.d.ts.map",
+      "packages/cli/dist/argv-diagnostics.js",
+      "packages/cli/dist/argv-diagnostics.js.map",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/cli/dist/schema.d.ts",
+      "packages/cli/dist/schema.d.ts.map",
+      "packages/cli/dist/schema.js",
+      "packages/cli/dist/schema.js.map",
+      "packages/cli/src/argv-diagnostics.ts",
+      "packages/cli/src/index.ts",
+      "packages/cli/src/schema.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/dist/file-request-key-store.js",
+      "packages/client/dist/file-request-key-store.js.map",
+      "packages/client/src/client.ts",
+      "packages/client/src/file-request-key-store.ts",
+      "packages/core/dist/services/post-service.js",
+      "packages/core/dist/services/post-service.js.map",
+      "packages/core/src/services/post-service.ts",
+      "packages/mcp/dist/tool-validation.d.ts",
+      "packages/mcp/dist/tool-validation.d.ts.map",
+      "packages/mcp/dist/tool-validation.js",
+      "packages/mcp/dist/tool-validation.js.map",
+      "packages/mcp/src/tool-validation.ts",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/protocol/dist/posts.d.ts.map",
+      "packages/protocol/dist/posts.js",
+      "packages/protocol/dist/posts.js.map",
+      "packages/protocol/dist/tools.d.ts",
+      "packages/protocol/dist/tools.d.ts.map",
+      "packages/protocol/dist/tools.js",
+      "packages/protocol/dist/tools.js.map",
+      "packages/protocol/dist/validation-issues.d.ts",
+      "packages/protocol/dist/validation-issues.d.ts.map",
+      "packages/protocol/dist/validation-issues.js",
+      "packages/protocol/dist/validation-issues.js.map",
+      "packages/protocol/src/index.ts",
+      "packages/protocol/src/posts.ts",
+      "packages/protocol/src/tools.ts",
+      "packages/protocol/src/validation-issues.ts",
+      "scripts/backend.mjs",
+      "tests/contracts/m4-mcp-schema.test.ts",
+      "tests/contracts/m4-mcp-wrapped-independent.test.ts",
+      "tests/contracts/m4-pi-runtime.test.ts",
+      "tests/contracts/m6-review-tools-independent.test.ts",
+      "tests/contracts/m7-backend-runner.test.ts",
+      "tests/contracts/m7-first-use-cli.test.ts",
+      "tests/contracts/m7-first-use-messages.test.ts",
+      "tests/contracts/m7-search-client-input.test.ts",
+      "tests/contracts/m7-validation-diagnostics.test.ts",
+      "tests/fixtures/pi-runtime/native-lifecycle.mjs",
+      "vitest.config.ts"
+    ],
+    "count": 63,
+    "all_equal": true,
+    "guide_document_equal_to_actual_input": true,
+    "method": "direct bytes; no checksum files"
+  }
+}
