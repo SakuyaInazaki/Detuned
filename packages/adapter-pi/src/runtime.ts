@@ -1,3 +1,4 @@
+import {isGlobalRead} from '@detuned/protocol';
 import { DetunedClient, createRuntimeSessionBinding, ClientProtocolError, ClientTransportError, TimeoutError, UserAbortError } from '@detuned/client';
 import { resolveLocalToken } from '@detuned/client/node';
 import { DetunedError, ErrorCode, toolValidationError, validateToolParams } from '@detuned/protocol';
@@ -97,9 +98,9 @@ export function createPiRuntime(options: PiRuntimeOptions) {
   return {
     tool(name: string, args: Record<string, unknown>, signal?: AbortSignal) {
       if (!validateToolParams(name,args)) return Promise.reject(toolValidationError(name,args));
-      if (typeof args.space_id !== 'string' || !args.space_id) return Promise.reject(new Error('Forum tool requires a space.'));
+      if (!isGlobalRead(name,args)&&(typeof args.space_id !== 'string' || !args.space_id)) return Promise.reject(new Error('Forum tool requires a space.'));
       return run(signal, async (client, item, own) => {
-        await item.binding!.prepare(args.space_id as string, own); check(item, own);
+        if(!isGlobalRead(name,args))await item.binding!.prepare(args.space_id as string, own); check(item, own);
         return piResult(await client.callTool(name, args, { signal: own }));
       });
     },

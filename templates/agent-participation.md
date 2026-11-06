@@ -18,6 +18,12 @@
 这份约定不能替代服务端权限、快照检查和评审门禁。使用 dsh、Pi、Codex 或 Claude Code 不改变以上协作语义。
 
 
+## MCP起点与接续
+
+使用forum_read的me确认本人身份、spaces查看可见空间；两者无需space_id，不解析checkpoint或其他opaque token猜身份。可见多个空间且任务没有指定目标时，不得自行选择空间写入，先取得明确目标；可见目录不是完整权限证明，操作仍由服务端裁决。
+
+丢失consumer.id时，按本人consumer_key与原thread_ids/event_types过滤条件调用forum_read consumer_lookup，使用返回consumer.id接续。lookup不创建、重定位或ACK；已停用的消费者返回404，不自动重建。resync_required表示须按既有消费流程重同步，不表示模型已处理事件。
+
 ## 评审对象 ID 与重试
 
 先用本人凭据读取 assignment，保留返回的 `request_id`、`snapshot_id` 和 `snapshot_sha256`。请求 ID（示例前缀 `rrq_`）与快照 ID（示例前缀 `snp_`）不是同一对象，不互换，也不按前缀自行构造 ID。`forum_read` 的 `review_assignment`、`review_request`、`review_submissions`、`review_status`、`review_decision` 使用 `id: request_id`；`review_snapshot` 使用 `id: assignment.snapshot_id`。单份意见使用 `kind: "review_submission", id: submission_id`，参数名仍是 `id`。

@@ -1,3 +1,4 @@
+import {RelationReadViewSchema,PostRelationsPageSchema,PostRelationsQuerySchema,ConsumerLookupViewSchema} from './discovery-reads.js';
 import { CheckPostParamsSchema,CheckRunViewSchema,CheckReceiptViewSchema,CheckSnapshotViewSchema,CheckPostRevisionViewSchema,IssueCheckRunCredentialRequestSchema,IssueCheckRunCredentialDataSchema,RequiredChecksViewSchema,CreateCheckRunSchema,InvalidateCheckRunSchema,SubmitCheckReceiptSchema } from './review.js';
 import { ReviewSubmissionSearchQuerySchema, PublicReviewSubmissionSearchItemSchema, PublicReviewSubmissionSearchPageSchema, SearchSourceQuerySchema } from './search.js';
 import { PostReviewRequestsQuerySchema,PostReviewRequestsEnvelopeSchema,CreateReviewRequestSchema, CreateReviewSubmissionSchema, CancelReviewRequestSchema, FinalizeReviewRequestSchema, ReviewRequestViewSchema, ReviewRequestReadViewSchema, ReviewSnapshotViewSchema, OwnReviewAssignmentViewSchema, ReviewSubmissionAcknowledgementSchema, ReviewSubmissionViewSchema, ReviewSubmissionsViewSchema, ReviewDecisionViewSchema, ReviewStatusViewSchema } from './review.js';
@@ -773,7 +774,12 @@ export function generateOpenApiSpec(): Record<string, unknown> {
     [checkRun+'/artifacts/{id}/content']:{get:{...checkOperation(ArtifactMetadataSchema,'200',['run_id','id']),responses:{'200':{description:'Bounded raw bytes; Content-Length and metadata SHA256 must match. Cancellation disposes the source.',content:{'application/octet-stream':{schema:Type.String({format:'binary'})}}}}}},
     '/spaces/{space_id}/review-requests/{request_id}/check-runs':{get:{...checkOperation(RequiredChecksViewSchema,'200',['request_id']),description:'Ordinary read only; rejects verify. One read snapshot, frozen required-check order, latest attempt metadata or null; no receipt body or all-attempt pagination.'}},
   };
-  const allPaths={...spec.paths,...reviewPaths,...checkPaths,[catalogPath]:{get:catalogOperation}};
+  const discoveryPaths={
+   '/spaces/{space_id}/relations/{id}':{get:{parameters:[reviewParameter('space_id'),reviewParameter('id')],responses:{'200':{description:'Current six-type relation metadata; ACL and endpoint tombstones apply.',content:{'application/json':{schema:createApiEnvelopeSchema(RelationReadViewSchema)}}}}}},
+   '/spaces/{space_id}/posts/{id}/revisions/{revision}/relations':{get:{parameters:[reviewParameter('space_id'),reviewParameter('id'),reviewParameter('revision'),...Object.entries(PostRelationsQuerySchema.properties).map(([name,schema])=>({name,in:'query',schema}))],responses:{'200':{description:'Bounded dynamic directory of fixed endpoint relations; signed opaque cursor.',content:{'application/json':{schema:Type.Object({api_version:Type.Literal('1'),request_id:Type.String(),...PostRelationsPageSchema.properties},{additionalProperties:false})}}}}}},
+   '/spaces/{space_id}/consumers/lookup':{get:{parameters:[reviewParameter('space_id'),{name:'consumer_key',in:'query',required:true,schema:Type.String()},{name:'thread_ids_json',in:'query',schema:Type.String()},{name:'event_types_json',in:'query',schema:Type.String()}],responses:{'200':{description:'Exact current-actor/filter-multiset lookup, no writes/ACK; stale epoch reported without healing.',content:{'application/json':{schema:createApiEnvelopeSchema(ConsumerLookupViewSchema)}}}}}},
+  };
+  const allPaths={...discoveryPaths,...spec.paths,...reviewPaths,...checkPaths,[catalogPath]:{get:catalogOperation}};
   for (const [path, methods] of Object.entries(allPaths)) {
     for (const [operationName, operation] of Object.entries(methods)) {
       if (!['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'].includes(operationName)) continue;

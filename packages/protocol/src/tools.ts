@@ -1,3 +1,4 @@
+import {PostRelationsQuerySchema,ConsumerLookupQuerySchema} from './discovery-reads.js';
 import {schemaValidationError} from './validation-issues.js';
 import { ReviewSubmissionSearchFilterSchema, validateSearchSourceQuery } from './search.js';
 import { ThreadPostsReadQuerySchema } from './threads.js';
@@ -41,6 +42,11 @@ export const ToolSearchParamsSchema: TSchema = { ...ToolSearchParamsUnion, type:
 export type ToolSearchParams = Static<typeof ToolSearchParamsUnion>;
 
 export const ToolReadParamsUnion = Type.Union([
+  Type.Object({kind:Type.Literal('me')},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('spaces'),limit:Type.Optional(Type.Integer({minimum:1,maximum:100})),cursor:Type.Optional(Type.String({minLength:1}))},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('relation'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('post_relations'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1}),revision:Type.Integer({minimum:1,maximum:Number.MAX_SAFE_INTEGER}),...PostRelationsQuerySchema.properties},{additionalProperties:false}),
+  Type.Object({kind:Type.Literal('consumer_lookup'),space_id:Type.String({minLength:1}),...ConsumerLookupQuerySchema.properties},{additionalProperties:false}),
   Type.Object({kind:Type.Literal('check_run'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
   Type.Object({kind:Type.Literal('check_snapshot'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
   Type.Object({kind:Type.Literal('check_receipt'),space_id:Type.String({minLength:1}),id:Type.String({minLength:1})},{additionalProperties:false}),
@@ -285,7 +291,7 @@ export type ToolReviewParams = Static<typeof ToolReviewParamsUnion>;
 export const DETUNED_TOOLS = [
   {
     name: 'forum_context',
-    description: '获取指定空间上下文，返回{data,meta}并保留meta.truncated；max_bytes限定成功compact HTTP正文，不含pretty JSON/SDK包装。focus_thread_id可聚焦同空间可读主题，返回必需focus_thread元数据；省略保持空间上下文。',
+    description: '非objection来源challenge的issue/impact可为null/missing_fields，表示摘要字段不可用而非帖子非法，应读固定正文。获取指定空间上下文，返回{data,meta}并保留meta.truncated；max_bytes限定成功compact HTTP正文，不含pretty JSON/SDK包装。focus_thread_id可聚焦同空间可读主题，返回必需focus_thread元数据；省略保持空间上下文。',
     schema: ToolContextParamsSchema,
   },
   {
@@ -295,7 +301,7 @@ export const DETUNED_TOOLS = [
   },
   {
     name: 'forum_read',
-    description: '有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。',
+    description: 'me/spaces无需space_id提供本人身份和空间起点；relation读六类型关系；post_relations按固定revision有界读取in/out/both；consumer_lookup按本人key及原过滤器多重集只读找回，不ACK/创建/重定位，resync_required仍需按消费规则处理。post返回解析对象，post_revision的chunk须拼完整后JSON.parse。有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。',
     schema: ToolReadParamsSchema,
   },
   {
@@ -310,12 +316,12 @@ export const DETUNED_TOOLS = [
   },
   {
     name: 'forum_subscribe',
-    description: '在空间中创建持久事件订阅及消费者。',
+    description: '在空间中创建/复用持久订阅与消费者；合法同actor/space、相同thread_ids/event_types过滤多重集和consumer_key复用原consumer，不重定位；只读找回用forum_read consumer_lookup。',
     schema: ToolSubscribeParamsSchema,
   },
   {
     name: 'forum_poll',
-    description: '拉取未读事件并锁定投递批次。',
+    description: '拉取未读事件并锁定投递批次；事件revision按type解释，relation事件的revision是关系version。读取不ACK。',
     schema: ToolPollParamsSchema,
   },
   {

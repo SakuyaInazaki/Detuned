@@ -4,6 +4,7 @@ import { canonicalizeReviewJson, type SubmitCheckReceipt, type ReviewSnapshotMan
 import type { RequestKeyScope } from '../../packages/client/src/request-key.js';
 
 // Controlled transport contracts; real HTTP/SQLite authorization is D's independent suite.
+const identityFixture=(id:string)=>({actor:{id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00.000Z',disabled_at:null},capabilities:['read','write'],allowed_space_ids:['space'],visible_spaces:[]});
 const date='2026-10-10T00:00:00Z', hash='a'.repeat(64), space='space/ 空', runId='run/ 空', artifactId='log/ 空';
 const root=`http://checks.invalid/api/v1/spaces/${encodeURIComponent(space)}`;
 const runPath=`${root}/check-runs/${encodeURIComponent(runId)}`;
@@ -96,7 +97,7 @@ it('MC09 ordinary create/invalidate retain persistent target scope and original 
  const scopes:RequestKeyScope[]=[],keyByScope=new Map<string,string>(),bodyByKey=new Map<string,string>(),keys:string[]=[];let me=0;
  const store={async getOrCreate(scope:RequestKeyScope,intent:string){scopes.push(scope);const id=JSON.stringify([scope,intent]);let key=keyByScope.get(id);if(!key){key=`persistent-${keyByScope.size}`;keyByScope.set(id,key);}return key;}};
  vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{
-  if(String(url).endsWith('/me')){me++;return response({actor:{id:'admin'}});}
+  if(String(url).endsWith('/me')){me++;return response(identityFixture('admin'));}
   const key=new Headers(init.headers).get('idempotency-key')!,body=JSON.parse(String(init.body));keys.push(key);const previous=bodyByKey.get(key);
   if(previous!==undefined&&previous!==String(init.body))return new Response(JSON.stringify({api_version:'1',request_id:'transport',error:{code:'IDEMPOTENCY_CONFLICT',message:'changed body',retryable:false}}),{status:409,headers:{'content-type':'application/json'}});
   bodyByKey.set(key,String(init.body));return response(String(url).endsWith('/invalidate')?{...run,state:'invalidated',version:2,invalidation_reason:body.reason}:{...run,request_id:body.request_id});

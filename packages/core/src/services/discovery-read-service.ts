@@ -1,0 +1,35 @@
+import {DetunedError,ErrorCode,validateDiscoveryQuery,PostRelationsQuerySchema,type PostRelationsQuery,type PostRelationsPage,type RelationReadView,type Relation} from '@detuned/protocol';
+import {StoragePort} from '../ports/storage.js';
+import {TokenSignerPort} from '../ports/token-signer.js';
+import {ClockPort} from '../ports/clock.js';
+import {AuthService,type AuthenticatedContext} from './auth-service.js';
+export class DiscoveryReadService {
+ constructor(private readonly storage:StoragePort,private readonly signer:TokenSignerPort,private readonly authService:AuthService,private readonly secret:string,private readonly clock:ClockPort){}
+ private project(spaceId:string,relation:Relation):RelationReadView|null {
+  if(relation.space_id!==spaceId)return null;
+  const source=this.storage.findPostById(relation.source_post_id),target=this.storage.findPostById(relation.target_post_id);
+  if(!source||!target||source.space_id!==spaceId||target.space_id!==spaceId||!this.storage.getPostRevisionMetadata(source.id,relation.source_revision)||!this.storage.getPostRevisionMetadata(target.id,relation.target_revision))return null;
+  return {relation_id:relation.id,relation_type:relation.type,source_ref:{post_id:source.id,revision:relation.source_revision},target_ref:{post_id:target.id,revision:relation.target_revision},creator_id:relation.creator_id,source_author_id:source.author_id,target_author_id:target.author_id,state:relation.state,version:relation.version,created_at:relation.created_at,source_status:source.lifecycle,target_status:target.lifecycle,source_has_newer_revision:source.lifecycle==='redacted'?null:source.current_revision>relation.source_revision,target_has_newer_revision:target.lifecycle==='redacted'?null:target.current_revision>relation.target_revision};
+ }
+ getRelation(auth:AuthenticatedContext,spaceId:string,id:string):RelationReadView {
+  return this.storage.readSnapshot(()=>{const current=this.authService.refreshContext(auth);this.authService.requireSpaceAccess(current,spaceId,'observer');const relation=this.storage.findRelationById(id),result=relation?this.project(spaceId,relation):null;if(!result)throw new DetunedError(ErrorCode.NOT_FOUND,'Relation does not exist or is not accessible.',404);return result;});
+ }
+ getPostRelations(auth:AuthenticatedContext,spaceId:string,postId:string,revision:number,query:PostRelationsQuery,budget:{request_id:string}):PostRelationsPage {
+  return this.storage.readSnapshot(()=>{
+   const current=this.authService.refreshContext(auth);this.authService.requireSpaceAccess(current,spaceId,'observer');
+   const post=this.storage.findPostById(postId);if(!post||post.space_id!==spaceId)throw new DetunedError(ErrorCode.NOT_FOUND,'Post does not exist or is not accessible.',404);
+   if(post.lifecycle==='redacted')throw new DetunedError(ErrorCode.CONTENT_REDACTED,'Post content has been redacted.',410);
+   if(!Number.isSafeInteger(revision)||revision<1)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid fixed revision.',400);
+   if(!this.storage.getPostRevisionMetadata(postId,revision))throw new DetunedError(ErrorCode.NOT_FOUND,'Post revision does not exist.',404);
+   validateDiscoveryQuery(PostRelationsQuerySchema,query);const direction=query.direction??'both',now=Math.floor(this.clock.now().getTime()/1000);let exp=now+86400,afterId:string|undefined;
+   if(query.cursor!==undefined){const p=this.signer.verify(query.cursor,this.secret,now);if(!p||Object.keys(p).length!==10||p.v!==1||p.purpose!=='post_relations'||p.sort!=='id_asc'||p.actor_id!==current.actor.id||p.space_id!==spaceId||p.post_id!==postId||p.revision!==revision||p.direction!==direction||(typeof p.after_id!=='string'||!p.after_id.trim())||typeof p.exp!=='number'||!Number.isSafeInteger(p.exp)||p.exp<now||p.exp>exp)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid relation cursor.',400);afterId=p.after_id;exp=p.exp;}
+   const list=this.storage.listPostRelations(spaceId,postId,revision,direction,query.limit??20,afterId);const relations=list.relations.flatMap(row=>{const result=this.project(spaceId,row);return result?[result]:[];});let removed=false;
+   while(true){const more=list.has_more||removed,last=relations.at(-1);if(more&&!last)throw new DetunedError(ErrorCode.QUERY_TOO_BROAD,'Required relation metadata cannot fit the budget.',422);
+    const next=more?this.signer.sign({v:1,purpose:'post_relations',sort:'id_asc',actor_id:current.actor.id,space_id:spaceId,post_id:postId,revision,direction,after_id:last!.relation_id,exp},this.secret):null;
+    const page:PostRelationsPage={data:{ref:{post_id:postId,revision},relations:[...relations]},meta:{truncated:removed,next_cursor:next}};
+    if((next===null||next.length<=4096)&&new TextEncoder().encode(JSON.stringify({api_version:'1',request_id:budget.request_id,...page})).byteLength<=(query.max_bytes??12288))return page;
+    if(relations.length<=1)throw new DetunedError(ErrorCode.QUERY_TOO_BROAD,'Required relation metadata cannot fit the budget.',422);relations.pop();removed=true;
+   }
+  });
+ }
+}

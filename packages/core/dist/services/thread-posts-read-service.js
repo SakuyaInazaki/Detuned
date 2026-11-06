@@ -34,19 +34,25 @@ export class ThreadPostsReadService {
             if (query.cursor !== undefined) {
                 const payload = this.signer.verify(query.cursor, this.secret, now);
                 if (!isThreadPostsReadCursorPayload(payload) || payload.actor_id !== current.actor.id || payload.space_id !== spaceId ||
-                    payload.thread_id !== threadId || payload.sort !== sort || now > payload.exp || payload.exp > now + THREAD_POSTS_READ_LIMITS.cursor_ttl_seconds)
+                    payload.thread_id !== threadId || payload.sort !== sort || (payload.include_titles === true) !== (query.include_titles === true) || now > payload.exp || payload.exp > now + THREAD_POSTS_READ_LIMITS.cursor_ttl_seconds)
                     throw invalidCursor();
                 afterId = payload.after_id;
                 if (payload.sort === 'created_at_asc')
                     afterKey = payload.after_key;
                 exp = payload.exp;
             }
+            const titles = (posts) => posts.map(post => {
+                if (query.include_titles !== true || post.lifecycle === 'redacted')
+                    return post;
+                const title = this.storage.getPostRevisionTitle(post.id, post.current_revision);
+                return title === null ? post : { ...post, title };
+            });
             if (sort === 'created_at_asc') {
                 const listed = this.storage.listPostsInThreadByCreatedAt(threadId, limit, afterId === undefined ? undefined : { key: afterKey ?? null, id: afterId });
-                return { actorId: current.actor.id, thread, posts: listed.posts.map(({ sort_key, ...post }) => post), sortKeys: new Map(listed.posts.map(post => [post.id, post.sort_key])), sort, storageHasMore: listed.has_more, maxBytes, exp };
+                return { actorId: current.actor.id, thread, posts: titles(listed.posts.map(({ sort_key, ...post }) => post)), sortKeys: new Map(listed.posts.map(post => [post.id, post.sort_key])), sort, storageHasMore: listed.has_more, maxBytes, exp };
             }
             const listed = this.storage.listPostsInThread(threadId, limit, afterId);
-            return { actorId: current.actor.id, thread, posts: listed.posts, sortKeys: new Map(), sort, storageHasMore: listed.next_cursor !== null, maxBytes, exp };
+            return { actorId: current.actor.id, thread, posts: titles(listed.posts), sortKeys: new Map(), sort, storageHasMore: listed.next_cursor !== null, maxBytes, exp };
         });
         // Only metadata was read. At most 100 candidates; never reuse storage's last untrimmed cursor.
         const posts = snapshot.posts.slice();
@@ -58,7 +64,7 @@ export class ThreadPostsReadService {
                 if (!last)
                     throw tooBroad();
                 const cursor = this.signer.sign({ v: 1, purpose: 'thread_posts_read', actor_id: snapshot.actorId,
-                    space_id: spaceId, thread_id: threadId, sort: snapshot.sort, ...(snapshot.sort === 'created_at_asc' ? { after_key: snapshot.sortKeys.get(last.id) ?? null } : {}), after_id: last.id, exp: snapshot.exp }, this.secret);
+                    space_id: spaceId, thread_id: threadId, ...(query.include_titles === true ? { include_titles: true } : {}), sort: snapshot.sort, ...(snapshot.sort === 'created_at_asc' ? { after_key: snapshot.sortKeys.get(last.id) ?? null } : {}), after_id: last.id, exp: snapshot.exp }, this.secret);
                 if (removed)
                     return { data: { thread: snapshot.thread, posts }, meta: { truncated: true, next_cursor: cursor } };
                 return { data: { thread: snapshot.thread, posts }, meta: { truncated: false, next_cursor: cursor } };

@@ -30,6 +30,7 @@ export const PatchThreadRequestSchema = Type.Object({
 export const THREAD_POSTS_READ_LIMITS = Object.freeze({ cursor_chars: 4096, cursor_ttl_seconds: 86400 });
 export const THREAD_POSTS_CURSOR_ERROR_MESSAGE = 'Invalid or expired thread posts cursor. Remove cursor and retry the first page.';
 export const ThreadPostsReadQuerySchema = Type.Object({
+    include_titles: Type.Optional(Type.Boolean()),
     sort: Type.Optional(Type.Union([Type.Literal('id_asc'), Type.Literal('created_at_asc')])),
     limit: Type.Optional(Type.Integer({ ...THREAD_POST_LIMIT })),
     max_bytes: Type.Optional(Type.Integer({ ...CONTEXT_BYTES })),
@@ -42,13 +43,13 @@ export function validateThreadPostsReadQuery(query) {
         throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid thread posts read parameters.', 400, false);
 }
 const IdThreadPostsReadCursorPayloadSchema = Type.Object({
-    v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'),
+    v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'), include_titles: Type.Optional(Type.Literal(true)),
     actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }),
     thread_id: Type.String({ minLength: 1 }), sort: Type.Literal('id_asc'),
     after_id: Type.String({ minLength: 1 }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
 }, { additionalProperties: false });
 export const ThreadPostsReadCursorPayloadSchema = Type.Union([IdThreadPostsReadCursorPayloadSchema, Type.Object({
-        v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'),
+        v: Type.Literal(1), purpose: Type.Literal('thread_posts_read'), include_titles: Type.Optional(Type.Literal(true)),
         actor_id: Type.String({ minLength: 1 }), space_id: Type.String({ minLength: 1 }), thread_id: Type.String({ minLength: 1 }),
         sort: Type.Literal('created_at_asc'), after_key: Type.Union([Type.String({ pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$' }), Type.Null()]),
         after_id: Type.String({ minLength: 1 }), exp: Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER }),
@@ -57,7 +58,8 @@ export function isThreadPostsReadCursorPayload(value) {
     return Value.Check(ThreadPostsReadCursorPayloadSchema, value);
 }
 const threadPostsMetadataSchema = Type.Object({ ...ThreadSchema.properties, title: Type.String() }, { additionalProperties: false });
-const threadPostsData = (minItems) => Type.Object({ thread: threadPostsMetadataSchema, posts: Type.Array(PostSchema, { minItems }) }, { additionalProperties: false });
+export const ThreadPostDirectoryItemSchema = Type.Object({ ...PostSchema.properties, title: Type.Optional(Type.String()) }, { additionalProperties: false });
+const threadPostsData = (minItems) => Type.Object({ thread: threadPostsMetadataSchema, posts: Type.Array(ThreadPostDirectoryItemSchema, { minItems }) }, { additionalProperties: false });
 const threadPostsMeta = (truncated, cursor) => Type.Object({
     truncated: Type.Literal(truncated), next_cursor: cursor ? Type.String({ minLength: 1, pattern: '\\S' }) : Type.Null(),
 }, { additionalProperties: false });

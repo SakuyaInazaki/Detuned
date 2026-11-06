@@ -124,7 +124,7 @@ export function parseNewTypedStructured(kind: PostKind, structured: unknown): Ne
   return structured as NewTypedStructured;
 }
 
-export const NEW_TYPED_WRITE_POLICY_DESCRIPTION = '新幂等 action 的 proposal/claim/failure/summary structured 必须符合共享严格新写 schema；兼容 wire envelope 保留以支持历史成功请求原 key + 原 payload 重放，不注入默认字段。引用权限与可读性由 core 校验；provided 只表示提供引用，不表示机器验证结论。';
+export const NEW_TYPED_WRITE_POLICY_DESCRIPTION = '新幂等 action 的 proposal/claim/failure/summary structured 必须符合共享严格新写 schema；兼容 wire envelope 保留以支持历史成功请求原 key + 原 payload 重放，不注入默认字段。引用权限与可读性由 core 校验；provided 只表示提供引用，不表示机器验证结论；无引用时unverified不等于推理错误，可将推理保存为证据帖后固定引用。';
 
 export const InformalReviewDecisionStructuredSchema = Type.Object({
   subject_refs: Type.Array(PostRefSchema, { minItems: 1 }),

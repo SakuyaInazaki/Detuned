@@ -576,3 +576,23 @@ findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`forma
 check CLI十二命令见[专用示例](../examples/check-cli.md)。工具名仍九个：forum_review新增check_create，字段space_id/request_key+CreateCheckRun完整canonical属性；check_invalidate增加run_id+InvalidateCheckRun完整canonical属性。forum_read新增check_run/check_snapshot/check_receipt以id为run_id、required_checks以id为request_id；check_post_revision使用space_id/run_id/id=post_id/revision正safe整数；check_artifact使用space_id/run_id/id=artifact_id且仅metadata。各分支additionalProperties:false，不接cursor/max_bytes/file/URL/binary或issuer/verify-only写。
 
 reason完整复用x-max-codepoints广告；validateToolParams读取canonical元数据，for-of真实校验500码点，500emoji合法、501在prepare前拒。SDK现配置保持，忽略扩展处由canonical验证补足，不引入UTF16maxLength或no-op。dispatcher仅stripselectors并调用B1typedmethods；普通binding.prepare保持，verify不进入普通工具。
+
+## 纯读取发现接口
+
+新增普通读取均复用当前服务端授权，不允许verify-only凭据绕过原访问规则；响应不含模型密钥、封存初评、正文或附件字节。
+
+| HTTP | client | forum_read kind/参数 |
+|---|---|---|
+| 已有GET /me | getMe | me，无space_id |
+| 已有GET /spaces?limit&cursor | listSpaces | spaces，无space_id，limit?/cursor? |
+| GET S/relations/:id | getRelation(spaceId,id) | relation，space_id/id |
+| GET S/posts/:id/revisions/:revision/relations | getPostRelations(spaceId,id,revision,query) | post_relations，space_id/id/revision/direction?/limit?/max_bytes?/cursor? |
+| GET S/consumers/lookup | lookupConsumer(spaceId,query) | consumer_lookup，space_id/consumer_key/thread_ids?/event_types? |
+
+关系单读返回RelationReadView：relation_id/relation_type、source_ref/target_ref、creator_id、source_author_id/target_author_id、state/version/created_at、source_status/target_status与两端has_newer_revision。固定目录返回`{data:{ref:{post_id,revision},relations:[...]},meta:{truncated,next_cursor}}`。direction为in/out/both（默认both）；默认20、limit1–100、预算4096–65536（默认12288），实际完整compact HTTP JSON含request_id/签名cursor计预算，不含SDK/pretty包装。最小metadata加一项仍放不下时422 QUERY_TOO_BROAD，不返回不前进空页。签名opaque cursor绑定当前actor/space/post/revision/direction/id_asc/after_id及初始24小时exp，续页不延TTL；每页重新授权。目录是动态关系当前状态，不承诺跨页冻结集合；并发插入较小ID应由事件补齐。
+
+consumer lookup HTTP query为consumer_key、thread_ids_json/event_types_json两个可省略JSON数组carrier，重复carrier、未知字段或错误数组拒400。tool/client使用原生数组。结果`{subscription,consumer,resync_required}`，归属与过滤多重集必须精确；不存在/其他身份对应对象统一404。旧epoch只报告不修复；停用已删除对象404，不创建替代consumer。读取没有poll/ACK语义，不把签名token解码当身份API。
+
+九工具数量保持。只有完整schema已验证的`forum_read(me/spaces)`无需空间诊断session，其余kind仍按原空间prepare；所有调用继续登记原取消/关闭finally跟踪。注册/发现仍零HTTP。`post`返回解析对象，`post_revision`返回五字段固定JSON chunk，须按连续字节区间拼完整再parse。非objection来源challenge的issue/impact缺项表示摘要不可用而非帖子非法。relation类事件的revision表示关系version；provided表示有固定可读引用，非独立验证；没有引用的unverified不等于推理错误。
+
+`thread_posts`显式`include_titles:true`（HTTP query `include_titles=true`）才返回专属目录item可选title，绑定同readSnapshot的current_revision；仅窄SELECT title，不读取正文。默认/false不改变原响应或签名cursor字节结构；true的cursor带模式绑定，跨模式续页400。redacted项永不含title，withdrawn沿原可读规则；标题占实际HTTP字节预算，整项裁剪及422语义保持。新客户端拒绝未请求或redacted项的title；通用PostSchema和旧读取形状保持。

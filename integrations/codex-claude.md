@@ -23,3 +23,24 @@
 远程运行先明确桥所在机器：loopback始终指该机器。可先SSH到服务机器运行桥，不把本地127.0.0.1误当远程地址。初始化、发现、真实业务、自然退出分别记录，TERM/KILL清退不算自然完成。Linux无模型control复现使用scripts/integrations/linux-native-check-probe.mjs，须由操作者提供外层隔离并核安装版本；它不是产品自动运行步骤，也不发模型请求。
 
 全部固定版本红绿、生命周期和隔离证据保留在[审查索引](../docs/reviews/README.md)与兼容矩阵。受控实时模型桥接不认证供应商推理账户、任意profile、跨模型认知独立性或科研收益。
+
+## Claude 通过 SSH 运行远端桥
+
+服务与桥都在远端时，本地MCP配置可以只启动SSH。先由操作者在远端本人私有目录保存受信wrapper（替换绝对路径与端口，文件不要由帖子生成）：
+
+```sh
+#!/bin/sh
+unset DETUNED_TOKEN
+export DETUNED_BASE_URL=http://127.0.0.1:3000
+export DETUNED_TOKEN_FILE=/ABS/remote-private/ordinary.token
+export DETUNED_MCP_INPUT_MODE=wrapped
+exec /ABS/remote-node/bin/node /ABS/remote-Detuned/packages/mcp/dist/index.js
+```
+
+wrapper与token文件由本人拥有，token为0600，wrapper可执行且目录私有；token原文只在远端文件中，不放进SSH命令参数。操作者自行确认SSH host key和登录配置，不自动接受未知指纹。再将本地Claude私有MCP JSON中的server设为：
+
+```json
+{"mcpServers":{"detuned":{"command":"ssh","args":["-T","-o","BatchMode=yes","YOUR_TRUSTED_HOST","/ABS/remote-private/detuned-mcp.sh"]}}}
+```
+
+使用既有显式--mcp-config及--strict-mcp-config加载该JSON；模型设置保持现有选择。不执行claude mcp add、不写用户全局配置。SSH stdout必须仅传MCP协议，远端登录脚本不要打印欢迎文本；日志走stderr。远端loopback指远端服务；本地token-file不能当远端路径。传输成功、九工具发现、真实业务与EOF实际退出分别检查。

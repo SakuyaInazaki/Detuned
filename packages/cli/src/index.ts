@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import {setupParticipants,validateSetupOptions} from './setup.js';
 import {cliInputSchema} from './schema.js';
 import {CliSafeError,renderCliError} from './cli-errors.js';
 import {configureCliParser,diagnosticJsonMode,parserError} from './argv-diagnostics.js';
@@ -91,10 +92,10 @@ function handleError(err: any, jsonOnly = false): never {
   process.exit(exitCode);
 }
 
-function getClient(cmdOpts: any, requestKeyStore?: RequestKeyStore): DetunedClient {
+function getClient(cmdOpts: any, requestKeyStore?: RequestKeyStore, maxRetries?: number): DetunedClient {
   const baseUrl = cmdOpts.url ?? process.env.DETUNED_BASE_URL ?? 'http://127.0.0.1:3000';
   const token = resolveCliToken({token:cmdOpts.token,tokenFile:cmdOpts.tokenFile}, {DETUNED_TOKEN:process.env.DETUNED_TOKEN,DETUNED_TOKEN_FILE:process.env.DETUNED_TOKEN_FILE});
-  return new DetunedClient({ baseUrl, token, requestKeyStore });
+  return new DetunedClient({ baseUrl, token, requestKeyStore, ...(maxRetries !== undefined ? {maxRetries} : {}) });
 }
 
 function readInputJson(inputPath?: string): any {
@@ -217,10 +218,10 @@ program.command('import').description('本地校验空间NDJSON并导入新实�
     }
   });
 
-program.command('migrate').description('离线复制旧schema1、schema2、schema3或schema4实例并升级到新schema5目录；保留原目录回退')
+program.command('migrate').description('离线复制已支持的schema1–5实例并升级到新schema6目录；保留原目录回退')
   .option('--offline', '显式确认离线升级，活跃服务持锁时拒绝')
-  .requiredOption('--data-dir <dir>', '旧schema1或schema2源目录')
-  .requiredOption('--output <dir>', '不存在的新schema3目录')
+  .requiredOption('--data-dir <dir>', '已支持的旧schema1–5源目录')
+  .requiredOption('--output <dir>', '不存在的新schema6目录')
   .requiredOption('--admin-name <name>', '新本地human管理员名称')
   .option('--timeout-ms <n>', '完整离线升级超时1–120000ms', '120000')
   .action(async (options) => {
@@ -399,7 +400,7 @@ program
         reportFailure: () => {
           try { process.stderr.write(isJson ? JSON.stringify({error:{code:'SHUTDOWN_FAILED',message:'服务关闭未完整完成。'}})+'\n' : 'Detuned 服务关闭未完整完成。\n'); } catch {}
         },
-        exit: code => process.exit(code),
+        exit: code => { if (code === 0) { try { process.stderr.write('Detuned 服务已完整关闭。\n'); } catch {} } process.exit(code); },
       }, shutdownTimeoutMs);
       shutdown.attachSignals();
 
@@ -501,6 +502,15 @@ sessionCommand.command('create <space-id>').option('--input <file>', 'JSON文件
     catch (error) { handleError(error, program.opts().json); }
   });
 const consumerCommand = program.command('consumer').description('显式消费者终止');
+consumerCommand.command('lookup <space-id>').description('按本人consumer key和原过滤条件只读恢复consumer.id；不创建/ACK')
+  .requiredOption('--consumer-key <key>', '原订阅consumer key')
+  .option('--thread <thread-id>', '原主题过滤，可重复并保留重复项', (value:string,prior:string[])=>[...prior,value], [])
+  .option('--event-type <type>', '原事件类型过滤，可重复并保留重复项', (value:string,prior:string[])=>[...prior,value], [])
+  .action(async(spaceId,options)=>{try{printOutput(await getClient(program.opts()).lookupConsumer(spaceId,{consumer_key:options.consumerKey,thread_ids:options.thread,event_types:options.eventType}),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+const relationCommand = program.command('relation').description('当前关系metadata与固定端点读取');
+relationCommand.command('read <space-id> <relation-id>').description('读取有权关系的类型、固定两端、状态与version')
+  .action(async(spaceId,relationId)=>{try{printOutput(await getClient(program.opts()).getRelation(spaceId,relationId),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+
 consumerCommand.command('deactivate <space-id> <consumer-id>').action(async (spaceId, consumerId) => {
   try { printOutput((await getClient(program.opts()).deactivateConsumer(spaceId, consumerId)).data, program.opts().json); }
   catch (error) { handleError(error, program.opts().json); }
@@ -655,7 +665,7 @@ checkCommand.command('artifact-download <space-id> <run-id> <artifact-id>').requ
  }catch(error){handleError(error,program.opts().json);}});
 checkCommand.command('required <space-id> <request-id>').action(async(spaceId,id)=>{try{printOutput(await withArtifactSignal(signal=>getClient(program.opts()).getRequiredChecks(spaceId,id,{signal})),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 
-const healthCommand = program.command('health').description('匿名最小健康检查');
+const healthCommand = program.command('health').description('匿名最小健康检查：health live / health ready');
 for (const name of ['live', 'ready'] as const) {
   healthCommand.command(name).action(async () => {
     try {
@@ -665,7 +675,7 @@ for (const name of ['live', 'ready'] as const) {
     } catch (error) { handleError(error, program.opts().json); }
   });
 }
-program.command('view <space-id> <name>').description('读取知识视图')
+program.command('view <space-id> <name>').description('读取知识视图：findings / failures / open-questions')
   .action(async (spaceId, name) => {
     try {
       if (name !== 'findings' && name !== 'failures' && name !== 'open-questions') throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'view name 必须为 findings、failures 或 open-questions。', 400);
@@ -711,6 +721,14 @@ spaceReadCommand.command('read <space-id>').description('按固定内容修订�
   });
 
 const postReadCommand = program.command('post').description('帖子固定修订内容读取');
+postReadCommand.command('relations <space-id> <post-id>').description('有界读取固定帖子修订的入/出关系；整页data/meta')
+  .requiredOption('--revision <n>', '固定帖子修订，正安全整数')
+  .option('--direction <in|out|both>', '入边/出边/两者', 'both')
+  .option('--limit <n>', '每页1–100', '20')
+  .option('--max-bytes <n>', 'compact HTTP正文预算4096–65536', '12288')
+  .option('--cursor <token>', '上页不透明next_cursor，保持原过滤条件')
+  .action(async(spaceId,postId,options)=>{try{printOutput(await getClient(program.opts()).getPostRelations(spaceId,postId,parseReadPositiveInteger(options.revision,'revision'),{direction:options.direction,limit:parsePageLimit(options.limit),max_bytes:parseReadPositiveInteger(options.maxBytes,'max-bytes'),cursor:options.cursor}),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
+
 postReadCommand.command('revisions <space-id> <post-id>').option('--limit <count>', '每页1–100', '20').option('--cursor <token>', '上一页next_cursor')
   .action(async (spaceId, postId, options) => {
     try { printOutput(await getClient(program.opts()).listPostRevisions(spaceId, postId, parsePageLimit(options.limit), options.cursor), program.opts().json); }
@@ -750,6 +768,7 @@ threadCommand.command('list <space-id>').option('--state <state>', 'open 或 arc
   });
 threadCommand.command('posts <space-id> <thread-id>')
   .description('有界帖子元数据目录；整页data/meta，不含正文；旧read thread仅默认首批')
+  .option('--include-titles', '显式包含当前修订标题；脱敏帖仍不返回标题')
   .option('--limit <count>', '每页最多帖子数1..100（默认50）')
   .option('--max-bytes <bytes>', 'compact envelope预算4096..65536（默认12288）')
   .option('--sort <sort>', 'id_asc（默认）或created_at_asc（记录创建时间，未知历史时间末尾）')
@@ -758,7 +777,7 @@ threadCommand.command('posts <space-id> <thread-id>')
     try {
       const page = await getClient(program.opts()).getThreadPosts(spaceId, threadId, {
         limit: options.limit === undefined ? undefined : parseReadPositiveInteger(options.limit, 'limit'),
-        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort,
+        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort, include_titles: options.includeTitles,
       });
       printOutput(page, program.opts().json);
     } catch (err: any) { handleError(err, program.opts().json); }
@@ -850,6 +869,13 @@ program
       handleError(err, program.opts().json);
     }
   });
+
+program.command('setup')
+  .description('连接已运行服务，创建空间与普通参与者，将凭据保存到新私有目录；不启动服务或模型')
+  .requiredOption('--input <file>', '空间CreateSpace JSON；无tool envelope')
+  .requiredOption('--participant <label>', '1–32个唯一安全标签，可重复该选项', (value:string,prior:string[])=>[...prior,value], [])
+  .requiredOption('--output <dir>', '不存在的新0700目录；结果失败也保留收据和已发凭据')
+  .action(async(options)=>{try{const checked=validateSetupOptions(readAdminInput(()=>readInputJson(options.input)),options.participant,options.output);printOutput(await setupParticipants(getClient(program.opts(),undefined,0),checked),program.opts().json);}catch(error){handleError(error,program.opts().json);}});
 
 program.command('schema <target>')
   .description('离线查看CLI输入JSON schema：publish或relate；不读取凭据、不连接服务')
@@ -1019,6 +1045,12 @@ program
       handleError(err, program.opts().json);
     }
   });
+
+function markRequiredHelp(command: Command): void {
+  for (const option of command.options) if (option.mandatory && !option.description.includes('必需')) option.description += '（必需）';
+  for (const child of command.commands) markRequiredHelp(child);
+}
+markRequiredHelp(program);
 
 void program.parseAsync(process.argv).catch((error: unknown) => {
   const code = error instanceof Error && 'code' in error ? error.code : undefined;

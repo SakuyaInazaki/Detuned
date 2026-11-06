@@ -196,3 +196,7 @@ findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`forma
 ## C2B当前公共检索边界
 
 公开意见可通过search显式review_submissions源读取；只有全部揭示且当前权限与引用材料仍可读的意见参与。封存意见、闲置私有附件、ID/hash与帖子body不进入意见文本索引；读时有界扫描，无持久FTS。固定target_ref与historical round保留，不把揭示或意见verdict算当前批准/真实检查通过。损坏与在线材料不可见分开处理，同一snapshot批次保持一致。完整query/DTO/cursor见[协议C2B](04-protocol.md#m64-c2b公开正式意见的有界检索)，[证据](reviews/2026-10-09-m6-4-c2b/README.md)。截至C2B该阶段下步M7.1-A仅规划；当前状态以顶部B1入口为准。
+
+### 普通发现读取与封存边界
+
+本人me/spaces、普通帖子固定修订的关系目录及本人consumer找回不参与正式评审资格判定，不创建独立身份或评审会话，也不揭示封存初评。关系端点仍限同空间真实PostRef，不把review_submission或其私有证据变成公共帖子/关系。当前ACL、红删墓碑、旧版本不沿用批准及显式ACK规则保持。

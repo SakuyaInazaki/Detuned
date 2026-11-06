@@ -28,3 +28,5 @@ export * from './post-catalogs.js';
 export { canonicalizeReviewJson, ReviewCanonicalizationError, type ReviewCanonicalizationReason } from './review-canonical.js';
 
 export * from './validation-issues.js';
+
+export * from './discovery-reads.js';

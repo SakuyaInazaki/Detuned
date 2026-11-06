@@ -97,6 +97,7 @@ export declare const THREAD_POSTS_READ_LIMITS: Readonly<{
 }>;
 export declare const THREAD_POSTS_CURSOR_ERROR_MESSAGE = "Invalid or expired thread posts cursor. Remove cursor and retry the first page.";
 export declare const ThreadPostsReadQuerySchema: import("@sinclair/typebox").TObject<{
+    include_titles: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     sort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"id_asc">, import("@sinclair/typebox").TLiteral<"created_at_asc">]>>;
     limit: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
@@ -107,6 +108,7 @@ export declare function validateThreadPostsReadQuery(query: ThreadPostsReadQuery
 export declare const ThreadPostsReadCursorPayloadSchema: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TObject<{
     v: import("@sinclair/typebox").TLiteral<1>;
     purpose: import("@sinclair/typebox").TLiteral<"thread_posts_read">;
+    include_titles: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TLiteral<true>>;
     actor_id: import("@sinclair/typebox").TString;
     space_id: import("@sinclair/typebox").TString;
     thread_id: import("@sinclair/typebox").TString;
@@ -116,6 +118,7 @@ export declare const ThreadPostsReadCursorPayloadSchema: import("@sinclair/typeb
 }>, import("@sinclair/typebox").TObject<{
     v: import("@sinclair/typebox").TLiteral<1>;
     purpose: import("@sinclair/typebox").TLiteral<"thread_posts_read">;
+    include_titles: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TLiteral<true>>;
     actor_id: import("@sinclair/typebox").TString;
     space_id: import("@sinclair/typebox").TString;
     thread_id: import("@sinclair/typebox").TString;
@@ -126,6 +129,17 @@ export declare const ThreadPostsReadCursorPayloadSchema: import("@sinclair/typeb
 }>]>;
 export type ThreadPostsReadCursorPayload = Static<typeof ThreadPostsReadCursorPayloadSchema>;
 export declare function isThreadPostsReadCursorPayload(value: unknown): value is ThreadPostsReadCursorPayload;
+export declare const ThreadPostDirectoryItemSchema: import("@sinclair/typebox").TObject<{
+    title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    id: import("@sinclair/typebox").TString;
+    space_id: import("@sinclair/typebox").TString;
+    thread_id: import("@sinclair/typebox").TString;
+    author_id: import("@sinclair/typebox").TString;
+    kind: import("@sinclair/typebox").TUnion<import("@sinclair/typebox").TLiteral<"note" | "question" | "proposal" | "claim" | "objection" | "failure" | "summary" | "review" | "decision">[]>;
+    current_revision: import("@sinclair/typebox").TInteger;
+    lifecycle: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"active">, import("@sinclair/typebox").TLiteral<"withdrawn">, import("@sinclair/typebox").TLiteral<"redacted">]>;
+    created_at: import("@sinclair/typebox").TString;
+}>;
 export declare const ThreadPostsPageSchema: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TObject<{
     data: import("@sinclair/typebox").TObject<{
         thread: import("@sinclair/typebox").TObject<{
@@ -139,6 +153,7 @@ export declare const ThreadPostsPageSchema: import("@sinclair/typebox").TUnion<[
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;
@@ -166,6 +181,7 @@ export declare const ThreadPostsPageSchema: import("@sinclair/typebox").TUnion<[
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;
@@ -193,6 +209,7 @@ export declare const ThreadPostsPageSchema: import("@sinclair/typebox").TUnion<[
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;
@@ -222,6 +239,7 @@ export declare const ThreadPostsEnvelopeSchema: import("@sinclair/typebox").TUni
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;
@@ -251,6 +269,7 @@ export declare const ThreadPostsEnvelopeSchema: import("@sinclair/typebox").TUni
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;
@@ -280,6 +299,7 @@ export declare const ThreadPostsEnvelopeSchema: import("@sinclair/typebox").TUni
             updated_at: import("@sinclair/typebox").TString;
         }>;
         posts: import("@sinclair/typebox").TArray<import("@sinclair/typebox").TObject<{
+            title: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
             id: import("@sinclair/typebox").TString;
             space_id: import("@sinclair/typebox").TString;
             thread_id: import("@sinclair/typebox").TString;

@@ -10,12 +10,13 @@ export const threadRoutes = async (app) => {
         const auth = req.auth;
         const { space_id, id } = req.params;
         const query = req.query;
-        validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor', 'sort']);
+        validateAllowedQueryParams(query, ['limit', 'max_bytes', 'cursor', 'sort', 'include_titles']);
         const limit = parseIntegerQuery(query.limit, 'limit', integerQueryOptions(THREAD_POST_LIMIT));
         const max_bytes = parseIntegerQuery(query.max_bytes, 'max_bytes', integerQueryOptions(CONTEXT_BYTES));
         const cursor = parseStringQuery(query.cursor, 'cursor', { allowEmpty: true });
         const sort = parseStringQuery(query.sort, 'sort');
-        const page = threadPostsReadService.getPosts(auth, space_id, id, { limit, max_bytes, cursor, sort }, { request_id: req.id });
+        const titles = parseStringQuery(query.include_titles, 'include_titles', { allowedValues: new Set(['true', 'false']) });
+        const page = threadPostsReadService.getPosts(auth, space_id, id, { limit, max_bytes, cursor, sort, include_titles: titles === undefined ? undefined : titles === 'true' }, { request_id: req.id });
         return reply.type('application/json').send(serializeThreadPostsEnvelope(req.id, page));
     });
     app.get('/spaces/:space_id/threads', async (req) => {

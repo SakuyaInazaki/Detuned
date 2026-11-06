@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DetunedClient, ClientProtocolError, UserAbortError } from '@detuned/client';
 import { validateRequestKeyScope, type RequestKeyScope } from '../../packages/client/src/request-key.js';
+const identityFixture=(id:string)=>({actor:{id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00.000Z',disabled_at:null},capabilities:['read','write'],allowed_space_ids:['space'],visible_spaces:[]});
 const date='2026-10-09T00:00:00Z', hash='a'.repeat(64);
 const status={request_id:'request',snapshot_id:'snapshot',phase:'collecting',verification_status:'not_required',current_validity:'current',validity_reasons:[]};
 const decision={id:'decision',request_id:'request',actor_id:'actor',snapshot_sha256:hash,review_ids:['submission'],check_receipt_ids:[],outcome:'accepted',rationale:'complete',request_version:3,created_at:date};
@@ -20,7 +21,7 @@ describe('review bounded client contracts',()=>{
  it('RC02 persistent request scopes retain request target and key across attempts and validate all five families',async()=>{
   const scopes:RequestKeyScope[]=[],keys:string[]=[];const body={expected_version:2};
   vi.stubGlobal('fetch',vi.fn(async(url:unknown,init:RequestInit)=>{
-   if(String(url).endsWith('/me'))return response({actor:{id:'actor'}});
+   if(String(url).endsWith('/me'))return response(identityFixture('actor'));
    keys.push(new Headers(init.headers).get('idempotency-key')!);expect(JSON.parse(String(init.body))).toEqual(body);return response(decision);
   }));
   const c=new DetunedClient({baseUrl:'http://review.invalid',token:'private-fixture',maxRetries:0,requestKeyStore:{async getOrCreate(scope){scopes.push(scope);return 'stable-key';}}});

@@ -32,6 +32,31 @@ export declare const ToolSearchParamsUnion: import("@sinclair/typebox").TUnion<[
 export declare const ToolSearchParamsSchema: TSchema;
 export type ToolSearchParams = Static<typeof ToolSearchParamsUnion>;
 export declare const ToolReadParamsUnion: import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TObject<{
+    kind: import("@sinclair/typebox").TLiteral<"me">;
+}>, import("@sinclair/typebox").TObject<{
+    kind: import("@sinclair/typebox").TLiteral<"spaces">;
+    limit: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    cursor: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+}>, import("@sinclair/typebox").TObject<{
+    kind: import("@sinclair/typebox").TLiteral<"relation">;
+    space_id: import("@sinclair/typebox").TString;
+    id: import("@sinclair/typebox").TString;
+}>, import("@sinclair/typebox").TObject<{
+    direction: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"in">, import("@sinclair/typebox").TLiteral<"out">, import("@sinclair/typebox").TLiteral<"both">]>>;
+    limit: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
+    cursor: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
+    kind: import("@sinclair/typebox").TLiteral<"post_relations">;
+    space_id: import("@sinclair/typebox").TString;
+    id: import("@sinclair/typebox").TString;
+    revision: import("@sinclair/typebox").TInteger;
+}>, import("@sinclair/typebox").TObject<{
+    consumer_key: import("@sinclair/typebox").TString;
+    thread_ids: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TString>>;
+    event_types: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TArray<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"space.revised">, import("@sinclair/typebox").TLiteral<"thread.created">, import("@sinclair/typebox").TLiteral<"thread.updated">, import("@sinclair/typebox").TLiteral<"post.created">, import("@sinclair/typebox").TLiteral<"post.revised">, import("@sinclair/typebox").TLiteral<"post.withdrawn">, import("@sinclair/typebox").TLiteral<"post.redacted">, import("@sinclair/typebox").TLiteral<"relation.created">, import("@sinclair/typebox").TLiteral<"relation.resolved">, import("@sinclair/typebox").TLiteral<"relation.reopened">, import("@sinclair/typebox").TLiteral<"artifact.created">, import("@sinclair/typebox").TLiteral<"artifact.redacted">, import("@sinclair/typebox").TLiteral<"review.requested">, import("@sinclair/typebox").TLiteral<"review.cancelled">, import("@sinclair/typebox").TLiteral<"review.submitted">, import("@sinclair/typebox").TLiteral<"review.revealed">, import("@sinclair/typebox").TLiteral<"review.finalized">, import("@sinclair/typebox").TLiteral<"review.stale">, import("@sinclair/typebox").TLiteral<"review.invalidated">, import("@sinclair/typebox").TLiteral<"check.created">, import("@sinclair/typebox").TLiteral<"check.completed">, import("@sinclair/typebox").TLiteral<"check.invalidated">]>>>;
+    kind: import("@sinclair/typebox").TLiteral<"consumer_lookup">;
+    space_id: import("@sinclair/typebox").TString;
+}>, import("@sinclair/typebox").TObject<{
     kind: import("@sinclair/typebox").TLiteral<"check_run">;
     space_id: import("@sinclair/typebox").TString;
     id: import("@sinclair/typebox").TString;
@@ -66,6 +91,7 @@ export declare const ToolReadParamsUnion: import("@sinclair/typebox").TUnion<[im
     space_id: import("@sinclair/typebox").TString;
     id: import("@sinclair/typebox").TString;
 }>, import("@sinclair/typebox").TObject<{
+    include_titles: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TBoolean>;
     sort: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TUnion<[import("@sinclair/typebox").TLiteral<"id_asc">, import("@sinclair/typebox").TLiteral<"created_at_asc">]>>;
     limit: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
     max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
@@ -858,7 +884,7 @@ export declare const ToolReviewParamsSchema: TSchema;
 export type ToolReviewParams = Static<typeof ToolReviewParamsUnion>;
 export declare const DETUNED_TOOLS: readonly [{
     readonly name: "forum_context";
-    readonly description: "获取指定空间上下文，返回{data,meta}并保留meta.truncated；max_bytes限定成功compact HTTP正文，不含pretty JSON/SDK包装。focus_thread_id可聚焦同空间可读主题，返回必需focus_thread元数据；省略保持空间上下文。";
+    readonly description: "非objection来源challenge的issue/impact可为null/missing_fields，表示摘要字段不可用而非帖子非法，应读固定正文。获取指定空间上下文，返回{data,meta}并保留meta.truncated；max_bytes限定成功compact HTTP正文，不含pretty JSON/SDK包装。focus_thread_id可聚焦同空间可读主题，返回必需focus_thread元数据；省略保持空间上下文。";
     readonly schema: import("@sinclair/typebox").TObject<{
         max_bytes: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TInteger>;
         focus_thread_id: import("@sinclair/typebox").TOptional<import("@sinclair/typebox").TString>;
@@ -870,11 +896,11 @@ export declare const DETUNED_TOOLS: readonly [{
     readonly schema: TSchema;
 }, {
     readonly name: "forum_read";
-    readonly description: "有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。";
+    readonly description: "me/spaces无需space_id提供本人身份和空间起点；relation读六类型关系；post_relations按固定revision有界读取in/out/both；consumer_lookup按本人key及原过滤器多重集只读找回，不ACK/创建/重定位，resync_required仍需按消费规则处理。post返回解析对象，post_revision的chunk须拼完整后JSON.parse。有界读取thread_posts主题帖子元数据目录（签名cursor，limit/max_bytes/sort）或续读固定space规则/post_revision内容修订并返回data/meta；各chunk拼接后解析。旧post读取完整单帖；thread返回默认首批帖子元数据（不含正文），工具不提供目录分页。旧post/thread不支持cursor/max_bytes。review/artifact/check_artifact只读metadata，不读取文件路径。review_snapshot的id取assignment.snapshot_id；review_submission的id取提交确认submission_id；其他单轮review读取id取request_id。";
     readonly schema: TSchema;
 }, {
     readonly name: "forum_publish";
-    readonly description: "原子发布主题、帖子、新修订或撤回已有帖子。新幂等 action 的 proposal/claim/failure/summary structured 必须符合共享严格新写 schema；兼容 wire envelope 保留以支持历史成功请求原 key + 原 payload 重放，不注入默认字段。引用权限与可读性由 core 校验；provided 只表示提供引用，不表示机器验证结论。 initial_post 按自身 kind，新修订按数据库不可变 post.kind 应用规则。";
+    readonly description: "原子发布主题、帖子、新修订或撤回已有帖子。新幂等 action 的 proposal/claim/failure/summary structured 必须符合共享严格新写 schema；兼容 wire envelope 保留以支持历史成功请求原 key + 原 payload 重放，不注入默认字段。引用权限与可读性由 core 校验；provided 只表示提供引用，不表示机器验证结论；无引用时unverified不等于推理错误，可将推理保存为证据帖后固定引用。 initial_post 按自身 kind，新修订按数据库不可变 post.kind 应用规则。";
     readonly schema: TSchema;
 }, {
     readonly name: "forum_relate";
@@ -882,7 +908,7 @@ export declare const DETUNED_TOOLS: readonly [{
     readonly schema: TSchema;
 }, {
     readonly name: "forum_subscribe";
-    readonly description: "在空间中创建持久事件订阅及消费者。";
+    readonly description: "在空间中创建/复用持久订阅与消费者；合法同actor/space、相同thread_ids/event_types过滤多重集和consumer_key复用原consumer，不重定位；只读找回用forum_read consumer_lookup。";
     readonly schema: import("@sinclair/typebox").TObject<{
         space_id: import("@sinclair/typebox").TString;
         request_key: import("@sinclair/typebox").TString;
@@ -894,7 +920,7 @@ export declare const DETUNED_TOOLS: readonly [{
     }>;
 }, {
     readonly name: "forum_poll";
-    readonly description: "拉取未读事件并锁定投递批次。";
+    readonly description: "拉取未读事件并锁定投递批次；事件revision按type解释，relation事件的revision是关系version。读取不ACK。";
     readonly schema: import("@sinclair/typebox").TObject<{
         space_id: import("@sinclair/typebox").TString;
         consumer_id: import("@sinclair/typebox").TString;

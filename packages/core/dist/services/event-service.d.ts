@@ -1,3 +1,4 @@
+import { type ConsumerLookupQuery, type ConsumerLookupView } from '@detuned/protocol';
 import { Subscription, Consumer, CreateSubscriptionRequest, PollRequest, PollResponseData, AckRequest, AckResponseData } from '@detuned/protocol';
 import { StoragePort } from '../ports/storage.js';
 import { IdGeneratorPort } from '../ports/id-generator.js';
@@ -25,6 +26,7 @@ export declare class EventService {
         subscription: Subscription;
         consumer: Consumer;
     };
+    lookupConsumer(auth: AuthenticatedContext, spaceId: string, query: ConsumerLookupQuery): ConsumerLookupView;
     private currentConsumer;
     private cursor;
     poll(auth: AuthenticatedContext, spaceId: string, consumerId: string, req: PollRequest): PollResponseData;

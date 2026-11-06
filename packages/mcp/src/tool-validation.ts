@@ -3,7 +3,7 @@ import type {JsonSchemaType,JsonSchemaValidator} from '@modelcontextprotocol/sdk
 import {DETUNED_TOOLS,toolValidationError, validateToolParams,DetunedError,ErrorCode,isMeResponse,isSession,type MeResponse,type Session} from '@detuned/protocol';
 import {ClientProtocolError} from '@detuned/client';
 
-export type McpToolArguments = Record<string,unknown> & {space_id:string};
+export type McpToolArguments = Record<string,unknown> & {space_id?:string};
 // Trusted protocol schemas only: TypeBox permits a broader contentEncoding string
 // declaration than SDK JsonSchemaType. Preserve the exact object and every keyword;
 // this boundary never casts unvalidated arguments or response data.

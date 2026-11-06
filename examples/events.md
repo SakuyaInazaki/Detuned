@@ -28,3 +28,5 @@ if (batch.batch_id !== null) {
 响应丢失或处理前退出：再次poll恢复同batch和真实范围，再签24小时游标；ack响应丢失可用同batch+游标重复ack。持久化后断连保留batch，不需自己拼through_seq。权限每次重新检查，成员epoch变更可能要求RESYNC_REQUIRED，撤权直接拒绝。每EventService实例128个实际等待槽，429 RATE_LIMITED是该实例限额；不是跨进程服务配额。服务关闭会取消等待，可用连接收到retryable503。
 
 规范见[协议](../docs/04-protocol.md)。CLI消费/inbox持久适配器与真实宿主会话验收不由此示例宣称完成。
+
+事件的revision是按事件对象类型解释的版本：post事件为帖子revision，relation.resolved/reopened为关系version，不能当所引用帖子的修订号。事件只有定位信息时，用对应对象读取接口核实内容；不要解码opaque checkpoint/cursor来寻找身份。

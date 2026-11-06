@@ -106,4 +106,8 @@ export const SpaceRevisionEnvelopeSchema = Type.Union(SpaceRevisionPageSchema.an
 export function buildSpaceRevisionEnvelope(requestId, page) { return { api_version: '1', request_id: requestId, ...page }; }
 export function serializeSpaceRevisionEnvelope(requestId, page) { return JSON.stringify(buildSpaceRevisionEnvelope(requestId, page)); }
 export function spaceRevisionEnvelopeBytes(requestId, page) { return new TextEncoder().encode(serializeSpaceRevisionEnvelope(requestId, page)).byteLength; }
+export function validateCreateSpaceRequest(value) {
+    if (!Value.Check(CreateSpaceRequestSchema, value))
+        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid space creation parameters.', 400);
+}
 //# sourceMappingURL=spaces.js.map

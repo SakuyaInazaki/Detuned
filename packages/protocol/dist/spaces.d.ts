@@ -243,4 +243,5 @@ export type SpaceRevisionEnvelope = {
 export declare function buildSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): SpaceRevisionEnvelope;
 export declare function serializeSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): string;
 export declare function spaceRevisionEnvelopeBytes(requestId: string, page: SpaceRevisionPage): number;
+export declare function validateCreateSpaceRequest(value: unknown): asserts value is CreateSpaceRequest;
 //# sourceMappingURL=spaces.d.ts.map

@@ -432,3 +432,11 @@ M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0
 ## ADR087：plain HTTP 解析连接与完整业务响应分域收尾
 
 原业务资源 lease 完整收束后，plain HTTP 单独清退本服务拥有的空连接及未完成解析连接；完整请求的正常响应保留至 finish/close，再先结束可写侧并 flush 后清退，不因后续半 pipeline 截断正文。不把 socket 当业务 lease、不延长 CLI 退出预算、不改 TLS 原路径或业务提交语义。此项解决资源计数为零仍被半开 plain HTTP 连接阻塞的问题；实际红绿、正常响应及完整生命周期证据记在当前 Arch 审查。
+
+## 只读发现与显式参与者准备
+
+为纯MCP参与者提供本人me/spaces、六类型关系单读与固定帖子修订的有界关系目录、按本人key和原过滤多重集的consumer纯读恢复，复用forum_read保持九工具。全局起点显式绕过仅空间诊断session，不绕过schema、HTTP授权、取消或关闭跟踪；未知/额外参数不被放行。通用关系视图独立于原knowledge三类投影，不改变治理状态；consumer旧epoch只报告，停用删除仍404，任何读不ACK、不创建、不重定位。
+
+管理员可显式连接已运行服务，使用setup的space JSON、1–32唯一安全participant标签和全新0700 output目录创建空间及普通contributor/read-write/单空间凭据。该命令不启动服务或模型，不改全局配置，不以actor.kind猜管理员；权限仍由服务裁决。credential签发单attempt，未知结果立即停，不重放或删除服务端材料；0600收据记录步骤状态、非秘密ID和恢复提示，token以0600新文件保存。本地保存失败保留credential_id并标received_not_saved或明确私有recovery文件，不报告成功却丢弃凭据；重复output在业务写前拒绝。
+
+关系目录新增两条runtime derived索引（source/target固定修订+id），由现prepareRuntimeReadIndexes机制在配额后显式维护，保逻辑schema6及历史迁移材料；保留名但定义不符则拒绝启动，不默吞或删除。双向各索引seek取limit+1后UNION去重及最终限额，自环一次；保证单页候选与响应边界，不作全库容量承诺。主题目录标题采用显式include_titles模式，仅读同快照当前修订标题，默认/false旧响应与cursor保持，红删不返回标题。

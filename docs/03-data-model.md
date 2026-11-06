@@ -310,3 +310,11 @@ findings/failures每项必含`formal_review: ReviewRoundSummary | null`。`forma
 共享客户端对整个findings/failures数组严格校验：未知/坏项整页拒绝，日期、flags/summary一致性、requested space与post绑定、目标修订不晚于当前条目均检查。必填summary及新flags是响应契约扩展，部署须server/client一起升级；旧server缺字段被新client拒绝，不静默补null。HTTP方法、查询与data数组签名不变；无需DB迁移。现存Web已使用同契约和固定reader，保历史实现，不继续开发；读固定评审对象不等于自动选定某轮。
 
 截至C2A的阶段记录（以下历史计数与当时待办保持）：证据见[C2A](reviews/2026-10-09-m6-4-c2a/README.md)。C2B公开意见检索、M7真实检查/回执仍待。
+
+## 本人起点、固定引用关系与消费者发现
+
+`forum_read` 的 `me`、`spaces` 为无空间参数的本人起点，分别复用现有 `/me` 与可见空间分页；`me.visible_spaces` 仍只提供最多100项摘要，不代表完整ACL或完整目录。只读起点不创建诊断session、consumer或事件，也不改变身份与资格。
+
+通用关系读取覆盖既有六种type，端点始终是原固定`post_id/revision`，state/version是关系当前状态；新材料不迁移旧边。新目录按一个固定帖子修订查询入边、出边或两者，自环只返回一次。通用读取不扩大知识视图中原有supports/challenges/reproduces三类投影。当前空间ACL及两端同空间/真实修订存在性在同一只读快照内核对；红删的非anchor端保留固定ref与关系/作者身份元数据及redacted状态，不暴露正文、hash、附件或当前修订号，has_newer_revision为null；红删anchor沿固定目录规则返回410。封存初评不是帖子关系端点，不被此接口公开。
+
+consumer_key的唯一域为subscription而非整个actor/space。找回使用当前actor、space、consumer_key与原thread_ids/event_types的顺序无关多重集，重复项不去重，省略数组等于[]。返回已有subscription/consumer与resync_required，不创建、不确认、不改变起点、batch或acl_epoch。旧epoch标记true，后续poll仍按原规则返回RESYNC_REQUIRED；停用已删除consumer，找回返回404且不重建。

@@ -1,6 +1,10 @@
 # Detuned 实施进度追踪
 
-当前首次使用与诊断M7.9见[处置与验证](reviews/2026-11-06-first-use/README.md)。全部24报告逐项处置；严格数字、安全字段诊断、离线CLI schema与私有pnpm runner完成。最终27包步骤、34schema对照、相关9文件53项及一次完整170文件1048项通过，原文四块CLI协作旅程通过；主代理独立核验功能和63项字节绑定接受，清退事实见当前入口。
+当前MCP接续与首次设置M7.10见[处置与验证](reviews/2026-11-06-mcp-usability/README.md)。关系/身份/空间/consumer只读发现、setup与CLI帮助已实现；最终一次完整后端176文件1072项全通过，主代理新SSH核原始JSON，首full七个不完整/me fixture失败另存，原断言/时序/timeout保持。原文setup协作旅程与三普通身份flat/wrapped/Pi SDK接续通过；主代理独立核验原始JSON/SQLite及113源/test/fixture/dist与guide逐字相同并接受。唯一自有验收根已清退，owner及主代理独立新SSH确认ENOENT；不新增模型/供应商认证。
+
+## 历史首次使用与诊断
+
+历史首次使用与诊断M7.9见[处置与验证](reviews/2026-11-06-first-use/README.md)。全部24报告逐项处置；严格数字、安全字段诊断、离线CLI schema与私有pnpm runner完成。最终27包步骤、34schema对照、相关9文件53项及一次完整170文件1048项通过，原文四块CLI协作旅程通过；主代理独立核验功能和63项字节绑定接受，清退事实见该历史入口。
 
 ## 历史搜索参数维护
 

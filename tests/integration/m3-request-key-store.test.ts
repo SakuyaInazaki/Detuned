@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { DetunedClient, RequestKeyError, normalizeServerNamespace } from '../../packages/client/src/index.js';
 import { FileRequestKeyStore } from '../../packages/client/src/node.js';
+const identityFixture=(id:string)=>({actor:{id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00.000Z',disabled_at:null},capabilities:['read','write'],allowed_space_ids:['space'],visible_spaces:[]});
 const roots: string[] = [];
 afterEach(async () => { vi.unstubAllGlobals(); await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))); });
 const scope = { serverNamespace: 'https://example.test', actorId: 'actor', spaceId: 'space', operation: 'post.create', target: 'thread' };
@@ -41,7 +42,7 @@ describe('optional persistent request keys', () => {
     const a = await store();
     vi.stubGlobal('fetch', vi.fn(async (url: string, opts: RequestInit) => {
       seen.push(String(url));
-      if (String(url).endsWith('/me')) return new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: { actor: { id: 'actor' } } }));
+      if (String(url).endsWith('/me')) return new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: identityFixture('actor') }));
       expect((opts.headers as Record<string, string>)['Idempotency-Key']).toMatch(/^rk_/);
       expect((await readdir(a.root)).filter(n => n.endsWith('.json'))).toHaveLength(1);
       return new Response(JSON.stringify({ api_version: '1', request_id: 'write', data: { id: 'post' } }));
@@ -53,7 +54,7 @@ describe('optional persistent request keys', () => {
     expect(record).not.toContain('secret');
   });
   it('rejects explicit-key conflict, missing store and failed store before POST', async () => {
-    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: { actor: { id: 'actor' } } })));
+    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: identityFixture('actor') })));
     vi.stubGlobal('fetch', fetch);
     const client = new DetunedClient({ baseUrl: scope.serverNamespace });
     await expect(client.createThread('space', { title: 'x' }, '', { logicalOperationId: '' })).rejects.toMatchObject({ code: 'INVALID_OPTIONS' });
@@ -63,14 +64,14 @@ describe('optional persistent request keys', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
   });
   it('rejects a credential change during store preparation and does not POST', async () => {
-    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: { actor: { id: 'actor' } } })));
+    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: identityFixture('actor') })));
     vi.stubGlobal('fetch', fetch);
     const client = new DetunedClient({ baseUrl: scope.serverNamespace, token: 'A', requestKeyStore: { async getOrCreate() { client.setToken('B'); return 'rk_key'; } } });
     await expect(client.createThread('space', { title: 'x' }, undefined, { logicalOperationId: 'id' })).rejects.toMatchObject({ code: 'IDENTITY_CHANGED' });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
   it('cancels promptly while a store is pending and never POSTs after it completes', async () => {
-    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: { actor: { id: 'actor' } } })));
+    const fetch = vi.fn(async () => new Response(JSON.stringify({ api_version: '1', request_id: 'me', data: identityFixture('actor') })));
     vi.stubGlobal('fetch', fetch);
     let enter!: () => void; const entered = new Promise<void>(resolve => { enter = resolve; });
     let finish!: (key: string) => void; const pending = new Promise<string>(resolve => { finish = resolve; });

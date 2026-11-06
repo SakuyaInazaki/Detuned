@@ -50,3 +50,5 @@ export * from './services/public-review-submission.js';
 export * from './services/check-service.js';
 export * from './services/check-records.js';
 export * from './services/check-authorization.js';
+
+export * from './services/discovery-read-service.js';

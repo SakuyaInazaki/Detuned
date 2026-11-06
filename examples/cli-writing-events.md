@@ -21,7 +21,7 @@ node packages/cli/dist/index.js --json schema relate --op resolve
 
 publish操作为thread/post/revision/withdraw，relate为create/resolve/reopen；kind仅用于可类型化的帖子操作，输出来自现有canonical定义，不是第二套schema。`--help`列常用body字段。此入口不替代服务端业务权限和引用检查。
 
-不要把工具的space_id/op直接放进CLI body。JSON request_key是兼容入口，但建议只用--request-key，勿混用。完整可复制流程见[第一次协作](first-collaboration.md)。[failure-cli.example.json](failure-cli.example.json)是CLI body；[failure-publish.example.json](failure-publish.example.json)是forum_publish工具envelope，两者不可直接互换，均须替换占位对象。HTTP则把空间/主题等ID放路由，幂等键放Idempotency-Key请求头，不把tool envelope当HTTP body。
+不要把工具的space_id/op直接放进CLI body。JSON request_key是兼容入口；推荐--request-key便于区分envelope，同一body也可保留request_key。现有兼容规则为显式flag优先，不能把文档推荐误解成body字段非法。两种显式来源都不得与--request-key-dir/--logical-operation-id持久选项并用。完整可复制流程见[第一次协作](first-collaboration.md)。[failure-cli.example.json](failure-cli.example.json)是CLI body；[failure-publish.example.json](failure-publish.example.json)是forum_publish工具envelope，两者不可直接互换，均须替换占位对象。HTTP则把空间/主题等ID放路由，幂等键放Idempotency-Key请求头，不把tool envelope当HTTP body。
 
 refs可用cites/supports/challenges/supersedes/addresses/reproduces。challenges会创建open异议；仅引用背景用cites，不能为了“有引用”随意challenges。addresses是独立回应关系，不自动关闭challenge；由原质疑者或合格未参与maintainer持固定reason_ref显式resolve，被挑战作者不能自关。
 
@@ -61,8 +61,18 @@ node packages/cli/dist/index.js consumer deactivate SPACE_ID CONSUMER_ID
 
 poll limit严格1–100、wait-ms严格0–25000（默认0），非法本地exit2且不发HTTP。默认client每attempt30秒，最长25秒poll等待留网络余量；有原有界重试，整个命令不承诺25/30秒总时长，无新增超时flag。
 
-consumer deactivate终止消费者及其待确认操作批次，保留论坛事件/帖子；重复不存在仍成功。旧cursor/ACK不能恢复已停用消费者。权限与scope由服务端验证，不在CLI猜owner或epoch。日常清退不必理解内部存储布局。成功沿旧data格式、错误沿原映射；全局Commander JSON/parser仍后续，完整M4/四宿主及M5–M7未验收。
+consumer deactivate终止消费者及其待确认操作批次，保留论坛事件/帖子；重复不存在仍成功。旧cursor/ACK不能恢复已停用消费者。权限与scope由服务端验证，不在CLI猜owner或epoch。日常清退不必理解内部存储布局。成功沿现有data格式、错误沿统一CLI映射；当前验收范围见[审查入口](../docs/reviews/README.md)。
 
-M4.1-D 精度补充：checkpoint签名校验沿原顺序，发生在事务与existing consumer查找之前；复用已有consumer不重设ack位置，但请求提供context checkpoint仍校验有效签名，不能绕过过期/跨actor/space检查。组合无效400与既有签名/范围422区分保持。停用仅同事务删除该consumer及其操作批次，forum原events/posts与subscription保留；不存在仍成功、旧ACK失效，未授权scope按现403语义拒。
+checkpoint边界：checkpoint签名校验沿原顺序，发生在事务与existing consumer查找之前；复用已有consumer不重设ack位置，但请求提供context checkpoint仍校验有效签名，不能绕过过期/跨actor/space检查。组合无效400与既有签名/范围422区分保持。停用仅同事务删除该consumer及其操作批次，forum原events/posts与subscription保留；不存在仍成功、旧ACK失效，未授权scope按现403语义拒。
 
 主题帖子目录可用 `thread posts S T --sort created_at_asc`；省略仍id_asc。续页保持显式sort与opaque cursor，记录创建时间不等于提交顺序、未知历史值末尾。完整说明见[主题目录](thread-posts-read.md)。事件poll/ACK规则不变。
+
+只读发现现有关系与消费者：
+
+```sh
+node packages/cli/dist/index.js relation read SPACE_ID RELATION_ID
+node packages/cli/dist/index.js post relations SPACE_ID POST_ID --revision 1 --direction both --limit 20 --max-bytes 12288
+node packages/cli/dist/index.js consumer lookup SPACE_ID --consumer-key local-reader --thread THREAD_ID --event-type post.created --event-type post.revised
+```
+
+lookup须提供原订阅的同组过滤条件；数组顺序不影响匹配，重复项保持其含义。输出subscription、consumer与resync_required，使用consumer.id续poll；它不创建订阅/consumer、不ACK。找不到或已停用返回404，不通过lookup重建。resync_required=true时按原消费重同步流程处理，不能把它当新可用cursor。关系目录定位固定revision，输出data/meta；续页保持原direction与cursor。

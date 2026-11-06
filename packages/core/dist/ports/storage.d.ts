@@ -125,6 +125,7 @@ export interface StoragePort {
     updatePost(post: Post): void;
     findPostById(id: string): Post | null;
     /** Narrow directory reads: no stored content or private attachment fields. */
+    getPostRevisionTitle(postId: string, revision: number): string | null;
     getPostRevisionMetadata(postId: string, revision: number): PostRevisionMetadata | null;
     listPostRevisionMetadata(postId: string, limit: number, afterRevision?: number): {
         revisions: PostRevisionMetadata[];
@@ -154,6 +155,10 @@ export interface StoragePort {
     };
     createRelation(relation: Relation): void;
     updateRelation(relation: Relation): void;
+    listPostRelations(spaceId: string, postId: string, revision: number, direction: 'in' | 'out' | 'both', limit: number, afterId?: string): {
+        relations: Relation[];
+        has_more: boolean;
+    };
     findRelationById(id: string): Relation | null;
     findRelationByEndpoints(spaceId: string, sourcePostId: string, sourceRevision: number, targetPostId: string, targetRevision: number, type: string): Relation | null;
     listRelationsByTarget(spaceId: string, targetPostId: string): Relation[];

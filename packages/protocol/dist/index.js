@@ -23,4 +23,5 @@ export * from './web-auth.js';
 export * from './post-catalogs.js';
 export { canonicalizeReviewJson, ReviewCanonicalizationError } from './review-canonical.js';
 export * from './validation-issues.js';
+export * from './discovery-reads.js';
 //# sourceMappingURL=index.js.map

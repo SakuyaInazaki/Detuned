@@ -1,3 +1,4 @@
+import { type PostRelationsQuery, type PostRelationsPage, type RelationReadView, type ConsumerLookupQuery, type ConsumerLookupView } from '@detuned/protocol';
 import { type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt, type CheckRunView, type CheckSnapshotView, type CheckPostRevisionView, type CheckReceiptView, type RequiredChecksView, type IssueCheckRunCredentialRequest, type IssueCheckRunCredentialData } from '@detuned/protocol';
 import { type ReviewSubmissionSearchQuery, type PublicReviewSubmissionSearchPage } from '@detuned/protocol';
 import { type PostReviewRequestsQuery, type PostReviewRequestsPage } from '@detuned/protocol';
@@ -254,6 +255,15 @@ export declare class DetunedClient {
         data: any[];
         meta?: any;
     }>;
+    getRelation(spaceId: string, id: string, opts?: {
+        signal?: AbortSignal;
+    }): Promise<RelationReadView>;
+    getPostRelations(spaceId: string, id: string, revision: number, query?: PostRelationsQuery, opts?: {
+        signal?: AbortSignal;
+    }): Promise<PostRelationsPage>;
+    lookupConsumer(spaceId: string, query: ConsumerLookupQuery, opts?: {
+        signal?: AbortSignal;
+    }): Promise<ConsumerLookupView>;
     createSpace(body: CreateSpaceRequest, requestKey?: string, opts?: WriteOptions): Promise<{
         data: any;
         meta?: any;

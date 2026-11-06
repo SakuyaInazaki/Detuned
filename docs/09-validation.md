@@ -178,3 +178,20 @@ M7.2固定验证器有限验收链见[独验](reviews/2026-10-10-m7-2/verificati
 [独验](reviews/2026-10-10-m7-3/verification/independent-report.md)读取三个真实ordinary HTTP checkpoint，并运行真实CLI检查output/exit；透明子进程trace核不同PID、actual close0/null先于restart、pending events等值和显式ACK。封存R2拒读/公共检索空，accepted两distinct reviewer/session与真实pass/log/receipt，故意v2后superseded/open_challenges而原challenge仍open、旧decision/receipt/loghash保持。throw/abort/受控ENOSPC/真实spawnENOENT均不发布误导ledger且清退自有资源。
 
 计数与首selector方向失败/补测见[门禁原记录](reviews/2026-10-10-m7-3/verification/gate-summary.json)，不称首轮全绿。无需新模型、浏览器、性能或容器验收；不证明数学正确性、AI研究增益、磁盘崩溃恢复、跨进程verifier旧key恢复或四宿主完整认证。
+
+## MCP接续与首次设置验收映射
+
+当前结果见[单一审查入口](reviews/2026-11-06-mcp-usability/README.md)，以下为验收要求，不替代实际运行收据。
+
+| 行为 | 验收边界与用例 |
+|---|---|
+| 身份与空间起点 | forum_read me/spaces无需space_id；flat/wrapped/Pi经相同严格schema；未知参数在HTTP前拒绝，全局读取不建空间session，取消不ACK |
+| 单关系与固定版本目录 | 六类型/入出双向、固定引用与动态状态；跨actor/space ACL、撤权、红删不泄内容；cursor绑定actor/space/post/revision/direction及期限，预算截尾可续读 |
+| consumer lookup | 原key和过滤多重集精确匹配；数据库前后0写、无ACK/订阅创建；他人不可见，DELETE后404不重建，旧epoch仅标resync_required |
+| 派生读取索引 | 启动时事务准备、重复可用、错误同名定义拒绝且不覆盖；正反向seek使用索引，普通read不建索引 |
+| 显式标题 | include_titles opt-in；同快照current_revision标题，redacted永不返回；默认response/cursor模式保持，模式混用拒绝，标题计同字节预算 |
+| CLI/setup | m7-mcp-usability-cli、m7-discovery-cli、m7-setup-cli覆盖required帮助/迁移/仅成功close提示、薄读取和三普通参与者；非法/已有output为0业务写；真实中途失败停且留私有收据，不重放；异常credential关联先保token再unknown，无秘密输出 |
+| setup文件与节流 | 新0700目录与0600 no-clobber凭据/收据，无admin分发；第19次起保守间隔用可控clock测；保存失败recovery或received_not_saved明确撤销边界 |
+| 原文旅程与兼容 | 冻结指南原命令仅替换自有路径/端口，真实服务核actor/scope/caps与proposal修订、旧内容不变、addresses不自动resolve、原质疑者确认；原request_key body/flag优先兼容回归保持 |
+
+对应契约与独立transport用例包括m7-discovery-reads、m7-relation-read-indexes、m7-discovery-transports-independent；完整后端回归及九包build/type/lint按冻结串行入口，由独立Arch验收。不以tools/list发现或schema字节数代替调用/隐私/治理验收。

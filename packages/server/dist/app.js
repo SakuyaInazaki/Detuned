@@ -1,3 +1,4 @@
+import { DiscoveryReadService } from '@detuned/core';
 import { checkRoutes } from './routes/checks.js';
 import { ReviewModule, ReviewRequestService, ReviewSubmissionService, ReviewFinalizationService, ReviewStatusService, ReviewPostCatalogService } from '@detuned/module-review';
 import { reviewRoutes } from './routes/reviews.js';
@@ -69,6 +70,7 @@ export function buildApp(options) {
     const spaceService = new SpaceService(options.storage, idGen, clock, authService, idempotency, writeRateLimiter);
     const threadService = new ThreadService(options.storage, idGen, clock, hasher, authService, idempotency);
     const postService = new PostService(options.storage, idGen, clock, hasher, authService, idempotency);
+    const discoveryReadService = new DiscoveryReadService(options.storage, tokenSigner, authService, tokenSecret, clock);
     const relationService = new RelationService(options.storage, idGen, clock, authService, idempotency);
     const eventService = new EventService(options.storage, idGen, clock, tokenSigner, authService, tokenSecret, undefined, writeRateLimiter);
     const operationsService = new OperationsService(options.storage, authService);
@@ -144,6 +146,7 @@ export function buildApp(options) {
     app.spaceExportService = spaceExportService;
     app.threadService = threadService;
     app.postService = postService;
+    app.discoveryReadService = discoveryReadService;
     app.relationService = relationService;
     app.eventService = eventService;
     app.contextService = contextService;

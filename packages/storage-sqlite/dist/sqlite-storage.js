@@ -1,3 +1,4 @@
+import { prepareRelationReadIndexes, RELATION_SOURCE_INDEX, RELATION_TARGET_INDEX } from './relation-read-indexes.js';
 import { POST_CREATED_SORT_KEY_SQL, preparePostCreatedOrderIndex } from './post-created-order-index.js';
 import { checkSqliteReadiness, sampleSqliteStatus } from './operational-status.js';
 import { configureSqliteResourceLimits } from './sqlite-resource-limits.js';
@@ -13,7 +14,7 @@ export class SqliteStorage {
         this.operationalOptions = operationalOptions;
         this.initPragmas();
     }
-    prepareRuntimeReadIndexes() { preparePostCreatedOrderIndex(this.db); }
+    prepareRuntimeReadIndexes() { preparePostCreatedOrderIndex(this.db); prepareRelationReadIndexes(this.db); }
     checkReadiness() { return checkSqliteReadiness(this.db, this.operationalOptions); }
     sampleOperationalStatus() {
         return sampleSqliteStatus(this.db, this.operationalOptions, this.getArtifactUsage(10000));
@@ -463,6 +464,10 @@ export class SqliteStorage {
             created_at: row.created_at,
         };
     }
+    getPostRevisionTitle(postId, revision) {
+        const row = this.db.prepare('SELECT title FROM post_revisions WHERE post_id=? AND revision=?').get(postId, revision);
+        return row && typeof row.title === 'string' ? row.title : null;
+    }
     getPostRevisionMetadata(postId, revision) {
         return this.db.prepare('SELECT revision,editor_id,created_at,content_hash FROM post_revisions WHERE post_id=? AND revision=?')
             .get(postId, revision) ?? null;
@@ -598,6 +603,13 @@ export class SqliteStorage {
         this.db
             .prepare('UPDATE relations SET state = ?, version = ? WHERE id = ?')
             .run(relation.state, relation.version, relation.id);
+    }
+    listPostRelations(spaceId, postId, revision, direction, limit, afterId) {
+        const branch = (side) => `SELECT r.id FROM relations r INDEXED BY ${side === 'source' ? RELATION_SOURCE_INDEX : RELATION_TARGET_INDEX} WHERE r.space_id=? AND r.${side}_post_id=? AND r.${side}_revision=? ${afterId === undefined ? '' : 'AND r.id>?'} AND EXISTS(SELECT 1 FROM posts p JOIN post_revisions v ON v.post_id=p.id AND v.revision=r.source_revision WHERE p.id=r.source_post_id AND p.space_id=r.space_id) AND EXISTS(SELECT 1 FROM posts p JOIN post_revisions v ON v.post_id=p.id AND v.revision=r.target_revision WHERE p.id=r.target_post_id AND p.space_id=r.space_id) ORDER BY r.id ASC LIMIT ?`;
+        const params = () => [spaceId, postId, revision, ...(afterId === undefined ? [] : [afterId]), limit + 1];
+        const sql = direction === 'both' ? `SELECT id FROM (${branch('source')}) UNION SELECT id FROM (${branch('target')}) ORDER BY id ASC LIMIT ?` : branch(direction === 'in' ? 'target' : 'source');
+        const rows = this.db.prepare(sql).all(...(direction === 'both' ? [...params(), ...params(), limit + 1] : params()));
+        return { relations: rows.slice(0, limit).map(row => this.findRelationById(row.id)), has_more: rows.length > limit };
     }
     findRelationById(id) {
         const row = this.db.prepare('SELECT * FROM relations WHERE id = ?').get(id);

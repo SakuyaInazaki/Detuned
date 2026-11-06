@@ -1,3 +1,4 @@
+import {isGlobalRead} from '@detuned/protocol';
 import { Readable, Writable } from 'node:stream';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -88,7 +89,7 @@ export function createMcpBridge(options: McpBridgeOptions) {
     const finished = new Promise<void>(resolve => finish = resolve);
     calls.set(controller, finished);
     try {
-      await binding?.prepare(args.space_id, controller.signal);
+      if(!isGlobalRead(name,args))await binding?.prepare(args.space_id!, controller.signal);
       if (closing || controller.signal.aborted) throw new Error('Operation cancelled.');
       return bridgeSuccess(await options.client.callTool(name, args, { signal: controller.signal }));
     }

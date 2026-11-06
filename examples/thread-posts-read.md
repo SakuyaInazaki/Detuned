@@ -24,3 +24,5 @@ meta.truncated仅表示预算删尾：仅limit还有更多可false+非空cursor�
 `GET /api/v1/spaces/S/threads/T/posts?sort=created_at_asc&limit=20` 或 `client.getThreadPosts(S,T,{sort:"created_at_asc",limit:20})`；后续用原next_cursor且继续显式传同sort。默认/旧cursor保id_asc；新sort cursor省略或更改sort拒400。canonical UTC毫秒按ID tie，无法确认的历史时间完整末尾按ID；不是事务提交顺序，公开metadata形状不变。
 
 `node packages/cli/dist/index.js --token-file /private/path/reader-token thread posts S T --sort created_at_asc --limit 20` 返回原整页data/meta。forum_read(kind=thread_posts)同schema支持sort，MCP/Pi经sharedclient转发。当前ACL每页复核、原24h exp与完整信封预算保留。
+
+需要标题时显式使用 `--include-titles`，HTTP/client/tool对应 `include_titles=true`。标题来自该页同一读取快照中current_revision的标题；redacted条目始终省略标题。默认不包含标题，保留原响应与cursor模式；带标题的续页必须继续传true，不能与默认模式cursor混用。标题计入同一字节预算，目录仍不返回正文。

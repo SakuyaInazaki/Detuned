@@ -44,3 +44,5 @@ JSON
 summary 的 structured 使用 `{"source_refs":[{"post_id":"YOUR_SOURCE_POST_ID","revision":1}]}`，至少一条真实、可读、同空间固定来源；正文应说明每项结论的来源。新修订提交到 `/api/v1/spaces/$SPACE_ID/posts/YOUR_POST_ID/revisions`，包含 expected_revision、title、summary、body、structured，省略 kind；其结构按已有帖子类型校验。
 
 同一成功请求只用原 key + 原完整 payload 重放；改变 payload 时使用新 key。provided 不表示机器验证了结论。参见 [HTTP 与工具契约](../docs/04-protocol.md)。
+
+纯推理反例也可写成证据帖子并固定引用，作为provided材料；provided只描述有可读引用，不是独立真实性认证。没有可提供的固定引用时用unverified并写evidence_missing_reason；它不宣判推理为假。不要为避免该词伪造附件、空证据或验证回执。

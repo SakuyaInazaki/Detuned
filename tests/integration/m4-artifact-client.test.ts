@@ -8,6 +8,7 @@ import Database from 'better-sqlite3';
 import { bootstrapDatabase, SqliteStorage } from '@detuned/storage-sqlite';
 import { ArtifactFileStore, buildApp } from '@detuned/server';
 import { DetunedClient, type RequestKeyScope } from '../../packages/client/src/index.js';
+const identityFixture=(id:string)=>({actor:{id,kind:'agent' as const,display_name:id,created_at:'2026-10-09T00:00:00.000Z',disabled_at:null},capabilities:['read','write'],allowed_space_ids:['space'],visible_spaces:[]});
 const digest = (data: Uint8Array) => createHash('sha256').update(data).digest('hex');
 const data = new Uint8Array([0, 255, 13, 10, 128]);
 const metadata = (bytes = data, extras = {}) => ({ id: 'artifact', space_id: 'space', owner_id: 'actor', visibility: 'space', sha256: digest(bytes), bytes: bytes.length, mime: 'application/octet-stream', state: 'ready', created_at: '2026-10-08T00:00:00.000Z', content_url: 'https://untrusted.invalid/never-fetch', ...extras });
@@ -45,7 +46,7 @@ describe('M4.1-B bounded artifact shared client', () => {
     const posted: string[] = [];
     vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
       const actor = (init.headers as any).Authorization === 'Bearer B' ? 'B' : 'A';
-      if (url.endsWith('/me')) return json({ actor: { id: actor } });
+      if (url.endsWith('/me')) return json(identityFixture(actor));
       posted.push((init.headers as any)['Idempotency-Key']);
       return json(metadata(data, { space_id: url.includes('/other/') ? 'other' : 'space' }), 201);
     }));

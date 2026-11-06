@@ -1,3 +1,4 @@
+import {isThreadPostsPageForQuery,isGlobalRead,isMeResponse,isSpacesPage,isRelationReadView,isPostRelationsPage,isConsumerLookupView,validateDiscoveryQuery,PostRelationsQuerySchema,ConsumerLookupQuerySchema,type PostRelationsQuery,type PostRelationsPage,type RelationReadView,type ConsumerLookupQuery,type ConsumerLookupView} from '@detuned/protocol';
 import { publicHttpError } from './http-error.js';
 import { normalizeArtifactMime, canonicalizeReviewJson, type CreateCheckRun, type InvalidateCheckRun, type SubmitCheckReceipt,
   type CheckRunView, type CheckSnapshotView, type CheckPostRevisionView, type CheckReceiptView,
@@ -858,12 +859,31 @@ export class DetunedClient {
     return this.request<import('@detuned/protocol').OperationsDiagnostics>({method:'GET',path:'/admin/diagnostics',signal:opts?.signal});
   }
 
-  getMe(opts?: { signal?: AbortSignal }) {
-    return this.request<any>({ method: 'GET', path: '/me', signal: opts?.signal });
+  async getMe(opts?: { signal?: AbortSignal }) {
+    const response=await this.request<any>({ method: 'GET', path: '/me', signal: opts?.signal });
+    if(!isMeResponse(response.data))throw new ClientProtocolError('Invalid identity response.');return response;
   }
 
-  listSpaces(limit?: number, cursor?: string, opts?: { signal?: AbortSignal }) {
-    return this.request<any[]>({ method: 'GET', path: '/spaces', query: { limit, cursor }, signal: opts?.signal });
+  async listSpaces(limit?: number, cursor?: string, opts?: { signal?: AbortSignal }) {
+    const response=await this.request<any[]>({ method: 'GET', path: '/spaces', query: { limit, cursor }, signal: opts?.signal });
+    if(!isSpacesPage(response)||response.data.length>(limit??20))throw new ClientProtocolError('Invalid spaces response.');return response;
+  }
+
+  async getRelation(spaceId:string,id:string,opts?:{signal?:AbortSignal}):Promise<RelationReadView> {
+    const result=await this.request<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/relations/${encodeURIComponent(id)}`,signal:opts?.signal});
+    if(!isRelationReadView(result.data)||result.data.relation_id!==id)throw new ClientProtocolError('Invalid relation response.');return result.data;
+  }
+  async getPostRelations(spaceId:string,id:string,revision:number,query:PostRelationsQuery={},opts?:{signal?:AbortSignal}):Promise<PostRelationsPage> {
+    validateDiscoveryQuery(PostRelationsQuerySchema,query);if(!Number.isSafeInteger(revision)||revision<1)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid fixed revision.',400);
+    const result=await this.request<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(id)}/revisions/${revision}/relations`,query,signal:opts?.signal});
+    if(!isPostRelationsPage(result)||result.data.ref.post_id!==id||result.data.ref.revision!==revision||result.data.relations.length>(query.limit??20))throw new ClientProtocolError('Invalid relation directory response.');
+    const direction=query.direction??'both';for(let i=0;i<result.data.relations.length;i++){const row=result.data.relations[i]!;if(i>0&&result.data.relations[i-1]!.relation_id>=row.relation_id)throw new ClientProtocolError('Invalid relation order.');const incoming=row.target_ref.post_id===id&&row.target_ref.revision===revision,outgoing=row.source_ref.post_id===id&&row.source_ref.revision===revision;if(!(direction==='in'?incoming:direction==='out'?outgoing:incoming||outgoing))throw new ClientProtocolError('Invalid relation binding.');}
+    return result;
+  }
+  async lookupConsumer(spaceId:string,query:ConsumerLookupQuery,opts?:{signal?:AbortSignal}):Promise<ConsumerLookupView> {
+    validateDiscoveryQuery(ConsumerLookupQuerySchema,query);const result=await this.request<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/consumers/lookup`,query:{consumer_key:query.consumer_key,thread_ids_json:query.thread_ids===undefined?undefined:JSON.stringify(query.thread_ids),event_types_json:query.event_types===undefined?undefined:JSON.stringify(query.event_types)},signal:opts?.signal});
+    if(!isConsumerLookupView(result.data)||result.data.subscription.space_id!==spaceId||result.data.consumer.consumer_key!==query.consumer_key)throw new ClientProtocolError('Invalid consumer lookup response.');
+    const same=(a:string[],b:string[])=>a.length===b.length&&[...a].sort().every((v,i)=>v===[...b].sort()[i]);if(!same(result.data.subscription.thread_ids,query.thread_ids??[])||!same(result.data.subscription.event_types,query.event_types??[]))throw new ClientProtocolError('Invalid consumer filters.');return result.data;
   }
 
   createSpace(body: CreateSpaceRequest, requestKey?: string, opts?: WriteOptions) {
@@ -904,8 +924,9 @@ export class DetunedClient {
     });
   }
 
-  getThreadPosts(spaceId: string, threadId: string, query?: ThreadPostsReadQuery, opts?: { signal?: AbortSignal }): Promise<ThreadPostsPage> {
-    return this.request<ThreadPostsPage['data']>({ method: 'GET', path: `/spaces/${spaceId}/threads/${threadId}/posts`, query, signal: opts?.signal }) as Promise<ThreadPostsPage>;
+  async getThreadPosts(spaceId: string, threadId: string, query?: ThreadPostsReadQuery, opts?: { signal?: AbortSignal }): Promise<ThreadPostsPage> {
+    const result=await this.request<ThreadPostsPage['data']>({ method: 'GET', path: `/spaces/${spaceId}/threads/${threadId}/posts`, query, signal: opts?.signal });
+    if(!isThreadPostsPageForQuery(result,spaceId,threadId,query))throw new ClientProtocolError('Invalid thread posts directory.');return result;
   }
 
   getThread(spaceId: string, threadId: string, limit?: number, cursor?: string, opts?: { signal?: AbortSignal }) {
@@ -1149,6 +1170,7 @@ export class DetunedClient {
       throw new Error('Operation aborted');
     }
     if (!validateToolParams(name, params)) throw toolValidationError(name, params);
+    if(isGlobalRead(name,params))return params.kind==='me'?(await this.getMe(opts)).data:await this.listSpaces(params.limit,params.cursor,opts);
     const spaceId = params.space_id;
     if (!spaceId) {
       throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Tool call missing space_id', 400);
@@ -1175,6 +1197,10 @@ export class DetunedClient {
 
       case 'forum_read': {
         validateToolReadParams(params);
+        if(params.kind==='me'||params.kind==='spaces')throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid global read dispatch.',400);
+        if(params.kind==='relation')return this.getRelation(spaceId,params.id,opts);
+        if(params.kind==='post_relations'){const {kind: _kind,space_id:_space,id,revision,...query}=params;return this.getPostRelations(spaceId,id,revision,query,opts);}
+        if(params.kind==='consumer_lookup'){const {kind:_kind,space_id:_space,...query}=params;return this.lookupConsumer(spaceId,query,opts);}
         if (params.kind === 'check_run') return this.getCheckRun(spaceId,params.id,opts);
         if (params.kind === 'check_snapshot') return this.getCheckSnapshot(spaceId,params.id,opts);
         if (params.kind === 'check_receipt') return this.getCheckReceipt(spaceId,params.id,opts);
@@ -1183,7 +1209,7 @@ export class DetunedClient {
         if (params.kind === 'check_artifact') return this.getCheckArtifact(spaceId,params.run_id,params.id,opts);
         if (params.kind === 'review_requests') return this.getPostReviewRequests(spaceId,params.id,{limit:params.limit,cursor:params.cursor,max_bytes:params.max_bytes},opts);
         if (params.kind === 'space') return this.getSpaceRevision(spaceId, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
-        if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor, sort: params.sort }, opts);
+        if (params.kind === 'thread_posts') return this.getThreadPosts(spaceId, params.id, { limit: params.limit, max_bytes: params.max_bytes, cursor: params.cursor, sort: params.sort,include_titles:params.include_titles }, opts);
         if (params.kind === 'post_revision') return this.getPostRevisionContent(spaceId, params.id, params.revision, { max_bytes: params.max_bytes, cursor: params.cursor }, opts);
         const { kind, id } = params;
         if (kind === 'review_request') return this.getReviewRequest(spaceId,id,opts);

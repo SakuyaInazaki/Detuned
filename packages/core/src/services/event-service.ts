@@ -1,3 +1,4 @@
+import {ConsumerLookupQuerySchema,validateDiscoveryQuery,type ConsumerLookupQuery,type ConsumerLookupView} from '@detuned/protocol';
 import {
   Subscription,
   Consumer,
@@ -156,6 +157,17 @@ export class EventService {
       }
 
       return { subscription: sub, consumer };
+    });
+  }
+
+  lookupConsumer(auth:AuthenticatedContext,spaceId:string,query:ConsumerLookupQuery):ConsumerLookupView {
+    return this.storage.readSnapshot(()=>{
+      const current=this.authService.refreshContext(auth);this.authService.requireSpaceAccess(current,spaceId,'observer');validateDiscoveryQuery(ConsumerLookupQuerySchema,query);
+      const equal=(a:string[],b:string[])=>a.length===b.length&&[...a].sort().every((value,index)=>value===[...b].sort()[index]);
+      const subscription=this.storage.listSubscriptionsByActorAndSpace(current.actor.id,spaceId).find(sub=>equal(sub.thread_ids,query.thread_ids??[])&&equal(sub.event_types,query.event_types??[]));
+      const consumer=subscription?this.storage.findConsumerByKey(subscription.id,query.consumer_key):null;
+      if(!subscription||!consumer)throw new DetunedError(ErrorCode.NOT_FOUND,'Consumer does not exist or is not accessible.',404);
+      return {subscription,consumer,resync_required:consumer.acl_epoch!==this.storage.findSpaceById(spaceId)!.acl_epoch};
     });
   }
 

@@ -142,3 +142,7 @@ export type SpaceRevisionEnvelope = { api_version: '1'; request_id: string } & S
 export function buildSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): SpaceRevisionEnvelope { return { api_version: '1', request_id: requestId, ...page }; }
 export function serializeSpaceRevisionEnvelope(requestId: string, page: SpaceRevisionPage): string { return JSON.stringify(buildSpaceRevisionEnvelope(requestId, page)); }
 export function spaceRevisionEnvelopeBytes(requestId: string, page: SpaceRevisionPage): number { return new TextEncoder().encode(serializeSpaceRevisionEnvelope(requestId, page)).byteLength; }
+
+export function validateCreateSpaceRequest(value:unknown):asserts value is CreateSpaceRequest {
+ if(!Value.Check(CreateSpaceRequestSchema,value))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid space creation parameters.',400);
+}
