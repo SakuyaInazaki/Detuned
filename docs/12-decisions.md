@@ -446,3 +446,9 @@ M7.5-A已获root有限接受：固定Node22.19.0 Darwin arm64与既有pnpm11.7.0
 采用共享客户端完整验证≤1MiB附件后生成字节offset内容页，保持旧25MiB文件下载路径，不新增服务器任意URL读取、执行或落盘入口。UTF8 fatal并保BOM、码点边界、显式base64分片、续页SHA绑定及完整JSON字节预算共同避免截断冒充完整。generic附件异步I/O后重新核当前ACL/封存资格/生命周期，并释放失败handle。
 
 关系动作history独立于默认Relation读，复用已有resolution记录，以非unique derived(relation_id,version,id)索引和双键seek控制单页候选，初始version上界与签名cursor固定TTL。当前理由不可见时隐藏ref或保红删墓碑，不输出正文/附件。新reopen理由存在性和同空间校验与resolve对齐，成功幂等重放不变。消费者停用仅在forum_subscribe严格op分支复用现DELETE，不把写动作混入forum_read，也不改变ACK、订阅或事件语义。
+
+## 显式只读拼接与终端展示
+
+CLI read的me/spaces别名复用既有共享client，不将全局身份读取强制绑定空间。post read显式--assemble或--human使用共享固定修订拼接：1MiB/512页/总deadline、字节连续与metadata一致、坏cursor及取消失败不输出部分；不加hash文件/元数据，不宣称验证持久content_hash。默认一页JSON与历史内容投影不改。
+
+--human只用于post read/thread posts，与--json互斥，对所有不可信动态文本转义终端及bidi控制，不执行内容。thread人读显式opt-in既有include_titles，仍一页且清楚给续cursor；不在CLI复制业务权限或自动批准新版。凭据布局与互斥保持；同OS用户互读必须由操作者的OS隔离解决，拆目录不虚称安全隔离。

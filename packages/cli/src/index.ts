@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {setupParticipants,validateSetupOptions} from './setup.js';
+import {humanPost,humanThread} from './reading-output.js';
 import {cliInputSchema} from './schema.js';
 import {CliSafeError,renderCliError} from './cli-errors.js';
 import {configureCliParser,diagnosticJsonMode,parserError} from './argv-diagnostics.js';
@@ -750,12 +751,16 @@ postReadCommand.command('read <space-id> <post-id>').description('有界读取�
   .requiredOption('--revision <n>', '显式正安全整数内容修订号')
   .option('--max-bytes <n>', 'compact HTTP正文预算4096–65536', '12288')
   .option('--cursor <token>', '上一页meta.next_cursor；旧read post不支持预算/游标')
+  .option('--assemble', '从首片拼完固定内容后一次返回JSON；不能带cursor')
+  .option('--human', '安全纯文本完整阅读；自动assemble，与--json/cursor互斥')
   .action(async (spaceId, postId, options) => {
     try {
-      const page = await getClient(program.opts()).getPostRevisionContent(spaceId, postId,
-        parseReadPositiveInteger(options.revision, 'revision'),
-        { max_bytes: parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor });
-      printOutput(page, program.opts().json);
+      if((options.human&&program.opts().json)||((options.assemble||options.human)&&options.cursor!==undefined))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'human与json互斥；assemble/human不能从cursor中段开始。',400);
+      const revision=parseReadPositiveInteger(options.revision,'revision'),max_bytes=parseReadPositiveInteger(options.maxBytes,'max-bytes');
+      if(options.assemble||options.human){
+        const result=await withArtifactSignal(signal=>getClient(program.opts()).assemblePostRevisionContent(spaceId,postId,revision,{max_bytes},{signal}));
+        if(options.human)process.stdout.write(humanPost(result));else printOutput(result,program.opts().json);
+      }else printOutput(await getClient(program.opts()).getPostRevisionContent(spaceId,postId,revision,{max_bytes,cursor:options.cursor}),program.opts().json);
     } catch (err: any) { handleError(err, program.opts().json); }
   });
 
@@ -781,17 +786,19 @@ threadCommand.command('list <space-id>').option('--state <state>', 'open 或 arc
 threadCommand.command('posts <space-id> <thread-id>')
   .description('有界帖子元数据目录；整页data/meta，不含正文；旧read thread仅默认首批')
   .option('--include-titles', '显式包含当前修订标题；脱敏帖仍不返回标题')
+  .option('--human', '安全纯文本单页目录，自动请求标题；与--json互斥')
   .option('--limit <count>', '每页最多帖子数1..100（默认50）')
   .option('--max-bytes <bytes>', 'compact envelope预算4096..65536（默认12288）')
   .option('--sort <sort>', 'id_asc（默认）或created_at_asc（记录创建时间，未知历史时间末尾）')
   .option('--cursor <token>', '上一页签名next_cursor；跨页目录动态变化')
   .action(async (spaceId, threadId, options) => {
     try {
+      if(options.human&&program.opts().json)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'human与json互斥。',400);
       const page = await getClient(program.opts()).getThreadPosts(spaceId, threadId, {
         limit: options.limit === undefined ? undefined : parseReadPositiveInteger(options.limit, 'limit'),
-        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort, include_titles: options.includeTitles,
+        max_bytes: options.maxBytes === undefined ? undefined : parseReadPositiveInteger(options.maxBytes, 'max-bytes'), cursor: options.cursor, sort: options.sort, include_titles: options.human?true:options.includeTitles,
       });
-      printOutput(page, program.opts().json);
+      if(options.human)process.stdout.write(humanThread(page));else printOutput(page, program.opts().json);
     } catch (err: any) { handleError(err, program.opts().json); }
   });
 
@@ -859,28 +866,23 @@ program
 
 program
   .command('read')
-  .description('读取帖子或主题')
-  .requiredOption('--space <space_id>', '空间 ID')
-  .requiredOption('--kind <kind>', '类型 (thread / post)')
-  .requiredOption('--id <id>', '对象 ID')
-  .option('--revision <rev>', '修订号')
-  .action(async (options) => {
-    try {
-      const client = getClient(program.opts());
-      if (options.kind === 'post') {
-        const rev = options.revision === undefined ? undefined : parseReadPositiveInteger(options.revision, 'revision');
-        const res = await client.getPost(options.space, options.id, rev);
-        printOutput(res.data, program.opts().json);
-      } else if (options.kind === 'thread') {
-        const res = await client.getThread(options.space, options.id);
-        printOutput(res.data, program.opts().json);
-      } else {
-        throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'kind 仅支持 post 或 thread', 400);
-      }
-    } catch (err: any) {
-      handleError(err, program.opts().json);
-    }
-  });
+  .description('读取post/thread，或全局me/spaces；me/spaces无需space/id')
+  .option('--space <space_id>', 'post/thread必需的空间ID')
+  .requiredOption('--kind <kind>', 'post / thread / me / spaces')
+  .option('--id <id>', 'post/thread必需的对象ID')
+  .option('--revision <rev>', '仅post可选固定修订号')
+  .option('--limit <count>', '仅spaces每页1–100')
+  .option('--cursor <token>', '仅spaces上一页opaque next_cursor')
+  .action(async(options)=>{try{
+    if(options.kind==='me'||options.kind==='spaces'){
+      if(options.space!==undefined||options.id!==undefined||options.revision!==undefined||(options.kind==='me'&&(options.limit!==undefined||options.cursor!==undefined)))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'me/spaces不接受space/id/revision；分页仅spaces支持。',400);
+      const client=getClient(program.opts());printOutput(options.kind==='me'?(await client.getMe()).data:await client.listSpaces(options.limit===undefined?undefined:parsePageLimit(options.limit),options.cursor),program.opts().json);
+    }else if(options.kind==='post'||options.kind==='thread'){
+      if(!options.space||!options.id)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'post/thread读取必需--space与--id；本人身份请用me或read --kind me。',400);
+      if(options.limit!==undefined||options.cursor!==undefined||(options.kind==='thread'&&options.revision!==undefined))throw new DetunedError(ErrorCode.VALIDATION_ERROR,'此读取不支持所给分页或revision；固定有界正文请用post read。',400);
+      const client=getClient(program.opts());printOutput(options.kind==='post'?(await client.getPost(options.space,options.id,options.revision===undefined?undefined:parseReadPositiveInteger(options.revision,'revision'))).data:(await client.getThread(options.space,options.id)).data,program.opts().json);
+    }else throw new DetunedError(ErrorCode.VALIDATION_ERROR,'kind仅支持post/thread/me/spaces。',400);
+  }catch(error){handleError(error,program.opts().json);}});
 
 program.command('setup')
   .description('连接已运行服务，创建空间与普通参与者，将凭据保存到新私有目录；不启动服务或模型')

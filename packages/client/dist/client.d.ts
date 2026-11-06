@@ -1,3 +1,5 @@
+import { type PostAssembleQuery, type AssembledPostRevisionContent } from '@detuned/protocol';
+export type { PostAssembleQuery, AssembledPostRevisionContent } from '@detuned/protocol';
 import { type RelationHistoryQuery, type RelationHistoryPage } from '@detuned/protocol';
 import { type ArtifactContentQuery, type ArtifactContentPage } from '@detuned/protocol';
 import { type PostRelationsQuery, type PostRelationsPage, type RelationReadView, type ConsumerLookupQuery, type ConsumerLookupView } from '@detuned/protocol';
@@ -208,13 +210,13 @@ export declare class DetunedClient {
         signal?: AbortSignal;
     }): Promise<{
         data: {
+            lifecycle: "running" | "draining";
             artifacts: {
                 complete: boolean;
                 objects_observed: number;
                 bytes_observed: string;
             };
             ready: boolean;
-            lifecycle: "running" | "draining";
             database: {
                 page_size: number;
                 page_count: number;
@@ -232,13 +234,13 @@ export declare class DetunedClient {
             };
             files: {
                 database: {
-                    state: "missing" | "regular" | "unavailable" | "not_applicable";
                     bytes: string | null;
+                    state: "missing" | "regular" | "unavailable" | "not_applicable";
                     applicable: boolean;
                 };
                 wal: {
-                    state: "missing" | "regular" | "unavailable" | "not_applicable";
                     bytes: string | null;
+                    state: "missing" | "regular" | "unavailable" | "not_applicable";
                     applicable: boolean;
                 };
             };
@@ -282,10 +284,10 @@ export declare class DetunedClient {
         signal?: AbortSignal;
     }): Promise<{
         data: {
+            space_id: string;
             created_at: string;
             id: string;
             actor_id: string;
-            space_id: string;
             client_name: string;
             client_version: string;
             harness_session_id: string | null;
@@ -337,6 +339,9 @@ export declare class DetunedClient {
     getPostRevisionContent(spaceId: string, postId: string, revision: number, query?: PostRevisionReadQuery, opts?: {
         signal?: AbortSignal;
     }): Promise<PostRevisionContentPage>;
+    assemblePostRevisionContent(spaceId: string, postId: string, revision: number, query?: PostAssembleQuery, opts?: {
+        signal?: AbortSignal;
+    }): Promise<AssembledPostRevisionContent>;
     getPostRevisionCatalog(spaceId: string, postId: string, query?: PostRevisionCatalogQuery, options?: {
         signal?: AbortSignal;
     }): Promise<PostRevisionCatalogPage>;

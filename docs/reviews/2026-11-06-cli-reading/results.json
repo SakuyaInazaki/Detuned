@@ -1,0 +1,601 @@
+{
+  "task": "M7.12",
+  "base_commit": "cf012fd38e9cd65a517e8ec5e587c5eee97ddec4",
+  "environment": {
+    "host": "arch-ms-a2",
+    "node": "22.19.0",
+    "pnpm": "11.7.0",
+    "root": "/var/tmp/detuned-m712-ht_yz7cv",
+    "uid": 1000,
+    "device": 66306,
+    "inode": 827241,
+    "mode": "0700",
+    "parent": {
+      "path": "/var/tmp",
+      "uid": 0,
+      "device": 66306,
+      "inode": 58196314,
+      "mode": "1777"
+    },
+    "marker": {
+      "name": ".detuned-owner",
+      "inode": 827242,
+      "mode": "0600",
+      "text": "detuned-owned-M7.12-3d0114e7a6e9ce999be9bead36d9ec91\n"
+    },
+    "private_home_cache_tmp_store": true,
+    "worker_count": 1,
+    "file_parallelism": false,
+    "model_calls": 0
+  },
+  "stages": {
+    "old_red": {
+      "files": 3,
+      "tests": 22,
+      "passed": 1,
+      "failed": 21,
+      "success": false,
+      "failed_cases": [
+        {
+          "file": "tests/contracts/m7-cli-reading.test.ts",
+          "full_name": "M7.12-B read me and spaces aliases do not require space or id"
+        },
+        {
+          "file": "tests/contracts/m7-cli-reading.test.ts",
+          "full_name": "M7.12-B post read assemble returns one complete fixed document across bounded pages"
+        },
+        {
+          "file": "tests/contracts/m7-cli-reading.test.ts",
+          "full_name": "M7.12-B post human assembles and escapes terminal controls while rejecting machine mode or cursor conflicts before HTTP"
+        },
+        {
+          "file": "tests/contracts/m7-cli-reading.test.ts",
+          "full_name": "M7.12-B thread human explicitly requests titles and exposes bounded continuation without fetching the next page"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 assembles complete UTF8 JSON with exact bytes and historical structured wire data"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent ref pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent kind pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent lifecycle pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent newer pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent offset pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent bytes pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent complete pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent cursor pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent unknown pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 rejects malformed or inconsistent unicode pages without partial output"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 refuses incomplete JSON, document shape drift and unknown query before fetching"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 later permission failure and caller abort never return partial content"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 total deadline covers all pages instead of resetting at each request"
+        },
+        {
+          "file": "tests/contracts/m7-fixed-content-assemble.test.ts",
+          "full_name": "M7.12 refuses cumulative content over one MiB and more than 512 advancing pages"
+        },
+        {
+          "file": "tests/contracts/m7-http-validation-diagnostics.test.ts",
+          "full_name": "M7.12 HTTP top-level missing fields expose bounded canonical paths/rules"
+        },
+        {
+          "file": "tests/contracts/m7-http-validation-diagnostics.test.ts",
+          "full_name": "M7.12 HTTP unknown fields never reflect supplied property names or values"
+        }
+      ],
+      "outer": {
+        "exit_code": 1,
+        "wall_ms": 2893
+      },
+      "root_independent_raw_review": true
+    },
+    "focused": {
+      "files": 17,
+      "tests": 115,
+      "passed": 115,
+      "failed": 0,
+      "success": true,
+      "failed_cases": [],
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 48581
+      }
+    },
+    "checks": [
+      {
+        "command": "pnpm build:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10673
+      },
+      {
+        "command": "pnpm typecheck:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 9937
+      },
+      {
+        "command": "pnpm lint:backend",
+        "workspace_packages": 9,
+        "workspace_concurrency": 1,
+        "exit_code": 0,
+        "wall_ms": 10012
+      }
+    ],
+    "human_multiline_checks": [
+      {
+        "command": "pnpm --workspace-concurrency=1 --filter @detuned/cli run build",
+        "exit_code": 0,
+        "wall_ms": 1153
+      },
+      {
+        "command": "pnpm --workspace-concurrency=1 --filter @detuned/cli run typecheck",
+        "exit_code": 0,
+        "wall_ms": 1040
+      },
+      {
+        "command": "pnpm --workspace-concurrency=1 --filter @detuned/cli run lint",
+        "exit_code": 0,
+        "wall_ms": 1059
+      }
+    ],
+    "malformed": {
+      "initial_invalid_fixture": {
+        "status_code": 400,
+        "error_code": "VALIDATION_ERROR",
+        "raw_body_contains_marker": false,
+        "message_contains_marker": false
+      },
+      "existing_space_cases": [
+        {
+          "case": "bare_word",
+          "status_code": 400,
+          "error_code": "VALIDATION_ERROR",
+          "full_marker_reflected": false,
+          "marker_fragment_reflected": false,
+          "raw_syntax_message": true,
+          "issue_count": 0
+        },
+        {
+          "case": "trailing_comma",
+          "status_code": 400,
+          "error_code": "VALIDATION_ERROR",
+          "full_marker_reflected": false,
+          "marker_fragment_reflected": false,
+          "raw_syntax_message": true,
+          "issue_count": 0
+        },
+        {
+          "case": "missing_value",
+          "status_code": 400,
+          "error_code": "VALIDATION_ERROR",
+          "full_marker_reflected": false,
+          "marker_fragment_reflected": false,
+          "raw_syntax_message": true,
+          "issue_count": 0
+        }
+      ]
+    },
+    "guide": {
+      "passed": true,
+      "ordinary_actor": true,
+      "guide_commands": [
+        {
+          "index": 1,
+          "exit_code": 0,
+          "http_requests": 1
+        },
+        {
+          "index": 2,
+          "exit_code": 0,
+          "http_requests": 4
+        },
+        {
+          "index": 3,
+          "exit_code": 0,
+          "http_requests": 12,
+          "assembled_pages": 12
+        }
+      ],
+      "readonly_all_rows_unchanged": true,
+      "probe_commands": [
+        {
+          "ok": true,
+          "input_mode": "flat",
+          "tool_count": 9,
+          "me_valid": true,
+          "spaces_valid": true,
+          "spaces_returned": 1,
+          "bridge_exit": {
+            "code": 0,
+            "signal": null
+          },
+          "stderr_bytes_capped": 0,
+          "stderr_truncated": false
+        },
+        {
+          "ok": true,
+          "input_mode": "wrapped",
+          "tool_count": 9,
+          "me_valid": true,
+          "spaces_valid": true,
+          "spaces_returned": 1,
+          "bridge_exit": {
+            "code": 0,
+            "signal": null
+          },
+          "stderr_bytes_capped": 0,
+          "stderr_truncated": false
+        }
+      ],
+      "unverified_failure_created": true,
+      "unverified_no_claim_required": true,
+      "bad_unknown_input_exit": 2,
+      "bad_unknown_http_requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/spaces/spc_229d15e2-fdd1-4516-b2ec-2103962afeb9/threads/thd_c07dbe79-95a8-4c3d-9c35-e43a19a8b2c2/posts",
+          "status_code": 400
+        }
+      ],
+      "bad_unknown_no_rows_changed": true,
+      "bad_unknown_no_sentinel_echo": true,
+      "model_calls": 0
+    },
+    "guide_outer": {
+      "exit_code": 0,
+      "wall_ms": 2020
+    },
+    "first_guide_outer": {
+      "exit_code": 1,
+      "wall_ms": 1988
+    },
+    "guide_root_independent_raw_review": true
+  },
+  "notes": {
+    "preparation": "Initial uncompressed required-source SSH transfer timed out and left an incomplete private copy. One compressed exact cf012fd3 file-list transfer completed; only then frozen install and baseline build ran. A premature version check before run.sh existed exited127, a sequencing mistake rather than a product failure.",
+    "malformed_probe": "Initial missing idempotency-header/absent-space probe was not evidence about malformed parsing. A follow-up fixture used the wrong header to create space and failed preparation; corrected existing-space probes with the proper header rejected three malformed JSON shapes without marker reflection. No generic4xx product change was made.",
+    "old_red": "Old assembler15/15 failed, CLI4/4 failed, HTTP diagnostics2failed1passed. The final16th assembler response-envelope budget test is additional repaired-source strengthening, not a repeated old-method-missing red.",
+    "guide_first_failure": "All three documented reads, both stdio modes, and the unverified example write succeeded. The extra negative-input fixture incorrectly required zeroHTTP for an unknown field handled by the server. Its counter assertion failed29vs30. The corrected fresh guide requires exactly one expected POST400 plus unchanged complete database rows and no marker reflection; that independent full guide passed.",
+    "human_multiline": "After initial27 steps, only CLI reading-output and its new test changed to retain body/summary lines with static indentation and per-line terminal escaping; CLI build/typecheck/lint were rerun, then focused115passed."
+  },
+  "final_backend_full": {
+    "pending": false,
+    "files": 184,
+    "unique_files": 184,
+    "tests": 1120,
+    "actual_assertions": 1120,
+    "unique_cases": 1120,
+    "passed": 1120,
+    "failed": 0,
+    "pending_tests": 0,
+    "todo": 0,
+    "success": true,
+    "outer": {
+      "exit_code": 0,
+      "wall_ms": 354716
+    },
+    "duration_ms": 354265.2561035156,
+    "root_independent_raw_review": true,
+    "scope": "Final production backend package sources; before the independent probe-only signal-observer amendment. Not a full run of amended probe script/test.",
+    "existing_timeouts_and_behavioral_invariants_preserved": true
+  },
+  "cleanup": {
+    "removed": true,
+    "only_owned_root": "/var/tmp/detuned-m712-ht_yz7cv",
+    "identity_marker_parent_rechecked": true,
+    "own_process_count": 0,
+    "nested_mount_count": 0,
+    "parent_dirfd_nofollow_removal": true,
+    "immediate_lstat_errno": 2,
+    "immediate_enoent": true,
+    "root_separate_review_pending": false,
+    "owner_new_ssh_enoent": true,
+    "owner_new_ssh_connection_sharing_disabled": true,
+    "owner_new_ssh_exit_code": 0,
+    "root_new_ssh_enoent": true,
+    "root_new_ssh_connection_sharing_disabled": true,
+    "root_new_ssh_exit_code": 0
+  },
+  "artifacts": {
+    "tracked_backend_compared": 596,
+    "tracked_same": 579,
+    "tracked_changed": [
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/client/dist/artifact-transfer.d.ts",
+      "packages/client/dist/artifact-transfer.d.ts.map",
+      "packages/client/dist/artifact-transfer.js",
+      "packages/client/dist/artifact-transfer.js.map",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/server/dist/app.d.ts.map",
+      "packages/server/dist/app.js",
+      "packages/server/dist/app.js.map"
+    ],
+    "new_exact_files": [
+      "packages/protocol/dist/fixed-content.js",
+      "packages/protocol/dist/fixed-content.js.map",
+      "packages/protocol/dist/fixed-content.d.ts",
+      "packages/protocol/dist/fixed-content.d.ts.map",
+      "packages/client/dist/fixed-content-assemble.js",
+      "packages/client/dist/fixed-content-assemble.js.map",
+      "packages/client/dist/fixed-content-assemble.d.ts",
+      "packages/client/dist/fixed-content-assemble.d.ts.map",
+      "packages/cli/dist/reading-output.js",
+      "packages/cli/dist/reading-output.js.map",
+      "packages/cli/dist/reading-output.d.ts",
+      "packages/cli/dist/reading-output.d.ts.map"
+    ],
+    "new_git_intent_to_add": true,
+    "web_untouched": true
+  },
+  "probe_only_final_amendment": {
+    "reason": "Observe any SDK signal request to the exact owned child; reject caught TERM followed by exit0 as non-natural closure. No new kill action or production package source change.",
+    "full_not_rerun_after_independent_probe_only_change": true,
+    "owner_and_root_approved_scope": true,
+    "independent_source_review_passed": true,
+    "validation": {
+      "files": 1,
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "success": true,
+      "cases": [
+        "M7.12 project stdio probe verifies exact nine tools and global reads in both modes with zero database writes",
+        "M7.12 probe rejects unsafe local input before HTTP and wrong credentials without partial stdout or secret details",
+        "M7.12 probe exit observes its actual SDK child exit and never forwards hostile bridge stderr",
+        "M7.12 probe timeout observes its actual SDK child exit and never forwards hostile bridge stderr",
+        "M7.12 probe rejects a completed bridge that ignores EOF and converts requested TERM to exit zero"
+      ],
+      "outer": {
+        "exit_code": 0,
+        "wall_ms": 8679
+      },
+      "root_independent_raw_review": true
+    },
+    "final_guide_two_modes": {
+      "passed": true,
+      "modes": [
+        {
+          "ok": true,
+          "input_mode": "flat",
+          "tool_count": 9,
+          "me_valid": true,
+          "spaces_valid": true,
+          "spaces_returned": 1,
+          "bridge_exit": {
+            "code": 0,
+            "signal": null
+          },
+          "bridge_requested_signals": [],
+          "stderr_bytes_capped": 0,
+          "stderr_truncated": false
+        },
+        {
+          "ok": true,
+          "input_mode": "wrapped",
+          "tool_count": 9,
+          "me_valid": true,
+          "spaces_valid": true,
+          "spaces_returned": 1,
+          "bridge_exit": {
+            "code": 0,
+            "signal": null
+          },
+          "bridge_requested_signals": [],
+          "stderr_bytes_capped": 0,
+          "stderr_truncated": false
+        }
+      ],
+      "all_database_rows_unchanged": true,
+      "sessions_added": 0,
+      "http_requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/me",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/spaces",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/me",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/spaces",
+          "status": 200
+        }
+      ],
+      "model_calls": 0
+    },
+    "final_guide_outer": {
+      "exit_code": 0,
+      "wall_ms": 1076
+    },
+    "final_guide_root_independent_raw_review": true
+  },
+  "guide_prose_sync": {
+    "all_fenced_code_blocks_unchanged": true,
+    "inline_probe_command_unchanged": true,
+    "change": "Added only explanation of LF line splitting, per-line escaping and static indentation already tested by the final CLI source and guide smoke.",
+    "final_prose_copied_after_command_tests": true,
+    "full_markdown_prose_not_reexecuted": true,
+    "no_additional_runtime_or_command_change": true
+  },
+  "final_binding": {
+    "tested_repo_root": "/var/tmp/detuned-m712-ht_yz7cv/src",
+    "all_bytes_equal": true,
+    "guide_and_example_files": [
+      "examples/cli-reading.md",
+      "examples/failure-unverified-cli.example.json"
+    ],
+    "all_delivery_guide_example_bytes_equal": true,
+    "executed_code_blocks_and_probe_command_unchanged_by_last_prose_sync": true,
+    "unverified_example_only_thread_id_substituted": true,
+    "scope": "Production packages bound to accepted backend full; final independent script/five-case test bound to subsequent probe-only validation and final two-mode guide. Guide prose later synchronized without command changes.",
+    "root_independent_review_pending": false,
+    "checksum_files_generated": false,
+    "root_independent_memory_comparison_46_paths_accepted": true,
+    "owner_compared_file_count_including_guide_example": 50,
+    "owner_compared_files": [
+      "examples/cli-reading.md",
+      "examples/failure-unverified-cli.example.json",
+      "package.json",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/cli/dist/reading-output.d.ts",
+      "packages/cli/dist/reading-output.d.ts.map",
+      "packages/cli/dist/reading-output.js",
+      "packages/cli/dist/reading-output.js.map",
+      "packages/cli/src/index.ts",
+      "packages/cli/src/reading-output.ts",
+      "packages/client/dist/artifact-transfer.d.ts",
+      "packages/client/dist/artifact-transfer.d.ts.map",
+      "packages/client/dist/artifact-transfer.js",
+      "packages/client/dist/artifact-transfer.js.map",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/dist/fixed-content-assemble.d.ts",
+      "packages/client/dist/fixed-content-assemble.d.ts.map",
+      "packages/client/dist/fixed-content-assemble.js",
+      "packages/client/dist/fixed-content-assemble.js.map",
+      "packages/client/src/artifact-transfer.ts",
+      "packages/client/src/client.ts",
+      "packages/client/src/fixed-content-assemble.ts",
+      "packages/protocol/dist/fixed-content.d.ts",
+      "packages/protocol/dist/fixed-content.d.ts.map",
+      "packages/protocol/dist/fixed-content.js",
+      "packages/protocol/dist/fixed-content.js.map",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/protocol/src/fixed-content.ts",
+      "packages/protocol/src/index.ts",
+      "packages/server/dist/app.d.ts.map",
+      "packages/server/dist/app.js",
+      "packages/server/dist/app.js.map",
+      "packages/server/src/app.ts",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "scripts/backend.mjs",
+      "scripts/mcp-probe.mjs",
+      "tests/contracts/m7-cli-reading.test.ts",
+      "tests/contracts/m7-fixed-content-assemble.test.ts",
+      "tests/contracts/m7-http-validation-diagnostics.test.ts",
+      "tests/contracts/m7-mcp-probe.test.ts",
+      "tests/helpers/pi-native-environment.ts",
+      "vitest.config.ts"
+    ],
+    "root_independently_compared_file_count": 46,
+    "root_independently_compared_files": [
+      "examples/cli-reading.md",
+      "examples/failure-unverified-cli.example.json",
+      "package.json",
+      "packages/cli/dist/index.js",
+      "packages/cli/dist/index.js.map",
+      "packages/cli/dist/reading-output.d.ts",
+      "packages/cli/dist/reading-output.d.ts.map",
+      "packages/cli/dist/reading-output.js",
+      "packages/cli/dist/reading-output.js.map",
+      "packages/cli/src/index.ts",
+      "packages/cli/src/reading-output.ts",
+      "packages/client/dist/artifact-transfer.d.ts",
+      "packages/client/dist/artifact-transfer.d.ts.map",
+      "packages/client/dist/artifact-transfer.js",
+      "packages/client/dist/artifact-transfer.js.map",
+      "packages/client/dist/client.d.ts",
+      "packages/client/dist/client.d.ts.map",
+      "packages/client/dist/client.js",
+      "packages/client/dist/client.js.map",
+      "packages/client/dist/fixed-content-assemble.d.ts",
+      "packages/client/dist/fixed-content-assemble.d.ts.map",
+      "packages/client/dist/fixed-content-assemble.js",
+      "packages/client/dist/fixed-content-assemble.js.map",
+      "packages/client/src/artifact-transfer.ts",
+      "packages/client/src/client.ts",
+      "packages/client/src/fixed-content-assemble.ts",
+      "packages/protocol/dist/fixed-content.d.ts",
+      "packages/protocol/dist/fixed-content.d.ts.map",
+      "packages/protocol/dist/fixed-content.js",
+      "packages/protocol/dist/fixed-content.js.map",
+      "packages/protocol/dist/index.d.ts",
+      "packages/protocol/dist/index.d.ts.map",
+      "packages/protocol/dist/index.js",
+      "packages/protocol/dist/index.js.map",
+      "packages/protocol/src/fixed-content.ts",
+      "packages/protocol/src/index.ts",
+      "packages/server/dist/app.d.ts.map",
+      "packages/server/dist/app.js",
+      "packages/server/dist/app.js.map",
+      "packages/server/src/app.ts",
+      "pnpm-lock.yaml",
+      "scripts/mcp-probe.mjs",
+      "tests/contracts/m7-cli-reading.test.ts",
+      "tests/contracts/m7-fixed-content-assemble.test.ts",
+      "tests/contracts/m7-http-validation-diagnostics.test.ts",
+      "tests/contracts/m7-mcp-probe.test.ts"
+    ],
+    "owner_only_unchanged_support_paths": [
+      "pnpm-workspace.yaml",
+      "scripts/backend.mjs",
+      "tests/helpers/pi-native-environment.ts",
+      "vitest.config.ts"
+    ],
+    "scope_count_note": "Owner compared48 runtime/config/support paths plus2 guide/example inputs=50 unique paths. Root independently compared46 including guide/example, package.json and pnpm-lock.yaml; four additional unchanged workspace/runner/test-support files were owner-only checks. Root was not claimed to compare50."
+  }
+}

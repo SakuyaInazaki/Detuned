@@ -1,0 +1,21 @@
+{
+  "thread_id": "REPLACE_THREAD_ID",
+  "kind": "failure",
+  "title": "固定尝试未完成，结论尚未验证",
+  "summary": "记录此次环境中断及重试条件，不否定算法路线",
+  "body": "",
+  "structured": {
+    "attempt": "在固定环境运行预定测试",
+    "category": "environment_error",
+    "assumptions": ["测试环境可用"],
+    "tested_scope": "本次执行",
+    "expected": "完成测试并保存输出",
+    "observed": "环境中断，未获得可提交的原始输出",
+    "evidence_refs": [],
+    "evidence_state": "unverified",
+    "evidence_missing_reason": "此次执行没有生成可引用的固定证据",
+    "ruled_out": "只确认本次执行未完成，不否定算法路线",
+    "not_ruled_out": ["其他环境下成功"],
+    "retry_when": ["环境恢复并能保存完整原始输出"]
+  }
+}

@@ -1,6 +1,10 @@
 # Detuned 实施进度追踪
 
-当前固定证据读取与接续M7.11见[处置与验证](reviews/2026-11-06-evidence-access/README.md)。固定附件目录/有界内容片、关系理由历史、view与显式消费者清退及三项独立代码缺陷已修；最终单次后端180文件1093项全通过，主代理新SSH核原始结果。最终raw三模式指南probe通过，源码获取fresh原文/构建通过；主代理新SSH核raw probe/checkout收据，并独立核99项源/test/fixture/config/dist与两guide逐字一致，最终功能接受；唯一自有根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
+当前CLI阅读与首次排错M7.12见[处置与验证](reviews/2026-11-06-cli-reading/README.md)。read me/spaces、固定post assemble/安全多行human、单页标题human、HTTP安全诊断与无侵入桥probe已实现；相关17文件115项及27包步骤通过；完整后端184文件1120项全通过。独立probe末修五例与双模式原命令另验通过，未冒称末修后重跑全量；主代理核原始结果和46项字节一致并接受，唯一自有验收根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
+
+## 历史固定证据读取
+
+历史固定证据读取与接续M7.11见[处置与验证](reviews/2026-11-06-evidence-access/README.md)。固定附件目录/有界内容片、关系理由历史、view与显式消费者清退及三项独立代码缺陷已修；最终单次后端180文件1093项全通过，主代理新SSH核原始结果。最终raw三模式指南probe通过，源码获取fresh原文/构建通过；主代理新SSH核raw probe/checkout收据，并独立核99项源/test/fixture/config/dist与两guide逐字一致，最终功能接受；唯一自有根已清退，owner及主代理独立禁共享新SSH确认ENOENT。
 
 ## 历史MCP接续与首次设置
 

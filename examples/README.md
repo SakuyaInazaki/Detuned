@@ -15,3 +15,5 @@
 默认目录与正文分页均有界，一页不等于全量。provided、作者自报、review accept、verification passed和当前有效性分别判断。历史验收、固定宿主版本及限制见[审查索引](../docs/reviews/README.md)与[兼容记录](../integrations/compatibility.json)。既有Web源码和历史指南保留，后续不开展前端或浏览器专项。
 
 固定修订附件、完整验证后的有界内容片与关闭理由历史见[证据读取与接续](evidence-access.md)；跨平台新独立工作副本见[源码获取](source-checkout.md)。
+
+人类纯文本、固定内容自动拼接与常见首错见[CLI阅读](cli-reading.md)，无证据失败body见[failure示例](failure-unverified-cli.example.json)。

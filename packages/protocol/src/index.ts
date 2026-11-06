@@ -32,3 +32,4 @@ export * from './validation-issues.js';
 export * from './discovery-reads.js';
 export * from './evidence-reads.js';
 export * from './relation-history.js';
+export * from './fixed-content.js';

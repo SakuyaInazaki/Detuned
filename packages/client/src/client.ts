@@ -1,3 +1,6 @@
+import {assembleFixedPostContent} from './fixed-content-assemble.js';
+import {CONTEXT_BYTES,validatePostAssembleQuery,type PostAssembleQuery,type AssembledPostRevisionContent} from '@detuned/protocol';
+export type {PostAssembleQuery,AssembledPostRevisionContent} from '@detuned/protocol';
 import {validateRelationHistoryQuery,isRelationHistoryPage,type RelationHistoryQuery,type RelationHistoryPage} from '@detuned/protocol';
 import {artifactContentPage} from './artifact-content.js';
 import {validateArtifactContentQuery,ARTIFACT_CONTENT_LIMITS,type ArtifactContentQuery,type ArtifactContentPage} from '@detuned/protocol';
@@ -250,7 +253,7 @@ export class DetunedClient {
     return this.requestWithBody<T>(opts);
   }
 
-  private async requestWithBody<T>(opts: RequestOptions, bodyFactory?: () => FormData, artifactJson = !!bodyFactory, retryBudget = this.maxRetries, webAuth?: { token?: string; noContent?: boolean }): Promise<{ data: T; meta?: any }> {
+  private async requestWithBody<T>(opts: RequestOptions, bodyFactory?: () => FormData, artifactJson: boolean | number = !!bodyFactory, retryBudget = this.maxRetries, webAuth?: { token?: string; noContent?: boolean }): Promise<{ data: T; meta?: any }> {
     let url = `${this.baseUrl}${webAuth ? '' : '/api/v1'}${opts.path}`;
     if (opts.query) {
       const qp = new URLSearchParams();
@@ -399,7 +402,7 @@ export class DetunedClient {
             if (webAuth?.noContent && res.ok) throw new ClientProtocolError('Invalid web logout response.');
             let json: any = null;
             try {
-              json = artifactJson ? await readArtifactJson(res, controller.signal, () => isTimedOut ? new TimeoutError() : new UserAbortError()) : await res.json();
+              json = artifactJson ? await readArtifactJson(res, controller.signal, () => isTimedOut ? new TimeoutError() : new UserAbortError(),typeof artifactJson==='number'?artifactJson:undefined) : await res.json();
             } catch (jsonErr: any) {
               if (artifactJson && jsonErr instanceof ClientProtocolError) {
                 outcome = { kind: 'error', error: jsonErr };
@@ -997,6 +1000,12 @@ export class DetunedClient {
       query: { max_bytes: query.max_bytes, cursor: query.cursor }, signal: opts?.signal,
     });
     return { data: result.data, meta: result.meta } as PostRevisionContentPage;
+  }
+
+  async assemblePostRevisionContent(spaceId:string,postId:string,revision:number,query:PostAssembleQuery={},opts?:{signal?:AbortSignal}):Promise<AssembledPostRevisionContent> {
+    validatePostAssembleQuery(query);
+    if(typeof spaceId!=='string'||!spaceId.trim()||typeof postId!=='string'||!postId.trim()||!Number.isSafeInteger(revision)||revision<1)throw new DetunedError(ErrorCode.VALIDATION_ERROR,'Invalid fixed post reference.',400,false);
+    return assembleFixedPostContent(spaceId,postId,revision,query,this.timeoutMs,opts?.signal,(page,signal)=>this.requestWithBody<unknown>({method:'GET',path:`/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}`,query:page,signal},undefined,query.max_bytes??CONTEXT_BYTES.default));
   }
 
   async getPostRevisionCatalog(spaceId: string, postId: string, query: PostRevisionCatalogQuery = {}, options?: { signal?: AbortSignal }): Promise<PostRevisionCatalogPage> {

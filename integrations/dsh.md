@@ -10,6 +10,12 @@
 
 [固定官方MCP说明](https://github.com/deepseek-ai/deepseek-harness/blob/5badb15009ae1756c3afe0ae0cef1faafc290ccc/packages/mcp/mcp-client/README.md)于2026-11-06只读复核：每个server单独配置、工具带命名空间、默认无server，探测和发现不等于有效业务调用。该固定源码不等于任意npm发行包。详细桥参数与生命周期见[stdio指南](../examples/mcp-bridge.md)。
 
+## 不改profile的桥层检查
+
+尚不想加载patch时，可先在项目root运行 `node scripts/mcp-probe.mjs --url http://127.0.0.1:3000 --token-file /ABS/private/me.token`；桥所需Node与项目dist须已就绪。默认flat，测试wrapped可加--input-mode wrapped；--timeout-ms范围1000–60000，默认10000。探针启动项目stdio桥，官方SDK只做九工具发现和本人me/spaces读取，正常退出后打印非秘密JSON计数摘要；失败不回显token路径或原始子进程stderr。
+
+此命令不读写dsh profile或用户全局配置，不启动dsh/模型，不把探测通过写成dsh原生工具已加载。需要实际宿主工具时仍由操作者按上述固定版本接入；多个可见空间不自动授权选择某空间写入。
+
 ## 错误与续接
 
 dsh可能只保留完整JSON错误文本，不保证structuredContent.error形状；只有显式isError信封中的合法业务码可作判定，不搜索正文子串猜码。读取和取消不ACK；重连用原consumer保留pending，以batch/事件比较重投，允许cursor续签。初始session创建若结果未知，不盲目创建多个会话。

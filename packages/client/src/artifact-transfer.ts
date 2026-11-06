@@ -97,10 +97,9 @@ export async function downloadArtifactBytes(baseUrl: string, token: string | und
 }
 
 /** New artifact JSON transport only; old generic JSON requests keep their semantics. */
-export async function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error): Promise<unknown> {
+export async function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error, maximum = 1048576): Promise<unknown> {
   if (!response.body) throw new ClientProtocolError('Invalid JSON response.');
   const reader = response.body.getReader();
-  const maximum = 1048576;
   const buffer = new Uint8Array(maximum);
   let size = 0;
   try {

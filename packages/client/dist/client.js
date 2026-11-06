@@ -1,3 +1,5 @@
+import { assembleFixedPostContent } from './fixed-content-assemble.js';
+import { CONTEXT_BYTES, validatePostAssembleQuery } from '@detuned/protocol';
 import { validateRelationHistoryQuery, isRelationHistoryPage } from '@detuned/protocol';
 import { artifactContentPage } from './artifact-content.js';
 import { validateArtifactContentQuery, ARTIFACT_CONTENT_LIMITS } from '@detuned/protocol';
@@ -306,7 +308,7 @@ export class DetunedClient {
                             throw new ClientProtocolError('Invalid web logout response.');
                         let json = null;
                         try {
-                            json = artifactJson ? await readArtifactJson(res, controller.signal, () => isTimedOut ? new TimeoutError() : new UserAbortError()) : await res.json();
+                            json = artifactJson ? await readArtifactJson(res, controller.signal, () => isTimedOut ? new TimeoutError() : new UserAbortError(), typeof artifactJson === 'number' ? artifactJson : undefined) : await res.json();
                         }
                         catch (jsonErr) {
                             if (artifactJson && jsonErr instanceof ClientProtocolError) {
@@ -935,6 +937,12 @@ export class DetunedClient {
             query: { max_bytes: query.max_bytes, cursor: query.cursor }, signal: opts?.signal,
         });
         return { data: result.data, meta: result.meta };
+    }
+    async assemblePostRevisionContent(spaceId, postId, revision, query = {}, opts) {
+        validatePostAssembleQuery(query);
+        if (typeof spaceId !== 'string' || !spaceId.trim() || typeof postId !== 'string' || !postId.trim() || !Number.isSafeInteger(revision) || revision < 1)
+            throw new DetunedError(ErrorCode.VALIDATION_ERROR, 'Invalid fixed post reference.', 400, false);
+        return assembleFixedPostContent(spaceId, postId, revision, query, this.timeoutMs, opts?.signal, (page, signal) => this.requestWithBody({ method: 'GET', path: `/spaces/${encodeURIComponent(spaceId)}/posts/${encodeURIComponent(postId)}/revisions/${revision}`, query: page, signal }, undefined, query.max_bytes ?? CONTEXT_BYTES.default));
     }
     async getPostRevisionCatalog(spaceId, postId, query = {}, options) {
         const result = await this.requestWithBody({ method: 'GET',

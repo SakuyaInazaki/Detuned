@@ -201,3 +201,11 @@ M7.2固定验证器有限验收链见[独验](reviews/2026-10-10-m7-2/verificati
 结果集中在[证据读取审查](reviews/2026-11-06-evidence-access/README.md)。新能力须覆盖固定revision附件目录（不用事件猜归属）、当前权限/封存/红删、完整至多1MiB摘要校验后的UTF8 fatal/base64有界片、字节offset与后续expected_sha256绑定、预算与取消；超限保留原download而非无限内存读取。理由历史须保动作/version/固定reason_ref，撤权或坏引用安全不可用，cursor绑定actor/space/relation且按预算续读。显式deactivate实际DELETE，不ACK，旧无op订阅不回归；view复用现公共知识投影。
 
 独立发现的默认帖子目录50上限、附件exists/open异步授权窗口、reopen新动作理由校验须先真实红后绿；保留旧成功幂等重放，未变原断言/timeout。CLI三薄读取用m7-evidence-access-cli真实服务/blob测试；源码获取指南由Arch在全新独立副本逐字执行，验证必需源码/fixture/config/lock/scripts/Dockerfile存在及依赖/cache/dist不物化，原仓库不改。不能仅凭clone exit0宣称服务端filter生效或全部后端可用。
+
+## CLI阅读与首错验收映射
+
+当前事实见[CLI阅读审查](reviews/2026-11-06-cli-reading/README.md)。me/spaces别名须无space/id可读且与原入口等值；post/thread定位缺项与无关参数本地拒绝。固定--assemble用真实多页Unicode内容核完整结果，坏ref/metadata/offset/cursor/终页、超限/总deadline/取消/撤权均不得输出部分成功；既有单页JSON与历史structured投影保持。
+
+人类输出仅post read/thread posts，与--json互斥；post human自动拼完且拒cursor，thread human opt-in当前标题但只一页，未完明确cursor。所有动态字符串（标题/正文/ID/结构化等）验证C0/C1/DEL/bidi控制安全转义，无终端执行/ANSI颜色。无证据failure例仅替换真实thread_id通过现严格新写，不强制先claim；坏JSON与结构缺项诊断分层验证且未知键/值不得回显。
+
+无侵入mcp-probe仅在普通凭据下启动built stdio桥，SDK九工具/me/spaces、取消与退出收尾、有界timeout、不写宿主profile/全局配置/不调用模型；此结果不替代dsh原生宿主验收。同UID凭据文件互读限制靠文档明确，不用拆目录虚构隔离。

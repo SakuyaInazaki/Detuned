@@ -8,7 +8,7 @@ import { trackHttpSockets } from './http-sockets.js';
 import { resolveWebAssetsDir, isWebStaticRequest, staticWebRoutes } from './static-web.js';
 import { authRoutes } from './routes/auth.js';
 import { resolveWebAuthConfig, checkWebRequest, readWebCookie, readCsrf, uniqueHeader } from './web-auth.js';
-import { WEB_AUTH_PATH } from '@detuned/protocol';
+import { WEB_AUTH_PATH, schemaValidationError } from '@detuned/protocol';
 import { RuntimeResources } from './runtime-resources.js';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
@@ -180,14 +180,28 @@ export function buildApp(options) {
         }
         const anyErr = error;
         if (anyErr?.validation) {
+            // The context and schema come from registered routes, never from AJV's
+            // user-supplied property names, error text, or error params.
+            const context = anyErr.validationContext;
+            const source = context === 'body' ? req.body : context === 'params' ? req.params
+                : context === 'querystring' ? req.query : context === 'headers' ? req.headers : undefined;
+            const trustedContext = context === 'body' || context === 'params' || context === 'querystring' || context === 'headers';
+            const schemas = req.routeOptions.schema;
+            const schema = trustedContext && schemas && Object.prototype.hasOwnProperty.call(schemas, context)
+                ? schemas[context] : undefined;
+            // Route schemas are trusted canonical JSON schemas; this type boundary
+            // neither casts request data nor trusts an error-provided schema object.
+            const diagnostic = schema && typeof schema === 'object' && !Array.isArray(schema)
+                ? schemaValidationError('Request schema validation failed.', schema, source)
+                : new DetunedError(ErrorCode.VALIDATION_ERROR, 'Request schema validation failed.', 400, false, { issues: [{ path: '', rule: 'schema' }] });
             reply.status(400).send({
                 api_version: '1',
                 request_id: req.id,
                 error: {
                     code: ErrorCode.VALIDATION_ERROR,
-                    message: anyErr.message ?? '请求验证错误。',
+                    message: diagnostic.message,
                     retryable: false,
-                    details: { issues: anyErr.validation },
+                    details: diagnostic.details,
                 },
             });
             return;

@@ -613,3 +613,13 @@ consumer lookup HTTP query为consumer_key、thread_ids_json/event_types_json两�
 `GET S/relations/:id/history`与`getRelationHistory(spaceId,id,query={},opts?)`返回`{data:{relation_id,resolutions:[...]},meta:{truncated,next_cursor}}`。项含resolution_id/relation_id/version/action/resolver_id/created_at/reason_ref/reason_status/reason_has_newer_revision。默认20，limit1–100，max_bytes4096–65536默认12288，cursor≤4096字符；实际完整compact HTTP信封（含request_id与签名cursor）计预算，最小项不能容纳返回422。version/id升序有界索引seek；cursor绑定actor/space/relation/固定初始through_version/after_version/after_id及初始24小时expiry，续页不延TTL。每页同快照重核当前ACL、关系固定端点与理由状态。跨空间/不存在理由ref=null、unavailable；redacted理由只留ref墓碑、不返回正文或当前修订信息。旧getRelation默认DTO不增历史字段。
 
 `forum_subscribe`原创建/复用分支不传op，参数与起点语义保持。新增严格`{op:'deactivate',space_id,consumer_id}`复用现DELETE：仅本人consumer，非ACK，不删subscription/events；他人consumer沿原403，已不存在沿原幂等成功。停用后consumer_lookup仍404，不重建。
+
+## 固定帖子修订的完整拼接读取
+
+`assemblePostRevisionContent(spaceId,postId,revision,{max_bytes?},{signal?})`是共享客户端的显式完整读取方法，供CLI `post read --assemble`和人类输出复用。既有`getPostRevisionContent`单页接口与MCP分片输出保持；不增加大文本MCP分支，也不自动执行或解释帖子中的指令。
+
+方法逐页使用同一固定ref及opaque cursor，当前服务端权限仍在每页读取时裁决。先严格核页shape、encoding=json、complete/truncated/next_cursor关联、固定ref、post_kind/lifecycle/has_newer_revision一致，再核start_byte从0连续推进、end-start等于chunk实际UTF8字节且无坏Unicode；重复cursor、缺页、混入未知页字段、元信息变化或后页错误均拒绝，不输出部分内容。累计上限1MiB、最多512页，每页max_bytes沿4096–65536默认12288；每页JSON传输按同一max_bytes限制完整HTTP信封（包括request_id与任何信封字段），超限取消body读取；不为元信息另加松预算。正的client timeoutMs作为整个拼接操作总deadline，调用者取消与超时终止所有后续读取；显式timeoutMs=0仍按原客户端约定关闭时间限制，字节与页数边界保持。
+
+只有完整拼接并JSON.parse成功才返回`{ref,post_kind,lifecycle,has_newer_revision,encoding:'json',content,bytes,pages}`。content含title/summary/body/tags/structured；读取按历史wire形状保留structured，不以新typed写入规则重验旧材料。bytes是所拼原JSON的UTF8字节数，pages是实际读取页数。该方法保证固定引用、连续字节与完整JSON的客户端检查，不新增服务器摘要或密码学认证声明；研究结论仍须独立核查。当前metadata改变时应重新读取，不把跨页不一致拼成同一次稳定结果。
+
+HTTP注册路由的schema拒绝使用与typed写入相同的有界脱敏诊断：details.issues最多8项，只含可信schema字段路径、规则及有界静态枚举值；message仅附最多两条安全路径摘要。body/params/querystring/headers仅从注册路由的已知schema定位，不透传AJV原始message、params或未知属性名/输入值；无法安全定位时返回固定通用schema问题。400、VALIDATION_ERROR、retryable=false及既有授权/隐藏顺序保持。损坏JSON或不可读输入文件仍是独立的输入解析错误，不把解析失败伪装成某个业务字段缺失。

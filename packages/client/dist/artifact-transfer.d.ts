@@ -15,5 +15,5 @@ export declare function snapshotUpload(file: Blob, metadata: CreateArtifactMetad
 }>;
 export declare function downloadArtifactBytes(baseUrl: string, token: string | undefined, spaceId: string, artifactId: string, timeoutMs: number, external: AbortSignal | undefined, getMetadata: (signal: AbortSignal) => Promise<ReadableArtifactMetadata>, cookieSession?: boolean, checkRunId?: string, maximumBytes?: number): Promise<ArtifactDownload>;
 /** New artifact JSON transport only; old generic JSON requests keep their semantics. */
-export declare function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error): Promise<unknown>;
+export declare function readArtifactJson(response: Response, signal: AbortSignal, error: () => Error, maximum?: number): Promise<unknown>;
 //# sourceMappingURL=artifact-transfer.d.ts.map
