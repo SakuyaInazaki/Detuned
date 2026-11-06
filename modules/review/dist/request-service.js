@@ -4,6 +4,7 @@ import { readReviewSnapshotRecords, reconstructReviewRequestView, reviewSnapshot
 import { canonicalizeReviewJson } from './canonical-json.js';
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const invalid = () => new DetunedError(ErrorCode.VALIDATION_ERROR, 'Formal review request requirements are not satisfied.', 400);
+const rosterInvalid = (rule, expectedCount) => new DetunedError(ErrorCode.VALIDATION_ERROR, rule === 'exact_reviewers' ? 'Reviewer count must exactly match the frozen required_reviewers policy.' : 'Reviewers must not be contributors to the frozen review materials.', 400, false, { issues: [{ path: '/reviewer_actor_ids', rule, ...(expectedCount === undefined ? {} : { expected_count: expectedCount }) }] });
 const missing = () => new DetunedError(ErrorCode.NOT_FOUND, 'Review material does not exist or is not accessible.', 404);
 const forbidden = () => new DetunedError(ErrorCode.FORBIDDEN, 'This review request operation requires its requester or space maintenance authority.', 403);
 /** Internal only: fixed assignments and collecting/cancelled heads, no submissions or public endpoint. */
@@ -55,13 +56,16 @@ export class ReviewRequestService {
             return this.idempotency.executeIdempotent(current.actor.id, spaceId, 'review.request.create', requestKey, req, 201, () => {
                 const { manifest, manifestHash } = this.builder.generateSnapshotManifest(current, spaceId, req);
                 const policy = manifest.review_policy;
-                if (!policy.enabled || !policy.exclude_contributors || !policy.distinct_actors || !policy.seal_until_all_submitted || !policy.invalidate_on_revision ||
-                    req.reviewer_actor_ids.length !== policy.required_reviewers)
+                if (!policy.enabled || !policy.exclude_contributors || !policy.distinct_actors || !policy.seal_until_all_submitted || !policy.invalidate_on_revision)
                     throw invalid();
+                if (req.reviewer_actor_ids.length !== policy.required_reviewers)
+                    throw rosterInvalid('exact_reviewers', policy.required_reviewers);
                 const reviewers = [...req.reviewer_actor_ids].sort(cmp), groups = new Set();
                 const assignments = reviewers.map(reviewer_actor_id => {
                     const actor = tx.findActorById(reviewer_actor_id), member = tx.getMembership(spaceId, reviewer_actor_id);
-                    if (!actor || actor.disabled_at || !['human', 'agent'].includes(actor.kind) || !member || !member.active || !member.reviewer_eligible || manifest.contributors.includes(reviewer_actor_id))
+                    if (manifest.contributors.includes(reviewer_actor_id))
+                        throw rosterInvalid('exclude_contributors');
+                    if (!actor || actor.disabled_at || !['human', 'agent'].includes(actor.kind) || !member || !member.active || !member.reviewer_eligible)
                         throw invalid();
                     if (policy.distinct_independence_groups) {
                         const group = member.independence_group;

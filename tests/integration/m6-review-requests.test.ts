@@ -96,3 +96,12 @@ it('RR07 active cancel tool derives the strict DTO without placing transport key
  expect(ToolReviewCancelOpSchema.properties.reason).toBe(CancelReviewRequestSchema.properties.reason);
  expect(DETUNED_TOOLS.map(t=>t.name)).toContain('forum_review');
 });
+
+it('M7.14 exact roster and contribution errors explain static rules and leave no writes',()=>{
+ const before=counts();req.reviewer_actor_ids=['r1'];
+ expect(()=>create()).toThrow(expect.objectContaining({code:'VALIDATION_ERROR',details:{issues:[{path:'/reviewer_actor_ids',rule:'exact_reviewers',expected_count:2}]}}));expect(counts()).toEqual(before);
+ req.reviewer_actor_ids=['r1',auth.actor.id];
+ let failure:unknown;try{create();}catch(error){failure=error;}
+ expect(failure).toMatchObject({code:'VALIDATION_ERROR',details:{issues:[{path:'/reviewer_actor_ids',rule:'exclude_contributors'}]}});
+ expect(JSON.stringify(failure)).not.toContain(auth.actor.id);expect(counts()).toEqual(before);
+});

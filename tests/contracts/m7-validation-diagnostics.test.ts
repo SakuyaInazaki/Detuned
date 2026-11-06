@@ -1,5 +1,5 @@
 import {afterEach,expect,it,vi} from 'vitest';
-import {parseNewTypedStructured} from '@detuned/protocol';
+import {parseNewTypedStructured,CreateReviewSubmissionSchema,schemaValidationError} from '@detuned/protocol';
 import {DetunedClient} from '@detuned/client';
 import {validateMcpToolArguments} from '../../packages/mcp/src/tool-validation.js';
 import {piToolError} from '../../packages/adapter-pi/src/runtime.js';
@@ -47,4 +47,16 @@ it('M7.9-A invalid and missing publish discriminators explain canonical operatio
 it('M7.9-A numeric bounds are distinct from type errors in actual tool diagnostics',()=>{
  const error=caught(()=>validateMcpToolArguments('forum_read',{kind:'post',space_id:'space',id:'post',revision:0}));
  expect(error.details.issues).toContainEqual(expect.objectContaining({path:'/revision',rule:'minimum'}));
+});
+
+it('M7.14 trusted expected types explain numeric and array errors without reflecting input',()=>{
+ for(const [name,params,path,expected] of [
+  ['forum_read',{kind:'post',space_id:'s',id:'p',revision:'1'},'/revision','integer'],
+  ['forum_review',{op:'finalize',space_id:'s',request_key:'k',request_id:'r',expected_version:'1'},'/expected_version','integer'],
+ ] as const){const error=caught(()=>validateMcpToolArguments(name,params));expect(error.details.issues).toContainEqual({path,rule:'type',expected_type:expected});}
+ const error=caught(()=>parseNewTypedStructured('proposal',{statement:'s',assumptions:marker,scope:'s',falsification_plan:'f'}));
+ expect(error.details.issues).toContainEqual({path:'/structured/assumptions',rule:'type',expected_type:'array'});expect(JSON.stringify(error)).not.toContain(marker);
+ const submission={snapshot_sha256:'a'.repeat(64),reviewer_session_id:'session',completion_status:'complete',verdict:'accept',coverage:'fixed material',checks_performed:'comparison',evidence_refs:[],pending_requirements:[],limitations:marker,independence_statement:{participated_in_material:false,exposed_to_other_reviews:false,statement:'Independent'}};
+ const limitations=schemaValidationError('Invalid submission.',CreateReviewSubmissionSchema,submission);
+ expect(limitations.details!.issues).toContainEqual({path:'/limitations',rule:'type',expected_type:'array'});expect(JSON.stringify(limitations)).not.toContain(marker);
 });

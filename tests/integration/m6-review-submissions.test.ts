@@ -39,6 +39,8 @@ it('RS01 sealed observer submissions reveal atomically and retain exact historic
  const ack=r1.submission.submit(r1.ctx,sid,first.id,b1,'one');
  const compact=JSON.parse(extractResultRef(`review.submission.create:${first.id}`,ack,storage));expect(compact).toMatchObject({v:1,kind:'review.submission',submission_id:ack.submission_id,request_version:2,snapshot_id:first.snapshot_id});expect(Object.keys(compact)).toHaveLength(8);expect(()=>extractResultRef(`review.submission.create:${first.id}`,ack)).toThrow(expect.objectContaining({code:'RESYNC_REQUIRED'}));
  expect(service.getRequest(auth,sid,first.id)).toMatchObject({phase:'collecting',submitted_count:1,changed_by:null});
+ const waiting=service.getRequest(r2.ctx,sid,first.id);expect(waiting).toMatchObject({submitted_count:1,changed_by:null});
+ expect(JSON.stringify(waiting)).not.toContain('coverage');expect(r2.submission.listVisibleSubmissions(r2.ctx,sid,first.id).submissions).toEqual([]);
  expect(()=>r2.submission.getSubmission(r2.ctx,sid,ack.submission_id)).toThrow(expect.objectContaining({code:'NOT_FOUND'}));
  expect(r1.submission.getSubmission(r1.ctx,sid,ack.submission_id)).toMatchObject({coverage:'scope',revealed_at:null});
  expect(create()).toEqual(first);expect(r1.submission.submit(r1.ctx,sid,first.id,b1,'one')).toEqual(ack);

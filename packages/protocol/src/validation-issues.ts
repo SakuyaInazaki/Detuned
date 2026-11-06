@@ -4,13 +4,14 @@ import {DetunedError,ErrorCode} from './errors.js';
 
 function validValue(schema:TSchema,value:unknown):boolean {return Value.Check(schema,value);}
 
-export interface SafeValidationIssue {path:string;rule:string;allowed_values?:Array<string|number|boolean|null>}
+export interface SafeValidationIssue {path:string;rule:string;allowed_values?:Array<string|number|boolean|null>;expected_type?:string}
 /** Diagnostics only. Schemas are trusted; input names/values and validator messages never enter output. */
 export function safeValidationIssues(schema:TSchema,value:unknown,prefix=''):SafeValidationIssue[] {
  const issues:SafeValidationIssue[]=[];let budget=256;
- const add=(path:string,rule:string,allowed?:SafeValidationIssue['allowed_values'])=>{
+ const add=(path:string,rule:string,allowed?:SafeValidationIssue['allowed_values'],expectedType?:string)=>{
   if(issues.length>=8)return;
   const issue:SafeValidationIssue={path:path.length<=160?path:'',rule};
+  if(rule==='type'&&expectedType&&['string','integer','number','boolean','null','array','object'].includes(expectedType))issue.expected_type=expectedType;
   if(allowed?.length && allowed.length<=16 && allowed.every(item=>typeof item!=='string'||item.length<=64))issue.allowed_values=allowed;
   if(!issues.some(item=>item.path===issue.path&&item.rule===rule))issues.push(issue);
  };
@@ -47,7 +48,7 @@ export function safeValidationIssues(schema:TSchema,value:unknown,prefix=''):Saf
    add(path,'union');return;
   }
   if(s.type==='object'){
-   if(v===null||typeof v!=='object'||Array.isArray(v)){add(path,'type');return;}
+   if(v===null||typeof v!=='object'||Array.isArray(v)){add(path,'type',undefined,'object');return;}
    const object=v as Record<string,unknown>,properties=s.properties??{};
    for(const [key,property] of Object.entries(properties) as [string,TSchema][]){if(--budget<0||issues.length>=8)break;
     const next=path+'/'+key.replace(/~/g,'~0').replace(/\//g,'~1');
@@ -56,14 +57,14 @@ export function safeValidationIssues(schema:TSchema,value:unknown,prefix=''):Saf
    }
    if(s.additionalProperties===false){for(const key of Object.keys(object)){if(--budget<0)break;if(!Object.prototype.hasOwnProperty.call(properties,key)){add(path,'additionalProperties');break;}}}
   } else if(s.type==='array'){
-   if(!Array.isArray(v)){add(path,'type');return;}
+   if(!Array.isArray(v)){add(path,'type',undefined,'array');return;}
    if(s.minItems!==undefined&&v.length<s.minItems)add(path,'minItems');
    if(s.maxItems!==undefined&&v.length>s.maxItems)add(path,'maxItems');
    if(s.items&&!Array.isArray(s.items))for(let i=0;i<v.length&&budget>0&&issues.length<8;i++)visit(s.items,v[i],path+'/'+i,depth+1);
   } else if(!validValue(s,v)){
    if(Object.prototype.hasOwnProperty.call(s,'const'))add(path,'enum',[s.const]);
    else if((s.type==='number'||s.type==='integer')&&typeof v==='number'&&Number.isFinite(v)){
-    if(s.type==='integer'&&!Number.isInteger(v))add(path,'type');
+    if(s.type==='integer'&&!Number.isInteger(v))add(path,'type',undefined,'integer');
     else if(s.minimum!==undefined&&v<s.minimum)add(path,'minimum');
     else if(s.maximum!==undefined&&v>s.maximum)add(path,'maximum');
     else if(s.exclusiveMinimum!==undefined&&v<=s.exclusiveMinimum)add(path,'exclusiveMinimum');
@@ -72,7 +73,7 @@ export function safeValidationIssues(schema:TSchema,value:unknown,prefix=''):Saf
     else add(path,'schema');
    }
    else if(s.type==='string' &&typeof v==='string')add(path,s.minLength!==undefined&&v.length<s.minLength?'minLength':s.maxLength!==undefined&&v.length>s.maxLength?'maxLength':s.pattern?'pattern':'schema');
-   else add(path,'type');
+   else add(path,'type',undefined,s.type);
   }
  };
  try{visit(schema,value,prefix,0);}catch{/* Diagnostics must not replace the original rejection. */}

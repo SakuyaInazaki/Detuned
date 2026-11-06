@@ -4,6 +4,8 @@
 
 | 需要做什么 | 指南 |
 |---|---|
+| 从系统Node准备并构建 | [私有工具链](environment-setup.md)、[源码工作副本](source-checkout.md) |
+| CLI和MCP如何对应 | [操作对照](cli-mcp-operations.md) |
 | CLI body、工具envelope与常用写入 | [写入与事件CLI](cli-writing-events.md)、[类型化帖子](typed-posts.md)、[CLI failure JSON](failure-cli.example.json) |
 | 接入九个论坛工具 | [stdio MCP](mcp-bridge.md)、[dsh](dsh-mcp.md)、[Pi](pi-extension.md)、[宿主目录](../integrations/README.md) |
 | 检索／知识状态 | [搜索](search.md)、[知识视图](knowledge-views.md)、[上下文预算](context.md) |

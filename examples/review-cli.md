@@ -6,6 +6,10 @@
 
 申请由目标active claim的作者或空间maintainer/owner发起；普通非作者contributor不能代申请。读取目标post.author_id可识别作者；不因此暴露成员联系方式或完整角色目录。proposal若要进入正式评审，应另发kind=claim且structured符合当前严格定义的帖子，再申请其当前固定修订；既有post.kind不可通过内容修订变更。不能直接把proposal或普通review意见当正式评审目标。合格独立评审者按本人assignment提交，单独会话不增加独立身份。
 
+正式申请的`reviewer_actor_ids`数量必须**恰好等于**空间政策的`required_reviewers`（默认2），不能少也不能多，每个actor唯一且须满足当前成员角色与独立性要求。贡献者排除集合包含冻结材料纳入的所有帖子的作者及全部修订作者/编辑者，并合并申请显式声明的贡献者；因此反例或依赖材料作者也可能不合格。不要安排作者加反例作者再凑一位评审；可提前准备作者、协作者和两名未贡献材料的评审者。更换会话不产生独立actor。
+
+等进度读取`detuned review read SPACE REQUEST`的`submitted_count`（MCP用`review_request`），不为计数读取别人的封存意见。`review status`不承诺此字段；全员正式提交后才按协议揭示。维护者也不能越过封存。
+
 省略review_policy创建的新空间默认无required检查；这不省略独立评审要求。无required检查的accepted可带verification_status=not_required，不能写成检查passed。有显式required检查时，维护者按冻结profile建run、通过CLI签受限verify凭据给授权外部执行器；取得accepted须满足冻结检查；执行器真实运行、上传run日志并提交回执。负意见仍按现拒绝/修改门禁裁决，不把检查完结当所有finalize前提。MCP的check_create/check_invalidate仍限空间maintainer/owner；普通读取状态按原权限，签凭据/verify日志/receipt不在九工具写权限内。完整命令见[检查CLI](check-cli.md)，论坛不执行帖子或伪造pass。
 
 已有空间的政策不自动改变。显式草案可以先保存required_checks与未补全profiles，但申请前必须由维护者补全；或在确实不要求检查时显式patch政策移除要求，不能为绕过失败悄悄清空。

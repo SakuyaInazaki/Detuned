@@ -1,0 +1,291 @@
+{
+  "fresh_smoke": {
+    "source": "actual exported candidate",
+    "model_calls": 0,
+    "blocks": [
+      {
+        "block": 1,
+        "exit_code": 0
+      },
+      {
+        "block": 3,
+        "exit_code": 0
+      }
+    ],
+    "two_distinct_ordinary_actors": true,
+    "global_reads_all_table_counts_unchanged": true,
+    "four_ordinary_reads": true,
+    "health_live_200": true,
+    "serve_exit_code": 0,
+    "complete_shutdown_marker": true,
+    "wall_ms": 1335,
+    "passed": true
+  },
+  "fresh_build": {
+    "exact_command_copied_and_executed": true,
+    "node": "v22.19.0",
+    "pnpm": "11.7.0",
+    "steps": [
+      {
+        "step": "install",
+        "exit_code": 0,
+        "wall_ms": 72803
+      },
+      {
+        "step": "esbuild",
+        "exit_code": 0,
+        "wall_ms": 615
+      },
+      {
+        "step": "build",
+        "exit_code": 0,
+        "wall_ms": 10822
+      }
+    ]
+  },
+  "fresh_type_lint": [
+    {
+      "step": "typecheck",
+      "exit_code": 0,
+      "wall_ms": 10022
+    },
+    {
+      "step": "lint",
+      "exit_code": 0,
+      "wall_ms": 9951
+    }
+  ],
+  "cold_tools": {
+    "exit_code": 0,
+    "wall_ms": 32387,
+    "prefix_contains_space_and_quote": true
+  },
+  "public_clone": {
+    "head": "79e23bec79dcea140f7a78ef49c9a564e0eb9e77",
+    "tracked_paths": 39848,
+    "required_missing": 0,
+    "missing_paths": [],
+    "excluded_materialized": 0,
+    "materialized_sample": [],
+    "legacy_fixtures_present": true,
+    "clone_exit": {
+      "exit_code": 0,
+      "wall_ms": 14103
+    },
+    "filter_unsupported_warning": false
+  },
+  "export": {
+    "exit_code": 0,
+    "wall_ms": 220,
+    "includes": [
+      "scripts/prepare-tools.sh",
+      "scripts/export-source.mjs",
+      "tests/scripts/source-preparation.check.mjs",
+      "examples/environment-setup.md",
+      "examples/cli-mcp-operations.md",
+      "tests/contracts/m7-fable-mcp.test.ts"
+    ],
+    "exported_files": 583,
+    "git_head_is_public_baseline_with_candidate_worktree_overlay": true
+  },
+  "boundary_exit": {
+    "exit_code": 0
+  },
+  "preparation_order_failure": {
+    "exit_code": 127,
+    "wall_ms": 3,
+    "classification": "orchestration: check started before source overlay completed; prepare-tools.sh absent",
+    "product_failure": false
+  },
+  "old_red": {
+    "files": 2,
+    "tests": 16,
+    "passed": 14,
+    "failed": 2,
+    "success": false,
+    "exit": {
+      "exit_code": 1,
+      "wall_ms": 2128
+    },
+    "failed_cases": [
+      {
+        "file": "tests/contracts/m7-validation-diagnostics.test.ts",
+        "name": "M7.14 trusted expected types explain numeric and array errors without reflecting input"
+      },
+      {
+        "file": "tests/integration/m6-review-requests.test.ts",
+        "name": "M7.14 exact roster and contribution errors explain static rules and leave no writes"
+      }
+    ]
+  },
+  "candidate_focused": {
+    "files": 8,
+    "tests": 42,
+    "passed": 42,
+    "failed": 0,
+    "success": true,
+    "exit": {
+      "exit_code": 0,
+      "wall_ms": 8658
+    },
+    "failed_cases": []
+  },
+  "task": "M7.14",
+  "baseline_commit": "79e23bec79dcea140f7a78ef49c9a564e0eb9e77",
+  "arch_owned_root": "/var/tmp/detuned-m714-u1jflb35",
+  "final_test_source": "/var/tmp/detuned-m714-u1jflb35/first-use/home/Detuned-source-new",
+  "model_calls": 0,
+  "script_boundary_tests": {
+    "runner": "system Node26 node --test",
+    "tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "not_in_vitest_count": true,
+    "fixed_node22": {
+      "exit_code": 0,
+      "wall_ms": 407,
+      "node": "v22.19.0",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0
+    }
+  },
+  "first_use_initial": {
+    "node": "v26.11.1",
+    "pnpm_present": false,
+    "corepack_present": false,
+    "PATH": "/usr/bin:/bin"
+  },
+  "artifacts": {
+    "tracked_backend_dist_compared": 608,
+    "same": 601,
+    "changed": [
+      "modules/review/dist/request-service.d.ts.map",
+      "modules/review/dist/request-service.js",
+      "modules/review/dist/request-service.js.map",
+      "packages/protocol/dist/validation-issues.d.ts",
+      "packages/protocol/dist/validation-issues.d.ts.map",
+      "packages/protocol/dist/validation-issues.js",
+      "packages/protocol/dist/validation-issues.js.map"
+    ],
+    "new_modules": 0,
+    "web_untouched": true,
+    "source": "actual exported source final build"
+  },
+  "final_backend_full": {
+    "files": 187,
+    "tests": 1134,
+    "passed": 1134,
+    "failed": 0,
+    "pending": 0,
+    "success": true,
+    "exit_code": 0,
+    "wall_ms": 369052,
+    "source": "/var/tmp/detuned-m714-u1jflb35/first-use/home/Detuned-source-new",
+    "worker_count": 1,
+    "file_parallelism": false,
+    "status": "passed",
+    "existing_timeouts_and_behavioral_invariants_preserved": true
+  },
+  "cleanup": {
+    "status": "complete",
+    "root_separate_review_pending": false,
+    "precheck": {
+      "identity_matches": true,
+      "parent_matches": true,
+      "marker_matches": true,
+      "own_process_count": 0,
+      "nested_mount_count": 0,
+      "root_uid": 1000,
+      "root_dev": 66306,
+      "root_inode": 786460,
+      "root_mode": "0700",
+      "parent_inode": 58196314,
+      "marker_inode": 786461
+    },
+    "identity_rechecked_before_deletion": true,
+    "parent_dirfd_nofollow": true,
+    "deleted_only_owned_root": true,
+    "immediate_enoent": true,
+    "owner_new_ssh_enoent": true,
+    "errno": 2,
+    "root_new_ssh_enoent": true,
+    "root_new_ssh_exit_code": 0
+  },
+  "final_binding": {
+    "paths": [
+      "README.md",
+      "examples/cli-mcp-operations.md",
+      "examples/environment-setup.md",
+      "examples/first-collaboration.md",
+      "examples/source-checkout.md",
+      "modules/review/dist/request-service.d.ts.map",
+      "modules/review/dist/request-service.js",
+      "modules/review/dist/request-service.js.map",
+      "modules/review/src/request-service.ts",
+      "package.json",
+      "packages/protocol/dist/validation-issues.d.ts",
+      "packages/protocol/dist/validation-issues.d.ts.map",
+      "packages/protocol/dist/validation-issues.js",
+      "packages/protocol/dist/validation-issues.js.map",
+      "packages/protocol/src/validation-issues.ts",
+      "pnpm-lock.yaml",
+      "scripts/export-source.mjs",
+      "scripts/prepare-tools.sh",
+      "tests/contracts/m7-fable-mcp.test.ts",
+      "tests/contracts/m7-validation-diagnostics.test.ts",
+      "tests/integration/m6-review-requests.test.ts",
+      "tests/integration/m6-review-submissions.test.ts",
+      "tests/scripts/source-preparation.check.mjs"
+    ],
+    "file_count": 23,
+    "source": "/var/tmp/detuned-m714-u1jflb35/first-use/home/Detuned-source-new",
+    "root_review_pending": false,
+    "owner_byte_equal": true,
+    "root_independent_byte_equal": true
+  },
+  "candidate_27": [
+    {
+      "command": "pnpm build:backend",
+      "workspace_packages": 9,
+      "workspace_concurrency": 1,
+      "exit_code": 0,
+      "wall_ms": 10675
+    },
+    {
+      "command": "pnpm typecheck:backend",
+      "workspace_packages": 9,
+      "workspace_concurrency": 1,
+      "exit_code": 0,
+      "wall_ms": 9932
+    },
+    {
+      "command": "pnpm lint:backend",
+      "workspace_packages": 9,
+      "workspace_concurrency": 1,
+      "exit_code": 0,
+      "wall_ms": 9947
+    }
+  ],
+  "root_independent_review": {
+    "old_red_and_candidate_focused": true,
+    "public_clone_cold_tools_fresh_build_type_lint_smoke": true,
+    "global_read_comparison_scope": "all table counts, not row fields",
+    "actual_light_source_full": true,
+    "node22_boundary_four": true,
+    "operations_help_static": true,
+    "latest_23_binding": true,
+    "precleanup": true
+  },
+  "operations_guide_correction": {
+    "changes": "spaces entry corrected to space list and aliases fully qualified",
+    "validation": {
+      "exit_code": 0,
+      "space_list_help_usage": true,
+      "scope": "static command help; no full table business execution"
+    },
+    "production_source_unchanged": true,
+    "entire_table_business_execution_claimed": false,
+    "root_final_guide_recheck_pending": false
+  }
+}

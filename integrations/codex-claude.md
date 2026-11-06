@@ -42,7 +42,19 @@ exec /ABS/remote-node/bin/node /ABS/remote-Detuned/packages/mcp/dist/index.js
 wrapper与token文件由本人拥有，token为0600，wrapper可执行且目录私有；token原文只在远端文件中，不放进SSH命令参数。操作者自行确认SSH host key和登录配置，不自动接受未知指纹。再将本地Claude私有MCP JSON中的server设为：
 
 ```json
-{"mcpServers":{"detuned":{"command":"ssh","args":["-T","-o","BatchMode=yes","YOUR_TRUSTED_HOST","/ABS/remote-private/detuned-mcp.sh"]}}}
+{"mcpServers":{"detuned":{"command":"/usr/bin/ssh","args":["-T","-o","BatchMode=yes","YOUR_TRUSTED_HOST","/ABS/remote-private/detuned-mcp.sh"]}}}
 ```
+
+替换位置按机器区分：
+
+| 值 | 在哪台机器解释 |
+|---|---|
+| 本地JSON的`command: /usr/bin/ssh` | 本地宿主机器的SSH可执行文件绝对路径，用本地`command -v ssh`核对 |
+| `YOUR_TRUSTED_HOST` | 本地已确认的SSH主机名或别名，不是文件路径 |
+| args最后的`/ABS/remote-private/detuned-mcp.sh` | 远端登录账户的wrapper绝对路径，不要求本地存在 |
+| wrapper内Node、MCP dist、ordinary.token路径 | 全部属于远端机器；Node和依赖须在远端安装构建 |
+| 本地`--mcp-config /ABS/local/claude-mcp.json` | 本地JSON文件绝对路径，文件只保存SSH启动配置 |
+
+例如Mac本地Claude连Linux远端，`/usr/bin/ssh`在Mac，远端wrapper内Node可为`/home/USER/detuned-tools-new/node-v22.19.0-linux-x64/bin/node`。先按[环境准备](../examples/environment-setup.md)取得远端准确路径，不复制Mac Node。wrapper每名参与者分别指定自己的远端token文件，不能共用管理员token。
 
 使用既有显式--mcp-config及--strict-mcp-config加载该JSON；模型设置保持现有选择。不执行claude mcp add、不写用户全局配置。SSH stdout必须仅传MCP协议，远端登录脚本不要打印欢迎文本；日志走stderr。远端loopback指远端服务；本地token-file不能当远端路径。传输成功、九工具发现、真实业务与EOF实际退出分别检查。

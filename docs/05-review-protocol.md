@@ -61,6 +61,8 @@ required_checks 引用同一有效空间策略的 check_profiles。检查配置�
 
 reviewer 必须是有效成员并被空间 owner 标记 eligible；不能由作者随意创建两个假账号。服务根据被纳入帖子所有修订的作者/编辑者、声明的代码贡献者和显式贡献名单计算排除集，取并集不能减去。外部工作贡献者仍需诚实申报，服务不能自动识别全部研究贡献。
 
+reviewer_actor_ids必须恰好包含冻结策略required_reviewers指定的人数。当前发起授权与材料可见性校验通过后，人数不符返回VALIDATION_ERROR，details.issues为path=/reviewer_actor_ids、rule=exact_reviewers及expected_count；包含材料贡献者时为同一路径、rule=exclude_contributors。诊断不附actor、独立组或私密名单；其余资格不符仍返回通用要求错误。拒绝不写快照、名单、事件或幂等成功结果。
+
 ## 3. 冻结对象
 
 manifest 包含：目标主张及修订/内容哈希、假设与范围、明示依赖的帖子修订及哈希、附件 ID/哈希/大小、源码提交与源码包、复现说明、规则与策略版本、贡献者名单、所需检查名称及配置摘要。依赖是显式有限清单，不递归抓取整个论坛；依赖遗漏由评审覆盖检查发现。

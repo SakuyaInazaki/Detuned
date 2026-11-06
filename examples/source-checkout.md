@@ -1,21 +1,59 @@
-# 独立获取源码工作副本
+# 获取独立源码工作副本
 
-仓库按用户要求保留完整跟踪内容，包括依赖、平台二进制、缓存、dist和历史。普通clone也会获取这些内容，.gitignore不会排除已跟踪文件。跨机器使用时，可新建独立的partial+sparse工作副本；以下命令只配置这个新副本，不修改原仓库、历史或全局Git配置。不要在已有工作目录执行sparse-checkout。
+仓库按用户要求保留完整跟踪内容，包括依赖、平台二进制、缓存和历史审查。普通clone或`git archive HEAD`可能包含这些大文件；以下只减少显式新工作副本，不删除原仓库内容、不改ignore、不重写历史。安装构建都在运行服务的目标机器完成。
 
-从不存在的新目录开始；服务端须支持partial clone。这里保留所有源码、测试、配置、锁文件、历史fixtures、examples/templates、scripts与Dockerfile，只不物化依赖、缓存、生成dist及临时工作/测试结果目录：
+## 使用当前本地工作区
+
+在已有完整仓库根目录，用系统Node即可导出（不要求已安装依赖或已构建）：
+
+```sh
+node scripts/export-source.mjs --output "$HOME/Detuned-source-new"
+```
+
+目标必须为不存在的绝对目录，父目录已存在且由本人控制，且位于仓库外。复制默认只覆盖Git跟踪文件的**当前工作树字节**：包括已修改/已暂存文件，已删除文件不复活；这不是HEAD快照。导出时停止编辑源码，脚本在逐文件读取前后检查身份、大小与修改时间，检测到变化即失败；仍不提供跨文件原子快照。新副本没有.git，不适合原地提交推送。原仓库仍是完整历史的唯一来源。
+
+尚未跟踪但确需传输的源码，逐项显式加入，例如：
+
+```sh
+node scripts/export-source.mjs --output "$HOME/Detuned-source-new" --include scripts/new-helper.mjs
+```
+
+include可为相对文件或目录，须先检查其中无凭据；不自动收集未跟踪或忽略文件。路径禁止绝对路径、`.`/`..`与符号链接；任意剩余符号链接（含祖先目录）都会停止。固定排除规则不能被include绕过：任意node_modules、.pnpm-store、dist、.git、AppleDouble，根scratch/test-results，以及docs/reviews主体。保留整个`docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/`，普通typed-write回归直接导入其中legacy代码。
+
+其余跟踪源码、配置、锁文件、tests/fixtures、scripts/history-fixtures、examples、templates、Dockerfile和已有Web源码均保留。脚本不生成校验/manifest文件、不执行hooks或帖子。失败后仅保留它刚创建的partial输出供检查；重试换新目录，不覆盖旧输出。
+
+跨机器可把**这个轻副本**流式传输，不先archive完整仓库。先在远端创建一个不存在的新目录，再在本地执行（替换受信主机、两端绝对路径）：
+
+```sh
+ssh -T -o BatchMode=yes YOUR_TRUSTED_HOST 'umask 077; mkdir /ABS/remote/Detuned-source-new'
+```
+
+```sh
+set -o pipefail
+COPYFILE_DISABLE=1 tar -C "$HOME/Detuned-source-new" -cf - . | ssh -T -o BatchMode=yes YOUR_TRUSTED_HOST 'tar -xf - -C /ABS/remote/Detuned-source-new'
+```
+
+第二块使用bash或zsh的pipefail；任一端失败都须停止，不把不完整副本当成功。SSH主机名在本地解析，mkdir/tar的路径在远端解释；所有目录由本人控制。不接受未知host key，不传token。传完按[环境准备](environment-setup.md)安装目标平台依赖。
+
+## 获取GitHub固定版本
+
+在新目录执行以下命令。`sourceCommit`替换为明确要使用的**完整40位提交ID**，该提交必须已在远端存在；本地未推送修改应使用上面的工作区导出，不能把main称为当前本地版本。
 
 ```sh
 set -eu
-GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=1024 -c http.lowSpeedTime=30 clone --filter=blob:none --no-checkout --depth 1 --branch main https://github.com/SakuyaInazaki/Detuned.git Detuned-source
+sourceCommit=REPLACE_WITH_FULL_40_HEX_COMMIT
+case "$sourceCommit" in *[!0-9a-f]*|'') exit 2;; esac
+[ "${#sourceCommit}" -eq 40 ]
+GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 clone --filter=blob:none --no-checkout --depth 1 https://github.com/SakuyaInazaki/Detuned.git Detuned-source
 cd Detuned-source
-GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=1024 -c http.lowSpeedTime=30 sparse-checkout set --no-cone '/*' '!**/node_modules/' '!/.pnpm-store/' '!/packages/*/dist/' '!/modules/*/dist/' '!/scratch/' '!/test-results/'
-GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=1024 -c http.lowSpeedTime=30 checkout main
+GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 fetch --filter=blob:none --depth 1 origin "$sourceCommit"
+git sparse-checkout set --no-cone '/*' '!**/node_modules/' '!/.pnpm-store/' '!**/dist/' '!/scratch/' '!/test-results/' '!/docs/reviews/' '/docs/reviews/2026-10-03-m2-2-a/implementation/core/fixtures/'
+GIT_TERMINAL_PROMPT=0 git -c http.version=HTTP/1.1 checkout --detach "$sourceCommit"
+[ "$(git rev-parse HEAD)" = "$sourceCommit" ]
 ```
 
-本例读取公共仓库，禁用认证交互；每条命令临时指定HTTP/1.1与连续30秒低于1024B/s则失败的传输限制，不写Git全局配置，也不保证整个命令30秒内完成。超时/网络失败须明确停止，不能当已完整获取。首次默认网络传输曾停滞，恢复采用这些选项，不据此断言根因一定是HTTP/2。
+这只改变新副本配置。filter推迟下载blob，sparse减少物化，浅历史不包含全部历史对象；Git服务端不支持filter时仍可能传输大对象，应停止核对而非声称轻量成功。网络错误明确停止；再次操作前先检查已有目录。不能在原工作区直接执行这组sparse命令。
 
-`blob:none`推迟下载文件内容，sparse决定工作树物化范围；`--depth 1`仅取当前分支浅历史，需要历史时另行fetch。仓库远端的完整文件与历史未改变。Git官方建议通常使用cone目录模式，这里因须排除嵌套生成目录而使用少量固定non-cone模式；不启用实验性sparse-index。服务端忽略filter时可能仍传输完整对象，不能保证下载体积或时间；出现“filtering not recognized”等提示先核服务支持，不能把它误报为轻量下载通过。后续扩大sparse范围会按需下载对象。
+轻副本保留普通回归所需冻结fixtures；显式**再生成**旧fixture可能还需要完整Git对象和被省略的原审查证据，须回到完整原仓库执行其配方。轻副本不是历史证据归档替代品。
 
-在此新副本中按[README](../README.md)使用目标机器的私有Node/pnpm安装依赖和构建，不能使用仓库内Mac二进制。不要省略tests/fixtures、scripts/history-fixtures、examples、templates或Dockerfile；后端测试也使用历史与跨接口fixture。已有源码工作区不需要应用本指南，更不要为此删除、停止跟踪其依赖/缓存，或执行git clean。
-
-官方依据：[git clone](https://git-scm.com/docs/git-clone)的--filter/--no-checkout/--depth，以及[git sparse-checkout](https://git-scm.com/docs/git-sparse-checkout)的set --no-cone与完整pattern规则。本指南只减少新工作副本取用范围，不发布另一份源码包，不创建release，也不改用户全局配置。
+官方规则：[git clone](https://git-scm.com/docs/git-clone)、[git sparse-checkout](https://git-scm.com/docs/git-sparse-checkout)、[git fetch](https://git-scm.com/docs/git-fetch)。

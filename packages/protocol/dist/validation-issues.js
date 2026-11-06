@@ -5,10 +5,12 @@ function validValue(schema, value) { return Value.Check(schema, value); }
 export function safeValidationIssues(schema, value, prefix = '') {
     const issues = [];
     let budget = 256;
-    const add = (path, rule, allowed) => {
+    const add = (path, rule, allowed, expectedType) => {
         if (issues.length >= 8)
             return;
         const issue = { path: path.length <= 160 ? path : '', rule };
+        if (rule === 'type' && expectedType && ['string', 'integer', 'number', 'boolean', 'null', 'array', 'object'].includes(expectedType))
+            issue.expected_type = expectedType;
         if (allowed?.length && allowed.length <= 16 && allowed.every(item => typeof item !== 'string' || item.length <= 64))
             issue.allowed_values = allowed;
         if (!issues.some(item => item.path === issue.path && item.rule === rule))
@@ -81,7 +83,7 @@ export function safeValidationIssues(schema, value, prefix = '') {
         }
         if (s.type === 'object') {
             if (v === null || typeof v !== 'object' || Array.isArray(v)) {
-                add(path, 'type');
+                add(path, 'type', undefined, 'object');
                 return;
             }
             const object = v, properties = s.properties ?? {};
@@ -109,7 +111,7 @@ export function safeValidationIssues(schema, value, prefix = '') {
         }
         else if (s.type === 'array') {
             if (!Array.isArray(v)) {
-                add(path, 'type');
+                add(path, 'type', undefined, 'array');
                 return;
             }
             if (s.minItems !== undefined && v.length < s.minItems)
@@ -125,7 +127,7 @@ export function safeValidationIssues(schema, value, prefix = '') {
                 add(path, 'enum', [s.const]);
             else if ((s.type === 'number' || s.type === 'integer') && typeof v === 'number' && Number.isFinite(v)) {
                 if (s.type === 'integer' && !Number.isInteger(v))
-                    add(path, 'type');
+                    add(path, 'type', undefined, 'integer');
                 else if (s.minimum !== undefined && v < s.minimum)
                     add(path, 'minimum');
                 else if (s.maximum !== undefined && v > s.maximum)
@@ -142,7 +144,7 @@ export function safeValidationIssues(schema, value, prefix = '') {
             else if (s.type === 'string' && typeof v === 'string')
                 add(path, s.minLength !== undefined && v.length < s.minLength ? 'minLength' : s.maxLength !== undefined && v.length > s.maxLength ? 'maxLength' : s.pattern ? 'pattern' : 'schema');
             else
-                add(path, 'type');
+                add(path, 'type', undefined, s.type);
         }
     };
     try {
